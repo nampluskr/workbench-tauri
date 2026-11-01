@@ -1,0 +1,80 @@
+{
+  "ok": true,
+  "target": {
+    "port": 9222,
+    "pid": 17684,
+    "listener": {
+      "pid": 11236,
+      "name": "msedgewebview2.exe"
+    },
+    "chain": [
+      {
+        "pid": 11236,
+        "name": "msedgewebview2.exe"
+      },
+      {
+        "pid": 17684,
+        "name": "zedlike.exe"
+      },
+      {
+        "pid": 33852,
+        "name": "cargo.exe"
+      },
+      {
+        "pid": 1500,
+        "name": "cargo.exe"
+      },
+      {
+        "pid": 23500,
+        "name": "node.exe"
+      },
+      {
+        "pid": 30096,
+        "name": "cmd.exe"
+      },
+      {
+        "pid": 13632,
+        "name": "node.exe"
+      },
+      {
+        "pid": 4848,
+        "name": "pwsh.exe"
+      },
+      {
+        "pid": 25728,
+        "name": "herdr.exe"
+      },
+      {
+        "pid": 3472,
+        "name": "herdr.exe"
+      },
+      {
+        "pid": 23136,
+        "name": "pwsh.exe"
+      },
+      {
+        "pid": 23220,
+        "name": "Zed.exe"
+      },
+      {
+        "pid": 25140,
+        "name": "explorer.exe"
+      }
+    ]
+  },
+  "type": "object",
+  "value": {
+    "signals": {
+      "pageLoads": 1,
+      "beforePrint": 0,
+      "pageHide": 0,
+      "popState": 0,
+      "dprChanges": [],
+      "contextMenusBlocked": 0,
+      "devicePixelRatio": 2,
+      "visualViewportScale": 1
+    },
+    "dpr": 2,
+    "href": "http://localhost:1420/"
+  }
+}

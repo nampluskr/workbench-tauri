@@ -149,6 +149,198 @@
   - 특이사항: 커밋은 leader가 한다.
   - 상태: Phase 1 완료 (2026-11-01). R-1, R-2 모두 충족이다(PLAN "Phase를 마친 것" 규칙).
 
+### Phase 2 — 창·단위·테마·키맵 기반
+
+- **R-8 대상 토큰·화면 샘플 목록 고정** (2026-11-01, Phase 2 시작 때)
+  - 무엇을 했나: SPEC R-8의 규칙대로 대상 토큰과 화면 샘플을 원문에서 뽑아 여기에 고정했다. 원문은 03-THEME-ICONS 1.3절(T-40), 1.2절(T-26), 2.3절(T-08)이다. 고정한 뒤에는 바꾸지 않는다. 판정 때 덤프에서 빠지면 실패다.
+  - 결과:
+    - **대상 토큰** — 1.3절(T-40) 가운데 v0.1 화면 요소에 쓰이는 것만 골랐다. v0.1 화면 요소는 R-4 타이틀 바·창 버튼, R-9 영역 뼈대, R-2 편집기다.
+      | 출처 행 | 토큰 | v0.1 화면 요소 |
+      | --- | --- | --- |
+      | T-40.1 | `background` | 창 맨 바닥(L-11) |
+      | T-40.2 | `border`, `border.variant` | 영역 사이 1px 선(L-16, A-11.2, A-11.5) |
+      | T-40.5 | `ghost_element.hover`, `ghost_element.active` | 창 버튼 hover·누름(L-84) |
+      | T-40.8 | `text` | 타이틀 바 글자, 창 버튼 글자(L-84, T-08.15·T-08.21) |
+      | T-40.15 | `title_bar.background`, `title_bar.inactive_background` | 타이틀 바(L-81) |
+      | T-40.16 | `status_bar.background` | 상태 표시줄 |
+      | T-40.17 | `tab_bar.background`, `tab.active_background`, `tab.inactive_background` | Pane 탭 바와 탭(Phase 1 PoC 탭) |
+      | T-40.19 | `panel.background` | 사이드바, 왼쪽 Dock |
+      | T-40.21 | `scrollbar.thumb.background`, `scrollbar.thumb.hover_background`, `scrollbar.thumb.active_background`, `scrollbar.thumb.border`, `scrollbar.track.background`, `scrollbar.track.border` | 편집기 스크롤바 |
+      | T-40.22 | `editor.background`, `editor.foreground` | 편집기 바탕·글자 |
+      | T-40.23 | `editor.gutter.background`, `editor.line_number`, `editor.active_line_number`, `editor.active_line.background` | 줄 번호 칸, 현재 줄 |
+      | T-40.26 | `players[0].cursor`, `players[0].selection` | 캐럿, 선택 영역 |
+    - 1.3절의 나머지 행(T-40.3·4·6·7·9~14·18·20·24·25·27·28)은 v0.1 화면에 그 요소가 없어서 대상에서 뺐다.
+    - **대체 규칙(1.2절 T-26)** — 위 토큰에 걸리는 것만이다.
+      - T-26.3: `scrollbar.thumb.active_background` ← `scrollbar.thumb.background`. 6개 테마 모두다.
+      - T-26.8: `scrollbar.thumb.border` ← `#3b3d45`. Catppuccin 4종(`null`)이다.
+      - 위 토큰 가운데 원본에 값이 없거나 `null`인데 T-26에 규칙이 없는 것은 판정 때 덤프에 `missing`으로 남기고 실패로 본다.
+    - **화면 샘플** — 스크린샷 색 판정 대상이다. Mocha와 Latte만 본다(D-11). 상태는 기본, 그리고 1.3절에 적힌 상태다.
+      | 샘플 | 요소·상태 | 토큰 | Latte 관찰 항목 |
+      | --- | --- | --- | --- |
+      | S-1 | 타이틀 바 바탕, 창 활성 | `title_bar.background` | T-08.7 |
+      | S-2 | 타이틀 바 바탕, 창 비활성 | `title_bar.inactive_background` | — |
+      | S-3 | 창 버튼 글리프 | `text` | T-08.15, T-08.21 |
+      | S-4 | 최소화 버튼 hover 배경 | `ghost_element.hover`를 `title_bar.background` 위에 합성 | — |
+      | S-5 | 사이드바 바탕 | `panel.background` | T-08.8 |
+      | S-6 | 왼쪽 Dock 바탕 | `panel.background` | T-08.8 |
+      | S-7 | 상태 표시줄 바탕 | `status_bar.background` | T-08.9 |
+      | S-8 | 영역 사이 선(타이틀 바 아래, 상태 표시줄 위, 사이드바 오른쪽) | `border` | T-08.13 |
+      | S-9 | Pane 탭 바 바탕 | `tab_bar.background` | — |
+      | S-10 | 활성 탭 / 비활성 탭 | `tab.active_background` / `tab.inactive_background` | T-08.11 / T-08.10 |
+      | S-11 | 편집기 바탕 | `editor.background` | T-08.11 |
+      | S-12 | 현재 줄 바탕 | `editor.active_line.background`를 `editor.background` 위에 합성 | — |
+      | S-13 | 선택 영역 | `players[0].selection`을 `editor.background` 위에 합성 | — |
+    - 닫기 버튼 hover `#E81120`(L-84)는 테마 토큰이 아니라서 이 목록이 아니라 R-4에서 본다.
+  - 검증: 원문 표 행을 하나씩 대조해 옮겼다. 수치와 색 값은 적지 않았다. 값은 테마 JSON과 T-26 규칙에서 나온다.
+  - 특이사항: One Light는 토큰 덤프만 본다(D-11). 화면 샘플은 없다.
+
+- **Phase 2 구현: 창·타이틀 바·키맵·테마·영역 뼈대** (2026-11-01)
+  - 무엇을 했나:
+    - 창(R-3, R-4, D-7, D-13):
+      - `tauri.conf.json`을 `decorations: false`, `shadow: true`, 1440×852(A-30.2)로 바꿨다.
+      - `src-tauri/src/caption.rs`를 새로 만들었다(`windows` 0.62.2, 03-tauri 3.1 목록).
+        - DWM 둥근 모서리를 요청한다.
+        - `WRY_WEBVIEW`에서 최대화 버튼 칸을 `SetWindowRgn`으로 뚫는다. 그 칸에서 최상위 창이 `WM_NCHITTEST` → `HTMAXBUTTON`을 돌려주고, 버튼(Segoe Fluent Icons U+E922/U+E923, 36×32, 10px)을 GDI로 그린다.
+        - 누름·놓음을 직접 처리해 최대화·복원한다.
+      - D-7은 "스냅 팝업이 안 되면 `WM_NCHITTEST`를 더한다"고 했다. 처음부터 넣은 이유는 이렇다. 창 구조를 읽기 전용으로 확인하니 `Tauri Window` → `WRY_WEBVIEW` → `Chrome_WidgetWin_0`(앱 스레드) → `Chrome_WidgetWin_1`(WebView2 브라우저 프로세스) 순서였다. 즉 HTML만으로는 hit test가 다른 프로세스 창으로 간다.
+      - 명령 `caption_set_colors`, `caption_debug`를 넣었다(`serde_json`만 사용).
+      - capability는 쓰는 것만 개별로 허용했다: `core:window:allow-minimize`, `allow-close`, `allow-start-dragging`, `allow-internal-toggle-maximize`.
+    - 영역 뼈대(R-9):
+      - `src/shell/Shell.tsx`, `src/shell/styles.ts`. 사이드바 | Workspace(타이틀 바 → 본문(왼쪽 Dock → 가운데) → 상태 표시줄) 구조이고, 오른쪽 사이드바와 오른쪽·아래 Dock은 없다.
+      - 루트 글자 16px(L-01), `rem()` = px ÷ 16(L-02).
+      - Phase 1 PoC를 가운데 영역으로 옮겼다.
+      - `:hover` 규칙은 carrier nonce를 단 `<style>`(`zl-app-styles`)에 넣었다. CSP는 그대로다.
+    - 테마(R-8, D-11):
+      - `src/theme/`(`theme.ts`, `tokens.ts`, `color.ts`, `bootstrap.ts`). JSON → T-26 대체(T-26.3, T-26.8) → `:root` CSS 변수 순서로 적용한다. CM6 light/dark 플래그는 compartment로, 네이티브 최대화 버튼 색은 `caption_set_colors`로 바꾼다.
+      - 편집기·탭·스크롤바 색은 모두 토큰 변수로 바꿨다.
+      - 테마 JSON: catppuccin/zed v0.2.27 `catppuccin-mauve.json`과 LICENSE(MIT)를 `src/theme/assets/catppuccin/`에 넣었다. 받은 파일과 설치된 Zed 확장 파일의 sha256이 같다. 출처는 `src/theme/NOTICE.md`에 적었다.
+    - 키맵(R-6, R-7, D-5, D-6):
+      - `src/keymap/context.ts`, `engine.ts`가 I-702, I-703, I-001, I-704 규칙 엔진이다.
+      - `engine.test.ts`는 Node 24 `node --test`로 돌린다(`npm run test:keymap`). 패키지는 더하지 않았다.
+      - `dispatch.ts`: 캡처 단계 `keydown`으로 엔진에 먼저 넘기고, R-20 키를 막는다. 브라우저 우클릭 메뉴도 막는다. 키 로그와 브라우저 신호(새로고침·인쇄·이동·확대)를 기록한다.
+      - D-6 ① 확인: wry 0.57.1에는 `with_browser_accelerator_keys`가 있다. 하지만 Tauri 2.12.5는 설정이나 빌더로 노출하지 않는다(registry 소스 검색). `with_webview`로 쓰려면 `webview2-com` 크레이트가 필요한데, 이는 목록 밖이다. 그래서 ②를 택했다.
+    - 검증 수단:
+      - `src/poc/probe2.ts`(`__poc.theme`, `.shell`, `.keymap`, `.caption`)
+      - `tools/win-input.ps1`(SendInput, 스캔 코드 포함)
+      - `tools/capture.ps1`(gpui 도구를 옮겼고 기본값만 바꿨다)
+      - `specs/v0.1/verify/phase2/HOWTO.md`
+  - 결과:
+    - 추가 의존성(모두 03-tauri 3.1 목록): `windows` 0.62.2(cfg windows), `serde_json` 1.0.154. npm 패키지 추가는 없다.
+    - `tsconfig.json`에 `resolveJsonModule`·`allowImportingTsExtensions`를 넣고, `*.test.ts`는 tsc 대상에서 뺐다.
+  - 검증 (wt-coder 자체 확인, 판정은 wt-checker):
+    - 기본 검사: `npm run typecheck` 오류 없음, `npm run build` 성공, 번들에 `style="` 없음, `cargo check` 경고 0, `npm run test:keymap` 14/14 통과.
+    - R-3: dev 앱에서 SendInput으로 최대화 버튼에 머물렀을 때 스냅 레이아웃 플라이아웃이 버튼 아래에 나왔다(`native.hover: true`). 타이틀 바 더블클릭으로 최대화(frame 0,0,2880×1704)와 복원이 되었다.
+    - R-6: 실제 키 입력 12개(Ctrl+P 제외)가 모두 `isTrusted`, `action`, `prevented`였고 새로고침·확대·이동 신호는 없었다.
+    - R-8: Mocha·Latte 대상 토큰 27개가 모두 적용되었다(`missing` 0). 대체는 T-26.3·T-26.8 둘이다. 전환 시간 total은 약 30~33ms다(기록용).
+    - 회귀: 새 셸 안에서 R-1 이동·구조 변경과 R-2 측정이 모두 `pass: true`였다.
+  - 특이사항:
+    - 자체 확인 중에 `caption.rs`의 교착을 찾아 고쳤다. 창을 복원할 때 WM_SIZE를 처리하면서 `STATE` lock을 잡은 채 `SetWindowRgn`을 부르면, 같은 스레드의 WebView subclass가 다시 lock을 기다려 dev 앱이 멈췄다. 창 프로시저는 `try_lock`만 쓰도록 바꿨다. 그 뒤 tauri dev가 다시 빌드해 새로 띄웠다.
+    - SendInput에 스캔 코드가 없으면 `KeyboardEvent.code`가 비어 엔진이 키를 못 읽었다. 그때 F5·Ctrl+R로 새로고침이 일어났다. 도구에 스캔 코드를 넣고, 엔진은 `code`가 비면 `key`로 읽도록 고쳤다(테스트 추가).
+    - One Light: 원본(`zed-industries/zed` `assets/themes/one/one.json`)은 MIT(`assets/themes/LICENSES`)지만 GPL 저장소 안에만 있다. 지시대로 가져오지 않고 사용자 결정을 기다린다. 그동안 R-8의 One Light 항목은 판정 대기다.
+    - 리뷰·검증·커밋 전이므로 Phase 2는 진행 중이다.
+
+- **One Light 테마 가져오기(D-14)와 R-8 마무리** (2026-11-01)
+  - 무엇을 했나: leader 위임 결정(2026-11-01)에 따라 `zed-industries/zed` 커밋 `14b7b0ef3764d62a85070c8b5ccea105a2ad3235`의 `assets/themes/one/one.json` 하나만 `src/theme/assets/one/one.json`으로 가져왔다(sha256 `ed6cf880…7695`).
+    - 같은 커밋 `assets/themes/LICENSES`의 One Dark·One Light 절(MIT 전문, Copyright (c) 2014 GitHub Inc.)과 출처 URL을 `src/theme/assets/one/LICENSE`에 남겼다. `LICENSES` 파일은 scratchpad에서 읽기만 했고 프로젝트에 넣지 않았다.
+    - `src/theme/NOTICE.md`를 고쳤다. 테마 엔진에 One 패밀리를 더했다.
+    - DECISIONS에 D-14를 더했다.
+  - 결과: `__poc.theme.list()`에서 세 테마가 모두 `bundled: true`다.
+  - 검증:
+    - One Light 적용 뒤 대상 토큰 27개가 모두 `:root`에 적용되었다. 원본에 없는 것은 `scrollbar.thumb.active_background` 하나이고, T-26.3으로 `scrollbar.thumb.background` 값(`#383a414c`)을 받았다. 전환 total은 17.5ms였다(기록용). typecheck와 build를 통과했다.
+    - Mocha로 되돌린 뒤 R-2 `measure()`에서 E-011 "강조 오른쪽 끝 = 편집기 오른쪽 끝" 항목이 실패했다. Phase 2 셸에서 Pane이 좁아져 줄이 편집기보다 길어졌고, 강조가 내용 끝까지 이어졌기 때문이다(1114 > 974).
+    - E-011 원문 "오른쪽 끝까지"에 맞춰 probe 판정을 "보이는 오른쪽 끝에 닿는다(≥, ±1)"로 고쳤다. 다시 재니 R-2 `failed: []`, R-1 이동 `pass: true`였다.
+  - 특이사항: 없음.
+
+- **Phase 2 리뷰 1회차 지적 10건 반영** (2026-11-01)
+  - 무엇을 했나: leader가 전부 채택한 wt-reviewer 지적 10건을 원문(01-zed ID)과 대조한 뒤 반영했다. CSP·capabilities는 그대로이고 패키지 추가는 없다.
+    - 1/Major MIT 고지 누락: 고지 파일을 `public/licenses/`로 옮겼다. 빌드하면 `dist/licenses/`로 복사되어 앱에 같이 들어간다(T-17).
+      - `NOTICE.md`(출처·커밋·sha256)
+      - `catppuccin-zed-LICENSE`
+      - `zed-one-theme-LICENSE`
+    - 2/Major 전환 측정: `caption_set_colors` IPC가 끝날 때까지 기다린 뒤 두 프레임을 잰다. 결과에 `captionApplied`·`captionOk`가 있다(`bootstrap.ts` `captionApplied()`).
+    - 3/Major 숫자패드 +: `ctrl-+`(NumpadAdd)를 예약 키와 시험 바인딩에 더했다. `win-input.ps1`에 `numadd`·`numsub`를 넣었다.
+    - 4/Major null로 해제한 연속 키: 접두사 대기는 더 긴 시퀀스 가운데 I-703 적용 뒤에도 이기는 바인딩이 있을 때만 한다.
+    - 5/Major 인수 비교: `sameArgs`를 구조 비교로 바꿨다(객체 키 순서 무시).
+    - 6/Major WM_PRINT: `WM_PRINT`·`WM_PRINTCLIENT`에서 받은 HDC에 네이티브 최대화 버튼을 그린다(`paint_button_to`).
+    - 7/Major 표시 키: I-704 조회에서, 접두사가 현재 컨텍스트에서 다른 액션을 실행해 입력할 수 없는 연속 키는 뺀다. 각 접두사가 `pending`이어야 한다.
+    - 8/Major 대상 고정: `win-input.ps1`에 `-ProcessId`·`-TargetHwnd`를 넣었다. 지정이 없을 때 창이 여럿이면 오류로 끝난다. 결과에 `pid`·`hwnd`를 넣었다. HOWTO에 CDP 포트·capture `-Hwnd` 고정법을 적었다.
+    - 9/Minor 닫기 누름: L-84 "누름은 각각 80% 불투명"에 따라 글자도 `rgba(255,255,255,0.8)`로 했다.
+    - 10/Major 스크롤바 테두리: E-031에 따라 세로 트랙 왼쪽에 1px `scrollbar.track.border`를 넣었다. E-032에 따라 손잡이 테두리는 `scrollbar.thumb.border`, 각진 모서리로 했다. 손잡이 테두리 두께는 E-032에 적혀 있지 않아 1px로 정했다(판단, 사람 확인 필요).
+  - 결과: 위 파일들과 HOWTO(0절, 5절, 7절, 7a절 신설)를 고쳤다.
+  - 검증:
+    - 기본 검사: `npm run test:keymap` 17/17 통과(새 테스트 3개: null 연속 키, 구조 인수 비교, 가려진 접두사). typecheck 오류 없음, build 성공, `dist/licenses/`에 파일 3개, `cargo check` 경고 0.
+    - 실제 입력: `ctrl+numadd`·`ctrl+numsub`·`ctrl+=`·`ctrl+-`가 모두 `isTrusted`, `action`, `prevented`였다. 확대 신호는 없었다.
+    - 테마 전환: Latte·Mocha 전환에서 `captionOk: true`, `captionApplied` 약 5ms였다.
+    - 캡처: `capture.ps1`(PrintWindow)에 네이티브 최대화 버튼이 나왔다. 세로 스크롤바 왼쪽 2 물리 px가 `#1f1f29`(track.border 합성)였다.
+    - 도구: `win-input.ps1 -Action state`가 `pid`·`hwnd`를 냈다. dev 앱이 다시 빌드되는 동안에는 창을 찾지 못해 오류로 끝났다(의도한 동작).
+    - 회귀: R-1 두 시험과 R-2 `measure()`가 다시 통과했다.
+  - 특이사항: 반영하지 않은 지적은 없다.
+
+- **Phase 2 리뷰 2회차 미해소 지적 8 반영: CDP 대상 고정** (2026-11-01)
+  - 무엇을 했나: leader 채택에 따라 `tools/cdp-eval.mjs`에 `--pid <zedlike PID>`를 넣었다.
+    - `--port`에서 리스닝하는 프로세스와 그 조상 체인을 PowerShell로 구한다(`Get-NetTCPConnection` OwningProcess, `Win32_Process` ParentProcessId). 패키지는 추가하지 않았다.
+    - 그 PID가 체인에 없으면 체인을 보여 주며 종료 코드 1로 끝난다.
+    - 결과 JSON의 `target`에 `pid`, `port`, `listener`, `chain`을 남긴다.
+    - HOWTO 0절에 고정 절차를 적었다. 순서는 `win-input.ps1 -Action state`로 pid·hwnd를 얻고, `-ProcessId`, `--pid`, `capture.ps1 -Hwnd`에 같은 값을 쓰는 것이다. 창 크기 비교도 이렇게 고정한 대상끼리만 하도록 고쳤다.
+  - 결과: `tools/cdp-eval.mjs`와 HOWTO가 바뀌었다.
+  - 검증:
+    - `--pid 17684`(dev 앱): 통과했다. 체인은 msedgewebview2.exe(11236) ← zedlike.exe(17684)였다.
+    - `--pid 4`: 체인을 보여 주고 종료 코드 1로 끝났다.
+  - 특이사항: 없음.
+
+- **Phase 2 검증 결과 반영: I-703 수정, 색 판정 해석(D-15), win-input 전면 창 확인** (2026-11-01)
+  - 무엇을 했나: leader 위임 결정에 따라 세 가지를 고쳤다.
+    1. R-7 I-703(REPORT 116~122행 불충족): 루트 INTENT 원칙 "Zed와 같아야 한다"에 따라 `src/keymap/engine.ts`의 null 처리를 Zed 동작으로 바꿨다. Zed 코드는 복사하지 않았고 동작만 맞췄다.
+       - 후보를 I-702 순서(깊이 → 나중 등록)로 정렬한다.
+       - 그 순서에서 앞선 null은 뒤의 같은 키 후보를 모두 해제한다. 깊이가 얕아도 해제하고, 출처 등급이 같거나 낮은 것만 해제한다.
+       - 얕은 null은 깊은 바인딩을 못 끈다. 그 바인딩이 null보다 앞에 오기 때문이다.
+       - 출처 등급 규칙(사용자 > 덧씌움 > 기본, null에만 적용)은 그대로다.
+       - 테스트를 고쳤다. 잘못 고정된 `I-703: null in one context leaves other contexts alone`를 `I-703: a deeper null disables a shallower binding of the same key`로 바꾸고 기대값을 `none`으로 바로잡았다. 포커스가 Editor 밖이면 Workspace 바인딩이 실행되는 사례도 넣었다.
+       - 테스트를 더했다: 깊은 null ↔ 나중에 등록된 얕은 바인딩, 얕은 null ↔ 깊은 바인딩.
+    2. 색 판정(R-8): REPORT 10~17행의 디스플레이 색 변환 관찰에 따라 DECISIONS에 D-15를 더했다. 주 기준은 같은 토큰 CSS를 칠한 기준 견본과 같은 방법으로 잰 값 대비 ±1이고, 원본 JSON 직접 대비는 참고값이다.
+    3. `tools/win-input.ps1`:
+       - 키 조합과 마우스 버튼(누름·뗌)을 보낼 때마다 직전에 `GetForegroundWindow`가 대상 HWND인지 확인한다(`Guard`). 아니면 보내지 않고 오류로 끝난다.
+       - 전면으로 가져올 때 쓰던 Alt 탭을 없앴다. 그 Alt는 그때 앞에 있던 다른 앱으로 들어갈 수 있었다. 전면으로 가져오지 못하면 아무 입력도 보내지 않고 오류로 끝난다.
+  - 결과: `engine.ts`, `engine.test.ts`, `win-input.ps1`, DECISIONS(D-15)가 바뀌었다.
+  - 검증:
+    - `npm run test:keymap` 19/19 통과, typecheck 오류 없음.
+    - checker의 재현 스크립트(`r7-i703-probe.mts`)에서 "Editor null + Workspace 바인딩"은 `none`, "Workspace null + Editor 바인딩"은 `editor::Act`였다.
+    - `win-input.ps1 -Action state`가 대상 창 전면에서 정상 동작했다. 거부 경로는 다른 앱에 포커스를 줘야 시험할 수 있어 실제로 일으키지 않았다. 코드 근거는 `Guard`, `SendMouse`, `Combo`다.
+  - 특이사항: R-7은 다시 검증받아야 한다.
+
+- **tools/win-input.ps1 리뷰 지적 2건 반영** (2026-11-01)
+  - 무엇을 했나: leader가 채택한 지적 2건을 반영했다.
+    - 1/Major: 전경 확인이 버튼 입력에만 있어 `MoveTo`·`Glide`는 전경이 바뀐 뒤에도 마우스 이동을 보냈다. `SendMouse`가 이동을 포함한 모든 마우스 입력 직전에 `Guard`를 부르도록 바꿨다. `Combo`는 키 누름·뗌을 `SendKey`로 하나씩 보내고, 매번 직전에 `Guard`를 부른다.
+    - 2/Major: `LEFTDOWN` 뒤 전경이 바뀌면 `LEFTUP`의 `Guard`가 예외를 던져 버튼이 눌린 채 끝날 수 있었다. 이 도구가 누른 마우스 왼쪽 버튼과 키를 추적하게 했다(`SendMouse`, `SendKey`). 스크립트의 `finally`에서 `ReleaseAll`이 전경과 무관하게 모두 뗀다. 뗀 것이 있으면 경고와 결과 JSON `releasedOnExit`에 남긴다.
+  - 결과: `tools/win-input.ps1`이 바뀌었다(`Guard` 주석, `SendMouse`, `Combo`, 새 `SendKey`·`ReleaseAll`, 스크립트 try/finally, 도움말).
+  - 검증:
+    - `-Action state`가 정상 동작했다.
+    - `-Action keys -Keys "f6"`을 보내니 앱 키 로그에 `f6 true action true`가 남았고, `releasedOnExit`는 없었다.
+    - 거부 경로와 강제 해제 경로는 다른 앱에 포커스를 줘야 일으킬 수 있어 실제로 시험하지 않았다.
+  - 특이사항: 없음.
+
+- **Phase 2 리뷰·검증 결과와 완료** (2026-11-01)
+  - 무엇을 했나: PLAN의 Phase 끝 순서(리뷰 → 검증 → PROGRESS → 커밋)에서 리뷰·검증 결과와 leader 결정을 기록했다.
+  - 결과:
+    - 리뷰(wt-reviewer):
+      - 1회차 지적 10건을 모두 반영했다. 2회차에서 9건이 해소되었고, 남은 8번(CDP 대상 고정)은 3회차에서 해소되었다.
+      - 검증 뒤 수정분(I-703 키맵, win-input 전경 확인) 리뷰: keymap은 지적이 없었다. win-input 지적 2건(이동 입력 전경 확인, 눌림 상태 해제)은 반영했고 leader가 코드로 해소를 확인했다. Codex 한도가 1%만 남아 재리뷰 대신 leader가 확인했다.
+    - 검증(wt-checker): `specs/v0.1/verify/phase2/REPORT.md`
+      - R-3, R-4, R-5, R-6, R-8, R-9는 충족이다.
+      - R-7은 불충족이었다(I-703 깊은 `null`이 얕은 바인딩을 해제하지 않음). 엔진을 Zed 동작대로 고친 뒤 `specs/v0.1/verify/phase2/REPORT-R7-rerun.md`에서 충족이 되었다. 재검증은 agy Flash high checker가 했다.
+    - leader 결정(위임, 2026-11-01):
+      - 색 판정: 같은 토큰 CSS를 칠한 기준 견본 대비 ±1을 주 기준으로 한다(D-15). 원본 JSON 직접 대비는 참고값이다.
+      - E-032 손잡이 테두리 1px: 원문에 값이 없어 구현에서 정한 값이다. 최종 보고에서 사용자 확인을 요청한다.
+      - R-4 네이티브 최대화 버튼 누름 픽셀: 누른 채로 찍을 수 없어 판정 불가다. 색 값은 `caption_debug`·`lastColors`의 `pressed`가 토큰 합성값과 일치한다(값만 일치).
+    - 사고와 대응: 검증 중 `win-input.ps1`의 입력이 다른 앱(workbench-gpui 창)에 들어간 일이 있었다. 대응으로 `win-input.ps1`을 다음과 같이 보강했다.
+      - 대상 PID·HWND 고정, CDP `--pid` 고정
+      - 모든 마우스·키 입력 직전 전경 확인(`Guard`)
+      - 전면으로 가져올 때 Alt 탭 제거
+      - 누른 버튼·키를 추적하고 `finally`에서 해제(`ReleaseAll`)
+  - 검증: 두 보고서 파일이 있는지 확인했다. `npm run test:keymap` 19/19 통과다.
+  - 특이사항: 커밋은 leader가 한다.
+  - 상태: Phase 2 완료 (2026-11-01). R-3~R-9 모두 충족이다(R-7은 재검증 충족, PLAN "Phase를 마친 것" 규칙).
+
 ## 사용자 요청 작업
 
 ### 신규 시작과 v0.1 작성 단계 문서 초안 (2026-11-01)

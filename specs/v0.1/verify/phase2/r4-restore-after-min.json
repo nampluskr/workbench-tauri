@@ -1,0 +1,45 @@
+{
+  "action": "state",
+  "pid": 17684,
+  "hwnd": "0x760830",
+  "before": {
+    "frame": {
+      "x": -31989,
+      "y": -32000,
+      "width": 292,
+      "height": 39
+    },
+    "clientOrigin": {
+      "x": -31987,
+      "y": -31998
+    },
+    "clientSize": {
+      "width": 288,
+      "height": 35
+    },
+    "maximized": false,
+    "minimized": true,
+    "dpi": 192,
+    "foreground": false
+  },
+  "after": {
+    "frame": {
+      "x": -31989,
+      "y": -32000,
+      "width": 292,
+      "height": 39
+    },
+    "clientOrigin": {
+      "x": -31987,
+      "y": -31998
+    },
+    "clientSize": {
+      "width": 288,
+      "height": 35
+    },
+    "maximized": false,
+    "minimized": true,
+    "dpi": 192,
+    "foreground": false
+  }
+}

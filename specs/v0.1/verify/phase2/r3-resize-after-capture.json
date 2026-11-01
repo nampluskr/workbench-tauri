@@ -1,0 +1,53 @@
+{
+  "processName": "zedlike",
+  "pid": 17684,
+  "hwnd": "0x760830",
+  "title": "ZedLike",
+  "unit": "physical px",
+  "rect": {
+    "x": -5,
+    "y": 9,
+    "width": 2484,
+    "height": 1708
+  },
+  "windowRect": {
+    "x": -16,
+    "y": 9,
+    "width": 2506,
+    "height": 1719
+  },
+  "clientRect": {
+    "x": -3,
+    "y": 11,
+    "width": 2480,
+    "height": 1704
+  },
+  "dpi": 192,
+  "scale": 2.0,
+  "maximized": false,
+  "monitor": {
+    "device": "\\\\.\\DISPLAY1",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 2880,
+      "height": 1800
+    },
+    "workRect": {
+      "x": 0,
+      "y": 0,
+      "width": 2880,
+      "height": 1704
+    }
+  },
+  "capture": {
+    "method": "PrintWindow",
+    "ok": true,
+    "error": null,
+    "foreground": null,
+    "out": "D:\\projects\\workbench-tauri\\specs\\v0.1\\verify\\phase2\\r3-resize-after.png",
+    "width": 2484,
+    "height": 1708
+  },
+  "timestamp": "2026-11-01T11:42:15.2426689+09:00"
+}

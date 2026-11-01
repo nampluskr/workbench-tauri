@@ -3,6 +3,7 @@
 import { createEffect, For, Show, type JSX } from "solid-js";
 import { attachView } from "./editorStore";
 import { activateTab, layout, moveTab, type PaneState } from "./layout";
+import { varRef } from "../theme/tokens";
 
 const paneStyle: JSX.CSSProperties = {
   display: "flex",
@@ -10,14 +11,14 @@ const paneStyle: JSX.CSSProperties = {
   flex: "1 1 0",
   "min-width": "0",
   "min-height": "0",
-  border: "1px solid #313244",
+  border: `1px solid ${varRef("border")}`,
 };
 
 const tabBarStyle: JSX.CSSProperties = {
   display: "flex",
   gap: "4px",
   padding: "4px",
-  background: "#181825",
+  background: varRef("tab_bar.background"),
 };
 
 // Style objects are passed as variables, never as JSX literals: Solid compiles
@@ -25,16 +26,22 @@ const tabBarStyle: JSX.CSSProperties = {
 // (no 'unsafe-inline') blocks. Variables are applied through CSSOM at runtime.
 const tabGroupStyle: JSX.CSSProperties = { display: "flex", gap: "2px" };
 const slotStyle: JSX.CSSProperties = { flex: "1 1 0", "min-height": "0", overflow: "hidden" };
-const rootStyle: JSX.CSSProperties = { display: "flex", height: "100vh", background: "#1e1e2e" };
+const rootStyle: JSX.CSSProperties = {
+  display: "flex",
+  flex: "1 1 0",
+  "min-width": "0",
+  "min-height": "0",
+  background: varRef("editor.background"),
+};
 const nestedRootStyle: JSX.CSSProperties = { ...rootStyle, "flex-direction": "column" };
 const nestedWrapperStyle: JSX.CSSProperties = { display: "flex", flex: "1 1 0", "min-height": "0" };
 
 function tabStyle(active: boolean): JSX.CSSProperties {
   return {
     padding: "2px 8px",
-    color: "#cdd6f4",
-    background: active ? "#313244" : "transparent",
-    border: "1px solid #45475a",
+    color: varRef("text"),
+    background: active ? varRef("tab.active_background") : varRef("tab.inactive_background"),
+    border: `1px solid ${varRef("border")}`,
     cursor: "pointer",
   };
 }
@@ -57,6 +64,7 @@ function Pane(props: { pane: PaneState; index: number }) {
             <span style={tabGroupStyle}>
               <button
                 style={tabStyle(props.pane.active === tab)}
+                data-active={String(props.pane.active === tab)}
                 onClick={() => activateTab(tab)}
               >
                 {tab}

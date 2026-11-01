@@ -18,7 +18,13 @@
 //   --port <n>           DevTools port (default 9222)
 //   --title <text>       page title to look for (default ZedLike)
 //   --timeout <ms>       limit for each CDP request and the connection (default 30000)
+//   --pid <n>            pin the target app: the process listening on --port must be
+//                        a descendant of this zedlike.exe PID (WebView2 browser
+//                        process). Otherwise exit 1. The result records pid and port,
+//                        so input (tools/win-input.ps1 -ProcessId) and capture
+//                        (tools/capture.ps1 -Hwnd) can be pinned to the same app.
 import { writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 
 function parseArgs(argv) {
   const opts = {
@@ -29,6 +35,7 @@ function parseArgs(argv) {
     port: 9222,
     title: "ZedLike",
     timeout: 30000,
+    pid: null,
   };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
@@ -38,18 +45,59 @@ function parseArgs(argv) {
     else if (a === "--port") opts.port = Number(argv[++i]);
     else if (a === "--title") opts.title = argv[++i];
     else if (a === "--timeout") opts.timeout = Number(argv[++i]);
+    else if (a === "--pid") opts.pid = Number(argv[++i]);
     else if (a === "--help" || a === "-h") opts.help = true;
     else if (opts.expr === null) opts.expr = a;
     else throw new Error(`unexpected argument: ${a}`);
   }
   if (!Number.isFinite(opts.timeout) || opts.timeout <= 0) throw new Error("--timeout must be > 0");
+  if (opts.pid !== null && !(Number.isInteger(opts.pid) && opts.pid > 0)) throw new Error("--pid must be a process id");
   return opts;
 }
 
 function usage() {
   console.error(
-    'usage: node tools/cdp-eval.mjs "<JS expression>" [--out <file>] [--screenshot <png>] [--logs] [--port 9222] [--title ZedLike] [--timeout 30000]',
+    'usage: node tools/cdp-eval.mjs "<JS expression>" [--out <file>] [--screenshot <png>] [--logs] [--port 9222] [--pid <zedlike PID>] [--title ZedLike] [--timeout 30000]',
   );
+}
+
+/**
+ * Which process listens on `port`, and its ancestor chain (Windows, via
+ * PowerShell Get-NetTCPConnection / Win32_Process; no packages).
+ */
+function listenerChain(port, timeout) {
+  const script = [
+    "$ErrorActionPreference = 'Stop'",
+    `$c = @(Get-NetTCPConnection -State Listen -LocalPort ${port} -ErrorAction SilentlyContinue)`,
+    "if ($c.Count -eq 0) { '[]'; exit 0 }",
+    "$chain = @(); $p = [int]$c[0].OwningProcess; $seen = @{}",
+    "while ($p -gt 0 -and -not $seen.ContainsKey($p)) {",
+    "  $seen[$p] = 1",
+    "  $w = Get-CimInstance Win32_Process -Filter \"ProcessId=$p\"",
+    "  if (-not $w) { break }",
+    "  $chain += [pscustomobject]@{ pid = [int]$w.ProcessId; name = [string]$w.Name }",
+    "  $p = [int]$w.ParentProcessId",
+    "}",
+    "ConvertTo-Json -Compress -InputObject @($chain)",
+  ].join("\n");
+  const out = execFileSync("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", script], {
+    encoding: "utf8",
+    timeout,
+    windowsHide: true,
+  });
+  return JSON.parse(out.trim() || "[]");
+}
+
+/** Fail unless the DevTools port belongs to (a descendant of) `pid`. */
+function verifyPortOwner(port, pid, timeout) {
+  const chain = listenerChain(port, timeout);
+  if (chain.length === 0) throw new Error(`no process listens on port ${port}`);
+  const listener = chain[0];
+  if (!chain.some((p) => p.pid === pid)) {
+    const path = chain.map((p) => `${p.name}(${p.pid})`).join(" <- ");
+    throw new Error(`port ${port} belongs to ${path}, not a descendant of pid ${pid}`);
+  }
+  return { listener, chain };
 }
 
 async function findPage(port, title, timeout) {
@@ -142,6 +190,12 @@ async function main() {
     usage();
     process.exit(opts.help ? 0 : 2);
   }
+  const target = { port: opts.port, pid: opts.pid, listener: null };
+  if (opts.pid !== null) {
+    const v = verifyPortOwner(opts.port, opts.pid, opts.timeout);
+    target.listener = v.listener;
+    target.chain = v.chain;
+  }
   const page = await findPage(opts.port, opts.title, opts.timeout);
   const cdp = await connect(page.webSocketDebuggerUrl, opts.timeout);
   try {
@@ -162,15 +216,15 @@ async function main() {
       });
       if (r.exceptionDetails) {
         const d = r.exceptionDetails;
-        output = { ok: false, error: d.exception?.description ?? d.text };
+        output = { ok: false, target, error: d.exception?.description ?? d.text };
       } else {
-        output = { ok: true, type: r.result.type, value: r.result.value };
+        output = { ok: true, target, type: r.result.type, value: r.result.value };
       }
     }
     if (opts.logs) {
       // Let replayed and new entries arrive.
       await new Promise((r) => setTimeout(r, 300));
-      output = { ...(output ?? { ok: true }), logs };
+      output = { ...(output ?? { ok: true, target }), logs };
     }
     if (output) {
       const json = JSON.stringify(output, null, 2);

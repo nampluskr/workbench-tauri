@@ -7,6 +7,7 @@ import type { EditorView } from "@codemirror/view";
 import { existingView, getView, instanceId, replaceDoc } from "./editorStore";
 import { activateTab, layout, moveTab, paneOf, toggleStructure } from "./layout";
 import * as SPEC from "./specExpected";
+import { phase2Api } from "./probe2";
 
 function frames(n = 3): Promise<void> {
   return new Promise((resolve) => {
@@ -313,7 +314,17 @@ async function measure(tab?: string) {
     const sc = view.scrollDOM.getBoundingClientRect();
     rows.push(px("E-011", "highlight left = editor left (gutter)", editor.left, g.left));
     rows.push(px("E-011", "content highlight starts at gutter edge", gutters.right, a.left));
-    rows.push(px("E-011", "highlight right = editor right (inside scrollbar)", sc.left + view.scrollDOM.clientWidth, a.right));
+    // E-011 "오른쪽 끝까지": the highlight must reach the visible right edge.
+    // When a line is wider than the editor it continues to the content end,
+    // so the check is "reaches at least", not equality.
+    const visibleRight = sc.left + view.scrollDOM.clientWidth;
+    rows.push({
+      id: "E-011",
+      check: "highlight reaches editor right edge (inside scrollbar)",
+      expected: `>= ${round(visibleRight - SPEC.TOLERANCE_PX)}`,
+      actual: round(a.right),
+      pass: a.right >= visibleRight - SPEC.TOLERANCE_PX,
+    });
     rows.push(px("E-011", "highlight height = 1 line", SPEC.LINE_HEIGHT_PX, a.height));
     rows.push(px("E-011", "gutter cell height = 1 line", SPEC.LINE_HEIGHT_PX, g.height));
     rows.push(color("E-011", "highlight color", SPEC.MOCHA_ACTIVE_LINE_BACKGROUND, getComputedStyle(active[0]).backgroundColor));
@@ -429,6 +440,7 @@ export function installProbe(): void {
     r1: { snapshot, runMoveTest, runRestructureTest, moveTab, toggleStructure, activateTab },
     r2: { measure, setLines },
     layout: () => JSON.parse(JSON.stringify(layout)),
+    ...phase2Api,
   };
   (window as unknown as { __poc: typeof api }).__poc = api;
 }

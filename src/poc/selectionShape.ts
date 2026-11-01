@@ -110,7 +110,8 @@ class SelectionShapeMarker implements LayerMarker {
       ...this.paths.map((d) => {
         const path = document.createElementNS(SVG_NS, "path");
         path.setAttribute("d", d);
-        path.setAttribute("fill", this.fill);
+        // Via CSSOM so the fill can be a CSS variable (theme token).
+        path.style.setProperty("fill", this.fill);
         return path;
       }),
     );

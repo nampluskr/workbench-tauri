@@ -14,6 +14,7 @@
 | D-004 | 2026-11-01 09:31 | wt-reviewer → wt-coder | 2회차 미해소 지적 2(PLAN 완료 규칙) 채택·반영, 3회차에서 해소 확인 | 대리 응답 | 2026-11-01 |
 | D-005 | 2026-11-01 09:42 | wt-coder, wt-reviewer, wt-checker | Phase 0: devCsp 승인, 읽기 전용·검증 명령 승인, 리뷰 지적 3건 채택 | 대리 응답 | 2026-11-01 |
 | D-006 | 2026-11-01 10:20~10:56 | wt-coder, wt-reviewer, wt-checker | Phase 1: CDP 원격 디버깅으로 dev 재시작, 검증 도구 추가, 리뷰 7건 채택, agy 한도 소진으로 checker 를 Sonnet 으로 교체, 승인 요청 처리 | 대리 응답 | 2026-11-01 |
+| D-007 | 2026-11-01 11:00~13:16 | wt-coder, wt-reviewer, wt-checker | Phase 2: One Light MIT 테마 가져오기 승인, 리뷰 지적 채택, R-7 I-703 을 Zed 동작으로 수정, 색 판정 기준, 입력 사고 대응, checker 를 agy Flash high 로 교체(사용자 지시), Codex 모델 전환 제안 거절 | 대리 응답 | 2026-11-01 |
 
 ## 기록
 
@@ -87,4 +88,30 @@
   - ② DOCUMENTS 6절 "판정 방법"과 D-10.
   - ④ 구성안에 적힌 대체 모델이다.
 - 결과: R-1, R-2 모두 충족이다(`specs/v0.1/verify/phase1/REPORT.md`). D-3(Solid)을 유지한다. wt-scouter도 같은 agy 한도라 쓸 수 없는데, 지금까지 조사 일이 없어 대체하지 않았다.
+- 보고: 2026-11-01 (최종 보고에 포함)
+
+### D-007 · 2026-11-01 11:00~13:16 · wt-coder, wt-reviewer, wt-checker (Phase 2)
+
+- 상황: 질문, 검증 결과 해석, 사고
+- 질문·사건:
+  ① wt-coder가 "One Light(zed 저장소 assets/themes/one/one.json, MIT)를 가져올까, 뺄까"를 물었다.
+  ② 리뷰 1회차 10건, 2회차 미해소 1건이 나왔다. 검증 후 수정분 리뷰에서 win-input 2건이 나왔다.
+  ③ wt-checker가 R-7 I-703 불충족을 보고했다. 깊은 `null`이 얕은 바인딩을 끄지 않아 Zed와 다르다는 것이고, 해석은 사람 몫이라고 적었다.
+  ④ 디스플레이 색 변환 때문에 토큰 값 직접 대비가 ±1을 넘는 샘플이 있었고, 판정 기준을 골라야 했다.
+  ⑤ 검증 중 키·클릭 일부가 다른 앱(workbench-gpui 창)에 들어갔을 수 있다.
+  ⑥ Codex가 한도 근접으로 gpt-6-luna 전환을 제안했다.
+- 구분: 대리 응답 (2026-11-01 위임). checker 교체는 사용자 지시다.
+- 답변:
+  ① 가져오게 했다. 앱 코드가 아닌 MIT 데이터 파일이고, MIT 고지를 빌드 결과물에도 넣는다는 조건을 붙였다.
+  ② 모두 채택했다. win-input 2건은 Codex 한도(1%) 때문에 leader가 코드를 읽어 해소를 확인했다(`Guard`가 모든 이동·버튼·키 직전에 있고, `finally`에서 `ReleaseAll`).
+  ③ Zed 동작으로 고치게 했다. 재검증(agy Flash high)에서 충족이다.
+  ④ 같은 CSS 기준 견본 대비 ±1을 주 기준으로 하고, 직접 대비는 참고값으로 둔다(DECISIONS에 기록).
+  ⑤ win-input을 매 입력 직전 전경 확인으로 바꾸고, 눌린 입력은 반드시 해제하게 했다.
+  ⑥ 거절하고 sol을 유지했다(리뷰 품질).
+- 근거:
+  - ① AGENTS의 복사 금지 대상은 Zed 앱 코드(GPL)다. 테마 파일은 assets/themes/LICENSES의 MIT 범위다.
+  - ③ 루트 INTENT 원칙 "Zed와 같아야 한다". checker가 Zed 동작(test_disable_deeper)을 확인했다.
+  - ④ 앱 밖 견본도 똑같이 변한다(REPORT 10~17행). 남는 차이는 앱이 아니라 화면 변환 때문이다.
+  - ⑤ 다른 앱 입력은 사용자 작업을 해칠 수 있다.
+- 결과: Phase 2 R-3~R-9 모두 충족이다(R-7은 재판정). 사용자 확인 필요 항목: E-032 손잡이 테두리 1px(원문 값 없음), ⑤ 입력 사고(workbench-gpui 창 상태).
 - 보고: 2026-11-01 (최종 보고에 포함)

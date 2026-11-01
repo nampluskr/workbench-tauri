@@ -65,6 +65,10 @@ export function instanceId(view: EditorView): number | undefined {
   return instanceIds.get(view);
 }
 
+export function allViews(): EditorView[] {
+  return [...views.values()];
+}
+
 export function getCreatedCount(): number {
   return createdCount;
 }

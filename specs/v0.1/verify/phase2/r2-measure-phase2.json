@@ -1,0 +1,304 @@
+{
+  "ok": true,
+  "target": {
+    "port": 9222,
+    "pid": 17684,
+    "listener": {
+      "pid": 11236,
+      "name": "msedgewebview2.exe"
+    },
+    "chain": [
+      {
+        "pid": 11236,
+        "name": "msedgewebview2.exe"
+      },
+      {
+        "pid": 17684,
+        "name": "zedlike.exe"
+      },
+      {
+        "pid": 33852,
+        "name": "cargo.exe"
+      },
+      {
+        "pid": 1500,
+        "name": "cargo.exe"
+      },
+      {
+        "pid": 23500,
+        "name": "node.exe"
+      },
+      {
+        "pid": 30096,
+        "name": "cmd.exe"
+      },
+      {
+        "pid": 13632,
+        "name": "node.exe"
+      },
+      {
+        "pid": 4848,
+        "name": "pwsh.exe"
+      },
+      {
+        "pid": 25728,
+        "name": "herdr.exe"
+      },
+      {
+        "pid": 3472,
+        "name": "herdr.exe"
+      },
+      {
+        "pid": 23136,
+        "name": "pwsh.exe"
+      },
+      {
+        "pid": 23220,
+        "name": "Zed.exe"
+      },
+      {
+        "pid": 25140,
+        "name": "explorer.exe"
+      }
+    ]
+  },
+  "type": "object",
+  "value": {
+    "tab": "b",
+    "font": {
+      "family": "Consolas",
+      "size": 15,
+      "ch": 8.247,
+      "descent": 4
+    },
+    "devicePixelRatio": 2,
+    "rows": [
+      {
+        "id": "E-010",
+        "check": "font size (L-08)",
+        "expected": 15,
+        "actual": 15,
+        "pass": true
+      },
+      {
+        "id": "E-002",
+        "check": "line-number width, 300 lines (3 digits)",
+        "expected": 32.988,
+        "actual": 32.974,
+        "pass": true
+      },
+      {
+        "id": "E-003",
+        "check": "gutter left padding = 3 ch",
+        "expected": 24.741,
+        "actual": 24.741,
+        "pass": true
+      },
+      {
+        "id": "E-004",
+        "check": "gutter right padding = 4 ch",
+        "expected": 32.988,
+        "actual": 32.988,
+        "pass": true
+      },
+      {
+        "id": "E-005",
+        "check": "gutter -> text gap = |descent|",
+        "expected": 4,
+        "actual": 4,
+        "pass": true
+      },
+      {
+        "id": "E-010",
+        "check": "view.defaultLineHeight",
+        "expected": 24.27,
+        "actual": 24.273,
+        "pass": true
+      },
+      {
+        "id": "E-010",
+        "check": ".cm-line height",
+        "expected": 24.27,
+        "actual": 24.273,
+        "pass": true
+      },
+      {
+        "id": "E-011",
+        "check": "empty cursor: highlighted lines / gutter cell",
+        "expected": "1 / yes",
+        "actual": "1 / yes",
+        "pass": true
+      },
+      {
+        "id": "E-011",
+        "check": "highlight left = editor left (gutter)",
+        "expected": 541,
+        "actual": 541,
+        "pass": true
+      },
+      {
+        "id": "E-011",
+        "check": "content highlight starts at gutter edge",
+        "expected": 631.703,
+        "actual": 631.703,
+        "pass": true
+      },
+      {
+        "id": "E-011",
+        "check": "highlight reaches editor right edge (inside scrollbar)",
+        "expected": ">= 1423",
+        "actual": 1424,
+        "pass": true
+      },
+      {
+        "id": "E-011",
+        "check": "highlight height = 1 line",
+        "expected": 24.27,
+        "actual": 24.273,
+        "pass": true
+      },
+      {
+        "id": "E-011",
+        "check": "gutter cell height = 1 line",
+        "expected": 24.27,
+        "actual": 24.273,
+        "pass": true
+      },
+      {
+        "id": "E-011",
+        "check": "highlight color",
+        "expected": "#cdd6f412",
+        "actual": "rgba(205, 214, 244, 0.07)",
+        "pass": true
+      },
+      {
+        "id": "E-011",
+        "check": "gutter highlight color",
+        "expected": "#cdd6f412",
+        "actual": "rgba(205, 214, 244, 0.07)",
+        "pass": true
+      },
+      {
+        "id": "E-011",
+        "check": "line with a non-empty selection: highlighted lines",
+        "expected": "0",
+        "actual": "0",
+        "pass": true
+      },
+      {
+        "id": "E-015",
+        "check": "single line: corners (outer / inner)",
+        "expected": "4 / 0",
+        "actual": "4 / 0",
+        "pass": true
+      },
+      {
+        "id": "E-015",
+        "check": "single line: outer corner 1 radius",
+        "expected": 3.64,
+        "actual": 3.641,
+        "pass": true
+      },
+      {
+        "id": "E-015",
+        "check": "single line: outer corner 2 radius",
+        "expected": 3.64,
+        "actual": 3.641,
+        "pass": true
+      },
+      {
+        "id": "E-015",
+        "check": "single line: outer corner 3 radius",
+        "expected": 3.64,
+        "actual": 3.641,
+        "pass": true
+      },
+      {
+        "id": "E-015",
+        "check": "single line: outer corner 4 radius",
+        "expected": 3.64,
+        "actual": 3.641,
+        "pass": true
+      },
+      {
+        "id": "E-015",
+        "check": "selection color",
+        "expected": "#9399b240",
+        "actual": "rgba(147, 153, 178, 0.25)",
+        "pass": true
+      },
+      {
+        "id": "E-015",
+        "check": "multi line: corners (outer / inner)",
+        "expected": "6 / 2",
+        "actual": "6 / 2",
+        "pass": true
+      },
+      {
+        "id": "E-015",
+        "check": "multi line: outer corner 1 radius",
+        "expected": 3.64,
+        "actual": 3.641,
+        "pass": true
+      },
+      {
+        "id": "E-015",
+        "check": "multi line: outer corner 2 radius",
+        "expected": 3.64,
+        "actual": 3.641,
+        "pass": true
+      },
+      {
+        "id": "E-015",
+        "check": "multi line: outer corner 3 radius",
+        "expected": 3.64,
+        "actual": 3.641,
+        "pass": true
+      },
+      {
+        "id": "E-015",
+        "check": "multi line: outer corner 4 radius",
+        "expected": 3.64,
+        "actual": 3.641,
+        "pass": true
+      },
+      {
+        "id": "E-015",
+        "check": "multi line: outer corner 5 radius",
+        "expected": 3.64,
+        "actual": 3.641,
+        "pass": true
+      },
+      {
+        "id": "E-015",
+        "check": "multi line: outer corner 6 radius",
+        "expected": 3.64,
+        "actual": 3.641,
+        "pass": true
+      },
+      {
+        "id": "E-015",
+        "check": "multi line: inner corner 1 radius (2r)",
+        "expected": 7.28,
+        "actual": 7.281,
+        "pass": true
+      },
+      {
+        "id": "E-015",
+        "check": "multi line: inner corner 2 radius (2r)",
+        "expected": 7.28,
+        "actual": 7.281,
+        "pass": true
+      },
+      {
+        "id": "E-030",
+        "check": "vertical scrollbar thickness",
+        "expected": 15,
+        "actual": 15,
+        "pass": true
+      }
+    ],
+    "failed": [],
+    "pass": true
+  }
+}

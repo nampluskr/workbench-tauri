@@ -10,7 +10,9 @@ import {
   gutterLineClass,
   lineNumbers,
 } from "@codemirror/view";
-import { EditorState, RangeSet, type Extension } from "@codemirror/state";
+import { Compartment, EditorState, RangeSet, type Extension } from "@codemirror/state";
+import { varRef } from "../theme/tokens";
+import { currentTheme } from "../theme/theme";
 import { selectionShape } from "./selectionShape";
 
 /**
@@ -112,8 +114,8 @@ function zedTheme(metrics: FontMetrics): Extension {
     {
       "&": {
         height: "100%",
-        color: MOCHA.foreground,
-        backgroundColor: MOCHA.background,
+        color: varRef("editor.foreground"),
+        backgroundColor: varRef("editor.background"),
       },
       "& .cm-scroller": {
         fontFamily: EDITOR_FONT_FAMILY,
@@ -125,8 +127,8 @@ function zedTheme(metrics: FontMetrics): Extension {
       // current-line background (E-011) starts right at the gutter edge.
       "& .cm-line": { padding: `0 0 0 ${metrics.descent}px` },
       "& .cm-gutters": {
-        backgroundColor: MOCHA.background,
-        color: MOCHA.lineNumber,
+        backgroundColor: varRef("editor.gutter.background"),
+        color: varRef("editor.line_number"),
         border: "none",
       },
       // E-002 (min 4 digits), E-003 (left 3 ch), E-004 (right 4 ch).
@@ -136,9 +138,10 @@ function zedTheme(metrics: FontMetrics): Extension {
         padding: `0 ${GUTTER_RIGHT_CH}ch 0 ${GUTTER_LEFT_CH}ch`,
         textAlign: "right",
       },
-      "& .zl-activeLine": { backgroundColor: MOCHA.activeLineBackground },
+      "& .zl-activeLine": { backgroundColor: varRef("editor.active_line.background") },
       "& .cm-gutterElement.zl-activeLineGutter": {
-        backgroundColor: MOCHA.activeLineBackground,
+        backgroundColor: varRef("editor.active_line.background"),
+        color: varRef("editor.active_line_number"),
       },
       // E-015: the selection is drawn by selectionShape() (SVG outline). The
       // rectangle layer of drawSelection() is hidden; drawSelection still
@@ -153,18 +156,41 @@ function zedTheme(metrics: FontMetrics): Extension {
         overflow: "visible",
         pointerEvents: "none",
       },
-      "& .cm-cursor, & .cm-dropCursor": { borderLeftColor: MOCHA.cursor },
+      "& .cm-cursor, & .cm-dropCursor": { borderLeftColor: varRef("players[0].cursor") },
       // E-030: 15px editor scrollbar.
       "& .cm-scroller::-webkit-scrollbar": {
         width: `${SCROLLBAR_PX}px`,
         height: `${SCROLLBAR_PX}px`,
       },
-      "& .cm-scroller::-webkit-scrollbar-track": { backgroundColor: MOCHA.scrollbarTrack },
-      "& .cm-scroller::-webkit-scrollbar-thumb": { backgroundColor: MOCHA.scrollbarThumb },
+      "& .cm-scroller::-webkit-scrollbar-corner": {
+        backgroundColor: varRef("scrollbar.track.background"),
+      },
+      "& .cm-scroller::-webkit-scrollbar-track": {
+        backgroundColor: varRef("scrollbar.track.background"),
+      },
+      // E-031: only the vertical track has a 1px left border (track.border).
+      "& .cm-scroller::-webkit-scrollbar-track:vertical": {
+        borderLeft: `1px solid ${varRef("scrollbar.track.border")}`,
+      },
+      // E-032: thumb border = scrollbar.thumb.border; square corners. The
+      // width is not given in E-032; 1px is used (recorded in PROGRESS).
+      "& .cm-scroller::-webkit-scrollbar-thumb": {
+        backgroundColor: varRef("scrollbar.thumb.background"),
+        border: `1px solid ${varRef("scrollbar.thumb.border")}`,
+        borderRadius: "0",
+      },
+      "& .cm-scroller::-webkit-scrollbar-thumb:hover": {
+        backgroundColor: varRef("scrollbar.thumb.hover_background"),
+      },
+      "& .cm-scroller::-webkit-scrollbar-thumb:active": {
+        backgroundColor: varRef("scrollbar.thumb.active_background"),
+      },
     },
-    { dark: true },
   );
 }
+
+/** Light/dark flag of the CM6 base theme; switched on theme change (SPEC R-8). */
+export const appearance = new Compartment();
 
 /** All editor extensions used by the PoC. */
 export function zedEditorExtensions(metrics: FontMetrics = measureFontMetrics()): Extension {
@@ -172,7 +198,8 @@ export function zedEditorExtensions(metrics: FontMetrics = measureFontMetrics())
     EditorView.cspNonce.of(cspNonce()),
     lineNumbers(),
     drawSelection(),
-    selectionShape({ radius: () => SELECTION_RADIUS_PX, fill: MOCHA.selection }),
+    selectionShape({ radius: () => SELECTION_RADIUS_PX, fill: varRef("players[0].selection") }),
+    appearance.of(EditorView.darkTheme.of(currentTheme()?.appearance !== "light")),
     EditorState.allowMultipleSelections.of(true),
     activeLine,
     zedTheme(metrics),

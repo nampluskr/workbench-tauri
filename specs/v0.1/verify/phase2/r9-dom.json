@@ -1,0 +1,152 @@
+{
+  "ok": true,
+  "target": {
+    "port": 9222,
+    "pid": 17684,
+    "listener": {
+      "pid": 11236,
+      "name": "msedgewebview2.exe"
+    },
+    "chain": [
+      {
+        "pid": 11236,
+        "name": "msedgewebview2.exe"
+      },
+      {
+        "pid": 17684,
+        "name": "zedlike.exe"
+      },
+      {
+        "pid": 33852,
+        "name": "cargo.exe"
+      },
+      {
+        "pid": 1500,
+        "name": "cargo.exe"
+      },
+      {
+        "pid": 23500,
+        "name": "node.exe"
+      },
+      {
+        "pid": 30096,
+        "name": "cmd.exe"
+      },
+      {
+        "pid": 13632,
+        "name": "node.exe"
+      },
+      {
+        "pid": 4848,
+        "name": "pwsh.exe"
+      },
+      {
+        "pid": 25728,
+        "name": "herdr.exe"
+      },
+      {
+        "pid": 3472,
+        "name": "herdr.exe"
+      },
+      {
+        "pid": 23136,
+        "name": "pwsh.exe"
+      },
+      {
+        "pid": 23220,
+        "name": "Zed.exe"
+      },
+      {
+        "pid": 25140,
+        "name": "explorer.exe"
+      }
+    ]
+  },
+  "type": "object",
+  "value": {
+    "rootFontSize": "16px",
+    "dpr": 2,
+    "dockBorder": {
+      "borderRightWidth": "1px",
+      "borderRightStyle": "solid",
+      "borderRightColor": "rgb(49, 50, 68)",
+      "borderLeftWidth": "0px",
+      "borderTopWidth": "0px",
+      "borderBottomWidth": "0px",
+      "width": "240px"
+    },
+    "sidebar": {
+      "width": "300px",
+      "borderRightWidth": "1px"
+    },
+    "titlebar": {
+      "height": "32px",
+      "paddingLeft": "8px"
+    },
+    "statusbar": {
+      "height": "30px",
+      "borderTopWidth": "1px"
+    },
+    "body": {
+      "borderTopWidth": "1px"
+    },
+    "pocPane": {
+      "borderTopWidth": "1px",
+      "borderLeftWidth": "1px",
+      "borderRightWidth": "1px",
+      "borderBottomWidth": "1px",
+      "borderTopColor": "rgb(49, 50, 68)"
+    },
+    "order": {
+      "rootChildren": [
+        "zl-sidebar",
+        "zl-workspace"
+      ],
+      "workspaceChildren": [
+        "zl-titlebar",
+        "zl-body",
+        "zl-statusbar"
+      ],
+      "bodyChildren": [
+        "zl-dock",
+        "zl-center"
+      ],
+      "sidebarChildren": [
+        "zl-sidebar-header",
+        "zl-sidebar-list",
+        "zl-sidebar-footer"
+      ]
+    },
+    "absent": {
+      "rightSidebar": 0,
+      "dockRight": 0
+    },
+    "classes": [
+      "zl-root",
+      "zl-sidebar",
+      "zl-sidebar-header",
+      "zl-sidebar-list",
+      "zl-sidebar-footer",
+      "zl-workspace",
+      "zl-titlebar",
+      "zl-titlebar-drag",
+      "zl-winbtn",
+      "zl-winbtn zl-winbtn-native",
+      "zl-winbtn zl-winbtn-close",
+      "zl-body",
+      "zl-dock",
+      "zl-center",
+      "cm-gutterElement zl-activeLineGutter",
+      "cm-line zl-activeLine",
+      "cm-layer zl-selectionLayer",
+      "zl-statusbar"
+    ],
+    "remRules": [
+      ".zl-sidebar { display: flex; flex-direction: column; flex: 0 0 auto; width: 18.75rem; background: var(--zl-panel-background); border-right: 1px solid var(--zl-border); box-sizing: border-box; }",
+      ".zl-titlebar { display: flex; flex: 0 0 auto; align-items: stretch; height: 2rem; padding-left: 0.5rem; box-sizing: border-box; user-select: none; background: var(--zl-title_bar-background); color: var(--zl-text); }",
+      ".zl-winbtn { flex: 0 0 auto; width: 2.25rem; height: 2rem; padding: 0px; border: 0px; margin: 0px; display: flex; align-items: center; justify-content: center; background: transparent; color: var(--zl-text); font-family: \"Segoe Fluent Icons\"; font-size: 0.625r",
+      ".zl-dock { flex: 0 0 auto; width: 15rem; background: var(--zl-panel-background); border-right: 1px solid var(--zl-border); box-sizing: border-box; }",
+      ".zl-statusbar { flex: 0 0 auto; height: 1.875rem; background: var(--zl-status_bar-background); border-top: 1px solid var(--zl-border); box-sizing: border-box; }"
+    ]
+  }
+}

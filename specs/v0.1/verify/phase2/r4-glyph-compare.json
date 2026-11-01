@@ -1,0 +1,159 @@
+{
+ "codePoints": {
+  "src/shell/Shell.tsx:15 GLYPH_MINIMIZE": [
+   "U+E921"
+  ],
+  "src/shell/Shell.tsx:16 GLYPH_CLOSE": [
+   "U+E8BB"
+  ],
+  "src-tauri/src/caption.rs:47 GLYPH_MAXIMIZE": "U+E922",
+  "src-tauri/src/caption.rs:48 GLYPH_RESTORE": "U+E923",
+  "src-tauri/src/caption.rs:221 font": "Segoe Fluent Icons",
+  "src/shell/Shell.tsx:38 font-family": "Segoe Fluent Icons"
+ },
+ "compare": {
+  "minimize (HTML button, U+E921)": {
+   "app": {
+    "x0": 25,
+    "y0": 30,
+    "x1": 46,
+    "y1": 31,
+    "w": 22,
+    "h": 2,
+    "lit": 44
+   },
+   "reference": {
+    "x0": 25,
+    "y0": 30,
+    "x1": 46,
+    "y1": 31,
+    "w": 22,
+    "h": 2,
+    "lit": 44
+   },
+   "bboxMatch": true,
+   "pixelDiff": {
+    "differingPixels": 0,
+    "maxChannelDiff": 0
+   }
+  },
+  "close (HTML button, U+E8BB)": {
+   "app": {
+    "x0": 25,
+    "y0": 22,
+    "x1": 46,
+    "y1": 41,
+    "w": 22,
+    "h": 20,
+    "lit": 184
+   },
+   "reference": {
+    "x0": 25,
+    "y0": 22,
+    "x1": 46,
+    "y1": 41,
+    "w": 22,
+    "h": 20,
+    "lit": 184
+   },
+   "bboxMatch": true,
+   "pixelDiff": {
+    "differingPixels": 0,
+    "maxChannelDiff": 0
+   }
+  },
+  "maximize (native GDI, U+E922) vs Chrome reference": {
+   "app": {
+    "x0": 25,
+    "y0": 22,
+    "x1": 46,
+    "y1": 41,
+    "w": 22,
+    "h": 20,
+    "lit": 204
+   },
+   "reference": {
+    "x0": 25,
+    "y0": 22,
+    "x1": 46,
+    "y1": 41,
+    "w": 22,
+    "h": 20,
+    "lit": 208
+   },
+   "bboxMatch": true,
+   "note": "GDI ClearType vs Chrome text: compare glyph box size/position only (+-1 physical px)"
+  },
+  "restore (native GDI, U+E923, window maximized) vs Chrome reference": {
+   "app": {
+    "x0": 25,
+    "y0": 22,
+    "x1": 46,
+    "y1": 41,
+    "w": 22,
+    "h": 20,
+    "lit": 234
+   },
+   "reference": {
+    "x0": 25,
+    "y0": 22,
+    "x1": 46,
+    "y1": 41,
+    "w": 22,
+    "h": 20,
+    "lit": 245
+   },
+   "bboxMatch": true
+  }
+ },
+ "reference": [
+  {
+   "name": "U+E921 minimize",
+   "bbox": {
+    "x0": 25,
+    "y0": 30,
+    "x1": 46,
+    "y1": 31,
+    "w": 22,
+    "h": 2,
+    "lit": 44
+   }
+  },
+  {
+   "name": "U+E922 maximize",
+   "bbox": {
+    "x0": 25,
+    "y0": 22,
+    "x1": 46,
+    "y1": 41,
+    "w": 22,
+    "h": 20,
+    "lit": 208
+   }
+  },
+  {
+   "name": "U+E923 restore",
+   "bbox": {
+    "x0": 25,
+    "y0": 22,
+    "x1": 46,
+    "y1": 41,
+    "w": 22,
+    "h": 20,
+    "lit": 245
+   }
+  },
+  {
+   "name": "U+E8BB close",
+   "bbox": {
+    "x0": 25,
+    "y0": 22,
+    "x1": 46,
+    "y1": 41,
+    "w": 22,
+    "h": 20,
+    "lit": 184
+   }
+  }
+ ]
+}

@@ -1,0 +1,53 @@
+{
+  "action": "drag",
+  "pid": 17684,
+  "hwnd": "0x760830",
+  "before": {
+    "frame": {
+      "x": -5,
+      "y": 9,
+      "width": 2884,
+      "height": 1708
+    },
+    "clientOrigin": {
+      "x": -3,
+      "y": 11
+    },
+    "clientSize": {
+      "width": 2880,
+      "height": 1704
+    },
+    "maximized": false,
+    "minimized": false,
+    "dpi": 192,
+    "foreground": false
+  },
+  "from": {
+    "x": 2878,
+    "y": 811
+  },
+  "to": {
+    "x": 2446,
+    "y": 811
+  },
+  "after": {
+    "frame": {
+      "x": -5,
+      "y": 9,
+      "width": 2452,
+      "height": 1708
+    },
+    "clientOrigin": {
+      "x": -3,
+      "y": 11
+    },
+    "clientSize": {
+      "width": 2448,
+      "height": 1704
+    },
+    "maximized": false,
+    "minimized": false,
+    "dpi": 192,
+    "foreground": true
+  }
+}

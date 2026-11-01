@@ -1,0 +1,98 @@
+{
+  "ok": true,
+  "target": {
+    "port": 9222,
+    "pid": 17684,
+    "listener": {
+      "pid": 11236,
+      "name": "msedgewebview2.exe"
+    },
+    "chain": [
+      {
+        "pid": 11236,
+        "name": "msedgewebview2.exe"
+      },
+      {
+        "pid": 17684,
+        "name": "zedlike.exe"
+      },
+      {
+        "pid": 33852,
+        "name": "cargo.exe"
+      },
+      {
+        "pid": 1500,
+        "name": "cargo.exe"
+      },
+      {
+        "pid": 23500,
+        "name": "node.exe"
+      },
+      {
+        "pid": 30096,
+        "name": "cmd.exe"
+      },
+      {
+        "pid": 13632,
+        "name": "node.exe"
+      },
+      {
+        "pid": 4848,
+        "name": "pwsh.exe"
+      },
+      {
+        "pid": 25728,
+        "name": "herdr.exe"
+      },
+      {
+        "pid": 3472,
+        "name": "herdr.exe"
+      },
+      {
+        "pid": 23136,
+        "name": "pwsh.exe"
+      },
+      {
+        "pid": 23220,
+        "name": "Zed.exe"
+      },
+      {
+        "pid": 25140,
+        "name": "explorer.exe"
+      }
+    ]
+  },
+  "type": "object",
+  "value": {
+    "ok": true,
+    "native": {
+      "active": true,
+      "buttonRect": [
+        2736,
+        0,
+        2808,
+        64
+      ],
+      "clientHeight": 1704,
+      "clientWidth": 2880,
+      "dpi": 192,
+      "glyph": "U+E923",
+      "glyphFont": "Segoe Fluent Icons",
+      "hover": false,
+      "installed": true,
+      "pressed": false,
+      "regionApplied": true,
+      "scale": 2,
+      "webviewFound": true,
+      "zoomed": true
+    },
+    "lastColors": {
+      "background": "#11111b",
+      "inactiveBackground": "#171725",
+      "hover": "#21212e",
+      "pressed": "#3c3d4e",
+      "foreground": "#cdd6f4"
+    },
+    "setColorsError": null
+  }
+}

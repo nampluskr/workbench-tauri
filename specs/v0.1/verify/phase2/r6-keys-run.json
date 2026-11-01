@@ -1,0 +1,71 @@
+{
+  "action": "keys",
+  "pid": 17684,
+  "hwnd": "0x760830",
+  "before": {
+    "frame": {
+      "x": -5,
+      "y": 9,
+      "width": 2884,
+      "height": 1708
+    },
+    "clientOrigin": {
+      "x": -3,
+      "y": 11
+    },
+    "clientSize": {
+      "width": 2880,
+      "height": 1704
+    },
+    "maximized": false,
+    "minimized": false,
+    "dpi": 192,
+    "foreground": false
+  },
+  "sent": [
+    "ctrl+p",
+    "ctrl+f",
+    "ctrl+r",
+    "f5",
+    "f3",
+    "alt+left",
+    "alt+right",
+    "ctrl+=",
+    "ctrl+-",
+    "ctrl+numadd",
+    "ctrl+numsub",
+    "ctrl+w",
+    "ctrl+tab",
+    "f1",
+    "f6"
+  ],
+  "after": {
+    "frame": {
+      "x": -5,
+      "y": 9,
+      "width": 2884,
+      "height": 1708
+    },
+    "clientOrigin": {
+      "x": -3,
+      "y": 11
+    },
+    "clientSize": {
+      "width": 2880,
+      "height": 1704
+    },
+    "maximized": false,
+    "minimized": false,
+    "dpi": 192,
+    "foreground": false
+  },
+  "screenshot": {
+    "path": "D:\\projects\\workbench-tauri\\specs\\v0.1\\verify\\phase2\\r6-after-keys.png",
+    "monitor": {
+      "x": 0,
+      "y": 0,
+      "width": 2880,
+      "height": 1800
+    }
+  }
+}

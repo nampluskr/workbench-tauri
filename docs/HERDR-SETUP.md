@@ -53,7 +53,7 @@
 | wt-coder | claude | Opus 5.5 · medium | 2 agents 왼쪽 위 | 루트 INTENT·AGENTS·CLAUDE.md, specs/ 문서, Rust(src-tauri)·TypeScript 구현·테스트 | 프로젝트 전체 (HERDR-* 제외) |
 | wt-scouter | agy | gemini-3.8-flash-low | 2 agents 왼쪽 아래 | Tauri·wry·WebView2·CodeMirror 6·web-tree-sitter 문서를 조사해 요약 (03-tauri 5절 R-항목) | 안 함 |
 | wt-reviewer | codex | gpt-6.1-sol · medium | 2 agents 오른쪽 위 | Phase 끝에 `git diff` 적대적 코드 리뷰, specs 문서별 리뷰 | 안 함 |
-| wt-checker | agy | gemini-4-argon-medium (최종 판정은 high, 대체 Sonnet 5.5 · high) | 2 agents 오른쪽 아래 | Zed 일치도 검증: 단계별 항목 ID(L-/I-/E-/P-/K-/X-/T-/A-)를 스크린샷·측정값과 대조한다. 기준은 04-COMPARISON 체크리스트, A-32(±1px), A-35 | 검증 보고서만 (`specs/<버전>/verify/`) |
+| wt-checker | agy | gemini-3.8-flash-high (2026-11-01 사용자 지시로 Argon 에서 변경, 대체 Sonnet 5.5 · high) | 2 agents 오른쪽 아래 | Zed 일치도 검증: 단계별 항목 ID(L-/I-/E-/P-/K-/X-/T-/A-)를 스크린샷·측정값과 대조한다. 기준은 04-COMPARISON 체크리스트, A-32(±1px), A-35 | 검증 보고서만 (`specs/<버전>/verify/`) |
 
 checker 운영 규칙
 - 명세 전체가 아니라 그 단계의 항목 ID 절만 넘긴다.
@@ -110,3 +110,4 @@ checker 운영 규칙
 | 2026-11-01 | 검증 왕복 최대 2회 → 3회로 변경 (사용자 지시 "리뷰어 왕복을 2회 -> 3회까리로 변경") | 사용자 지시 |
 | 2026-11-01 | Phase 1~3 순차 진행과 승인 결정을 leader에게 위임 (사용자 지시 "리더 에이젼트가 플랜을 기반으로 순차적으로 진행해 주세요. 필요한 승인은 리더가 결정하고 근거를 문서에 남겨 주세요.") | 사용자 지시 |
 | 2026-11-01 | wt-checker 를 agy Argon → Claude Sonnet 5.5 · high 로 교체 (agy 한도 소진, 4절 대체안). wt-scouter 는 같은 이유로 사용 불가 | leader (위임) |
+| 2026-11-01 | wt-checker 를 agy gemini-3.8-flash-high 로 교체 (사용자 지시 "argon 대신 gemini flass high 로 바꿔주세요"). 진행 중이던 Phase 2 검증(Sonnet)이 끝난 뒤 교체. Flash 한도는 살아 있음을 wt-scouter 로 확인 | 사용자 지시 |

@@ -1,0 +1,49 @@
+{
+  "action": "dblclick",
+  "pid": 17684,
+  "hwnd": "0x760830",
+  "before": {
+    "frame": {
+      "x": -5,
+      "y": 9,
+      "width": 2884,
+      "height": 1708
+    },
+    "clientOrigin": {
+      "x": -3,
+      "y": 11
+    },
+    "clientSize": {
+      "width": 2880,
+      "height": 1704
+    },
+    "maximized": false,
+    "minimized": false,
+    "dpi": 192,
+    "foreground": true
+  },
+  "pointerScreen": {
+    "x": 1397,
+    "y": 43
+  },
+  "after": {
+    "frame": {
+      "x": 0,
+      "y": 0,
+      "width": 2880,
+      "height": 1704
+    },
+    "clientOrigin": {
+      "x": 0,
+      "y": 0
+    },
+    "clientSize": {
+      "width": 2880,
+      "height": 1704
+    },
+    "maximized": true,
+    "minimized": false,
+    "dpi": 192,
+    "foreground": true
+  }
+}

@@ -1,0 +1,392 @@
+{
+  "ok": true,
+  "target": {
+    "port": 9222,
+    "pid": 17684,
+    "listener": {
+      "pid": 11236,
+      "name": "msedgewebview2.exe"
+    },
+    "chain": [
+      {
+        "pid": 11236,
+        "name": "msedgewebview2.exe"
+      },
+      {
+        "pid": 17684,
+        "name": "zedlike.exe"
+      },
+      {
+        "pid": 33852,
+        "name": "cargo.exe"
+      },
+      {
+        "pid": 1500,
+        "name": "cargo.exe"
+      },
+      {
+        "pid": 23500,
+        "name": "node.exe"
+      },
+      {
+        "pid": 30096,
+        "name": "cmd.exe"
+      },
+      {
+        "pid": 13632,
+        "name": "node.exe"
+      },
+      {
+        "pid": 4848,
+        "name": "pwsh.exe"
+      },
+      {
+        "pid": 25728,
+        "name": "herdr.exe"
+      },
+      {
+        "pid": 3472,
+        "name": "herdr.exe"
+      },
+      {
+        "pid": 23136,
+        "name": "pwsh.exe"
+      },
+      {
+        "pid": 23220,
+        "name": "Zed.exe"
+      },
+      {
+        "pid": 25140,
+        "name": "explorer.exe"
+      }
+    ]
+  },
+  "type": "object",
+  "value": {
+    "log": [
+      {
+        "t": 2222281,
+        "keystroke": null,
+        "code": "ControlLeft",
+        "key": "Control",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "none",
+        "action": null,
+        "args": null,
+        "prevented": false
+      },
+      {
+        "t": 2222294,
+        "keystroke": "ctrl-p",
+        "code": "KeyP",
+        "key": "p",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "action",
+        "action": "test::Key",
+        "args": "ctrl-p",
+        "prevented": true
+      },
+      {
+        "t": 2222655,
+        "keystroke": null,
+        "code": "ControlLeft",
+        "key": "Control",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "none",
+        "action": null,
+        "args": null,
+        "prevented": false
+      },
+      {
+        "t": 2222657,
+        "keystroke": "ctrl-f",
+        "code": "KeyF",
+        "key": "f",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "action",
+        "action": "test::Key",
+        "args": "ctrl-f",
+        "prevented": true
+      },
+      {
+        "t": 2223017,
+        "keystroke": null,
+        "code": "ControlLeft",
+        "key": "Control",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "none",
+        "action": null,
+        "args": null,
+        "prevented": false
+      },
+      {
+        "t": 2223018,
+        "keystroke": "ctrl-r",
+        "code": "KeyR",
+        "key": "r",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "action",
+        "action": "test::Key",
+        "args": "ctrl-r",
+        "prevented": true
+      },
+      {
+        "t": 2223390,
+        "keystroke": "f5",
+        "code": "F5",
+        "key": "F5",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "action",
+        "action": "test::Key",
+        "args": "f5",
+        "prevented": true
+      },
+      {
+        "t": 2258822,
+        "keystroke": "f3",
+        "code": "F3",
+        "key": "F3",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "action",
+        "action": "test::Key",
+        "args": "f3",
+        "prevented": true
+      },
+      {
+        "t": 2261227,
+        "keystroke": null,
+        "code": "AltLeft",
+        "key": "Alt",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "none",
+        "action": null,
+        "args": null,
+        "prevented": false
+      },
+      {
+        "t": 2261228,
+        "keystroke": "alt-left",
+        "code": "ArrowLeft",
+        "key": "ArrowLeft",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "action",
+        "action": "test::Key",
+        "args": "alt-left",
+        "prevented": true
+      },
+      {
+        "t": 2263470,
+        "keystroke": null,
+        "code": "AltLeft",
+        "key": "Alt",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "none",
+        "action": null,
+        "args": null,
+        "prevented": false
+      },
+      {
+        "t": 2263471,
+        "keystroke": "alt-right",
+        "code": "ArrowRight",
+        "key": "ArrowRight",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "action",
+        "action": "test::Key",
+        "args": "alt-right",
+        "prevented": true
+      },
+      {
+        "t": 2265958,
+        "keystroke": null,
+        "code": "ControlLeft",
+        "key": "Control",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "none",
+        "action": null,
+        "args": null,
+        "prevented": false
+      },
+      {
+        "t": 2265959,
+        "keystroke": "ctrl-=",
+        "code": "Equal",
+        "key": "=",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "action",
+        "action": "test::Key",
+        "args": "ctrl-=",
+        "prevented": true
+      },
+      {
+        "t": 2268449,
+        "keystroke": null,
+        "code": "ControlLeft",
+        "key": "Control",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "none",
+        "action": null,
+        "args": null,
+        "prevented": false
+      },
+      {
+        "t": 2268451,
+        "keystroke": "ctrl--",
+        "code": "Minus",
+        "key": "-",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "action",
+        "action": "test::Key",
+        "args": "ctrl--",
+        "prevented": true
+      },
+      {
+        "t": 2270952,
+        "keystroke": null,
+        "code": "ControlLeft",
+        "key": "Control",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "none",
+        "action": null,
+        "args": null,
+        "prevented": false
+      },
+      {
+        "t": 2270953,
+        "keystroke": "ctrl-+",
+        "code": "NumpadAdd",
+        "key": "+",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "action",
+        "action": "test::Key",
+        "args": "ctrl-+",
+        "prevented": true
+      },
+      {
+        "t": 2273454,
+        "keystroke": null,
+        "code": "ControlLeft",
+        "key": "Control",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "none",
+        "action": null,
+        "args": null,
+        "prevented": false
+      },
+      {
+        "t": 2273455,
+        "keystroke": "ctrl--",
+        "code": "NumpadSubtract",
+        "key": "-",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "action",
+        "action": "test::Key",
+        "args": "ctrl--",
+        "prevented": true
+      },
+      {
+        "t": 2275670,
+        "keystroke": null,
+        "code": "ControlLeft",
+        "key": "Control",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "none",
+        "action": null,
+        "args": null,
+        "prevented": false
+      },
+      {
+        "t": 2275672,
+        "keystroke": "ctrl-w",
+        "code": "KeyW",
+        "key": "w",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "action",
+        "action": "test::Key",
+        "args": "ctrl-w",
+        "prevented": true
+      },
+      {
+        "t": 2277616,
+        "keystroke": null,
+        "code": "ControlLeft",
+        "key": "Control",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "none",
+        "action": null,
+        "args": null,
+        "prevented": false
+      },
+      {
+        "t": 2277633,
+        "keystroke": "ctrl-tab",
+        "code": "Tab",
+        "key": "Tab",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "action",
+        "action": "test::Key",
+        "args": "ctrl-tab",
+        "prevented": true
+      },
+      {
+        "t": 2279519,
+        "keystroke": "f1",
+        "code": "F1",
+        "key": "F1",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "action",
+        "action": "test::Key",
+        "args": "f1",
+        "prevented": true
+      },
+      {
+        "t": 2281519,
+        "keystroke": "f6",
+        "code": "F6",
+        "key": "F6",
+        "isTrusted": true,
+        "context": "Workspace > Pane > Editor",
+        "result": "action",
+        "action": "test::Key",
+        "args": "f6",
+        "prevented": true
+      }
+    ],
+    "signals": {
+      "pageLoads": 1,
+      "beforePrint": 0,
+      "pageHide": 0,
+      "popState": 0,
+      "dprChanges": [],
+      "contextMenusBlocked": 0,
+      "devicePixelRatio": 2,
+      "visualViewportScale": 1
+    }
+  }
+}

@@ -14,3 +14,17 @@ tauri-build = { version = "2.7.4", features = [] }
 
 [dependencies]
 tauri = { version = "2.12.5", features = [] }
+# 03-tauri 3.1 "파서"
+serde_json = "1.0.154"
+
+# 03-tauri 3.1 "Win32 호출" (DWM 모서리·창 보정, R-06). Phase 2 caption hit-test.
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.62.2", features = [
+  "Win32_Foundation",
+  "Win32_Graphics_Dwm",
+  "Win32_Graphics_Gdi",
+  "Win32_UI_HiDpi",
+  "Win32_UI_Input_KeyboardAndMouse",
+  "Win32_UI_Shell",
+  "Win32_UI_WindowsAndMessaging",
+] }
