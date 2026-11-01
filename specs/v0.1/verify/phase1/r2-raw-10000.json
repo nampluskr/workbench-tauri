@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "type": "object",
+  "value": {
+    "gutterW": 98.9609375,
+    "pl": "24.7412px",
+    "pr": "32.9883px",
+    "content": 41.231437500000006,
+    "expected5ch": 41.2353515625,
+    "lines": null
+  }
+}

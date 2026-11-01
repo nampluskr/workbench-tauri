@@ -70,6 +70,85 @@
   - 특이사항: 커밋은 leader가 한다.
   - 상태: Phase 0 완료 (2026-11-01).
 
+### Phase 1 — 프레임워크·편집기 기반 PoC
+
+- **R-1·R-2 PoC와 검증용 진입점 구현** (2026-11-01)
+  - 무엇을 했나: 앱 화면을 PoC로 바꿨다. Pane 두 개에 탭과 CM6 편집기가 있다. 검증용 개발 진입점 `window.__poc`를 만들었다.
+    - `src/poc/editorStore.ts`: `EditorView`를 Solid 컴포넌트 트리 밖의 Map에 두고, Pane 슬롯에는 `view.dom`만 옮겨 붙인다(03-tauri 6절 대응). 노드를 떼면 scroll offset을 잃으므로, 마지막 `scrollSnapshot()`을 보관했다가 붙인 뒤 되돌린다.
+    - `src/poc/layout.ts`: Pane·탭 상태 store(Solid `createStore`). 기능은 탭 이동과 감싸는 구조 바꾸기(row ↔ nested)다.
+    - `src/poc/PocApp.tsx`: Pane 컴포넌트. props를 구조 분해하지 않았다(D-3 위험 항목). 스타일은 CSP에 맞게 CSSOM(`style` 객체)만 쓴다.
+    - `src/poc/zedEditor.ts`: R-2용 CM6 확장.
+      - 글꼴 `15px Consolas`(Q7 A), 줄 높이 15 × 1.618(E-010)
+      - 줄 번호 칸 최소 4ch·왼쪽 3ch·오른쪽 4ch(E-002~E-004), 줄 왼쪽 여백 = |descent|(E-005)
+      - 현재 줄 강조(E-011): 빈 커서 줄만 강조하고, 비어 있지 않은 선택이 걸린 줄은 뺀다. 거터 칸을 포함한다.
+      - 둥근 선택 0.15 × 줄 높이(E-015), 스크롤바 15px(E-030)
+      - 색은 Mocha 고정값이다.
+    - `src/poc/probe.ts`: `__poc.r1.runMoveTest`, `__poc.r1.runRestructureTest`, `__poc.r2.measure`, `__poc.r2.setLines`.
+    - `src/index.tsx`, `src/App.tsx`: PoC 연결. `body` margin은 CSSOM으로 0이다.
+  - 결과:
+    - 추가 패키지(03-tauri 3.2 목록 안): `@codemirror/view` 6.43.15, `@codemirror/state` 6.7.6(둘 다 MIT). 정확한 버전으로 고정했다.
+    - 검증 방법은 `specs/v0.1/verify/phase1/HOWTO.md`에 있다.
+  - 검증:
+    - `npm run typecheck`는 오류가 없었다.
+    - `npm run build`는 성공했다(JS 242.85 kB).
+    - 앱에서 직접 실행해 확인하지는 못했다. `npm run tauri dev`는 지시대로 띄우지 않았고, Chrome 확장도 연결되지 않아 개발 서버 페이지로도 확인하지 못했다. 판정은 wt-checker가 HOWTO대로 한다.
+  - 특이사항:
+    - E-015의 "여러 줄 선택의 안쪽 꺾인 모서리 2배 반지름"은 구현하지 않았다. CM6 `drawSelection`은 사각형을 따로 그린다. measure 결과에 항상 `pass: false`로 남는 차이 항목이다.
+    - 색 판정은 Phase 2 테마 로더 전이라 Mocha 고정값과 비교한다.
+    - 리뷰·검증·커밋 전이므로 Phase 1은 진행 중이다.
+
+- **검증 도구 `tools/cdp-eval.mjs` 추가** (2026-11-01)
+  - 무엇을 했나: CDP로 앱 페이지에서 JS 식을 평가하는 명령줄 도구를 만들었다. Node 24 내장 `fetch`·`WebSocket`만 쓴다.
+    - 옵션: `--out`, `--screenshot`(`Page.captureScreenshot`)
+    - wt-runner-app이 `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222`로 앱을 띄운다(개발 검증 전용).
+  - 결과: HOWTO 4절에 사용법을 적었다.
+  - 검증: `node tools/cdp-eval.mjs "typeof window.__poc"`의 결과가 `{"ok": true, "type": "string", "value": "object"}`였다.
+  - 특이사항: 없음.
+
+- **Phase 1 리뷰 1회차 지적 7건 반영** (2026-11-01)
+  - 무엇을 했나: leader가 전부 채택한 wt-reviewer 지적 7건을 반영했다.
+    - 1/Major CSP:
+      - `tauri dev`는 Vite 서버 페이지라 CSP가 걸리지 않는다. 빌드 앱에서는 CM6의 실행 중 `<style>`이 막힐 수 있었다.
+      - Tauri 소스(tauri-utils `html.rs` `inject_nonce_token`, tauri `manager/mod.rs` `replace_csp_nonce`)를 확인했다. Tauri는 `index.html`의 모든 `<style>`에 페이지를 읽을 때마다 nonce를 넣고 `style-src 'self' 'nonce-…'`를 더한다.
+      - 그래서 `index.html`에 `<style id="csp-nonce-carrier">`를 두고, 그 nonce를 `EditorView.cspNonce`로 넘겼다(`zedEditor.ts`). CSP는 완화하지 않았다.
+      - 빌드 앱 확인에서 Solid의 정적 `style={{…}}` 리터럴이 템플릿 `style="…"` 속성으로 컴파일되어 `style-src-attr` 위반 2건이 나왔다. 그래서 스타일 객체를 모두 변수로 바꿔 CSSOM으로 적용되게 했다(`PocApp.tsx`).
+    - 2/Major R-1 목적지 검증: `connectedBefore`·`connectedAfter`와 `inDestinationSlot`(DOM 부모 슬롯 `data-poc-slot`과 store의 Pane이 모두 목적지)을 판정에 넣었다. `scrollPreserved`는 이동 전 `scrollTop`이 0보다 커야 참이다.
+    - 3/Major R-1 생성 횟수: 전체 생성 횟수 비교를 빼고, 옮긴 탭 자신의 인스턴스 번호와 저장소 객체만 비교한다.
+    - 4/Major E-015 미구현:
+      - `src/poc/selectionShape.ts`를 새로 만들었다. 선택 행을 하나의 외곽선으로 합쳐 SVG 경로로 그리는 CM6 layer다. 바깥 모서리 반지름은 r, 안쪽 꺾인 모서리는 2r다.
+      - drawSelection의 사각형 층은 숨겼다. 커서는 drawSelection이 계속 그린다.
+      - probe는 경로의 호를 읽어 한 줄(바깥 4개)과 세 줄(바깥 6개 + 안쪽 2개)을 판정한다.
+    - 5/Major 독립 기대값: `src/poc/specExpected.ts`에 SPEC·01-zed 원문 값을 따로 두었다(구현이 import하지 않음). ch·descent는 편집기가 실제로 쓰는 글꼴로 잰다.
+    - 6/Major 측정 누락: 잴 수 없으면 `unmeasurable` 실패 행을 남긴다. 필수 ID 8개 가운데 행이 없는 ID는 실패로 더한다. 결과에 `failed[]`를 넣었다.
+    - 7/Minor cdp-eval: `--timeout`(기본 30000 ms)을 넣었다. `/json` 조회, WebSocket 연결, 요청마다 적용된다. close·error 때는 대기 중인 요청을 모두 거부한다. CSP 위반 확인용 `--logs`(CDP Log 도메인)도 넣었다.
+  - 결과:
+    - 위 파일들과 `index.html`, `src/poc/probe.ts`가 바뀌었다. HOWTO를 고쳤고, CSP 절(3a)을 더했다.
+    - 증거는 `specs/v0.1/verify/phase1/csp-built-check.json`이다.
+  - 검증:
+    - `npm run typecheck` 오류 없음, `npm run build` 성공. 번들에 `style="` 문자열이 없다.
+    - dev 인스턴스(9222)에서 `runMoveTest`·`runRestructureTest`가 모든 checks 참이었다. `measure()`는 33행 모두 통과, `failed: []`였다. 글꼴 Consolas 15px, ch 8.247, descent 4.
+    - 빌드 앱(에셋 프로토콜 `http://tauri.localhost`, 포트 9223, 별도 WebView2 데이터 폴더)에서:
+      - `__poc.csp()`의 violations가 0건, CDP Log의 security 항목도 0건이었다.
+      - CM6 `<style>`이 carrier와 같은 nonce로 118 rules가 적용되었다.
+      - 같은 실행에서 R-1 두 시험과 R-2가 모두 `pass: true`였다.
+      - 대조 시험으로 nonce 없는 `<style>`을 넣으면 `style-src` 위반으로 막혔다. CSP가 실제로 걸려 있다.
+    - cdp-eval은 없는 포트에서 바로 종료 코드 1로 끝났다.
+  - 특이사항:
+    - 검증용 빌드 앱은 scratchpad의 별도 target 폴더로 빌드해 잠깐 실행했고, 확인 뒤 닫았다(`window.close()` 후 백그라운드 작업 종료).
+    - wt-runner-app의 dev 인스턴스는 건드리지 않았다.
+
+- **Phase 1 리뷰·검증 결과와 완료** (2026-11-01)
+  - 무엇을 했나: PLAN의 Phase 끝 순서(리뷰 → 검증 → PROGRESS → 커밋)에서 리뷰와 검증 결과를 기록했다.
+  - 결과:
+    - 리뷰(wt-reviewer): 1회차 지적 7건(CSP nonce, R-1 목적지·생성 횟수, E-015 구현, 독립 기대값, 측정 누락, cdp-eval 타임아웃)을 반영했다. 2회차에서 모두 해소되었고, 새 Major 지적은 없다.
+    - 검증(wt-checker): agy 한도가 소진되어 HERDR-SETUP 4절의 대체 규칙대로 Sonnet 5.5 high로 바꿔 수행했다. 보고서는 `specs/v0.1/verify/phase1/REPORT.md`다.
+      - R-1 충족. 탭 이동과 부모 구조 변경 모두에서 같은 `EditorView` 객체와 인스턴스가 유지되었다. 스크롤·선택·커서도 유지되었다. 앱 시험과 checker의 독립 시험이 모두 이 결과였다.
+      - R-2 충족. 측정 글꼴은 Consolas 15px다(ch 8.2471, descent 4).
+    - D-3(Solid)은 유지한다. R-1이 충족이라 PLAN Phase 1의 React 19 비교 조건(R-1 실패 시)에 해당하지 않으므로, React 비교는 하지 않는다.
+  - 검증: wt-checker 보고서와 증거 파일(`r1-*.json`·`.png`, `r2-*.json`·`.png`)이 `specs/v0.1/verify/phase1/`에 있는지 확인했다.
+  - 특이사항: 커밋은 leader가 한다.
+  - 상태: Phase 1 완료 (2026-11-01). R-1, R-2 모두 충족이다(PLAN "Phase를 마친 것" 규칙).
+
 ## 사용자 요청 작업
 
 ### 신규 시작과 v0.1 작성 단계 문서 초안 (2026-11-01)

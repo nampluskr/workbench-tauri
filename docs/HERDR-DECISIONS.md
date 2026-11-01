@@ -13,6 +13,7 @@
 | D-003 | 2026-11-01 09:26 | wt-reviewer → wt-coder | 1회차 리뷰 지적 11건 중 1~10 채택·반영 지시, 11(루트 INTENT 기술 이름)은 사용자에게 올림 | 대리 응답 / 사람에게 올림 | 2026-11-01 |
 | D-004 | 2026-11-01 09:31 | wt-reviewer → wt-coder | 2회차 미해소 지적 2(PLAN 완료 규칙) 채택·반영, 3회차에서 해소 확인 | 대리 응답 | 2026-11-01 |
 | D-005 | 2026-11-01 09:42 | wt-coder, wt-reviewer, wt-checker | Phase 0: devCsp 승인, 읽기 전용·검증 명령 승인, 리뷰 지적 3건 채택 | 대리 응답 | 2026-11-01 |
+| D-006 | 2026-11-01 10:20~10:56 | wt-coder, wt-reviewer, wt-checker | Phase 1: CDP 원격 디버깅으로 dev 재시작, 검증 도구 추가, 리뷰 7건 채택, agy 한도 소진으로 checker 를 Sonnet 으로 교체, 승인 요청 처리 | 대리 응답 | 2026-11-01 |
 
 ## 기록
 
@@ -65,3 +66,25 @@
 - 근거: HERDR-SETUP.md 7절 위임. ① 개발 서버에만 적용되고, 빌드 CSP(D-10)는 그대로다. ② ③ 읽기 전용이거나 checker의 쓰기 범위(`specs/<버전>/verify/`) 안이다. ④ 지적마다 파일 근거가 있다. 권한을 줄이는 방향이라 D-10·A-55의 취지에 맞는다.
 - 결과: 2회차 리뷰에서 3건 모두 해소됐다. checker 보고는 불충족 없음이다.
 - 보고: 2026-11-01
+
+### D-006 · 2026-11-01 10:20~10:56 · wt-coder, wt-reviewer, wt-checker (Phase 1)
+
+- 상황: 진행 판단, 승인 요청, 한도 소진
+- 질문·사건:
+  ① checker가 앱 안 `window.__poc` 덤프를 얻을 방법이 필요했다.
+  ② 리뷰 1회차 지적 7건(Major 6, Minor 1)이 나왔다. CM6 동적 style이 CSP에 막히는 문제와, 판정 코드가 거짓 통과를 낼 수 있는 문제가 들어 있었다.
+  ③ wt-reviewer·wt-checker가 읽기·검증 명령 승인을 요청했다.
+  ④ wt-checker(agy Argon)가 "Individual quota reached … Resets in 121h"로 멈췄다.
+- 구분: 대리 응답 (2026-11-01 사용자 위임: Phase 1~3 진행과 승인 결정)
+- 답변:
+  ① wt-runner-app의 `tauri dev`를 `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222`로 다시 띄웠다. wt-coder가 패키지 없이 `tools/cdp-eval.mjs`를 만들게 했다.
+  ② 7건 모두 채택했다. CSP는 완화하지 말고 nonce로 풀라고 조건을 붙였다. 결과는 `EditorView.cspNonce`이고, 빌드 앱에서 위반 0건이었다.
+  ③ 삭제·설치·외부 전송·git 쓰기가 없는 명령만 승인했다(leader 승인 루프로 화면의 위험 명령을 검사).
+  ④ HERDR-SETUP 4절의 대체안대로 p5 패널의 agy를 끝내고, 같은 이름 wt-checker를 claude Sonnet 5.5 · high로 다시 띄웠다.
+- 근거:
+  - HERDR-SETUP 7절 위임.
+  - ① CDP는 로컬 127.0.0.1에만 열리고 개발 실행에만 쓴다. 앱 설정·CSP는 바뀌지 않는다.
+  - ② DOCUMENTS 6절 "판정 방법"과 D-10.
+  - ④ 구성안에 적힌 대체 모델이다.
+- 결과: R-1, R-2 모두 충족이다(`specs/v0.1/verify/phase1/REPORT.md`). D-3(Solid)을 유지한다. wt-scouter도 같은 agy 한도라 쓸 수 없는데, 지금까지 조사 일이 없어 대체하지 않았다.
+- 보고: 2026-11-01 (최종 보고에 포함)

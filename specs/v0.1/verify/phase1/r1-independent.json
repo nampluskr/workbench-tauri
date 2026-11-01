@@ -1,0 +1,60 @@
+{
+  "ok": true,
+  "type": "object",
+  "value": {
+    "tab": "b",
+    "from": "p0",
+    "to": "p1",
+    "sameObject": true,
+    "tagSurvived": "R1-INDEPENDENT",
+    "rawBefore": {
+      "scrollTop": 900,
+      "parentSlot": "p0",
+      "instance": "3",
+      "connected": true
+    },
+    "rawAfter": {
+      "scrollTop": 900,
+      "parentSlot": "p1",
+      "instance": "3",
+      "connected": true
+    },
+    "snapBefore": {
+      "tab": "b",
+      "storePane": "p0",
+      "domSlot": "p0",
+      "instance": 3,
+      "connected": true,
+      "scrollTop": 900,
+      "selection": [
+        {
+          "anchor": 0,
+          "head": 0
+        }
+      ],
+      "cursor": {
+        "line": 1,
+        "col": 1
+      }
+    },
+    "snapAfter": {
+      "tab": "b",
+      "storePane": "p1",
+      "domSlot": "p1",
+      "instance": 3,
+      "connected": true,
+      "scrollTop": 900,
+      "selection": [
+        {
+          "anchor": 0,
+          "head": 0
+        }
+      ],
+      "cursor": {
+        "line": 1,
+        "col": 1
+      }
+    },
+    "editorCountInDoc": 1
+  }
+}
