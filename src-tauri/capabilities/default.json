@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Main window permissions. Phase 0 uses no commands; add individual permissions when a Phase needs them.",
+  "windows": ["main"],
+  "permissions": []
+}

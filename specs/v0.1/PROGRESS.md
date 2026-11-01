@@ -6,7 +6,69 @@
 
 ## Phase별 진행
 
-아직 없음.
+### Phase 0 — 프로젝트 뼈대
+
+- **Tauri 2 + Solid + TypeScript + Vite 뼈대 생성과 빌드 확인** (2026-11-01)
+  - 무엇을 했나: 대화형 생성기를 쓰지 않고 파일을 직접 썼다.
+    - 프런트엔드(루트): `package.json`, `vite.config.ts`, `tsconfig.json`, `index.html`, `src/index.tsx`, `src/App.tsx`
+    - 코어(`src-tauri/`): `Cargo.toml`, `build.rs`, `src/main.rs`, `src/lib.rs`, `tauri.conf.json`, `capabilities/default.json`, `icons/icon.png`·`icon.ico`
+    - 앱 이름은 03-tauri 2.3의 임시 이름 `ZedLike`이고, identifier는 임시값 `dev.workbench.zedlike`다.
+    - CSP를 켰다(D-10).
+    - 창 설정은 기본값으로 두었다. Phase 2에서 정한다.
+    - `.gitignore`에 `src-tauri/target/`를 더했다.
+  - 결과:
+    - 패키지는 03-tauri 3.1·3.2 후보와 지시받은 목록 안에서만 넣었다.
+      - npm: `@tauri-apps/api` 2.12.4, `@tauri-apps/cli` 2.12.4, `solid-js` 1.9.18, `vite` 8.3.5, `vite-plugin-solid` 2.11.15, `typescript` 7.0.2
+      - cargo: `tauri` 2.12.5, `tauri-build` 2.7.4
+    - `tauri`와 `@tauri-apps/api`의 마이너 버전이 12로 같다(D-4, 03-tauri R-31).
+    - `package-lock.json`과 `src-tauri/Cargo.lock`이 생겼다.
+    - CSP 값:
+      - `csp`: `default-src 'self' ipc: http://ipc.localhost`
+      - `devCsp`: 위 값에 Vite HMR용 `connect-src 'self' ipc: http://ipc.localhost ws://localhost:1420`을 더한 것
+  - 검증:
+    - `npm install`은 0 vulnerabilities였다.
+    - `npm run typecheck`는 오류가 없었다.
+    - `npm run tauri build -- --debug --no-bundle`은 종료 코드 0, 경고 0건이었고 `src-tauri/target/debug/zedlike.exe`가 생겼다. 요약은 `specs/v0.1/verify/phase0/build.txt`에 있다.
+    - 빌드 준비물(03-tauri R-30):
+      - Node v24.19.0, npm 11.17.0
+      - Rust 1.99.1 (`stable-x86_64-pc-windows-msvc`), cargo 1.99.1
+      - MSVC: Visual Studio Build Tools 2022 17.14.37827.9 (VC.Tools.x86.x64 구성 요소 있음)
+      - Windows SDK 10.0.26100.0
+      - WebView2 런타임 156.0.4314.58 (HKLM EdgeUpdate 레지스트리)
+  - 특이사항:
+    - 03-tauri 3.1은 `tauri-build`를 2.12.5로 적었지만, crates.io에 그 버전이 없다. 2.x의 최신은 2.7.4다(`tauri-codegen`·`tauri-macros`도 2.7.4). 그래서 2.7.4를 썼다.
+    - crates.io의 최신 `tauri`는 3.0.0-alpha.5다. 하지만 03-tauri의 기준 버전인 2.12.5를 썼다.
+    - 아이콘은 Windows 리소스 생성에 필요해서 회색 단색 정사각형 자리 표시 아이콘을 Node 스크립트로 만들었다(Zed 아이콘 아님).
+    - `npm run tauri dev`는 실행하지 않았다. 지시대로 leader가 wt-runner-app에서 실행한다.
+    - 리뷰·검증·커밋 전이므로 Phase 0은 진행 중이다.
+
+- **Phase 0 리뷰 1회차 지적 3건 반영** (2026-11-01)
+  - 무엇을 했나: leader가 채택한 wt-reviewer 지적 3건을 반영했다.
+    - 1/Major: `src-tauri/capabilities/default.json`에서 쓰지 않는 `core:default` 전체 권한을 뺐다. `permissions`를 빈 배열로 두었다. 프런트엔드는 아직 `@tauri-apps/api`·`invoke`를 쓰지 않는다(`src/` 검색으로 확인). 이후 Phase에서 필요한 명령만 개별로 더한다.
+    - 2/Minor: `vite.config.ts`의 `envPrefix`에서 `TAURI_ENV_*`를 `TAURI_ENV_`로 고쳤다. envPrefix는 glob이 아니라 접두사다.
+    - 3/Minor: `.gitignore`에 `src-tauri/gen/schemas/`를 더했다.
+  - 결과: 위 세 파일이 바뀌었다.
+    - devCsp(`connect-src … ws://localhost:1420`)는 Vite HMR용 개발 전용 설정이다. leader가 승인했다(2026-11-01). 배포 빌드에는 `csp`(`default-src 'self' ipc: http://ipc.localhost`)만 걸린다.
+  - 검증:
+    - `npm run build`(vite) 성공.
+    - `npm run typecheck` 오류 없음.
+    - `cargo build --manifest-path src-tauri/Cargo.toml` 성공(1m 18s, 경고 0건). 빈 권한의 capability도 tauri-build 검증을 통과했다.
+    - wt-runner-app의 `npm run tauri dev`가 기본 target 폴더를 쓰고 있어서, 빌드는 scratchpad의 별도 target 폴더(`CARGO_TARGET_DIR`)로 했다.
+  - 특이사항: `npm run tauri dev`는 건드리지 않았다. 다만 dev가 `src-tauri/` 변경을 감시하므로 capabilities 수정으로 다시 빌드되었을 수 있다.
+
+- **Phase 0 리뷰·검증 결과와 완료** (2026-11-01)
+  - 무엇을 했나: PLAN의 Phase 끝 순서(리뷰 → 검증 → PROGRESS → 커밋)에서 리뷰와 검증 결과를 기록했다.
+  - 결과:
+    - 리뷰(wt-reviewer):
+      - 1회차 지적 3건(capabilities 1/Major, envPrefix 2/Minor, `.gitignore` 3/Minor)을 반영했다.
+      - 2회차에서 3건 모두 해소되었고, 새 Major 지적은 없다.
+    - 검증(wt-checker): `specs/v0.1/verify/phase0/REPORT.md`에 PLAN Phase 0 완료 조건의 판정표가 있다.
+      - 1~6번 조건이 모두 충족이고, 불충족은 없다.
+      - 7번(Phase 끝 순서)은 이 기록과 커밋으로 마무리된다.
+      - 실행 증거는 `specs/v0.1/verify/phase0/window.png`다. 창 제목 `ZedLike`, 배율 200%(DPI 192), 클라이언트 영역 논리 800×600이다.
+  - 검증: wt-checker 보고서의 판정표와 `window.png` 파일이 있는지 확인했다.
+  - 특이사항: 커밋은 leader가 한다.
+  - 상태: Phase 0 완료 (2026-11-01).
 
 ## 사용자 요청 작업
 
