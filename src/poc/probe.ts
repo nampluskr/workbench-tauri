@@ -8,6 +8,7 @@ import { existingView, getView, instanceId, replaceDoc } from "./editorStore";
 import { activateTab, layout, moveTab, paneOf, toggleStructure } from "./layout";
 import * as SPEC from "./specExpected";
 import { phase2Api } from "./probe2";
+import { phase3Api } from "./probe3";
 
 function frames(n = 3): Promise<void> {
   return new Promise((resolve) => {
@@ -441,6 +442,7 @@ export function installProbe(): void {
     r2: { measure, setLines },
     layout: () => JSON.parse(JSON.stringify(layout)),
     ...phase2Api,
+    ...phase3Api,
   };
   (window as unknown as { __poc: typeof api }).__poc = api;
 }

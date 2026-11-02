@@ -320,6 +320,40 @@ A-31.8의 "화면 샘플은 알파 합성 뒤 채널당 ±1"을 이 환경에서
 
 ---
 
+## D-16. 확장 파일은 코어의 `zlext` 프로토콜로만 주고, CSP에는 그에 필요한 세 항목만 더한다
+
+**선택**
+
+- 설치된 Zed 확장의 파일(문법 WASM, `.scm`, 아이콘 SVG)은 코어가 커스텀 스킴 `zlext`로 준다. WebView 주소는 `http://zlext.localhost/<확장 id>/<상대 경로>`다(`src-tauri/src/ext_protocol.rs`).
+- 확장 루트는 환경변수 `ZEDLIKE_EXT_ROOTS`(`;` 구분)이고, 없으면 `%LOCALAPPDATA%\Zed\extensions\installed`다(D-9).
+- 코어는 요청마다 A-55.2대로 검사한다.
+  - 확장 하나의 루트 안 상대 경로만 허용한다.
+  - 절대 경로(드라이브, `\\`, 앞의 `/`)는 거부한다.
+  - `..`는 거부한다.
+  - 정규화한 실제 경로가 확장 루트 밖이면(밖을 가리키는 링크) 거부한다.
+- 응답의 CORS는 앱 자신의 출처(`http://tauri.localhost`, `http://localhost:1420`)에만 연다.
+- CSP(`csp`, `devCsp`)에 더한 것은 다음 셋이다. 그 밖은 바꾸지 않았다.
+  - `script-src 'self' 'wasm-unsafe-eval'` — `web-tree-sitter` 런타임과 문법 WASM을 `WebAssembly`로 컴파일하려면 필요하다(03-tauri R-36).
+  - `connect-src`에 `http://zlext.localhost` — 문법 WASM과 `.scm`을 `fetch`로 받는다. `connect-src`를 따로 적었으므로 기존 `'self' ipc: http://ipc.localhost`(그리고 devCsp의 `ws://localhost:1420`)를 그대로 함께 적었다.
+  - `img-src`에 `http://zlext.localhost` — 확장 아이콘 SVG를 `<img>`로 보인다(03-tauri R-36, R-12).
+- 디버그 빌드에는 시험용 명령 `dev_ext_add_root`가 있다. SPEC R-11의 링크 사례를 이 PC의 Zed 폴더를 건드리지 않고 임시 폴더로 시험하기 위한 것이다. 릴리스 빌드에서는 거부한다.
+
+**근거**
+
+leader 위임 지시다(Phase 3 시작, 2026-11-01). 지시 내용은 "코어가 경로 검증(A-55.2) 후 커스텀 프로토콜이나 바이트 응답으로 WebView에 준다, CSP는 R-11·D-10대로 필요한 최소 허용만 더한다"였다. 그 밖의 근거는 다음과 같다.
+- D-9: 파일은 복사하지 않고 경로로 참조한다.
+- D-10: CSP를 켜고 시작한다.
+- 01-zed A-55.2와 04-APP-SPEC 4.11절: 확장 폴더 밖을 가리키는 심볼릭 링크는 거부한다.
+- 빌드한 앱(`http://tauri.localhost`, CSP 적용)에서 위 세 항목만으로 위반 0건이었다(`specs/v0.1/verify/phase3/csp-built-check.json`).
+
+**배제한 대안**
+
+- **에셋 프로토콜(`asset:`)과 Tauri 에셋 범위(scope)** — 범위 단위가 폴더 glob이라 A-55.2의 "확장 루트별, 링크 탈출 거부" 검사를 코어가 직접 하기 어렵다. 배제.
+- **바이트 응답 명령(`invoke`)** — 가능하지만 SVG를 `<img>`로 보이려면 URL이 필요하다. 프로토콜 하나로 맞췄다. 배제.
+- **`'unsafe-eval'`** — WASM 컴파일에는 `'wasm-unsafe-eval'`로 충분하다. 배제.
+
+---
+
 ## 미결 사항
 
 없음.

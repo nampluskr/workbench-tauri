@@ -66,6 +66,23 @@ export function resolveTheme(name: ThemeName): { appearance: "light" | "dark"; t
   return { appearance: theme.appearance, tokens };
 }
 
+export interface SyntaxStyle {
+  color: string | null;
+  font_style: string | null;
+  font_weight: number | null;
+}
+
+/** The theme's `syntax` map (03-THEME-ICONS T-06, T-27). */
+export function themeSyntax(name: ThemeName): Record<string, SyntaxStyle> {
+  const t = findTheme(name);
+  const raw = (t?.style as { syntax?: Record<string, Partial<SyntaxStyle>> } | undefined)?.syntax ?? {};
+  const out: Record<string, SyntaxStyle> = {};
+  for (const [k, v] of Object.entries(raw)) {
+    out[k] = { color: v?.color ?? null, font_style: v?.font_style ?? null, font_weight: v?.font_weight ?? null };
+  }
+  return out;
+}
+
 type Listener = (name: ThemeName, appearance: "light" | "dark") => void;
 const listeners: Listener[] = [];
 let current: { name: ThemeName; appearance: "light" | "dark" } | null = null;

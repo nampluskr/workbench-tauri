@@ -341,6 +341,103 @@
   - 특이사항: 커밋은 leader가 한다.
   - 상태: Phase 2 완료 (2026-11-01). R-3~R-9 모두 충족이다(R-7은 재검증 충족, PLAN "Phase를 마친 것" 규칙).
 
+### Phase 3 — 문법 WASM 로드 PoC와 P0 정리
+
+- **R-10 술어 목록 고정** (2026-11-01, Phase 3 시작 때)
+  - 무엇을 했나: SPEC R-10 규칙대로, 이 PC의 Zed HTML 확장(`C:/Users/nampl/AppData/Local/Zed/extensions/installed/html/languages/html/`, 확장 0.3.2)에서 `.scm` 6개에 실제로 쓰인 술어를 원문으로 뽑아 여기에 고정했다. 고정한 뒤에는 바꾸지 않는다.
+  - 결과:
+    | 술어 | 파일·쓰임 | 고정 사례(입력 → 기대) |
+    | --- | --- | --- |
+    | `#match?` | injections.scm: `@_attribute_name "^style$"` | P-1 `<p style="color:red">` → injection.content "color:red", injection.language "css" / P-2 `<p class="color:red">` → 속성 매치 없음 |
+    | `#match?` | injections.scm: `@_attribute_name "^on[a-z]+$"` | P-3 `<b onclick="go()">` → injection.content "go()", injection.language "javascript" / P-4 `<b onClick="go()">` → 속성 매치 없음(대문자 C) |
+    | `#set!`(인수 2개) | injections.scm: `injection.language` ×5 | P-5 `<script>let x = 1;</script>` → setProperties {"injection.language":"javascript"}, content "let x = 1;" |
+    | `#set!`(인수 1개) | brackets.scm: `rainbow.exclude` ×5 | P-6 `<a href="x">` 따옴표 쌍 → setProperties에 키 "rainbow.exclude"(값 null) |
+    | `#set!`(인수 1개) | brackets.scm: `newline.only` ×1 | P-7 `<div></div>` → 시작·끝 태그 쌍에 키 "newline.only"와 "rainbow.exclude" |
+    - 03-tauri R-03이 든 `#any-of?`는 이 6개 파일에 쓰이지 않는다.
+    - highlights.scm, indents.scm, outline.scm, overrides.scm에는 술어가 없다.
+    - overrides.scm에는 Zed 고유 지시문(`.inclusive` 등)이 없고, 일반 캡처(`@comment`, `@string`, `@default`)만 있다.
+  - 검증: 파일 6개 원문을 읽어 옮겼다.
+  - 특이사항: 없음.
+
+- **Phase 3 구현: 문법 WASM 로드, 경로 검사 프로토콜, CSP, 증분 강조, P0 요약 초안** (2026-11-01)
+  - 무엇을 했나:
+    - 코어(R-11, D-9, D-16): `src-tauri/src/ext_protocol.rs`를 새로 만들었다.
+      - 커스텀 스킴 `zlext`(`http://zlext.localhost/<id>/<rel>`)로 확장 파일을 준다.
+      - A-55.2 검사: 확장 루트별 상대 경로만 허용하고, 절대 경로·`..`·루트 밖을 가리키는 링크를 거부한다. 링크는 정규화한 경로로 판정한다.
+      - CORS는 앱 출처에만 연다. 거부 이유는 `X-Zedlike-Denied` 헤더(expose)에 담는다.
+      - 단위 테스트 `a55_2_rules`를 넣었다.
+      - 명령: `ext_check`, `ext_roots`, `dev_ext_add_root`(디버그 빌드 전용)
+    - CSP(D-16): `script-src 'self' 'wasm-unsafe-eval'`, `connect-src`·`img-src`에 `http://zlext.localhost`만 더했다(`csp`, `devCsp`).
+    - 문법(R-10, D-8, D-9): `src/syntax/grammar.ts`를 새로 만들었다.
+      - `web-tree-sitter` 0.27.1(03-tauri 3.2 목록, MIT)로 Zed HTML 확장의 `grammars/html.wasm`과 `.scm` 6개를 `zlext`로 받는다. 파일은 복사하지 않는다.
+      - 받은 그대로 로드하면 실패한다. `dylink.0` NEEDED에 `libc.so`가 있어 로더가 그 파일을 받으려 하기 때문이다.
+      - 그래서 **메모리 사본에서만** NEEDED 하위 섹션의 종류 바이트(오프셋 26)를 0x7f로 바꿔 건너뛰게 했다. 문법이 쓰는 libc 함수는 런타임이 이미 내보낸다(`__assert_fail`만 없고 지연 바인딩이다). 이 우회는 `rawLoad`·`shim`으로 덤프에 남긴다.
+    - 강조와 증분 연동(R-10, R-12): `src/syntax/highlight.ts`를 새로 만들었다.
+      - CM6 ViewPlugin이 트랜잭션마다 `Tree.edit`를 부르고, 이전 트리를 넘겨 `parse`한다(입력은 콜백으로 64KB씩).
+      - 장식은 `visibleRanges` 안에서만 만든다.
+      - 캡처 → 테마 키는 T-27.1 규칙이다. 테마별 `syntax` 색은 `:root` 변수와 nonce를 단 클래스로 준다. 테마를 바꾸면 다시 그린다.
+      - Lezer(`@codemirror/language`)는 쓰지 않는다.
+    - 탭: `h`(새로 쓴 HTML 예제), `hbig`(약 10MB, `bigEdit`가 만든다)
+    - 검증 수단:
+      - `src/poc/probe3.ts`(`__poc.syntax`, `__poc.ext`)
+      - `tools/make-ext-fixture.ps1`(임시 폴더의 시험 확장, 정션·심볼릭 링크)
+      - `specs/v0.1/verify/phase3/HOWTO.md`
+      - R-13 요약 초안 `specs/v0.1/verify/phase3/P0-SUMMARY.md`
+  - 결과:
+    - 추가 패키지: npm `web-tree-sitter` 0.27.1(정확한 버전 고정)
+    - cargo 의존성 추가는 없다(`tauri::http` 사용).
+  - 검증 (wt-coder 자체 확인, 판정은 wt-checker):
+    - 기본 검사: typecheck 오류 없음, build 성공(`web-tree-sitter.wasm` 포함), `cargo check` 경고 0, `cargo test --lib` 1/1, `npm run test:keymap` 19/19
+    - R-10 (dev 앱, CDP `--pid` 고정):
+      - `rawLoad` 실패, `shim` 적용 뒤 ABI 14로 로드되었다. 예제 HTML 파싱에 오류가 없었다.
+      - `.scm` 6개가 모두 컴파일되었다(패턴 수 5/8/3/5/2/3).
+      - 술어 P-1~P-7이 모두 맞았다.
+      - T-27.1 키: `punctuation.bracket.html`→`punctuation.bracket`, `punctuation.delimiter.html`→`punctuation.delimiter`, 나머지는 같은 이름이었다(Mocha·Latte).
+      - Markdown·JSON은 `unknown-extension`이라 대기다.
+    - R-11:
+      - 프로토콜 C-1~C-9가 모두 기대대로였다. C-9는 정션을 통한 루트 밖 접근으로 `link-escapes-extension-root` 거부였다.
+      - 명령 K-1~K-5도 모두 기대대로였다.
+      - 확장 SVG(`catppuccin-icons/icons/latte/_file.svg`)가 16×16으로 로드되었다.
+      - 빌드 앱(`http://tauri.localhost`, CSP 적용)에서 CSP 위반 0, security 로그 0이었다(`specs/v0.1/verify/phase3/csp-built-check.json`).
+    - R-12 (10MB, 루트 `document`, 오류 없음):
+      - 첫 파싱 1551ms
+      - 트랜잭션 5개 모두 `treeEditCalls: 1`, `oldTreePassed: true`
+      - 증분 파싱 중앙값 98ms, 장식 1.2ms, 화면 반영 중앙값 117ms
+      - 맨 위·가운데 모두 보이는 범위 밖 장식 0
+    - 회귀: R-1 두 시험, R-2 `measure()`(`failed: []`), 테마 전환(`captionOk: true`)이 통과했다.
+  - 특이사항:
+    - `web-tree-sitter` 0.27.1 단위: `QueryOptions.startIndex/endIndex`는 바이트(코드 단위 × 2)이고, Node·Edit은 코드 단위다. Node로 재현했다. 처음에는 이를 몰라 가운데 범위 장식이 0이었고, 범위를 × 2로 넘겨 고쳤다.
+    - 측정용 큰 HTML 생성기가 처음에 `<body>` 줄을 반복해 루트가 ERROR가 되었다. 그래서 가운데 장식 0, 증분 파싱 약 250ms가 나왔다. 생성기를 고친 뒤 다시 쟀다.
+    - 심볼릭 링크는 이 계정 권한으로 만들지 못해(관리자 권한 필요) 디렉터리 정션으로 시험했다.
+    - 첫 `addRoot` 호출에서 경로 이스케이프를 잘못해 엉뚱한 루트 하나가 이 dev 세션의 루트 목록에 남았다. 존재하지 않는 경로라 영향은 없고, 앱을 다시 시작하면 사라진다.
+    - 코어 대안(D-8): `tree-sitter` 크레이트로 `.wasm` 문법을 읽으려면 03-tauri 3.1에서 제외된 `wasmtime`이 필요하다. 그래서 시험하지 않고 분석만 했다(P0-SUMMARY "R-19 관찰").
+    - **사용자 확인 필요**: 구문 강조 구조(D-8)를 유지하는 조건은 메모리 안 dylink 우회를 받아들이는 것이다. 판단은 P0-SUMMARY "구조 판단"에 있다.
+    - 리뷰·검증·커밋 전이므로 Phase 3은 진행 중이다.
+
+- **중지·인계 (2026-11-02, 사용자 지시)**
+  - 무엇을 했나: 사용자가 "우선 순위에서 다른 작업을 먼저 해야 함니다. 현상태로 마무리하고, 다음에 새 세션에서 작업할 수 있도록 마무리 해 주세요."라고 지시했다. 그래서 현재 상태를 로컬 WIP 커밋으로 남겼다(push는 하지 않았다).
+    - 리뷰 1회차 지적을 `specs/v0.1/verify/phase3/REVIEW-R1.md`로 옮겼다.
+    - leader 도구(`approve-loop.sh`, `review-generic.md`)를 `docs/herdr/`로 옮겼다.
+  - 상태:
+    - 구현과 wt-coder 자체 확인은 끝났다.
+    - 리뷰 1회차 10건은 반영하던 중에 중지했다(2026-11-01 13:50쯤). 지적마다 반영되었는지는 확인하지 않았다.
+    - 리뷰 2·3회차, wt-checker 판정(R-10~R-13), Phase 3 완료 커밋이 남았다.
+  - 재개 순서:
+    1. `git diff db5e9de -- tools/ src/ src-tauri/ specs/v0.1/verify/phase3/`를 REVIEW-R1.md와 대조해 지적별 반영 상태를 확정한다.
+       - #1(fixture 삭제 검사)이 해소되었다고 확인하기 전에는 `tools/make-ext-fixture.ps1`을 실행하지 않는다.
+       - TEMP 아래에서 실제로 지워진 것이 있는지도 확인한다.
+    2. 남은 지적을 wt-coder에게 반영시킨다. 그다음 wt-reviewer 2회차·3회차를 돈다(최대 3회).
+    3. wt-runner-app(`wC:p7`)에서 `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222`를 주고 `npm run tauri dev`를 실행한다. 검증 방법은 `verify/phase3/HOWTO.md`에 있다.
+    4. wt-checker(agy gemini-3.8-flash-high)가 R-10~R-13을 판정한다.
+    5. PROGRESS와 HERDR-DECISIONS를 기록하고, Phase 3 완료 커밋을 한 뒤 사용자에게 최종 보고를 한다.
+  - 최종 보고 때 사용자에게 확인받을 것:
+    - E-032 손잡이 테두리 1px: 원문 값이 없다.
+    - html.wasm `libc.so` 메모리 우회를 받아들일지 (D-8 유지 조건)
+    - Phase 2 입력 사고 뒤 workbench-gpui 창 상태
+    - R-4 기본 최대화 버튼 눌림 픽셀: 판정 불가
+    - Markdown·JSON 문법: 확장이 설치되지 않아 대기
+  - 검증: 커밋 뒤 `git status`가 깨끗했다. 고친 문서는 UTF-8로 다시 읽어 확인했다.
+
 ## 사용자 요청 작업
 
 ### 신규 시작과 v0.1 작성 단계 문서 초안 (2026-11-01)
@@ -435,6 +532,12 @@
 - 결과: v0.1 작성 단계 문서 네 개가 확정되었다. 다음은 PLAN Phase 0이다.
 - 검증: 다섯 문서의 첫 줄을 다시 읽어 상태를 확인했다.
 - 상태: 완료(커밋은 leader 몫).
+
+### Phase 3 중지·인계 정리 (2026-11-02)
+
+- 요청: "우선 순위에서 다른 작업을 먼저 해야 함니다. 현상태로 마무리하고, 다음에 새 세션에서 작업할 수 있도록 마무리 해 주세요."
+- 조치: Phase 3 절의 "중지·인계" 항목을 쓰고, REVIEW-R1.md와 docs/herdr/를 저장소로 옮기고, 로컬 WIP 커밋을 했다.
+- 상태: 완료. 작업 재개는 사용자가 요청할 때 한다.
 
 ## 버전 종료
 

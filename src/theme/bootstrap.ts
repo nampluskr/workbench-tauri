@@ -3,6 +3,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { EditorView } from "@codemirror/view";
 import { allViews } from "../poc/editorStore";
+import { applySyntaxTheme, syntaxRefresh } from "../syntax/highlight";
 import { appearance } from "../poc/zedEditor";
 import { composite, parseColor, toHex } from "./color";
 import { onThemeChange, resolveTheme, type ThemeName } from "./theme";
@@ -39,8 +40,11 @@ export function captionApplied(): Promise<boolean> {
 
 export function installThemeBridge(): void {
   onThemeChange((name, mode) => {
+    applySyntaxTheme(name);
     for (const view of allViews()) {
-      view.dispatch({ effects: appearance.reconfigure(EditorView.darkTheme.of(mode === "dark")) });
+      view.dispatch({
+        effects: [appearance.reconfigure(EditorView.darkTheme.of(mode === "dark")), syntaxRefresh.of(null)],
+      });
     }
     const colors = captionColors(name);
     captionSync.last = colors;
