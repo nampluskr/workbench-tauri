@@ -539,6 +539,15 @@
 - 조치: Phase 3 절의 "중지·인계" 항목을 쓰고, REVIEW-R1.md와 docs/herdr/를 저장소로 옮기고, 로컬 WIP 커밋을 했다.
 - 상태: 완료. 작업 재개는 사용자가 요청할 때 한다.
 
+### GitHub 공개 레포 생성·push와 MIT LICENSE 추가 (2026-11-02)
+
+- 요청: "깃헙 레포를 public 으로 생성하고 푸시해 주세요.", "MIT LICENSE 파일 추가하고 푸시해 주세요"
+- 조치:
+  - https://github.com/nampluskr/workbench-tauri 를 공개로 만들고 `master`를 push했다.
+  - 루트에 `LICENSE`(MIT, Copyright (c) 2026 nampluskr)를 더했다. 가져온 테마 파일의 MIT 고지는 `public/licenses/`에 그대로 있다.
+- 검증: push 뒤 `git status -sb`에서 `master...origin/master` 차이가 없었다.
+- 상태: 완료.
+
 ## 버전 종료
 
 - 사용자 종료 판단: 진행 중.
