@@ -111,3 +111,4 @@ checker 운영 규칙
 | 2026-11-01 | Phase 1~3 순차 진행과 승인 결정을 leader에게 위임 (사용자 지시 "리더 에이젼트가 플랜을 기반으로 순차적으로 진행해 주세요. 필요한 승인은 리더가 결정하고 근거를 문서에 남겨 주세요.") | 사용자 지시 |
 | 2026-11-01 | wt-checker 를 agy Argon → Claude Sonnet 5.5 · high 로 교체 (agy 한도 소진, 4절 대체안). wt-scouter 는 같은 이유로 사용 불가 | leader (위임) |
 | 2026-11-01 | wt-checker 를 agy gemini-3.8-flash-high 로 교체 (사용자 지시 "argon 대신 gemini flass high 로 바꿔주세요"). 진행 중이던 Phase 2 검증(Sonnet)이 끝난 뒤 교체. Flash 한도는 살아 있음을 wt-scouter 로 확인 | 사용자 지시 |
+| 2026-11-02 | 8절 정리 실행: 탭 2 agents(wt-coder·wt-reviewer·wt-scouter·wt-checker)와 탭 3 run(wt-runner-build·wt-runner-app)을 닫음 (사용자 지시 "Herdr 탭 2·3 패널 닫아 주세요"). 재개할 때 3·4·5절대로 다시 만든다 | 사용자 지시 |
