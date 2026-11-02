@@ -91,7 +91,7 @@ checker 운영 규칙
   - leader가 사용자 승인 권한을 가진다. 하위 에이전트의 결정 요청을 검토해 승인하거나 수정을 요청하고, 판단마다 근거를 HERDR-DECISIONS.md에 남긴다.
   - 단, specs 문서의 요구·결정 내용은 사용자에게 묻는다(AGENTS "사람이 정하고 묻는다").
   - 위임 밖: 파일·폴더 삭제, push 등 외부 전송, git 원격 설정
-  - git: `git init`만 한다 (push·원격 없음).
+  - git: `git init`만 한다 (push·원격 없음). 단 2026-11-02 사용자 지시로 공개 원격 `origin` = https://github.com/nampluskr/workbench-tauri 를 만들고 push 했다. 이후 push 도 사용자 지시가 있을 때만 한다.
   - 새 크레이트·npm 패키지: 03-tauri 3.1·3.2절 후보 목록 안이면 승인한다. 목록 밖은 2026-11-01 위임 이후 leader가 라이선스·필요성을 확인해 결정하고 HERDR-DECISIONS에 근거를 남긴다.
   - (2026-11-01 사용자 위임) PLAN Phase 1~3을 leader가 순서대로 진행하고, 필요한 승인을 leader가 결정해 근거를 HERDR-DECISIONS에 남긴다. 모든 단계를 마친 뒤 사용자에게 보고한다. PLAN의 "미해결 실패가 있으면 멈추고 사용자에게 올린다" 규칙은 그대로 따른다.
   - 같은 에이전트와의 검증 왕복은 최대 3회다 (사용자 지시 2026-11-01, 가이드 PLANNING 4절의 2회 대신).
@@ -112,3 +112,4 @@ checker 운영 규칙
 | 2026-11-01 | wt-checker 를 agy Argon → Claude Sonnet 5.5 · high 로 교체 (agy 한도 소진, 4절 대체안). wt-scouter 는 같은 이유로 사용 불가 | leader (위임) |
 | 2026-11-01 | wt-checker 를 agy gemini-3.8-flash-high 로 교체 (사용자 지시 "argon 대신 gemini flass high 로 바꿔주세요"). 진행 중이던 Phase 2 검증(Sonnet)이 끝난 뒤 교체. Flash 한도는 살아 있음을 wt-scouter 로 확인 | 사용자 지시 |
 | 2026-11-02 | 8절 정리 실행: 탭 2 agents(wt-coder·wt-reviewer·wt-scouter·wt-checker)와 탭 3 run(wt-runner-build·wt-runner-app)을 닫음 (사용자 지시 "Herdr 탭 2·3 패널 닫아 주세요"). 재개할 때 3·4·5절대로 다시 만든다 | 사용자 지시 |
+| 2026-11-02 | GitHub 공개 레포 생성·push (사용자 지시 "깃헙 레포를 public 으로 생성하고 푸시해 주세요."). origin = https://github.com/nampluskr/workbench-tauri, 브랜치 master | 사용자 지시 |
