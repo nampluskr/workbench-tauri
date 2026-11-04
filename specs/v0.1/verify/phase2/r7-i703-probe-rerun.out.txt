@@ -1,2 +1,0 @@
-{"case":"Editor null (base) + Workspace binding (default), focus path Workspace>Pane>Editor","result":{"kind":"none"}}
-{"case":"Workspace null (base) + Editor binding (default)","result":{"kind":"action","action":"editor::Act","args":null,"binding":{"keys":"ctrl-j","context":"Editor","source":"default"}}}
