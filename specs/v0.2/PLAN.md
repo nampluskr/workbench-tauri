@@ -150,5 +150,5 @@
 | Phase 2 — 키맵 | R-1 · R-2 | done | ed485f9 | 없음 |
 | Phase 3 — 툴팁·메뉴 | R-4 ~ R-9 | done | 787e793 | 없음 |
 | Phase 4 — 사이드바·state.json | R-11 ~ R-17 · R-29 | done | 2ee70ee | 없음 |
-| Phase 5 — 트리·파일 작업·탭 | R-3 · R-18 ~ R-24 · R-26 ~ R-28 · R-30 | done | - | 없음 |
-| Phase 6 — 디스크 감시 | R-25 | todo | 미정 | 없음 |
+| Phase 5 — 트리·파일 작업·탭 | R-3 · R-18 ~ R-24 · R-26 ~ R-28 · R-30 | done | 5b48fca | 없음 |
+| Phase 6 — 디스크 감시 | R-25 | done | - | 없음 |

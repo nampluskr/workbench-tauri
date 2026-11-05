@@ -5,7 +5,7 @@ import { Decoration, ViewPlugin, type DecorationSet, type EditorView, type ViewU
 import { syntaxClass } from "../theme/theme.ts";
 import { syntaxKeys } from "../theme/apply.ts";
 import { compileQuery, grammarPaths, loadLanguage, themeKey } from "./grammar.ts";
-import { editTree, parseDoc, parseDocSliced } from "./incremental.ts";
+import { editTree, mostlyReplaced, parseDoc, parseDocSliced } from "./incremental.ts";
 
 // No spec ID: a slice shorter than a frame (R-30 gives no number for how long the main thread may be held).
 const PARSE_SLICE_MS = 8;
@@ -49,30 +49,67 @@ export function syntaxHighlighting(id: string) {
       tree: Tree | null = null;
       highlights: Query | null = null;
       parser: Parser | null = null;
-
       destroyed = false;
+      parsing = false; // a sliced parse is waiting for its next slice and still owns the parser
 
       constructor(readonly view: EditorView) {
-        grammar(id).then(async ({ language, highlights }) => {
+        grammar(id).then(({ language, highlights }) => {
           if (this.destroyed) return;
           // A parser per view: a sliced parse that is waiting for its next slice must not be touched by another view.
-          const parser = new Parser();
-          parser.setLanguage(language);
-          const tree = await parseDocSliced(parser, view.state.doc, PARSE_SLICE_MS, () => this.destroyed); // the only full parse
-          if (!tree) return parser.delete();
-          [this.parser, this.highlights, this.tree] = [parser, highlights, tree];
-          this.decorations = this.build();
-          view.dispatch({}); // let CM6 pick up the first decorations
+          this.parser = new Parser();
+          this.parser.setLanguage(language);
+          this.highlights = highlights;
+          return this.parseAll();
         }, console.error);
+      }
+
+      /**
+       * The full parse, in slices (R-30). If the text is replaced while it runs (a file read again, R-25) it starts over on
+       * the new text. A tree comes out only when the text is still the one that was parsed.
+       */
+      async parseAll(): Promise<void> {
+        const { view, parser } = this;
+        this.parsing = true;
+        let tree: Tree | null = null;
+        while (parser && !tree && !this.destroyed) {
+          const doc = view.state.doc;
+          tree = await parseDocSliced(parser, doc, PARSE_SLICE_MS, () => this.destroyed || view.state.doc !== doc);
+          if (tree && view.state.doc !== doc) {
+            tree.delete(); // finished on the old text
+            tree = null;
+          }
+        }
+        this.parsing = false;
+        if (this.destroyed) {
+          tree?.delete();
+          parser?.delete();
+          return;
+        }
+        this.tree = tree;
+        this.decorations = this.build();
+        view.dispatch({}); // let CM6 pick up the decorations
       }
 
       update(update: ViewUpdate) {
         if (update.docChanged && this.tree && this.parser) {
-          // R-11: report the changes, then parse incrementally from the edited old tree.
           const old = this.tree;
+          if (mostlyReplaced(update.changes)) {
+            // shortcut: structural test only (less than half of the text kept); an incremental parse of a text that is new all
+            // through is a full parse in one block. Parse it in slices again; the old colors, moved with the text, stay meanwhile.
+            this.tree = null;
+            old.delete();
+            this.decorations = this.decorations.map(update.changes);
+            void this.parseAll();
+            return;
+          }
+          // R-11: report the changes, then parse incrementally from the edited old tree.
           editTree(old, update.changes, update.startState.doc, update.state.doc);
           this.tree = parseDoc(this.parser, update.state.doc, old);
           old.delete();
+        }
+        if (!this.tree) {
+          if (update.docChanged) this.decorations = this.decorations.map(update.changes);
+          return;
         }
         if (update.docChanged || update.viewportChanged) this.decorations = this.build();
       }
@@ -94,7 +131,8 @@ export function syntaxHighlighting(id: string) {
       destroy() {
         this.destroyed = true;
         this.tree?.delete();
-        this.parser?.delete();
+        if (!this.parsing) this.parser?.delete(); // a parse in flight deletes it when it sees destroyed
+        this.parser = null;
       }
     },
     { decorations: (plugin) => plugin.decorations },

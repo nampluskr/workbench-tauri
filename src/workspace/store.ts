@@ -78,7 +78,7 @@ export function guardClose(): Promise<unknown> {
 
 // --- loading -----------------------------------------------------------------
 
-async function markMissing(list: Folder[]): Promise<void> {
+export async function markMissing(list: Folder[]): Promise<void> {
   try {
     const exists = await invoke<boolean[]>("paths_exist", { paths: list.map((f) => f.path) });
     setMissingIds((old) => {

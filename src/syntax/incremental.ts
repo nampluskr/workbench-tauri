@@ -61,3 +61,10 @@ export async function parseDocSliced(parser: Parser, doc: Text, sliceMs: number,
     }
   }
 }
+
+/** Less than half of the new text is kept from the old one: reusing the old tree gains nothing (R-25, a file read again). */
+export function mostlyReplaced(changes: ChangeSet): boolean {
+  let inserted = 0;
+  changes.iterChangedRanges((_fromA, _toA, fromB, toB) => (inserted += toB - fromB));
+  return (changes.newLength - inserted) * 2 < changes.newLength;
+}

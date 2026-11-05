@@ -6,6 +6,7 @@ import { loadUserKeymap, watchUserKeymap } from "./keymap/load.ts";
 import { loadHome } from "./shell/home.ts";
 import { installTooltips } from "./shell/tooltip.ts";
 import { guardClose, loadWorkspace } from "./workspace/store.ts";
+import { installWatcher } from "./workspace/watch.ts";
 import { applyTheme } from "./theme/apply.ts";
 import { applyMetrics } from "./spec/metrics.ts";
 import "./app.css";
@@ -27,6 +28,7 @@ try {
   installTooltips();
   render(() => <App />, root);
   await watchUserKeymap();
+  await installWatcher();
   await guardClose();
 } finally {
   await getCurrentWindow().show();

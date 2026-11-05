@@ -150,7 +150,7 @@ fn copy_into(source: &Path, target: &Path, is_dir: bool) -> io::Result<()> {
     Ok(())
 }
 
-fn normal_path(path: &Path) -> PathBuf {
+pub(crate) fn normal_path(path: &Path) -> PathBuf {
     let text = path.to_string_lossy();
     if let Some(rest) = text.strip_prefix(r"\\?\UNC\") { PathBuf::from(format!(r"\\{rest}")) }
     else if let Some(rest) = text.strip_prefix(r"\\?\") { PathBuf::from(rest) }

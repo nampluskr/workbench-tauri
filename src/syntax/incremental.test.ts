@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import { EditorState } from "@codemirror/state";
 import { Parser, type Edit, type Node, type Tree } from "web-tree-sitter";
 import { loadLanguage } from "./grammar.ts";
-import { editTree, parseDoc, parseDocSliced } from "./incremental.ts";
+import { editTree, mostlyReplaced, parseDoc, parseDocSliced } from "./incremental.ts";
 
 await Parser.init();
 const parser = new Parser();
@@ -72,4 +72,14 @@ test("R-30: a parse in slices gives the thread back between slices and ends with
   assert.equal(shape(sliced.rootNode), shape(parseDoc(parser, state.doc, null)!.rootNode));
   assert.equal(await parseDocSliced(parser, state.doc, 0, () => true), null, "a parse nobody wants any more stops");
   parser.reset();
+});
+
+test("R-25: a change that keeps less than half of the text is a replacement; small edits and cutting are not", () => {
+  const base = EditorState.create({ doc: "x".repeat(100) });
+  const of = (changes: Parameters<typeof base.update>[0]["changes"]) => base.update({ changes }).changes;
+  assert.equal(mostlyReplaced(of({ from: 0, to: 100, insert: "y".repeat(100) })), true, "everything new");
+  assert.equal(mostlyReplaced(of({ from: 40, to: 45, insert: "abc" })), false, "an edit");
+  assert.equal(mostlyReplaced(of({ from: 10, to: 90 })), false, "cutting most of it keeps what is left");
+  assert.equal(mostlyReplaced(of({ from: 50, to: 50, insert: "z".repeat(200) })), true, "a block much bigger than the old text");
+  assert.equal(mostlyReplaced(of({ from: 0, to: 100 })), false, "emptied");
 });

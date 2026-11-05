@@ -4,7 +4,7 @@ import type { EditorView } from "@codemirror/view";
 import { createFileView, decodeText } from "../editor/file-view.ts";
 import { PANE_MAX_PREVIEW_TABS } from "../spec/metrics.ts";
 import type { Validation } from "./names.ts";
-import { baseName } from "./paths.ts";
+import { followListing, underOrSame } from "./changes.ts";
 import { openTab, type TabInfo } from "./tabs.ts";
 import { buildRows, collapseAll, joinPath, none, only, sortChildren, type Child, type Row, type Selection } from "./tree.ts";
 
@@ -101,25 +101,21 @@ export async function refreshDirs(ctx: FolderContext, dirs: Iterable<string>): P
   ctx.touch();
 }
 
-const underOrSame = (dir: string, path: string) => path === dir || path.startsWith(dir.endsWith("\\") ? dir : dir + "\\");
 
-/** An item was renamed or moved: every path in this context that was in it follows (tree state, selection, tabs). */
+/** An item was renamed or moved: every path in this context that was in it follows (tree state, selection, tabs), in one update. */
 export function followMove(ctx: FolderContext, from: string, to: string): void {
   const remap = (p: string) => (underOrSame(from, p) ? to + p.slice(from.length) : p);
-  ctx.expanded = new Set([...ctx.expanded].map(remap));
-  ctx.unfolded = new Set([...ctx.unfolded].map(remap));
-  for (const [dir, list] of [...ctx.listing]) {
-    if (underOrSame(from, dir)) {
-      ctx.listing.delete(dir);
-      ctx.listing.set(remap(dir), list);
-    }
-  }
-  const sel = ctx.selection();
-  ctx.setSelection({ selected: sel.selected && remap(sel.selected), marked: sel.marked.map(remap), anchor: sel.anchor && remap(sel.anchor) });
-  const tabs = ctx.tabs();
-  // New objects for the moved tabs: the tab list draws a title once per object, so changing the path in place would not show.
-  if (tabs.some((t) => underOrSame(from, t.path))) ctx.setTabs(tabs.map((t) => (underOrSame(from, t.path) ? { ...t, path: remap(t.path) } : t)));
-  ctx.touch();
+  batch(() => {
+    ctx.listing = followListing(ctx.root, ctx.listing, from, to);
+    ctx.expanded = new Set([...ctx.expanded].map(remap));
+    ctx.unfolded = new Set([...ctx.unfolded].map(remap));
+    const sel = ctx.selection();
+    ctx.setSelection({ selected: sel.selected && remap(sel.selected), marked: sel.marked.map(remap), anchor: sel.anchor && remap(sel.anchor) });
+    const tabs = ctx.tabs();
+    // New objects for the moved tabs: the tab list draws a title once per object, so changing the path in place would not show.
+    if (tabs.some((t) => underOrSame(from, t.path))) ctx.setTabs(tabs.map((t) => (underOrSame(from, t.path) ? { ...t, path: remap(t.path) } : t)));
+    ctx.touch();
+  });
 }
 
 /** Items were deleted: forget what this context knew below them. */
