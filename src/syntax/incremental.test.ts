@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import { EditorState } from "@codemirror/state";
 import { Parser, type Edit, type Node, type Tree } from "web-tree-sitter";
 import { loadLanguage } from "./grammar.ts";
-import { editTree, parseDoc } from "./incremental.ts";
+import { editTree, parseDoc, parseDocSliced } from "./incremental.ts";
 
 await Parser.init();
 const parser = new Parser();
@@ -60,4 +60,16 @@ test("each transaction: one Tree.edit per change, parse gets the edited old tree
     tree = next;
     state = tr.state;
   }
+});
+
+test("R-30: a parse in slices gives the thread back between slices and ends with the same tree as one parse", async () => {
+  const state = EditorState.create({ doc: '<div class="row"><span id="a1">some text &amp; more</span></div>\n'.repeat(20000) });
+  let ticks = 0;
+  const timer = setInterval(() => ticks++, 1); // runs only if a slice ends and the event loop turns
+  const sliced = (await parseDocSliced(parser, state.doc, 5, () => false))!;
+  clearInterval(timer);
+  assert.ok(ticks > 0, "the event loop ran between slices");
+  assert.equal(shape(sliced.rootNode), shape(parseDoc(parser, state.doc, null)!.rootNode));
+  assert.equal(await parseDocSliced(parser, state.doc, 0, () => true), null, "a parse nobody wants any more stops");
+  parser.reset();
 });

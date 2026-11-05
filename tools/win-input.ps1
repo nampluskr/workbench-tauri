@@ -39,6 +39,7 @@
   presshold  : (-X,-Y) 에서 왼쪽 버튼을 누른 채 -HoldMs 기다리고(-MidOut 에 모니터 캡처), (-X+-DX,-Y+-DY) 로 옮겨 놓는다.
                누름 상태 색 캡처와 '버튼 위에서/밖에서 놓기' 시험용.
   hoverclick : 최대화 버튼(또는 -X,-Y) 위에 -HoldMs 머문 뒤 -MidOut 에 캡처(스냅 팝업), 화면 좌표 (-SX,-SY) 로 옮겨 클릭한다.
+  middleclick: (-X,-Y) 가운데 버튼 클릭. type: -Text 를 유니코드 문자로 입력(IME 무관). click 은 -Mods "shift","ctrl","alt" 를 누른 채 한다.
   windows    : 대상 프로세스 트리(앱 + WebView2 자식)의 보이는 최상위 창 목록(인쇄·찾기 창 같은 부수 창 확인).
 
 .PARAMETER Out
@@ -52,8 +53,10 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
-    [ValidateSet('hover', 'click', 'dblclick', 'drag', 'resize', 'keys', 'state', 'maxbutton', 'foreground', 'blur', 'windows', 'rightclick', 'presshold', 'hoverclick', 'wheel')]
+    [ValidateSet('hover', 'click', 'dblclick', 'drag', 'resize', 'keys', 'state', 'maxbutton', 'foreground', 'blur', 'windows', 'rightclick', 'presshold', 'hoverclick', 'wheel', 'middleclick', 'type')]
     [string]$Action,
+    [string[]]$Mods = @(),
+    [string]$Text = '',
     [double]$X = [double]::NaN,
     [double]$Y = [double]::NaN,
     [double]$DX = 0,
@@ -76,6 +79,7 @@ param(
 $ErrorActionPreference = 'Stop'
 # pwsh -File passes "a","b" as one string "a,b": split on commas.
 $Keys = @($Keys | ForEach-Object { $_ -split ',' } | Where-Object { $_ -ne '' })
+$Mods = @($Mods | ForEach-Object { $_ -split ',' } | Where-Object { $_ -ne '' })
 Add-Type -AssemblyName System.Drawing.Common
 Add-Type -AssemblyName System.Drawing.Primitives
 
@@ -230,6 +234,25 @@ namespace ZlInput {
         public static void Wheel(int x, int y, int delta) { MoveTo(x, y); Thread.Sleep(30); SendMouse(0x0800, x, y, unchecked((uint)delta)); }
         public static void RightClick(int x, int y) { MoveTo(x, y); Thread.Sleep(30); SendMouse(RIGHTDOWN, x, y); Thread.Sleep(30); SendMouse(RIGHTUP, x, y); }
         public static void DoubleClick(int x, int y) { Click(x, y); Thread.Sleep((int)Math.Min(80, GetDoubleClickTime() / 4)); Click(x, y); }
+        public static void MiddleClick(int x, int y) { MoveTo(x, y); Thread.Sleep(30); SendMouse(0x0020, x, y); Thread.Sleep(30); SendMouse(0x0040, x, y); }
+        /// Hold or release modifier keys around a mouse action ("shift", "ctrl", "alt").
+        public static void Mods(string[] mods, bool up) {
+            var list = new List<ushort>(); foreach (var m in mods) list.Add(Vk(m));
+            if (up) list.Reverse();
+            foreach (var k in list) SendKey(k, up, "mod");
+        }
+        /// Text typed as Unicode characters (no layout, no IME), one foreground check per event.
+        public static void TypeText(string text) {
+            foreach (char c in text) {
+                foreach (bool up in new[] { false, true }) {
+                    Guard("text char");
+                    var i = new INPUT { type = INPUT_KEYBOARD };
+                    i.u.ki.wScan = c; i.u.ki.dwFlags = 0x0004 | (up ? KEYUP : 0);
+                    if (SendInput(1, new[] { i }, Marshal.SizeOf(typeof(INPUT))) != 1) throw new InvalidOperationException("SendInput(text) failed");
+                }
+                Thread.Sleep(15);
+            }
+        }
         public static void Drag(int x0, int y0, int x1, int y1, int steps, int stepMs) {
             MoveTo(x0, y0); Thread.Sleep(50); SendMouse(LEFTDOWN, x0, y0); Thread.Sleep(80);
             Glide(x0, y0, x1, y1, steps, stepMs); Thread.Sleep(80); SendMouse(LEFTUP, x1, y1);
@@ -245,6 +268,8 @@ namespace ZlInput {
                 case ";": return 0xBA; case "menu": case "apps": return 0x5D;
                 case "pageup": return 0x21; case "pagedown": return 0x22; case "end": return 0x23; case "home": return 0x24;
                 case "delete": case "del": return 0x2E;
+                case "backspace": return 0x08; case "insert": return 0x2D;
+                case ".": return 0xBE; case ",": return 0xBC; case "/": return 0xBF; case "\\": return 0xDC;
             }
             if (k.Length == 1 && char.IsLetterOrDigit(k[0])) return (ushort)char.ToUpperInvariant(k[0]);
             if (k.StartsWith("f") && int.TryParse(k.Substring(1), out int n) && n >= 1 && n <= 24) return (ushort)(0x70 + n - 1);
@@ -447,7 +472,9 @@ switch ($Action) {
     }
     'wheel' { $p = To-Screen $X $Y; [ZlInput.Native]::Wheel($p[0], $p[1], [int]$DY); $result.pointerScreen = [ordered]@{ x = $p[0]; y = $p[1] } }
     'rightclick' { $p = To-Screen $X $Y; [ZlInput.Native]::RightClick($p[0], $p[1]); $result.pointerScreen = [ordered]@{ x = $p[0]; y = $p[1] } }
-    'click' { $p = To-Screen $X $Y; [ZlInput.Native]::Click($p[0], $p[1]); $result.pointerScreen = [ordered]@{ x = $p[0]; y = $p[1] } }
+    'click' { $p = To-Screen $X $Y; if ($Mods) { [ZlInput.Native]::Mods($Mods, $false) }; [ZlInput.Native]::Click($p[0], $p[1]); if ($Mods) { [ZlInput.Native]::Mods($Mods, $true) }; $result.pointerScreen = [ordered]@{ x = $p[0]; y = $p[1] } }
+    'middleclick' { $p = To-Screen $X $Y; [ZlInput.Native]::MiddleClick($p[0], $p[1]); $result.pointerScreen = [ordered]@{ x = $p[0]; y = $p[1] } }
+    'type' { [ZlInput.Native]::TypeText($Text); $result.typed = $Text }
     'dblclick' { $p = To-Screen $X $Y; [ZlInput.Native]::DoubleClick($p[0], $p[1]); $result.pointerScreen = [ordered]@{ x = $p[0]; y = $p[1] } }
     'drag' {
         $p0 = To-Screen $X $Y

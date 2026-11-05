@@ -100,6 +100,7 @@
 - 행은 키 하나에 하나씩이다. gpui `specs/v0.2/verify/phase1/r1-bindings.md`의 60행에 gpui v0.2 D-2 이후 변경(A-18.11)으로 더한 I-341·I-358 2행을 붙여 62행이다.
 - 같은 바인딩이 여러 행에 나온다. I-030·I-035의 `menu` 행과 I-517 행이 그렇다. 프로젝트 패널 요소는 `ProjectPanel`·`menu`·`not_editing`을 함께 컨텍스트로 갖는다(I-002).
 - 표에 없는 키: I-310의 "열린 채 F10 = 닫기, Left/Right = 이전·다음 메뉴"는 메뉴 자체의 동작이라 R-8에서 다룬다. I-038은 원문이 "제외"다.
+- 개정 2026-11-06(카드 W-v02-P5a, leader 결정(사용자 위임 2026-11-06)): I-532·I-533 2행을 더해 64행이다. 근거는 01-zed `02-INTERACTION.md` 우클릭 메뉴 표(I-532·I-533)의 키이고, gpui v0.3 `builtin.rs`와 같다. 두 액션 이름은 01-zed에 있어 아래 "지은 이름" 표에는 넣지 않는다. 기존 행은 고치지 않았다.
 
 | ID | 키 | 원문 컨텍스트 | 원문 동작 | 내장 컨텍스트 | 액션 |
 | --- | --- | --- | --- | --- | --- |
@@ -148,6 +149,8 @@
 | I-042 | Shift+F10 | ProjectPanel | 우클릭 메뉴 열기 | `ProjectPanel` | `project_panel::DeployContextMenu` |
 | I-043 | Shift+Up | ProjectPanel | 선택 범위 확장 | `ProjectPanel` | `project_panel::SelectPreviousExtend` |
 | I-043 | Shift+Down | ProjectPanel | 선택 범위 확장 | `ProjectPanel` | `project_panel::SelectNextExtend` |
+| I-532 | Ctrl+Alt+R | ProjectPanel (우클릭 메뉴, 로컬 폴더) | Reveal in File Explorer | `ProjectPanel` | `project_panel::RevealInFileManager` |
+| I-533 | Ctrl+Shift+Enter | ProjectPanel (우클릭 메뉴, 로컬 폴더) | Open in Default App | `ProjectPanel` | `project_panel::OpenWithSystem` |
 | I-517 | Down | 원문에 없음 (우클릭 메뉴 공통) | 다음 | `menu` | `menu::SelectNext` |
 | I-517 | Tab | 원문에 없음 (우클릭 메뉴 공통) | 다음 | `menu` | `menu::SelectNext` |
 | I-517 | Ctrl-N | 원문에 없음 (우클릭 메뉴 공통) | 다음 | `menu` | `menu::SelectNext` |
@@ -540,7 +543,139 @@
 
 ### Phase 5 — 프로젝트 패널 트리·파일 작업·최소 탭과 시나리오
 
-없음.
+**판정** — R-3, R-18 ~ R-24, R-26 ~ R-28, R-30 충족(2026-11-06). V3 결함 B-0·F-1~F-5는 재측정 R1·R2 뒤 모두 해소되어 불일치 0이다. Phase 4에서 미룬 R-13·R-14의 트리·탭 부분과 남은 R-7 행도 판정했다. 휴지통 도착은 이 PC 설정 때문에 판정 불가다(아래 측정 불가).
+
+**설치한 의존성(PLAN 완료 조건, D-7·D-19)**
+- `trash` 5.2.9(`Cargo.toml` `=5.2.9`).
+- `tauri-plugin-opener` 2.7.2(`=2.7.2`).
+- `@tauri-apps/plugin-opener` 2.7.2(`package.json` 정확히 고정, 크레이트와 같은 버전).
+- `windows` =0.62.2에 `Win32_UI_Controls` feature(`TaskDialogIndirect`).
+
+**더한 capability(PLAN 완료 조건)** — `src-tauri/capabilities/default.json`
+- `opener:allow-reveal-item-in-dir`: Reveal in File Explorer.
+- `opener:allow-open-path`(`path: "**"`): Open in Default App. 등록 폴더를 미리 알 수 없어 모든 경로 범위다(아래 leader 결정).
+- `core:path:allow-resolve-directory`: 홈 폴더 경로를 읽어 항목 툴팁의 `~` 치환에 쓴다(아래 leader 결정).
+
+**R-30 시험 크기(PLAN 완료 조건, leader 고정)** — 큰 파일은 10MB HTML 1개(10,485,817 B), 큰 폴더는 파일 2,000개 × 100KB(204,800,000 B)다.
+
+**무엇을**
+- 카드 v02-P5-C1(코어 구현 담당, V1): 새 `src-tauri/src/files.rs`, `lib.rs`.
+  - 파일 작업 명령: `list_dir`, `read_file`(바이트 IPC), `create_file`·`create_dir`·`rename_path`, `trash_paths`·`delete_paths`, `paste_paths`, `duplicate_path`, `confirm`(TaskDialog).
+  - 붙여넣기·복제 이름은 ` copy`, ` copy 1` 순이고 덮어쓰지 않는다. 같은 폴더에 잘라 붙이면 아무 일도 하지 않는다. 다른 볼륨 이동은 복사 → 원본 대조 → 삭제다(gpui P3-D1·P3-D2). 심볼릭 링크·정션 복사는 재귀 위험을 피하려 오류로 처리한다.
+  - opener 플러그인을 등록했다.
+- 카드 v02-P5-1(프런트엔드 구현 담당, V1): 트리·탭.
+  - 새 파일: `src/workspace/{tree.ts, tabs.ts, context.ts}`, `src/shell/{ProjectTree.tsx, Pane.tsx, tree-commands.ts, chain.ts}`, `src/editor/file-view.ts`, 테스트 `tree.test.ts`·`tabs.test.ts`. Lucide `file.svg`·`folder-closed.svg`를 더했다(D-20, 펼침 화살표는 gpui `panel_view`에 없어 들이지 않음).
+  - R-18: 활성 폴더 루트가 맨 위, 자식이 폴더 하나뿐인 폴더는 한 줄로 합친다(`docs \ guides`). 정렬은 폴더 먼저, 대소문자 무시 자연 정렬(gpui `fsops/list.rs`와 같음). 치수는 `project_panel.item.*`·`indent_step`·`indent_guide.*`·`collapsed_path.padding_x`·`icons.size.medium`이다. 가상 스크롤은 고정 행 높이, 보이는 범위 ±10행만 DOM이다. 위치는 adopted sheet로 준다.
+  - R-19: 클릭(폴더 토글, Alt+클릭 하위 전체, 파일 한 번 = 임시 탭, 더블클릭·가운데 클릭 = 일반 탭 + 편집기 포커스, Shift·Ctrl+클릭 선택)과 키(Up/Down/Home/End 끝에서 멈춤, Shift+Up/Down, Left/Right, Ctrl+Left/Right, Space). `ProjectPanel` 컨텍스트에 `menu`·`not_editing`을 함께 준다(gpui와 같음).
+  - R-26 최소 탭: 임시 탭 `pane.max_preview_tabs` 1(자리 재사용·승격), 일반 탭은 활성 탭 바로 뒤, 제목 24자 말줄임, 임시 탭은 기울임. 탭 테두리는 L-63 표대로다. 내용은 CM6 읽기 전용, html·toml만 강조, UTF-8(깨진 바이트는 대체 문자), 읽지 못하면 빈 읽기 전용 탭이다.
+  - R-24: 탭을 열거나 활성 탭이 바뀌면 그 파일의 상위 폴더를 펼치고 선택·스크롤한다(포커스는 옮기지 않음).
+  - R-13·R-14: 폴더별 문맥(펼침·읽은 목록·선택·스크롤·탭)을 폴더 id로 보관하고 해제 때 버린다(탭의 CM6 view도 destroy).
+  - R-3: 사이드바 Delete = `RemoveFromProject`, 패널 Delete = `project_panel::Trash`의 깊이 규칙을 `builtin.test.ts`에 테스트로 고정했다.
+  - R-7: 프로젝트 패널 항목 툴팁 = 항목 경로, 지연 `project_panel.name_tooltip_delay`(툴팁에 항목별 지연 인자를 더함).
+- 카드 v02-P5-2(프런트엔드 구현 담당, V1): 파일 작업·우클릭 메뉴.
+  - 새 파일: `src/workspace/{names.ts, ops.ts, actions.ts}`, `src/shell/{tree-menu.ts, home.ts}`, 테스트 `names.test.ts`·`ops.test.ts`.
+  - R-20 인라인 입력: Ctrl+N·Alt+N(대상 폴더·자리 규칙은 gpui와 같음), Enter·F2 이름 변경(루트 불가). 확정 규칙은 끝 마침표 제거, `/`·`\`로 끝나면 폴더, `a/b/c.rs`는 사이 폴더도 만듦, 빈 이름·Windows 금지 이름은 입력칸 유지, 같은 이름은 거부다. Escape는 버리고, 포커스를 잃으면 확정을 시도한다. 검증 배너(P-021)는 `inline_input.*` ID다.
+  - 한글 조합: `isComposing`이거나 keyCode 229이면 Enter·Escape를 처리하지 않는다. `data-text-input` 입력칸의 키는 키맵에 넘기지 않는다.
+  - R-21: Delete·Backspace = Trash, Shift+Delete·Ctrl+Delete·Ctrl+Backspace = Delete. 루트만 선택이면 무동작이다. 확인창은 코어 `confirm`(TaskDialog)이고 문구는 A-14.7~A-14.9, 실패 알림은 A-14.11이다.
+  - R-22: 복사·잘라내기·붙여넣기·Duplicate·Copy Path·Copy Relative Path. 원본마다 `paste_paths`를 따로 불러 실패한 원본을 가리고, 실패는 알림 하나다.
+  - R-23 우클릭 메뉴: 02 11.2·gpui 구성 그대로, Phase 3 공통 메뉴 `openContextMenu`를 재사용했다. Reveal·Open in Default App은 plugin-opener다. 루트 `Remove from Project`는 Phase 4 `removeFolder`를 재사용했다.
+  - R-7 남은 행: 항목 툴팁에 홈 폴더 `~` 치환.
+  - R-30 프런트: 디스크 호출이 모두 비동기이고 동기 루프가 없다.
+- 카드 v02-P5-3(프런트엔드 구현 담당, V1): 내장 키맵 `ProjectPanel`에 `ctrl-alt-r` → `project_panel::RevealInFileManager`, `ctrl-shift-enter` → `project_panel::OpenWithSystem`을 더하고 우클릭 메뉴와 같은 실행부에 이었다. R-1 기대 표 개정(카드 W-v02-P5a, 위 Phase 2 절)과 맞춘 것이다.
+- 카드 v02-P5-4(프런트엔드 구현 담당, V1, B-0만 V2 예외 1회): 결함 B-0·F-1·F-2·F-5와 R-30 큰 파일 정지(아래 결함과 수정 이력).
+- 카드 v02-P5-C3·v02-P5-C4(코어 구현 담당, V1): 결함 F-3·F-4(아래).
+- 카드 v02-M5·v02-M5-R1·v02-M5-R2(V3 측정 담당): Phase 끝 V3 실측과 재측정(아래 검증). `tools/win-input.ps1`에 키 이름(`backspace`·`insert`·`.`·`,`·`/`·`\`), `click -Mods`, `middleclick`, `type`(유니코드 입력)을 더했다. 일반 입력 도구라 남긴다.
+- 카드 C-24(`check`): Phase 5 diff 검토와 전체 테스트 1회.
+
+**P3-D 한계 `shortcut:` 주석 위치(PLAN 완료 조건, D-17)** — `src-tauri/src/files.rs`
+- `transfer`의 원본 대조 부분(184행): 크기·시각이 같은 변경과 대조 뒤 삭제 전의 변경은 놓칠 수 있다.
+- `reserve` 부분(257행): 이름을 확보한 뒤 `fs::copy` 전에 그 이름이 바뀔 수 있다.
+
+**결함과 수정 이력**
+- B-0 빈 창(v02-M5가 처음 실행해 발견): `Pane.tsx`의 `PaneBody`가 ref가 들어가기 전에 `createRenderEffect`에서 `body.replaceChildren`을 불러 `render()` 이후가 모두 건너뛰어졌다. Phase 5 구현 카드가 모두 V1(앱 실행 안 함)이라 이 측정이 첫 실행이었다.
+  - M5는 scratch 사본에서 그 한 토큰만 막은 우회 빌드로 측정했다(레포 파일 무변경).
+  - 수정(v02-P5-4): 효과를 ref 콜백 안에서 만든다. V2 예외 1회로 시작 화면이 채워지고 오류 0건을 확인했다. R1이 레포 빌드로 다시 확인했다.
+- F-1 이름을 바꿔도 열린 탭 제목이 옛 이름: `followMove`가 탭 객체를 제자리에서 바꿔 다시 그려지지 않았다. 옮겨진 탭만 새 객체로 바꾼다(v02-P5-4). R1 해소.
+- F-2 우클릭 메뉴 단축키가 02 11.2와 다른 별칭: 내장 키맵 `ProjectPanel` 순서를 gpui `builtin.rs`와 같게 했다(I-704 "마지막 바인딩" 규칙은 그대로). `display.test.ts`의 기존 기대값 `Copy → Ctrl-Insert`가 잘못된 별칭을 굳힌 것이라 02 11.2대로 Copy Ctrl-C·Paste Ctrl-V·Trash Delete·Delete Ctrl-Delete로 고쳤다(v02-P5-4). R1 해소.
+- F-3 붙여넣기·복제로 만든 파일이 탭으로 열리지도 선택되지도 않음(I-097): 코어가 `\\?\`가 붙은 경로를 돌려줬다. 반환 경로를 입력 대상 폴더 형식으로 두고 verbatim 드라이브·UNC 접두어를 바꾼다(v02-P5-C3). R1 해소.
+- F-4 다른 볼륨 이동(C:→D:) 실패(데이터 손실은 없음), 2단계로 고쳤다.
+  - 1단계(v02-P5-C3): HRESULT를 Win32 오류로 정규화해 다른 볼륨·이름 충돌을 가린다. 실패한 복사에서 배타 예약한 빈 파일·폴더만 정리한다. R1에서 폴더 이동(작은 폴더와 200MB)은 성공했으나 단일 파일 이동은 여전히 실패했다.
+  - 2단계(v02-P5-C4): `snapshot`이 루트 항목에 빈 상대 경로를 붙여 파일 경로 끝에 구분자가 생겨 실패했다. 루트는 원본 경로 그대로 검사한다. C:→D: 단일 파일 이동 회귀 테스트를 더했다. R2 해소.
+- F-5 한글 조합 중 Esc 한 번이 입력 행 전체를 취소: Microsoft 한글 입력기가 조합 확정 뒤 `isComposing=false`인 Escape를 한 번 더 보낸다. 입력칸이 `compositionend` 시각을 기억하고 100 ms 안의 Escape를 무시한다(v02-P5-4, 100 ms는 스펙 ID가 아니라 `shortcut:` 주석). R1 해소.
+- R-30 큰 파일 열기 정지(M5 측정값, 불일치 판정은 아님): 원인은 tree-sitter 첫 전체 동기 파싱이다(node에서 10MB HTML 전체 파싱 3,381 ms). 파싱을 8 ms 조각으로 나눠 조각마다 메인 스레드를 돌려주고, 뷰마다 새 Parser를 쓴다(v02-P5-4). 강조가 나타나기까지는 약 6 s로 늘었다. 조각 8 ms는 스펙 ID가 아니다(주석).
+
+**leader 결정(사용자 위임 2026-11-06)**
+- `opener:allow-open-path`의 `path: "**"` 범위를 받아들인다. Zed Open in Default App과 같은 범위다.
+- 테마 토큰 2개를 `TARGET_TOKENS`에 더했다(33개, `theme.test.ts`도 33개): `error`(status.error), `warning`(status.warning). 입력칸 오류·경고 테두리와 배너 색(P-020·P-021)이다.
+- R-1 기대 표에 `ctrl-alt-r`·`ctrl-shift-enter` 2행을 개정으로 더했다(I-532·I-533, 위 Phase 2 절).
+- 루트 행 클릭이 루트를 접는 것은 그대로 둔다. I-089에 루트 예외가 없다.
+- 홈 경로 권한(`core:path:allow-resolve-directory`)을 더해 R-7 항목 툴팁의 `~` 치환을 한다.
+
+**Phase 4에서 미룬 것의 판정(PLAN 완료 조건)**
+- R-13 트리·탭: 폴더를 오가도 펼침·선택·`scrollTop`·탭이 폴더별로 유지된다(`verify/phase5.md` S2 "R-13/R-14 폴더별 문맥").
+- R-14 탭·세 번째 경로: 해제하면 그 폴더 문맥(탭 포함)이 버려진다(같은 경로로 다시 등록하면 탭 0개, 루트만 펼침). 프로젝트 패널 루트 우클릭 `Remove from Project`로 해제하면 다음 활성 규칙대로 옮겨 가고 디스크는 그대로다(S3 "R-14 해제와 탭").
+- R-7 남은 행: 프로젝트 패널 항목 경로(L-247) 툴팁이 `~` 표기, 지연 1495 ms로 통과했다.
+- `statusbar.group_gap`: 오른쪽 묶음이 아직 없어 간격이 그려지지 않는다(computed 8px만 확인). 미측정으로 남긴다.
+
+**검증**
+- 구현 담당 확인
+  - v02-P5-C1: `cargo check` 경고 0, `cargo test` 7/7(이름 규칙·덮어쓰기 금지·재귀 복사·같은 폴더 cut·원본 변경 대조).
+  - v02-P5-C3: `cargo check` 경고 0, `cargo test` 10/10(드라이브·UNC 경로 변환, HRESULT 판별, 이름 충돌 이동, 빈 예약 정리).
+  - v02-P5-C4: `cargo check` 경고 0, `cargo test` 11/11(수정 전 C:→D: 단일 파일 실패를 재현, 수정 뒤 ADS 있음·없음 모두 이동 성공).
+  - v02-P5-1: `npx tsc --noEmit` 오류 0, `npm.cmd run test` 50/50, `vite build` 통과.
+  - v02-P5-2: `npx tsc --noEmit` 오류 0, `npm.cmd run test` 65/65, `vite build` 통과.
+  - v02-P5-3: `npx tsc --noEmit` 오류 0, `npm.cmd run test` 65/65(R-1 기대 표 대조 포함).
+  - v02-P5-4: `npx tsc --noEmit` 오류 0, `npm.cmd run test` 66/66(조각 파싱, F-5 Escape).
+- V3 실측(`specs/v0.2/verify/phase5.md`, 스크린샷 `specs/v0.2/verify/phase5/`, 창 논리 1440×852, 100%, 1920×1080, Catppuccin Mocha, 대상 프로세스 고정, 입력마다 전경 확인)
+  - v02-M5(우회 빌드): 판정 행 263개 가운데 234개 통과, 불일치 14행 = 결함 F-1~F-5.
+  - v02-M5-R1(레포 빌드, 불일치·막힌 항목만): 48개 가운데 39개 통과. B-0·F-1·F-2·F-3·F-5 해소, F-4는 폴더 이동만 해소.
+  - v02-M5-R2(레포 빌드): 7개 모두 통과, F-4 단일 파일 이동 해소. 불일치 0.
+  - R-3: 사이드바 Delete = 해제, 패널 Delete = 휴지통 확인창, 루트 Delete = 무동작, 같은 컨텍스트에 두 번 묶은 키는 나중 것.
+  - R-18·R-19: 치수가 모두 toml 값(행 26, 들여쓰기 20, 안내선 x = 깊이×20+15 등), 가상 스크롤 DOM 41행/전체 184행, 클릭·키 전부.
+  - R-20: 생성·이름 변경·취소·포커스 잃음 뒤 디스크와 트리, 선택 범위, 배너 문구·색, 루트 이름 변경 불가.
+  - R-21: 확인창 문구·버튼·기본 취소·Esc·Enter, 여러 항목·넘치는 목록, 잠긴 파일 실패 알림, 삭제 뒤 선택.
+  - R-22: ` copy`·` copy 1`, 덮어쓰지 않음, NTFS 스트림·수정 시각 보존, 같은 폴더 잘라 붙이기 무동작, 자기 안에 붙이기 실패 알림, 경로 복사, 다른 볼륨 복사·이동(파일·폴더). 이동 중 원본을 바꾼 시험에서 알림 하나, 원본 그대로, 대상에 복사본이 남았다(P3-D1).
+  - R-23: 우클릭 메뉴 6종의 항목·순서·구분선·비활성·단축키가 02 11.2와 같다. 키보드 위치, 항목 실행, Reveal·Open in Default App 창이 열린다.
+  - R-24, R-26(임시 탭 교체·승격, L-63 테두리 표 전 행, 읽기 전용, UTF-8 대체 문자, html·toml 강조), R-27, R-28.
+  - 파일 작업 디스크 비교: 작업마다 전후 디스크(이름·크기·내용 해시·수정 시각)를 비교했다(`verify/phase5.md` S2b·S4a~S4d). 휴지통 목록도 전후로 비교했으나 휴지통이 꺼져 있어 도착은 판정하지 못했다(아래).
+  - 두 시나리오 단계별 증거(`verify/phase5.md` 4절, 스크린샷 `r27-step*`·`r28-step*`)
+    - A-33.2(R-27): 한 번 클릭 = 임시 탭(기울임) → 다른 파일 한 번 클릭 = 같은 자리 교체 → 더블클릭 = 일반 탭 + 편집기 포커스.
+    - A-33.4(R-28): 실제 폴더 선택 창으로 두 번째 폴더 등록 → 폴더별 탭 → 오가도 탭이 따로 유지 → 하나를 해제해도 디스크의 그 폴더는 이름·크기·해시·수정 시각이 같다.
+  - 03-tauri R-15 결과(SPEC R-21, `verify/phase5.md` 7절): `TaskDialogIndirect`로 사용자 문구 버튼(`Trash`·`Delete`)과 OS 언어 취소 버튼이 나온다. 기본 포커스는 취소 버튼이고 Enter(기본 버튼)·Esc 모두 취소다. 지우려면 `Trash`·`Delete`를 눌러야 한다. 창 제목은 `workbench-tauri`다. UI Automation 실측이다.
+  - 03-tauri R-08 결과(`verify/phase5.md` S4e·11.7, Microsoft 한글 입력기 실제 입력): 조합 중 keydown(229)은 무시된다. 조합 중 Esc 한 번은 조합만 끝내고 입력 행을 남긴다(F-5 수정 뒤). 조합이 없을 때 Esc는 취소, Enter는 확정이다. 조합 중 Enter 한 번은 마지막 글자가 잘리지 않고 이름까지 확정한다(`한글.txt`). 조합 중 방향키는 트리 선택을 바꾸지 않는다.
+  - R-30 측정값(원문에 기준이 없어 기록하면 충족, SPEC R-30)
+    - 10MB HTML 열기: M5에서 메인 스레드가 약 2.8 s 멈췄다(하트비트 최대 2,762·2,945 ms, 키→선택 최대 2.6~2.8 s). 조각 파싱 뒤 R1에서 하트비트 최대 50·53 ms, 키→선택 14/14 응답 최대 8 ms, 메뉴 열림 2.5~8.9 ms다. 작업 없을 때 하트비트 최대는 12 ms다.
+    - 재귀 복사 200MB(2,000×100KB): 11.6~11.9 s 동안 키→선택 0.5~1.2 ms, 하트비트 최대 13~28 ms.
+    - 다른 볼륨 복사 200MB: 약 1.85 s 동안 0.5~1.4 ms, 하트비트 최대 13~23 ms.
+    - 다른 볼륨 이동 200MB: R1에서 약 16 s에 성공(원본 삭제, 해시 2,000개 일치, 알림 없음). M5에서는 F-4로 시작 즉시 실패해 이동 중 응답을 재지 못했다.
+  - 측정 불가·환경
+    - 휴지통 도착: 이 PC는 C:·D:·E:·I: 모두 `NukeOnDelete=1`(휴지통 꺼짐)이다. Trash 호출 뒤 디스크에서 사라지는 것까지만 판정했다. 시스템 설정은 바꾸지 않았다(gpui v0.3 Q-16과 같은 사정).
+    - Ctrl+Alt+R 실제 입력: R 키가 WebView에 닿지 않았다(같은 방식의 Ctrl+Alt+J는 닿음). 앱 밖 전역 단축키로 추정하나 확인하지 못했다. 패널 포커스에서 CDP 합성 Ctrl+Alt+R이 탐색기를 열어 앱 배선은 통과했다.
+    - `statusbar.group_gap`: 오른쪽 묶음이 없어 미측정.
+    - 입력 배너가 마지막 보이는 행에서 잘리는지: 시험하지 않았다(V4로).
+  - 관찰(판정 아님): 루트 행 클릭이 루트를 접는다(위 leader 결정). 임시 탭이 있을 때 다른 파일 더블클릭의 첫 클릭이 임시 탭 자리를 재사용한다. CM6 `readOnly`라 `contenteditable`은 true다(입력만 막힘). 한글 Enter 한 번이 조합과 이름을 함께 확정한다.
+  - 원상복구: 원래 없던 `%TEMP%\wb-v02-m5`·`src-tauri\target\wb-m5`·`%APPDATA%\workbench-tauri`를 지웠다. 우회 빌드로 덮어쓰였던 `target/debug/workbench-tauri.exe`는 레포 소스로 다시 빌드해 되돌렸다. 앱 프로세스는 0이다. M5가 연 탐색기·메모장 창만 닫았다.
+- 측정 중 생긴 일(원칙 이탈)
+  - v02-M5 앱 실행 약 45회(유효 세션 약 22, 나머지는 빈 창 진단·스크립트 오류 재실행): "필요 최소"를 넘었다. B-0 때문에 레포 빌드가 아닌 우회 빌드로 측정했다. R1은 8회(스크립트 오류로 무효 3회 포함), R2는 1회다.
+  - OS 폴더 선택 창 7회: A-33.4의 등록 한 번을 위해 열렸다. 앞 6번은 UI Automation 도우미 실패로 닫히거나 Esc로 취소했고 등록·`state.json` 변화는 없었다. 7번째에 실제 키 입력으로 등록했다.
+  - 측정 스크립트의 기대값 오기로 가짜 불일치가 생겨 다시 돌렸다. 표에는 마지막 실행만 있고, 기대값을 보정한 두 행은 그 사실을 행에 적었다.
+  - 실제 입력이 아닌 대체: 해제한 폴더 재등록과 `Add Folders to Project…`의 선택 창 응답(페이지 `fetch` 덮어쓰기), Ctrl+Alt+R 배선 확인(CDP 합성 키).
+- 검토 C-24(`check`): PASSED.
+  - 데이터 손실 방지(배타 이름 확보, 덮어쓰기 금지, 다른 볼륨 원본 대조, 빈 예약 정리 조건, 루트 삭제 차단), `\\?\` 경로 정규화, 프로덕션 코드에 unwrap 없음.
+  - 의존성 정확한 버전과 capability 3개(`open-path` `**`는 leader 결정으로 기록), TaskDialog 문구, 가상 스크롤·조각 파싱.
+  - `metrics.ts` 112개 키가 toml에 있음, 인라인 style 없음, ponytail, Solid 반응성·뷰·리스너 정리(B-0 수정 포함).
+  - 전체 테스트 1회: `npm.cmd run typecheck` 에러 0, `npm.cmd run test` 66/66, `cargo check` 경고 0, `cargo test` 11/11.
+
+**사용자 확인 필요(V4, Phase 종료 때)** — Phase 4 목록에 더한다.
+5. 트리 이름·입력칸·배너·탭 제목의 글자 크기·색, 활성 조각 밑줄, 빈 탭 목록 자리(ID 없는 값).
+6. 입력 배너가 목록 마지막 보이는 행에서 잘리는지(`shortcut:` 주석의 한계, 시험하지 않음).
+7. 확인창이 OS 기본 TaskDialog 모양(제목·경고 아이콘·버튼)이고 취소 버튼 글자가 OS 언어(`취소`)다.
+
+**다음 Phase로 넘긴 것**
+- `statusbar.group_gap`: 오른쪽 묶음이 생길 때.
+- 바깥 변경 반영(R-25, 트리 펼침·탭 경로가 바깥 이름 변경·삭제를 따라가는 것): Phase 6.
+- 하위 폴더 읽기 동시 요청 개수 제한 없음(`shortcut:` 주석), 큰 파일 강조 지연 약 6 s(조각 파싱의 대가).
+- 열린 탭 닫기·삭제된 파일 탭 표시는 D-10·D-17대로 그대로 둔다.
 
 ### Phase 6 — 디스크 감시
 

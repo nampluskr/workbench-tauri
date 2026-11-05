@@ -1,11 +1,14 @@
 // Tree-sitter highlighting for CM6 (SPEC R-9): capture -> T-27.1 theme key -> theme syntax class.
-import { Parser, type Query, type Tree } from "web-tree-sitter";
+import { Parser, type Language, type Query, type Tree } from "web-tree-sitter";
 import runtimeWasm from "web-tree-sitter/web-tree-sitter.wasm?url";
 import { Decoration, ViewPlugin, type DecorationSet, type EditorView, type ViewUpdate } from "@codemirror/view";
 import { syntaxClass } from "../theme/theme.ts";
 import { syntaxKeys } from "../theme/apply.ts";
 import { compileQuery, grammarPaths, loadLanguage, themeKey } from "./grammar.ts";
-import { editTree, parseDoc } from "./incremental.ts";
+import { editTree, parseDoc, parseDocSliced } from "./incremental.ts";
+
+// No spec ID: a slice shorter than a frame (R-30 gives no number for how long the main thread may be held).
+const PARSE_SLICE_MS = 8;
 
 const runtime = Parser.init({ locateFile: () => runtimeWasm });
 
@@ -16,7 +19,7 @@ async function fetchExt(path: string): Promise<Response> {
 }
 
 // One load per extension id, shared by every editor using it.
-const grammars = new Map<string, Promise<{ parser: Parser; highlights: Query }>>();
+const grammars = new Map<string, Promise<{ language: Language; highlights: Query }>>();
 function grammar(id: string) {
   let loaded = grammars.get(id);
   if (!loaded) {
@@ -24,9 +27,7 @@ function grammar(id: string) {
     loaded = (async () => {
       await runtime;
       const language = await loadLanguage(new Uint8Array(await (await fetchExt(paths.wasm)).arrayBuffer()));
-      const parser = new Parser();
-      parser.setLanguage(language);
-      return { parser, highlights: compileQuery(language, await (await fetchExt(paths.highlights)).text()) };
+      return { language, highlights: compileQuery(language, await (await fetchExt(paths.highlights)).text()) };
     })();
     grammars.set(id, loaded);
   }
@@ -49,10 +50,17 @@ export function syntaxHighlighting(id: string) {
       highlights: Query | null = null;
       parser: Parser | null = null;
 
+      destroyed = false;
+
       constructor(readonly view: EditorView) {
-        grammar(id).then(({ parser, highlights }) => {
-          [this.parser, this.highlights] = [parser, highlights];
-          this.tree = parseDoc(parser, view.state.doc, null); // the only full parse
+        grammar(id).then(async ({ language, highlights }) => {
+          if (this.destroyed) return;
+          // A parser per view: a sliced parse that is waiting for its next slice must not be touched by another view.
+          const parser = new Parser();
+          parser.setLanguage(language);
+          const tree = await parseDocSliced(parser, view.state.doc, PARSE_SLICE_MS, () => this.destroyed); // the only full parse
+          if (!tree) return parser.delete();
+          [this.parser, this.highlights, this.tree] = [parser, highlights, tree];
           this.decorations = this.build();
           view.dispatch({}); // let CM6 pick up the first decorations
         }, console.error);
@@ -84,7 +92,9 @@ export function syntaxHighlighting(id: string) {
       }
 
       destroy() {
+        this.destroyed = true;
         this.tree?.delete();
+        this.parser?.delete();
       }
     },
     { decorations: (plugin) => plugin.decorations },

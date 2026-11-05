@@ -10,9 +10,11 @@ export type Tip = { title: string; action?: string; meta?: string };
 export type TipSpec = Tip | Tip[] | null;
 
 const specs = new WeakMap<Element, () => TipSpec>();
-/** Give `el` a tooltip. The function runs when the tooltip is about to show, so it can read current state. */
-export function tooltip(el: Element, spec: () => TipSpec): void {
+const delays = new WeakMap<Element, number>();
+/** Give `el` a tooltip. The function runs when the tooltip is about to show, so it can read current state. `delay` replaces the default (L-206, L-247). */
+export function tooltip(el: Element, spec: () => TipSpec, delay?: number): void {
   specs.set(el, spec);
+  if (delay !== undefined) delays.set(el, delay);
 }
 
 type Size = { w: number; h: number };
@@ -103,7 +105,7 @@ export function installTooltips(): void {
       reset();
       owner = next;
       // The position is read when the timer fires, so it is where the pointer is then (L-208).
-      if (next) timer = window.setTimeout(() => show(next), TOOLTIP_DELAY_MS);
+      if (next) timer = window.setTimeout(() => show(next), delays.get(next) ?? TOOLTIP_DELAY_MS);
     },
     true,
   );

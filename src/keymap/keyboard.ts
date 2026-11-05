@@ -41,6 +41,12 @@ export const focusStack = (): ContextNode[] => contextStack(document.activeEleme
 function onKeyDown(e: KeyboardEvent): void {
   const stroke = strokeOf(e);
   if (!stroke) return;
+  // A text input the app made (the tree's name input) takes its keys itself: the panel's bindings (Backspace, Left, Space...)
+  // must not eat them. Only the browser's own accelerators are still stopped.
+  if (e.target instanceof HTMLInputElement && "textInput" in e.target.dataset) {
+    if (BROWSER_KEYS.has(stroke)) e.preventDefault();
+    return;
+  }
   const stack = contextStack(e.target);
   let strokes = [...pending, stroke];
   let result = keymap.dispatch(strokes, stack);

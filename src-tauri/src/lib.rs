@@ -1,6 +1,7 @@
 mod caption;
 mod ext_protocol;
 mod state;
+mod files;
 
 use notify::{Event, EventKind, RecursiveMode, Watcher};
 use tauri::{Emitter, Manager};
@@ -91,6 +92,7 @@ async fn write_state(json: String) -> Result<(), String> {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_opener::init())
         .setup(|app| {
             let main = app.get_webview_window("main").ok_or("main window missing")?;
             caption::install(main.hwnd()?);
@@ -101,7 +103,7 @@ pub fn run() {
             Ok(())
         })
         .register_uri_scheme_protocol("zlext", |_ctx, request| ext_protocol::respond(&request))
-        .invoke_handler(tauri::generate_handler![caption_set_colors, read_user_keymap, check_folder, paths_exist, read_state, write_state])
+        .invoke_handler(tauri::generate_handler![caption_set_colors, read_user_keymap, check_folder, paths_exist, read_state, write_state, files::list_dir, files::read_file, files::create_file, files::create_dir, files::rename_path, files::trash_paths, files::delete_paths, files::confirm, files::paste_paths, files::duplicate_path])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

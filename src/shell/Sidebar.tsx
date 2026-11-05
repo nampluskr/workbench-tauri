@@ -1,5 +1,6 @@
 import { createEffect, createMemo, For, Show } from "solid-js";
 import { commands } from "../keymap/keyboard.ts";
+import { chain as chainWhen } from "./chain.ts";
 import { SIDEBAR_WIDTH } from "../spec/metrics.ts";
 import { displayNames } from "../workspace/folders.ts";
 import {
@@ -24,10 +25,7 @@ import type { MenuEntry } from "./menu.ts";
 const sidebarFocused = () => !!document.querySelector(".sidebar-list")?.contains(document.activeElement);
 
 /** The menu actions are shared by name with the app menu: act only with focus in the list, else hand on (P3-2). */
-function chain(name: string, handler: () => void): void {
-  const previous = commands.get(name);
-  commands.set(name, () => (sidebarFocused() ? handler() : previous?.()));
-}
+const chain = (name: string, handler: () => void) => chainWhen(name, sidebarFocused, handler);
 chain("menu::SelectNext", () => moveCursor(1)); // A-17.3
 chain("menu::SelectPrevious", () => moveCursor(-1));
 chain("menu::Confirm", () => cursorId() && activateFolder(cursorId()!)); // A-17.4

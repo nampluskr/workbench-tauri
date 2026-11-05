@@ -41,6 +41,8 @@ const VARS: [token: string, cssVar: string][] = [
   ["border.focused", "--border-focused"],
   ["icon.muted", "--icon-muted"],
   ["icon.disabled", "--icon-disabled"],
+  ["error", "--error"],
+  ["warning", "--warning"],
 ];
 
 test("parseColor: #RRGGBB has alpha 255, #RRGGBBAA keeps it, anything else is rejected (T-01.7)", () => {

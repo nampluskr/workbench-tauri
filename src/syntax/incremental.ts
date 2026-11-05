@@ -41,3 +41,23 @@ const CHUNK = 4096;
 export function parseDoc(parser: Parser, doc: Text, oldTree: Tree | null): Tree | null {
   return parser.parse((index) => (index < doc.length ? doc.sliceString(index, index + CHUNK) : undefined), oldTree);
 }
+
+/**
+ * R-30: the first full parse of a big file, in slices of `sliceMs`, giving the main thread back between slices so typing,
+ * scrolling and menus stay live. A cancelled web-tree-sitter parse resumes where it stopped on the next call, so `parser`
+ * must belong to this parse alone. `stop` says the result is no longer wanted (the view went away); null is returned then.
+ */
+export async function parseDocSliced(parser: Parser, doc: Text, sliceMs: number, stop: () => boolean): Promise<Tree | null> {
+  for (;;) {
+    const start = performance.now();
+    const tree = parser.parse((index) => (index < doc.length ? doc.sliceString(index, index + CHUNK) : undefined), null, {
+      progressCallback: () => performance.now() - start > sliceMs, // true cancels this slice
+    });
+    if (tree) return tree;
+    await new Promise((resolve) => setTimeout(resolve));
+    if (stop()) {
+      parser.reset();
+      return null;
+    }
+  }
+}

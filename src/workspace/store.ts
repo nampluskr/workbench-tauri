@@ -5,7 +5,8 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { notify } from "../shell/toast.ts";
 import { SIDEBAR_WIDTH, STATE_SAVE_DEBOUNCE_MS } from "../spec/metrics.ts";
 import { addOrActivate, move, moveCursor as nextCursor, remove, type Folder } from "./folders.ts";
-import { normalizePath } from "./paths.ts";
+import { disposeContext, newContext, type FolderContext } from "./context.ts";
+import { folderName, normalizePath } from "./paths.ts";
 import { parseState, serializeState } from "./state-file.ts";
 
 // The registered folders and the state.json that keeps them (R-11~R-16, R-29, D-8, D-11). Folders, their order and
@@ -22,9 +23,13 @@ export { folders, activeId, cursorId, missingIds, sidebarWidth };
 
 export const activeFolder = (): Folder | null => folders().find((f) => f.id === activeId()) ?? null;
 
-// Work context per folder (A-15): tree state and tabs arrive with Phase 5; for now only the place to keep them.
-const contexts = new Map<string, object>();
-export const contextOf = (id: string): object => contexts.get(id) ?? contexts.set(id, {}).get(id)!;
+// Work context per folder (A-15): tree state and tabs. Made on first use, dropped with the folder (R-14).
+const contexts = new Map<string, FolderContext>();
+export function contextOf(folder: Folder): FolderContext {
+  let ctx = contexts.get(folder.id);
+  if (!ctx) contexts.set(folder.id, (ctx = newContext(folder.path, folderName(folder.path))));
+  return ctx;
+}
 
 // --- saving ------------------------------------------------------------------
 
@@ -159,7 +164,9 @@ export function removeFolder(id: string): void {
     setCursorId(cursorId() === id ? (next.folders[index] ?? next.folders[index - 1])?.id ?? null : cursorId());
     setMissingIds((old) => new Set([...old].filter((m) => m !== id)));
   });
-  contexts.delete(id); // its tabs go with it (A-14)
+  const ctx = contexts.get(id);
+  if (ctx) disposeContext(ctx); // its tabs go with it (A-14, R-14)
+  contexts.delete(id);
   changed();
 }
 
@@ -173,3 +180,6 @@ export function moveFolder(id: string, dir: 1 | -1): void {
 
 export const moveCursor = (dir: 1 | -1): void => void setCursorId(nextCursor(folders(), cursorId(), dir));
 export const setCursor = (id: string): void => void setCursorId(id);
+
+/** Run `fn` on every folder's context (a rename or move can touch the tabs and trees of several folders). */
+export const eachContext = (fn: (ctx: FolderContext) => void): void => contexts.forEach(fn);

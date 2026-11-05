@@ -23,8 +23,8 @@ test("R-5 / I-704: shortcut is the last unshadowed binding in the focus context,
   const workspace = [node("Workspace")];
   assert.deepEqual(shortcutFor(km, "workspace::ToggleLeftDock", workspace), ["Ctrl-B"]);
   assert.deepEqual(shortcutFor(km, "workspace::Open", workspace), ["Ctrl-K", "Ctrl-O"]);
-  // Project panel actions are not bound in the Workspace context: the window-wide fallback finds the last one.
-  assert.deepEqual(shortcutFor(km, "project_panel::Copy", workspace), ["Ctrl-Insert"]);
+  // Project panel actions are not bound in the Workspace context: the window-wide fallback finds the last one (02 11.2).
+  for (const [action, key] of [["Copy", "Ctrl-C"], ["Paste", "Ctrl-V"], ["Trash", "Delete"], ["Delete", "Ctrl-Delete"]]) assert.deepEqual(shortcutFor(km, `project_panel::${action}`, workspace), [key]);
   assert.equal(shortcutFor(km, "pane::GoBack", workspace), undefined); // L-223
   // A user binding comes last and wins; a null on the same context hides the key of the shadowed default.
   km.addSections("user", [{ context: "Workspace", bindings: { "ctrl-shift-b": "workspace::ToggleLeftDock" } }]);

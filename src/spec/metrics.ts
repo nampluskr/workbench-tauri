@@ -4,6 +4,8 @@ const REM_SIZE = 16; // units.rem_size (L-01)
 /** L-02: px -> rem is px / rem_size. The only place that converts. */
 const rem = (px: number) => `${px / REM_SIZE}rem`;
 
+export const PROJECT_PANEL_ITEM_HEIGHT = 26; // project_panel.item.height (L-36); script needs it for the virtual window
+
 // Buffer font size stays in px (L-08); every other length goes through rem().
 const METRICS: Record<string, string> = {
   "units.rem_size": `${REM_SIZE}px`, // L-01
@@ -31,6 +33,18 @@ const METRICS: Record<string, string> = {
   "window.border_sidebar_right": rem(1), // L-303
   "window.border_dock_left": rem(1), // L-16
   "project_panel.default_width": rem(240), // L-32 (left Dock content)
+  "icons.size.medium": rem(16), // L-06 (project panel file and folder icons; L-40 itself is not judged)
+  "project_panel.item.height": rem(PROJECT_PANEL_ITEM_HEIGHT), // L-36 (comfortable)
+  "project_panel.item.content_height": rem(24), // L-36
+  "project_panel.item.border_width": rem(1), // L-48
+  "project_panel.item.border_right_width": rem(2), // L-48
+  "project_panel.item.padding_x": rem(6), // L-37
+  "project_panel.item.gap": rem(4), // L-37
+  "project_panel.indent_step": rem(20), // L-37
+  "project_panel.indent_guide.width": rem(1), // L-38
+  "project_panel.indent_guide.offset_x": rem(15), // L-38
+  "project_panel.indent_guide.padding_y": rem(4), // L-38
+  "project_panel.collapsed_path.padding_x": rem(2), // L-43
   "dock.resize_handle_width": rem(6), // L-30
   "dock.min_width": rem(6), // L-31
   "tab.bar_height": rem(32), // L-22
@@ -40,7 +54,17 @@ const METRICS: Record<string, string> = {
   "tab.end_buttons_area.border_start_right": rem(1), // L-27
   "tab.end_buttons_area.border_end_left": rem(1), // L-27
   "tab.bar_icon_size": rem(14), // L-300
+  "inline_input.height": rem(24), // P-019
+  "inline_input.border_top_bottom_left": rem(1), // P-020
+  "inline_input.border_right": rem(2), // P-020
+  "inline_input.banner.padding_y": rem(4), // P-021
+  "inline_input.banner.padding_x": rem(8), // P-021
+  "inline_input.banner.border": rem(1), // P-021
   "tab.border_width": rem(1), // L-63
+  "tab.content_height": rem(31), // L-23
+  "tab.padding_x": rem(4), // L-24
+  "tab.gap": rem(4), // L-24
+  "tab.active_padding_bottom": rem(1), // L-63
   "statusbar.height": rem(30), // L-28
   "statusbar.padding_y": rem(4), // L-28
   "statusbar.button_height": rem(22), // L-28
@@ -107,8 +131,15 @@ export const SIDEBAR_WIDTH = { default: 300, min: 200, max: 800 }; // sidebar.de
 export const STATE_SAVE_DEBOUNCE_MS = 500; // app.state_save_debounce (A-24.2)
 export const PROJECT_NAME_MAX_CHARS = 40; // titlebar.project_name.max_chars (L-88)
 
+// Project panel and tab values that script reads.
+export const PROJECT_PANEL_NAME_TOOLTIP_DELAY_MS = 1500; // project_panel.name_tooltip_delay (L-49)
+export const TREE_OVERSCAN_ROWS = 10; // rows drawn beyond the visible range on each side (D-9)
+export const PANE_MAX_PREVIEW_TABS = 1; // pane.max_preview_tabs (I-062)
+export const TAB_MAX_TITLE_CHARS = 24; // tab.max_title_chars (L-26)
+
 // Menu values that script reads.
 export const MENU_POPUP_OFFSET = { x: -5, y: 0 }; // menu.popup_offset_x / _y (I-314)
+export const MENU_KEYBOARD_OFFSET = { x: 2, y: 2 }; // menu.context.keyboard_offset_x / _y (I-502)
 export const MENU_WINDOW_MARGIN = 8; // menu.context.window_margin (I-314, I-501)
 export const MENU_SHORTCUT_ACTIVATE_DELAY_MS = 50; // menu.shortcut_activate_delay (I-520)
 

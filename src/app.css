@@ -117,8 +117,34 @@ body { background: var(--background); color: var(--text); font-size: 1rem; }
 }
 .tab-bar-edge.start { border-right: var(--tab-end-buttons-area-border-start-right) solid var(--border); }
 .tab-bar-edge.end { border-left: var(--tab-end-buttons-area-border-end-left) solid var(--border); }
-.tab-bar-filler { flex: 1; border-bottom: var(--tab-border-width) solid var(--border); } /* L-63 */
-.pane-body { flex: 1; min-height: 0; }
+.pane-body { flex: 1; min-height: 0; position: relative; }
+.pane-body > .cm-editor { position: absolute; inset: 0; }
+
+/* R-26 / L-63 (shortcut: tabs past the width are clipped, no scrolling or overflow menu in v0.2). The list carries the full-width line under the tabs; each tab draws its own sides (tabEdges). */
+.tab-list { position: relative; flex: 1; min-width: 0; display: flex; overflow: hidden; }
+.tab-list::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--tab-border-width); background: var(--border); }
+.tab {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: var(--tab-bar-height);
+  padding-inline: var(--tab-padding-x); /* L-24 */
+  gap: var(--tab-gap);
+  border: solid transparent;
+  border-width: 0 var(--tab-border-width) var(--tab-border-width); /* a side without a line keeps its 1px as padding */
+  background: var(--tab-inactive-background);
+  color: var(--text-muted);
+  cursor: default;
+}
+.tab.active { background: var(--tab-active-background); color: var(--text); border-bottom-width: var(--tab-active-padding-bottom); }
+.tab.edge-l { border-left-color: var(--border); }
+.tab.edge-r { border-right-color: var(--border); }
+.tab.edge-b { border-bottom-color: var(--border); }
+.tab-title { height: var(--tab-content-height); line-height: var(--tab-content-height); white-space: nowrap; }
+.tab.preview .tab-title { font-style: italic; } /* I-064 */
 
 /* Icon button: Default height square (L-07) unless the area sets --button-size. */
 .icon-button {
@@ -237,9 +263,77 @@ body { background: var(--background); color: var(--text); font-size: 1rem; }
 .menu-separator { height: var(--menu-separator-height); margin: var(--menu-separator-margin-y) 0; background: var(--border-variant); }
 
 /* R-16 project panel states. No spec ID sizes these texts or buttons, so only the structure is here. */
-.project-panel { height: 100%; overflow: auto; outline: none; }
+.project-panel { height: 100%; overflow: auto; outline: none; user-select: none; }
+
+/* R-18 tree. Rows are drawn in a window moved by a transform; heights and offsets come from an adopted sheet (ProjectTree.tsx). */
+.tree-scroll { height: 100%; overflow-x: hidden; overflow-y: auto; }
+.tree-spacer { position: relative; }
+.tree-window { position: absolute; top: 0; left: 0; right: 0; }
+.tree-row {
+  position: relative;
+  box-sizing: border-box;
+  height: var(--project-panel-item-height); /* L-36 */
+  border: var(--project-panel-item-border-width) solid transparent; /* L-48: the color shows only on the focused selection */
+  border-right-width: var(--project-panel-item-border-right-width);
+  color: var(--text);
+  cursor: default;
+  --icon-size: var(--icons-size-medium);
+}
+.tree-row:hover { background: var(--ghost-element-hover); }
+.tree-row.selected, .tree-row.marked { background: var(--ghost-element-selected); }
+.project-panel:focus-within .tree-row.selected { border-color: var(--border-focused); }
+.tree-item { display: flex; align-items: center; height: var(--project-panel-item-content-height); }
+.tree-indent { flex: none; width: var(--project-panel-indent-step); } /* L-37 */
+.tree-main { display: flex; align-items: center; min-width: 0; gap: var(--project-panel-item-gap); padding-inline: var(--project-panel-item-padding-x); }
+.tree-main .icon { flex-shrink: 0; color: var(--icon-muted); }
+.tree-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tree-segment { padding-inline: var(--project-panel-collapsed-path-padding-x); } /* L-43 */
+.tree-segment.active { text-decoration: underline; }
+/* L-38: a guide per ancestor level, over the whole row (outside its border), a gap at the first and last row. */
+.tree-guides { position: absolute; left: calc(-1 * var(--project-panel-item-border-width)); top: calc(-1 * var(--project-panel-item-border-width)); bottom: calc(-1 * var(--project-panel-item-border-width)); display: flex; pointer-events: none; }
+.tree-guide { position: relative; flex: none; width: var(--project-panel-indent-step); }
+.tree-guide::before { content: ""; position: absolute; top: 0; bottom: 0; left: var(--project-panel-indent-guide-offset-x); width: var(--project-panel-indent-guide-width); background: var(--border); }
+.tree-guide.first::before { top: var(--project-panel-indent-guide-padding-y); }
+.tree-guide.last::before { bottom: var(--project-panel-indent-guide-padding-y); }
 
 /* L-87, L-88: the left group of the title bar. */
 .title-left { display: flex; align-items: center; gap: var(--titlebar-left-group-gap); margin-right: auto; }
 .project-name { height: var(--buttons-height-default); padding: 0; border: 0; background: none; color: var(--text); font: inherit; }
 .project-name.empty { color: var(--text-muted); } /* L-227 */
+
+/* R-20 inline name input (P-019~P-021): the row keeps its height; the input fills the name's place. */
+.tree-row.editing {
+  border-width: var(--inline-input-border-top-bottom-left);
+  border-right-width: var(--inline-input-border-right);
+  background: var(--panel-background);
+}
+.tree-row.editing:focus-within { border-color: var(--border-focused); }
+.tree-row.editing.warning:focus-within { border-color: var(--warning); }
+.tree-row.editing.error:focus-within { border-color: var(--error); }
+.tree-input {
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  height: var(--inline-input-height);
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  user-select: text;
+}
+/* P-021: hangs under the row. shortcut: it is clipped by the tree's scroll area when the row is the last one in view. */
+.tree-banner {
+  position: absolute;
+  z-index: 2;
+  top: 100%;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
+  padding: var(--inline-input-banner-padding-y) var(--inline-input-banner-padding-x);
+  border: var(--inline-input-banner-border) solid;
+  background: var(--background);
+}
+.tree-banner.warning { color: var(--warning); border-color: var(--warning); }
+.tree-banner.error { color: var(--error); border-color: var(--error); }

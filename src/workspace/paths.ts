@@ -57,3 +57,15 @@ export function parentName(path: string): string {
 
 /** L-88: the title bar shows at most `max` characters of the name, then an ellipsis. */
 export const truncateName = (name: string, max: number): string => (name.length > max ? name.slice(0, max) + "…" : name);
+
+/** The last piece of a path. */
+export const baseName = (path: string): string => path.slice(path.lastIndexOf("\\") + 1);
+
+/** L-247: the path with the home folder written as `~` (compared without case). */
+export function tildePath(path: string, home: string | null): string {
+  if (home === null) return path;
+  const [p, h] = [path.toLowerCase(), home.toLowerCase()];
+  if (p === h) return "~";
+  const prefix = h.endsWith("\\") ? h : h + "\\";
+  return p.startsWith(prefix) ? "~\\" + path.slice(prefix.length) : path;
+}

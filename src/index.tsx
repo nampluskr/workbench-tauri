@@ -3,6 +3,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import App from "./App.tsx";
 import { installKeyboard } from "./keymap/keyboard.ts";
 import { loadUserKeymap, watchUserKeymap } from "./keymap/load.ts";
+import { loadHome } from "./shell/home.ts";
 import { installTooltips } from "./shell/tooltip.ts";
 import { guardClose, loadWorkspace } from "./workspace/store.ts";
 import { applyTheme } from "./theme/apply.ts";
@@ -21,6 +22,7 @@ try {
   await applyTheme();
   await loadUserKeymap();
   await loadWorkspace();
+  await loadHome();
   installKeyboard();
   installTooltips();
   render(() => <App />, root);
