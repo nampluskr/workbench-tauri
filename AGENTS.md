@@ -8,11 +8,11 @@
 - **Zed 코드 복사 금지** — Zed 앱 코드(GPL-3.0)는 동작 이해에만 참고하고 복사하지 않는다. (출처: `docs/refs/03-tauri/README.md` 1절)
 - **HERDR 문서** — `specs/{version}/HERDR-SETUP.md`·`HERDR-DECISIONS.md`는 버전마다 따로 두고, 사용자 승인 뒤 `writer`가 쓴다. `leader`는 코드·문서를 쓰지 않는다.
 - **HERDR 구성은 구독·토큰 부담으로 정한다** — 에이전트 풀은 Claude Code Opus 5.5 medium, Claude Code Sonnet 5.5 high, agy gemini-3.8-flash-high다(Codex는 쓰지 않는다, 사용자 2026-11-04). v0.2부터 Codex gpt-6.1-terra high를 더한다(사용자 결정 2026-11-05). 역할·모델·effort 배정은 구독 현황(구독 종류, 남은 한도·초기화 시점, 동시에 도는 다른 워크스페이스)을 사람에게 확인하고 구독별 토큰 부담을 따져 정한다. 배정과 근거는 `specs/{version}/HERDR-SETUP.md`에 적고, 한도가 바뀌어 구성을 바꾸면 다시 승인받는다.
-- **커밋은 leader만** — `leader`가 커밋만 한다(내용은 쓰지 않는다). `writer`와 구현 담당은 커밋하지 않는다. push는 매번 사용자 승인 뒤에 한다.
+- **커밋은 leader만** — `leader`가 커밋만 한다(내용은 쓰지 않는다). `writer`와 구현 담당은 커밋하지 않는다. push는 매번 사용자(또는 사용자에게 위임받은 leader) 승인 뒤에 한다.
 
 ---
 
-# 에이전트 공통 지침 (v0.2)
+# 에이전트 공통 지침 (v0.4)
 
 Tauri 2 기반 Zed 재현 편집기의 에이전트 공통 지침이다. 모든 에이전트가 따른다.
 `workbench-gpui`의 `AGENTS.md` 0·1·2·3·3A·4·5·8·9장을 TypeScript/Tauri에 맞게 고쳐 들여왔다.
@@ -23,8 +23,8 @@ Tauri 2 기반 Zed 재현 편집기의 에이전트 공통 지침이다. 모든 
 
 ## 0. 먼저 읽을 것
 
-1. `specs/v0.2/HERDR-SETUP.md`: 에이전트 구성, 역할, 파일 소유권, 작업 프로토콜
-2. `specs/v0.2/PLAN.md`: Phase별 목표, 완료 조건, 진행 현황
+1. `specs/v0.4/HERDR-SETUP.md`: 에이전트 구성, 역할, 파일 소유권, 작업 프로토콜
+2. `specs/v0.4/PLAN.md`: Phase별 목표, 완료 조건, 진행 현황
 3. `spec/INDEX.md`: Zed 실측 문서와 스펙의 색인. 원문은 이 색인을 보고 필요한 절만 연다.
 
 자기 역할은 `leader`의 지시나 최초 프롬프트로 정해진다. 역할이 불분명하면 작업하지 말고 질문한다.
@@ -37,7 +37,7 @@ Tauri 2 기반 Zed 재현 편집기의 에이전트 공통 지침이다. 모든 
 
 - 목적: Zed 편집기의 레이아웃과 동작을 재현하는 편집기를 Tauri 2로 만든다. `workbench-gpui`와 같은 앱의 다른 갈래다(루트 `INTENT.md`).
 - 스택: Tauri 2(Rust 코어) + Solid + TypeScript + Vite, 편집기 CodeMirror 6, 구문 강조 `web-tree-sitter`. Windows 전용.
-- 현재 상태: v0.2 진행 중이다. workbench-gpui v0.2+v0.3 끝 상태와 같은 외형·기능을 만든다(`specs/v0.2/INTENT.md`). v0.1은 종료했다(2026-11-05). 이전 PoC는 태그 `legacy-v0.1-poc`(9f83f8d)로만 남아 있다.
+- 현재 상태: v0.4 진행 중이다. workbench-gpui v0.4 끝 상태와 같은 외형·기능을 만든다(`specs/v0.4/INTENT.md`). v0.3 번호는 쓰지 않는다(gpui와 버전 번호를 맞춤). v0.2는 종료했다(2026-11-06). v0.1은 종료했다(2026-11-05). 이전 PoC는 태그 `legacy-v0.1-poc`(9f83f8d)로만 남아 있다.
 - 핵심 원칙
   - Zed 실측값은 요구사항이다.
   - 불필요한 코드와 테스트를 만들지 않는다(ponytail).
@@ -124,11 +124,11 @@ cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
 ### 3A.4 V3 수행 절차
 
 1. 측정할 화면 상태와 스펙 ID 목록을 먼저 작성한다. 목록에 없는 항목은 측정하지 않는다.
-2. 측정 조건을 고정한다. 데스크톱 주 모니터 1920x1080, 100%다(사용자 2026-11-04, `specs/v0.2/HERDR-SETUP.md` 3장). 테마와 창 크기는 측정 목록에 적는다. 스펙의 측정 조건(200% 기준)과는 논리 px로 비교한다.
+2. 측정 조건을 고정한다. 데스크톱 주 모니터 1920x1080, 100%다(사용자 2026-11-04, `specs/v0.4/HERDR-SETUP.md` 3장). 테마와 창 크기는 측정 목록에 적는다. 스펙의 측정 조건(200% 기준)과는 논리 px로 비교한다.
 3. 앱은 측정 세션당 1회만 실행하고, 목록의 상태에 도달하는 데 필요한 만큼만 조작한다.
 4. 눈대중으로 판단하지 않는다. WebView 값 덤프를 먼저 쓰고, 필요할 때만 스크린샷 픽셀을 잰다.
 5. 입력 도구로 키·마우스를 보낼 때는 대상 PID·HWND를 고정하고, 입력 직전마다 전경 창이 대상인지 확인한다(이전 PoC에서 다른 앱 창으로 입력이 들어간 사고가 있었다).
-6. `specs/v0.2/verify/`에 스펙 ID, 기대값, 측정값, 차이, 판정을 표로 남긴다.
+6. `specs/v0.4/verify/`에 스펙 ID, 기대값, 측정값, 차이, 판정을 표로 남긴다.
 7. 측정자가 직접 고치지 않는다. 불일치 목록을 `leader`에게 보고한다. 다시 측정할 때는 불일치 항목만 잰다.
 
 ### 3A.5 실행 범위
@@ -215,7 +215,7 @@ V3 실측 결과는 다음 형식으로 보고한다.
 ```text
 [MEASURED] <task-id>
 - 측정 조건: <모니터·창 크기, DPI 배율, 테마, 폰트>
-- 결과 파일: specs/v0.2/verify/<파일>
+- 결과 파일: specs/v0.4/verify/<파일>
 - 통과: <개수>
 - 불일치: <스펙 ID, 기대값, 측정값, 차이 목록>
 - 측정 불가: <항목과 사유>
@@ -234,9 +234,9 @@ V3 실측 결과는 다음 형식으로 보고한다.
 ## 9. 금지 사항
 
 - 승인 없는 의존성 추가·제거·버전 변경(`package.json`, `package-lock.json`, `src-tauri/Cargo.toml`, `Cargo.lock`)
-- 승인 없는 CSP·capability 완화
+- 사용자(또는 사용자에게 위임받은 leader) 승인 없는 CSP·capability 완화
 - 소유하지 않은 파일 수정, `spec/` 수정(원본은 workbench-gpui)
-- `leader` 외의 커밋, 사용자 승인 없는 push, 강제 푸시
+- `leader` 외의 커밋, 사용자(또는 사용자에게 위임받은 leader) 승인 없는 push, 강제 푸시
 - 스펙에 없는 수치의 추정 입력
 - 테스트를 통과시키기 위한 테스트 삭제나 기대값 변경
 - 작업 범위 밖의 리팩토링
