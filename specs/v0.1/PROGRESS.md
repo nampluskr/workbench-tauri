@@ -99,7 +99,278 @@
 
 ### Phase 2 — 창·단위·테마·키맵 기반
 
-없음.
+- **W-7 R-7 대상 토큰·화면 샘플 고정** (2026-11-05)
+  - 무엇을 했나: SPEC R-7의 시작 조건이다. 대상 토큰 목록과 화면 샘플 목록을 원문에서 뽑아 고정했다.
+    - 원문: `docs/refs/01-zed/03-THEME-ICONS.md`(T-08, T-26, T-40, 값 표 T-02~T-05·T-25), `01-LAYOUT.md`(L-·E- 행)
+    - **이 목록은 고정한 뒤 바꾸지 않는다(SPEC R-7).**
+    - 처음 뽑을 때 "확인 필요"였던 7건(표 4)은 리더 결정으로 정리했다(W-7-R1). 표 1~3은 그 결정까지 반영해 확정한 것이다.
+  - 결과
+    - 대상 토큰 24개(아래 표 1). T-40에 있는 키만 넣었다.
+    - 그 토큰에 걸리는 T-26 규칙(아래 표 2)
+    - 화면 샘플: Mocha 23개, Latte 23개(아래 표 3, 같은 요소·상태를 두 테마에 적용)
+    - One Light는 토큰 값만 본다(D-8). 표 1의 24개 토큰을 대상으로 한다.
+  - 검증: 원문 대조. 토큰마다 T-40 행과 화면 요소의 L-·E- 행을 달았다.
+  - 특이사항: 처음에 확인이 필요했던 7건은 표 4의 리더 결정으로 정리했다(남은 "확인 필요" 없음). 미사용으로 뺀 토큰은 표 5에 있다.
+
+  표 1. 대상 토큰
+
+  | # | 토큰 | T-40 | 쓰이는 화면 요소(이번 버전) | 원문 ID |
+  | --- | --- | --- | --- | --- |
+  | 1 | `border` | T-40.2 | 영역 사이 1px 선, 왼쪽 Dock 오른쪽 테두리 | L-16, T-08.13, `window.border_dock_left` |
+  | 2 | `title_bar.background` | T-40.15 | 타이틀 바(창 포커스 있음) | L-81, T-08.1, T-08.7 |
+  | 3 | `title_bar.inactive_background` | T-40.15 | 타이틀 바(창 포커스 잃음) | L-81 |
+  | 4 | `text` | T-40.8 | 타이틀 바 글자, 창 버튼 글리프, 활성 탭 제목 | L-84, T-08.5, T-08.15 |
+  | 5 | `text.muted` | T-40.9 | 비활성 탭 제목 | T-40.9 |
+  | 6 | `ghost_element.hover` | T-40.5 | 창 버튼 hover(닫기 외) | L-84 |
+  | 7 | `ghost_element.active` | T-40.5 | 창 버튼 누름(닫기 외) | L-84 |
+  | 8 | `status_bar.background` | T-40.16 | 상태 표시줄 | L-91, T-08.1, T-08.9 |
+  | 9 | `tab_bar.background` | T-40.17 | 탭 바 바탕 | L-61, T-08.1 |
+  | 10 | `tab.active_background` | T-40.17 | 활성 탭 | L-63, T-08.3, T-08.11 |
+  | 11 | `tab.inactive_background` | T-40.17 | 비활성 탭 | L-63, T-08.4, T-08.10 |
+  | 12 | `panel.background` | T-40.19 | 사이드바, 왼쪽 Dock | L-12, L-14, T-08.2, T-08.8 |
+  | 13 | `editor.background` | T-40.22 | 편집기 바탕 | L-102, T-08.3, T-08.11 |
+  | 14 | `editor.foreground` | T-40.22 | 편집기 글자(구문 강조 전) | T-40.22 |
+  | 15 | `editor.gutter.background` | T-40.23 | 거터 바탕 | E-007 |
+  | 16 | `editor.line_number` | T-40.23 | 줄 번호(커서 줄 외) | E-006 |
+  | 17 | `editor.active_line_number` | T-40.23 | 커서 줄 번호 | E-006 |
+  | 18 | `editor.active_line.background` | T-40.23 | 현재 줄 강조 | E-011 |
+  | 19 | `players[0].selection` | T-40.26 | 선택 영역 | E-015 |
+  | 20 | `scrollbar.thumb.background` | T-40.21 | 편집기 스크롤 손잡이 기본 | E-032(색) |
+  | 21 | `scrollbar.thumb.hover_background` | T-40.21 | 손잡이 hover | E-032(색) |
+  | 22 | `scrollbar.thumb.active_background` | T-40.21 | 손잡이 끄는 중 | E-032(색), T-26.3 |
+  | 23 | `scrollbar.track.background` | T-40.21 | 편집기 스크롤 트랙 | E-031 |
+  | 24 | `background` | T-40.1 | 창 맨 바닥. 화면 샘플 없이 토큰 값(V1·V2)만 본다(Q-7) | L-11 |
+
+  E-032는 두께만 판정에서 뺐다(D-15). 손잡이 색 상태는 대상이다.
+
+  표 2. 대상 토큰에 걸리는 T-26 규칙
+
+  | T-26 | 토큰 | 걸리는 테마 | 규칙 |
+  | --- | --- | --- | --- |
+  | T-26.3 | `scrollbar.thumb.active_background` | One Light(키 없음), Mocha·Latte(`null`) | `scrollbar.thumb.background` 값을 쓴다 |
+  | T-26.17 | 표 1에 없는 키 | — | 쓰지 않는다 |
+
+  - 표 1의 나머지 23개 토큰은 세 테마 JSON에 모두 값이 있다(T-02~T-05, T-25 값 표). 그래서 다른 T-26 규칙은 걸리지 않는다.
+  - `theme.fallback.*` 가운데 표 1의 토큰에 걸리는 항목은 없다. `theme.fallback."scrollbar.thumb.border"`(T-26.8)는 `scrollbar.thumb.border`가 대상이 아니어서(Q-2) 걸리지 않는다.
+
+  표 3. 화면 샘플(Mocha·Latte 각각)
+
+  | # | 화면 요소 | 상태 | 토큰 | 원문 ID |
+  | --- | --- | --- | --- | --- |
+  | S-1 | 타이틀 바 | 기본(창 포커스) | `title_bar.background` | T-08.1 / T-08.7 |
+  | S-2 | 타이틀 바 | 창 포커스 잃음 | `title_bar.inactive_background` | L-81 |
+  | S-3 | 타이틀 바 글자·창 버튼 글리프 | 기본 | `text` | L-84, T-08.5 / T-08.15 |
+  | S-4 | 창 버튼(최소화·최대화) | hover | `ghost_element.hover` | L-84 |
+  | S-5 | 창 버튼(최소화·최대화) | 누름 | `ghost_element.active` | L-84 |
+  | S-6 | 사이드바 | 기본 | `panel.background` | L-12, T-08.2 / T-08.8 |
+  | S-7 | 왼쪽 Dock | 기본 | `panel.background` | L-14, T-08.2 / T-08.8 |
+  | S-8 | 영역 사이 선(타이틀 바 아래, 탭 바 아래, 상태 표시줄 위, 사이드바 오른쪽, 왼쪽 Dock 오른쪽) | 기본 | `border` | L-16, T-08.13 |
+  | S-9 | 탭 바 바탕 | 기본 | `tab_bar.background` | L-61, T-08.1 |
+  | S-10 | 활성 탭 | 기본 | `tab.active_background` | L-63, T-08.3 / T-08.11 |
+  | S-11 | 비활성 탭 | 기본 | `tab.inactive_background` | L-63, T-08.4 / T-08.10 |
+  | S-12 | 활성 탭 제목 | 기본 | `text` | T-40.8 |
+  | S-13 | 비활성 탭 제목 | 기본 | `text.muted` | T-40.9 |
+  | S-14 | 상태 표시줄 | 기본 | `status_bar.background` | L-91, T-08.1 / T-08.9 |
+  | S-15 | 편집기 바탕 | 기본 | `editor.background` | L-102, T-08.3 / T-08.11 |
+  | S-16 | 편집기 글자 | 기본(구문 강조 전) | `editor.foreground` | T-40.22 |
+  | S-17 | 거터 바탕 | 기본 | `editor.gutter.background` | E-007 |
+  | S-18 | 줄 번호 | 커서 줄 외 | `editor.line_number` | E-006 |
+  | S-19 | 줄 번호 | 커서 줄 | `editor.active_line_number` | E-006 |
+  | S-20 | 현재 줄 강조 | 커서 줄(선택 없음) | `editor.active_line.background` | E-011 |
+  | S-21 | 선택 영역 | 선택 있음 | `players[0].selection` | E-015 |
+  | S-22 | 편집기 스크롤 손잡이 | 기본 / hover / 끄는 중 | `scrollbar.thumb.background` / `scrollbar.thumb.hover_background` / `scrollbar.thumb.active_background` | E-032(색), T-26.3 |
+  | S-23 | 편집기 스크롤 트랙 | 기본 | `scrollbar.track.background` | E-031 |
+
+  - S-22는 한 요소의 세 상태다. 상태마다 따로 잰다.
+  - Latte 관찰 항목 T-08.7~T-08.18 가운데 이번 화면에 있는 것은 T-08.7·T-08.8·T-08.9·T-08.10·T-08.11·T-08.13·T-08.15다. 위 표에 모두 들어 있다.
+  - 이번 화면에 요소가 없어 뺀 것은 다섯이다. T-08.12(사이드바 선택 항목), T-08.14(트리 항목 글자), T-08.16(비활성 ←→ 아이콘), T-08.17(프로젝트 패널 토글)은 화면에 해당 요소가 없다. T-08.18은 원문이 "제외 대상"으로 적었다.
+  - 표 1의 `background`(창 맨 바닥)는 화면 샘플에 넣지 않고 토큰 값만 본다(표 4 Q-7).
+
+  표 4. 처음 확인이 필요했던 항목과 결정
+
+  | Q | 항목 | 원문 | 처음 판단이 서지 않은 이유 | 결정 |
+  | --- | --- | --- | --- | --- |
+  | Q-1 | `players[0].cursor`(캐럿 색) | T-40.26, E-012 | 편집기에 캐럿이 보이지만, SPEC R-2·R-7이 든 화면 요소에 캐럿이 없다 | 대상 아님. SPEC 요소 목록 밖이다 |
+  | Q-2 | `scrollbar.thumb.border`와 T-26.8(`theme.fallback."scrollbar.thumb.border"`) | T-40.21, E-032 | E-032 두께를 판정하지 않으므로(D-15) 테두리를 그리는지가 정해지지 않았다 | 대상 아님. E-032 판정 제외이고, 테두리를 그리지 않는다 |
+  | Q-3 | `scrollbar.track.border`(E-031 세로 트랙 왼쪽 1px 테두리) | T-40.21, E-031 | SPEC R-2 목록에 없다. Phase 1에서 구현하지 않았다 | 대상 아님. 이번에 구현하지 않는다 |
+  | Q-4 | `border.variant` | T-40.2 | `border`와 한 행이다. 영역 사이 선은 T-08.13이 `border`로 확인했다 | 대상 아님. 쓰는 자리가 없다 |
+  | Q-5 | `pane_group.border`와 T-26.4 | T-26.4 | 두 Pane 사이 경계에 쓰는지 01-LAYOUT 행으로 확인하지 못했다 | 대상 아님. 01-LAYOUT로 확인되지 않았다. Pane 경계는 PoC 화면이며 L-15 판정 대상이 아니다 |
+  | Q-6 | `toolbar.background` | T-40.18 | "탭 바 아래 줄"인데, SPEC R-8 뼈대(L-11~L-16)에 툴바가 없다 | 대상 아님. 뼈대에 툴바가 없다 |
+  | Q-7 | `background`의 화면 샘플 | T-40.1, L-11 | 창 맨 바닥이 화면에 드러나는 자리가 있는지 원문으로 정할 수 없다 | 대상에 둔다. 화면 샘플 없이 토큰 값(V1·V2)만 본다 |
+
+  - 결정 원칙: SPEC R-2·R-4·R-8이 든 요소 밖으로 대상을 늘리지 않는다. 원문으로 확인되지 않은 것은 넣지 않는다(리더 결정, 사용자 위임 2026-11-05).
+
+  표 5. 미사용으로 뺀 토큰(A-31.8)
+
+  | 토큰 | 원문 |
+  | --- | --- |
+  | `editor.hover_line_number` | T-26.11 |
+  | `pane.focused_border` | T-26.14 |
+  | `editor.highlighted_line.background` | T-26.15 |
+
+  - 이번 화면 요소가 없는 토큰도 대상에 넣지 않았다(T-26.17): `element.*`, `ghost_element.selected`, `icon.*`, `text.disabled`, `text.placeholder`, `text.accent`, `elevated_surface.background`, `drop_target.*`, `panel.indent_guide*`, `editor.wrap_guide`·`indent_guide*`·`invisible`, `editor.document_highlight.*`, 상태 색, `syntax.*`. `syntax.*`는 Phase 3 R-9의 T-27.1이 다룬다.
+
+- **P2-1 장식 없는 창과 타이틀 바·창 버튼** (2026-11-05)
+  - 무엇을 했나: `impl`이 장식 없는 창(D-6 1단계)과 타이틀 바·창 버튼을 만들었다(R-3, R-4).
+  - 결과
+    - 새 파일: `src/shell/TitleBar.tsx`, `src/shell/title-bar.css`
+    - 고친 파일
+      - `src/App.tsx`, `src/app.css`: 타이틀 바와 `.workspace` 래퍼
+      - `src/spec/metrics.ts`: `titlebar.*` 4항목
+      - `src-tauri/tauri.conf.json`: `decorations: false`, `shadow: true`
+      - `src-tauri/capabilities/default.json`: 권한 8개를 개별로 허용했다.
+        - 창: `core:window:allow-minimize`, `allow-toggle-maximize`, `allow-close`, `allow-is-maximized`, `allow-start-dragging`, `allow-internal-toggle-maximize`
+        - 이벤트: `core:event:allow-listen`, `allow-unlisten`(최대화 상태 추적용 `onResized`)
+    - 타이틀 바 전체가 드래그 영역이다(`data-tauri-drag-region`, L-81). 높이는 `titlebar.height`다.
+    - 창 버튼은 오른쪽 끝에 최소화·최대화(복원)·닫기 순서로 있다.
+      - 크기: `titlebar.window_button.width`·`titlebar.window_button.height`, 글리프 `titlebar.window_button.glyph_size`
+      - 글꼴: `"Segoe Fluent Icons", "Segoe MDL2 Assets"` 폴백 체인(L-83)
+      - 글리프: U+E921 / U+E922(최대화 상태면 U+E923) / U+E8BB(L-83, L-312). 최대화 상태는 `isMaximized()`와 `onResized`로 추적한다.
+    - L-84 닫기 버튼 빨강은 판정 제외 항목이다. CSS 상수 하나(`--close-red`, 출처 주석)로 두었다.
+    - 창 모서리·테두리·그림자는 앱이 그리지 않는다(D-7).
+    - 새 의존성은 없다.
+  - 검증
+    - V2(`impl`): `npm run typecheck` 에러 0, `npm run test` 1 pass, `cargo check` 경고 0, `tauri build --debug --no-bundle` 성공
+    - 빌드 exe를 1회 띄워 조작 없이 덤프했다. L-21, L-39(폭·높이·글리프 크기), 버튼 순서·위치가 모두 차 0으로 통과했다. L-81 드래그 영역은 속성만 코드 확인했다.
+
+- **P2-2 키맵 엔진과 브라우저 단축키 차단** (2026-11-05)
+  - 무엇을 했나: `impl`이 WebView 안의 키맵 엔진(D-4)과 브라우저 단축키 차단(D-5)을 만들었다(R-5, R-6).
+  - 결과
+    - 새 파일: `src/keymap/engine.ts`, `src/keymap/keyboard.ts`, `src/keymap/engine.test.ts`
+    - 고친 파일: `src/index.tsx`(`installKeyboard()`), `src/App.tsx`(`data-keymap-context` Workspace·Pane), `src/editor/extensions.ts`(Editor 컨텍스트)
+    - 엔진은 I-702(깊이 우선, 같으면 나중 등록), I-703(null 해제와 출처 등급), I-001(연속 키), I-704(표시 키)를 따른다. 키 정규화는 빈 `code`, 한글 IME, 숫자패드 +·-를 다룬다.
+    - 의도적 단순화는 `shortcut:` 주석으로 남겼다. 술어의 `>`·`key == value`가 없다.
+    - Zed 키맵 파일 로드(I-700)는 하지 않는다. 앱의 바인딩은 비어 있다.
+    - D-5 결과
+      - wry 0.57.1에는 `with_browser_accelerator_keys`가 있다. 그러나 Tauri 2.12.5와 그 runtime·utils는 `AreBrowserAcceleratorKeysEnabled`를 노출하지 않는다. 결과는 안 됨이다.
+      - 그래서 최상위 캡처 단계 `keydown`에서 `BROWSER_KEYS`의 키를 `preventDefault`하고, 모든 키를 키맵 엔진으로 보낸다. 우클릭은 캡처 단계 `contextmenu`의 `preventDefault`로 막는다.
+      - `webview2-com`으로 설정을 직접 바꾸는 길은 03-tauri 3.1 목록 밖이라 쓰지 않았다.
+    - `BROWSER_KEYS`는 14개다. SPEC R-5 목록의 13개에 `ctrl-=`를 더했다(아래 리더 결정).
+    - 새 의존성은 없다.
+  - 검증
+    - V1(`impl`): `npm run typecheck` 에러 0, `npm run test` 7 pass / 0 fail(키맵 6개 + 기존 1개), `cargo check` 경고 0
+    - R-6 테스트 6개는 I-702, I-703, I-001, I-704, 키 정규화, R-5 키 집합을 다룬다.
+    - 테스트가 실패를 잡는지도 확인했다. I-703 등급 조건을 빼면 1 fail이 났고, 원복하자 7/7이 되었다.
+
+- **P2-3 테마 적용과 영역 뼈대** (2026-11-05)
+  - 무엇을 했나: `impl`이 세 테마의 대상 토큰 24개를 CSS 변수로 적용했다(R-7). 영역 뼈대와 rem 단위(R-8)도 만들었다.
+  - 결과
+    - 새 파일: `src/theme/theme.ts`, `src/theme/apply.ts`, `src/theme/theme.test.ts`, `src/theme/NOTICE.md`
+    - 새 데이터(수정 없이 들여옴): `src/theme/assets/one/one.json`과 `LICENSE`, `src/theme/assets/catppuccin/catppuccin-mauve.json`과 `LICENSE`. Catppuccin 복사는 아래 리더 결정을 따랐다.
+    - 고친 파일: `src/App.tsx`, `src/app.css`, `src/spec/metrics.ts`, `src/shell/TitleBar.tsx`, `src/shell/title-bar.css`, `src/editor/extensions.ts`, `src/index.tsx`, `tsconfig.json`(`resolveJsonModule`)
+    - 테마 코드
+      - `parseColor`: #RRGGBB는 알파 255, #RRGGBBAA, 그 밖은 오류(T-01.7)
+      - `findTheme`: T-01.4~06
+      - 대상 토큰은 W-7 표 1의 24개다. CSS 변수 이름은 키의 `.`·`_`·`[`·`]`를 `-`로 바꾼다.
+      - T-26.3 대체: `scrollbar.thumb.active_background` ← `scrollbar.thumb.background`
+    - 적용 방식
+      - constructable stylesheet 하나로 `:root`에 변수를 낸다. 인라인 style은 없다.
+      - 시작 테마는 Catppuccin Mocha다.
+      - 측정용으로 `?theme=<이름>`으로 다시 불러오면 그 테마로 시작한다. 측정 전용 전역은 없다.
+    - 타이틀 바는 창이 포커스를 잃으면 `title_bar.inactive_background`를 쓴다.
+    - 영역 뼈대(L-11~L-16)
+      - `#root`: [사이드바] → [Workspace]
+      - Workspace(세로): [타이틀 바] → [본문] → [상태 표시줄]
+      - 본문(가로): [왼쪽 Dock] → [PaneGroup(Phase 1의 두 Pane)]
+    - 치수는 toml ID 변수만 썼다. rem 변환은 `metrics.ts`의 `rem()` 한 곳이며, 루트 글자 크기는 `units.rem_size`다(L-01, L-02).
+    - 앞의 두 항목에서 판정하지 않는 부분이 있다.
+      - L-22 이후 치수는 판정하지 않는다.
+      - Phase 1의 임시 변수 이름은 이미 이름 규칙과 같아서 바꾸지 않았다.
+    - JSON 두 파일을 번들해서 JS가 255KB에서 328KB로 늘었다.
+  - 검증
+    - V1(`impl`): `npm run test` 11 pass / 0 fail. 이 카드에서 parseColor 1개와 세 테마의 24개 토큰 일치 3개를 더했다.
+      - 세 테마 모두 T-26.3 경로가 실제로 쓰였다.
+      - `npm run typecheck` 에러 0, `cargo check` 경고 0, `tauri build` 성공
+    - V2(`impl`): 빌드 exe 1회, 조작 없이 덤프
+      - Mocha 변수 24개가 V1 계산 값과 알파까지 일치했다.
+      - 루트 글자 크기는 16px다.
+      - R-8의 L-11~L-16 배치는 모두 통과했다.
+      - Phase 1에서 넘긴 E-011·E-006·스크롤바 색 변수가 연결되어 있다.
+
+- **P2-4 네이티브 최대화 버튼(D-6 2단계)과 둘째 탭** (2026-11-05)
+  - 무엇을 했나
+    - M-2에서 스냅 레이아웃 팝업이 안 됨으로 나왔다. 그래서 `impl`이 D-6 2단계로 최대화 버튼을 네이티브로 처리했다.
+    - S-11·S-13을 재려고 시작 상태에 둘째 탭을 더했다.
+  - 결과
+    - 의존성 추가: `windows` =0.62.2(03-tauri 3.1 목록, 리더 승인)
+      - feature는 6개다: `Win32_Foundation`, `Win32_Graphics_Gdi`, `Win32_UI_HiDpi`, `Win32_UI_Input_KeyboardAndMouse`, `Win32_UI_Shell`, `Win32_UI_WindowsAndMessaging`
+      - 이미 전이 의존성이었다. 그래서 `Cargo.lock` 변경은 1줄이다.
+    - 새 파일: `src-tauri/src/caption.rs`
+    - 고친 파일: `src-tauri/src/lib.rs`(setup과 명령 `caption_set_colors`), `src-tauri/Cargo.toml`·`Cargo.lock`, `src/theme/apply.ts`, `src/theme/theme.ts`(`over()` 합성), `src/editor/sample.ts`, `src/workbench/store.ts`
+    - 최대화 버튼 처리 방식
+      1. `WRY_WEBVIEW` 자식 창에서 최대화 버튼 칸을 창 영역으로 뚫는다.
+      2. 최상위 창 서브클래스가 그 칸에서 `WM_NCHITTEST`에 `HTMAXBUTTON`을 돌려준다.
+      3. hover·누름·놓음을 직접 처리하고, 버튼을 GDI로 그린다(Segoe Fluent Icons, `IsZoomed`로 U+E922/U+E923).
+      4. `WM_NCMOUSEMOVE`는 기본 처리로 넘겨 시스템이 스냅 팝업을 띄우게 한다.
+    - 버튼 색은 테마를 적용할 때 프런트엔드가 단색 5개로 보낸다. 타이틀 바 배경, 비활성 배경, `ghost_element.hover`·`ghost_element.active`를 타이틀 바 배경 위에 합성한 값, `text`다.
+    - 한계: 비활성 창에서 hover하면 활성 배경 기준 합성 색을 쓴다(아래 사용자 확인 필요).
+    - Rust 상수는 toml ID 이름이다(`TITLEBAR_WINDOW_BUTTON_WIDTH/HEIGHT/GLYPH_SIZE`). `unsafe` 블록마다 `SAFETY:` 주석을 달았다.
+    - HTML 최대화 버튼은 키보드 접근과 레이아웃을 위해 DOM에 남겼다.
+    - 둘째 탭: 시작 상태 Pane 0에 `index.html`(활성, HTML 예제)과 `style.css`(짧은 CSS)가 있다.
+  - 검증
+    - V2(`impl`): `npm run typecheck` 에러 0, `npm run test` 11 pass / 0 fail, `cargo check` 경고 0, `tauri build` 성공
+    - 빌드 exe 1회, 조작 없이 덤프와 읽기 전용 Win32 질의를 했다.
+      - L-21, L-39, L-83 모두 통과다.
+      - 최대화 버튼 중심의 `WM_NCHITTEST`는 `HTMAXBUTTON`이고, 최소화·닫기·편집기는 `HTCLIENT`다.
+      - GDI 버튼 픽셀은 타이틀 바 배경·`text`와 같다.
+
+- **Phase 2 판정과 Phase 끝 검증** (2026-11-05)
+  - 무엇을 했나
+    - `measure`가 Phase 2 V3를 실측했다(M-2). P2-4 뒤에 바뀐 항목과 지난 불일치·측정 불가 항목만 다시 쟀다(M-2-R1).
+    - `check`가 코드를 검토하고 전체 테스트를 1회 돌렸다. C-11a는 P2-1~P2-3, C-11b는 P2-4다.
+  - 결과(판정)
+    - **R-3 됨.**
+      - 스냅 레이아웃 팝업은 `WM_NCHITTEST` 처리가 필요했다. 1단계(`decorations: false` + `shadow: true`)에서는 안 됐고, D-6 2단계(P2-4)에서 됐다(M-2-R1). 최대화 버튼 hover 2.5초 뒤 팝업이 나오고, 칸을 고르면 스냅된다.
+      - 타이틀 바 드래그 이동, 가장자리 리사이즈, 더블클릭 최대화·복원, 최대화 버튼 클릭이 된다. 버튼 밖에서 놓으면 아무 일이 없다.
+      - 최대화 여백은 사방 0px이다. 프레임이 작업 영역 1920x1032와 같다.
+      - 세 창 상태 관찰값(D-7, L-311 판정 안 함)
+        - 일반 창: 1px `#0078d4` 테두리, 반지름 약 8px 둥근 모서리
+        - 왼쪽 스냅 창: 1px 테두리, 직각
+        - 최대화 창: 테두리 없음, 직각
+    - **R-4 충족.**
+      - 크기·글리프는 V2에서 통과했다.
+      - V3에서 닫기 외 버튼 hover·누름 색(S-4·S-5, Mocha·Latte)이 통과했다. 네이티브 최대화 버튼은 같은 캡처의 견본 대비 채널 차 1(±1 안)이다.
+      - 최대화 상태 글리프 U+E923과 복원 U+E922가 맞다.
+    - **R-5 충족.** 시험할 키 16개가 모두 앱 `keydown`에 도달했고, `defaultPrevented`가 참이었다.
+      - 키: Ctrl+P/F/R/W, F5·F3·F1·F6, Alt+←/→, Ctrl+Plus(Shift+=와 =), Ctrl+Minus, Ctrl+숫자패드 ±, Ctrl+Tab
+      - 새 창·새로고침·확대·뒤로가기가 없었다.
+      - 한글 모드 Ctrl+P/F/R/W와 우클릭 두 곳(편집기, 타이틀 바)도 같은 결과다.
+    - **R-6 충족.** 단위 테스트 6개가 통과했다.
+    - **R-7 충족.**
+      - 변수 덤프는 세 테마 각 24/24로 일치했다.
+      - 화면 색 S-1~S-23(Mocha·Latte)은 기준 견본 대비 채널 차 최대 1이다.
+      - S-11·S-13은 M-2-R1에서 실제 둘째 탭으로 차 0이었다.
+    - **R-8 충족.** V2 배치 L-11~L-16이 통과했다.
+    - R-1은 새 영역 뼈대에서 다시 재서 유지됨을 확인했다(M-2).
+    - 결과표: `specs/v0.1/verify/phase2.md`(맨 아래 "재측정(M-2-R1)" 절 포함)
+    - 증거 이미지: `specs/v0.1/verify/phase2/`
+    - 측정 도구: `tools/measure-p2.mjs`, `tools/win-input.ps1`, `tools/png.mjs`, `tools/theme-expect.mjs`
+  - 검증
+    - V3(`measure` M-2, M-2-R1)
+      - 조건: 1920x1080 100%, 창 논리 1440x852(최대화 안 함), 빌드 debug exe(CSP 적용)
+      - 입력: OS 입력(SendInput)과 CDP. PID·HWND를 고정하고 입력마다 전경 창을 확인했다. 다른 창에 입력이 들어간 일은 없다.
+    - `check` C-11a PASS, C-11b PASS
+      - 전체 테스트 1회: `npm run typecheck` 에러 0, `npm run test` 11 pass / 0 fail, `cargo check` 경고 0
+      - 지적은 모두 참고 수준이다. 비활성 창 hover 합성, `caption_set_colors` 결과 무시, 모듈 수준 리스너, `?theme=`다.
+  - 리더 결정(사용자 위임 2026-11-05)
+    - `ctrl-=` 차단 유지: SPEC R-5 목록 밖이지만 `BROWSER_KEYS`에 둔다. Shift 없이 `=`로 눌리는 확대 키다.
+    - Catppuccin JSON 임시 복사
+      - `catppuccin-mauve.json`을 MIT 고지(LICENSE, NOTICE.md)와 함께 레포에 복사했다.
+      - D-9(One Light 하나만 복사)·D-13(확장 파일은 경로로 참조)과 어긋난다. Phase 3 `zlext` 이후 다시 판단한다.
+    - W-7 Q-1~Q-7: 위 W-7 표 4의 결정대로 대상 토큰 24개와 화면 샘플을 고정했다.
+    - 둘째 탭: S-11·S-13을 재기 위해 시작 상태에 둘째 탭(`style.css`)을 더했다.
+    - D-5 결과: Tauri가 `AreBrowserAcceleratorKeysEnabled`를 노출하지 않는다. 그래서 캡처 단계 `keydown` 차단을 채택했다.
+    - D-6 2단계 진행과 `windows` =0.62.2 추가를 승인했다.
+  - 사용자 확인 필요(V4)
+    - 네이티브 GDI 최대화 글리프와 DOM 기준 글리프의 안티앨리어싱 차이
+      - 먹 범위(위치·크기)는 같다. Latte만 왼쪽 끝이 1px 짧다.
+      - 픽셀 최대 차는 Mocha 59, Mocha 최대화 상태 65, Latte 12다.
+      - 원문에 통과 수치가 없다.
+    - 비활성 창에서 최대화 버튼 hover 색은 근사값이다. 활성 타이틀 바 배경 기준으로 합성한다. 재지 않았다.
+  - 특이사항
+    - 창 리사이즈 영역은 클라이언트 밖 8px 투명 테두리다(위는 1px). Windows 기본 동작이다.
+    - S-22 "끄는 중" 색은 T-26.3 때문에 기본 색과 같다.
+    - 테마 JSON 번들로 JS 크기가 늘었다(255KB → 328KB). 필요한 테마만 잘라 넣을지는 Phase 3 `zlext` 판단과 함께 본다.
 
 ### Phase 3 — 문법 WASM 로드 PoC와 P0 정리
 

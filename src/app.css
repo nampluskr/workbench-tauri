@@ -1,7 +1,54 @@
 html, body, #root { height: 100%; margin: 0; }
+body { background: var(--background); color: var(--text); font-size: 1rem; }
 #root { display: flex; }
+
+/* L-11: [left sidebar] -> [Workspace]. L-12: the sidebar spans the full window height. */
+.sidebar {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: var(--sidebar-default-width);
+  background: var(--panel-background);
+  border-right: var(--window-border-sidebar-right) solid var(--border); /* L-303 */
+}
+/* Header height = title bar height; the line under it continues the one under the title bar (L-302). */
+.sidebar-header {
+  height: var(--sidebar-header-height);
+  border-bottom: var(--window-border-sidebar-header-bottom) solid var(--border);
+}
+
+/* L-13: title bar -> body -> status bar. */
+.workspace { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+/* L-301: the body box carries the lines under the title bar and above the status bar. */
+.workspace-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  border-top: var(--window-border-workspace-top) solid var(--border);
+  border-bottom: var(--window-border-workspace-bottom) solid var(--border);
+}
+.status-bar { flex-shrink: 0; height: var(--statusbar-height); background: var(--status-bar-background); }
+
+/* L-14: [left Dock] -> [PaneGroup]. */
+.dock-left {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: var(--project-panel-default-width);
+  background: var(--panel-background);
+  border-right: var(--window-border-dock-left) solid var(--border); /* L-16 */
+}
+.pane-group { flex: 1; min-width: 0; display: flex; }
+
+/* L-15: Pane = tab bar + active item. */
 .pane { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.pane + .pane { border-left: thin solid; }
-.tabs { display: flex; }
-.tab.active { font-weight: bold; }
+.pane + .pane { border-left: thin solid var(--border); }
+.tabs {
+  display: flex;
+  box-sizing: border-box;
+  height: var(--tab-bar-height);
+  background: var(--tab-bar-background);
+  border-bottom: var(--tab-border-width) solid var(--border);
+}
+.tab { display: flex; background: var(--tab-inactive-background); color: var(--text-muted); }
+.tab.active { background: var(--tab-active-background); color: var(--text); }
+.tab button { border: 0; background: none; color: inherit; font: inherit; }
 .pane-body { flex: 1; min-height: 0; }

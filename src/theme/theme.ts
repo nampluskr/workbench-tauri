@@ -1,0 +1,97 @@
+// Theme JSON -> T-26 fallbacks -> CSS variables (03-tauri R-11, SPEC R-7).
+
+export type Rgba = { r: number; g: number; b: number; a: number }; // all 0..255
+
+/** T-01.7: "#RRGGBB" (alpha 255) or "#RRGGBBAA". */
+export function parseColor(value: string): Rgba {
+  const m = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})?$/i.exec(value);
+  if (!m) throw new Error(`bad theme color: ${value}`);
+  const [r, g, b, a] = [m[1], m[2], m[3], m[4] ?? "ff"].map((h) => parseInt(h, 16));
+  return { r, g, b, a };
+}
+
+/** Canonical lowercase "#rrggbbaa" (CSS accepts it). */
+export function formatColor({ r, g, b, a }: Rgba): string {
+  return "#" + [r, g, b, a].map((n) => n.toString(16).padStart(2, "0")).join("");
+}
+
+// R-7 target tokens (PROGRESS Phase 2 table 1). Keys outside T-40 are never used (T-26.17).
+export const TARGET_TOKENS = [
+  "border",
+  "title_bar.background",
+  "title_bar.inactive_background",
+  "text",
+  "text.muted",
+  "ghost_element.hover",
+  "ghost_element.active",
+  "status_bar.background",
+  "tab_bar.background",
+  "tab.active_background",
+  "tab.inactive_background",
+  "panel.background",
+  "editor.background",
+  "editor.foreground",
+  "editor.gutter.background",
+  "editor.line_number",
+  "editor.active_line_number",
+  "editor.active_line.background",
+  "players[0].selection",
+  "scrollbar.thumb.background",
+  "scrollbar.thumb.hover_background",
+  "scrollbar.thumb.active_background",
+  "scrollbar.track.background",
+  "background",
+] as const;
+export type Token = (typeof TARGET_TOKENS)[number];
+
+// T-26 rules that touch the target tokens: value taken from another token when the JSON has none.
+// T-26.3. (`theme.fallback.*` colors only feed non-target tokens.)
+const FALLBACK_FROM: Partial<Record<Token, Token>> = {
+  "scrollbar.thumb.active_background": "scrollbar.thumb.background",
+};
+
+/** "players[0].selection" -> "--players-0-selection" (PROGRESS W-7 naming rule). */
+export function cssVarName(token: string): string {
+  return "--" + token.replace(/[._[\]]/g, "-").replace(/-+/g, "-").replace(/-$/, "");
+}
+
+export type ThemeStyle = Record<string, unknown> & { players?: Record<string, unknown>[] };
+export type ThemeFile = { themes: { name: string; appearance: "light" | "dark"; style: ThemeStyle }[] };
+
+/** T-01.4-T-01.6: find `themes[].name` and check its shape. */
+export function findTheme(file: ThemeFile, name: string): ThemeFile["themes"][number] {
+  const theme = file.themes?.find((t) => t.name === name);
+  if (!theme) throw new Error(`theme not found: ${name}`);
+  if (theme.appearance !== "light" && theme.appearance !== "dark") throw new Error(`bad appearance: ${name}`);
+  if (typeof theme.style !== "object" || theme.style === null) throw new Error(`no style: ${name}`);
+  return theme;
+}
+
+function rawValue(style: ThemeStyle, token: Token): string | undefined {
+  const m = /^players\[(\d+)\]\.(\w+)$/.exec(token);
+  const v = m ? style.players?.[Number(m[1])]?.[m[2]] : style[token];
+  return typeof v === "string" ? v : undefined; // absent and null both count as "no value"
+}
+
+/** Token -> canonical color for the target tokens, JSON value first, then T-26. */
+export function resolveTokens(style: ThemeStyle): Record<Token, string> {
+  const out = {} as Record<Token, string>;
+  for (const token of TARGET_TOKENS) {
+    const from = FALLBACK_FROM[token];
+    const value = rawValue(style, token) ?? (from && rawValue(style, from));
+    if (value === undefined) throw new Error(`theme has no value for ${token}`);
+    out[token] = formatColor(parseColor(value));
+  }
+  return out;
+}
+
+/** Opaque "#rrggbb" of `top` painted over `bottom` (source-over, bottom taken as opaque). */
+export function over(top: string, bottom: string): string {
+  const [t, b] = [parseColor(top), parseColor(bottom)];
+  const mix = (x: number, y: number) => Math.round((x * t.a + y * (255 - t.a)) / 255);
+  return formatColor({ r: mix(t.r, b.r), g: mix(t.g, b.g), b: mix(t.b, b.b), a: 255 }).slice(0, 7);
+}
+
+export function themeCss(tokens: Record<Token, string>): string {
+  return `:root { ${TARGET_TOKENS.map((t) => `${cssVarName(t)}: ${tokens[t]};`).join(" ")} }`;
+}

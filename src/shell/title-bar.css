@@ -1,0 +1,32 @@
+/* Color variables follow the theme token names (title_bar.background -> --title-bar-background);
+   they are set by the theme loader (P2-3) and unset until then. */
+.title-bar {
+  display: flex;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  height: var(--titlebar-height); /* L-21 */
+  background: var(--title-bar-background);
+  color: var(--text);
+  user-select: none;
+}
+.title-bar.inactive { background: var(--title-bar-inactive-background); }
+
+.window-button {
+  width: var(--titlebar-window-button-width); /* L-39 */
+  height: var(--titlebar-window-button-height);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  /* L-83: Fluent on Windows 11 (build >= 22000), MDL2 before that. */
+  font-family: "Segoe Fluent Icons", "Segoe MDL2 Assets";
+  font-size: var(--titlebar-window-button-glyph-size);
+}
+
+.window-button:hover { background: var(--ghost-element-hover); }
+.window-button:active { background: var(--ghost-element-active); }
+
+/* L-84: close button is red on hover (#E81120), 80% opaque while pressed, white glyph. No toml ID exists for it. */
+.window-button.close { --close-red: 232 17 32; }
+.window-button.close:hover { background: rgb(var(--close-red)); color: #fff; }
+.window-button.close:active { background: rgb(var(--close-red) / 80%); color: #fff; }

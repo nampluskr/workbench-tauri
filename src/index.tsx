@@ -1,5 +1,7 @@
 import { render } from "solid-js/web";
 import App from "./App.tsx";
+import { installKeyboard } from "./keymap/keyboard.ts";
+import { applyTheme } from "./theme/apply.ts";
 import { applyMetrics } from "./spec/metrics.ts";
 import "./app.css";
 
@@ -9,4 +11,6 @@ if (!root) {
 }
 
 applyMetrics();
+applyTheme();
+installKeyboard();
 render(() => <App />, root);

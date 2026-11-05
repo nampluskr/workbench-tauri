@@ -2,7 +2,7 @@ import { createStore } from "solid-js/store";
 import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 import { editorExtensions } from "../editor/extensions.ts";
-import { SAMPLE_HTML, SAMPLE_TITLE } from "../editor/sample.ts";
+import { SAMPLE_CSS, SAMPLE_CSS_TITLE, SAMPLE_HTML, SAMPLE_TITLE } from "../editor/sample.ts";
 import { moveTab, type Pane } from "./panes.ts";
 
 // Views live outside Solid: one EditorView per tab, created once (R-1). Panes only
@@ -16,10 +16,11 @@ function openTab(id: string, title: string, doc: string): void {
 }
 
 openTab(SAMPLE_TITLE, SAMPLE_TITLE, SAMPLE_HTML);
+openTab(SAMPLE_CSS_TITLE, SAMPLE_CSS_TITLE, SAMPLE_CSS);
 
 const [state, setState] = createStore<{ panes: Pane[] }>({
   panes: [
-    { tabs: [SAMPLE_TITLE], active: SAMPLE_TITLE },
+    { tabs: [SAMPLE_TITLE, SAMPLE_CSS_TITLE], active: SAMPLE_TITLE },
     { tabs: [], active: null },
   ],
 });

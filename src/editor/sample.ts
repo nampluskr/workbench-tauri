@@ -46,3 +46,16 @@ export const SAMPLE_HTML = `<!doctype html>
   </body>
 </html>
 `;
+
+// Second tab of the start state, so an inactive tab exists (S-11, S-13).
+export const SAMPLE_CSS_TITLE = "style.css";
+
+export const SAMPLE_CSS = `body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+h1 {
+  font-size: 2rem;
+}
+`;

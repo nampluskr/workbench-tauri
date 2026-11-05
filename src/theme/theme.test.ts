@@ -1,0 +1,63 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { findTheme, parseColor, resolveTokens, themeCss, type ThemeFile } from "./theme.ts";
+
+const load = (path: string) => JSON.parse(readFileSync(new URL(path, import.meta.url), "utf8")) as ThemeFile;
+const catppuccin = load("./assets/catppuccin/catppuccin-mauve.json");
+const one = load("./assets/one/one.json");
+
+// PROGRESS Phase 2 table 1 (R-7) with the CSS variable names fixed in W-7.
+const VARS: [token: string, cssVar: string][] = [
+  ["border", "--border"],
+  ["title_bar.background", "--title-bar-background"],
+  ["title_bar.inactive_background", "--title-bar-inactive-background"],
+  ["text", "--text"],
+  ["text.muted", "--text-muted"],
+  ["ghost_element.hover", "--ghost-element-hover"],
+  ["ghost_element.active", "--ghost-element-active"],
+  ["status_bar.background", "--status-bar-background"],
+  ["tab_bar.background", "--tab-bar-background"],
+  ["tab.active_background", "--tab-active-background"],
+  ["tab.inactive_background", "--tab-inactive-background"],
+  ["panel.background", "--panel-background"],
+  ["editor.background", "--editor-background"],
+  ["editor.foreground", "--editor-foreground"],
+  ["editor.gutter.background", "--editor-gutter-background"],
+  ["editor.line_number", "--editor-line-number"],
+  ["editor.active_line_number", "--editor-active-line-number"],
+  ["editor.active_line.background", "--editor-active-line-background"],
+  ["players[0].selection", "--players-0-selection"],
+  ["scrollbar.thumb.background", "--scrollbar-thumb-background"],
+  ["scrollbar.thumb.hover_background", "--scrollbar-thumb-hover-background"],
+  ["scrollbar.thumb.active_background", "--scrollbar-thumb-active-background"],
+  ["scrollbar.track.background", "--scrollbar-track-background"],
+  ["background", "--background"],
+];
+
+test("parseColor: #RRGGBB has alpha 255, #RRGGBBAA keeps it, anything else is rejected (T-01.7)", () => {
+  assert.deepEqual(parseColor("#1e1e2e"), { r: 0x1e, g: 0x1e, b: 0x2e, a: 255 });
+  assert.deepEqual(parseColor("#74ade83d"), { r: 0x74, g: 0xad, b: 0xe8, a: 0x3d });
+  assert.throws(() => parseColor("1e1e2e"));
+  assert.throws(() => parseColor("#1e1e2"));
+});
+
+for (const [file, name] of [
+  [catppuccin, "Catppuccin Mocha"],
+  [catppuccin, "Catppuccin Latte"],
+  [one, "One Light"],
+] as const) {
+  test(`${name}: the 24 target tokens equal the JSON value or the T-26 value`, () => {
+    const { style } = findTheme(file, name);
+    const css = themeCss(resolveTokens(style));
+    const vars = new Map([...css.matchAll(/(--[\w-]+): (#[0-9a-f]{8});/g)].map((m) => [m[1], m[2]]));
+    assert.equal(vars.size, VARS.length);
+    for (const [token, cssVar] of VARS) {
+      const raw = token === "players[0].selection" ? (style.players?.[0] as any).selection : style[token];
+      // T-26.3: no value for the active thumb in any theme here -> the plain thumb color.
+      if (token === "scrollbar.thumb.active_background") assert.equal(raw ?? null, null);
+      const expected = raw ?? style["scrollbar.thumb.background"];
+      assert.deepEqual(parseColor(vars.get(cssVar)!), parseColor(expected as string), `${token} -> ${cssVar}`);
+    }
+  });
+}

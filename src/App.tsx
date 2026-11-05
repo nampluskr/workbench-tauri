@@ -1,4 +1,5 @@
 import { For, createRenderEffect } from "solid-js";
+import TitleBar from "./shell/TitleBar.tsx";
 import { activate, moveToPane, panes, titles, views } from "./workbench/store.ts";
 
 function Pane(props: { index: number }) {
@@ -12,7 +13,7 @@ function Pane(props: { index: number }) {
     });
 
   return (
-    <section class="pane">
+    <section class="pane" data-keymap-context="Pane">
       <div class="tabs">
         <For each={pane().tabs}>
           {(id) => (
@@ -36,8 +37,21 @@ function Pane(props: { index: number }) {
 export default function App() {
   return (
     <>
-      <Pane index={0} />
-      <Pane index={1} />
+      <aside class="sidebar">
+        {/* The header sits in the title bar row, so it drags the window too (L-12). */}
+        <div class="sidebar-header" data-tauri-drag-region />
+      </aside>
+      <div class="workspace" data-keymap-context="Workspace">
+        <TitleBar />
+        <div class="workspace-body">
+          <aside class="dock-left" />
+          <div class="pane-group">
+            <Pane index={0} />
+            <Pane index={1} />
+          </div>
+        </div>
+        <footer class="status-bar" />
+      </div>
     </>
   );
 }

@@ -34,6 +34,12 @@ const zedEditorTheme = EditorView.theme({
   ".cm-scroller::-webkit-scrollbar-thumb": {
     background: "var(--scrollbar-thumb-background)",
   },
+  ".cm-scroller::-webkit-scrollbar-thumb:hover": {
+    background: "var(--scrollbar-thumb-hover-background)",
+  },
+  ".cm-scroller::-webkit-scrollbar-thumb:active": {
+    background: "var(--scrollbar-thumb-active-background)",
+  },
   ".cm-content": { padding: 0 },
   // E-005: margin between gutter and text. It sits inside the line so that the
   // active-line rectangle (E-011) covers it.
@@ -70,5 +76,6 @@ export const editorExtensions = [
   highlightActiveLine(),
   highlightActiveLineGutter(),
   drawSelection(),
+  EditorView.editorAttributes.of({ "data-keymap-context": "Editor" }),
   zedEditorTheme,
 ];
