@@ -80,3 +80,31 @@ test("range units: QueryOptions indexes are bytes (code units x 2), Node indexes
       .filter((c) => c.name === "tag").map((c) => [c.node.text, c.node.startIndex]);
   assert.deepEqual(tags(8, 16), [["b", 9], ["b", 14]]);
 });
+
+// R-19 other grammar: TOML extension (Markdown/JSON are built into Zed, not extensions; user 2026-11-05).
+const tomlExt = `${process.env.LOCALAPPDATA}/Zed/extensions/installed/toml`;
+const tomlScm = ["brackets", "highlights", "indents", "injections", "outline", "overrides", "redactions", "textobjects"];
+
+test("TOML: toml.wasm loads with or without the dylink workaround, the eight .scm compile, a sample parses cleanly", async () => {
+  const bytes = new Uint8Array(readFileSync(`${tomlExt}/grammars/toml.wasm`));
+  // It also lists libc.so as NEEDED, yet loads as is (unlike html.wasm); the app patches every grammar the same way.
+  assert.notDeepEqual(skipDylinkNeeded(bytes), bytes);
+  await import("web-tree-sitter").then(({ Language }) => Language.load(bytes));
+  const toml = await loadLanguage(bytes);
+  for (const name of tomlScm) {
+    assert.doesNotThrow(() => compileQuery(toml, readFileSync(`${tomlExt}/languages/toml/${name}.scm`, "utf8")), name);
+  }
+  const parser = new Parser();
+  parser.setLanguage(toml);
+  const tree = parser.parse('# c\n[server]\nname = "a\tb"\nport = 8080\nok = true\nlist = [1, 2]\n')!;
+  assert.equal(tree.rootNode.hasError, false);
+  const highlights = compileQuery(toml, readFileSync(`${tomlExt}/languages/toml/highlights.scm`, "utf8"));
+  const names = [...new Set(highlights.captures(tree.rootNode).map((c) => c.name))].sort();
+  const catppuccin = JSON.parse(
+    readFileSync(`${process.env.LOCALAPPDATA}/Zed/extensions/installed/catppuccin/themes/catppuccin-mauve.json`, "utf8"),
+  );
+  const keys = new Set(Object.keys(catppuccin.themes.find((t: any) => t.name === "Catppuccin Mocha").style.syntax));
+  assert.equal(themeKey("property", keys), "property");
+  assert.equal(themeKey("string.escape", keys), "string.escape");
+  assert.equal(themeKey("punctuation.bracket", keys), "punctuation.bracket");
+});

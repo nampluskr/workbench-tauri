@@ -483,6 +483,27 @@
     - 하드코딩 색은 쓰지 않았다. Rust 코드·의존성 변경은 없다.
   - 검증: V0/V1(`impl`). `npm run typecheck` 에러 0, `npm run test` 17/17, `cargo check` 경고 0, `tauri build` 성공. 화면 확인은 M-4-R1이다.
 
+- **P3-5 R-9 다른 문법 TOML 판정** (2026-11-05)
+  - 무엇을 했나: W-11의 사용자 결정에 따라 `impl`이 설치된 Zed toml 확장으로 R-9(03-tauri R-19)의 다른 문법을 판정했다.
+    - 대상: `%LOCALAPPDATA%\Zed\extensions\installed\toml`
+    - 버전: 확장 `toml` 1.1.0, 언어 0.7.0, 문법 `tree-sitter-toml` rev `342d9be207c2dba869b9967124c679b5e6fd0ebe`
+  - 결과
+    - 고친 파일: `src/syntax/grammar.test.ts`(테스트 1개 추가)
+    - 앱 코드·의존성·Rust 변경은 없다.
+    - 경로는 P3-2 규칙(`grammars/toml.wasm`, `languages/toml/*.scm`) 그대로다.
+    - 로드
+      - `toml.wasm`도 `dylink.0`에 NEEDED `libc.so`가 있다. 그런데 원본 그대로도 로드되고, 우회 사본도 로드된다.
+      - `html.wasm`은 우회가 있어야 로드된다(P3-2).
+      - 앱의 `loadLanguage`는 모든 문법에 같은 우회를 적용한다. TOML에는 필요 없고, 있어도 해가 없다.
+      - TOML이 우회 없이 되는 원인은 확인하지 않았다(추정: libc 심볼을 쓰지 않음).
+    - `.scm` 8개 컴파일: brackets(`#set!` ×4), highlights, indents, injections(`#set!` ×1), outline, overrides, redactions, textobjects 모두 됨
+    - 파싱: 주석·테이블·이스케이프 문자열·정수·불리언·배열이 든 예제에서 `hasError` false
+    - T-27.1: 예제의 캡처 8종이 모두 같은 이름의 Mocha `syntax` 키로 이어진다. 테스트는 `property`, `string.escape`, `punctuation.bracket`의 조회를 단언한다.
+    - 실패 사례가 없다. 그래서 D-11 코어 비교는 필요 없다.
+    - R-19는 됨이다. `verify/P0-SUMMARY.md`의 R-19 행을 고쳤다(W-12).
+  - 검증: V1(`impl`). `npm run typecheck` 에러 0, `npm run test` 18/18, `cargo check` 경고 0. 앱은 실행하지 않았다.
+  - 특이사항: 예제의 `\t`가 `@string.escape`로 캡처되지 않았다. 이 문법 rev가 문자열 안 이스케이프를 따로 노드로 내지 않는 것으로 보인다. 판정에는 영향이 없고, 조사하지 않았다.
+
 - **Phase 3 판정과 Phase 끝 검증** (2026-11-05)
   - 무엇을 했나
     - M-3: `measure`가 R-11 증분 파싱 시간을 쟀다. `tools/` 스크립트로 쟀고, 앱은 띄우지 않았다.
@@ -574,8 +595,13 @@
     - M-4-R1의 첫 프레임 강조는 1회 관찰이다. 항상 그렇다고 단정하지 않는다.
 
 - **사용자 확인 필요 모음** (2026-11-05, v0.1 전체)
-  - Markdown·JSON 확장 설치 뒤 R-9(03-tauri R-19) 판정. 사용자가 Zed에서 두 확장을 설치하면 같은 방식으로 로드하고 결과와 실패 사례를 적는다.
-  - 아이콘 테마 확장 설치 뒤 확장 SVG 표시(R-10, 시작 상태). 어떤 SVG를 어디에 보일지는 리더가 정한다.
+  - R-9(03-tauri R-19)의 다른 문법: 정리됨.
+    - Markdown·JSON 확장 설치 항목은 없앴다. 두 언어는 Zed 앱 내장이라 확장으로 없다.
+    - 이미 설치된 TOML(Zed toml 확장)로 판정한다(사용자 결정 2026-11-05, W-11).
+    - P3-5에서 판정했고 됨이다. 남은 사용자 확인은 없다.
+  - 아이콘 테마 확장 설치 뒤 확장 SVG 표시(R-10, 시작 상태)
+    - `catppuccin-icons`는 레지스트리에 있다. 사용자가 나중에 직접 설치하며, 그때까지 R-36 SVG는 대기다(사용자 결정 2026-11-05).
+    - 어떤 SVG를 어디에 보일지는 리더가 정한다.
   - 네이티브 GDI 최대화 글리프와 DOM 기준 글리프의 안티앨리어싱 차이(Phase 2, V4)
     - 먹 범위는 같다.
     - 픽셀 최대 차는 Mocha 59, Mocha 최대화 상태 65, Latte 12다.
@@ -674,6 +700,31 @@
   - W-4d-R1에서 사용자 답을 반영했다: Markdown·JSON 설치는 Phase 3 전, 미해결 실패 규칙 유지, 담당 이름은 HERDR-SETUP에서, CSP 세 항목은 Phase 3, 커밋은 Phase 끝 1회.
 - 결과: 확정, 커밋 1a15baa.
 - 검증: C-7은 PASS였다(지적 없음).
+- 상태: 완료.
+
+### W-11 R-19 다른 문법을 TOML로 개정 (2026-11-05)
+
+- 요청: 사용자 결정(2026-11-05)을 확정 문서에 반영한다.
+  - Zed의 Markdown·JSON은 앱 내장 언어라 확장 레지스트리에 문법 확장이 없다.
+    - 리더가 api.zed.dev를 조회해 확인했다.
+    - markdown 검색 결과는 language-server뿐이었다.
+    - json 검색 결과는 json5·jsonl·jsonnet 같은 다른 언어뿐이었다.
+  - 그래서 R-19의 "다른 문법"은 이미 설치된 TOML 확장(`installed/toml`, `grammars/toml.wasm`)으로 판정한다.
+  - 아이콘 테마 확장(`catppuccin-icons`, 레지스트리에 있음)은 사용자가 나중에 직접 설치한다. R-36 SVG는 대기를 유지한다.
+- 조치: 네 문서에서 Markdown·JSON을 "TOML(설치된 Zed toml 확장)"로 바꿨다. 바꾼 자리마다 개정 이유와 출처를 한 줄로 남겼다.
+  - `INTENT.md`: 범위의 R-19 줄
+  - `DECISIONS.md`: D-13의 제목·선택·근거, 배제한 대안 1개 추가, 이전 결정 처리 표의 D-9 행
+  - `SPEC.md`: R-9 제목과 "정해진 결과"의 다른 문법 줄. 공통 판정 방식에는 Markdown·JSON 언급이 없었다.
+  - `PLAN.md`: Phase 3의 설치 전제 문장, 진행 현황 표의 Phase 3 비고
+  - 네 문서 상태 줄에 "개정 (2026-11-05)"을 더했다.
+  - PROGRESS "사용자 확인 필요 모음"의 Markdown·JSON 항목을 이 결정으로 정리했다.
+- 결과
+  - 문서만 바뀌었다. 커밋하지 않았다.
+  - 아래 기록은 그때의 기록이라 고치지 않았다. 모두 "Markdown·JSON 대기"로 적혀 있다.
+    - Phase 3 W-9, P3-2, "Phase 3 판정과 Phase 끝 검증"
+    - `verify/P0-SUMMARY.md`의 R-19 행
+  - TOML 판정을 하고 나면 R-19 행을 고칠 카드가 필요하다. 이후 P3-5와 W-12로 처리했다.
+- 검증: 문서만이다(V0). 네 문서에서 "Markdown"을 다시 찾아 남은 곳을 확인했다. 남은 것은 개정 이유 줄과 이전 결정 기록뿐이다.
 - 상태: 완료.
 
 ## 버전 종료
