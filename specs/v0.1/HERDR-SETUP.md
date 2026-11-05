@@ -45,10 +45,10 @@ herdr session
     ├── tab: docs      pane wJ:p2  writer   (Claude Code Opus 5.5 medium)
     ├── tab: check     pane wJ:p4  check    (agy gemini-3.8-flash-high)
     │                  pane (Phase 끝에만)  measure  (Claude Code Sonnet 5.5 high)
-    └── tab: impl      pane        impl     (Claude Code Sonnet 5.5 high)
+    └── tab: impl      pane wJ:p5  impl     (Claude Code Sonnet 5.5 high)
 ```
 
-- `impl` 탭과 `measure` pane의 id는 띄울 때 herdr 응답의 실제 값을 이 절에 적는다.
+- `measure` pane의 id는 띄울 때 herdr 응답의 실제 값을 이 절에 적는다.
 - 같은 세션에 workspace `workbench-gpui`(wD)가 함께 떠 있다. 이 레포의 에이전트는 그 워크스페이스에 입력하지 않는다.
 
 ---

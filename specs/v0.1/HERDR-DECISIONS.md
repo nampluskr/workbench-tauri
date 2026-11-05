@@ -19,3 +19,4 @@
 | H-11 | 2026-11-05 | 구현 담당은 `impl`이다. 기본은 Claude Code Sonnet 5.5 high이고, R-9 dylink 우회와 R-11 증분 연동 카드만 Opus 5.5 medium으로 한다. 위치는 wJ의 새 탭 impl, main checkout이다. 소유는 `src/`, `src-tauri/`, 프런트엔드 설정, `package.json`·`package-lock.json`이다. | 사용자 결정(W-4e 안 승인) |
 | H-12 | 2026-11-05 | V3 측정 담당은 `measure`(Claude Code Sonnet 5.5 high)다. check 탭에 pane을 더해 Phase 끝에만 띄운다. 소유는 `tools/`와 `specs/v0.1/verify/`다. | 사용자 결정(W-4e 안 승인) |
 | H-13 | 2026-11-05 | 구독 현황을 확인했다. Claude Max와 Gemini Pro(agy)이고, workbench-gpui 기록과 같다. `leader`는 Claude Code Opus 5.5이며 effort는 세션 기본값으로 적는다. | 사용자 확인 |
+| H-14 | 2026-11-05 | 사용자가 `leader`에게 권한을 위임했다. `leader`는 사용자 권한으로 Phase 0~3을 서브 에이전트로 진행한다. 쓰기·빌드 승인은 카드 범위 안에서 `leader`가 처리한다. git 쓰기, push, 시스템 설치, 범위 밖 삭제는 `leader`가 직접 판단한다. 위임으로 내린 판단은 출처를 "리더 결정(사용자 위임 2026-11-05)"으로 단다. | 사용자 위임("단계별로 서브 에이전트를 이용해 마지막 phase까지 진행") |

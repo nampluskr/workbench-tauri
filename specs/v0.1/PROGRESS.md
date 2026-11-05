@@ -8,7 +8,47 @@
 
 ### Phase 0 — 프로젝트 뼈대
 
-없음.
+- **P0-1 Tauri 2 + Solid + Vite 뼈대** (2026-11-05)
+  - 무엇을 했나: `impl`이 CSP를 켠 채 빌드되는 빈 Tauri 2 + Solid + Vite + npm 프로젝트를 만들었다.
+    - 이전 PoC(`legacy-v0.1-poc`)의 `vite.config.ts`·`tsconfig.json`·`build.rs`·아이콘·`Cargo.lock`을 다시 썼다. `Cargo.lock`은 전이 의존성 버전을 고정하려고 가져왔다.
+    - 데모 코드는 넣지 않았다.
+  - 결과
+    - 새 파일
+      - 루트: `package.json`, `package-lock.json`, `index.html`, `vite.config.ts`, `tsconfig.json`, `src/index.tsx`
+      - `src-tauri/`: `Cargo.toml`, `Cargo.lock`, `build.rs`, `tauri.conf.json`, `capabilities/default.json`, `src/main.rs`, `src/lib.rs`, `icons/`
+    - 의존성(정확한 버전 고정, 03-tauri 3.1·3.2 안)
+      - npm dependencies: `@tauri-apps/api` 2.12.4, `solid-js` 1.9.18
+      - npm devDependencies: `@tauri-apps/cli` 2.12.4, `typescript` 7.0.2, `vite` 8.3.5, `vite-plugin-solid` 2.11.15
+      - Cargo: `tauri` =2.12.5, `tauri-build` =2.7.4
+      - `tauri`와 `@tauri-apps/api`의 마이너(2.12)가 같다.
+    - npm 스크립트: `test` → `node --test`, `typecheck` → `tsc --noEmit`, 그 밖에 `dev`·`build`·`tauri`. 루트 `AGENTS.md` 2장에 적었다.
+    - CSP
+      - `csp`: `default-src 'self' ipc: http://ipc.localhost`
+      - `devCsp`: 같은 값에 `connect-src 'self' ipc: http://ipc.localhost ws://localhost:1420`(Vite HMR)을 더했다.
+      - D-14의 세 항목은 아직 없다(PLAN Phase 0).
+    - 창은 `main` 하나이고 1440x852, 기본 장식이다. 장식은 Phase 2에서 바꾼다. capability 권한은 비어 있다.
+    - 이름
+      - package·crate는 `workbench-tauri`, lib는 `workbench_tauri_lib`다.
+      - identifier는 `dev.workbench.tauri`, productName은 `workbench-tauri`다.
+      - 앱 이름은 레포 이름과 같은 `workbench-tauri`로 정했다(리더 결정, 사용자 위임 2026-11-05).
+    - 빌드 준비물 버전(03-tauri R-30)
+      - Node v22.22.3, npm 10.9.8
+      - rustc·cargo 1.99.1(2026-10-13), toolchain `stable-x86_64-pc-windows-msvc`
+      - Visual Studio 2022 Build Tools, MSVC 도구 14.44.35207(Redist 14.44.35112)
+      - WebView2 런타임 156.0.4314.58
+    - 첫 빌드 시간(캐시 없음): `cargo check` 1분 14초, tauri 디버그 빌드 1분 20초.
+  - 검증
+    - V0. `impl`의 확인 결과다.
+      - `npx tsc --noEmit`: 에러 0
+      - `cargo check`: 경고 0
+      - `npm run tauri build -- --debug --no-bundle`: 성공. `workbench-tauri.exe` 11.6MB, 컴파일 경고 없음
+      - `npm run test`: tests 0, exit 0
+    - `check` C-9는 PASS다. Phase 0 완료 조건 일곱 가지를 모두 충족했다.
+    - C-9가 전체 테스트를 1회 돌렸다: `npm.cmd run typecheck`, `npm.cmd run test`, `cargo check`가 모두 exit 0, 경고 0이었다.
+    - 앱은 실행하지 않았다.
+  - 특이사항
+    - 03-tauri 표(`docs/refs/03-tauri/README.md`)에는 `tauri-build`가 2.12.5로 적혀 있지만, 실제 크레이트 버전은 2.7.x다. 그래서 이전 PoC 값 2.7.4를 썼다. `docs/refs/`는 고치지 않고 이 기록만 남긴다(리더 결정, 사용자 위임 2026-11-05).
+    - C-9 지적 1·2를 루트 `AGENTS.md` 2장에 반영했다. 1은 npm 스크립트, 2는 실행 정책에 막힐 때 `npm.cmd`를 쓰는 것이다.
 
 ### Phase 1 — 프레임워크·편집기 기반 PoC
 

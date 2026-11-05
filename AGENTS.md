@@ -53,12 +53,13 @@ Tauri 2 기반 Zed 재현 편집기의 에이전트 공통 지침이다. 모든 
 npm install
 npm run tauri dev
 npm run tauri build -- --debug --no-bundle
-npx tsc --noEmit                                     # 타입 검사
+npm run typecheck                                    # 타입 검사 (tsc --noEmit)
+npm run test                                         # 프런트엔드 테스트 (node --test)
 cargo check --manifest-path src-tauri/Cargo.toml     # Rust 컴파일·경고
 cargo test --manifest-path src-tauri/Cargo.toml
 ```
 
-- 프런트엔드 테스트의 npm 스크립트 이름은 뼈대를 만들 때 `package.json`에 정하고 이 절에 적는다.
+- PowerShell에서 `npm`(`npm.ps1`)이 실행 정책에 막히면 `npm.cmd`로 부른다(예: `npm.cmd run test`).
 - 개발자 도구로 WebView 값을 읽어야 할 때만 `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222`를 주고 `tauri dev`를 실행한다.
 - 테스트와 타입 검사가 통과하지 않은 상태로 완료 보고를 하지 않는다. `cargo` 경고를 남긴 채 완료 보고를 하지 않는다.
 - **스크립트 언어**
