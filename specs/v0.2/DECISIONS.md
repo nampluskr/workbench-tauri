@@ -1,6 +1,6 @@
-> 버전: v0.2 · 작성일: 2026-11-05 · 상태: 확정 (2026-11-05)
+> 버전: v0.2 · 작성일: 2026-11-05 · 상태: 확정 (2026-11-05), 개정 (2026-11-05)
 >
-> 이번 버전(gpui v0.2·v0.3 끝 상태와 같은 범위)에 적용할 설계 결정을 기록한다. 목적과 범위는 `specs/v0.2/INTENT.md`에, 요구와 판정 방법은 `SPEC.md`에 둔다(아직 없음). R-ID와 절 번호는 03-tauri 출발 문서(`docs/refs/03-tauri/README.md`)의 것이고 `03-tauri R-nn`으로 쓴다. 지난 버전 결정은 `specs/v0.1/DECISIONS.md`에 있고 "v0.1 D-n"으로, workbench-gpui 결정은 "gpui v0.2 D-n"·"gpui v0.3 D-n"으로 부른다. 질문 번호(Q-n)는 `writer` 보고서의 질문 목록 번호다. Q-4·Q-5·Q-6·Q-8은 사용자 결정(2026-11-05), 나머지 Q와 초안에서 정한 것으로 쓴 결정은 리더 결정(사용자 위임 2026-11-05)으로 확인됐다. 남은 미결은 Q-9 하나다.
+> 이번 버전(gpui v0.2·v0.3 끝 상태와 같은 범위)에 적용할 설계 결정을 기록한다. 목적과 범위는 `specs/v0.2/INTENT.md`에, 요구와 판정 방법은 `SPEC.md`에 있다. R-ID와 절 번호는 03-tauri 출발 문서(`docs/refs/03-tauri/README.md`)의 것이고 `03-tauri R-nn`으로 쓴다. 지난 버전 결정은 `specs/v0.1/DECISIONS.md`에 있고 "v0.1 D-n"으로, workbench-gpui 결정은 "gpui v0.2 D-n"·"gpui v0.3 D-n"으로 부른다. 질문 번호(Q-n)는 `writer` 보고서의 질문 목록 번호다. Q-4·Q-5·Q-6·Q-8은 사용자 결정(2026-11-05), 나머지 Q와 초안에서 정한 것으로 쓴 결정은 리더 결정(사용자 위임 2026-11-05)으로 확인됐다. 개정(2026-11-05): SPEC 작성 중 Q-9를 닫고(사용자 결정), D-19(opener)·D-20(Lucide 아이콘)을 더했다.
 
 # DECISIONS — workbench-tauri v0.2
 
@@ -141,7 +141,7 @@
 | 확인창 TaskDialog(A-14.7~A-14.10) | **[의존성]** 이미 쓰는 `windows` =0.62.2에 `TaskDialogIndirect`용 feature를 더한다(03-tauri 3.1 "Win32 호출") | 사용자 결정 2026-11-05 (Q-8) |
 | JSON 읽기·쓰기(`state.json`, `keymap.json`) | 코어는 문자열만 읽고 쓰고, 파싱은 WebView `JSON.parse`다. `state.json` 스냅샷은 화면이 만들고 코어가 쓴다(03-tauri 2.4 "저장 요청"). 알 수 없는 키 보존(A-20)은 화면 쪽에서 한다 | 리더 결정(사용자 위임 2026-11-05) (Q-7) |
 | 파일 읽기·쓰기·폴더 스캔 | 코어 명령에서 `std::fs`. `tauri-plugin-fs`는 쓰지 않는다. 경로 검사를 코어가 한 곳에서 한다 | 리더 결정(사용자 위임 2026-11-05) (Q-10) |
-| 원자적 쓰기의 교체(A-24.1) | 미정. `windows` `ReplaceFileW`(feature 추가)와 `std::fs::rename`(`MoveFileExW` + `MOVEFILE_REPLACE_EXISTING`) 가운데 SPEC의 A-24 판정과 함께 정한다 | 리더 결정(사용자 위임 2026-11-05)으로 미결 (Q-9) |
+| 원자적 쓰기의 교체(A-24.1) | **[의존성]** `windows` =0.62.2에 `Win32_Storage_FileSystem` feature를 더해 A-24.1 원문대로 부른다. 기존 `state.json`이 있으면 `ReplaceFileW`, 없으면 `MoveFileExW`(`MOVEFILE_REPLACE_EXISTING \| MOVEFILE_WRITE_THROUGH`)다 | 사용자 결정 2026-11-05 (Q-9, 개정 2026-11-05) |
 
 - 새 의존성 없이 웹 플랫폼으로 하는 것(`AGENTS.md` 4.1 3번)
   - 경로 복사(I-041): `navigator.clipboard.writeText`
@@ -164,6 +164,7 @@
 - **TaskDialog를 `tauri-plugin-dialog` 메시지 창으로 한다** — 세 버튼·사용자 문구 지원이 미확인이고(03-tauri R-15), 사용자가 `windows` feature 추가를 골랐다(2026-11-05). 배제.
 - **`serde_json` + `serde`로 코어가 JSON을 파싱한다** — 코어가 JSON 구조를 알 필요가 없다(리더 결정(사용자 위임 2026-11-05)). 배제.
 - **`tauri-plugin-fs`** — 경로 검사가 플러그인 범위 설정과 코어로 갈린다(리더 결정(사용자 위임 2026-11-05)). 배제.
+- **교체를 `std::fs::rename` 하나로 한다** — A-24.1 원문의 `ReplaceFileW`·`MOVEFILE_WRITE_THROUGH`와 같은지가 std 내부 구현에 달려 코드로 판정할 수 없다(사용자 결정 2026-11-05, 개정 2026-11-05). 배제.
 
 ---
 
@@ -238,7 +239,7 @@
 - 필드는 A-22의 해당 부분이다: `version`, `windows[].folders[]`(`id`, `path`, `added_at`), `windows[].active_folder_id`, `windows[].sidebar.width`. 폴더 순서는 `folders` 배열 순서다(A-13.6, A-22.2).
 - 그 밖의 A-22 항목과 A-25 복원은 넣지 않는다.
 - 쓰기·읽기는 01-zed A-24.1~A-24.7을 따른다. gpui v0.2 D-10 이후 변경의 정리를 그대로 쓴다.
-  - `.tmp` 쓰기 → 디스크 동기화 → 교체(교체 방식은 D-7 Q-9)
+  - `.tmp` 쓰기 → 디스크 동기화 → 교체(`ReplaceFileW`, 처음이면 `MoveFileExW`. D-7)
   - 변경 뒤 500ms 묶어 쓰기, 종료 직전 쓰기
   - 교체 실패 때 50ms × 3번 재시도, 그래도 실패하면 `.tmp`를 두고 알림
   - 깨졌으면 `.tmp`로 복구, 깨진 파일은 `state.json.bad-YYYYMMDD-HHMMSS`로 옮기고 최근 3개만 보관
@@ -396,6 +397,48 @@ gpui v0.2 D-16. INTENT 제외 범위(Picker).
 
 ---
 
+## D-19. Reveal in File Explorer와 Open in Default App은 `tauri-plugin-opener`로 부른다
+
+**선택**
+
+- **[의존성]** `tauri-plugin-opener` 2.7.2(03-tauri 3.1 필수)와 **[의존성]** `@tauri-apps/plugin-opener`를 쓴다. JS 패키지 버전은 설치할 때 크레이트와 짝이 맞는 것으로 고정한다.
+- capability는 쓰는 권한만 개별로 허용한다(`AGENTS.md` 5장).
+- 대상은 프로젝트 패널 우클릭 메뉴의 Reveal in File Explorer(Ctrl-Alt-R)와 Open in Default App(Ctrl-Shift-Enter)이다(I-530~I-557, SPEC R-23).
+
+**근거**
+
+- 사용자 결정 2026-11-05(Q-L, 개정 2026-11-05).
+- 03-tauri 3.1 "대화상자·파일·열기" 행("탐색기에서 보기").
+
+**배제한 대안**
+
+- **코어에서 `explorer.exe /select,` 실행이나 `windows` ShellExecute로 직접 부른다** — 사용자가 `tauri-plugin-opener`를 골랐다(2026-11-05). 배제.
+
+---
+
+## D-20. UI 아이콘은 gpui와 같은 Lucide SVG를 고지와 함께 필요한 것만 레포에 들여온다
+
+**선택**
+
+- 사이드바·트리·탭 바·타이틀 바의 UI 아이콘은 gpui와 같은 Lucide SVG를 쓴다. 출처는 `gpui-kit-assets` 0.8.1의 `assets/icons`다.
+- 들여오는 것은 아래 이름 가운데 v0.2 화면에 쓰이는 것만이다. 이름은 gpui 코드의 `IconName`과 같다: `Folder`, `FolderOpen`, `FolderClosed`, `File`, `PanelLeft`, `PanelRight`, `Plus`, `Pin`, `Minimize`, `Maximize`, `Menu`, `Close`, `Eye`, `BookOpen`, `ArrowLeft`, `ArrowRight`. 어느 요소에 어느 이름을 쓰는지는 gpui 코드의 사용처와 같게 한다.
+- Lucide 라이선스(ISC) 고지 `LICENSE-LUCIDE`를 함께 들여온다. 넣는 폴더는 구현 작업에서 정한다.
+- 아이콘은 앱 번들 자산이라 `zlext`나 CSP 항목을 더하지 않는다.
+- 아이콘 테마 매핑과 v0.1의 Catppuccin 고정 아이콘은 쓰지 않는다(INTENT 결정 기록 3).
+
+**근거**
+
+- 리더 결정(사용자 위임 2026-11-05), SPEC 작성 중 Q-D(개정 2026-11-05).
+- "workbench-gpui와 같아야 한다"(루트 `INTENT.md`). 01-zed T-10.21은 사이드바 폴더 아이콘을 `Folder`로 적는다.
+- Lucide는 Zed 앱 코드가 아니라 ISC 라이선스 아이콘이라 Zed 코드 복사 금지 대상이 아니다. 파일을 들여오는 것이고 패키지 의존성은 더하지 않는다.
+
+**배제한 대안**
+
+- **v0.1처럼 설치된 `catppuccin-icons` 확장의 SVG를 `zlext`로 쓴다** — gpui 화면과 아이콘이 달라진다(리더 결정(사용자 위임 2026-11-05)). 배제.
+- **Zed 앱 저장소의 아이콘 SVG를 들여온다** — gpui와 다르고 라이선스를 확인하지 않았다. 배제.
+
+---
+
 ## v0.1 결정 처리 표
 
 | v0.1 D | 내용 | 처리 | v0.2 D | 이유 |
@@ -433,7 +476,7 @@ gpui v0.2 D-16. INTENT 제외 범위(Picker).
 | v0.2 D-7 | 폴더마다 작업 문맥 | D-8 | 같게 |
 | v0.2 D-8 | gpui-component tree, 판단 18가지 | D-9, D-17 | 가상 스크롤은 직접(고정 행 높이), 판단 표는 같게(cut 클립보드는 성공 때만 비움) |
 | v0.2 D-9 | 최소 탭 | D-10 | 같게 |
-| v0.2 D-10 | state.json 범위, A-24 | D-11 | 같게(문구 포함), 교체 방식은 미결(Q-9) |
+| v0.2 D-10 | state.json 범위, A-24 | D-11 | 같게(문구 포함), 교체는 `windows` feature 추가로 A-24.1 원문대로 |
 | v0.2 D-11 | %APPDATA%\workbench-gpui | D-6 | 같은 꼴로 %APPDATA%\workbench-tauri |
 | v0.2 D-12 | TaskDialog FFI | D-12, D-7 | 창은 같게, `windows` feature 추가로 부름 |
 | v0.2 D-13 | ☰ 동작 항목만, 앱 이름 | D-13 | 같게, 앱 이름 workbench-tauri |
@@ -444,10 +487,12 @@ gpui v0.2 D-16. INTENT 제외 범위(Picker).
 | v0.2 D-18 | 탭 보기 전용 | D-10 | 같게 |
 | v0.3 D-1~D-12 | 리팩토링 진행·도구·환경·에이전트 | 없음 | INTENT 제외 범위(리팩토링 자체, 검증 기반 후보 넣지 않음). 수치 스펙·검증 수준은 v0.1 D-1·D-17로 이미 있다 |
 | v0.3 PLAN "Phase 3 뒤" | P3-D1·P3-D2 | D-17 | 같게 |
+| (gpui 코드) | Lucide 아이콘(`IconName`) | D-20 | 같게 |
 
 ---
 
 ## 미결 사항
 
-- Q-9 원자적 쓰기의 교체 방식(`windows` `ReplaceFileW` 또는 `std::fs::rename`) (D-7, D-11). SPEC에서 A-24 판정과 함께 정한다(리더 결정(사용자 위임 2026-11-05)).
-- Q-1~Q-8, Q-10~Q-16은 정했다. Q-4·Q-5·Q-6·Q-8은 사용자 결정 2026-11-05, 나머지는 리더 결정(사용자 위임 2026-11-05)이다.
+없음.
+
+- Q-1~Q-16을 모두 정했다. Q-4·Q-5·Q-6·Q-8·Q-9는 사용자 결정 2026-11-05, 나머지는 리더 결정(사용자 위임 2026-11-05)이다. Q-9는 SPEC 작성 중에 닫았다(개정 2026-11-05).
