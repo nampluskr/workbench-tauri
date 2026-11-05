@@ -1,9 +1,11 @@
+import { EditorState } from "@codemirror/state";
 import {
   EditorView,
   drawSelection,
   highlightActiveLine,
   highlightActiveLineGutter,
   lineNumbers,
+  rectangularSelection,
 } from "@codemirror/view";
 import { BUFFER_FONT_FAMILY } from "../spec/metrics.ts";
 
@@ -66,6 +68,8 @@ const zedEditorTheme = EditorView.theme({
     backgroundColor: "var(--editor-active-line-background)",
     color: "var(--editor-active-line-number)",
   },
+  // E-012: cursor width (drawSelection draws the cursor as a left border).
+  ".cm-cursor": { borderLeftWidth: "var(--editor-cursor-width)" },
   // E-015: selection color and corner radius = line height * multiplier.
   ".cm-selectionBackground, &.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground":
     {
@@ -80,6 +84,13 @@ export const editorExtensions = [
   highlightActiveLine(),
   highlightActiveLineGutter(),
   drawSelection(),
+  // Column selection yields one range per line; without this CM6 keeps only the main range.
+  EditorState.allowMultipleSelections.of(true),
+  // E-046: Zed's multi_cursor_modifier defaults to Alt. CM6 would read Ctrl on Windows, which kept the
+  // pre-drag cursor as a range in a Ctrl+Shift column drag (and added ranges on Ctrl+click).
+  EditorView.clickAddsSelectionRange.of((e) => e.altKey),
+  // E-047 (D-11): Ctrl+Shift+drag selects a column from the pointer. Alt+Shift and middle-button drag are out of scope.
+  rectangularSelection({ eventFilter: (e) => e.button === 0 && e.ctrlKey && e.shiftKey }),
   EditorView.editorAttributes.of({ "data-keymap-context": "Editor" }),
   zedEditorTheme,
 ];

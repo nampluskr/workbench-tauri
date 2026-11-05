@@ -76,7 +76,7 @@ fn wide(text: &str) -> Vec<u16> { OsStr::new(text).encode_wide().chain(Some(0)).
 #[tauri::command]
 pub async fn confirm(window: tauri::WebviewWindow, title: String, main: String, content: Option<String>, ok_label: String, details: Option<String>) -> bool {
     let hwnd = match window.hwnd() { Ok(hwnd) => hwnd.0 as isize, Err(_) => return false };
-    match tauri::async_runtime::spawn_blocking(move || {
+    tauri::async_runtime::spawn_blocking(move || {
         let title = wide(&title);
         let main = wide(&main);
         let content = content.as_deref().map(wide);
@@ -99,7 +99,7 @@ pub async fn confirm(window: tauri::WebviewWindow, title: String, main: String, 
         };
         let mut chosen = IDCANCEL.0;
         unsafe { TaskDialogIndirect(&config, Some(&mut chosen), None, None) }.is_ok() && chosen == IDOK.0
-    }).await { Ok(confirmed) => confirmed, Err(_) => false }
+    }).await.unwrap_or_default()
 }
 
 fn copy_name(source: &Path, is_dir: bool, number: usize) -> io::Result<OsString> {
@@ -285,7 +285,7 @@ fn cleanup_empty_reservation(target: &Path, id: FileId, is_dir: bool) {
                     let stream = unsafe { &*(streams.as_ptr().cast::<FILE_STREAM_INFO>()) };
                     if !checked || stream.NextEntryOffset != 0 || stream.StreamSize != 0 { return; }
                 }
-                let disposition = FILE_DISPOSITION_INFO { DeleteFile: true.into() };
+                let disposition = FILE_DISPOSITION_INFO { DeleteFile: true };
                 let _ = unsafe { SetFileInformationByHandle(handle, FileDispositionInfo, &disposition as *const _ as *const _, std::mem::size_of_val(&disposition) as u32) };
             }
         }

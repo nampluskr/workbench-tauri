@@ -10,10 +10,12 @@ export const PROJECT_PANEL_ITEM_HEIGHT = 26; // project_panel.item.height (L-36)
 const METRICS: Record<string, string> = {
   "units.rem_size": `${REM_SIZE}px`, // L-01
   "typography.buffer_font_size": "15px", // L-08
+  "typography.size.default": rem(14), // L-05 (label default: tree name, tab title, title bar folder button)
   "editor.gutter.min_line_number_digits": "4", // E-002
   "editor.gutter.padding_left_ch": "3", // E-003
   "editor.gutter.padding_right_ch": "4", // E-004
   "editor.line_height.comfortable_multiplier": "1.618", // E-010
+  "editor.cursor_width": rem(2), // E-012
   "editor.selection.corner_radius_multiplier": "0.15", // E-015
   "scrollbar.width.editor": rem(15), // E-030
   "titlebar.height": rem(32), // L-21
