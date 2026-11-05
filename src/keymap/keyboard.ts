@@ -1,3 +1,4 @@
+import { BUILTIN } from "./builtin.ts";
 import { Keymap, strokeOf, type ContextNode } from "./engine.ts";
 
 // D-5: Tauri 2.12.5 does not expose WebView2's AreBrowserAcceleratorKeysEnabled (wry has it,
@@ -9,19 +10,25 @@ export const BROWSER_KEYS: ReadonlySet<string> = new Set([
 ]);
 
 export const keymap = new Keymap();
-/** Action name -> handler. Bindings are loaded here later (Zed keymap files are out of scope, I-700). */
+keymap.addSections("default", BUILTIN);
+/** Action name -> handler. Its keys are the actions keymap.json may name (K-085). */
 export const commands = new Map<string, () => void>();
+// Actions whose behavior arrives in a later Phase are registered as no-ops; that Phase replaces them with commands.set.
+for (const { bindings } of BUILTIN) for (const action of Object.values(bindings)) if (typeof action === "string") commands.set(action, () => {});
 
 let pending: string[] = [];
 
-/** Context stack from `data-keymap-context="A B"` attributes, root first. */
+// Zed's window-level base context: Workspace bindings match wherever focus is, including on no element.
+const WORKSPACE_ROOT: ContextNode = new Set(["Workspace"]);
+
+/** Context stack from `data-keymap-context="A B"` attributes, root first, under the Workspace base. */
 function contextStack(target: EventTarget | null): ContextNode[] {
   const stack: ContextNode[] = [];
   for (let el = target instanceof Element ? target : null; el; el = el.parentElement) {
     const names = (el as HTMLElement).dataset?.keymapContext;
     if (names) stack.unshift(new Set(names.split(" ")));
   }
-  return stack;
+  return [WORKSPACE_ROOT, ...stack];
 }
 
 function onKeyDown(e: KeyboardEvent): void {

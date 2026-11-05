@@ -146,8 +146,8 @@
 
 | Phase | 대응 R | 상태 | 커밋 | 비고 |
 | --- | --- | --- | --- | --- |
-| Phase 1 — 뼈대 | R-10 | done | - | 없음 |
-| Phase 2 — 키맵 | R-1 · R-2 | todo | 미정 | 없음 |
+| Phase 1 — 뼈대 | R-10 | done | 06d9c4d | 없음 |
+| Phase 2 — 키맵 | R-1 · R-2 | done | - | 없음 |
 | Phase 3 — 툴팁·메뉴 | R-4 ~ R-9 | todo | 미정 | 없음 |
 | Phase 4 — 사이드바·state.json | R-11 ~ R-17 · R-29 | todo | 미정 | 없음 |
 | Phase 5 — 트리·파일 작업·탭 | R-3 · R-18 ~ R-24 · R-26 ~ R-28 · R-30 | todo | 미정 | 없음 |

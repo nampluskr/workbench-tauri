@@ -238,12 +238,13 @@ namespace ZlInput {
                 case "left": return 0x25; case "up": return 0x26; case "right": return 0x27; case "down": return 0x28;
                 case "=": case "plus": return 0xBB; case "-": case "minus": return 0xBD;
                 case "hangul": return 0x15; case "numadd": return 0x6B; case "numsub": return 0x6D;
+                case ";": return 0xBA; case "menu": case "apps": return 0x5D;
             }
             if (k.Length == 1 && char.IsLetterOrDigit(k[0])) return (ushort)char.ToUpperInvariant(k[0]);
             if (k.StartsWith("f") && int.TryParse(k.Substring(1), out int n) && n >= 1 && n <= 24) return (ushort)(0x70 + n - 1);
             throw new ArgumentException("unknown key: " + k);
         }
-        static bool IsExtended(ushort vk) { return vk >= 0x21 && vk <= 0x2E || vk == 0x5B; }
+        static bool IsExtended(ushort vk) { return vk >= 0x21 && vk <= 0x2E || vk == 0x5B || vk == 0x5D; }
         [DllImport("user32.dll")] static extern uint MapVirtualKey(uint code, uint mapType);
         /// Fill the scan code too, like a real keyboard: Chromium derives
         /// KeyboardEvent.code from it (a VK-only event gets an empty code).

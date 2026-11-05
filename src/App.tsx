@@ -20,7 +20,7 @@ export default function App() {
           </div>
         </div>
       </aside>
-      <div class="workspace" data-keymap-context="Workspace">
+      <div class="workspace">
         <TitleBar />
         <div class="workspace-body">
           <aside class="dock-left">

@@ -1,8 +1,10 @@
 // Keymap engine (D-4): context depth, null unbinding, chords, display-key lookup.
-// Rules: 01-zed I-001, I-702, I-703, I-704. Zed keymap file loading (I-700) is out of scope.
+// Rules: 01-zed I-001, I-702, I-703, I-704. Loading keymap files (I-700) is done by user.ts.
 
 export type Action = string | [name: string, args: unknown] | null; // null unbinds (I-703)
 export type Source = "default" | "overlay" | "user";
+/** One block of a Zed keymap.json: bindings sharing a context. */
+export type KeymapSection = { context?: string | null; bindings: Record<string, Action> };
 export type ContextNode = ReadonlySet<string>;
 export type Dispatch = { type: "match"; action: NonNullable<Action> } | { type: "pending" } | { type: "none" };
 
@@ -28,7 +30,8 @@ function keyName(e: KeyEventLike): string {
     if (m) return (m[1] ?? m[2]).toLowerCase();
   }
   // Synthetic input may have an empty `code`; `key` alone decides.
-  return e.key === " " ? "space" : e.key.toLowerCase().replace(/^arrow/, "");
+  // Zed names the Menu key "menu"; the browser calls it "ContextMenu".
+  return e.key === " " ? "space" : e.key.toLowerCase().replace(/^arrow/, "").replace(/^contextmenu$/, "menu");
 }
 
 /** Canonical stroke such as "ctrl-shift-p", or null for a bare modifier press. */
@@ -41,7 +44,7 @@ export function strokeOf(e: KeyEventLike): string | null {
 }
 
 /** Canonicalize a binding string: "Ctrl-K V" -> ["ctrl-k", "v"]. */
-function parseKeys(keys: string): string[] {
+export function parseKeys(keys: string): string[] {
   return keys.trim().split(/\s+/).map((stroke) => {
     const mods = new Set<string>();
     let rest = stroke.toLowerCase();
@@ -101,6 +104,13 @@ export class Keymap {
         test: b.context ? parsePredicate(b.context) : null,
         source,
       });
+    }
+  }
+
+  /** Add Zed-shaped sections; within a section the bindings keep their object order. */
+  addSections(source: Source, sections: KeymapSection[]): void {
+    for (const { context, bindings } of sections) {
+      this.add(source, Object.entries(bindings).map(([keys, action]) => ({ keys, action, context: context ?? undefined })));
     }
   }
 

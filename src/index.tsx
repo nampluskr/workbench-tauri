@@ -2,6 +2,7 @@ import { render } from "solid-js/web";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import App from "./App.tsx";
 import { installKeyboard } from "./keymap/keyboard.ts";
+import { loadUserKeymap } from "./keymap/load.ts";
 import { applyTheme } from "./theme/apply.ts";
 import { applyMetrics } from "./spec/metrics.ts";
 import "./app.css";
@@ -16,6 +17,7 @@ if (!root) {
 try {
   applyMetrics();
   await applyTheme();
+  await loadUserKeymap();
   installKeyboard();
   render(() => <App />, root);
 } finally {
