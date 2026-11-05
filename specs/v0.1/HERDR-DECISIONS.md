@@ -20,3 +20,4 @@
 | H-12 | 2026-11-05 | V3 측정 담당은 `measure`(Claude Code Sonnet 5.5 high)다. check 탭에 pane을 더해 Phase 끝에만 띄운다. 소유는 `tools/`와 `specs/v0.1/verify/`다. | 사용자 결정(W-4e 안 승인) |
 | H-13 | 2026-11-05 | 구독 현황을 확인했다. Claude Max와 Gemini Pro(agy)이고, workbench-gpui 기록과 같다. `leader`는 Claude Code Opus 5.5이며 effort는 세션 기본값으로 적는다. | 사용자 확인 |
 | H-14 | 2026-11-05 | 사용자가 `leader`에게 권한을 위임했다. `leader`는 사용자 권한으로 Phase 0~3을 서브 에이전트로 진행한다. 쓰기·빌드 승인은 카드 범위 안에서 `leader`가 처리한다. git 쓰기, push, 시스템 설치, 범위 밖 삭제는 `leader`가 직접 판단한다. 위임으로 내린 판단은 출처를 "리더 결정(사용자 위임 2026-11-05)"으로 단다. | 사용자 위임("단계별로 서브 에이전트를 이용해 마지막 phase까지 진행") |
+| H-15 | 2026-11-05 | P0 요약표 `specs/v0.1/verify/P0-SUMMARY.md`는 이번만 `writer`가 새로 쓴다(W-10). `verify/`의 소유자는 `measure`지만, 요약표는 측정이 아니라 문서 작업이라서다. | 리더 결정(사용자 위임 2026-11-05) |

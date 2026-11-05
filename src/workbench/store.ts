@@ -1,6 +1,7 @@
 import { createStore } from "solid-js/store";
-import { EditorState } from "@codemirror/state";
+import { EditorState, type Extension } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
+import { syntaxHighlighting } from "../syntax/highlight.ts";
 import { editorExtensions } from "../editor/extensions.ts";
 import { SAMPLE_CSS, SAMPLE_CSS_TITLE, SAMPLE_HTML, SAMPLE_TITLE } from "../editor/sample.ts";
 import { moveTab, type Pane } from "./panes.ts";
@@ -10,12 +11,12 @@ import { moveTab, type Pane } from "./panes.ts";
 export const views = new Map<string, EditorView>();
 export const titles = new Map<string, string>();
 
-function openTab(id: string, title: string, doc: string): void {
+function openTab(id: string, title: string, doc: string, extra: Extension = []): void {
   titles.set(id, title);
-  views.set(id, new EditorView({ state: EditorState.create({ doc, extensions: editorExtensions }) }));
+  views.set(id, new EditorView({ state: EditorState.create({ doc, extensions: [editorExtensions, extra] }) }));
 }
 
-openTab(SAMPLE_TITLE, SAMPLE_TITLE, SAMPLE_HTML);
+openTab(SAMPLE_TITLE, SAMPLE_TITLE, SAMPLE_HTML, syntaxHighlighting("html"));
 openTab(SAMPLE_CSS_TITLE, SAMPLE_CSS_TITLE, SAMPLE_CSS);
 
 const [state, setState] = createStore<{ panes: Pane[] }>({

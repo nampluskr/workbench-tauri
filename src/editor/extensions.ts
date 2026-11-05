@@ -31,6 +31,10 @@ const zedEditorTheme = EditorView.theme({
   ".cm-scroller::-webkit-scrollbar-track": {
     background: "var(--scrollbar-track-background)",
   },
+  // The corner where both scrollbars meet takes the track color.
+  ".cm-scroller::-webkit-scrollbar-corner": {
+    background: "var(--scrollbar-track-background)",
+  },
   ".cm-scroller::-webkit-scrollbar-thumb": {
     background: "var(--scrollbar-thumb-background)",
   },

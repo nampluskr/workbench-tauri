@@ -5,9 +5,11 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+// D-13: Catppuccin is read from the installed Zed extension, no longer bundled in the repo (this PC only).
+const CATPPUCCIN = process.env.LOCALAPPDATA + "/Zed/extensions/installed/catppuccin/themes/catppuccin-mauve.json";
 const FILES = {
-  "Catppuccin Mocha": "src/theme/assets/catppuccin/catppuccin-mauve.json",
-  "Catppuccin Latte": "src/theme/assets/catppuccin/catppuccin-mauve.json",
+  "Catppuccin Mocha": CATPPUCCIN,
+  "Catppuccin Latte": CATPPUCCIN,
   "One Light": "src/theme/assets/one/one.json",
 };
 

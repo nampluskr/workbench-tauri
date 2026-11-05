@@ -1,4 +1,5 @@
 import { render } from "solid-js/web";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import App from "./App.tsx";
 import { installKeyboard } from "./keymap/keyboard.ts";
 import { applyTheme } from "./theme/apply.ts";
@@ -10,7 +11,13 @@ if (!root) {
   throw new Error("#root element not found");
 }
 
-applyMetrics();
-applyTheme();
-installKeyboard();
-render(() => <App />, root);
+// The window starts hidden (tauri.conf.json "visible": false): the WebView would otherwise show
+// its default white page until the theme is applied. Show it even if startup fails.
+try {
+  applyMetrics();
+  await applyTheme();
+  installKeyboard();
+  render(() => <App />, root);
+} finally {
+  await getCurrentWindow().show();
+}

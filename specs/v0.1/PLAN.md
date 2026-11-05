@@ -132,4 +132,4 @@
 | Phase 0 — 프로젝트 뼈대 | 없음 | done | 4ca546e | 없음 |
 | Phase 1 — 프레임워크·편집기 | R-1 · R-2 | done | 9f5ea8f | 없음 |
 | Phase 2 — 창·단위·테마·키맵 | R-3 ~ R-8 | done | 미정 | 없음 |
-| Phase 3 — 문법 WASM·P0 정리 | R-9 ~ R-12 | 시작 전 | 없음 | 시작 전 Markdown·JSON 확장 설치(사용자) |
+| Phase 3 — 문법 WASM·P0 정리 | R-9 ~ R-12 | done | 미정 | 시작 전 Markdown·JSON 확장 설치(사용자) |

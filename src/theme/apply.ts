@@ -1,27 +1,38 @@
 import { invoke } from "@tauri-apps/api/core";
-import catppuccin from "./assets/catppuccin/catppuccin-mauve.json";
 import one from "./assets/one/one.json";
-import { findTheme, over, resolveTokens, themeCss, type ThemeFile } from "./theme.ts";
+import { findTheme, over, resolveTokens, syntaxCss, themeCss, type ThemeFile } from "./theme.ts";
+
+// Catppuccin is read from the installed Zed extension (D-13, D-14); One is in the repo (D-9).
+async function installed(path: string): Promise<ThemeFile> {
+  const response = await fetch(`http://zlext.localhost/${path}`);
+  if (!response.ok) throw new Error(`zlext ${path}: ${response.status} ${await response.text()}`);
+  return response.json();
+}
+const catppuccin = () => installed("catppuccin/themes/catppuccin-mauve.json");
 
 // D-8: the three themes of this version.
-const THEMES: Record<string, ThemeFile> = {
-  "Catppuccin Mocha": catppuccin as ThemeFile,
-  "Catppuccin Latte": catppuccin as ThemeFile,
-  "One Light": one as ThemeFile,
+const THEMES: Record<string, () => Promise<ThemeFile>> = {
+  "Catppuccin Mocha": catppuccin,
+  "Catppuccin Latte": catppuccin,
+  "One Light": async () => one as ThemeFile,
 };
 const DEFAULT_THEME = "Catppuccin Mocha"; // reference screen A-30.1
 
 const sheet = new CSSStyleSheet();
+/** Syntax keys of the applied theme, for the T-27.1 lookup. */
+export let syntaxKeys: ReadonlySet<string> = new Set();
 
 /**
  * Apply the theme named by `?theme=` (V3 switches themes by navigating with it; the selector UI is
  * out of scope, T-21), else the default. Variables live in one constructable sheet, no inline style.
  */
-export function applyTheme(): void {
+export async function applyTheme(): Promise<void> {
   const requested = new URLSearchParams(location.search).get("theme");
   const name = requested && Object.hasOwn(THEMES, requested) ? requested : DEFAULT_THEME;
-  const tokens = resolveTokens(findTheme(THEMES[name], name).style);
-  sheet.replaceSync(themeCss(tokens));
+  const { style } = findTheme(await THEMES[name](), name);
+  const tokens = resolveTokens(style);
+  syntaxKeys = new Set(Object.keys(style.syntax ?? {}));
+  sheet.replaceSync(`${themeCss(tokens)}\n${syntaxCss(style)}`);
   if (!document.adoptedStyleSheets.includes(sheet)) document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
   // The native maximize button (src-tauri/src/caption.rs) cannot read CSS: send it the flat colors.
   const bar = tokens["title_bar.background"];

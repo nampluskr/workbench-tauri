@@ -374,7 +374,217 @@
 
 ### Phase 3 — 문법 WASM 로드 PoC와 P0 정리
 
-없음.
+- **W-9 R-9 술어 목록 고정** (2026-11-05)
+  - 무엇을 했나: SPEC R-9 시작 조건이다. 이 PC에 설치된 Zed HTML 확장에서 `.scm` 6개를 읽고, 실제로 쓰인 술어를 원문 그대로 뽑아 고정했다.
+    - 경로: `%LOCALAPPDATA%\Zed\extensions\installed\html\languages\html\`
+    - 확장 버전: `html` 0.3.2(`extension.toml`)
+    - 문법: `tree-sitter-html` rev `bfa075d83c6b97cd48440b3829ab8d24a2319809`
+    - **이 목록은 고정한 뒤 바꾸지 않는다(SPEC R-9).**
+  - 결과
+
+    | 술어 | 파일·쓰임 | 고정 사례(입력 → 기대) |
+    | --- | --- | --- |
+    | `#match?` | injections.scm: `@_attribute_name "^style$"` | P-1 `<p style="color:red">` → injection.content "color:red", injection.language "css" / P-2 `<p class="color:red">` → 속성 매치 없음 |
+    | `#match?` | injections.scm: `@_attribute_name "^on[a-z]+$"` | P-3 `<b onclick="go()">` → injection.content "go()", injection.language "javascript" / P-4 `<b onClick="go()">` → 속성 매치 없음(대문자 C) |
+    | `#set!`(인수 2개) | injections.scm: `injection.language` ×5 | P-5 `<script>let x = 1;</script>` → setProperties {"injection.language":"javascript"}, content "let x = 1;" |
+    | `#set!`(인수 1개) | brackets.scm: `rainbow.exclude` ×5 | P-6 `<a href="x">` 따옴표 쌍 → setProperties에 키 "rainbow.exclude"(값 null) |
+    | `#set!`(인수 1개) | brackets.scm: `newline.only` ×1 | P-7 `<div></div>` → 시작·끝 태그 쌍에 키 "newline.only"와 "rainbow.exclude" |
+
+    - `injection.language` 값 다섯은 "comment", "javascript"(script), "css"(style), "css"(`style` 속성), "javascript"(`on*` 속성)다.
+    - 03-tauri R-03이 든 `#any-of?`는 이 6개 파일에 쓰이지 않는다.
+    - highlights.scm, indents.scm, outline.scm, overrides.scm에는 술어가 없다.
+    - overrides.scm에는 Zed 고유 지시문(`.inclusive` 등)이 없다. 일반 캡처(`@comment`, `@string`, `@default`)만 있다.
+    - Markdown·JSON 확장은 2026-11-05 현재 설치되어 있지 않다. `installed`에 있는 것은 `catppuccin`, `html`, `macos-classic`, `toml`이다. 그래서 PLAN대로 R-9의 Markdown·JSON 항목은 "대기"다(리더 확인).
+  - 검증
+    - 파일 6개 원문을 읽어 옮겼다.
+    - `#` 지시문은 13곳이다(brackets 6, injections 7). 모두 위 표에 들어 있다.
+    - 이전 PoC의 고정 표(태그 `legacy-v0.1-poc`의 PROGRESS "R-10 술어 목록 고정", 확장 0.3.2)와 대조했다. 현재 설치 파일과 같다.
+  - 특이사항: 이전 PoC 표는 이전 SPEC 번호(R-10)로 적혀 있다. 이번 버전에서는 R-9다.
+
+- **P3-1 `zlext` 스킴, 확장 경로 검사, CSP, Catppuccin을 설치 경로에서 읽기** (2026-11-05)
+  - 무엇을 했나: `impl`이 확장 파일을 주는 커스텀 스킴 `zlext`, A-55.2 경로 검사, D-14 CSP 세 항목을 만들었다(R-10). Catppuccin 임시 복사본을 지우고 `zlext`로 읽게 했다.
+  - 결과
+    - 새 파일: `src-tauri/src/ext_protocol.rs`(스킴·경로 검사와 정션 단위 테스트)
+    - 고친 파일
+      - `src-tauri/src/lib.rs`: `register_uri_scheme_protocol("zlext", …)`
+      - `src-tauri/tauri.conf.json`: CSP
+      - `src/theme/apply.ts`: Catppuccin을 `zlext`로 fetch, `applyTheme` async
+      - `src/index.tsx`: `await applyTheme()` 뒤 render
+      - `src/theme/theme.test.ts`: Catppuccin을 설치 경로에서 읽음
+      - `src/theme/NOTICE.md`: Catppuccin 행 삭제
+    - 지운 파일: `src/theme/assets/catppuccin/`(`catppuccin-mauve.json`, `LICENSE`)
+    - 스킴 URL은 `http://zlext.localhost/<확장 id>/<상대 경로>`다. 루트는 `%LOCALAPPDATA%\Zed\extensions\installed` 하나다(D-14).
+    - 경로 검사(A-55.2)는 다음 순서다.
+      1. 퍼센트 디코딩을 먼저 한다.
+      2. 절대 경로(드라이브, `\\`, 앞의 `/`)를 거부한다.
+      3. `..`·`.` 구성 요소를 거부한다.
+      4. `canonicalize`한 실제 경로가 확장 루트 밖이면 거부한다.
+    - 거부하면 403과 이유 문자열을, 없는 파일이면 404를 준다. CORS는 앱 출처에만 연다.
+    - CSP(`csp`, `devCsp`)는 D-14 세 항목만 더했다: `script-src 'self' 'wasm-unsafe-eval'`, `connect-src`에 `http://zlext.localhost`, `img-src 'self' http://zlext.localhost`.
+    - 의존성·capability 변경은 없다(Tauri 내장 스킴, std).
+    - 확장 SVG 표시는 넣지 않았다. 이 PC의 `installed`에 SVG 파일이 없다(아래 리더 결정).
+  - 검증
+    - V1(`impl`): `npm run typecheck` 에러 0, `npm run test` 11/11, `cargo check` 경고 0, `tauri build` 성공
+    - `cargo test` `ext_protocol::tests::path_checks_follow_a_55_2` 통과
+      - 임시 폴더와 `mklink /J` 정션으로 시험한다.
+      - 사례: 정상 상대 경로 허용, `C:/…`·`\\server\share`·`//etc` 거부, `../other`·`%2e%2e`·`sub\..\..` 거부, 정션 경유 루트 밖 링크 거부
+      - 이 PC의 Zed 폴더는 건드리지 않는다.
+    - V2(`impl`): 빌드 exe 1회, 조작 없이 최초 로드부터 수집했다.
+      - CSP 위반 0건
+      - `catppuccin-mauve.json`, `highlights.scm`, `html.wasm` 요청이 200이다.
+      - 거부 사례 fetch는 403·404다.
+      - Mocha 변수 24/24가 Phase 2 값과 같다.
+
+- **P3-2 문법 WASM 로드와 구문 강조** (2026-11-05)
+  - 무엇을 했나: `impl`이 `web-tree-sitter`로 설치된 HTML 확장의 문법 WASM과 `.scm`을 읽어 시작 상태 편집기에 강조를 입혔다(R-9). dylink 우회 카드라 HERDR-SETUP대로 Opus 5.5 medium으로 했다(아래 리더 결정).
+  - 결과
+    - 새 파일: `src/syntax/grammar.ts`(dylink 우회, 언어 로드, 경로, 쿼리 컴파일, T-27.1 `themeKey`), `src/syntax/highlight.ts`(CM6 ViewPlugin), `src/syntax/grammar.test.ts`
+    - 고친 파일: `src/theme/theme.ts`(`syntaxClass`·`syntaxCss`), `src/theme/apply.ts`, `src/workbench/store.ts`(`index.html` 탭에만 `syntaxHighlighting("html")`), `package.json`·`package-lock.json`
+    - 의존성 추가: `web-tree-sitter` 0.27.1(정확히 고정, 03-tauri 3.2 목록)
+    - dylink 우회(D-12): 바이트 사본에서 `dylink.0`의 NEEDED(`libc.so`) 하위 섹션 종류 바이트만 0x7f로 바꾼다. 원본 파일과 원본 배열은 그대로다.
+    - 경로 규칙: `<id>/grammars/<id>.wasm`, `<id>/languages/<id>/highlights.scm`. Markdown·JSON은 설치 뒤 실제 폴더를 보고 맞춘다.
+    - 강조: 캡처 이름 → T-27.1 키 → `cm-syntax-*` 클래스다. 테마 `style.syntax` 키마다 규칙 하나를 같은 stylesheet에 넣는다. 장식은 `visibleRanges` 안에서만 만든다.
+    - 인젝션 강조는 하지 않는다. `style.css` 탭은 CSS 확장이 없어 강조가 없다(대상 아님).
+  - 검증
+    - V1(`impl`): `npm run test` 16/16(이 카드 5개), `npm run typecheck` 에러 0, `cargo check` 경고 0, `tauri build` 성공
+      1. D-12: 원본 그대로는 로드가 거부되고, 우회 사본은 로드되며, 원본은 변하지 않는다.
+      2. `.scm` 6개 컴파일: brackets·highlights·indents·injections·outline·overrides 모두 됨. highlights 캡처가 나온다.
+      3. W-9 술어 P-1~P-7: 입력 → 기대가 실제와 모두 같다.
+      4. T-27.1: Mocha `syntax` 키에서 기대 키와 앱 결과가 같다.
+      5. 범위 단위: `QueryOptions`는 바이트(코드 단위×2), Node는 코드 단위다.
+    - V2(`impl`): 빌드 exe, 조작 없음
+      - `cm-syntax-*` 요소 247개, 클래스 6종이고, 계산 색이 Mocha `syntax` 값과 같다.
+      - CSP 위반·콘솔 오류 0건
+      - 앱을 두 번 띄웠다. 첫 실행은 덤프 스크립트가 리로드 직후 편집기가 없는 상태를 만나 스크립트 쪽 예외로 끝났다. 앱 코드는 두 실행 사이에 바꾸지 않았다.
+
+- **P3-3 CM6와 Tree-sitter 증분 연동** (2026-11-05)
+  - 무엇을 했나: `impl`이 CM6 트랜잭션을 `Tree.edit`와 이전 트리를 넘기는 증분 파싱으로 이었다(R-11). 증분 연동 카드라 Opus 5.5 medium으로 했다.
+  - 결과
+    - 새 파일: `src/syntax/incremental.ts`(`editTree`, `parseDoc`), `src/syntax/incremental.test.ts`
+    - 고친 파일: `src/syntax/highlight.ts`(전체 파싱은 문법 로드 직후 한 번뿐, 이후 증분)
+    - `editTree`: change마다 `Tree.edit`를 한 번 부른다. 좌표는 앞 edit이 반영된 텍스트 기준이며, 인덱스·Point는 UTF-16 코드 단위다.
+    - `parseDoc`: `parser.parse(callback, oldTree)`. 콜백이 4096 코드 단위씩 준다.
+    - 코드 확인
+      - Lezer: `@codemirror/language`가 의존성에 없고, 편집기 확장에 언어 확장이 없다. 강조는 Tree-sitter 플러그인 하나뿐이다.
+      - 보이는 범위: `src/syntax/highlight.ts`의 `visibleRanges` 반복에서만 장식을 만든다.
+    - 의존성 변경은 없다.
+  - 검증
+    - V1(`impl`): `npm run test` 17/17, `npm run typecheck` 에러 0, `cargo check` 경고 0, `tauri build` 성공
+    - 테스트: 트랜잭션마다 `Tree.edit` 수가 change 수와 같고, `parse`에 edit한 옛 트리와 콜백 입력이 넘어가며, 결과가 전체 파싱과 같다. change 3개의 edit 값은 손계산과 비교한다.
+    - 일부러 고장 낸 네 가지(옛 좌표 인덱스, 옛 문서 Point, 여러 줄 삭제 행 누락, newEnd −1)를 모두 실패로 잡았다.
+
+- **P3-4 시작 흰 프레임과 스크롤바 모서리** (2026-11-05)
+  - 무엇을 했나: M-4에서 나온 두 가지를 고쳤다. 시작할 때 테마 없는 흰 프레임이 보이고, 스크롤바 모서리가 흰색이었다.
+  - 결과
+    - `src-tauri/tauri.conf.json`: 창 `"visible": false`
+    - `src-tauri/capabilities/default.json`: `core:window:allow-show` 추가(리더 승인)
+    - `src/index.tsx`: 테마 적용과 첫 render 뒤 `finally`에서 `show()`. 테마 로드가 실패해도 창은 뜬다.
+    - `src/editor/extensions.ts`: `::-webkit-scrollbar-corner`에 `--scrollbar-track-background`
+    - 하드코딩 색은 쓰지 않았다. Rust 코드·의존성 변경은 없다.
+  - 검증: V0/V1(`impl`). `npm run typecheck` 에러 0, `npm run test` 17/17, `cargo check` 경고 0, `tauri build` 성공. 화면 확인은 M-4-R1이다.
+
+- **Phase 3 판정과 Phase 끝 검증** (2026-11-05)
+  - 무엇을 했나
+    - M-3: `measure`가 R-11 증분 파싱 시간을 쟀다. `tools/` 스크립트로 쟀고, 앱은 띄우지 않았다.
+    - M-4: Phase 3 끝 V3와 줄 수 비교(D-18)를 했다.
+    - M-4-R1: P3-4로 바뀐 항목만 다시 쟀다.
+    - M-5: 일회성 측정 스크립트를 정리했다.
+    - C-12: `check`가 검토하고 전체 테스트를 1회 돌렸다.
+    - R-12: `writer`가 P0 요약표를 썼다(W-10).
+  - 결과(판정)
+    - **R-9**
+      - HTML: 됨. `html.wasm` 로드, `.scm` 6개 컴파일, 술어 P-1~P-7, T-27.1, 범위 단위가 모두 통과다. V2 강조 247개다.
+      - Markdown·JSON: 대기. 확장이 설치되어 있지 않다.
+      - 로드가 실패한 문법이 없어 코어 비교는 해당 없음이다.
+    - **R-10**
+      - wasm·`.scm` 로드, 경로 사례, CSP 세 항목, 위반 0건: 충족
+      - 확장 SVG 표시: 대기(아래 리더 결정)
+    - **R-11 충족.** M-3 측정값
+      - 조건: Node v22.22.3, i7-8700K, `web-tree-sitter` 0.27.1, Zed `html.wasm`, HTML 10.00 MiB(98,269줄), 위치당 워밍업 3 + 30회
+      - 첫 전체 파싱: 2998ms
+      - 한 글자 증분 파싱 중앙값: 맨 앞 0.629ms(0.588~0.966), 가운데 0.657ms(0.591~1.008), 끝 0.618ms(0.555~0.966). 편집 뒤에도 루트 `document`, `hasError` false다.
+      - 통과 기준 수치는 원문에 없어 기록까지다. 장식 갱신 시간은 재지 않았다.
+    - **R-12 충족.** `specs/v0.1/verify/P0-SUMMARY.md`
+      - 됨: R-01, R-02, R-03, R-06, R-20, R-37
+      - 대기: R-19(HTML 됨, Markdown·JSON), R-36(확장 SVG 표시)
+      - 구조 판단: 프레임워크·편집기·구문 강조 모두 유지다. "다시 정함"이 없어 사용자에게 올릴 결정이 없다.
+    - M-4 결과(빌드 exe, 1920x1080 100%)
+      - `?theme=Catppuccin%20Latte`는 `zlext`를 거쳐 Latte 변수 24/24 일치
+      - 시작 상태 HTML 강조: 247개, 클래스 6종
+      - 불일치 둘(P3-4로 고침)
+        - 시작 때 약 0.9초(325~1242ms) 창 전체가 `#ffffff`
+        - 스크롤바 모서리 15x15가 `#ffffff`
+    - M-4-R1 결과: 불일치 없음
+      - 흰 프레임이 사라졌다. 5초간 263장에서 `#ffffff`는 0회다. 첫 앱 프레임(≤1066ms)부터 Mocha UI이고, 강조도 이미 있었다(1회 관찰).
+      - 스크롤바 모서리 픽셀이 트랙 픽셀과 같다(Mocha·Latte).
+      - 숨김→표시 뒤에도 최대화 버튼 hit test는 `HTMAXBUTTON`이고, 스냅 팝업이 뜬다.
+    - 결과표: `specs/v0.1/verify/phase3.md`(M-3, M-4, M-4-R1, M-5 절), 이미지 `specs/v0.1/verify/phase3/`
+  - 검증
+    - `check` C-12 PASS. Phase 3 완료 조건을 충족했다(확장 SVG·Markdown·JSON은 대기 승인).
+    - 전체 테스트 1회
+      - `npm run typecheck` 에러 0
+      - `npm run test` 17 pass / 0 fail
+      - `cargo test` 1 pass
+      - `cargo check` 경고 0
+    - 지적 1·2(일회성 tools 스크립트)는 M-5로 정리했다. 지적 3(대기)은 리더 확인이다.
+  - 리더 결정(사용자 위임 2026-11-05)
+    - Catppuccin 임시 복사를 지우고 `zlext`로 설치 경로에서 읽는다. Phase 2의 D-9 어긋남이 풀렸다.
+    - 확장 SVG는 대기다. 아이콘 테마 확장이 이 PC에 설치되어 있지 않다. SPEC 공통 시작 상태의 "확장 SVG가 보인다" 항목도 대기다.
+    - 일회성 tools 스크립트를 정리했다(M-5).
+      - 지운 것: `tools/measure-p1.mjs`, `measure-p2.mjs`, `measure-m4.mjs`, `measure-m4r1.mjs`
+      - p1·p2는 git 기록(9f5ea8f / 6dd9580)에 남는다. m4·m4r1은 커밋된 적이 없다.
+      - 남긴 것: `cdp-lib.mjs`, `win-input.ps1`, `png.mjs`, `theme-expect.mjs`, `hittest.ps1`, `capture-startup.ps1`, `count-lines.mjs`, `measure-m3.mjs`
+    - R-9 dylink 우회(P3-2)와 R-11 증분 연동(P3-3) 카드는 `impl` 모델을 Opus 5.5 medium으로 바꿔서 했다(HERDR-SETUP 1절 배정대로).
+    - `core:window:allow-show` 추가를 승인했다(P3-4).
+  - 줄 수 비교(D-18)
+    - 비교 대상: 이전 PoC 태그 `legacy-v0.1-poc`와 현재 작업 트리(미커밋 변경 포함)
+    - 줄 기준: 전체 줄, 괄호 안은 비공백 줄이다.
+    - 센 것: `src/**/*.{ts,tsx,css}`, `src-tauri/src/**/*.rs`, `tools/**`
+    - 세지 않은 것: 문서·JSON 데이터·lock·아이콘·설정
+    - 테스트: `src/**/*.test.ts`와 Rust `#[cfg(test)]` 줄부터 파일 끝까지
+
+    | 구분 | 이전 PoC | 현재 | 차이 |
+    | --- | --- | --- | --- |
+    | 앱 코드 — `src/` (ts·tsx·css) | 3,171 (2,917) | 990 (893) | −2,181 |
+    | 앱 코드 — `src-tauri/src/` (Rust, 테스트 블록 제외) | 821 (771) | 342 (318) | −479 |
+    | **앱 코드 합계** | **3,992 (3,688)** | **1,332 (1,211)** | **−2,660** |
+    | 테스트 — `src/**/*.test.ts` | 251 (225) | 311 (286) | +60 |
+    | 테스트 — Rust `#[cfg(test)]` 블록 | 36 (34) | 46 (43) | +10 |
+    | **테스트 합계** | **287 (259)** | **357 (329)** | **+70** |
+    | `tools/` 정리 전(M-4) | 1,095 (1,007) | 1,891 (1,778) | +796 |
+    | `tools/` 정리 후(M-5) | 1,095 (1,007) | 975 (913) | −120 |
+
+    - 이전 PoC 앱 코드 3,171줄 안에는 `src/poc/` 9개 파일 1,736줄이 들어 있다.
+    - 현재 `src/`에는 css 2개 86줄이 들어 있다. 이전 PoC는 css 파일이 없다.
+    - 정리 후 `tools/` 파일별 줄 수
+      - `win-input.ps1` 486, `measure-m3.mjs` 121, `cdp-lib.mjs` 83, `png.mjs` 70
+      - `theme-expect.mjs` 61, `capture-startup.ps1` 58, `hittest.ps1` 49, `count-lines.mjs` 47
+    - 같은 시점(M-5) `src/`는 1,000줄(비공백 903)이다. P3-4분이 늘었다. 표의 앱 코드 행은 M-4 값 그대로다.
+    - 명령(저장소 루트)
+
+    ```powershell
+    node tools/count-lines.mjs legacy-v0.1-poc
+    node tools/count-lines.mjs worktree
+    git ls-tree -r --name-only legacy-v0.1-poc
+    git grep -n "cfg(test)" legacy-v0.1-poc -- 'src-tauri/src/*.rs'
+    ```
+
+  - 특이사항
+    - 테마와 문법 테스트(V1)는 설치 경로에서 확장 파일을 직접 읽는다. 그래서 이 PC에서만 돈다(SPEC R-9 판정 방법).
+    - M-4-R1의 첫 프레임 강조는 1회 관찰이다. 항상 그렇다고 단정하지 않는다.
+
+- **사용자 확인 필요 모음** (2026-11-05, v0.1 전체)
+  - Markdown·JSON 확장 설치 뒤 R-9(03-tauri R-19) 판정. 사용자가 Zed에서 두 확장을 설치하면 같은 방식으로 로드하고 결과와 실패 사례를 적는다.
+  - 아이콘 테마 확장 설치 뒤 확장 SVG 표시(R-10, 시작 상태). 어떤 SVG를 어디에 보일지는 리더가 정한다.
+  - 네이티브 GDI 최대화 글리프와 DOM 기준 글리프의 안티앨리어싱 차이(Phase 2, V4)
+    - 먹 범위는 같다.
+    - 픽셀 최대 차는 Mocha 59, Mocha 최대화 상태 65, Latte 12다.
+    - 원문에 통과 수치가 없다.
+  - 비활성 창에서 최대화 버튼 hover 색은 근사값이다. 활성 타이틀 바 배경 기준으로 합성하며, 재지 않았다(Phase 2, V4).
+  - 03-tauri 표의 `tauri-build` 버전 표기 차이(Phase 0)
+    - 03-tauri 표는 2.12.5다.
+    - 실제 크레이트는 2.7.x이고, 2.7.4를 썼다.
+    - `docs/refs/`는 고치지 않았다.
 
 ## 사용자 요청 작업
 

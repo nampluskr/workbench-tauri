@@ -3,9 +3,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { findTheme, parseColor, resolveTokens, themeCss, type ThemeFile } from "./theme.ts";
 
-const load = (path: string) => JSON.parse(readFileSync(new URL(path, import.meta.url), "utf8")) as ThemeFile;
-const catppuccin = load("./assets/catppuccin/catppuccin-mauve.json");
-const one = load("./assets/one/one.json");
+const load = (path: string | URL) => JSON.parse(readFileSync(path, "utf8")) as ThemeFile;
+// Catppuccin comes from the installed Zed extension (D-13): this test runs on this PC only.
+const catppuccin = load(`${process.env.LOCALAPPDATA}/Zed/extensions/installed/catppuccin/themes/catppuccin-mauve.json`);
+const one = load(new URL("./assets/one/one.json", import.meta.url));
 
 // PROGRESS Phase 2 table 1 (R-7) with the CSS variable names fixed in W-7.
 const VARS: [token: string, cssVar: string][] = [

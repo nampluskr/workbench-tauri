@@ -95,3 +95,23 @@ export function over(top: string, bottom: string): string {
 export function themeCss(tokens: Record<Token, string>): string {
   return `:root { ${TARGET_TOKENS.map((t) => `${cssVarName(t)}: ${tokens[t]};`).join(" ")} }`;
 }
+
+// Syntax colors (T-06) are outside the R-7 target tokens: they are only turned into highlight
+// classes for R-9. Class "cm-syntax-<key with . -> ->" per theme syntax key.
+type SyntaxStyle = { color?: string | null; font_style?: string | null; font_weight?: number | null };
+
+export const syntaxClass = (key: string) => "cm-syntax-" + key.replace(/\./g, "-");
+
+export function syntaxCss(style: ThemeStyle): string {
+  const syntax = (style.syntax ?? {}) as Record<string, SyntaxStyle>;
+  return Object.entries(syntax)
+    .map(([key, s]) => {
+      const rules = [
+        s.color && `color: ${formatColor(parseColor(s.color))};`,
+        s.font_style && `font-style: ${s.font_style};`,
+        s.font_weight && `font-weight: ${s.font_weight};`,
+      ].filter(Boolean);
+      return `.${syntaxClass(key)} { ${rules.join(" ")} }`;
+    })
+    .join("\n");
+}

@@ -1,4 +1,5 @@
 mod caption;
+mod ext_protocol;
 
 use tauri::Manager;
 
@@ -14,6 +15,7 @@ pub fn run() {
             caption::install(main.hwnd()?);
             Ok(())
         })
+        .register_uri_scheme_protocol("zlext", |_ctx, request| ext_protocol::respond(&request))
         .invoke_handler(tauri::generate_handler![caption_set_colors])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
