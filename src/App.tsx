@@ -1,65 +1,54 @@
-import { For, createRenderEffect } from "solid-js";
 import TitleBar from "./shell/TitleBar.tsx";
-import { SAMPLE_TITLE } from "./editor/sample.ts";
-import { activate, moveToPane, panes, titles, views } from "./workbench/store.ts";
+import { IconButton } from "./shell/Icon.tsx";
+import { resizeHandle } from "./shell/dock.ts";
 
-// R-36: icon served from the installed extension through zlext (D-14).
-const HTML_ICON = "http://zlext.localhost/catppuccin-icons/icons/mocha/html.svg";
-
-function Pane(props: { index: number }) {
-  const pane = () => panes()[props.index];
-
-  // Re-attach the existing EditorView DOM instead of rendering a new editor.
-  const attach = (body: HTMLDivElement) =>
-    createRenderEffect(() => {
-      const id = pane().active;
-      body.replaceChildren(...(id ? [views.get(id)!.dom] : []));
-    });
-
-  return (
-    <section class="pane" data-keymap-context="Pane">
-      <div class="tabs">
-        <For each={pane().tabs}>
-          {(id) => (
-            <div class="tab" classList={{ active: id === pane().active }}>
-              <button onClick={() => activate(props.index, id)}>
-                {/* shortcut: one fixed icon (Catppuccin Mocha html.svg) on the HTML tab only, no icon theme
-                    parsing or variant choice; read icon_themes/*.json once icon theme selection is in scope. */}
-                {id === SAMPLE_TITLE && <img class="tab-icon" src={HTML_ICON} alt="" />}
-                {titles.get(id)}
-              </button>
-              <button
-                aria-label="Move tab to the other pane"
-                onClick={() => moveToPane(id, props.index, 1 - props.index)}
-              >
-                {props.index === 0 ? "→" : "←"}
-              </button>
-            </div>
-          )}
-        </For>
-      </div>
-      <div class="pane-body" ref={attach} />
-    </section>
-  );
-}
-
+// Icon choice per element follows workbench-gpui v0.3 src/ui/layout.rs (D-20).
 export default function App() {
   return (
     <>
       <aside class="sidebar">
         {/* The header sits in the title bar row, so it drags the window too (L-12). */}
         <div class="sidebar-header" data-tauri-drag-region />
+        <div class="sidebar-list" />
+        {/* A-11.8 (sidebar open): toggle on the left, Add Project at the right end. */}
+        <div class="sidebar-footer">
+          <div class="group grow">
+            <IconButton name="panel-left" label="Toggle Sidebar" />
+          </div>
+          <div class="group">
+            <IconButton name="folder" label="Add Project" />
+          </div>
+        </div>
       </aside>
       <div class="workspace" data-keymap-context="Workspace">
         <TitleBar />
         <div class="workspace-body">
-          <aside class="dock-left" />
-          <div class="pane-group">
-            <Pane index={0} />
-            <Pane index={1} />
-          </div>
+          <aside class="dock-left">
+            <div class="dock-resize-handle" ref={resizeHandle} />
+          </aside>
+          {/* L-15: one Pane = tab bar + active item. No tabs at start (SPEC Q-A). */}
+          <section class="pane" data-keymap-context="Pane">
+            <div class="tab-bar">
+              <div class="tab-bar-edge start">
+                <IconButton name="arrow-left" label="Go Back" />
+                <IconButton name="arrow-right" label="Go Forward" />
+              </div>
+              <div class="tab-bar-filler" />
+              <div class="tab-bar-edge end">
+                <IconButton name="plus" label="New…" />
+                <IconButton name="panel-right" label="Split Pane" />
+                <IconButton name="maximize" label="Zoom In" />
+              </div>
+            </div>
+            <div class="pane-body" />
+          </section>
         </div>
-        <footer class="status-bar" />
+        {/* A-11.8 (sidebar open): the project panel toggle is the only left item. */}
+        <footer class="status-bar">
+          <div class="group grow">
+            <IconButton name="folder-open" label="Close Left Dock" />
+          </div>
+        </footer>
       </div>
     </>
   );

@@ -5,6 +5,8 @@ body { background: var(--background); color: var(--text); font-size: 1rem; }
 /* L-11: [left sidebar] -> [Workspace]. L-12: the sidebar spans the full window height. */
 .sidebar {
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
   width: var(--sidebar-default-width);
   background: var(--panel-background);
@@ -12,8 +14,18 @@ body { background: var(--background); color: var(--text); font-size: 1rem; }
 }
 /* Header height = title bar height; the line under it continues the one under the title bar (L-302). */
 .sidebar-header {
+  flex-shrink: 0;
   height: var(--sidebar-header-height);
   border-bottom: var(--window-border-sidebar-header-bottom) solid var(--border);
+}
+.sidebar-list { flex: 1; min-height: 0; }
+/* L-35 / A-11.4: padding + Default button = footer height; the top border sits outside it. */
+.sidebar-footer {
+  display: flex;
+  gap: var(--sidebar-footer-gap);
+  padding: var(--sidebar-footer-padding);
+  border-top: var(--sidebar-footer-border-top) solid var(--border);
+  --icon-size: var(--sidebar-footer-icon-size);
 }
 
 /* L-13: title bar -> body -> status bar. */
@@ -26,30 +38,80 @@ body { background: var(--background); color: var(--text); font-size: 1rem; }
   border-top: var(--window-border-workspace-top) solid var(--border);
   border-bottom: var(--window-border-workspace-bottom) solid var(--border);
 }
-.status-bar { flex-shrink: 0; height: var(--statusbar-height); background: var(--status-bar-background); }
+/* L-28 / L-29 / L-91: left and right groups, group gap between them. */
+.status-bar {
+  flex-shrink: 0;
+  display: flex;
+  gap: var(--statusbar-group-gap);
+  box-sizing: border-box;
+  height: var(--statusbar-height);
+  padding-block: var(--statusbar-padding-y);
+  background: var(--status-bar-background);
+  --button-size: var(--statusbar-button-height);
+  --icon-size: var(--statusbar-icon-size);
+}
+.group { display: flex; gap: var(--statusbar-item-gap); }
+.sidebar-footer .group { gap: var(--sidebar-footer-gap); }
+.grow { flex: 1; }
 
-/* L-14: [left Dock] -> [PaneGroup]. */
+/* L-14: [left Dock] -> [PaneGroup]. L-31: from the handle width up to the body width less the handle. */
 .dock-left {
+  position: relative;
   flex-shrink: 0;
   box-sizing: border-box;
   width: var(--project-panel-default-width);
+  min-width: var(--dock-min-width);
+  max-width: calc(100% - var(--dock-resize-handle-width));
   background: var(--panel-background);
   border-right: var(--window-border-dock-left) solid var(--border); /* L-16 */
 }
-.pane-group { flex: 1; min-width: 0; display: flex; }
+/* L-30: the handle straddles the Dock edge, half on each side. */
+.dock-resize-handle {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  right: calc(var(--dock-resize-handle-width) / -2);
+  width: var(--dock-resize-handle-width);
+  cursor: col-resize;
+}
 
 /* L-15: Pane = tab bar + active item. */
 .pane { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.pane + .pane { border-left: thin solid var(--border); }
-.tabs {
+/* L-61: [start area] + [tabs] + [filler] + [end area]. */
+.tab-bar {
+  flex-shrink: 0;
   display: flex;
-  box-sizing: border-box;
   height: var(--tab-bar-height);
   background: var(--tab-bar-background);
-  border-bottom: var(--tab-border-width) solid var(--border);
+  --icon-size: var(--tab-bar-icon-size);
 }
-.tab { display: flex; background: var(--tab-inactive-background); color: var(--text-muted); }
-.tab.active { background: var(--tab-active-background); color: var(--text); }
-.tab button { border: 0; background: none; color: inherit; font: inherit; }
-.tab-icon { width: var(--icons-size-small); height: var(--icons-size-small); vertical-align: middle; }
+/* L-27 */
+.tab-bar-edge {
+  display: flex;
+  align-items: center;
+  gap: var(--tab-end-buttons-area-gap);
+  padding-inline: var(--tab-end-buttons-area-padding-x);
+  border-bottom: var(--tab-end-buttons-area-border-bottom) solid var(--border);
+}
+.tab-bar-edge.start { border-right: var(--tab-end-buttons-area-border-start-right) solid var(--border); }
+.tab-bar-edge.end { border-left: var(--tab-end-buttons-area-border-end-left) solid var(--border); }
+.tab-bar-filler { flex: 1; border-bottom: var(--tab-border-width) solid var(--border); } /* L-63 */
 .pane-body { flex: 1; min-height: 0; }
+
+/* Icon button: Default height square (L-07) unless the area sets --button-size. */
+.icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--button-size, var(--buttons-height-default));
+  height: var(--button-size, var(--buttons-height-default));
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-muted);
+}
+.icon-button:not(:disabled):hover { background: var(--ghost-element-hover); }
+.icon { display: flex; width: var(--icon-size); height: var(--icon-size); }
+.icon svg { width: 100%; height: 100%; }

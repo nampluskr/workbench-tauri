@@ -20,16 +20,33 @@ const METRICS: Record<string, string> = {
   "titlebar.window_button.glyph_size": rem(10), // L-39
   "sidebar.default_width": rem(300), // L-33
   "sidebar.header_height": rem(32), // L-12
+  "sidebar.footer.padding": rem(4), // L-35
+  "sidebar.footer.gap": rem(4), // L-35
+  "sidebar.footer.border_top": rem(1), // L-35
+  "sidebar.footer.icon_size": rem(14), // L-35
+  "buttons.height.default": rem(22), // L-07
   "window.border_workspace_top": rem(1), // L-301
   "window.border_workspace_bottom": rem(1), // L-301
   "window.border_sidebar_header_bottom": rem(1), // L-302
   "window.border_sidebar_right": rem(1), // L-303
   "window.border_dock_left": rem(1), // L-16
   "project_panel.default_width": rem(240), // L-32 (left Dock content)
+  "dock.resize_handle_width": rem(6), // L-30
+  "dock.min_width": rem(6), // L-31
   "tab.bar_height": rem(32), // L-22
+  "tab.end_buttons_area.gap": rem(4), // L-27
+  "tab.end_buttons_area.padding_x": rem(6), // L-27
+  "tab.end_buttons_area.border_bottom": rem(1), // L-27
+  "tab.end_buttons_area.border_start_right": rem(1), // L-27
+  "tab.end_buttons_area.border_end_left": rem(1), // L-27
+  "tab.bar_icon_size": rem(14), // L-300
   "tab.border_width": rem(1), // L-63
   "statusbar.height": rem(30), // L-28
-  "icons.size.small": rem(14), // L-06
+  "statusbar.padding_y": rem(4), // L-28
+  "statusbar.button_height": rem(22), // L-28
+  "statusbar.group_gap": rem(8), // L-29
+  "statusbar.item_gap": rem(4), // L-29
+  "statusbar.icon_size": rem(14), // L-92
 };
 
 // System monospace stand-in; Lilex is out of scope (INTENT).
