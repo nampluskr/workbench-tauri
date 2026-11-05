@@ -52,7 +52,50 @@
 
 ### Phase 1 — 프레임워크·편집기 기반 PoC
 
-없음.
+- **P1-1 두 Pane·탭 이동과 CM6 편집기** (2026-11-05)
+  - 무엇을 했나: `impl`이 두 Pane과 탭이 있는 PoC 화면과 CM6 편집기를 만들었다(R-1, R-2).
+    - 탭마다 `EditorView`를 하나씩 둔다. Solid 밖(`store.ts`의 Map)에서 한 번만 만들고, Pane은 `view.dom`을 다시 붙이기만 한다.
+    - 탭은 "→/←" 버튼으로 옮긴다.
+    - 이동할 때는 스크롤을 찍어 두었다가 되살린 뒤 포커스를 준다.
+  - 결과
+    - 새 파일
+      - `src/`: `App.tsx`, `app.css`, `spec/metrics.ts`
+      - `src/editor/`: `extensions.ts`, `sample.ts`
+      - `src/workbench/`: `panes.ts`, `panes.test.ts`, `store.ts`
+    - 고친 파일: `src/index.tsx`, `index.html`, `package.json`·`package-lock.json`
+      - `index.html`에는 CSP nonce carrier `<style>`을 더했다.
+    - 의존성 추가: `@codemirror/state` 6.7.6, `@codemirror/view` 6.43.15. 정확한 버전으로 고정했고 03-tauri 3.2 목록 안이다(리더 승인).
+    - 시작 상태: Pane 0에 HTML 예제(`index.html` 탭, 스크롤이 생기는 길이)가 열리고, 커서는 1행에 있다. 구문 강조는 Phase 3에서 넣는다.
+    - 수치: toml ID를 키로 한 `src/spec/metrics.ts`가 `:root` CSS 변수로 내보낸다. 인라인 style은 없다.
+      - E-005 간격은 캔버스 `fontBoundingBoxDescent`로 한 번 계산한다.
+      - 편집기 글꼴은 시스템 고정폭 Consolas 15px다.
+    - CSP 문자열은 Phase 0 그대로다. CM6의 `<style>`은 nonce carrier와 `EditorView.cspNonce`로 허용한다.
+    - 색은 CSS 변수 이름만 걸었다. 값은 아직 정의하지 않았다.
+  - 검증
+    - V2(`impl`)
+      - `npm run typecheck`: 에러 0
+      - `npm run test`: 1 pass(`panes.test.ts`)
+      - `cargo check`: 경고 0
+      - `npm run build` 성공
+      - `tauri dev`를 1회 띄워 조작 없이 CDP로 덤프했다.
+      - E-002·E-003·E-004·E-005·E-010·E-011(크기·범위)·E-030이 모두 허용 오차 안에서 통과했다.
+    - V3(`measure` M-1)
+      - 빌드한 exe(CSP 적용)를 1회 실행했다. 창은 논리 1440x852, 1920x1080 100%다.
+      - R-1: 탭 이동 전후로 `.cm-editor`가 `===`이고 `isConnected`다. 스크롤 280/20, DOM 선택 영역, 커서 좌표가 같았다. 한 프레임 뒤와 500ms 뒤 모두 같았다. **R-1 됨**. React 19 비교는 필요 없고, D-2(Solid)를 유지한다.
+      - R-2 E-015: 선택 모서리 반지름 3.6405px로 기대값과 같다. 통과다.
+      - CSP 위반은 0건이다. 양성 대조로 측정 방식을 확인했다. CM6 `<style>`의 nonce도 일치했다.
+      - 결과표: `specs/v0.1/verify/phase1.md`
+      - 스크립트: `tools/cdp-lib.mjs`, `tools/measure-p1.mjs`
+    - `check` C-10은 PASS다.
+      - Phase 1 완료 조건 다섯 가지를 모두 충족했다.
+      - Solid 반응성 함정이 없다.
+      - 전체 테스트를 1회 돌렸다: typecheck, test 1 pass, `cargo check` 경고 0.
+    - R-2의 크기 항목은 모두 통과했다. 색 판정은 Phase 2로 넘겼다(아래 특이사항).
+  - 특이사항
+    - E-011·E-015·E-006 색과 스크롤바 색은 테마가 들어오는 Phase 2에서 판정한다. 테마 코드는 앞당기지 않는다. 임시 CSS 변수 이름(`--editor-active-line-background`, `--players-0-selection` 등)은 Phase 2에서 T-40 토큰 이름에 맞춘다(리더 결정, 사용자 위임 2026-11-05. C-10 지적 1).
+    - E-005의 descent는 Chromium이 글꼴 메트릭을 정수로 둥글려 4px다. 글꼴이나 배율 환경이 바뀌면 다시 확인한다(C-10 지적 2).
+    - V2 덤프 직전에 HMR 상태를 정리하려고 페이지를 한 번 리로드했다. nonce carrier는 덤프 뒤에 더했고, 그 확인은 V3에서 했다.
+    - M-1의 입력은 OS 입력이 아니라 CDP `Input.dispatchMouseEvent`였다.
 
 ### Phase 2 — 창·단위·테마·키맵 기반
 

@@ -1,0 +1,7 @@
+html, body, #root { height: 100%; margin: 0; }
+#root { display: flex; }
+.pane { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.pane + .pane { border-left: thin solid; }
+.tabs { display: flex; }
+.tab.active { font-weight: bold; }
+.pane-body { flex: 1; min-height: 0; }

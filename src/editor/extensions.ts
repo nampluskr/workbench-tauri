@@ -1,0 +1,74 @@
+import {
+  EditorView,
+  drawSelection,
+  highlightActiveLine,
+  highlightActiveLineGutter,
+  lineNumbers,
+} from "@codemirror/view";
+import { BUFFER_FONT_FAMILY } from "../spec/metrics.ts";
+
+// Metric variables come from applyMetrics() (spec/metrics.ts); color variables come
+// from the theme JSON (Phase 2, D-8/D-9) and are unset until then.
+const lineHeight =
+  "calc(var(--typography-buffer-font-size) * var(--editor-line-height-comfortable-multiplier))";
+
+const zedEditorTheme = EditorView.theme({
+  "&": {
+    height: "100%",
+    fontFamily: BUFFER_FONT_FAMILY,
+    fontSize: "var(--typography-buffer-font-size)",
+    color: "var(--editor-foreground)",
+    backgroundColor: "var(--editor-background)",
+  },
+  ".cm-scroller": {
+    fontFamily: "inherit",
+    lineHeight, // E-010
+  },
+  ".cm-scroller::-webkit-scrollbar": {
+    width: "var(--scrollbar-width-editor)", // E-030
+    height: "var(--scrollbar-width-editor)",
+  },
+  ".cm-scroller::-webkit-scrollbar-track": {
+    background: "var(--scrollbar-track-background)",
+  },
+  ".cm-scroller::-webkit-scrollbar-thumb": {
+    background: "var(--scrollbar-thumb-background)",
+  },
+  ".cm-content": { padding: 0 },
+  // E-005: margin between gutter and text. It sits inside the line so that the
+  // active-line rectangle (E-011) covers it.
+  ".cm-line": { padding: "0 0 0 var(--editor-gutter-margin)" },
+  ".cm-gutters": {
+    backgroundColor: "var(--editor-gutter-background)",
+    color: "var(--editor-line-number)",
+    "&.cm-gutters-before": { borderRightWidth: 0 },
+  },
+  // E-002/E-003/E-004: number width = max(digits, min digits) * ch, padded in ch.
+  ".cm-lineNumbers .cm-gutterElement": {
+    boxSizing: "content-box",
+    minWidth: "calc(var(--editor-gutter-min-line-number-digits) * 1ch)",
+    padding:
+      "0 calc(var(--editor-gutter-padding-right-ch) * 1ch) 0 calc(var(--editor-gutter-padding-left-ch) * 1ch)",
+  },
+  // E-011: gutter element + line together span the full editor width.
+  ".cm-activeLine": { backgroundColor: "var(--editor-active-line-background)" },
+  ".cm-activeLineGutter": {
+    backgroundColor: "var(--editor-active-line-background)",
+    color: "var(--editor-active-line-number)",
+  },
+  // E-015: selection color and corner radius = line height * multiplier.
+  ".cm-selectionBackground, &.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground":
+    {
+      background: "var(--players-0-selection)",
+      borderRadius: `calc(${lineHeight} * var(--editor-selection-corner-radius-multiplier))`,
+    },
+});
+
+export const editorExtensions = [
+  EditorView.cspNonce.of(document.getElementById("csp-nonce-carrier")?.nonce ?? ""),
+  lineNumbers(),
+  highlightActiveLine(),
+  highlightActiveLineGutter(),
+  drawSelection(),
+  zedEditorTheme,
+];
