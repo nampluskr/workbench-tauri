@@ -244,6 +244,7 @@ namespace ZlInput {
                 case "hangul": return 0x15; case "numadd": return 0x6B; case "numsub": return 0x6D;
                 case ";": return 0xBA; case "menu": case "apps": return 0x5D;
                 case "pageup": return 0x21; case "pagedown": return 0x22; case "end": return 0x23; case "home": return 0x24;
+                case "delete": case "del": return 0x2E;
             }
             if (k.Length == 1 && char.IsLetterOrDigit(k[0])) return (ushort)char.ToUpperInvariant(k[0]);
             if (k.StartsWith("f") && int.TryParse(k.Substring(1), out int n) && n >= 1 && n <= 24) return (ushort)(0x70 + n - 1);

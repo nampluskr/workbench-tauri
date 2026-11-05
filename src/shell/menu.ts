@@ -2,7 +2,8 @@ import { MENU_WINDOW_MARGIN } from "../spec/metrics.ts";
 
 // Menu logic shared by the app menu and (Phase 5) the right-click menu: what can be selected, and where a popup goes.
 
-export type MenuItem = { label: string; action: string; disabled?: boolean };
+/** An entry runs `run`, or else the command named `action`; `action` is also what the shortcut is looked up for. */
+export type MenuItem = { label: string; action?: string; run?: () => void; disabled?: boolean };
 export type MenuEntry = MenuItem | "separator";
 export type Menu = { name: string; entries: MenuEntry[] };
 

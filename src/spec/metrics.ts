@@ -74,6 +74,12 @@ const METRICS: Record<string, string> = {
   "tooltip.multi.separator_border_width": rem(1), // L-232
   "tooltip.multi.title_shortcut_gap": rem(8), // L-232
   "titlebar.padding_left": rem(8), // L-82
+  "titlebar.left_group.gap": rem(2), // L-87
+  "sidebar.item_row.height": rem(31), // L-34
+  "sidebar.project_header.padding_left": rem(8), // L-34
+  "sidebar.project_header.padding_right": rem(6), // L-34
+  "sidebar.item.icon_size": rem(14), // A-12.1
+  "sidebar.item.focus_border_width": rem(1), // A-12.5
   "menu.min_width": rem(200), // I-313 (inside the borders; menu.min_outer_width = 202 is this plus the two borders)
   "menu.max_height_ratio": "0.75", // I-313
   "menu.border_width": rem(1), // I-315
@@ -95,6 +101,11 @@ const METRICS: Record<string, string> = {
 // Tooltip values that script reads (the rest above reach CSS only).
 export const TOOLTIP_DELAY_MS = 500; // tooltip.delay_default (L-206)
 export const TOOLTIP_CURSOR_OFFSET = { x: 1, y: 1 }; // tooltip.cursor_offset_x / _y (L-208)
+
+// Sidebar and state values that script reads.
+export const SIDEBAR_WIDTH = { default: 300, min: 200, max: 800 }; // sidebar.default_width / min_width / max_width (L-33)
+export const STATE_SAVE_DEBOUNCE_MS = 500; // app.state_save_debounce (A-24.2)
+export const PROJECT_NAME_MAX_CHARS = 40; // titlebar.project_name.max_chars (L-88)
 
 // Menu values that script reads.
 export const MENU_POPUP_OFFSET = { x: -5, y: 0 }; // menu.popup_offset_x / _y (I-314)

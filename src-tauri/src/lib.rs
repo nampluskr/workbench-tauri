@@ -1,5 +1,6 @@
 mod caption;
 mod ext_protocol;
+mod state;
 
 use notify::{Event, EventKind, RecursiveMode, Watcher};
 use tauri::{Emitter, Manager};
@@ -49,8 +50,47 @@ fn caption_set_colors(window: tauri::WebviewWindow, colors: [String; 5]) -> Resu
     caption::set_colors(window.hwnd().map_err(|e| e.to_string())?, &colors)
 }
 
+#[tauri::command]
+async fn check_folder(path: String) -> Result<(), String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let path = std::path::Path::new(&path);
+        if !std::fs::metadata(path).map_err(|e| e.to_string())?.is_dir() {
+            return Err("Not a folder".into());
+        }
+        for entry in std::fs::read_dir(path).map_err(|e| e.to_string())? {
+            entry.map_err(|e| e.to_string())?;
+        }
+        Ok(())
+    }).await.map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+async fn paths_exist(paths: Vec<String>) -> Vec<bool> {
+    let count = paths.len();
+    match tauri::async_runtime::spawn_blocking(move || paths.iter().map(|p| std::path::Path::new(p).exists()).collect()).await {
+        Ok(result) => result,
+        Err(error) => {
+            eprintln!("Failed to check paths: {error}");
+            vec![false; count]
+        }
+    }
+}
+
+#[tauri::command]
+async fn read_state() -> Result<serde_json::Value, String> {
+    tauri::async_runtime::spawn_blocking(|| state::read(&app_data_dir()?))
+        .await.map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+async fn write_state(json: String) -> Result<(), String> {
+    tauri::async_runtime::spawn_blocking(move || state::write(&app_data_dir()?, &json))
+        .await.map_err(|e| e.to_string())?
+}
+
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
         .setup(|app| {
             let main = app.get_webview_window("main").ok_or("main window missing")?;
             caption::install(main.hwnd()?);
@@ -61,7 +101,7 @@ pub fn run() {
             Ok(())
         })
         .register_uri_scheme_protocol("zlext", |_ctx, request| ext_protocol::respond(&request))
-        .invoke_handler(tauri::generate_handler![caption_set_colors, read_user_keymap])
+        .invoke_handler(tauri::generate_handler![caption_set_colors, read_user_keymap, check_folder, paths_exist, read_state, write_state])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

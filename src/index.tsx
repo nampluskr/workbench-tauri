@@ -4,6 +4,7 @@ import App from "./App.tsx";
 import { installKeyboard } from "./keymap/keyboard.ts";
 import { loadUserKeymap, watchUserKeymap } from "./keymap/load.ts";
 import { installTooltips } from "./shell/tooltip.ts";
+import { guardClose, loadWorkspace } from "./workspace/store.ts";
 import { applyTheme } from "./theme/apply.ts";
 import { applyMetrics } from "./spec/metrics.ts";
 import "./app.css";
@@ -19,10 +20,12 @@ try {
   applyMetrics();
   await applyTheme();
   await loadUserKeymap();
+  await loadWorkspace();
   installKeyboard();
   installTooltips();
   render(() => <App />, root);
   await watchUserKeymap();
+  await guardClose();
 } finally {
   await getCurrentWindow().show();
 }

@@ -13,15 +13,16 @@ export default function Icon(props: { name: IconName }) {
 }
 
 /**
- * Icon button without an action yet (v0.2 Phase 1): disabled until its Phase wires it. It still has its
- * tooltip (8.1): the label with the shortcut of `action`, or the given rows.
+ * Icon button: disabled until it gets an `onClick` (the tab bar end buttons stay that way, R-10). It has its
+ * tooltip either way (8.1): the label with the shortcut of `action`, or the given rows.
  */
-export function IconButton(props: { name: IconName; label: string; action?: string; tips?: Tip[] }) {
+export function IconButton(props: { name: IconName; label: string; action?: string; tips?: Tip[]; onClick?: () => void }) {
   return (
     <button
       class="icon-button"
       aria-label={props.label}
-      disabled
+      disabled={!props.onClick}
+      onClick={() => props.onClick?.()}
       ref={(el) => tooltip(el, () => props.tips ?? { title: props.label, action: props.action })}
     >
       <Icon name={props.name} />

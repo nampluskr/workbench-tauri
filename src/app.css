@@ -18,7 +18,28 @@ body { background: var(--background); color: var(--text); font-size: 1rem; }
   height: var(--sidebar-header-height);
   border-bottom: var(--window-border-sidebar-header-bottom) solid var(--border);
 }
-.sidebar-list { flex: 1; min-height: 0; }
+.sidebar[hidden], .dock-left[hidden] { display: none; }
+/* R-12: one row per folder; the list scrolls when there are many (A-16.7). */
+.sidebar-list { flex: 1; min-height: 0; overflow-y: auto; outline: none; }
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: var(--sidebar-item-row-height); /* L-34 */
+  padding: 0 var(--sidebar-project-header-padding-right) 0 var(--sidebar-project-header-padding-left);
+  color: var(--text-muted); /* A-12.1 */
+  --icon-size: var(--sidebar-item-icon-size);
+}
+.sidebar-item .icon { flex-shrink: 0; color: var(--icon-muted); }
+.sidebar-item-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sidebar-item-parent { color: var(--text-muted); } /* A-12.6 */
+.sidebar-item:hover { background: var(--ghost-element-hover); color: var(--text); } /* A-12.3 */
+.sidebar-item:active { background: var(--ghost-element-active); } /* A-12.4 */
+.sidebar-item.active { background: var(--ghost-element-selected); color: var(--text); } /* A-12.2 */
+.sidebar-item.missing, .sidebar-item.missing:hover { color: var(--text-disabled); } /* A-12.7 */
+.sidebar-item.missing .icon { color: var(--icon-disabled); }
+/* A-12.5: the keyboard cursor ring shows while the list has focus. */
+.sidebar-list:focus .sidebar-item.cursor { box-shadow: inset 0 0 0 var(--sidebar-item-focus-border-width) var(--border-focused); }
 /* L-35 / A-11.4: padding + Default button = footer height; the top border sits outside it. */
 .sidebar-footer {
   display: flex;
@@ -172,7 +193,7 @@ body { background: var(--background); color: var(--text); font-size: 1rem; }
 }
 
 /* R-8 / R-9 menu. left/top come from an adopted sheet (src/shell/AppMenu.tsx); the popup is fixed to the window. */
-.app-menu { display: flex; align-items: center; margin-right: auto; --icon-size: var(--menu-app-menu-button-icon-size); }
+.app-menu { display: flex; align-items: center; --icon-size: var(--menu-app-menu-button-icon-size); }
 .menu-bar { display: flex; gap: var(--menu-horizontal-item-gap); }
 .menu-name {
   height: var(--buttons-height-default);
@@ -214,3 +235,11 @@ body { background: var(--background); color: var(--text); font-size: 1rem; }
 .menu-shortcut { display: flex; gap: var(--menu-item-shortcut-chord-gap); color: var(--text-muted); }
 .menu-item.disabled .menu-shortcut { color: var(--text-disabled); }
 .menu-separator { height: var(--menu-separator-height); margin: var(--menu-separator-margin-y) 0; background: var(--border-variant); }
+
+/* R-16 project panel states. No spec ID sizes these texts or buttons, so only the structure is here. */
+.project-panel { height: 100%; overflow: auto; outline: none; }
+
+/* L-87, L-88: the left group of the title bar. */
+.title-left { display: flex; align-items: center; gap: var(--titlebar-left-group-gap); margin-right: auto; }
+.project-name { height: var(--buttons-height-default); padding: 0; border: 0; background: none; color: var(--text); font: inherit; }
+.project-name.empty { color: var(--text-muted); } /* L-227 */

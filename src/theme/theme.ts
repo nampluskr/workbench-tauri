@@ -45,6 +45,9 @@ export const TARGET_TOKENS = [
   "border.variant", // T-40.2: tooltip, menu
   "ghost_element.selected", // I-514: keyboard-selected menu item
   "text.disabled", // I-514: disabled menu item
+  "border.focused", // A-12.5: keyboard cursor ring of a sidebar item
+  "icon.muted", // A-12.1: folder icon
+  "icon.disabled", // A-12.7: icon of a folder whose path is gone
 ] as const;
 export type Token = (typeof TARGET_TOKENS)[number];
 
