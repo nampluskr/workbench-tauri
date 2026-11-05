@@ -51,4 +51,5 @@ body { background: var(--background); color: var(--text); font-size: 1rem; }
 .tab { display: flex; background: var(--tab-inactive-background); color: var(--text-muted); }
 .tab.active { background: var(--tab-active-background); color: var(--text); }
 .tab button { border: 0; background: none; color: inherit; font: inherit; }
+.tab-icon { width: var(--icons-size-small); height: var(--icons-size-small); vertical-align: middle; }
 .pane-body { flex: 1; min-height: 0; }

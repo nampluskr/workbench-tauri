@@ -29,6 +29,7 @@ const METRICS: Record<string, string> = {
   "tab.bar_height": rem(32), // L-22
   "tab.border_width": rem(1), // L-63
   "statusbar.height": rem(30), // L-28
+  "icons.size.small": rem(14), // L-06
 };
 
 // System monospace stand-in; Lilex is out of scope (INTENT).

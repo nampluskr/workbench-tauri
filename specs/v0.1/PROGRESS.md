@@ -594,14 +594,50 @@
     - 테마와 문법 테스트(V1)는 설치 경로에서 확장 파일을 직접 읽는다. 그래서 이 PC에서만 돈다(SPEC R-9 판정 방법).
     - M-4-R1의 첫 프레임 강조는 1회 관찰이다. 항상 그렇다고 단정하지 않는다.
 
+- **P3-5 R-10(03-tauri R-36) 확장 SVG 표시** (2026-11-05)
+  - 카드 ID는 위의 "P3-5 R-9 다른 문법 TOML 판정"과 같다. 둘은 다른 카드다.
+  - 무엇을 했나: `impl`이 HTML 탭 제목 앞에 Catppuccin Mocha `html.svg`를 `zlext`로 보였다.
+    - 전제: 사용자가 2026-11-05 Zed에 `catppuccin-icons` 확장을 설치했다.
+    - 표시 대상은 리더가 정했다(아래 리더 결정).
+  - 결과
+    - 고친 파일(+12 −1)
+      - `src/App.tsx`: HTML 탭(`id === SAMPLE_TITLE`) 제목 버튼 안, 제목 앞에 `<img class="tab-icon" alt="">`. 주소는 상수 `HTML_ICON` = `http://zlext.localhost/catppuccin-icons/icons/mocha/html.svg`. CSS 탭에는 아이콘이 없다.
+      - `src/spec/metrics.ts`: `icons.size.small`(L-06) → CSS 변수 `--icons-size-small`
+      - `src/app.css`: `.tab-icon`의 폭·높이를 `var(--icons-size-small)`로
+    - CSP·capability·의존성·Rust 변경은 없다. 테스트는 더하지 않았다.
+    - 주소 확인: `icon_themes/catppuccin-icons.json`의 Catppuccin Mocha `file_suffixes.html` = `html`, `file_icons.html.path` = `./icons/mocha/html.svg`. 파일도 확장 폴더에 있다.
+    - `shortcut:` 주석: 한계는 Mocha `html.svg` 고정, HTML 탭만, 아이콘 테마 파싱·변종 선택 없음이다. 아이콘 테마 선택이 범위에 들어오면 `icon_themes/*.json`을 읽는다.
+    - V2 덤프(앱 1회 실행, 조작 없음, 시작 직후 상태)
+
+      | 항목 | 값 |
+      | --- | --- |
+      | `img.src` | `http://zlext.localhost/catppuccin-icons/icons/mocha/html.svg` |
+      | `complete` | true |
+      | natural 크기 | 16 × 16 |
+      | `getBoundingClientRect` 폭 × 높이 | 14 × 14 (`icons.size.small`과 같음) |
+      | 탭별 img 수 | index.html 1, style.css 0 |
+      | CSP 위반 보고(콘솔·Log) | 0건 |
+
+    - **R-10 판정: 충족.** 남아 있던 확장 SVG 표시가 됐다. 03-tauri R-36은 됨이다. `verify/P0-SUMMARY.md`의 R-36 행을 고쳤다(W-R36).
+    - 시작 상태에서 확장 SVG가 보인다(위 V2 덤프). SPEC 공통 시작 상태의 대기 항목이 풀렸다.
+  - 검증
+    - V2(`impl`): `npm run typecheck` 에러 0, `npm run test` 18/18, `tauri build` 성공, 위 덤프
+    - C-14(`check`): PASSED
+      - 검토: D-14 주소 형식과 CSP 무변경, `icons.size.small` ID 일치와 하드코딩 없음, 인라인 `style` 없음, ponytail(+12 −1, `shortcut:` 주석), Solid 반응성
+      - 명령: `npm run typecheck` 에러 0, `npm run test` 18 pass / 0 fail, `cargo check` 경고 0
+      - 지적 1건(참고): 아이콘과 제목 사이 간격이 없다. 카드 범위 밖이고 정한 스펙 ID가 없어 지금 상태가 맞다고 봤다.
+  - 리더 결정(2026-11-05): 표시 대상은 HTML 탭의 Catppuccin Mocha `html.svg`다. 탭 치수(L-22 이후)는 범위 밖이라 아이콘–제목 간격은 적용하지 않는다.
+  - 특이사항: `impl`의 실측 필요 항목(탭 안 아이콘·제목 정렬과 간격)은 위 리더 결정으로 범위 밖이다.
+
 - **사용자 확인 필요 모음** (2026-11-05, v0.1 전체)
   - R-9(03-tauri R-19)의 다른 문법: 정리됨.
     - Markdown·JSON 확장 설치 항목은 없앴다. 두 언어는 Zed 앱 내장이라 확장으로 없다.
     - 이미 설치된 TOML(Zed toml 확장)로 판정한다(사용자 결정 2026-11-05, W-11).
     - P3-5에서 판정했고 됨이다. 남은 사용자 확인은 없다.
-  - 아이콘 테마 확장 설치 뒤 확장 SVG 표시(R-10, 시작 상태)
-    - `catppuccin-icons`는 레지스트리에 있다. 사용자가 나중에 직접 설치하며, 그때까지 R-36 SVG는 대기다(사용자 결정 2026-11-05).
-    - 어떤 SVG를 어디에 보일지는 리더가 정한다.
+  - 아이콘 테마 확장 설치 뒤 확장 SVG 표시(R-10, 시작 상태): 정리됨.
+    - 사용자가 2026-11-05 `catppuccin-icons`를 설치했다.
+    - 리더가 HTML 탭의 Catppuccin Mocha `html.svg`로 정했다.
+    - P3-5(R-36)에서 됨이다. 남은 사용자 확인은 없다.
   - 네이티브 GDI 최대화 글리프와 DOM 기준 글리프의 안티앨리어싱 차이(Phase 2, V4)
     - 먹 범위는 같다.
     - 픽셀 최대 차는 Mocha 59, Mocha 최대화 상태 65, Latte 12다.
@@ -725,6 +761,22 @@
     - `verify/P0-SUMMARY.md`의 R-19 행
   - TOML 판정을 하고 나면 R-19 행을 고칠 카드가 필요하다. 이후 P3-5와 W-12로 처리했다.
 - 검증: 문서만이다(V0). 네 문서에서 "Markdown"을 다시 찾아 남은 곳을 확인했다. 남은 것은 개정 이유 줄과 이전 결정 기록뿐이다.
+- 상태: 완료.
+
+### W-R36 R-36 확장 SVG 판정 기록 (2026-11-05)
+
+- 요청: 사용자가 Zed에 `catppuccin-icons`를 설치한 뒤 한 P3-5(R-36)와 C-14 결과를 기록하고, R-10(03-tauri R-36)을 됨으로 판정한다.
+- 조치
+  - PROGRESS Phase 3에 "P3-5 R-10(03-tauri R-36) 확장 SVG 표시" 항목을 더했다.
+  - "사용자 확인 필요 모음"의 아이콘 테마 항목을 정리됨으로 바꿨다.
+  - `verify/P0-SUMMARY.md`의 R-36 행을 됨으로 바꾸고, 근거에 P3-5·C-14를 넣었다.
+- 결과
+  - P0 여덟 항목이 모두 됨이다.
+  - 아래 기록은 그때의 기록이라 고치지 않았다. 모두 "확장 SVG 대기"로 적혀 있다.
+    - Phase 3 P3-1, "Phase 3 판정과 Phase 끝 검증"
+    - W-11
+  - 문서만 바뀌었다. 커밋하지 않았다.
+- 검증: 문서만이다(V0).
 - 상태: 완료.
 
 ## 버전 종료

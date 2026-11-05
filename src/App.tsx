@@ -1,6 +1,10 @@
 import { For, createRenderEffect } from "solid-js";
 import TitleBar from "./shell/TitleBar.tsx";
+import { SAMPLE_TITLE } from "./editor/sample.ts";
 import { activate, moveToPane, panes, titles, views } from "./workbench/store.ts";
+
+// R-36: icon served from the installed extension through zlext (D-14).
+const HTML_ICON = "http://zlext.localhost/catppuccin-icons/icons/mocha/html.svg";
 
 function Pane(props: { index: number }) {
   const pane = () => panes()[props.index];
@@ -18,7 +22,12 @@ function Pane(props: { index: number }) {
         <For each={pane().tabs}>
           {(id) => (
             <div class="tab" classList={{ active: id === pane().active }}>
-              <button onClick={() => activate(props.index, id)}>{titles.get(id)}</button>
+              <button onClick={() => activate(props.index, id)}>
+                {/* shortcut: one fixed icon (Catppuccin Mocha html.svg) on the HTML tab only, no icon theme
+                    parsing or variant choice; read icon_themes/*.json once icon theme selection is in scope. */}
+                {id === SAMPLE_TITLE && <img class="tab-icon" src={HTML_ICON} alt="" />}
+                {titles.get(id)}
+              </button>
               <button
                 aria-label="Move tab to the other pane"
                 onClick={() => moveToPane(id, props.index, 1 - props.index)}
