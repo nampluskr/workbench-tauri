@@ -58,11 +58,12 @@ npm run typecheck                                    # 타입 검사 (tsc --noEm
 npm run test                                         # 프런트엔드 테스트 (node --test)
 cargo check --manifest-path src-tauri/Cargo.toml     # Rust 컴파일·경고
 cargo test --manifest-path src-tauri/Cargo.toml
+cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
 ```
 
 - PowerShell에서 `npm`(`npm.ps1`)이 실행 정책에 막히면 `npm.cmd`로 부른다(예: `npm.cmd run test`).
 - 개발자 도구로 WebView 값을 읽어야 할 때만 `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222`를 주고 `tauri dev`를 실행한다.
-- 테스트와 타입 검사가 통과하지 않은 상태로 완료 보고를 하지 않는다. `cargo` 경고를 남긴 채 완료 보고를 하지 않는다.
+- 테스트와 타입 검사가 통과하지 않은 상태로 완료 보고를 하지 않는다. `cargo` 경고(clippy 포함)를 남긴 채 완료 보고를 하지 않는다.
 - **스크립트 언어**
   - 측정·검증 스크립트는 PowerShell 7로 쓴다.
   - Python이 꼭 필요하면 WinPython 인터프리터를 전체 경로로 부른다: `C:\winpython\WPy64-31180_cpu\python-3.11.8.amd64\python.exe`. 시스템 PATH의 `python`은 WindowsApps 스텁이라 쓰지 않는다.
@@ -95,7 +96,7 @@ cargo test --manifest-path src-tauri/Cargo.toml
 | V1 단위 | 로직 변경(분기, 계산, 상태, 키 처리, 경로 검사, 파싱) | V0 + 관련 테스트만 실행 |
 | V2 레이아웃 | 크기·간격·배치가 바뀔 수 있는 변경 | V1 + 카드에 적힌 스펙 ID 값을 WebView에서 덤프해 대조(3A.2 V2 예외 조건) |
 | V3 UI 실측 | 3A.3의 필요 조건에 해당하는 경우 | 앱을 실행해 실제 화면을 측정하고 스펙과 대조(3A.4 절차) |
-| V4 사용자 확인 | 측정으로 판단할 수 없는 시각 품질 | Phase 종료 때 일괄 확인 |
+| V4 사용자 확인 | 측정으로 판단할 수 없는 시각 품질 | 버전 끝에 일괄 확인 |
 
 ### 3A.2 작업 단위 UI 실행 제한
 
