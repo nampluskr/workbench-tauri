@@ -7,6 +7,7 @@ import { Keymap, strokeOf, type ContextNode } from "./engine.ts";
 export const BROWSER_KEYS: ReadonlySet<string> = new Set([
   "ctrl-p", "ctrl-f", "ctrl-r", "f5", "f3", "alt-left", "alt-right",
   "ctrl-+", "ctrl--", "ctrl-=", "ctrl-w", "ctrl-tab", "f1", "f6",
+  "f10", // WebView2 would enter the window-menu mode even when the keymap does not bind F10 (e.g. a null)
 ]);
 
 export const keymap = new Keymap();
@@ -15,6 +16,9 @@ keymap.addSections("default", BUILTIN);
 export const commands = new Map<string, () => void>();
 // Actions whose behavior arrives in a later Phase are registered as no-ops; that Phase replaces them with commands.set.
 for (const { bindings } of BUILTIN) for (const action of Object.values(bindings)) if (typeof action === "string") commands.set(action, () => {});
+
+/** An open menu takes over a matched action here (I-520). Return true when it handled the action. */
+export const hooks: { beforeCommand: ((action: string) => boolean) | null } = { beforeCommand: null };
 
 let pending: string[] = [];
 
@@ -31,6 +35,9 @@ function contextStack(target: EventTarget | null): ContextNode[] {
   return [WORKSPACE_ROOT, ...stack];
 }
 
+/** Context stack of the focused element, as the keymap sees it (menus and tooltips look keys up here). */
+export const focusStack = (): ContextNode[] => contextStack(document.activeElement);
+
 function onKeyDown(e: KeyboardEvent): void {
   const stroke = strokeOf(e);
   if (!stroke) return;
@@ -40,12 +47,17 @@ function onKeyDown(e: KeyboardEvent): void {
   // A stroke that does not continue the chord starts over on its own.
   if (result.type === "none" && pending.length) result = keymap.dispatch((strokes = [stroke]), stack);
   pending = result.type === "pending" ? strokes : [];
-  if (result.type === "match") commands.get(typeof result.action === "string" ? result.action : result.action[0])?.();
+  if (result.type === "match") {
+    const name = typeof result.action === "string" ? result.action : result.action[0];
+    if (!hooks.beforeCommand?.(name)) commands.get(name)?.();
+  }
   if (result.type !== "none" || BROWSER_KEYS.has(stroke)) e.preventDefault();
 }
 
 export function installKeyboard(): void {
   window.addEventListener("keydown", onKeyDown, true);
+  // A lone Alt press-and-release activates the window menu on Windows; nothing is bound to it here.
+  window.addEventListener("keyup", (e) => e.key === "Alt" && e.preventDefault(), true);
   // The browser's own context menu must not appear (03-tauri 4절).
   window.addEventListener("contextmenu", (e) => e.preventDefault(), true);
 }

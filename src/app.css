@@ -125,3 +125,92 @@ body { background: var(--background); color: var(--text); font-size: 1rem; }
   background: var(--panel-background);
   color: var(--text);
 }
+
+/* R-6 tooltip. The outer box is the transparent margin (L-209); .tooltip-box is the visible one (L-211~L-216).
+   left/top come from an adopted sheet (src/shell/tooltip.ts). */
+.tooltip {
+  position: fixed;
+  z-index: 3;
+  width: max-content;
+  padding: var(--tooltip-transparent-margin-top) 0 0 var(--tooltip-transparent-margin-left);
+  pointer-events: none;
+}
+.tooltip[hidden] { display: none; }
+/* elevation_2 (L-211, L-212, I-504, I-320): tooltip and menu share the surface color and the two-layer shadow. */
+.tooltip-box, .menu {
+  --shadow-2-alpha: var(--tooltip-shadow-2-alpha-dark);
+  background: var(--elevated-surface-background);
+  color: var(--text);
+  box-shadow:
+    0 var(--tooltip-shadow-1-offset-y) var(--tooltip-shadow-1-blur)
+      color-mix(in srgb, var(--tooltip-shadow-1-color) calc(var(--tooltip-shadow-1-alpha) * 100%), transparent),
+    0 var(--tooltip-shadow-2-offset-y) var(--tooltip-shadow-2-blur)
+      color-mix(in srgb, var(--tooltip-shadow-2-color) calc(var(--shadow-2-alpha) * 100%), transparent);
+}
+:root[data-appearance="light"] .tooltip-box, :root[data-appearance="light"] .menu { --shadow-2-alpha: var(--tooltip-shadow-2-alpha-light); }
+.tooltip-box {
+  padding: var(--tooltip-padding-y) var(--tooltip-padding-x);
+  border: var(--tooltip-border-width) solid var(--border-variant);
+  border-radius: var(--tooltip-corner-radius);
+  font-size: var(--tooltip-font-size);
+}
+.tooltip-head { display: flex; align-items: center; justify-content: space-between; gap: var(--tooltip-title-shortcut-gap); }
+.tooltip-title { max-width: var(--tooltip-title-max-width); }
+.tooltip-shortcut { display: flex; gap: var(--tooltip-shortcut-chord-gap); color: var(--text-muted); }
+.tooltip-key { padding: var(--tooltip-shortcut-padding-y) var(--tooltip-shortcut-padding-x); line-height: 1; } /* L-222 */
+.tooltip-meta { max-width: var(--tooltip-title-max-width); color: var(--text-muted); font-size: var(--tooltip-meta-font-size); }
+/* L-232 (two rows): rows 2+ start with a line under a gap; the title-key gap is smaller than the single-row one. */
+.tooltip-box.multi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tooltip-multi-row-gap);
+}
+.tooltip-box.multi .tooltip-head { gap: var(--tooltip-multi-title-shortcut-gap); }
+.tooltip-box.multi .tooltip-row + .tooltip-row {
+  padding-top: var(--tooltip-multi-separator-padding-top);
+  border-top: var(--tooltip-multi-separator-border-width) solid var(--border-variant);
+}
+
+/* R-8 / R-9 menu. left/top come from an adopted sheet (src/shell/AppMenu.tsx); the popup is fixed to the window. */
+.app-menu { display: flex; align-items: center; margin-right: auto; --icon-size: var(--menu-app-menu-button-icon-size); }
+.menu-bar { display: flex; gap: var(--menu-horizontal-item-gap); }
+.menu-name {
+  height: var(--buttons-height-default);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--menu-horizontal-item-font-size);
+}
+.menu-name:hover { background: var(--ghost-element-hover); }
+.menu-name.open { background: var(--ghost-element-selected); }
+.menu {
+  position: fixed;
+  z-index: 3;
+  box-sizing: border-box; /* the outer height (border and padding included) stays within the max height */
+  min-width: calc(var(--menu-min-width) + 2 * var(--menu-border-width)); /* I-313: 200 inside, 202 outside */
+  max-height: calc(100vh * var(--menu-max-height-ratio));
+  overflow-y: auto;
+  padding: var(--menu-list-padding-y) 0;
+  border: var(--menu-border-width) solid var(--border-variant);
+  border-radius: var(--menu-corner-radius);
+  font-size: var(--menu-item-font-size);
+  outline: none;
+}
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--menu-item-shortcut-min-gap);
+  margin: 0 var(--menu-item-margin-x);
+  padding: 0 var(--menu-item-padding-x);
+  line-height: var(--menu-item-line-height);
+  white-space: nowrap;
+}
+.menu-item:hover { background: var(--ghost-element-hover); }
+.menu-item:active { background: var(--ghost-element-active); }
+.menu-item.selected { background: var(--ghost-element-selected); }
+.menu-item.disabled { color: var(--text-disabled); pointer-events: none; }
+.menu-shortcut { display: flex; gap: var(--menu-item-shortcut-chord-gap); color: var(--text-muted); }
+.menu-item.disabled .menu-shortcut { color: var(--text-disabled); }
+.menu-separator { height: var(--menu-separator-height); margin: var(--menu-separator-margin-y) 0; background: var(--border-variant); }

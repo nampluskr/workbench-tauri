@@ -41,6 +41,10 @@ export const TARGET_TOKENS = [
   "scrollbar.thumb.active_background",
   "scrollbar.track.background",
   "background",
+  "elevated_surface.background", // T-40.6: tooltip, menu
+  "border.variant", // T-40.2: tooltip, menu
+  "ghost_element.selected", // I-514: keyboard-selected menu item
+  "text.disabled", // I-514: disabled menu item
 ] as const;
 export type Token = (typeof TARGET_TOKENS)[number];
 

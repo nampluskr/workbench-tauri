@@ -34,6 +34,10 @@ const VARS: [token: string, cssVar: string][] = [
   ["scrollbar.thumb.active_background", "--scrollbar-thumb-active-background"],
   ["scrollbar.track.background", "--scrollbar-track-background"],
   ["background", "--background"],
+  ["elevated_surface.background", "--elevated-surface-background"],
+  ["border.variant", "--border-variant"],
+  ["ghost_element.selected", "--ghost-element-selected"],
+  ["text.disabled", "--text-disabled"],
 ];
 
 test("parseColor: #RRGGBB has alpha 255, #RRGGBBAA keeps it, anything else is rejected (T-01.7)", () => {
@@ -48,7 +52,7 @@ for (const [file, name] of [
   [catppuccin, "Catppuccin Latte"],
   [one, "One Light"],
 ] as const) {
-  test(`${name}: the 24 target tokens equal the JSON value or the T-26 value`, () => {
+  test(`${name}: the target tokens equal the JSON value or the T-26 value`, () => {
     const { style } = findTheme(file, name);
     const css = themeCss(resolveTokens(style));
     const vars = new Map([...css.matchAll(/(--[\w-]+): (#[0-9a-f]{8});/g)].map((m) => [m[1], m[2]]));

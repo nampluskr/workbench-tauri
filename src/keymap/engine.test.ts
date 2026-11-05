@@ -80,7 +80,7 @@ test("R-5: every browser accelerator key to block normalizes into BROWSER_KEYS",
     [ev("F5", "F5")], [ev("F3", "F3")], [ev("ArrowLeft", "ArrowLeft", { altKey: true })], [ev("ArrowRight", "ArrowRight", { altKey: true })],
     [ev("+", "NumpadAdd", { ctrlKey: true })], [ev("-", "NumpadSubtract", { ctrlKey: true })],
     [ev("+", "Equal", { ctrlKey: true, shiftKey: true })], [ev("-", "Minus", { ctrlKey: true })],
-    [ev("w", "KeyW", { ctrlKey: true })], [ev("Tab", "Tab", { ctrlKey: true })], [ev("F1", "F1")], [ev("F6", "F6")],
+    [ev("w", "KeyW", { ctrlKey: true })], [ev("Tab", "Tab", { ctrlKey: true })], [ev("F1", "F1")], [ev("F6", "F6")], [ev("F10", "F10")],
   ];
   for (const [e] of keys) assert.ok(BROWSER_KEYS.has(strokeOf(e)!), `${e.key} ${e.code}`);
 });

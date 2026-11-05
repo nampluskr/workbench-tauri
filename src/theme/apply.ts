@@ -29,9 +29,10 @@ export let syntaxKeys: ReadonlySet<string> = new Set();
 export async function applyTheme(): Promise<void> {
   const requested = new URLSearchParams(location.search).get("theme");
   const name = requested && Object.hasOwn(THEMES, requested) ? requested : DEFAULT_THEME;
-  const { style } = findTheme(await THEMES[name](), name);
+  const { style, appearance } = findTheme(await THEMES[name](), name);
   const tokens = resolveTokens(style);
   syntaxKeys = new Set(Object.keys(style.syntax ?? {}));
+  document.documentElement.dataset.appearance = appearance; // the tooltip shadow alpha differs by light/dark (L-212)
   sheet.replaceSync(`${themeCss(tokens)}\n${syntaxCss(style)}`);
   if (!document.adoptedStyleSheets.includes(sheet)) document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
   // The native maximize button (src-tauri/src/caption.rs) cannot read CSS: send it the flat colors.

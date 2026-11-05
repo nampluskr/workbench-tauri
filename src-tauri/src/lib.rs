@@ -1,7 +1,8 @@
 mod caption;
 mod ext_protocol;
 
-use tauri::Manager;
+use notify::{Event, EventKind, RecursiveMode, Watcher};
+use tauri::{Emitter, Manager};
 
 fn app_data_dir() -> Result<std::path::PathBuf, String> {
     std::env::var_os("APPDATA")
@@ -18,6 +19,31 @@ fn read_user_keymap() -> Result<Option<String>, String> {
     }
 }
 
+fn is_keymap_change(event: &Event) -> bool {
+    matches!(event.kind, EventKind::Create(_) | EventKind::Modify(_) | EventKind::Remove(_))
+        && event.paths.iter().any(|path| {
+            path.file_name()
+                .is_some_and(|name| name.eq_ignore_ascii_case("keymap.json"))
+        })
+}
+
+fn watch_user_keymap(app: tauri::AppHandle) -> Result<notify::RecommendedWatcher, String> {
+    let dir = app_data_dir()?;
+    std::fs::create_dir_all(&dir).map_err(|error| error.to_string())?;
+    let mut watcher = notify::recommended_watcher(move |result: notify::Result<Event>| match result {
+        Ok(event) if is_keymap_change(&event) => {
+            if let Err(error) = app.emit("user-keymap-changed", ()) {
+                eprintln!("Failed to emit keymap change: {error}");
+            }
+        }
+        Ok(_) => {}
+        Err(error) => eprintln!("Keymap watch error: {error}"),
+    })
+    .map_err(|error| error.to_string())?;
+    watcher.watch(&dir, RecursiveMode::NonRecursive).map_err(|error| error.to_string())?;
+    Ok(watcher)
+}
+
 #[tauri::command]
 fn caption_set_colors(window: tauri::WebviewWindow, colors: [String; 5]) -> Result<(), String> {
     caption::set_colors(window.hwnd().map_err(|e| e.to_string())?, &colors)
@@ -28,10 +54,31 @@ pub fn run() {
         .setup(|app| {
             let main = app.get_webview_window("main").ok_or("main window missing")?;
             caption::install(main.hwnd()?);
+            match watch_user_keymap(app.handle().clone()) {
+                Ok(watcher) => { app.manage(watcher); }
+                Err(error) => eprintln!("Failed to watch keymap: {error}"),
+            }
             Ok(())
         })
         .register_uri_scheme_protocol("zlext", |_ctx, request| ext_protocol::respond(&request))
         .invoke_handler(tauri::generate_handler![caption_set_colors, read_user_keymap])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::is_keymap_change;
+    use notify::{event::{AccessKind, CreateKind, ModifyKind, RemoveKind, RenameMode}, Event, EventKind};
+
+    #[test]
+    fn filters_keymap_changes_including_renames() {
+        for kind in [EventKind::Create(CreateKind::Any), EventKind::Modify(ModifyKind::Any), EventKind::Remove(RemoveKind::Any)] {
+            assert!(is_keymap_change(&Event::new(kind).add_path("KEYMAP.JSON".into())));
+            assert!(!is_keymap_change(&Event::new(kind).add_path("state.json".into())));
+        }
+        assert!(is_keymap_change(&Event::new(EventKind::Modify(ModifyKind::Name(RenameMode::Both)))
+            .add_path("temporary".into()).add_path("keymap.json".into())));
+        assert!(!is_keymap_change(&Event::new(EventKind::Access(AccessKind::Any)).add_path("keymap.json".into())));
+    }
 }

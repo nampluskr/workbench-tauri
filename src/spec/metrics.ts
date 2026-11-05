@@ -47,7 +47,59 @@ const METRICS: Record<string, string> = {
   "statusbar.group_gap": rem(8), // L-29
   "statusbar.item_gap": rem(4), // L-29
   "statusbar.icon_size": rem(14), // L-92
+  "tooltip.transparent_margin_left": rem(8), // L-209
+  "tooltip.transparent_margin_top": rem(10), // L-209
+  "tooltip.corner_radius": rem(8), // L-211
+  "tooltip.border_width": rem(1), // L-211
+  "tooltip.shadow.1.offset_y": rem(2), // L-212
+  "tooltip.shadow.1.blur": rem(3), // L-212
+  "tooltip.shadow.1.color": "#000000", // L-212
+  "tooltip.shadow.1.alpha": "0.12", // L-212
+  "tooltip.shadow.2.offset_y": rem(1), // L-212
+  "tooltip.shadow.2.blur": rem(0), // L-212
+  "tooltip.shadow.2.color": "#000000", // L-212
+  "tooltip.shadow.2.alpha_light": "0.03", // L-212
+  "tooltip.shadow.2.alpha_dark": "0.06", // L-212
+  "tooltip.padding_y": rem(4), // L-213
+  "tooltip.padding_x": rem(8), // L-213
+  "tooltip.font_size": rem(14), // L-214
+  "tooltip.title.max_width": rem(288), // L-215, also the meta line's max width (L-216)
+  "tooltip.title.shortcut_gap": rem(16), // L-215
+  "tooltip.meta.font_size": rem(12), // L-216
+  "tooltip.shortcut.padding_x": rem(2), // L-222
+  "tooltip.shortcut.padding_y": rem(2), // L-222
+  "tooltip.shortcut.chord_gap": rem(4), // L-222
+  "tooltip.multi.row_gap": rem(4), // L-232
+  "tooltip.multi.separator_padding_top": rem(4), // L-232
+  "tooltip.multi.separator_border_width": rem(1), // L-232
+  "tooltip.multi.title_shortcut_gap": rem(8), // L-232
+  "titlebar.padding_left": rem(8), // L-82
+  "menu.min_width": rem(200), // I-313 (inside the borders; menu.min_outer_width = 202 is this plus the two borders)
+  "menu.max_height_ratio": "0.75", // I-313
+  "menu.border_width": rem(1), // I-315
+  "menu.corner_radius": rem(8), // I-315
+  "menu.list_padding_y": rem(4), // I-315
+  "menu.item.margin_x": rem(4), // I-316
+  "menu.item.padding_x": rem(6), // I-316
+  "menu.item.shortcut_min_gap": rem(16), // I-316
+  "menu.item.shortcut_chord_gap": rem(4), // L-221
+  "menu.item.font_size": rem(14), // I-317
+  "menu.item.line_height": rem(22.652), // I-317
+  "menu.separator.height": rem(1), // I-318
+  "menu.separator.margin_y": rem(6), // I-318
+  "menu.app_menu_button.icon_size": rem(14), // I-321
+  "menu.horizontal.item_font_size": rem(12), // I-321
+  "menu.horizontal.item_gap": rem(4), // I-321
 };
+
+// Tooltip values that script reads (the rest above reach CSS only).
+export const TOOLTIP_DELAY_MS = 500; // tooltip.delay_default (L-206)
+export const TOOLTIP_CURSOR_OFFSET = { x: 1, y: 1 }; // tooltip.cursor_offset_x / _y (L-208)
+
+// Menu values that script reads.
+export const MENU_POPUP_OFFSET = { x: -5, y: 0 }; // menu.popup_offset_x / _y (I-314)
+export const MENU_WINDOW_MARGIN = 8; // menu.context.window_margin (I-314, I-501)
+export const MENU_SHORTCUT_ACTIVATE_DELAY_MS = 50; // menu.shortcut_activate_delay (I-520)
 
 // System monospace stand-in; Lilex is out of scope (INTENT).
 export const BUFFER_FONT_FAMILY = "Consolas, monospace";

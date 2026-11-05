@@ -279,7 +279,54 @@
 
 ### Phase 3 — 툴팁·메뉴와 단축키 표시
 
-없음.
+**R-8 메뉴 항목 목록(Phase 3 시작 때 고정, 2026-11-06, 카드 W-v02-P3a)**
+
+- 출처
+  - 01-zed `02-INTERACTION.md` 9.2절(최종 메뉴 구조 그림과 메뉴별 표).
+  - `04-APP-SPEC.md` A-18.3~A-18.9를 대조했다.
+- 고른 기준: v0.2(INTENT 범위)에서 동작하는 항목만 둔다(D-13). SPEC R-8이 기준으로 본 항목(gpui R-8과 같음)과 같다.
+- 문구·순서·구분선
+  - 9.2절 그대로다. 살아남은 그룹 사이의 구분선만 남기고, 선두·연속·끝 구분선은 없다(I-306).
+  - 항목이 없는 메뉴(Edit, Selection, Go, Help)는 메뉴 바에 두지 않는다(D-13, I-306).
+- 앱 이름: 첫 메뉴 이름은 `workbench-tauri`, Quit 항목은 `Quit workbench-tauri`다(D-13, A-18.10).
+- `†`는 9.2절 범례상 "우리가 추가한 항목" 표시이고 문구가 아니다. 화면 문구에는 넣지 않는다.
+- "넣는 Phase" 열: 그 항목의 동작이 생기는 Phase에서 메뉴에 넣는다(D-13, PLAN Phase 3 완료 조건).
+
+메뉴 바: `[workbench-tauri] [File] [View] [Window]`
+
+| 메뉴 | 순서 | ID | 문구 | 액션 | 넣는 Phase |
+| --- | --- | --- | --- | --- | --- |
+| workbench-tauri | 1 | I-341 | Quit workbench-tauri | `zed::Quit` | Phase 3 |
+| File | 1 | I-346 | Open Folder... | `workspace::Open` | Phase 4 (폴더 등록, A-13.1) |
+| File | — | I-349·I-351·I-355 | 구분선 (사이 그룹이 모두 빠져 하나로 줄인다, I-306) | | Phase 4 (위 항목과 함께) |
+| File | 2 | I-358 | Close Window | `workspace::CloseWindow` | Phase 3 |
+| View | 1 | I-391 | Toggle Left Dock | `workspace::ToggleLeftDock` | Phase 3 |
+| View | 2 | I-472 † | Toggle Folder Sidebar | `multi_workspace::ToggleWorkspaceSidebar` | Phase 4 (R-17) |
+| View | 3 | I-473 † | Focus Folder Sidebar | `multi_workspace::FocusWorkspaceSidebar` | Phase 4 (R-17) |
+| View | — | I-400 | 구분선 | | Phase 3 |
+| View | 4 | I-401 | Project Panel | `project_panel::ToggleFocus` | Phase 3 |
+| Window | 1 | I-445 | Minimize | `zed::Minimize` | Phase 3 |
+| Window | 2 | I-446 | Zoom | `zed::Zoom` | Phase 3 |
+
+- Phase 3 끝의 메뉴
+  - `workbench-tauri`: Quit workbench-tauri
+  - File: Close Window
+  - View: Toggle Left Dock, 구분선, Project Panel
+  - Window: Minimize, Zoom
+  - File의 구분선은 Open Folder...가 들어오는 Phase 4에서 함께 생긴다. 그 전에는 File 그룹이 하나뿐이라 구분선이 없다.
+- 빠진 9.2절 항목: 위 표에 없는 9.2절 항목은 v0.2에서 동작하지 않아 두지 않는다. INTENT 제외 범위의 "☰ 앱 메뉴에서 v0.2에 동작하지 않는 항목"이다. A-18.3~A-18.9의 나머지 항목과 Edit·Selection·Go·Help 메뉴 전체가 여기에 든다.
+- 액션 등록
+  - `zed::Minimize`·`zed::Zoom`은 R-1 기대 표(내장 키맵)에 없다. 그래서 Phase 2 `commands` 등록 목록에도 없다. 원문 키도 "없음"이다(I-445·I-446).
+  - Phase 2 leader 결정대로 이 Phase에서 `commands`에 등록한다.
+  - 나머지 액션은 Phase 2에서 no-op로 등록되어 있다. 실행부는 그 동작이 생기는 Phase에서 넣는다.
+
+**gpui v0.2 메뉴 목록과 다른 점** — gpui `specs/v0.2/PROGRESS.md`의 목록과 대조했다.
+- gpui Phase 2 구현 결과는 workbench-gpui[Quit workbench-gpui] / File[Close Window] / View[Toggle Left Dock, 구분선, Project Panel] / Window[Minimize, Zoom]였다.
+- gpui는 Open Folder...·Toggle Folder Sidebar·Focus Folder Sidebar를 다음 Phase(폴더)로 넘겼다(gpui D-031 ④).
+- 항목·순서·구분선은 위 표와 같다. 다른 점은 둘이다.
+  - 앱 이름: gpui는 `workbench-gpui`, 이 레포는 `workbench-tauri`다(D-13).
+  - Phase 번호: gpui는 메뉴가 Phase 2, 폴더가 Phase 3이었다. 이 레포는 메뉴가 Phase 3, 폴더가 Phase 4다(PLAN).
+- gpui `specs/v0.3/PROGRESS.md`에는 ☰ 메뉴 변경 기록이 없다.
 
 ### Phase 4 — 사이드바 폴더 등록·선택·해제와 상태 저장
 

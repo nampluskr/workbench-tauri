@@ -33,6 +33,7 @@
   maxbutton  : 최대화 버튼 중심의 논리 좌표를 낸다(오른쪽에서 두 번째 36x32 칸, L-39).
   foreground : 입력 없이 대상 창을 전면으로 가져온다(스냅 도우미 같은 다른 창을 닫을 때).
   blur       : 입력 없이 작업 표시줄을 전면으로 만들어 대상 창이 포커스를 잃게 한다(타이틀 바 inactive 관찰).
+  wheel      : (-X,-Y) 에서 휠 한 칸. -DY 가 델타(-120 = 아래로, 120 = 위로).
   rightclick : (-X,-Y) 오른쪽 클릭(브라우저 기본 컨텍스트 메뉴 확인용).
   -ListWindows 스위치: 어떤 동작이든 끝난 뒤 windows 목록을 결과에 더한다.
   presshold  : (-X,-Y) 에서 왼쪽 버튼을 누른 채 -HoldMs 기다리고(-MidOut 에 모니터 캡처), (-X+-DX,-Y+-DY) 로 옮겨 놓는다.
@@ -51,7 +52,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
-    [ValidateSet('hover', 'click', 'dblclick', 'drag', 'resize', 'keys', 'state', 'maxbutton', 'foreground', 'blur', 'windows', 'rightclick', 'presshold', 'hoverclick')]
+    [ValidateSet('hover', 'click', 'dblclick', 'drag', 'resize', 'keys', 'state', 'maxbutton', 'foreground', 'blur', 'windows', 'rightclick', 'presshold', 'hoverclick', 'wheel')]
     [string]$Action,
     [double]$X = [double]::NaN,
     [double]$Y = [double]::NaN,
@@ -185,12 +186,13 @@ namespace ZlInput {
                     "not sending {0}: foreground window is 0x{1:X}, target is 0x{2:X}", what, fg.ToInt64(), Target.ToInt64()));
         }
 
-        static void SendMouse(uint flags, int x, int y) {
+        static void SendMouse(uint flags, int x, int y, uint data = 0) {
             Guard(String.Format("mouse event 0x{0:X} at {1},{2}", flags, x, y));
             int vx = GetSystemMetrics(76), vy = GetSystemMetrics(77), vw = GetSystemMetrics(78), vh = GetSystemMetrics(79);
             var input = new INPUT { type = INPUT_MOUSE };
             input.u.mi.dx = (int)Math.Round((x - vx) * 65535.0 / (vw - 1));
             input.u.mi.dy = (int)Math.Round((y - vy) * 65535.0 / (vh - 1));
+            input.u.mi.mouseData = data;
             input.u.mi.dwFlags = flags | MOVE | ABSOLUTE | VIRTUALDESK;
             if (SendInput(1, new[] { input }, Marshal.SizeOf(typeof(INPUT))) != 1) throw new InvalidOperationException("SendInput(mouse) failed: " + Marshal.GetLastWin32Error());
             if ((flags & LEFTDOWN) != 0) leftDown = true;
@@ -224,6 +226,8 @@ namespace ZlInput {
         public static void Click(int x, int y) { MoveTo(x, y); Thread.Sleep(30); SendMouse(LEFTDOWN, x, y); Thread.Sleep(30); SendMouse(LEFTUP, x, y); }
         public static void Down(int x, int y) { MoveTo(x, y); Thread.Sleep(30); SendMouse(LEFTDOWN, x, y); }
         public static void Up(int x, int y) { SendMouse(LEFTUP, x, y); }
+        /// One wheel notch of `delta` (120 = up/away from the user, -120 = down) at (x, y).
+        public static void Wheel(int x, int y, int delta) { MoveTo(x, y); Thread.Sleep(30); SendMouse(0x0800, x, y, unchecked((uint)delta)); }
         public static void RightClick(int x, int y) { MoveTo(x, y); Thread.Sleep(30); SendMouse(RIGHTDOWN, x, y); Thread.Sleep(30); SendMouse(RIGHTUP, x, y); }
         public static void DoubleClick(int x, int y) { Click(x, y); Thread.Sleep((int)Math.Min(80, GetDoubleClickTime() / 4)); Click(x, y); }
         public static void Drag(int x0, int y0, int x1, int y1, int steps, int stepMs) {
@@ -239,6 +243,7 @@ namespace ZlInput {
                 case "=": case "plus": return 0xBB; case "-": case "minus": return 0xBD;
                 case "hangul": return 0x15; case "numadd": return 0x6B; case "numsub": return 0x6D;
                 case ";": return 0xBA; case "menu": case "apps": return 0x5D;
+                case "pageup": return 0x21; case "pagedown": return 0x22; case "end": return 0x23; case "home": return 0x24;
             }
             if (k.Length == 1 && char.IsLetterOrDigit(k[0])) return (ushort)char.ToUpperInvariant(k[0]);
             if (k.StartsWith("f") && int.TryParse(k.Substring(1), out int n) && n >= 1 && n <= 24) return (ushort)(0x70 + n - 1);
@@ -439,6 +444,7 @@ switch ($Action) {
         }
         $result.hoverScreen = [ordered]@{ x = $end[0]; y = $end[1] }
     }
+    'wheel' { $p = To-Screen $X $Y; [ZlInput.Native]::Wheel($p[0], $p[1], [int]$DY); $result.pointerScreen = [ordered]@{ x = $p[0]; y = $p[1] } }
     'rightclick' { $p = To-Screen $X $Y; [ZlInput.Native]::RightClick($p[0], $p[1]); $result.pointerScreen = [ordered]@{ x = $p[0]; y = $p[1] } }
     'click' { $p = To-Screen $X $Y; [ZlInput.Native]::Click($p[0], $p[1]); $result.pointerScreen = [ordered]@{ x = $p[0]; y = $p[1] } }
     'dblclick' { $p = To-Screen $X $Y; [ZlInput.Native]::DoubleClick($p[0], $p[1]); $result.pointerScreen = [ordered]@{ x = $p[0]; y = $p[1] } }

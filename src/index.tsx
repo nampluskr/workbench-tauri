@@ -2,7 +2,8 @@ import { render } from "solid-js/web";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import App from "./App.tsx";
 import { installKeyboard } from "./keymap/keyboard.ts";
-import { loadUserKeymap } from "./keymap/load.ts";
+import { loadUserKeymap, watchUserKeymap } from "./keymap/load.ts";
+import { installTooltips } from "./shell/tooltip.ts";
 import { applyTheme } from "./theme/apply.ts";
 import { applyMetrics } from "./spec/metrics.ts";
 import "./app.css";
@@ -19,7 +20,9 @@ try {
   await applyTheme();
   await loadUserKeymap();
   installKeyboard();
+  installTooltips();
   render(() => <App />, root);
+  await watchUserKeymap();
 } finally {
   await getCurrentWindow().show();
 }

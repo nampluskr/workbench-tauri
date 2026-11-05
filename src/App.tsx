@@ -13,10 +13,18 @@ export default function App() {
         {/* A-11.8 (sidebar open): toggle on the left, Add Project at the right end. */}
         <div class="sidebar-footer">
           <div class="group grow">
-            <IconButton name="panel-left" label="Toggle Sidebar" />
+            {/* L-232: two rows, Toggle Sidebar and Focus Sidebar, each with its key. */}
+            <IconButton
+              name="panel-left"
+              label="Toggle Sidebar"
+              tips={[
+                { title: "Toggle Sidebar", action: "multi_workspace::ToggleWorkspaceSidebar" },
+                { title: "Focus Sidebar", action: "multi_workspace::FocusWorkspaceSidebar" },
+              ]}
+            />
           </div>
           <div class="group">
-            <IconButton name="folder" label="Add Project" />
+            <IconButton name="folder" label="Add Project" action="workspace::Open" />
           </div>
         </div>
       </aside>
@@ -46,7 +54,7 @@ export default function App() {
         {/* A-11.8 (sidebar open): the project panel toggle is the only left item. */}
         <footer class="status-bar">
           <div class="group grow">
-            <IconButton name="folder-open" label="Close Left Dock" />
+            <IconButton name="folder-open" label="Close Left Dock" action="workspace::ToggleLeftDock" />
           </div>
         </footer>
       </div>

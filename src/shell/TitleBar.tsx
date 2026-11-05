@@ -1,5 +1,6 @@
 import { createSignal } from "solid-js";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import AppMenu from "./AppMenu.tsx";
 import "./title-bar.css";
 
 // L-83 / L-312: window button glyph code points.
@@ -23,6 +24,7 @@ export default function TitleBar() {
   return (
     // L-81: the whole bar is the drag region (double-click toggles maximize).
     <header class="title-bar" classList={{ inactive: !focused() }} data-tauri-drag-region>
+      <AppMenu />
       <button class="window-button" aria-label="Minimize" onClick={() => void appWindow.minimize()}>
         {GLYPH_MINIMIZE}
       </button>

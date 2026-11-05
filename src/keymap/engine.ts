@@ -11,7 +11,7 @@ export type Dispatch = { type: "match"; action: NonNullable<Action> } | { type: 
 // Lower rank = higher priority. Only used to limit what a `null` may unbind (I-703).
 const RANK: Record<Source, number> = { user: 0, overlay: 1, default: 2 };
 
-type Entry = { strokes: string[]; action: Action; test: ((node: ContextNode) => boolean) | null; source: Source };
+type Entry = { strokes: string[]; action: Action; context?: string; test: ((node: ContextNode) => boolean) | null; source: Source };
 
 // --- keystroke normalization -------------------------------------------------
 
@@ -101,6 +101,7 @@ export class Keymap {
       this.entries.push({
         strokes: parseKeys(b.keys),
         action: b.action,
+        context: b.context,
         test: b.context ? parsePredicate(b.context) : null,
         source,
       });
@@ -137,12 +138,36 @@ export class Keymap {
     return pending ? { type: "pending" } : { type: "none" };
   }
 
-  /** Key shown in menus/tooltips for an action (I-704): the last binding of that exact action that is not shadowed here. */
+  /** Drop every binding of one source, e.g. before the user keymap is read again. */
+  clear(source: Source): void {
+    this.entries = this.entries.filter((entry) => entry.source !== source);
+  }
+
+  /**
+   * Key shown in menus/tooltips for an action (I-704): the last binding of that exact action that is not
+   * shadowed in `stack`.
+   */
   keyFor(action: Action, stack: ContextNode[]): string | undefined {
     let found: string | undefined;
     for (const entry of this.entries) {
       if (!sameAction(entry.action, action)) continue;
       const result = this.dispatch(entry.strokes, stack);
+      if (result.type === "match" && sameAction(result.action, action)) found = entry.strokes.join(" ");
+    }
+    return found;
+  }
+
+  /**
+   * Same, but over the whole window (I-307, I-510): each binding is judged in the context it names, i.e. on top
+   * of `base` (the window's root) with one node holding that context's names. Still skips shadowed keys (I-704).
+   * shortcut: a negated group such as `!(A || B)` is read as if it named A and B, so such a binding is never shown.
+   */
+  keyForAnywhere(action: Action, base: ContextNode[]): string | undefined {
+    let found: string | undefined;
+    for (const entry of this.entries) {
+      if (!sameAction(entry.action, action)) continue;
+      const names = [...(entry.context ?? "").matchAll(/(!?)\s*([\w-]+)/g)].filter((m) => !m[1]).map((m) => m[2]);
+      const result = this.dispatch(entry.strokes, [...base, new Set(names)]);
       if (result.type === "match" && sameAction(result.action, action)) found = entry.strokes.join(" ");
     }
     return found;

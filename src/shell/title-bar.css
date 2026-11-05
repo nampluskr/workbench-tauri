@@ -2,7 +2,9 @@
    they are set by the theme loader (P2-3) and unset until then. */
 .title-bar {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  padding-left: var(--titlebar-padding-left); /* L-82 */
   flex-shrink: 0;
   height: var(--titlebar-height); /* L-21 */
   background: var(--title-bar-background);

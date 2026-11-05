@@ -12,6 +12,7 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "=2.7.4", features = [] }
 
 [dependencies]
+notify = "=8.2.1"
 tauri = { version = "=2.12.5", features = [] }
 # 03-tauri 3.1 "Win32 호출": maximize-button hit test for the snap layout flyout (D-6 step 2, R-3).
 windows = { version = "=0.62.2", features = [
