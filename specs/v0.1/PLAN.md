@@ -132,5 +132,5 @@ R-9의 다른 문법은 이미 설치된 Zed toml 확장(TOML)으로 판정한�
 | --- | --- | --- | --- | --- |
 | Phase 0 — 프로젝트 뼈대 | 없음 | done | 4ca546e | 없음 |
 | Phase 1 — 프레임워크·편집기 | R-1 · R-2 | done | 9f5ea8f | 없음 |
-| Phase 2 — 창·단위·테마·키맵 | R-3 ~ R-8 | done | 미정 | 없음 |
-| Phase 3 — 문법 WASM·P0 정리 | R-9 ~ R-12 | done | 미정 | R-9 다른 문법은 TOML(설치된 Zed toml 확장, 사용자 결정 2026-11-05) |
+| Phase 2 — 창·단위·테마·키맵 | R-3 ~ R-8 | done | 6dd9580 | 없음 |
+| Phase 3 — 문법 WASM·P0 정리 | R-9 ~ R-12 | done | 713b746 | R-9 다른 문법은 TOML(설치된 Zed toml 확장, 사용자 결정 2026-11-05) |
