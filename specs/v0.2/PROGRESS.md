@@ -328,9 +328,215 @@
   - Phase 번호: gpui는 메뉴가 Phase 2, 폴더가 Phase 3이었다. 이 레포는 메뉴가 Phase 3, 폴더가 Phase 4다(PLAN).
 - gpui `specs/v0.3/PROGRESS.md`에는 ☰ 메뉴 변경 기록이 없다.
 
+**판정** — R-4 ~ R-9 충족(2026-11-06). R-5 대조표의 불일치는 재측정 뒤 0이다. Phase 2에서 미룬 R-2의 키 실행 효과도 이 Phase의 V3에서 확인했다(아래 검증).
+
+**무엇을**
+- 카드 v02-P3-C1(코어 구현 담당, V1): `notify` 8.2.1을 설치했다(PLAN 완료 조건, D-7).
+  - `src-tauri/Cargo.toml`에 `notify = "=8.2.1"`, `Cargo.lock`도 8.2.1이다.
+  - `src-tauri/src/lib.rs`: 앱 데이터 폴더를 감시한다. `keymap.json`의 생성·수정·삭제·이름 변경이면 `user-keymap-changed` 이벤트를 낸다. 파일 이름은 대소문자를 가리지 않고, 다른 파일 이벤트는 거른다.
+  - 이벤트 권한은 기존 `core:event:allow-listen`·`allow-unlisten`이라 capability를 더하지 않았다.
+- 카드 v02-P3-1(프런트엔드 구현 담당, V1): 툴팁·단축키 표시·다시 읽기.
+  - 새 파일: `src/keymap/display.ts`(표시 문자열·키 고르기), `src/shell/tooltip.ts`(전역 DOM 툴팁·배치 계산), 테스트 `display.test.ts`·`tooltip.test.ts`.
+  - R-5 표시: 포커스 컨텍스트 스택에서 키를 고르고, 없으면 창 전체에서 고른다(I-307). 형식은 Ctrl→Win→Alt→Shift→키, 구분자 `-`, 첫 글자 대문자, `PageUp`/`PageDown`이다. chord는 키 입력마다 덩어리 하나다. 바인딩이 없으면 단축키 영역이 없다(L-223). 표시를 열 때마다 계산한다.
+  - R-6 툴팁: `body` 끝의 전역 `.tooltip` 하나다.
+    - `tooltip.delay_default` 뒤에 그 순간 포인터 +`cursor_offset`에 뜬다. 바깥 상자 padding이 투명 여백이다.
+    - 벗어남·창 `pointerleave`·blur·`pointerdown`·`wheel`·`scroll`에 사라진다. 누른 뒤에는 벗어났다 돌아올 때까지 다시 뜨지 않는다.
+    - 창 오른쪽·아래를 넘으면 뒤집는다(L-210).
+    - 위치는 adopted sheet로 준다(인라인 style 없음). 모양 ID는 모두 `metrics.ts`의 CSS 변수다.
+  - 메뉴가 열린 동안 ☰ 툴팁이 없는 것(L-205)은 툴팁 spec 함수가 `null`을 돌려주는 것으로 했다.
+  - R-4 프런트: `user-keymap-changed`를 받으면 `read_user_keymap`을 다시 불러 user 바인딩을 비우고 다시 얹는다. 파일이 없어지면 내장만 남는다. 읽기가 실패하면 이전 user 바인딩을 그대로 둔다.
+  - R-7: 지금 화면의 요소(사이드바 토글·Add Project, 탭 바 버튼, 상태 표시줄 토글)에 문구를 달았다. 비활성 버튼에도 단다. 창 버튼에는 툴팁이 없다.
+- 카드 v02-P3-2(프런트엔드 구현 담당, V1): ☰ 앱 메뉴와 메뉴 공통 동작.
+  - 새 파일: `src/shell/menu.ts`(항목 이동·순환·팝업 배치), `src/shell/app-menus.ts`(메뉴 정의), `src/shell/AppMenu.tsx`(☰ 버튼·가로 바·팝업·`menu::*` 실행부), 테스트 `menu.test.ts`.
+  - Lucide `menu` 아이콘을 더했다: `src/assets/icons/menu.svg`(gpui-kit-assets 0.8.1, ISC, `LICENSE-LUCIDE`는 Phase 1에 동봉). `IconName`에 `menu`를 더했다. Phase 1 "들여온 Lucide 아이콘" 목록의 `Menu`가 이것이다.
+  - R-8: 위 "Phase 3 끝의 메뉴" 목록 그대로다. ☰를 누르거나 F10(`app_menu::Toggle`)이면 첫 메뉴가 열리고 ☰ 자리에 가로 바가 나타난다. 이름 hover로 전환하고, Left/Right는 끝에서 순환한다.
+  - 실행부: `zed::Quit`·`workspace::CloseWindow`는 창 닫기(창이 하나라 앱 종료), `zed::Minimize`는 최소화, `zed::Zoom`은 최대화 토글이다. `zed::Minimize`·`zed::Zoom`을 `commands`에 등록했다(Phase 2 leader 결정). `workspace::ToggleLeftDock`·`project_panel::ToggleFocus`는 아직 no-op라 메뉴를 닫기만 한다.
+  - 포커스: 열 때 저장하고 팝업으로 옮긴다. Escape·Ctrl-C·F10·항목 실행이면 열기 직전 포커스로 되돌린 뒤 실행한다(I-309). 바깥 클릭·포커스 잃음이면 되돌리지 않는다.
+  - R-9: 치수 ID는 모두 CSS 변수다. 팝업 위치·창 가장자리 여백은 `placeMenu`가 쓴다. 바탕·그림자는 툴팁과 같은 elevation 규칙이다(I-320).
+    - 비활성 항목은 회색이고 hover·클릭·키보드 이동에서 빠진다(지금 비활성 항목은 없다).
+    - 닫힘은 바깥 `pointerdown`·Escape·실행·`focusout`이다(I-519). 열린 동안 항목의 액션 키가 맞으면 선택 표시 후 `menu.shortcut_activate_delay` 뒤 닫고 실행한다(I-520, `keyboard.ts`의 `hooks.beforeCommand`).
+  - 메뉴 공통 로직은 `menu.ts`, 모양 CSS는 `.menu*` 하나다. Phase 5 우클릭 메뉴가 재사용한다.
+  - 메뉴 항목 단축키도 열기 직전 포커스 컨텍스트로 `shortcutFor`를 불러 만든다(R-5).
+  - L-232 두 줄 툴팁 간격을 `metrics.ts`의 `tooltip.multi.*` 네 ID로 옮겼다(아래 leader 결정).
+- 카드 v02-P3-3(프런트엔드 구현 담당, V1): V3 불일치 4건을 고쳤다.
+  - R-5 / I-704 가려진 키: 창 전체 대체가 가려짐 검사 없이 그 액션의 마지막 바인딩을 돌려줬다. 엔진에 `keyForAnywhere`를 더해 대체도 dispatch로 가려짐 검사를 거치게 했다. 스택 없는 `keyFor`는 지웠다. `!(A || B)` 같은 부정 묶음은 보이지 않는다는 한계를 `shortcut:` 주석으로 남겼다(내장·현재 사용에 없음).
+  - F10 기본 동작: `BROWSER_KEYS`에 `f10`을 더해 바인딩과 무관하게 막는다. Alt 단독 `keyup`도 막는다.
+  - R-9 최대 높이: `.menu`를 `border-box`로 바꾸고 `min-width`를 `menu.min_width + 2 × menu.border_width`로 보정했다.
+  - F10으로 열 때 hover 전환: 가로 바 이름 전환을 `pointermove`로 바꾸고, 열 때의 포인터 위치와 좌표가 다를 때만 전환한다.
+- 카드 v02-M3·v02-M3-R1(V3 측정 담당): Phase 끝 V3 실측(아래 검증).
+  - `tools/win-input.ps1`에 키 이름 `home`·`end`·`pageup`·`pagedown`과 동작 `wheel`을 더했다. 일반 입력 도구라 남긴다. 일회성 스크립트는 `tools/`에 두지 않았다.
+- 카드 W-v02-P3b(`writer`): L-232 값 4개를 gpui `spec/zed-metrics.toml` `[tooltip]`에 더하고(gpui 4badee1) 이 레포로 복사했다. 해시가 같다.
+- 카드 C-22(`check`): Phase 3 diff 검토와 전체 테스트 1회.
+
+**leader 결정(사용자 위임 2026-11-06)**
+- 테마 토큰 4개를 `TARGET_TOKENS`에 더했다(T-40). 세 테마 모두 값이 있다. `theme.test.ts`의 목록도 28개다.
+  - `elevated_surface.background`(T-40.6), `border.variant`(T-40.2): 툴팁 바탕·테두리(L-211).
+  - `ghost_element.selected`(T-40.5): 키보드 선택·열린 메뉴 이름(I-514).
+  - `text.disabled`(T-40.10): 비활성 항목(I-514).
+  - `tools/theme-expect.mjs`의 24개 목록은 그대로다. 추가 변수가 거기서 보이지 않을 뿐 충돌은 없다.
+- 가로 메뉴 이름 버튼의 좌우 padding과 ☰ 버튼 모서리는 toml에 ID가 없어 0으로 둔다. ID가 생기면 `metrics.ts`로 넣는다.
+- ☰ 자리: 메뉴가 열린 동안 가로 바가 ☰ 자리를 대신한다(I-302 해석: 닫힘에는 ☰ 하나, 열리면 가로 바).
+- L-232 두 줄 툴팁 간격: 원문 값(줄 사이 4, 둘째 줄 위 padding 4, 선 1px, 제목-키 8)을 gpui spec에 ID 4개로 더한 뒤 복사했다(gpui 4badee1).
+  - `tooltip.multi.row_gap`, `tooltip.multi.separator_padding_top`, `tooltip.multi.separator_border_width`, `tooltip.multi.title_shortcut_gap`
+
+**R-7 행의 판정 시점(PLAN 완료 조건)** — 화면에 아직 없는 요소의 R-7 행은 그 요소가 생기는 Phase에서 판정한다.
+- Phase 4: 사이드바 폴더 항목(L-231), 타이틀 바 폴더 이름 Recent Projects(L-226), Open Folder Sidebar(L-251).
+- Phase 5: 상태 표시줄 Project Panel 토글(L-253), 프로젝트 패널 항목 경로(L-247).
+
+**검증**
+- 구현 담당 확인
+  - v02-P3-C1: `cargo check` 경고 0, `cargo test` 2/2(생성·수정·삭제·이름 변경과 무관 이벤트 필터).
+  - v02-P3-1: `npx tsc --noEmit` 오류 0, `npm.cmd run test` 25/25, `cargo check` 경고 0. 새 테스트는 표시 문자열·키 고르기·가려짐·창 전체 대체·`clear`, 툴팁 배치·뒤집기·0 고정이다.
+  - v02-P3-2: `npx tsc --noEmit` 오류 0, `npm.cmd run test` 28/28. 새 테스트는 `step`의 건너뛰기·순환·선택 불가, 바 순환, `placeMenu` 가장자리다.
+  - v02-P3-3: `npx tsc --noEmit` 오류 0, `npm.cmd run test` 29/29. 가려진 키·`null` 해제 표시와 `BROWSER_KEYS` F10 사례를 더했다.
+- V3 실측(`specs/v0.2/verify/phase3.md`, 창 논리 1440×852, 100%, 1920×1080, Catppuccin Mocha, 라이트 알파만 One Light, HWND 고정, 입력마다 전경 확인)
+  - R-4: 실행 중 `keymap.json` 쓰기 5회가 10~18 ms, 삭제 3회가 13~15 ms에 반영됐다. 툴팁·메뉴 단축키와 실제 키 동작이 모두 바뀌고, 삭제하면 내장으로 돌아간다.
+  - R-2에서 미룬 키 실행 효과(Phase 2 "다음 Phase로 넘긴 것")를 이 Phase에서 확인했다.
+    - `f10: null`이면 F10에 메뉴가 열리지 않는다.
+    - `ctrl-b: app_menu::Toggle`이면 Ctrl+B로 메뉴가 열리고 닫힌다.
+  - R-5: 툴팁·메뉴 단축키 DOM과 `builtin.ts`에서 따로 계산한 기대값의 대조표가 모두 일치한다. chord 간격 4, 덩어리 안쪽 여백 2·2.
+  - R-6: 지연 505.4~515.5 ms, 위치·투명 여백·좌우와 아래 뒤집기 차이 0, 사라짐(벗어남·누름·휠·blur·창 밖), 모양 ID 전부, 그림자 두 겹(다크 0.06, 라이트 0.03), 두 줄 툴팁 간격 4·4·1·8.
+  - R-7: 지금 화면 요소의 문구·키 전부. 비활성 버튼에도 `pointermove`가 와서 툴팁이 뜬다.
+  - R-8: 클릭 열기, 가로 바(12px, 간격 4), hover 전환, Left/Right 순환, F10 열기·닫기, 포커스 복원, 항목 문구·순서·구분선, Quit·Close Window·메뉴 연 채 Ctrl+Q 종료, Zoom 토글, Minimize.
+  - R-9: 폭 202, 테두리·모서리·패딩·마진·글자·줄 높이·구분선 13, 팝업 위치, 키 전부, 바깥 클릭·포커스 잃음·Escape·Ctrl-C 닫힘, 단축키 실행 51~57 ms, 브라우저 우클릭 메뉴 막힘.
+  - v02-M3 불일치 4건
+    1. R-5 / I-704: `ctrl-b`를 덮어도 ToggleLeftDock 툴팁·메뉴가 `Ctrl-B`를 보였다.
+    2. `f10: null`이면 F10을 막지 않아 Windows 메뉴 모드가 되고 페이지가 응답하지 않았다.
+    3. R-9: 메뉴 바깥 높이가 창 높이 × 0.75를 10 넘었다(content-box).
+    4. 관찰: 포인터가 가로 바 이름 자리에 있으면 F10으로 연 메뉴가 포인터 밑 메뉴로 바뀌었다.
+  - v02-M3-R1(불일치 항목만 재측정): 4건 모두 해소, 불일치 0.
+    - 가려진 `Ctrl-B`는 툴팁·메뉴에서 빠지고 실제 Ctrl+B는 메뉴를 연다.
+    - `f10: null`에서 F10 `defaultPrevented` true, 응답 유지. Alt 단독도 메뉴 모드가 되지 않는다.
+    - 창 안쪽 높이 53에서 바깥 높이 39.75 = 0.75×53, 바깥 폭 최소 202.
+    - 포인터를 `Window` 자리에 둔 채 F10이면 첫 메뉴가 유지되고, 포인터를 옮기면 전환된다.
+  - 측정 불가(V1 테스트나 다음 Phase가 다룬다): 화면에 없는 R-7 요소(위 판정 시점), `tooltip.meta.font_size`(메타 줄 요소 없음), `PageUp`/`PageDown` 표시, 비활성 메뉴 항목 건너뜀, 입력칸 안 복사·붙여넣기, `scroll` 이벤트 자체, 포커스 복원이 명령보다 먼저인지(명령이 no-op), OS 스냅 팝업.
+  - 원상복구: 원래 없던 `%APPDATA%\workbench-tauri`를 시험 뒤 지웠다(앱이 시작 때 이 폴더를 만든다). 앱 프로세스는 0이다.
+- 측정 중 생긴 일(v02-M3)
+  - 앱 실행 약 28회: "측정 세션당 앱 1회" 원칙(AGENTS 3A.4)을 넘었다. 유효 측정 세션 10회에 스크립트 시험·진단·실패 재실행이 더해졌다. 원인은 아래 사고와 측정 하네스 시행착오다. 재측정 R1은 3회다(키맵 시작 조건별 2회와 스크립트 실수로 다시 한 1회).
+  - 최대화 버튼 hover 직후 입력이 앱에 닿지 않고 앱이 사라졌다. 원인은 가리지 못했다(스냅 팝업 추정). 그 결과는 쓰지 않았다.
+  - 측정자의 키 순서 실수로 Close Window가 실행돼 앱이 한 번 종료됐다.
+  - 응답 없는 Windows 설정 프로세스(`SystemSettings`, 2026-11-04 시작)가 전경을 쥐어 입력이 거부되자, measure가 그 프로세스를 `Stop-Process`로 종료했다. 사용자의 창이었을 수 있다. 이후 카드에서는 다른 프로세스를 종료하지 않는다.
+- 검토 C-22(`check`): PASSED.
+  - R-4~R-9 대응, `notify` 8.2.1 고정과 감시 필터, I-704·I-307 키 고르기를 확인했다.
+  - `metrics.ts`의 키가 모두 `spec/zed-metrics.toml`에 있고, 추가 4개 키가 gpui 원본과 같다.
+  - 인라인 style·CSP·capability 변경이 없다. 추가 토큰 4개가 T-40에 있다.
+  - ponytail, Solid 반응성, 리스너 해제에 문제가 없다.
+  - 전체 테스트 1회: `npm.cmd run typecheck` 에러 0, `npm.cmd run test` 29/29, `cargo check` 경고 0, `cargo test` 2/2.
+
+**다음 Phase로 넘긴 것**
+- 화면에 없는 요소의 R-7 행: 위 판정 시점대로 Phase 4·5.
+- Open Folder...·File 구분선·Toggle/Focus Folder Sidebar 메뉴 항목: Phase 4(위 R-8 목록).
+- `workspace::ToggleLeftDock`·`project_panel::ToggleFocus` 실행부: 그 동작이 생기는 Phase.
+- 사이드바(Phase 4)·프로젝트 패널(Phase 5)이 `menu::SelectNext` 등을 같은 이름으로 쓴다. 지금 실행부는 앱 메뉴가 열렸을 때만 동작하므로 그 Phase에서 자기 핸들러를 앞에 잇는다.
+- 우클릭 메뉴(Phase 5)는 `menu.ts`·`.menu*`를 재사용하고, `AppMenu.tsx`의 상태를 인스턴스별로 뺀다.
+- 요소별 툴팁 지연(`project_panel.name_tooltip_delay`): Phase 5.
+
 ### Phase 4 — 사이드바 폴더 등록·선택·해제와 상태 저장
 
-없음.
+**판정** — R-11 ~ R-17, R-29의 이 Phase 몫 충족(2026-11-06). V3 불일치는 0이다. 트리·탭에 기대는 판정은 Phase 5에서 한다(아래).
+
+**설치한 의존성(PLAN 완료 조건, D-7)**
+- `tauri-plugin-dialog` 2.8.4(`Cargo.toml` `=2.8.4`).
+- `@tauri-apps/plugin-dialog` 2.8.4(`package.json` 정확히 고정, 크레이트와 같은 버전).
+- `windows` =0.62.2에 `Win32_Storage_FileSystem` feature.
+- `serde_json` 1.0.154 직접 의존(`=1.0.154`, 아래 leader 결정).
+
+**더한 capability(PLAN 완료 조건)** — `src-tauri/capabilities/default.json`
+- `dialog:allow-open`: 폴더 선택 창(A-13.1).
+- `core:window:allow-destroy`: 닫기 요청을 막고 쓰기를 마친 뒤 창을 닫는다(A-24.3, 아래 leader 결정).
+
+**무엇을**
+- 카드 v02-P4-C1(코어 구현 담당, V1): `src-tauri/src/lib.rs`, 새 `src-tauri/src/state.rs`.
+  - 명령 `check_folder`, `paths_exist`, `read_state`, `write_state`. 파일 작업은 `spawn_blocking`에서 한다.
+  - `state.json` 원자적 저장(A-24): `.tmp`에 쓰고 `sync_all`, 기존 파일이 있으면 `ReplaceFileW`, 없으면 `MoveFileExW`(`MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH`). 교체 재시도는 `app.state_replace_retry_delay`·`app.state_replace_retry_count`다.
+  - 읽기 복구: `state.json`이 깨졌으면 `.tmp`를 쓰고, 깨진 파일은 `state.json.bad-{시각}`으로 옮겨 최근 `app.state_bad_max_keep`개만 남긴다. 알림 문구를 함께 돌려준다.
+  - `version`이 앱보다 크면 읽기 전용(`writable` false)이고 쓰기를 막는다.
+  - 교체 실패 재시도의 오류 주입 테스트는 생략하고 `shortcut:` 주석으로 한계를 남겼다.
+  - dialog 플러그인을 등록했다.
+- 카드 v02-P4-1(프런트엔드 구현 담당, V1): 사이드바·상태 저장.
+  - 새 파일: `src/workspace/{paths.ts, folders.ts, state-file.ts, store.ts, workspace.test.ts}`, `src/shell/{Sidebar.tsx, ProjectPanel.tsx, panels.ts}`.
+  - R-11 폴더 추가: 사이드바 푸터·상태 표시줄(사이드바 닫힘)·☰ File → Open Folder...·Ctrl+K Ctrl+O·빈 상태 `Open Project`가 모두 `workspace::Open`이다. 취소는 무반응이다. 고른 경로는 A-28로 정규화해 `check_folder`에 보내고, 실패하면 `Cannot open this folder.` 알림만 낸다. 같은 경로(대소문자·끝 `\` 무시)는 새 항목 없이 기존 항목을 활성화한다. 새 폴더는 맨 아래에 붙고 활성이다(`id`는 `crypto.randomUUID`, `added_at`은 ISO).
+  - R-12 항목: Lucide Folder + 이름. 치수는 `sidebar.item_row.height`·`project_header.padding_*`·`item.icon_size`·`item.focus_border_width`다. 활성·hover·누름·키보드 링·경로 없음 상태를 토큰으로 칠한다. 같은 이름이면 ` · 바로 위 폴더`를 붙인다. 툴팁은 없다.
+  - R-13 활성: 클릭·Enter·Up/Down. 키보드 커서는 활성과 따로 움직이고 끝에서 멈춘다. 활성화해도 포커스는 그대로다. 폴더별 작업 문맥은 폴더 id로 보관하는 자리만 두었다(해제 때 지운다). 타이틀 바는 활성 폴더 이름(40자 + `…`), 폴더가 없으면 `Open Recent Project`(SPEC R-13), 툴팁 `Recent Projects`, 눌러도 무동작이다.
+  - R-14 해제: 우클릭 Remove, 사이드바 포커스의 Delete. 확인창이 없고 디스크를 건드리지 않는다. 다음 활성은 아래, 없으면 위, 없으면 빈 상태다.
+  - R-15 순서: 우클릭 메뉴 Move Up / Move Down / 구분선 / Remove. 폴더 하나면 Remove만, 맨 위·맨 아래면 해당 항목 비활성이다. 빈 공간·버튼에는 메뉴가 없다. 우클릭 메뉴는 `AppMenu.tsx`의 같은 구현(`openContextMenu`)이다.
+  - R-16 예외: 빈 상태 문구 + `Open Project`, 경로 없음 `This folder no longer exists.` + Remove(시작 때 `paths_exist`, 활성화할 때 다시 확인), 안쪽·바깥 폴더 둘 다 허용, 목록 세로 스크롤.
+  - R-17 표시·포커스 키(`panels.ts`): Ctrl+Alt+J, Ctrl+Alt+;, Ctrl+B, Ctrl+Shift+E. 사이드바가 닫히면 상태 표시줄 왼쪽에 사이드바 토글·폴더 추가·프로젝트 패널 토글이 차례로 온다. 프로젝트 패널 토글 문구는 Dock 열림이면 `Close Left Dock`, 닫힘이면 `Project Panel`이다.
+  - ☰ 메뉴에 Phase 4 항목을 넣었다(위 R-8 목록의 Open Folder..., File 구분선, Toggle Folder Sidebar, Focus Folder Sidebar).
+  - `menu::SelectNext`·`SelectPrevious`·`Confirm`과 `project_panel::RemoveFromProject`는 사이드바 핸들러를 앞에 잇는다(포커스가 목록 안일 때만 동작). Phase 5 프로젝트 패널도 같은 방식으로 잇는다.
+  - R-29: 시작 때 `read_state`, 알림이 있으면 띄운다. `windows[0]`의 `folders`·`active_folder_id`·`sidebar.width`를 읽는다(활성 id가 없으면 첫 폴더, 폭이 200~800 밖이면 300). 읽은 객체 전체를 보관하고 그 위에 세 필드만 덮어써 알 수 없는 키를 보존한다(A-20). 변경 뒤 `app.state_save_debounce` 지나면 `write_state`를 부른다. 실패하면 알림을 내고 dirty를 남겨 다음 변경 때 다시 쓴다.
+  - 사이드바 폭 손잡이는 없다. 폭은 읽어서 적용하고 그대로 다시 쓴다.
+- 카드 v02-P4-2(프런트엔드 구현 담당, V1): A-24.3 모든 닫기 경로의 종료 직전 쓰기.
+  - `store.ts`의 `guardClose()`가 `onCloseRequested`에서 기본 닫기를 막고, 대기 중인 디바운스를 지우고, 쓰기 큐를 끝까지 기다린 뒤 `destroy()`로 닫는다. 쓰기가 실패해도 닫는다.
+  - Quit·Close Window·타이틀 바 닫기 버튼은 모두 `close()`만 부른다. 그래서 Alt+F4·작업 표시줄 닫기와 같은 한 지점으로 들어간다.
+  - 등록이 실패하면 닫기는 막히지 않고 쓰기 보장만 빠진다.
+- 카드 v02-M4(V3 측정 담당): Phase 끝 V3 실측(아래 검증). `tools/win-input.ps1`에 키 이름 `delete`·`del`을 더했다. 일회성 스크립트는 `tools/`에 두지 않았다.
+- 카드 C-23(`check`): Phase 4 diff 검토와 전체 테스트 1회.
+
+**leader 결정(사용자 위임 2026-11-06)**
+- `serde_json` 직접 사용: DECISIONS D-7의 JSON 줄(Q-7)에 개정 줄을 더했다. 코어가 `state.json`·`.tmp`가 올바른 JSON인지 가리고(A-24 복구) `version`을 봐야 해서(쓰기 차단) 파싱이 필요하다.
+- `core:window:allow-destroy` 추가: A-24.3을 모든 닫기 경로(Alt+F4·작업 표시줄 포함)에서 보장하려면 `onCloseRequested`로 막고 쓴 뒤 `destroy()`해야 한다.
+- 테마 토큰 3개를 `TARGET_TOKENS`에 더했다(31개, `theme.test.ts`도 31개): `border.focused`(A-12.5), `icon.muted`(A-12.1), `icon.disabled`(A-12.7).
+- 사이드바 키보드 커서는 끝에서 멈춘다(A-17.3 "항목 이동"). 메뉴의 순환(I-518)과 다르다.
+- toml에 ID가 없는 값은 기본값으로 둔다. ID가 생기면 `metrics.ts`로 넣는다.
+  - 사이드바 항목 아이콘과 이름 사이 간격: 0.
+  - 빈 상태·경로 없음 패널의 문구와 버튼의 크기·여백·글자: 브라우저 기본.
+  - 타이틀 바 폴더 이름 버튼의 글자 크기·좌우 padding: 기본·0.
+
+**Phase 5에서 판정하는 것(PLAN 완료 조건)** — 트리·탭에 기대는 판정이다.
+- R-13: 폴더별 트리 펼침·선택·탭 유지.
+- R-14: 해제 때 그 폴더 탭 닫기, 프로젝트 패널 루트 항목 `Remove from Project`(세 번째 해제 경로).
+
+**Phase 3에서 미룬 것의 판정(PLAN 완료 조건)**
+- ☰ 메뉴 Phase 4 항목: File(`Open Folder...` `Ctrl-K Ctrl-O`, 구분선, `Close Window`), View(`Toggle Left Dock`, `Toggle Folder Sidebar` `Ctrl-Alt-J`, `Focus Folder Sidebar` `Ctrl-Alt-;`, 구분선, `Project Panel`)의 문구·키·동작이 통과했다.
+- R-7 Phase 4 행 8개가 통과했다: 푸터 Add Project, 푸터 사이드바 토글 두 줄, 상태 표시줄 프로젝트 패널 토글(Dock 열림·닫힘), 상태 표시줄 Open Folder Sidebar(L-251)·Add Project, 타이틀 바 폴더 이름 `Recent Projects`(L-226), 사이드바 폴더 항목 툴팁 없음(L-231).
+- 프로젝트 패널 항목 경로(L-247)는 트리가 생기는 Phase 5에서 판정한다.
+
+**검증**
+- 구현 담당 확인
+  - v02-P4-C1: `cargo check` 경고 0, `cargo test` 5/5(최초 저장·교체, `.tmp` 복구, 손상 파일 이름 충돌·3개 보관, 상위 버전 쓰기 차단).
+  - v02-P4-1: `npx tsc --noEmit` 오류 0, `npm.cmd run test` 36/36. 새 테스트 7개는 A-28 정규화·비교, A-12.6 같은 이름, A-13.1·13.2 추가·중복 활성화, A-13.5 다음 활성, A-13.6 이동·A-17.3 커서, A-20 알 수 없는 키 보존·활성 id 보정·version 읽기 전용·깨진 JSON, 파일 없음·폭 범위다.
+  - v02-P4-2: `npx tsc --noEmit` 오류 0, `npm.cmd run test` 36/36. 이벤트 처리는 Tauri API 호출이라 단위 테스트가 없다(코드 확인).
+- V3 실측(`specs/v0.2/verify/phase4.md`, 스크린샷 `specs/v0.2/verify/phase4/`, 창 논리 1440×852, 100%, 1920×1080, Catppuccin Mocha, 대상 프로세스 고정, 입력마다 전경 확인). 판정 행 약 118개 통과, 불일치 0.
+  - R-11: 실제 선택 창으로 등록 1·취소 1. 그 밖의 사례는 선택 창의 결과값만 페이지 쪽에서 대신 돌려줬다(뒤의 정규화·검사·목록·`state.json`은 실제 앱 코드). 파일·없는 경로·상대 경로·읽을 수 없는 폴더는 `Cannot open this folder.`만, 중복 경로 5사례, 진입 경로 5개.
+  - R-12: `item_row.height` 31(39행), padding 8/6, 아이콘 14, 링 1px, 상태별 토큰이 CSS 변수 값과 같다. 툴팁 없음.
+  - R-13·R-15: 활성 전환, 커서 분리, 끝에서 멈춤, 타이틀 40자 + `…`, Move Up/Down 표시·비활성·순서와 재시작 복원.
+  - R-14 해제 전후 디스크 비교(`verify/phase4.md` "R-14" 표): 우클릭 Remove·Delete 두 경로 4단계 모두 시험 폴더가 전과 같다(185항목, 2036 바이트, 최신 수정 시각, 해시 `b585e4fccad4c628`). 확인창은 나오지 않았다.
+  - R-16: 빈 상태, 시작 때 없는 경로, 실행 중 사라짐과 복귀, 안쪽·바깥 폴더, 많은 폴더 스크롤.
+  - R-17: 키 13단계의 사이드바·Dock 표시와 `activeElement`, 사이드바 닫힘 상태의 상태 표시줄 배치, `statusbar.item_gap` 4·`button_height` 22·`icon_size` 14·`height` 30·`padding_y` 4.
+  - R-29 재시작 전후 `state.json`과 복원(`verify/phase4.md` "R-29" 절)
+    - S1(등록·활성 변경), S3(순서 변경), S2(폭 420)가 재시작 뒤 같은 목록·순서·활성·폭으로 복원됐다. 시작이 `state.json`을 고쳐 쓰지 않는다.
+    - 미리 만든 파일 사례 6개: 알 수 없는 키 네 군데 보존, 깨진 파일 + 올바른 `.tmp`(복구·bad 3개 유지), 둘 다 깨짐(빈 상태), `version` 2(바이트 동일), `.tmp`만, 이상한 값(보정).
+    - 닫기 5경로(타이틀 바 닫기, Close Window, Ctrl+Q, Alt+F4, 작업 표시줄 대체)에서 등록 뒤 75~140 ms 안에 닫아도 `state.json`에 새 폴더가 들어갔다. `.tmp`가 남지 않고 프로세스와 WebView2 자식이 모두 사라졌다.
+  - 측정 불가
+    - `statusbar.group_gap`: 왼쪽 묶음 하나뿐이라 간격이 그려지지 않는다. Phase 5(R-26, 오른쪽 묶음)에서 잰다.
+    - 실제 작업 표시줄 닫기: 입력 도구로 겨냥할 수 없어 앱 창에 `WM_CLOSE`를 보내 대체했다(통과, 프로세스 소멸은 약 1 s로 다른 경로의 70~110 ms보다 느림).
+    - 미측정: 프로젝트 패널 `Remove` 버튼 누르기, 타이틀 바 폴더 이름 버튼 무동작(코드 확인).
+  - 관찰(판정 아님): 마우스로 눌러도 목록에 포커스가 들어가 키보드 링이 보인다. 읽을 때 걸러낸 항목(중복 id, 숫자 `path`)은 다음 쓰기에서 빠진다. `version` 초과 때 알림 없이 쓰기만 건너뛴다. 탭 바 끝 버튼 아이콘 색이 `text.muted`와 같다(Phase 1 요소).
+  - 원상복구: 원래 없던 `%TEMP%\wb-v02-m4`와 `%APPDATA%\workbench-tauri`를 지웠다. 앱 프로세스는 0이다. 사용자 폴더는 등록하지 않았다.
+- 측정 중 생긴 일(v02-M4)
+  - 의도하지 않은 실제 선택 창 약 18번: 선택 창 응답 대체가 처음에 조용히 실패해 지정한 "등록 1·취소 1" 밖의 실제 창이 열렸다. 전부 UI Automation으로 취소했고, 등록·목록·`state.json`이 바뀌지 않은 것을 확인했다. 페이지의 `window.fetch` 덮어쓰기로 바꾼 뒤에는 열리지 않았다.
+  - 앱 실행 약 32회(유효 세션 15, 재시작 2, 진단·실패 재실행): "사례별 필요 최소"를 넘었다.
+  - 작업 표시줄 닫기는 `WM_CLOSE`로 대체했다(위 측정 불가).
+  - 창 아래쪽이 작업 표시줄에 걸려 앱 창 위치만 `SetWindowPos`로 올렸다(크기는 그대로). 다른 프로세스는 건드리지 않았다.
+- 검토 C-23(`check`): PASSED.
+  - A-24.1~A-24.7·R-29 구현(교체 플래그, `sync_all`, 재시도·bad 보관 상수, version 차단), 프로덕션 코드에 unwrap 없음.
+  - 의존성 정확한 버전과 capability 두 개만 추가, `guardClose`가 쓰기 실패에도 창을 닫는지, A-28 경로 비교.
+  - 하드코딩·인라인 style 없음, ponytail, Solid 반응성·타이머 정리.
+  - 전체 테스트 1회: `npm.cmd run typecheck` 에러 0, `npm.cmd run test` 36/36, `cargo check` 경고 0, `cargo test` 5/5.
+
+**사용자 확인 필요(V4, Phase 종료 때)** — 측정으로 판단할 수 없는 시각 품질이다. 앞의 "ID 없는 값"과 겹친다.
+1. 목록 세로 스크롤바가 OS 기본의 밝은 모양이라 다크 테마에서 눈에 띈다.
+2. 빈 상태·경로 없음 패널의 문구와 버튼이 브라우저 기본 모양이다.
+3. 폴더 아이콘과 이름 사이 간격이 0이다.
+4. 타이틀 바 폴더 이름 버튼의 글자 크기·좌우 여백이 기본값이다.
+
+**다음 Phase로 넘긴 것**
+- 위 "Phase 5에서 판정하는 것"(R-13 트리·탭, R-14 탭 닫기·`Remove from Project`).
+- R-7 프로젝트 패널 항목 경로(L-247).
+- `statusbar.group_gap`: Phase 5 R-26.
+- Phase 5 단축키(`ProjectPanel` 컨텍스트)는 아직 no-op다. 패널에 포커스가 있으면 그 키들이 기본 동작만 막는다.
+- 사이드바 폭 조절(A-11.12)은 이 Phase에서 만들지 않았다.
 
 ### Phase 5 — 프로젝트 패널 트리·파일 작업·최소 탭과 시나리오
 
@@ -342,7 +548,7 @@
 
 ## 사용자 요청 작업
 
-없음.
+- Phase 3·4 PROGRESS 보완(2026-11-06): Phase 3·4 커밋(787e793, 2ee70ee)에 PROGRESS 기록이 빠져 후속 커밋으로 보완한다. Phase 3·4 절의 무엇을·결과·검증과 PLAN 진행 현황의 커밋 번호를 채웠다.
 
 ## 버전 종료
 
