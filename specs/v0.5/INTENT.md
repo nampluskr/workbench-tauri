@@ -32,5 +32,4 @@
 - workbench-core와 workbench-gpui 레포에 쓰는 것. 읽기만 한다(core D-7).
 - `spec/`의 수정(원본은 workbench-gpui, 루트 `AGENTS.md` 3장).
 - Zed 테마·아이콘·글꼴의 복사·내려받기를 해당 Phase 전에 하는 것(D-8·D-9는 Phase 7·5, D-10은 Phase 3, ORDER-01 7장).
-- 루트 `INTENT.md` "다루지 않는 것"(프로젝트 전체 검색, 설정 UI 화면 등)과 I-2·I-22가 부딪치는 부분: 미정. `SPEC.md` R-2·R-22에 적었고, 사람이 정한다.
-- 그 밖: 없음.
+- 그 밖: 없음. 루트 `INTENT.md` "다루지 않는 것"과 부딪치는 I-2·I-22는 core ITEMS가 우선하므로(core D-12, 사용자 2026-11-06) 제외하지 않고 `SPEC.md` R-2·R-22로 둔다.

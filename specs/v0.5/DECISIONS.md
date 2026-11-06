@@ -19,6 +19,7 @@
 | core D-9 Zed UI 아이콘 복사(`.gitignore` 폴더) | `SPEC.md` R-1·R-18, `PLAN.md` Phase 5 |
 | core D-10 Zed 기본 글꼴 커밋 | `SPEC.md` R-14, `PLAN.md` Phase 3 |
 | core D-11 ITEMS가 SPEC 역할 | `SPEC.md`(I-n을 R-n으로 옮기고 판정 방법은 그대로) |
+| core D-12 core ITEMS가 갈래 지침보다 우선 | 루트 `AGENTS.md` 레포 규칙·3장·5장, 루트 `INTENT.md` "다루지 않는 것", `SPEC.md` R-2·R-22, `PLAN.md` Phase 8 |
 
 갈래가 정해 갈래 문서에 남기라고 한 것(core D-8·D-9의 복사본 폴더 경로, 복사본이 없을 때의 모습, 다시 채우는 방법, 복사 출처 커밋; core D-10의 굵기·스타일 파일과 버전)은 미정이다. 해당 Phase(3·5·7)에서 정해 이 문서에 더한다.
 
