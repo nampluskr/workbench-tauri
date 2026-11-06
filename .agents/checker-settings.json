@@ -43,8 +43,7 @@
       "command(npm.cmd run tauri build -- --debug --no-bundle)",
       "command(pwsh -NoProfile -File tools/win-input.ps1 -Action state)",
       "command(pwsh -NoProfile -File tools/win-input.ps1 -Action resize -DX -1200 -DY -700)",
-      "command(src-tauri\\target\\debug\\workbench-tauri.exe)",
-      "command(Stop-Process -Name workbench-tauri)"
+      "command(src-tauri\\target\\debug\\workbench-tauri.exe)"
     ]
   }
 }
