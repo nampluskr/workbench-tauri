@@ -6,13 +6,14 @@
 - **지난 버전 폴더 불변** — specs/ 아래 지난 버전 폴더는 읽기만 하고 고치지 않는다.
 - **PROGRESS 기록** — 작업을 끝낼 때마다 PROGRESS에 무엇을·결과·검증을 남기고, 계획 밖 작업은 사용자 요청 작업으로 적는다.
 - **Zed 코드 복사 금지** — Zed 앱 코드(GPL-3.0)는 동작 이해에만 참고하고 복사하지 않는다. (출처: `docs/refs/03-tauri/README.md` 1절)
-- **HERDR 문서** — `specs/{version}/HERDR-SETUP.md`·`HERDR-DECISIONS.md`는 버전마다 따로 두고, 사용자 승인 뒤 `writer`가 쓴다. `leader`는 코드·문서를 쓰지 않는다.
-- **HERDR 구성은 구독·토큰 부담으로 정한다** — 에이전트 풀은 Claude Code Opus 5.5 medium, Claude Code Sonnet 5.5 high, agy gemini-3.8-flash-high다(Codex는 쓰지 않는다, 사용자 2026-11-04). v0.2부터 Codex gpt-6.1-terra high를 더한다(사용자 결정 2026-11-05). 역할·모델·effort 배정은 구독 현황(구독 종류, 남은 한도·초기화 시점, 동시에 도는 다른 워크스페이스)을 사람에게 확인하고 구독별 토큰 부담을 따져 정한다. 배정과 근거는 `specs/{version}/HERDR-SETUP.md`에 적고, 한도가 바뀌어 구성을 바꾸면 다시 승인받는다.
-- **커밋은 leader만** — `leader`가 커밋만 한다(내용은 쓰지 않는다). `writer`와 구현 담당은 커밋하지 않는다. push는 매번 사용자(또는 사용자에게 위임받은 leader) 승인 뒤에 한다.
+- **HERDR 문서** — `specs/{version}/HERDR-SETUP.md`(v0.4까지는 `HERDR-DECISIONS.md`도)는 버전마다 따로 두고, 사용자 승인 뒤 `tauri-writer`가 쓴다. `tauri-leader`는 코드·문서를 쓰지 않는다.
+- **HERDR 구성은 core가 정한다** — v0.5 구성은 workbench-core `specs/v0.5/DECISIONS.md` D-2다: `tauri-leader` Claude Code Opus 5.5, `tauri-writer` Claude Code Opus 5.5 medium, `tauri-coder` Codex gpt-6.1-sol medium, `tauri-checker` agy gemini-3.8-flash-high(사용자 2026-11-06). Codex는 coder에만 쓴다. 배정과 근거는 `specs/{version}/HERDR-SETUP.md`에 적고, 한도가 바뀌어 구성을 바꾸면 다시 승인받는다.
+- **자기 워크스페이스만 쓴다** — 다른 워크스페이스의 파일은 읽기만 한다 (core D-7).
+- **커밋은 tauri-leader만** — `tauri-leader`가 커밋만 한다(내용은 쓰지 않는다). `tauri-writer`·`tauri-coder`·`tauri-checker`는 커밋하지 않는다. push는 매번 사용자(또는 사용자에게 위임받은 tauri-leader) 승인 뒤에 한다.
 
 ---
 
-# 에이전트 공통 지침 (v0.4)
+# 에이전트 공통 지침 (v0.5)
 
 Tauri 2 기반 Zed 재현 편집기의 에이전트 공통 지침이다. 모든 에이전트가 따른다.
 `workbench-gpui`의 `AGENTS.md` 0·1·2·3·3A·4·5·8·9장을 TypeScript/Tauri에 맞게 고쳐 들여왔다.
@@ -23,13 +24,13 @@ Tauri 2 기반 Zed 재현 편집기의 에이전트 공통 지침이다. 모든 
 
 ## 0. 먼저 읽을 것
 
-1. `specs/v0.4/HERDR-SETUP.md`: 에이전트 구성, 역할, 파일 소유권, 작업 프로토콜
-2. `specs/v0.4/PLAN.md`: Phase별 목표, 완료 조건, 진행 현황
+1. `specs/v0.5/HERDR-SETUP.md`: 에이전트 구성, 역할, 파일 소유권, 작업 프로토콜
+2. `specs/v0.5/PLAN.md`: Phase별 목표, 완료 조건, 진행 현황
 3. `spec/INDEX.md`: Zed 실측 문서와 스펙의 색인. 원문은 이 색인을 보고 필요한 절만 연다.
 
-자기 역할은 `leader`의 지시나 최초 프롬프트로 정해진다. 역할이 불분명하면 작업하지 말고 질문한다.
+자기 역할은 `tauri-leader`의 지시나 최초 프롬프트로 정해진다. 역할이 불분명하면 작업하지 말고 질문한다.
 
-**작업 카드**는 `leader`가 herdr 프롬프트로 주는 지시다. 파일이 아니다(`TASKS.md` 같은 작업 보드 파일을 두지 않는다). 카드에는 카드 ID, 할 일, 관련 `R-n`·`D-n`, 검증 수준이 들어간다. PLAN·PROGRESS 같은 문서는 카드를 받은 `writer`가 쓴다.
+**작업 카드**는 `tauri-leader`가 `%TEMP%\v05-<카드ID>-card.md` 파일로 쓰고 그 경로를 herdr 프롬프트로 주는 지시다. 보고는 `%TEMP%\v05-<카드ID>-report.md`에 쓰고 답으로 경로만 보낸다(`specs/v0.5/HERDR-SETUP.md` 5.2). 레포 안에 작업 보드 파일(`TASKS.md` 등)을 두지 않는다. 카드에는 카드 ID, 할 일, 관련 `R-n`·`D-n`, 검증 수준이 들어간다. PLAN·PROGRESS 같은 문서는 카드를 받은 `tauri-writer`가 쓰고, 구현은 `tauri-coder`, 리뷰·화면 검증은 `tauri-checker`가 한다.
 
 ---
 
@@ -37,7 +38,7 @@ Tauri 2 기반 Zed 재현 편집기의 에이전트 공통 지침이다. 모든 
 
 - 목적: Zed 편집기의 레이아웃과 동작을 재현하는 편집기를 Tauri 2로 만든다. `workbench-gpui`와 같은 앱의 다른 갈래다(루트 `INTENT.md`).
 - 스택: Tauri 2(Rust 코어) + Solid + TypeScript + Vite, 편집기 CodeMirror 6, 구문 강조 `web-tree-sitter`. Windows 전용.
-- 현재 상태: v0.4 진행 중이다. workbench-gpui v0.4 끝 상태와 같은 외형·기능을 만든다(`specs/v0.4/INTENT.md`). v0.3 번호는 쓰지 않는다(gpui와 버전 번호를 맞춤). v0.2는 종료했다(2026-11-06). v0.1은 종료했다(2026-11-05). 이전 PoC는 태그 `legacy-v0.1-poc`(9f83f8d)로만 남아 있다.
+- 현재 상태: v0.5 진행 중이다. workbench-core v0.5 ITEMS의 I-1~I-23을 반영한다(`specs/v0.5/INTENT.md`). v0.4는 종료했다(2026-11-06). v0.3 번호는 쓰지 않는다(gpui와 버전 번호를 맞춤). v0.2는 종료했다(2026-11-06). v0.1은 종료했다(2026-11-05). 이전 PoC는 태그 `legacy-v0.1-poc`(9f83f8d)로만 남아 있다.
 - 핵심 원칙
   - Zed 실측값은 요구사항이다.
   - 불필요한 코드와 테스트를 만들지 않는다(ponytail).
@@ -76,7 +77,7 @@ cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
 - `spec/`의 원본은 `workbench-gpui`다. 이 레포에서는 `spec/`를 고치지 않는다. 값을 바꿔야 하면 gpui에서 바꾼 뒤 이 레포로 다시 복사한다.
 - 원문 실측 문서(`docs/refs/01-zed/`)는 `spec/INDEX.md`를 통해 필요한 절만 읽는다.
 - 코드에 수치를 하드코딩하지 않는다. CSS 값도 스펙 ID 이름의 상수나 CSS 변수로 둔다.
-- 스펙에 없는 값이 필요하면 추정하지 말고 `leader`에게 보고한다.
+- 스펙에 없는 값이 필요하면 추정하지 말고 `tauri-leader`에게 보고한다.
 - 실측값은 단순화·반올림·통합 대상이 아니다. 비슷한 두 값이라도 스펙 ID가 다르면 별개로 유지한다.
 - Zed 소스에서 값을 확인할 수는 있지만 코드는 복사하지 않는다. 값만 참고한다.
 
@@ -86,7 +87,7 @@ cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
 
 검증은 변경 유형에 맞는 최소 수준만 한다. 코드로 동작이 확실히 예상되는 부분은 실행해서 다시 확인하지 않는다. 실제 화면을 측정해 스펙과 대조하는 UI 실측(V3)은 정해진 시점에만 한다.
 
-검증 수준은 `leader`가 작업 카드에 지정하며, 담당자는 그 이상을 습관적으로 더하지 않는다.
+검증 수준은 `tauri-leader`가 작업 카드에 지정하며, 담당자는 그 이상을 습관적으로 더하지 않는다.
 
 ### 3A.1 검증 수준
 
@@ -112,7 +113,7 @@ cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
 
 ### 3A.3 V3 필요 조건
 
-`leader`는 아래 중 하나에 해당하면 V3 작업 카드를 지시한다. 화면 단위로 묶는다.
+`tauri-leader`는 아래 중 하나에 해당하면 V3 작업 카드를 지시한다. 화면 단위로 묶는다.
 
 1. 새 화면이나 새 컴포넌트를 처음 구현했을 때
 2. 테마·폰트·전역 간격·DPI 처리처럼 여러 화면에 영향을 주는 공통 값이 바뀌었을 때
@@ -124,16 +125,16 @@ cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
 ### 3A.4 V3 수행 절차
 
 1. 측정할 화면 상태와 스펙 ID 목록을 먼저 작성한다. 목록에 없는 항목은 측정하지 않는다.
-2. 측정 조건을 고정한다. 데스크톱 주 모니터 1920x1080, 100%다(사용자 2026-11-04, `specs/v0.4/HERDR-SETUP.md` 3장). 테마와 창 크기는 측정 목록에 적는다. 스펙의 측정 조건(200% 기준)과는 논리 px로 비교한다.
+2. 측정 조건을 고정한다. 데스크톱 주 모니터 1920x1080, 100%다(사용자 2026-11-04, `specs/v0.5/HERDR-SETUP.md` 3장). 테마와 창 크기는 측정 목록에 적는다. 스펙의 측정 조건(200% 기준)과는 논리 px로 비교한다.
 3. 앱은 측정 세션당 1회만 실행하고, 목록의 상태에 도달하는 데 필요한 만큼만 조작한다.
 4. 눈대중으로 판단하지 않는다. WebView 값 덤프를 먼저 쓰고, 필요할 때만 스크린샷 픽셀을 잰다.
 5. 입력 도구로 키·마우스를 보낼 때는 대상 PID·HWND를 고정하고, 입력 직전마다 전경 창이 대상인지 확인한다(이전 PoC에서 다른 앱 창으로 입력이 들어간 사고가 있었다).
-6. `specs/v0.4/verify/`에 스펙 ID, 기대값, 측정값, 차이, 판정을 표로 남긴다.
-7. 측정자가 직접 고치지 않는다. 불일치 목록을 `leader`에게 보고한다. 다시 측정할 때는 불일치 항목만 잰다.
+6. `specs/v0.5/verify/`에 스펙 ID, 기대값, 측정값, 차이, 판정을 표로 남긴다.
+7. 측정자가 직접 고치지 않는다. 불일치 목록을 `tauri-leader`에게 보고한다. 다시 측정할 때는 불일치 항목만 잰다.
 
 ### 3A.5 실행 범위
 
-- 작업 중에는 변경과 관련된 테스트만 실행한다. 전체 테스트는 커밋 직전 `check`가 1회만 실행한다.
+- 작업 중에는 변경과 관련된 테스트만 실행한다. 전체 테스트는 커밋 직전 `tauri-checker`가 1회만 실행한다.
 - 이미 통과한 검증을 같은 코드에 대해 반복하지 않는다. 변경하지 않은 영역은 다시 검증하지 않는다.
 
 ---
@@ -173,7 +174,7 @@ cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
 - 데이터 손실을 막는 오류 처리
 - 입력 검증과 보안 관련 처리(CSP, 확장 경로 검사)
 - 접근성 기본 요소(키보드 탐색, 포커스)
-- 사용자 또는 `leader`가 명시적으로 요청한 기능
+- 사용자 또는 `tauri-leader`가 명시적으로 요청한 기능
 
 ### 4.4 테스트
 
@@ -215,7 +216,7 @@ V3 실측 결과는 다음 형식으로 보고한다.
 ```text
 [MEASURED] <task-id>
 - 측정 조건: <모니터·창 크기, DPI 배율, 테마, 폰트>
-- 결과 파일: specs/v0.4/verify/<파일>
+- 결과 파일: specs/v0.5/verify/<파일>
 - 통과: <개수>
 - 불일치: <스펙 ID, 기대값, 측정값, 차이 목록>
 - 측정 불가: <항목과 사유>
@@ -234,9 +235,9 @@ V3 실측 결과는 다음 형식으로 보고한다.
 ## 9. 금지 사항
 
 - 승인 없는 의존성 추가·제거·버전 변경(`package.json`, `package-lock.json`, `src-tauri/Cargo.toml`, `Cargo.lock`)
-- 사용자(또는 사용자에게 위임받은 leader) 승인 없는 CSP·capability 완화
+- 사용자(또는 사용자에게 위임받은 tauri-leader) 승인 없는 CSP·capability 완화
 - 소유하지 않은 파일 수정, `spec/` 수정(원본은 workbench-gpui)
-- `leader` 외의 커밋, 사용자(또는 사용자에게 위임받은 leader) 승인 없는 push, 강제 푸시
+- `tauri-leader` 외의 커밋, 사용자(또는 사용자에게 위임받은 tauri-leader) 승인 없는 push, 강제 푸시
 - 스펙에 없는 수치의 추정 입력
 - 테스트를 통과시키기 위한 테스트 삭제나 기대값 변경
 - 작업 범위 밖의 리팩토링
