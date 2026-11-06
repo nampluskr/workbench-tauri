@@ -47,3 +47,14 @@
 
 ## BLOCKED
 없음 (기준 2는 사용자 조치 대기, 대체 방식 적용)
+
+## 사용자 직접 승인 뒤 (core-leader 전달, 사용자 원문 2026-11-06 "checker가 승인 창 없이 명령을 실행하게 하는 설정하도록 승인합니다.")
+- 한 것: writer가 `.agents/checker-settings.json`에서 `deny`를 빼고 `allow`만 남겼다. 이번에는 자동 모드가 막지 않았다. checker를 `--settings`로 다시 띄웠다.
+- 확인: `git diff --stat`에 **승인 창이 떴다**. 취소했다. `command(git diff)`는 `git diff --stat`과 일치하지 않는다. 앞부분 일치가 아니다. 앞 시험 2에서는 정확한 항목 `command(git diff --stat)`이 있을 때 승인 없이 돌았다.
+- 이어서 하려던 것: 와일드카드 항목 `command(git diff *)`를 더해 한 번 시험하려 했다. 그 뒤에 정확한 항목을 더할 생각이었다. 그런데 writer에게 보내는 지시를 tauri-leader 세션 자동 모드가 다시 "[Self-Modification]"으로 거부했다. 우회하지 않았다. 정확한 항목을 더하는 것도 같은 종류라 시도하지 않았다.
+- 지금 상태: 파일은 `allow`만 있다(`deny` 없음). 목록 항목이 명령 전체와 정확히 같을 때만 승인 없이 도는 것으로 보인다. 지금 목록의 항목은 대부분 인자 없는 형태라 실제 명령과 맞지 않는다. 그래서 HERDR-SETUP 5.5 대체 방식을 계속 쓴다(문서에 반영).
+- 기준 2: 여전히 사용자 조치 대기다.
+- 사용자 조치(둘 중 하나):
+  1. 사용자가 직접 `.agents/checker-settings.json` `allow`에 쓸 명령을 정확한 형태로 더한다. 예: `"command(git diff --stat)"`, `"command(git diff)"`, `"command(cargo test --manifest-path src-tauri/Cargo.toml)"`, `"command(cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings)"`, `"command(npm.cmd run test)"`. 와일드카드 문법이 있는지는 확인하지 못했다.
+  2. tauri-leader 세션에 사용자가 직접 지시한다.
+- 바꾼 파일(추가): `.agents/checker-settings.json`(deny 삭제), `specs/v0.5/HERDR-SETUP.md`, `specs/v0.5/PROGRESS.md`, 이 보고. 커밋은 `git log -1 -- specs/v0.5/reports/ORDER-01-R3.md`.

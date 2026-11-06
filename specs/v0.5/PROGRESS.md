@@ -45,6 +45,10 @@
   - 검증: V0. 문서·설정 파일만 바뀌어 명령은 실행하지 않았다. 확인 결과(checker `git diff --stat`이 승인 창 없이 도는지): leader가 checker 재시작 뒤 확인.
   - 특이사항: 없음.
   - 확인 결과와 대체 방식(W-05, 2026-11-06): allow와 deny가 함께 있으면 허용 명령도 승인 창이 뜬다(tauri-leader 시험 2026-11-06). deny를 빼는 조치는 사용자 조치 대기이고(core-leader가 최종 보고에 올린다), 설정 파일은 allow+deny 그대로 둔다. 대체 방식(core-leader 결정, 사용자 위임 2026-11-06, core D-13): checker가 실행해야 할 명령은 `tauri-coder` 또는 `tauri-leader`가 실행해 출력을 `%TEMP%\v05-<카드ID>-*.txt`로 남기고, `tauri-checker`는 그 파일을 읽어 판정하며 셸 명령을 실행하지 않는다. 사용자 조치로 승인 없이 돌게 되면 대체 방식을 끝낸다. `HERDR-SETUP.md` 5.5에 같은 내용을 적었다.
+  - deny 제거(W-07·W-08, 2026-11-06): 사용자 직접 승인(core-leader 전달, 사용자 원문 "checker가 승인 창 없이 명령을 실행하게 하는 설정하도록 승인합니다.")으로 `.agents/checker-settings.json`에서 deny를 빼고 allow만 남겼다.
+  - leader 시험(2026-11-06): allow만 있어도 `command(git diff)`는 `git diff --stat`과 일치하지 않아 승인 창이 떴다. 앞부분 일치가 아니다. 앞 시험에서는 정확한 항목 `command(git diff --stat)`이 있을 때 승인 창이 뜨지 않았다.
+  - 정확한 항목이나 와일드카드 항목을 더하는 지시는 tauri-leader 세션 자동 모드가 `[Self-Modification]`으로 거부해 하지 않았다(우회하지 않음, core-leader에게 알림).
+  - 그래서 대체 방식(coder/leader가 실행해 `%TEMP%\v05-<카드ID>-*.txt`, checker는 파일만 읽음)을 계속 쓴다. `HERDR-SETUP.md` 5.5의 설정 항목을 "현재 파일 내용"과 실제 동작으로 고쳐 적었다.
 - Phase 1 종료 판정: 충족(core-leader, 사용자 위임 D-13), 문서 다섯 확정 (2026-11-06, W-06).
 
 ## 사용자 요청 작업

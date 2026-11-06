@@ -116,14 +116,17 @@ herdr session
   - HERDR 구성 변경(모델·effort·역할·pane, 루트 `AGENTS.md` 레포 규칙)
   - push
 - `tauri-leader`가 처리한 판단은 출처 "리더 결정(사용자 위임 2026-11-06, core ORDER-01-R2)"을 달아 `PROGRESS.md`에 남긴다. `HERDR-DECISIONS.md`는 두지 않는다.
-- checker 명령 허용(core ORDER-01-R3, 사용자 2026-11-06):
+- checker 명령 설정(core ORDER-01-R3, 사용자 2026-11-06):
   - 위치: 레포 `.agents/checker-settings.json`. `agy --settings`로 `tauri-checker` 세션에만 적용한다(1장 실행 명령). agy 전역 설정(`C:\Users\nampl\.gemini\antigravity-cli\settings.json`)은 레포 밖이라 고치지 않는다(core D-7). 레포 안 파일을 checker 실행 때만 쓰는 것은 리더 결정이다(agy는 레포 안 프로젝트 settings 파일이 문서화되어 있지 않다).
-  - 허용(`permissions.allow`, 명령 단어 앞부분 일치): `git diff`·`git log`·`git status`·`git show`, `npm run build`·`typecheck`·`test`(`npm.cmd` 포함), `npx tsc --noEmit`, `cargo check`·`cargo test`·`cargo clippy`(`--manifest-path src-tauri/Cargo.toml`), `tools/`의 검증·측정 스크립트(`count-lines.mjs`, `measure-m3.mjs`, `theme-expect.mjs`, `capture-startup.ps1`, `hittest.ps1`, `win-input.ps1`). 화면을 다루는 스크립트는 5.3의 차례를 따로 받는다.
-  - 허용하지 않는 것(`permissions.deny`): `git commit`·`push`·`reset`·`checkout`·`switch`·`branch`·`rm`, `npm install`·`npm.cmd install`·`npm i`, `cargo add`·`cargo remove`, `rm`·`del`·`Remove-Item`, `curl`·`Invoke-WebRequest`. 그 밖에 파일 삭제, `src/` 쓰기, 의존성 변경, 내려받기도 하지 않는다.
+  - 현재 파일 내용(`permissions.allow`만 있음): `git diff`·`git log`·`git status`·`git show`, `npm run build`·`typecheck`·`test`(`npm.cmd` 포함), `npx tsc --noEmit`, `cargo check`·`cargo test`·`cargo clippy`(`--manifest-path src-tauri/Cargo.toml`), `tools/`의 검증·측정 스크립트(`count-lines.mjs`, `measure-m3.mjs`, `theme-expect.mjs`, `capture-startup.ps1`, `hittest.ps1`, `win-input.ps1`). 화면을 다루는 스크립트는 5.3의 차례를 따로 받는다.
+  - deny 제거: 사용자 직접 승인(core-leader 전달, 사용자 원문 2026-11-06 "checker가 승인 창 없이 명령을 실행하게 하는 설정하도록 승인합니다.")으로 `permissions.deny`를 빼고 allow만 남겼다(W-07). 그 전 deny에 있던 `git commit`·`push`·`reset`·`checkout`·`switch`·`branch`·`rm`, `npm install`·`npm i`, `cargo add`·`cargo remove`, `rm`·`del`·`Remove-Item`, `curl`·`Invoke-WebRequest`와 파일 삭제, `src/` 쓰기, 의존성 변경, 내려받기는 여전히 checker가 하지 않는다(core D-2, 루트 `AGENTS.md` 9장).
   - 보고 파일 쓰기는 카드가 정한 `%TEMP%\v05-*-report.md`만 한다. 레포 밖 파일 접근은 전역 `allowNonWorkspaceAccess`가 이미 허용한다.
-  - 앱 실행(`npm run tauri dev`)은 목록에 넣지 않았다. 화면 검증 때 필요하면 그때 카드로 정한다.
-- 허용 목록의 실제 동작: allow와 deny가 함께 있으면 허용 명령도 승인 창이 뜬다(tauri-leader 시험 2026-11-06). 그래서 지금은 checker 명령이 승인 없이 돌지 않는다. deny를 빼는 조치는 사용자 조치 대기다(core-leader가 최종 보고에 올린다). 설정 파일은 지금(allow+deny) 그대로 둔다.
-- 대체 방식(core-leader 결정, 사용자 위임 2026-11-06, core D-13): checker가 실행해야 할 명령(`git diff`, 빌드·테스트·clippy, `tools/` 검증·측정 스크립트)은 `tauri-coder` 또는 `tauri-leader`가 실행하고 출력을 `%TEMP%\v05-<카드ID>-*.txt` 파일로 남긴다. `tauri-checker`는 그 파일을 읽어 판정하고 셸 명령을 실행하지 않는다. 사용자 조치로 checker 명령이 승인 없이 돌게 되면 이 대체 방식을 끝낸다.
+  - 앱 실행(`npm run tauri dev`)은 파일에 넣지 않았다. 화면 검증 때 필요하면 그때 카드로 정한다.
+- 설정의 실제 동작(tauri-leader 시험 2026-11-06):
+  - allow와 deny가 함께 있을 때는 허용 항목의 명령도 승인 창이 떴다.
+  - allow만 있어도 `command(git diff)`는 `git diff --stat`과 일치하지 않아 승인 창이 떴다. 앞부분 일치가 아니다. 앞 시험에서는 정확한 항목 `command(git diff --stat)`이 있을 때 승인 창이 뜨지 않았다.
+  - 정확한 항목이나 와일드카드 항목을 더하는 지시는 `tauri-leader` 세션 자동 모드가 `[Self-Modification]`으로 거부해 하지 않았다. 우회하지 않고 core-leader에게 알렸다.
+- 대체 방식(core-leader 결정, 사용자 위임 2026-11-06, core D-13): 위 동작 때문에 계속 쓴다. checker가 실행해야 할 명령(`git diff`, 빌드·테스트·clippy, `tools/` 검증·측정 스크립트)은 `tauri-coder` 또는 `tauri-leader`가 실행하고 출력을 `%TEMP%\v05-<카드ID>-*.txt` 파일로 남긴다. `tauri-checker`는 그 파일을 읽어 판정하고 셸 명령을 실행하지 않는다. checker 명령이 승인 창 없이 실행되는 것이 확인되면 이 대체 방식을 끝낸다.
 - 그 밖의 승인 요청에는 아래 리더 결정을 따른다.
 - 리더 결정: `tauri-leader` 세션의 자동 모드가 승인 키 입력을 막으면 그 명령을 승인하지 않는다. 읽기 전용 결과(예: `git diff`)는 `tauri-leader`가 `%TEMP%` 파일로 만들어 넘긴다. 그래도 안 되면 `[BLOCKED]`로 사용자에게 묻는다. 2026-11-06 C-01·C-02에서 `git diff` 승인 일부가 막혔다.
 

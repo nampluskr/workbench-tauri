@@ -21,25 +21,6 @@
       "command(pwsh tools/capture-startup.ps1)",
       "command(pwsh tools/hittest.ps1)",
       "command(pwsh tools/win-input.ps1)"
-    ],
-    "deny": [
-      "command(git commit)",
-      "command(git push)",
-      "command(git reset)",
-      "command(git checkout)",
-      "command(git switch)",
-      "command(git branch)",
-      "command(git rm)",
-      "command(npm install)",
-      "command(npm.cmd install)",
-      "command(npm i)",
-      "command(cargo add)",
-      "command(cargo remove)",
-      "command(rm)",
-      "command(del)",
-      "command(Remove-Item)",
-      "command(curl)",
-      "command(Invoke-WebRequest)"
     ]
   }
 }
