@@ -1,16 +1,16 @@
 import { createEffect, createMemo, createRoot, on, untrack } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { decodeText } from "../editor/file-view.ts";
-import { diffRange, eventDirs, goneDirs } from "./changes.ts";
-import { forget, refreshDirs, type FolderContext, type Tab } from "./context.ts";
+import { eventDirs, goneDirs } from "./changes.ts";
+import { forget, refreshDirs, type FolderContext } from "./context.ts";
 import { pathKey } from "./paths.ts";
 import { activeFolder, contextOf, markMissing, missingIds } from "./store.ts";
 import { only, rowIndex } from "./tree.ts";
 
 // Following the disk (R-25, A-16.3): the core watches the active folder and reports changed paths. They are gathered for
 // one animation frame, then the folders they touch are read again and the open tabs whose file changed are read again.
-// Reading again is idempotent, so the events of the app's own file work (R-20~R-22) only repeat what is already shown.
+// Reading again is idempotent, so the events of the app's own file work (R-20~R-22) and saves (same bytes as the save
+// base, D-7) only repeat what is already shown.
 
 /** Read the folders again, drop what is gone, and keep the selection where it was (a vanished one moves to the row now in its place, D-17). */
 async function syncTree(ctx: FolderContext, dirs: string[]): Promise<void> {
@@ -30,23 +30,9 @@ async function syncTree(ctx: FolderContext, dirs: string[]): Promise<void> {
   }
 }
 
-/** E-086: a tab whose file changed shows the new text. A file that cannot be read any more (deleted) stays as it is (D-10). */
-async function reloadTab(path: string, view: Tab["view"]): Promise<void> {
-  if (!view) return;
-  let text: string;
-  try {
-    text = decodeText(await invoke<ArrayBuffer>("read_file", { path })).replace(/\r\n?/g, "\n"); // the document keeps "\n" only
-  } catch {
-    return;
-  }
-  const change = diffRange(view.state.doc.toString(), text);
-  // One change from the first to the last difference: the scroll position and selection stay, and an incremental parse
-  // re-highlights it (a whole new text starts the sliced parse again, R-30). The view is read-only for people, not for this.
-  if (change.from < change.to || change.insert !== "") view.dispatch({ changes: change });
-}
-
+/** E-086, E-087 (R-7, D-7): each tab whose file changed reads it again and judges the bytes against its save base. */
 async function reloadTabs(ctx: FolderContext, keys: Set<string> | null): Promise<void> {
-  await Promise.all(ctx.tabs().filter((tab) => keys === null || keys.has(pathKey(tab.path))).map((tab) => reloadTab(tab.path, tab.view)));
+  await Promise.all(ctx.tabs().filter((tab) => keys === null || keys.has(pathKey(tab.path))).map((tab) => tab.file.doc.read()));
 }
 
 let pending = new Set<string>();

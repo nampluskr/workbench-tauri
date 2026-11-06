@@ -145,6 +145,28 @@ body { background: var(--background); color: var(--text); font-size: 1rem; }
 .tab.edge-b { border-bottom-color: var(--border); }
 .tab-title { font-size: var(--typography-size-default); height: var(--tab-content-height); line-height: var(--tab-content-height); white-space: nowrap; }
 .tab.preview .tab-title { font-style: italic; } /* I-064 */
+.tab-title.deleted { text-decoration: line-through; } /* E-087 */
+/* L-25 slots. L-65 / I-071: Accent dot when modified, Warning on a conflict, nothing when clean. */
+.tab-slot-start { flex: none; display: flex; align-items: center; justify-content: center; width: var(--tab-start-slot-width); height: var(--tab-start-slot-height); }
+.tab-indicator { display: none; width: var(--tab-indicator-size); height: var(--tab-indicator-size); border-radius: 50%; }
+.tab-indicator.dirty { display: block; background: var(--text-accent); }
+.tab-indicator.conflict { background: var(--warning); }
+/* L-66 / I-073: Close, Small, Muted, square, at the right; shown only while the tab is hovered (the slot keeps its place). */
+.tab-close {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tab-end-slot-width);
+  height: var(--tab-end-slot-height);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--icon-muted);
+  visibility: hidden;
+  --icon-size: var(--icons-size-small);
+}
+.tab:hover .tab-close { visibility: visible; }
 
 /* Icon button: Default height square (L-07) unless the area sets --button-size. */
 .icon-button {

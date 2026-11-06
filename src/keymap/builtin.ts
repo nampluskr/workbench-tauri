@@ -1,8 +1,8 @@
 import type { KeymapSection } from "./engine.ts";
 
 // Built-in keymap (D-2): the result of 01-zed 02-INTERACTION section 1 (Windows + VSCode overlay) for the
-// v0.2 actions, re-typed in Zed's keymap.json shape. The expected rows are pinned in specs/v0.2/PROGRESS.md
-// (Phase 2, R-1 table); builtin.test.ts compares this file with that table.
+// v0.2 and v0.4 actions, re-typed in Zed's keymap.json shape. The expected rows are pinned in specs/v0.4/PROGRESS.md
+// (Phase 2, R-1 table (v0.4)); builtin.test.ts compares this file with that table.
 // Section order is the tie-break order at equal depth (later wins, I-702): `menu` first, as in workbench-gpui.
 export const BUILTIN: KeymapSection[] = [
   {
@@ -42,6 +42,10 @@ export const BUILTIN: KeymapSection[] = [
       "ctrl-alt-;": "multi_workspace::FocusWorkspaceSidebar",
       "ctrl-k ctrl-o": "workspace::Open",
       "f10": "app_menu::Toggle",
+      "ctrl-s": "workspace::Save", // I-005
+      // I-008: several keys for one action show the last one (I-704), Ctrl-W (L-240).
+      "ctrl-f4": "pane::CloseActiveItem",
+      "ctrl-w": "pane::CloseActiveItem",
     },
   },
   {
@@ -89,5 +93,22 @@ export const BUILTIN: KeymapSection[] = [
   {
     context: "ProjectPanel && not_editing",
     bindings: { "space": "project_panel::Open" },
+  },
+  {
+    context: "Pane",
+    bindings: {
+      "ctrl-f4": "pane::CloseActiveItem",
+      "ctrl-w": "pane::CloseActiveItem",
+    },
+  },
+  {
+    context: "Editor",
+    bindings: {
+      "ctrl-z": "editor::Undo",
+      "ctrl-y": "editor::Redo",
+      "ctrl-shift-z": "editor::Redo",
+      "tab": "editor::Tab", // I-059: indent, never a focus move
+      "shift-tab": "editor::Backtab",
+    },
   },
 ];

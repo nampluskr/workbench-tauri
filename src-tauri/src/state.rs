@@ -127,9 +127,14 @@ fn write_inner(dir: &Path, json: &str) -> Result<(), Box<dyn std::error::Error>>
     file.write_all(json.as_bytes())?;
     file.sync_all()?;
     drop(file);
+    replace_file(&tmp, &target)?;
+    Ok(())
+}
+
+pub(crate) fn replace_file(tmp: &Path, target: &Path) -> io::Result<()> {
     let tmp_w: Vec<u16> = tmp.as_os_str().encode_wide().chain(Some(0)).collect();
     let target_w: Vec<u16> = target.as_os_str().encode_wide().chain(Some(0)).collect();
-    // shortcut: retry failures are not simulated, add a fault-injection test if replacement handling changes.
+    let mut last_error = None;
     for attempt in 0..=APP_STATE_REPLACE_RETRY_COUNT {
         let result = unsafe {
             if target.exists() {
@@ -138,10 +143,10 @@ fn write_inner(dir: &Path, json: &str) -> Result<(), Box<dyn std::error::Error>>
                 MoveFileExW(PCWSTR(tmp_w.as_ptr()), PCWSTR(target_w.as_ptr()), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)
             }
         };
-        if result.is_ok() { return Ok(()); }
+        match result { Ok(()) => return Ok(()), Err(error) => last_error = Some(io::Error::from(error)) }
         if attempt < APP_STATE_REPLACE_RETRY_COUNT { std::thread::sleep(APP_STATE_REPLACE_RETRY_DELAY); }
     }
-    Err(SAVE_ERROR.into())
+    Err(last_error.unwrap_or_else(|| io::Error::other(SAVE_ERROR)))
 }
 
 #[cfg(test)]

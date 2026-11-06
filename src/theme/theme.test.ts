@@ -43,6 +43,7 @@ const VARS: [token: string, cssVar: string][] = [
   ["icon.disabled", "--icon-disabled"],
   ["error", "--error"],
   ["warning", "--warning"],
+  ["text.accent", "--text-accent"],
 ];
 
 test("parseColor: #RRGGBB has alpha 255, #RRGGBBAA keeps it, anything else is rejected (T-01.7)", () => {

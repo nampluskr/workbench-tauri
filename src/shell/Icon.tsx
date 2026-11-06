@@ -5,7 +5,7 @@ const svgs = import.meta.glob<string>("../assets/icons/*.svg", { query: "?raw", 
 import { tooltip, type Tip } from "./tooltip.ts";
 
 export type IconName =
-  | "folder" | "folder-open" | "panel-left" | "panel-right" | "plus" | "maximize" | "arrow-left" | "arrow-right" | "menu" | "file" | "folder-closed";
+  | "folder" | "folder-open" | "panel-left" | "panel-right" | "plus" | "maximize" | "arrow-left" | "arrow-right" | "menu" | "file" | "folder-closed" | "close";
 
 /** Inline SVG so `stroke="currentColor"` follows the theme text color; size comes from the container CSS. */
 export default function Icon(props: { name: IconName }) {

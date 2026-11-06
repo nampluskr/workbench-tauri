@@ -7,7 +7,8 @@ import {
   lineNumbers,
   rectangularSelection,
 } from "@codemirror/view";
-import { BUFFER_FONT_FAMILY } from "../spec/metrics.ts";
+import { history } from "@codemirror/commands";
+import { BUFFER_FONT_FAMILY, EDITOR_TAB_SIZE, EDITOR_UNDO_GROUP_INTERVAL_MS } from "../spec/metrics.ts";
 
 // Metric variables come from applyMetrics() (spec/metrics.ts); color variables come
 // from the theme JSON (Phase 2, D-8/D-9) and are unset until then.
@@ -91,6 +92,8 @@ export const editorExtensions = [
   EditorView.clickAddsSelectionRange.of((e) => e.altKey),
   // E-047 (D-11): Ctrl+Shift+drag selects a column from the pointer. Alt+Shift and middle-button drag are out of scope.
   rectangularSelection({ eventFilter: (e) => e.button === 0 && e.ctrlKey && e.shiftKey }),
+  EditorState.tabSize.of(EDITOR_TAB_SIZE), // E-055
+  history({ newGroupDelay: EDITOR_UNDO_GROUP_INTERVAL_MS }), // E-059c; the keys are the app keymap's editor::Undo / Redo
   EditorView.editorAttributes.of({ "data-keymap-context": "Editor" }),
   zedEditorTheme,
 ];

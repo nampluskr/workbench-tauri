@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { openTab, tabEdges, type TabInfo } from "./tabs.ts";
+import { activeAfterClose, openTab, tabEdges, type TabInfo } from "./tabs.ts";
 
 const tab = (path: string, preview: boolean): TabInfo => ({ path, preview });
 const open = (tabs: TabInfo[], active: number | null, path: string, preview: boolean) => openTab(tabs, active, path, preview, 1, () => tab(path, preview));
@@ -42,4 +42,23 @@ test("L-63: sides with a line depend on position and on the active tab", () => {
   assert.equal(edges(1, 3, 0), "011"); // middle, after the active tab: right and bottom
   assert.equal(edges(2, 3, 2), "110"); // last, active
   assert.equal(edges(2, 3, 0), "011"); // last, inactive: right and bottom
+});
+
+test("I-072: closing the active tab goes to the most recent tab still open, else the left neighbour; others keep the active one", () => {
+  const [a, b, c, d] = ["a", "b", "c", "d"];
+  assert.equal(activeAfterClose([a, b, c, d], 2, 2, [a, d, c]), 2); // d, now at index 2
+  assert.equal(activeAfterClose([a, b, c, d], 2, 2, [c]), 1); // no history: left neighbour b
+  assert.equal(activeAfterClose([a, b, c], 0, 0, []), 0); // first tab: its right neighbour moves to 0
+  assert.equal(activeAfterClose([a, b, c], 0, 2, [c]), 1); // an inactive tab before the active one
+  assert.equal(activeAfterClose([a, b, c], 2, 0, [a]), 0);
+  assert.equal(activeAfterClose([a], 0, 0, [a]), null);
+});
+
+test("I-062: a modified preview tab is not replaced; the new preview goes after the active tab, and is the one replaced next", () => {
+  const keep = (t: TabInfo) => t.path === "dirty";
+  const openKeep = (tabs: TabInfo[], active: number | null, path: string) => openTab(tabs, active, path, true, 1, () => tab(path, true), keep);
+  const first = openKeep([tab("a", false), tab("dirty", true)], 1, "b");
+  assert.deepEqual([names(first.tabs), first.active, first.replaced], [["a", "dirty*", "b*"], 2, null]);
+  const second = openKeep(first.tabs, 2, "c");
+  assert.deepEqual([names(second.tabs), second.active, second.replaced?.path], [["a", "dirty*", "c*"], 2, "b"]);
 });

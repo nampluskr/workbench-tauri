@@ -1,5 +1,5 @@
 use std::{collections::BTreeMap, ffi::{c_void, OsStr, OsString}, fs, io, os::windows::{ffi::OsStrExt, fs::OpenOptionsExt, io::{AsRawHandle, FromRawHandle}}, path::{Path, PathBuf}, time::SystemTime};
-use windows::{core::PCWSTR, Win32::{Foundation::{HANDLE, HWND, ERROR_NOT_SAME_DEVICE}, Storage::FileSystem::{MoveFileExW, GetFileInformationByHandle, GetFileInformationByHandleEx, SetFileInformationByHandle, BY_HANDLE_FILE_INFORMATION, FILE_DISPOSITION_INFO, FILE_STREAM_INFO, FileDispositionInfo, FileStreamInfo, DELETE, FILE_READ_ATTRIBUTES, FILE_FLAG_BACKUP_SEMANTICS, FILE_FLAG_OPEN_REPARSE_POINT}, UI::{Controls::{TaskDialogIndirect, TASKDIALOGCONFIG, TASKDIALOGCONFIG_0, TASKDIALOG_BUTTON, TDCBF_CANCEL_BUTTON, TD_WARNING_ICON}, WindowsAndMessaging::{IDCANCEL, IDOK}}}};
+use windows::{core::PCWSTR, Win32::{Foundation::{HANDLE, HWND, ERROR_NOT_SAME_DEVICE}, Storage::FileSystem::{MoveFileExW, GetFileInformationByHandle, GetFileInformationByHandleEx, SetFileInformationByHandle, BY_HANDLE_FILE_INFORMATION, FILE_DISPOSITION_INFO, FILE_STREAM_INFO, FileDispositionInfo, FileStreamInfo, DELETE, FILE_READ_ATTRIBUTES, FILE_FLAG_BACKUP_SEMANTICS, FILE_FLAG_OPEN_REPARSE_POINT}, UI::{Controls::{TaskDialogIndirect, TASKDIALOGCONFIG, TASKDIALOGCONFIG_0, TASKDIALOG_BUTTON, TDCBF_CANCEL_BUTTON, TDF_ALLOW_DIALOG_CANCELLATION, TD_WARNING_ICON}, WindowsAndMessaging::{IDCANCEL, IDOK}}}};
 
 fn io_error(error: impl std::fmt::Display) -> String { error.to_string() }
 
@@ -100,6 +100,38 @@ pub async fn confirm(window: tauri::WebviewWindow, title: String, main: String, 
         let mut chosen = IDCANCEL.0;
         unsafe { TaskDialogIndirect(&config, Some(&mut chosen), None, None) }.is_ok() && chosen == IDOK.0
     }).await.unwrap_or_default()
+}
+
+#[tauri::command]
+pub async fn confirm_buttons(window: tauri::WebviewWindow, title: String, main: String, content: Option<String>, buttons: Vec<String>) -> i32 {
+    let cancel = i32::try_from(buttons.len().saturating_sub(1)).unwrap_or(i32::MAX);
+    if buttons.is_empty() || buttons.len() > 3 { return cancel; }
+    let hwnd = match window.hwnd() { Ok(hwnd) => hwnd.0 as isize, Err(_) => return cancel };
+    tauri::async_runtime::spawn_blocking(move || {
+        let title = wide(&title);
+        let main = wide(&main);
+        let content = content.as_deref().map(wide);
+        let labels: Vec<_> = buttons.iter().map(|label| wide(label)).collect();
+        let controls: Vec<_> = labels.iter().enumerate().map(|(i, label)| TASKDIALOG_BUTTON {
+            nButtonID: 100 + i as i32, pszButtonText: PCWSTR(label.as_ptr()),
+        }).collect();
+        let config = TASKDIALOGCONFIG {
+            cbSize: std::mem::size_of::<TASKDIALOGCONFIG>() as u32,
+            hwndParent: HWND(hwnd as *mut _),
+            dwFlags: TDF_ALLOW_DIALOG_CANCELLATION,
+            Anonymous1: TASKDIALOGCONFIG_0 { pszMainIcon: TD_WARNING_ICON },
+            pszWindowTitle: PCWSTR(title.as_ptr()),
+            pszMainInstruction: PCWSTR(main.as_ptr()),
+            pszContent: content.as_ref().map_or(PCWSTR::null(), |s| PCWSTR(s.as_ptr())),
+            cButtons: controls.len() as u32,
+            pButtons: controls.as_ptr(),
+            nDefaultButton: 100 + cancel,
+            ..Default::default()
+        };
+        let mut chosen = IDCANCEL.0;
+        if unsafe { TaskDialogIndirect(&config, Some(&mut chosen), None, None) }.is_ok()
+            && (100..100 + controls.len() as i32).contains(&chosen) { chosen - 100 } else { cancel }
+    }).await.unwrap_or(cancel)
 }
 
 fn copy_name(source: &Path, is_dir: bool, number: usize) -> io::Result<OsString> {

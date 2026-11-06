@@ -67,6 +67,12 @@ const METRICS: Record<string, string> = {
   "tab.padding_x": rem(4), // L-24
   "tab.gap": rem(4), // L-24
   "tab.active_padding_bottom": rem(1), // L-63
+  "tab.start_slot.width": rem(12), // L-25 (modified dot)
+  "tab.start_slot.height": rem(12), // L-25
+  "tab.end_slot.width": rem(14), // L-25 (close button)
+  "tab.end_slot.height": rem(14), // L-25
+  "tab.indicator_size": rem(10), // L-65
+  "icons.size.small": rem(14), // L-06 (tab close icon, L-66)
   "statusbar.height": rem(30), // L-28
   "statusbar.padding_y": rem(4), // L-28
   "statusbar.button_height": rem(22), // L-28
@@ -138,6 +144,11 @@ export const PROJECT_PANEL_NAME_TOOLTIP_DELAY_MS = 1500; // project_panel.name_t
 export const TREE_OVERSCAN_ROWS = 10; // rows drawn beyond the visible range on each side (D-9)
 export const PANE_MAX_PREVIEW_TABS = 1; // pane.max_preview_tabs (I-062)
 export const TAB_MAX_TITLE_CHARS = 24; // tab.max_title_chars (L-26)
+
+// Editor values that script reads.
+export const EDITOR_TAB_SIZE = 4; // editor.tab_size (E-055)
+export const EDITOR_UNDO_GROUP_INTERVAL_MS = 300; // editor.undo.group_interval (E-059c)
+export const CONFIRM_CLOSE_PATH_MAX_CHARS = 80; // editor.confirm_close.path_max_chars (E-081)
 
 // Menu values that script reads.
 export const MENU_POPUP_OFFSET = { x: -5, y: 0 }; // menu.popup_offset_x / _y (I-314)

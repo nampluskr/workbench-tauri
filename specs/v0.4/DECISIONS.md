@@ -1,4 +1,4 @@
-> 버전: v0.4 · 작성일: 2026-11-06 · 상태: 확정 (2026-11-06)
+> 버전: v0.4 · 작성일: 2026-11-06 · 상태: 확정 (2026-11-06), 개정 (2026-11-06)
 >
 > 이번 버전(gpui v0.4와 같은 범위)에 적용할 설계 결정을 기록한다. 목적과 범위는 `specs/v0.4/INTENT.md`에, 요구와 판정 방법은 `SPEC.md`에 둔다(아직 없음). 지난 버전 결정은 `specs/v0.2/DECISIONS.md`에 있고 "v0.2 D-n"으로, workbench-gpui 결정은 "gpui v0.4 D-n"·"gpui H-n"(gpui `specs/v0.4/HERDR-DECISIONS.md`)으로 부른다. `03-tauri R-nn`은 `docs/refs/03-tauri/README.md` 5절 조사 항목이다. "INTENT 결정 n"은 v0.4 INTENT "결정 기록"의 번호다. Q-n은 `writer` 보고서(`%TEMP%\v04-w2.md`)의 질문 번호다. Q-1~Q-10은 리더 결정(사용자 위임 2026-11-06)으로 정했다.
 
@@ -26,7 +26,7 @@
 
 ---
 
-## D-2. 새 의존성은 `encoding_rs`, `markdown-it` 15.0.3, `dompurify` 3.4.17 셋이다
+## D-2. 새 의존성은 `encoding_rs`, `markdown-it` 15.0.3, `dompurify` 3.4.17, `@codemirror/commands` 넷이다(개정 2026-11-06: `@codemirror/commands`를 더함)
 
 **선택**
 
@@ -34,7 +34,8 @@
 
 | 쓰임 | 선택 | 결정 |
 | --- | --- | --- |
-| CP949 저장 인코딩(D-5) | **[의존성]** `encoding_rs`(`src-tauri/Cargo.toml`). 03-tauri 3.1 목록 밖이다. 정확한 버전은 설치하는 Phase에서 crates.io 최신 안정판으로 고정하고 이 표에 적는다(버전: 미정) | 사용자 승인 2026-11-06(INTENT 결정 7) |
+| CP949 저장 인코딩(D-5) | **[의존성]** `encoding_rs` =0.8.44(`src-tauri/Cargo.toml`). 03-tauri 3.1 목록 밖이다. 개정 2026-11-06: Phase 2에서 `impl-core`가 crates.io 최신 안정판으로 설치하고 이 버전으로 고정했다 | 사용자 승인 2026-11-06(INTENT 결정 7) |
+| 되돌리기·다시 실행(D-3, SPEC R-2·R-14의 `editor::Undo`·`editor::Redo`, `editor.undo.group_interval`) | **[의존성]** `@codemirror/commands` 6.11.1(`package.json`). 개정 2026-11-06: Phase 2에서 `impl`이 이 버전으로 고정해 설치했다. 함께 들어온 하위 의존성(`package-lock.json`): `@codemirror/language` 6.13.1, `@lezer/common` 1.5.5, `@lezer/highlight` 1.2.5, `@lezer/lr` 1.4.12 | 사용자 승인 2026-11-06 |
 | 마크다운 렌더(D-10) | **[의존성]** `markdown-it` 15.0.3(`package.json`, 03-tauri 3.2) | 사용자 승인 2026-11-06(INTENT 결정 8) |
 | 렌더 결과 정화(D-10) | **[의존성]** `dompurify` 3.4.17(`package.json`, 03-tauri 3.2. 라이선스 MPL-2.0 OR Apache-2.0) | 사용자 승인 2026-11-06(INTENT 결정 8) |
 | `markdown-it` 타입 | 새 의존성 없이, 쓰는 API만 담은 작은 `.d.ts`를 레포에 둔다. `markdown-it` 15는 타입 선언을 함께 싣지 않는다. 쓰는 API가 넓어지면 `@types/markdown-it`(승인 필요)로 바꾼다는 조건을 `shortcut:` 주석으로 남긴다 | 리더 결정(사용자 위임 2026-11-06) (Q-7) |

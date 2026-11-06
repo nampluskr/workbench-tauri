@@ -5,9 +5,9 @@ import { fileURLToPath } from "node:url";
 import { BUILTIN } from "./builtin.ts";
 import { Keymap, parseKeys } from "./engine.ts";
 
-// R-1: the built-in keymap must equal the expected table pinned in PROGRESS (Phase 2), row for row.
-const progress = readFileSync(fileURLToPath(new URL("../../specs/v0.2/PROGRESS.md", import.meta.url)), "utf8");
-const table = progress.slice(progress.indexOf("**R-1 기대 바인딩 표"), progress.indexOf("**우리가 지은 액션 이름"));
+// R-1: the built-in keymap must equal the expected table pinned in the current version's PROGRESS (Phase 2), row for row.
+const progress = readFileSync(fileURLToPath(new URL("../../specs/v0.4/PROGRESS.md", import.meta.url)), "utf8");
+const table = progress.slice(progress.indexOf("**R-1 기대 바인딩 표(v0.4)"), progress.indexOf("**우리가 지은 액션 이름"));
 const row = (keys: string, context: string, action: string) => `${parseKeys(keys).join(" ")}\t${context}\t${action}`;
 
 test("R-1: built-in keymap equals the PROGRESS expected table (key, context, action)", () => {

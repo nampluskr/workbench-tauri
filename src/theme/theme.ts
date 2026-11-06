@@ -49,7 +49,8 @@ export const TARGET_TOKENS = [
   "icon.muted", // A-12.1: folder icon
   "icon.disabled", // A-12.7: icon of a folder whose path is gone
   "error", // status.error (P-020, P-021): inline name input with an error
-  "warning", // status.warning (P-020, P-021): inline name input with a warning
+  "warning", // status.warning (P-020, P-021): inline name input with a warning; tab conflict dot (L-65)
+  "text.accent", // Color::Accent (L-65, I-071): modified tab dot
 ] as const;
 export type Token = (typeof TARGET_TOKENS)[number];
 

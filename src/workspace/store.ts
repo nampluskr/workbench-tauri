@@ -5,7 +5,8 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { notify } from "../shell/toast.ts";
 import { SIDEBAR_WIDTH, STATE_SAVE_DEBOUNCE_MS } from "../spec/metrics.ts";
 import { addOrActivate, move, moveCursor as nextCursor, remove, type Folder } from "./folders.ts";
-import { disposeContext, newContext, type FolderContext } from "./context.ts";
+import { askWarning, closingTabs, disposeContext, newContext, type FolderContext } from "./context.ts";
+import { confirmClose } from "./closing.ts";
 import { folderName, normalizePath } from "./paths.ts";
 import { parseState, serializeState } from "./state-file.ts";
 
@@ -63,16 +64,24 @@ function changed(): void {
 
 /**
  * A-24.3: every way of closing (Quit, Close Window, the title bar button, Alt+F4, the taskbar) raises the window's
- * close request. Hold it, write what is pending, then close for good. A failed write was already reported and
- * must not keep the window open.
+ * close request. Hold it, ask about modified tabs of every folder (R-6, D-6), write what is pending, then close for
+ * good. A failed state write was already reported and must not keep the window open.
  */
 export function guardClose(): Promise<unknown> {
   const appWindow = getCurrentWindow();
+  let asking = false;
   return appWindow.onCloseRequested(async (event) => {
     event.preventDefault();
+    if (asking) return; // a second request while the question is open
+    asking = true;
+    try {
+      if (!(await confirmClose([...contexts.values()].flatMap(closingTabs), askWarning))) return;
+    } finally {
+      asking = false;
+    }
     clearTimeout(timer);
     await write();
-    await appWindow.destroy().catch(() => {}); // a second request while this one waits finds it gone already
+    await appWindow.destroy().catch(() => {});
   });
 }
 
@@ -152,8 +161,13 @@ export async function addFolder(): Promise<void> {
   void markMissing(next.folders.filter((f) => f.id === next.activeId));
 }
 
-/** R-14: take a folder off the list; the disk is not touched and there is no confirmation. */
-export function removeFolder(id: string): void {
+/**
+ * R-14: take a folder off the list; the disk is not touched. Its tabs go with it, so modified ones are asked about first
+ * like closing them (R-6, E-081 / E-082); Cancel keeps the folder.
+ */
+export async function removeFolder(id: string): Promise<void> {
+  const ctx = contexts.get(id);
+  if (ctx && !(await confirmClose(closingTabs(ctx), askWarning))) return;
   const next = remove(folders(), id, activeId());
   if (next.folders === folders()) return;
   const index = folders().findIndex((f) => f.id === id);
@@ -164,8 +178,8 @@ export function removeFolder(id: string): void {
     setCursorId(cursorId() === id ? (next.folders[index] ?? next.folders[index - 1])?.id ?? null : cursorId());
     setMissingIds((old) => new Set([...old].filter((m) => m !== id)));
   });
-  const ctx = contexts.get(id);
-  if (ctx) disposeContext(ctx); // its tabs go with it (A-14, R-14)
+  const gone = contexts.get(id);
+  if (gone) disposeContext(gone); // its tabs go with it (A-14, R-14)
   contexts.delete(id);
   changed();
 }
