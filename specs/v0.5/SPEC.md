@@ -103,7 +103,36 @@ Zed `IconName`은 `crates/icons/src/icons.rs:9`의 snake_case와 `:314~316`의 �
 
 I-2, 사용자 2026-11-06("'v' 메뉴 동작까지 구현"), core D-12(루트 `INTENT.md` "설정 UI 화면", "오른쪽·하단 Dock", "화면을 추가하는 확장, 온라인 확장 목록"보다 I-2가 우선한다).
 
-미정: Settings·Keymap·Extensions·Panel Layout이 Zed에서 무엇을 여는지. 갈래가 Zed에서 확인해 이 절에 적는다(I-2 정한 것).
+**Zed가 여는 것 (ORDER-06 1단계 확인)**
+
+tauri-leader가 2026-11-07 Zed 새 창(`zed -n`, 클라이언트 1440×852, 100%, Restricted Mode)에서 확인했다. 메뉴 정의 근거는 Zed `crates/title_bar/src/title_bar.rs`(커밋 `4304dec732a75505066de5ce2dbbfb2bec369498`) 1374~1415행이다. 전문과 캡처는 `specs/v0.5/reports/ORDER-06-zed.md`, `specs/v0.5/verify/ORDER-06/zed-*.png`에 있다.
+
+| 항목 | 단축키 표시 | Zed가 여는 것 | 저장 위치 |
+|---|---|---|---|
+| Settings | `Ctrl-,` | 별도 OS 창(검색칸, 범주 15개, 행마다 토글·드롭다운, `Edit in settings.json`) | `%APPDATA%\Zed\settings.json`, 프로젝트 `.zed/settings.json` |
+| Keymap | `Ctrl-K Ctrl-S` | 편집 영역 새 탭 "Keymap Editor"(필터, Action·Arguments·Keystrokes·Context·Source 표) | `%APPDATA%\Zed\keymap.json` |
+| Themes… | `Ctrl-K Ctrl-T` | 모달 선택기 "Select Theme…" | settings.json `theme` |
+| Icon Themes… | 없음 | 모달 선택기 "Select Icon Theme…" | settings.json `icon_theme` |
+| Extensions | `Ctrl-Shift-X` | 편집 영역 새 탭 "Extensions"(온라인 목록, 설치·제거) | `%LOCALAPPDATA%\Zed\extensions\` |
+| (구분선) | | | |
+| Panel Layout | `>` | 하위 메뉴 Classic·Agentic·조건부 Custom | settings.json 패널 위치 |
+
+- AI 기능이 꺼져 있으면 Zed는 Panel Layout과 앞 구분선을 보이지 않는다. 로그인하면 구분선 뒤에 Sign Out이 더 나온다(확인하지 않음).
+
+**1단계 결과 (ORDER-06 1단계)**
+
+1단계 범위는 버튼·메뉴·순서·단축키 표시다. 각 항목이 여는 화면은 2단계(ORDER-06-R1)에서 core가 공통 범위를 정한다.
+
+- 버튼 위치: 타이틀 바 오른쪽, 최소화 버튼 바로 앞(`src/shell/TitleBar.tsx`).
+- 버튼 아이콘: Zed `ChevronDown` → `chevron_down.svg`(R-1의 D-9 복사본). 근거 `crates/title_bar/src/title_bar.rs:1262`.
+- 버튼·팝업 크기: `titlebar.user_menu.button_width`/`button_height`(I-608) 22px, `button_icon_size`(I-601) 14px, `button_corner_radius`(I-609) 4px, 팝업 오프셋(I-611) x=5·y=0. 팝업 폭·최대 높이(I-612)는 기존 메뉴 스타일과 같은 값이라 그대로 쓴다.
+- 항목·순서·단축키 표시: Settings `Ctrl-,`, Keymap `Ctrl-K Ctrl-S`, Themes… `Ctrl-K Ctrl-T`, Icon Themes…(없음), Extensions `Ctrl-Shift-X`, (구분선), Panel Layout(하위 메뉴 Classic·Agentic). 단축키 표시는 기존 `shortcutFor`로 사용자 키맵과 메뉴를 열기 직전의 포커스를 따른다.
+- 비활성 처리: 아직 화면이 없는 Settings·Keymap·Themes…·Icon Themes…·Extensions와 Panel Layout 하위 Classic·Agentic은 누를 수 없는 비활성 항목이다. 눌러도 아무 일이 없고 오류를 띄우지 않는다. Panel Layout 자체는 하위 항목을 볼 수 있게 활성이다. 비활성 항목에 새 키 바인딩은 더하지 않았다.
+- Themes…·Icon Themes…: Phase 7(R-4·R-3 선택 화면)까지 비활성이다.
+- Custom을 넣지 않은 이유: Zed의 Custom은 지금 배치가 Classic·Agentic 어느 것도 아닐 때만 나오는 체크·비활성 표시다(`title_bar.rs` 1388~1415행). tauri에는 그런 배치 상태가 없다.
+- Sign In·업데이트·계정 항목은 범위 밖이라 넣지 않았다.
+- 화면(V3, tauri-leader 2026-11-07, 1440×852·100%): 판정 checker C-21(`specs/v0.5/verify/ORDER-06/ORDER-06-judgement.md`). "v" 버튼은 최소화 버튼 바로 앞 22×22(`userButton` x=1310, 최소화 x=1332), 아이콘 `chevron_down` 14px. 항목 순서·구분선·단축키 표시 네 개가 Zed와 같다(`tauri-user-menu.png`). Panel Layout 하위 Classic·Agentic이 열린다(`tauri-user-menu-panel-layout.png`). 비활성 항목은 `[disabled]`로 보이고 Settings를 눌러도 앱이 그대로다.
+- 하위 메뉴가 열린 채 비활성 형제(Extensions 등)로 포인터를 옮기면 하위 메뉴가 닫힌다(K-09-R3, C-21 지적). 코드·테스트 확인, 화면 재확인은 tauri-leader.
 
 ---
 
@@ -447,6 +476,118 @@ I-16, 사용자 2026-11-06("zed와 동일하게").
 **출처**
 
 I-17, 사용자 2026-11-06("Help 제안대로").
+
+**Zed 근거**
+
+Zed `crates/zed/src/zed/app_menus.rs`(커밋 `4304dec732a75505066de5ce2dbbfb2bec369498`)의 항목 이름·순서·조건만 확인했고 코드는 복사하지 않았다.
+
+| 근거 | 위치 |
+|---|---|
+| 메뉴 막대 순서 Zed·File·Edit·Selection·View·Go·Run·Window·Help | `app_menus.rs:71,116,153,174,222,227,270,295,304` |
+| View의 Editor Layout 하위 메뉴(Split Up/Down/Left/Right) | `app_menus.rs:31~40` |
+| Close Editor는 고정 탭도 닫는다(close_pinned=true) | `app_menus.rs:142~146` |
+| Help의 라이선스·구분선·버그·기능 요청·저장소 | `app_menus.rs:304~334` |
+| 메뉴 막대가 열리면 프로젝트 이름 숨김 | `crates/title_bar/src/title_bar.rs:302~319` |
+
+**넣는 규칙**
+
+- 구현된 기능의 항목만 넣는다. 구현되지 않은 Zed 항목은 넣지 않는다.
+- 항목이 하나도 없는 메뉴(Selection·Run)는 메뉴째 넣지 않는다.
+- 첫 메뉴 이름은 Zed 자리에 앱 이름 `workbench-tauri`를 둔다.
+- Zed에 없는 앱 전용 항목(폴더 사이드바 두 항목, Maximize Pane, Markdown Preview 두 항목, 탭 이동)은 기존 기능이라 유지하고, 기존 상대 순서를 지킨다.
+
+**메뉴 항목 표 (ORDER-06 1단계)**
+
+단축키는 기본 키맵 기준이다. 실제 표시는 기존 `shortcutFor`로 사용자 키맵과 메뉴를 열기 직전의 포커스를 따른다. `—`는 표시 없음이다.
+
+| 메뉴 | 항목 | 기본 단축키 | 동작 |
+|---|---|---|---|
+| workbench-tauri | Quit workbench-tauri | `Ctrl-Q` | 창 닫기 |
+| File | Open Folder... | `Ctrl-K Ctrl-O` | 폴더 추가 |
+| File | (구분선) | | |
+| File | Save | `Ctrl-S` | 활성 문서 저장 |
+| File | (구분선) | | |
+| File | Close Editor | — | 활성 탭 닫기. 고정 탭도 닫고 저장 확인은 유지 |
+| File | Close Window | `Ctrl-Shift-W` | 창 닫기 |
+| Edit | Undo | `Ctrl-Z` | 편집 이력 취소 |
+| Edit | Redo | `Ctrl-Shift-Z` | 편집 이력 재실행 |
+| View | Toggle Left Dock | `Ctrl-B` | 왼쪽 dock 토글 |
+| View | Toggle Folder Sidebar | `Ctrl-Alt-J` | 폴더 사이드바 토글 |
+| View | Focus Folder Sidebar | `Ctrl-Alt-;` | 폴더 사이드바 포커스 |
+| View | Editor Layout | `>` | 하위 메뉴 |
+| View → Editor Layout | Split Up | `Ctrl-K Up` | 위로 분할 |
+| View → Editor Layout | Split Down | `Ctrl-K Down` | 아래로 분할 |
+| View → Editor Layout | Split Left | `Ctrl-K Left` | 왼쪽으로 분할 |
+| View → Editor Layout | Split Right | `Ctrl-\`(편집기), `Ctrl-K Right`(그 밖) | 오른쪽으로 분할 |
+| View | Maximize Pane | `Shift-Escape` | Pane 확대 토글 |
+| View | (구분선) | | |
+| View | Project Panel | `Ctrl-Shift-E` | 프로젝트 패널 포커스 토글 |
+| View | Open Markdown Preview | `Ctrl-Shift-V` | 미리보기. Markdown 편집 탭에서만 활성 |
+| View | Open Markdown Preview to the Side | `Ctrl-K V` | 옆 미리보기. Markdown 편집 탭에서만 활성 |
+| Go | Previous Tab | `Ctrl-PageUp` | 이전 탭 |
+| Go | Next Tab | `Ctrl-PageDown` | 다음 탭 |
+| Window | Minimize | — | 최소화 |
+| Window | Zoom | — | 최대화 토글 |
+| Help | View Dependency Licenses | — | 라이선스 대화 상자(아래) |
+| Help | (구분선) | | |
+| Help | File Bug Report... | — | 브라우저로 `https://github.com/nampluskr/workbench-tauri/issues/new` |
+| Help | Request Feature... | — | 브라우저로 `https://github.com/nampluskr/workbench-tauri/issues/new` |
+| Help | (구분선) | | |
+| Help | workbench-tauri Repository | — | 브라우저로 `https://github.com/nampluskr/workbench-tauri` |
+
+- Help: View Telemetry·Show Welcome·Email Us는 넣지 않는다. Zed는 버그 요청에 이슈 템플릿과 환경 정보를, 기능 요청에 discussions를 쓰지만(`crates/feedback/src/feedback.rs:19~35`), 이 레포에는 이슈 템플릿이 없고 ORDER-06이 두 항목 모두 이 저장소의 `issues/new`로 정했다. URL은 테스트로 확인했고 브라우저는 열지 않았다.
+- 하위 메뉴: 누르거나 포인터를 올리거나 Right/Enter로 열고, Left/Escape로 부모에 돌아간다. 오른쪽 공간이 모자라면 부모 왼쪽에 펼치고 창 안으로 제한한다.
+- 하위 메뉴가 열린 채 다른 메뉴 이름으로 포인터를 옮기면 그 메뉴로 바뀌고 메뉴 막대는 열린 채다(K-09-R1). 포커스가 잠깐 메뉴 밖으로 나가도 동기 교체가 끝난 뒤 포커스가 메뉴 안이면 닫지 않는다(`src/shell/menu.ts` `closeOnFocusOut`).
+- 하위 메뉴가 열린 채 비활성 형제 항목으로 포인터를 옮기면 하위 메뉴가 닫힌다. 비활성 항목은 선택·강조되지 않고 실행되지 않는다(K-09-R3).
+
+**메뉴 막대가 열리면 프로젝트 이름 숨김**
+
+가로 메뉴 막대가 열려 있는 동안 타이틀 바의 프로젝트 이름을 그리지 않는다(`src/shell/TitleBar.tsx`). "v" 메뉴나 다른 컨텍스트 메뉴만 열렸을 때는 이름이 그대로다.
+
+**메뉴 이름 간격**
+
+이름 사이 간격 = 앞 이름 버튼 오른쪽 padding + 막대 gap + 다음 이름 버튼 왼쪽 padding이다.
+
+- 막대 gap: `menu.horizontal.item_gap`(I-321) 4px를 같은 ID의 CSS 변수로 `.menu-bar`의 `gap`에 쓴다.
+- 이름 버튼 좌우 padding: `buttons.padding_x.default_compact`(L-07) 4px를 같은 ID의 CSS 변수로 `.menu-name`의 좌우 padding에 쓴다(K-09-R2). 세로 padding은 0, 버튼 높이 `buttons.height.default`(L-07) 22px는 그대로다.
+- 근거: Zed 메뉴 이름 글자 잉크 간격은 13~14px다(`specs/v0.5/verify/ORDER-06/zed-menubar.png`). 이름 버튼 padding이 0이던 tauri는 약 5px였다(`tauri-menubar.png`). padding 4px를 더한 뒤 12~13px로 Zed와 1px 이내다(`tauri-menubar-after.png`).
+
+**Licenses 표시 방법**
+
+Help → View Dependency Licenses는 앱 안의 읽기 전용 DOM `<dialog>`에 라이선스 전문을 텍스트로 보인다. Close 버튼과 Escape로 닫고 원래 포커스로 돌아간다. 글은 선택·복사할 수 있고, 폴더가 없어도 열린다(`src/shell/licenses.ts`).
+
+- 글꼴: `public/fonts/ibm-plex-sans/license.txt`, `public/fonts/lilex/OFL.txt`를 같은 출처에서 읽는다(CSP 변경 없음).
+- Zed 아이콘: `src/assets/zed-icons/LICENSES`, `LICENSE-GPL`, `LICENSE-APACHE`를 빌드에 넣는다. `.gitignore` 복사본이 없으면 그 이름과 `License copy unavailable.`를 보인다.
+- 자체 아이콘: `src/assets/icons/LICENSE-LUCIDE`.
+- 테마: 이미 있는 `src/theme/assets/**/LICENSE`.
+- 파일마다 실패를 따로 처리해, 한 파일이 없어도 다른 라이선스가 보이고 앱이 죽지 않는다.
+
+**gpui와 다른 점 (두 갈래 조율 필요)**
+
+tauri-coder가 gpui `src/ui/app_menu.rs`와 gpui `specs/v0.5/SPEC.md` R-2·R-17을 읽은 시점(2026-11-07, K-09)의 차이다. 두 갈래 표가 같아야 하므로(I-17) 아래는 두 갈래 조율이 필요하다.
+
+| 대상 | tauri | gpui(읽은 시점) |
+|---|---|---|
+| 첫 메뉴 이름 | workbench-tauri | workbench-gpui(의도된 갈래 이름 차이) |
+| View 분할 | Editor Layout 하위 메뉴(Zed `app_menus.rs:31~40`과 같음) | View의 직접 항목 |
+| "v" 메뉴 | chevron_down 버튼, 비활성 다섯 항목, Panel Layout 하위 메뉴 | `app_menu.rs`에 없음(다른 파일은 판정하지 않음) |
+| Help URL·앱 이름 | workbench-tauri 저장소 | workbench-gpui 저장소(의도된 차이) |
+
+File Save, Edit Undo·Redo, Go Previous·Next Tab, View Markdown Preview 두 항목, Help 구성은 마지막으로 읽은 시점에 두 갈래가 같은 이름·순서다.
+
+**확인 결과**
+
+- 코드(V1, tauri-coder K-09): `npm.cmd run typecheck` 통과, `node --test src/shell/app-menus.test.ts src/shell/menu.test.ts` 8/8(구성·순서·비활성·단축키 표시·URL·라이선스 누락·하위 메뉴 경계 배치), `cargo check` 경고 없음, `npm.cmd run tauri build -- --debug --no-bundle` 통과.
+- 리뷰(tauri-checker C-20): PASS. `npm.cmd run typecheck` 통과, `npm.cmd run test` 119/119, `cargo check` 경고 없음.
+- 수정(V1, tauri-coder): K-09-R1 하위 메뉴가 열린 채 다른 메뉴 이름으로 옮기면 막대 전체가 닫히던 버그, K-09-R2 이름 버튼 padding(L-07), K-09-R3 비활성 형제 항목 위에서 하위 메뉴가 닫히지 않던 것(C-21 지적). R3 뒤 `npm.cmd run typecheck` 통과, `npm.cmd run test` 121/121, `npm.cmd run tauri build -- --debug --no-bundle` 통과. Rust 변경 없음, `cargo check` 경고 0.
+- 화면(V3, tauri-leader 2026-11-07, 1920×1080 주 모니터·창 1440×852·100%·One Dark): 판정 checker C-21, 통과 13·불일치 0(`specs/v0.5/verify/ORDER-06/ORDER-06-judgement.md`, `tauri-menus.json`).
+  - 메뉴 순서 workbench-tauri·File·Edit·View·Go·Window·Help, Selection·Run 없음.
+  - 메뉴 막대가 열리면 프로젝트 이름이 숨는다(`projectNameVisible: false`).
+  - 이름 잉크 간격 File→Edit 13, Edit→View 12, View→Go 12, Go→Window 12, Window→Help 12px(Zed 13~14px와 1px 이내).
+  - View > Editor Layout이 열린 채 Go로 옮기면 Go가 열리고 막대는 열린 채다(R1 뒤 CDP 재현).
+  - 라이선스 대화 상자가 열리고 Escape로 닫히며 이전 포커스로 돌아간다. 복사본 누락(`License copy unavailable.`) 0.
+  - Help URL 세 개는 코드·테스트로 확인했다.
+- K-09-R3(비활성 형제 위에서 하위 메뉴 닫힘)은 코드·테스트로 확인했고, 화면 재확인은 tauri-leader가 한다.
 
 ---
 

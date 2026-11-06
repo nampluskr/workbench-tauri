@@ -141,6 +141,36 @@
     - 빌드 경고: Vite 500 kB 초과 chunk, `web-tree-sitter` direct eval 2건(복사본 있음·없음 같음, 범위 밖).
     - 사용자 확인 필요: 없음(시각 품질은 Phase 12 V4에서 함께 본다).
 
+### Phase 6 — 타이틀 바 메뉴
+
+- **ORDER-06 1단계 `≡` 메뉴와 "v" 메뉴 (R-17·R-2 / I-17·I-2)** (2026-11-07, 1단계 완료·core 판정 대기)
+  - 무엇을 했나:
+    - tauri-leader가 Zed 새 창(`zed -n`, 1440×852, 100%, Restricted Mode)에서 "v" 메뉴 여섯 항목이 여는 것·화면 구성·저장 위치를 확인하고 캡처했다(`specs/v0.5/reports/ORDER-06-zed.md`, `specs/v0.5/verify/ORDER-06/zed-*.png`). Zed 설정·키맵 파일은 바뀌지 않았다.
+    - K-09: `≡` 메뉴를 workbench-tauri·File·Edit·View·Go·Window·Help로 맞췄다. Split 네 항목을 Zed처럼 View → Editor Layout 하위 메뉴로 옮기고, Help(View Dependency Licenses·File Bug Report...·Request Feature...·workbench-tauri Repository)와 라이선스 대화 상자를 더했다. 메뉴 막대가 열리면 프로젝트 이름을 숨긴다. 최소화 버튼 앞에 "v" 버튼(`chevron_down.svg`)과 메뉴(Settings·Keymap·Themes…·Icon Themes…·Extensions·Panel Layout 하위 Classic·Agentic)를 더했다. 변경 파일 `src/shell/app-menus.ts`, `AppMenu.tsx`, `TitleBar.tsx`, `Icon.tsx`, `menu.ts`, `menu.test.ts`, `app-menus.test.ts`(신규), `licenses.ts`(신규), `src/spec/metrics.ts`, `src/app.css`.
+    - K-09-R1(leader 화면 확인에서 발견): View > Editor Layout 하위 메뉴가 열린 채 다른 메뉴 이름으로 포인터를 옮기면 메뉴 막대 전체가 닫히던 버그. 하위 메뉴 DOM 교체 중의 일시적 포커스 이탈로 닫히던 것을, `src/shell/menu.ts` `closeOnFocusOut`이 microtask 뒤 포커스가 메뉴 안인지 보고 판정하게 고쳤다(`AppMenu.tsx`, `menu.test.ts` 회귀 테스트 1개).
+    - K-09-R2(leader 화면 확인에서 발견): 메뉴 이름 간격이 Zed 잉크 13~14px에 비해 약 5px였다. 이름 버튼 좌우 padding을 `buttons.padding_x.default_compact`(L-07) 4px로 했다(`src/spec/metrics.ts`, `src/app.css` `.menu-name`).
+    - K-09-R3(checker C-21 지적): "v" 메뉴 Panel Layout 하위 메뉴가 열린 채 비활성 형제(Extensions 등)로 포인터를 옮기면 닫히지 않던 것. hover 판단을 `menu.ts`로 분리해 비활성 항목에서도 하위 메뉴를 닫게 하고, `.menu-item.disabled`의 `pointer-events: none`을 빼고 hover 배경을 활성 항목에만 준다. 비활성 항목은 여전히 선택·실행되지 않는다(`AppMenu.tsx`, `menu.ts`, `menu.test.ts`, `src/app.css`).
+    - tauri-leader가 화면 차례로 tauri 메뉴를 실측했다(V3).
+    - 문서(W-07): SPEC R-17에 메뉴 항목 표·Zed 근거·넣는 규칙·Help URL·이름 숨김·이름 간격·Licenses 표시 방법·gpui와 다른 점, R-2에 Zed 확인 결과와 1단계 결과, PLAN Phase 6 doing.
+    - 문서(W-07-R1): SPEC R-17·R-2에 V3 결과와 R1~R3, R-17에 이름 padding(L-07) 근거, PLAN Phase 6 비고 "1단계 완료(core 판정 대기), 2단계 ORDER-06-R1 대기".
+  - 결과:
+    - `≡` 메뉴는 구현된 기능만 Zed 순서로 있고 Help가 마지막이다. Selection·Run은 항목이 없어 넣지 않았다.
+    - "v" 메뉴는 Zed와 같은 순서·단축키 표시로 나온다. 화면이 없는 항목과 Panel Layout 하위 항목은 비활성이라 눌러도 아무 일이 없다. Themes…·Icon Themes…는 Phase 7까지 비활성이다. Zed의 Custom은 tauri에 해당 배치 상태가 없어 넣지 않았다.
+    - 라이선스 대화 상자는 파일마다 실패를 따로 처리해, Zed 아이콘 복사본이 없어도 `License copy unavailable.`로 보이고 앱이 죽지 않는다.
+  - 검증:
+    - V1(K-09): `npm.cmd run typecheck` 통과, `node --test src/shell/app-menus.test.ts src/shell/menu.test.ts` 8/8, `cargo check` 경고 없음, `npm.cmd run tauri build -- --debug --no-bundle` 통과, `git diff --check` 통과(`%TEMP%\v05-K-09-report.md`).
+    - 리뷰(C-20): PASS. `npm.cmd run typecheck` 통과, `npm.cmd run test` 119/119, `cargo check` 경고 없음(`%TEMP%\v05-C-20-report.md`).
+    - V1(K-09-R1~R3): R1 관련 9/9·전체 120/120, R2 관련 10/10, R3 관련 10/10·전체 121/121, typecheck 통과, 디버그 빌드 통과, `git diff --check` 통과(`%TEMP%\v05-K-09-R1-report.md`, `-R2-`, `-R3-`). Rust 변경 없음, `cargo check` 경고 0.
+    - V3(tauri-leader, 1920×1080·창 1440×852·100%·One Dark): checker C-21 통과 13·불일치 0(`specs/v0.5/verify/ORDER-06/ORDER-06-judgement.md`, `%TEMP%\v05-C-21-report.md`). 메뉴 순서, 프로젝트 이름 숨김(`projectNameVisible: false`), 이름 잉크 간격 12~13px(Zed 13~14px와 1px 이내, `tauri-menubar-after.png`), Editor Layout → Go 전환 뒤 막대 유지, 라이선스 대화 상자 열림·Escape 닫힘·복사본 누락 0, "v" 버튼 최소화 바로 앞 22×22, 항목 순서·단축키 표시, Panel Layout 하위 열림, 비활성 항목 클릭 뒤 앱 유지.
+    - K-09-R3: 코드·테스트 확인. 화면 재확인은 tauri-leader(결과는 leader 보고에 적는다).
+    - 문서: V0(실행 없음).
+  - 특이사항:
+    - gpui와 다른 점: View 분할이 tauri는 Editor Layout 하위 메뉴(Zed와 같음), gpui는 직접 항목이다. 두 갈래 표가 같아야 하므로 조율이 필요하다(SPEC R-17 "gpui와 다른 점").
+    - Help 두 이슈 항목은 ORDER-06대로 이 저장소의 `issues/new`를 연다(Zed의 템플릿·discussions는 쓰지 않음). 브라우저는 열지 않고 URL을 테스트로 확인했다.
+    - 2단계(ORDER-06-R1): Settings·Keymap·Extensions·Panel Layout 화면의 공통 범위를 core가 정한다.
+    - 빌드 경고: Vite 500 kB 초과 chunk, `web-tree-sitter` direct eval 2건(기존, 범위 밖).
+    - 사용자 확인 필요: 라이선스 대화 상자의 시각 품질(`tauri-licenses.png`, Phase 12 V4에서 함께 본다).
+
 ## 사용자 요청 작업
 
 없음.

@@ -9,7 +9,7 @@ import { themedSvg } from "./icon-svg.ts";
 export type IconName =
   | "folder" | "folder_open" | "folder_add" | "file_tree" | "threads_sidebar_left_open" | "threads_sidebar_left_closed"
   | "split" | "plus" | "maximize" | "arrow_left" | "arrow_right" | "menu" | "close" | "pin" | "minimize" | "eye" | "file_doc"
-  | "file";
+  | "file" | "chevron_down" | "chevron_right";
 
 /** Missing Zed copies leave an empty slot with the existing spec dimensions. */
 export default function Icon(props: { name: IconName }) {

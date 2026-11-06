@@ -335,7 +335,7 @@ button, input, select, textarea {
 .menu-bar { display: flex; gap: var(--menu-horizontal-item-gap); }
 .menu-name {
   height: var(--buttons-height-default);
-  padding: 0;
+  padding: 0 var(--buttons-padding-x-default-compact); /* L-07 */
   border: 0;
   background: none;
   color: var(--text);
@@ -366,13 +366,23 @@ button, input, select, textarea {
   line-height: var(--menu-item-line-height);
   white-space: nowrap;
 }
-.menu-item:hover { background: var(--ghost-element-hover); }
-.menu-item:active { background: var(--ghost-element-active); }
+.menu-item:not(.disabled):hover { background: var(--ghost-element-hover); }
+.menu-item:not(.disabled):active { background: var(--ghost-element-active); }
 .menu-item.selected { background: var(--ghost-element-selected); }
-.menu-item.disabled { color: var(--text-disabled); pointer-events: none; }
+.menu-item.disabled { color: var(--text-disabled); }
 .menu-shortcut { display: flex; gap: var(--menu-item-shortcut-chord-gap); color: var(--text-muted); }
 .menu-item.disabled .menu-shortcut { color: var(--text-disabled); }
 .menu-separator { height: var(--menu-separator-height); margin: var(--menu-separator-margin-y) 0; background: var(--border-variant); }
+.menu-item { align-items: center; --icon-size: var(--menu-app-menu-button-icon-size); }
+.user-menu-button {
+  width: var(--titlebar-user-menu-button-width);
+  height: var(--titlebar-user-menu-button-height);
+  border-radius: var(--titlebar-user-menu-button-corner-radius);
+  --icon-size: var(--titlebar-user-menu-button-icon-size);
+}
+/* License content uses the existing text and surface tokens without introducing layout measurements. */
+.license-dialog { background: var(--elevated-surface-background); color: var(--text); border-color: var(--border-variant); }
+.license-dialog pre { white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; }
 
 /* R-16 project panel states. No spec ID sizes these texts or buttons, so only the structure is here. */
 .project-panel { height: 100%; overflow: auto; outline: none; user-select: none; }

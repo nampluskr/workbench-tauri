@@ -1,9 +1,9 @@
-import { createSignal } from "solid-js";
+import { createSignal, Show } from "solid-js";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { PROJECT_NAME_MAX_CHARS } from "../spec/metrics.ts";
 import { folderName, truncateName } from "../workspace/paths.ts";
 import { activeFolder } from "../workspace/store.ts";
-import AppMenu from "./AppMenu.tsx";
+import AppMenu, { appMenuExpanded, UserMenuButton } from "./AppMenu.tsx";
 import { tooltip } from "./tooltip.ts";
 import "./title-bar.css";
 
@@ -43,8 +43,9 @@ export default function TitleBar() {
     <header class="title-bar" classList={{ inactive: !focused() }} data-tauri-drag-region>
       <div class="title-left">
         <AppMenu />
-        <ProjectName />
+        <Show when={!appMenuExpanded()}><ProjectName /></Show>
       </div>
+      <UserMenuButton />
       <button class="window-button" aria-label="Minimize" onClick={() => void appWindow.minimize()}>
         {GLYPH_MINIMIZE}
       </button>

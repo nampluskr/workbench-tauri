@@ -1,0 +1,207 @@
+{
+  "pid": 41508,
+  "menus": {
+    "workbench-tauri": [
+      [
+        "Quit workbench-tauriCtrl-Q"
+      ]
+    ],
+    "File": [
+      [
+        "Open Folder...Ctrl-K Ctrl-O",
+        "---",
+        "SaveCtrl-S",
+        "---",
+        "Close Editor",
+        "Close WindowCtrl-Shift-W"
+      ]
+    ],
+    "Edit": [
+      [
+        "UndoCtrl-Z",
+        "RedoCtrl-Shift-Z"
+      ]
+    ],
+    "View": [
+      [
+        "Toggle Left DockCtrl-B",
+        "Toggle Folder SidebarCtrl-Alt-J",
+        "Focus Folder SidebarCtrl-Alt-;",
+        "Editor Layout",
+        "Maximize PaneShift-Escape",
+        "---",
+        "Project PanelCtrl-Shift-E",
+        "Open Markdown PreviewCtrl-Shift-V [disabled]",
+        "Open Markdown Preview to the SideCtrl-K V [disabled]"
+      ]
+    ],
+    "View > Editor Layout": [
+      [
+        "Toggle Left DockCtrl-B",
+        "Toggle Folder SidebarCtrl-Alt-J",
+        "Focus Folder SidebarCtrl-Alt-;",
+        "Editor Layout",
+        "Maximize PaneShift-Escape",
+        "---",
+        "Project PanelCtrl-Shift-E",
+        "Open Markdown PreviewCtrl-Shift-V [disabled]",
+        "Open Markdown Preview to the SideCtrl-K V [disabled]"
+      ],
+      [
+        "Split UpCtrl-K Up",
+        "Split DownCtrl-K Down",
+        "Split LeftCtrl-K Left",
+        "Split RightCtrl-\\"
+      ]
+    ],
+    "Go": [],
+    "Window": [
+      [
+        "Minimize",
+        "Zoom"
+      ]
+    ],
+    "Help": [
+      [
+        "View Dependency Licenses",
+        "---",
+        "File Bug Report...",
+        "Request Feature...",
+        "---",
+        "workbench-tauri Repository"
+      ]
+    ],
+    "user": [
+      [
+        "SettingsCtrl-, [disabled]",
+        "KeymapCtrl-K Ctrl-S [disabled]",
+        "Themes…Ctrl-K Ctrl-T [disabled]",
+        "Icon Themes… [disabled]",
+        "ExtensionsCtrl-Shift-X [disabled]",
+        "---",
+        "Panel Layout"
+      ]
+    ],
+    "user > Panel Layout": [
+      [
+        "SettingsCtrl-, [disabled]",
+        "KeymapCtrl-K Ctrl-S [disabled]",
+        "Themes…Ctrl-K Ctrl-T [disabled]",
+        "Icon Themes… [disabled]",
+        "ExtensionsCtrl-Shift-X [disabled]",
+        "---",
+        "Panel Layout"
+      ],
+      [
+        "Classic [disabled]",
+        "Agentic [disabled]"
+      ]
+    ]
+  },
+  "bar": {
+    "names": [
+      {
+        "name": "workbench-tauri",
+        "box": [
+          308,
+          397.453125
+        ],
+        "text": [
+          308,
+          397.453125
+        ]
+      },
+      {
+        "name": "File",
+        "box": [
+          401.453125,
+          421.015625
+        ],
+        "text": [
+          401.453125,
+          421.015625
+        ]
+      },
+      {
+        "name": "Edit",
+        "box": [
+          425.015625,
+          446.078125
+        ],
+        "text": [
+          425.015625,
+          446.078125
+        ]
+      },
+      {
+        "name": "View",
+        "box": [
+          450.078125,
+          476.140625
+        ],
+        "text": [
+          450.078125,
+          476.140625
+        ]
+      },
+      {
+        "name": "Go",
+        "box": [
+          480.140625,
+          495.203125
+        ],
+        "text": [
+          480.140625,
+          495.203125
+        ]
+      },
+      {
+        "name": "Window",
+        "box": [
+          499.203125,
+          542.5625
+        ],
+        "text": [
+          499.203125,
+          542.5625
+        ]
+      },
+      {
+        "name": "Help",
+        "box": [
+          546.5625,
+          571.859375
+        ],
+        "text": [
+          546.5625,
+          571.859375
+        ]
+      }
+    ],
+    "gap": "4px",
+    "projectNameVisible": false
+  },
+  "licenses": {
+    "open": true,
+    "headings": [
+      "Dependency Licenses"
+    ],
+    "length": 60917,
+    "unavailable": 0
+  },
+  "licensesClosed": true,
+  "userButton": {
+    "box": [
+      1310,
+      5,
+      22,
+      22
+    ],
+    "minimizeLeft": 1332,
+    "nextIsMinimize": true
+  },
+  "afterDisabledClick": {
+    "menus": 2,
+    "title": true
+  }
+}

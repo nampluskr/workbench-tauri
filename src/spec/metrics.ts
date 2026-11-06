@@ -8,6 +8,10 @@ export const PROJECT_PANEL_ITEM_HEIGHT = 26; // project_panel.item.height (L-36)
 
 // Buffer font size (L-08) and measured gutter padding stay in px; other lengths go through rem().
 const METRICS: Record<string, string> = {
+  "titlebar.user_menu.button_width": rem(22), // I-608
+  "titlebar.user_menu.button_height": rem(22), // I-608
+  "titlebar.user_menu.button_icon_size": rem(14), // I-601
+  "titlebar.user_menu.button_corner_radius": rem(4), // I-609
   "units.rem_size": `${REM_SIZE}px`, // L-01
   "typography.ui_font_size": rem(16), // L-08
   "typography.buffer_font_size": "15px", // L-08
@@ -31,6 +35,7 @@ const METRICS: Record<string, string> = {
   "sidebar.footer.border_top": rem(1), // L-35
   "sidebar.footer.icon_size": rem(14), // L-35
   "buttons.height.default": rem(22), // L-07
+  "buttons.padding_x.default_compact": rem(4), // L-07
   "window.border_workspace_top": rem(1), // L-301
   "window.border_workspace_bottom": rem(1), // L-301
   "window.border_sidebar_header_bottom": rem(1), // L-302
@@ -207,6 +212,7 @@ export const CONFIRM_CLOSE_PATH_MAX_CHARS = 80; // editor.confirm_close.path_max
 
 // Menu values that script reads.
 export const MENU_POPUP_OFFSET = { x: -5, y: 0 }; // menu.popup_offset_x / _y (I-314)
+export const USER_MENU_POPUP_OFFSET = { x: 5, y: 0 }; // titlebar.user_menu.popup_offset_x / _y (I-611)
 export const MENU_KEYBOARD_OFFSET = { x: 2, y: 2 }; // menu.context.keyboard_offset_x / _y (I-502)
 export const MENU_WINDOW_MARGIN = 8; // menu.context.window_margin (I-314, I-501)
 export const MENU_SHORTCUT_ACTIVATE_DELAY_MS = 50; // menu.shortcut_activate_delay (I-520)

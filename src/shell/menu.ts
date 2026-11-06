@@ -3,9 +3,18 @@ import { MENU_WINDOW_MARGIN } from "../spec/metrics.ts";
 // Menu logic shared by the app menu and (Phase 5) the right-click menu: what can be selected, and where a popup goes.
 
 /** An entry runs `run`, or else the command named `action`; `action` is also what the shortcut is looked up for. */
-export type MenuItem = { label: string; action?: string; run?: () => void; disabled?: boolean };
+export type MenuItem = { label: string; action?: string; run?: () => void; disabled?: boolean; shortcut?: string; url?: string; children?: MenuEntry[] };
 export type MenuEntry = MenuItem | "separator";
 export type Menu = { name: string; entries: MenuEntry[] };
+
+/** A disabled sibling still dismisses the child, without becoming selected. */
+export function hoverMenuItem(entry: MenuItem, index: number, childParent: number | null, inChild = false) {
+  return {
+    closeChild: !inChild && childParent !== null && childParent !== index,
+    openChild: !inChild && !entry.disabled && !!entry.children && childParent !== index,
+    select: !entry.disabled && (inChild || !entry.children),
+  };
+}
 
 const selectable = (entry: MenuEntry): boolean => entry !== "separator" && !entry.disabled;
 
@@ -30,6 +39,13 @@ export const last = (entries: MenuEntry[]): number | null => step(entries, null,
 /** Index of the menu `dir` away from `from`, wrapping (Left/Right in the horizontal bar, I-303). */
 export const cycle = (count: number, from: number, dir: 1 | -1): number => (from + dir + count) % count;
 
+/** Removing a focused submenu can blur before its parent receives focus. */
+export function closeOnFocusOut(root: Pick<HTMLElement, "contains">, close: () => void): void {
+  queueMicrotask(() => {
+    if (!document.hasFocus() || !root.contains(document.activeElement)) close();
+  });
+}
+
 type Point = { x: number; y: number };
 type Size = { w: number; h: number };
 
@@ -37,4 +53,10 @@ type Size = { w: number; h: number };
 export function placeMenu(anchor: Point, size: Size, view: Size): Point {
   const keep = (v: number, extent: number, limit: number) => Math.max(MENU_WINDOW_MARGIN, Math.min(v, limit - MENU_WINDOW_MARGIN - extent));
   return { x: keep(anchor.x, size.w, view.w), y: keep(anchor.y, size.h, view.h) };
+}
+
+/** Open to the left when the parent's right edge has no room for the child. */
+export function placeSubmenu(parent: { left: number; right: number; top: number }, size: Size, view: Size): Point {
+  const x = parent.right + size.w <= view.w - MENU_WINDOW_MARGIN ? parent.right : parent.left - size.w;
+  return placeMenu({ x, y: parent.top }, size, view);
 }
