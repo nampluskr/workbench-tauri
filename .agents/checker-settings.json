@@ -39,7 +39,12 @@
       "command(node tools/theme-expect.mjs)",
       "command(pwsh tools/capture-startup.ps1)",
       "command(pwsh tools/hittest.ps1)",
-      "command(pwsh tools/win-input.ps1)"
+      "command(pwsh tools/win-input.ps1)",
+      "command(npm.cmd run tauri build -- --debug --no-bundle)",
+      "command(pwsh -NoProfile -File tools/win-input.ps1 -Action state)",
+      "command(pwsh -NoProfile -File tools/win-input.ps1 -Action resize -DX -1200 -DY -700)",
+      "command(src-tauri\\target\\debug\\workbench-tauri.exe)",
+      "command(Stop-Process -Name workbench-tauri)"
     ]
   }
 }
