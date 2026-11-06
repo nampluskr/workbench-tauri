@@ -91,6 +91,30 @@ async fn write_state(json: String) -> Result<(), String> {
         .await.map_err(|e| e.to_string())?
 }
 
+fn centered_outer_position(
+    work_origin: tauri::PhysicalPosition<i32>,
+    work_size: tauri::PhysicalSize<u32>,
+    client_size: tauri::PhysicalSize<u32>,
+    client_offset: tauri::PhysicalPosition<i32>,
+) -> tauri::PhysicalPosition<i32> {
+    tauri::PhysicalPosition::new(
+        work_origin.x + (work_size.width as i32 - client_size.width as i32) / 2 - client_offset.x,
+        work_origin.y + (work_size.height as i32 - client_size.height as i32) / 2 - client_offset.y,
+    )
+}
+
+fn compensated_min_size(
+    minimum: tauri::LogicalSize<f64>,
+    outer: tauri::PhysicalSize<u32>,
+    inner: tauri::PhysicalSize<u32>,
+    scale: f64,
+) -> tauri::LogicalSize<f64> {
+    tauri::LogicalSize::new(
+        minimum.width + outer.width.saturating_sub(inner.width) as f64 / scale,
+        minimum.height + outer.height.saturating_sub(inner.height) as f64 / scale,
+    )
+}
+
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
@@ -99,6 +123,30 @@ pub fn run() {
         .setup(|app| {
             let main = app.get_webview_window("main").ok_or("main window missing")?;
             caption::install(main.hwnd()?);
+            let monitor = main.current_monitor()?.ok_or("main window monitor missing")?;
+            let work_area = monitor.work_area();
+            let outer = main.outer_position()?;
+            let inner = main.inner_position()?;
+            // I-6: center the client area, excluding the invisible resize border; all values are physical pixels.
+            main.set_position(centered_outer_position(
+                work_area.position,
+                work_area.size,
+                main.inner_size()?,
+                tauri::PhysicalPosition::new(inner.x - outer.x, inner.y - outer.y),
+            ))?;
+            let config = app.config().app.windows.iter().find(|window| window.label == "main")
+                .ok_or("main window configuration missing")?;
+            // I-6: compensate for the undecorated window's invisible resize border.
+            // shortcut: sample borders at startup; recompute on DPI changes if per-monitor border proportions differ.
+            main.set_min_size(Some(compensated_min_size(
+                tauri::LogicalSize::new(
+                    config.min_width.ok_or("main window minWidth missing")?,
+                    config.min_height.ok_or("main window minHeight missing")?,
+                ),
+                main.outer_size()?,
+                main.inner_size()?,
+                main.scale_factor()?,
+            )))?;
             match watch_user_keymap(app.handle().clone()) {
                 Ok(watcher) => { app.manage(watcher); }
                 Err(error) => eprintln!("Failed to watch keymap: {error}"),
@@ -115,6 +163,40 @@ pub fn run() {
 mod tests {
     use super::is_keymap_change;
     use notify::{event::{AccessKind, CreateKind, ModifyKind, RemoveKind, RenameMode}, Event, EventKind};
+
+    #[test]
+    fn centers_client_area_with_resize_border_offset() {
+        use tauri::{PhysicalPosition, PhysicalSize};
+
+        for scale in [1, 2] {
+            assert_eq!(
+                super::centered_outer_position(
+                    PhysicalPosition::new(0, 0),
+                    PhysicalSize::new(1920 * scale, 1032 * scale),
+                    PhysicalSize::new(1440 * scale, 852 * scale),
+                    PhysicalPosition::new(8 * scale as i32, scale as i32),
+                ),
+                PhysicalPosition::new(232 * scale as i32, 89 * scale as i32),
+            );
+        }
+    }
+
+    #[test]
+    fn compensates_minimum_client_size_for_resize_border() {
+        use tauri::{LogicalSize, PhysicalSize};
+
+        for scale in [1, 2] {
+            assert_eq!(
+                super::compensated_min_size(
+                    LogicalSize::new(360.0, 240.0),
+                    PhysicalSize::new(1456 * scale, 861 * scale),
+                    PhysicalSize::new(1440 * scale, 852 * scale),
+                    scale as f64,
+                ),
+                LogicalSize::new(376.0, 249.0),
+            );
+        }
+    }
 
     #[test]
     fn filters_keymap_changes_including_renames() {

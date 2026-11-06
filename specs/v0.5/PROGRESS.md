@@ -52,6 +52,26 @@
   - 정확한 변형 추가(W-09, 2026-11-06): core-leader가 사용자 직접 요청으로 allow에 정확한 명령 형태(`git diff --stat`, `git status --short`, `git log --oneline -5` 등과 빌드·clippy 변형)를 더했다(core D-7 예외). checker를 `--settings`로 다시 띄우자 이 세 명령이 승인 창 없이 실행되었다(tauri-leader 시험). allow는 명령 전체가 정확히 같을 때만 일치하므로, 목록에 있는 명령은 checker가 직접 실행하고, 없는 명령은 대체 방식을 쓰며 필요하면 tauri-leader가 core-leader에게 알려 목록에 더한다(`HERDR-SETUP.md` 5.5).
 - Phase 1 종료 판정: 충족(core-leader, 사용자 위임 D-13), 문서 다섯 확정 (2026-11-06, W-06).
 
+### Phase 2 — 창
+
+- **ORDER-02 창 1440×852·작업 영역 가운데·최소 360×240 (R-6, I-6)** (2026-11-06 ~ 2026-11-07)
+  - 무엇을 했나:
+    - K-01: `src-tauri/tauri.conf.json` main 창에 `minWidth: 360`·`minHeight: 240`을 더했다(1440×852는 그대로). 처음에는 `center: true`로 가운데 배치를 맡겼다.
+    - V3 1차(C-04·C-05): clientOrigin이 기대 240,90보다 +8,+1 어긋났다(center가 보이지 않는 크기 조절 테두리를 포함한 바깥 사각형을 가운데에 둠). 최소 크기는 입력 도구가 크기를 바꾸지 못해 측정 불가였다.
+    - K-01-R1: `center`를 빼고 `src-tauri/src/lib.rs` setup에서 보이지 않는 크기 조절 테두리를 뺀 클라이언트 영역을 작업 영역 가운데에 둔다(`centered_outer_position`, 단위 테스트 하나).
+    - V3 2차(C-07): 클라이언트가 344×231까지 줄어 최소 크기가 불일치였다.
+    - K-01-R2: setup에서 테두리만큼 최소 크기를 보정한다(`compensated_min_size`, 최소값은 `tauri.conf.json`에서만 읽음, 단위 테스트 하나).
+    - V3 3차(C-09): 세 기준을 다시 쟀다.
+  - 결과: 첫 실행 clientSize 1440×852, clientOrigin 240,90(작업 영역 0,0,1920,1032의 가운데). 최소 clientSize 360×240 유지. 크기를 바꾸고 다시 실행해도 1440×852로 열린다. R-6 충족.
+  - 검증:
+    - V1: `cargo test --manifest-path src-tauri/Cargo.toml` 19 passed, `cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings` 경고 0, `npm.cmd run tauri build -- --debug --no-bundle` 통과(K-01-R2, `%TEMP%\v05-K-01-R2-cmd.txt`).
+    - 리뷰: C-03(K-01)·C-06(K-01-R1)·C-08(K-01-R2) 모두 PASS(`%TEMP%\v05-C-03-report.md`, `v05-C-06-report.md`, `v05-C-08-report.md`).
+    - V3: 3기준 통과, 불일치 없음(`specs/v0.5/verify/ORDER-02-window.md`, `%TEMP%\v05-C-09-report.md`). 측정 조건 1920×1080, 100%, 작업 표시줄 있음, 앱 데이터 측정마다 백업·복원.
+    - 화면 차례: `[SCREEN-REQ]`·`[SCREEN-OK]`·`[SCREEN-DONE]`를 3회 주고받았다(core D-4).
+  - 특이사항:
+    - checker의 첫 state 호출이 창이 보이기 전이라 실패해, 측정 명령은 tauri-leader가 대체 방식으로 실행했다(`HERDR-SETUP.md` 5.5).
+    - 사용자 확인 필요: 없음.
+
 ## 사용자 요청 작업
 
 없음.

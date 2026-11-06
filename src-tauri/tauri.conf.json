@@ -16,6 +16,8 @@
         "title": "workbench-tauri",
         "width": 1440,
         "height": 852,
+        "minWidth": 360,
+        "minHeight": 240,
         "visible": false,
         "decorations": false,
         "shadow": true
