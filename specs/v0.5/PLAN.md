@@ -1,4 +1,4 @@
-> 버전: v0.5 · 작성일: 2026-11-06 · 상태: 초안
+> 버전: v0.5 · 작성일: 2026-11-06 · 상태: 확정 (core-leader 판정, 사용자 위임 2026-11-06)
 >
 > R-1~R-23을 어떤 Phase 순서로 만족시킬지 적는다. Phase는 workbench-core v0.5 `PLAN.md`의 Phase와 번호를 같게 둔다. 요구와 판정 방법은 `SPEC.md`에, 결정은 `DECISIONS.md`와 core `DECISIONS.md`에, 에이전트 운영은 `HERDR-SETUP.md`에, 실제 진행은 `PROGRESS.md`에 있다.
 

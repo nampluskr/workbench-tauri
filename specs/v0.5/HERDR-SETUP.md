@@ -1,4 +1,4 @@
-> 버전: v0.5 · 작성일: 2026-11-06 · 상태: 초안
+> 버전: v0.5 · 작성일: 2026-11-06 · 상태: 확정 (core-leader 판정, 사용자 위임 2026-11-06)
 >
 > workbench-tauri v0.5의 herdr 에이전트 구성, 레이아웃, 파일 소유권, 작업 프로토콜이다. 구성은 workbench-core `specs/v0.5/DECISIONS.md` D-2, 화면 차례는 core D-1·D-4, 카드는 core D-3을 따른다(ORDER-01 3.2·3.3). 공통 규칙은 루트 `AGENTS.md`에, Phase 순서는 `PLAN.md`에 있다. 지난 버전 구성은 `specs/v0.4/HERDR-SETUP.md`에 있다(읽기만 한다).
 

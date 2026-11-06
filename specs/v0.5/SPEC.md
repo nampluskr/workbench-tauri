@@ -1,4 +1,4 @@
-> 버전: v0.5 · 작성일: 2026-11-06 · 상태: 초안
+> 버전: v0.5 · 작성일: 2026-11-06 · 상태: 확정 (core-leader 판정, 사용자 위임 2026-11-06)
 >
 > workbench-core v0.5 `ITEMS.md`의 I-1~I-23을 이 레포의 요구 R-1~R-23으로 옮긴다. R-n의 번호는 I-n과 같다(R-1 = I-1). 판정 방법은 ITEMS의 "판정 방법"을 바꾸지 않고 옮긴다(core D-11). 결정은 `DECISIONS.md`와 core `DECISIONS.md`에, Phase 순서는 `PLAN.md`에 있다.
 
