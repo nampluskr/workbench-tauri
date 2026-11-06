@@ -1,5 +1,66 @@
+/* I-14 / T-15: the same weights and styles as Zed's bundled fonts, from official releases. */
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("/fonts/ibm-plex-sans/IBMPlexSans-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("/fonts/ibm-plex-sans/IBMPlexSans-Italic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("/fonts/ibm-plex-sans/IBMPlexSans-SemiBold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 600;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("/fonts/ibm-plex-sans/IBMPlexSans-SemiBoldItalic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 600;
+}
+@font-face {
+  font-family: "Lilex";
+  src: url("/fonts/lilex/Lilex-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Lilex";
+  src: url("/fonts/lilex/Lilex-Italic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Lilex";
+  src: url("/fonts/lilex/Lilex-Bold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Lilex";
+  src: url("/fonts/lilex/Lilex-BoldItalic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 700;
+}
+
 html, body, #root { height: 100%; margin: 0; }
-body { background: var(--background); color: var(--text); font-size: 1rem; }
+body {
+  background: var(--background);
+  color: var(--text);
+  font-family: var(--ui-font-family);
+  font-size: var(--typography-ui-font-size);
+  font-weight: var(--font-weight-default);
+  font-feature-settings: var(--ui-font-feature-settings);
+}
+button, input, select, textarea {
+  font-family: inherit;
+  font-feature-settings: inherit;
+}
 #root { display: flex; }
 
 /* L-11: [left sidebar] -> [Workspace]. L-12: the sidebar spans the full window height. */
@@ -470,6 +531,10 @@ body { background: var(--background); color: var(--text); font-size: 1rem; }
   background: color-mix(in srgb, var(--editor-foreground) calc(var(--markdown-preview-inline-code-background-opacity) * 100%), transparent);
 }
 .markdown-body pre { /* L-109 block, no border */
+  font-family: var(--buffer-font-family); /* I-14 */
+  font-weight: var(--font-weight-default);
+  line-height: var(--editor-line-height-comfortable-multiplier);
+  font-feature-settings: normal;
   margin: var(--markdown-preview-code-block-margin-y) 0;
   padding: var(--markdown-preview-code-block-padding);
   border-radius: var(--markdown-preview-code-block-corner-radius);

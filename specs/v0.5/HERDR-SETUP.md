@@ -55,6 +55,7 @@ herdr session
 - Zed와 비교하는 판정: 창 1440×852, 화면 배율 100%, 같은 폴더·파일·테마(core D-11).
 - 입력 도구로 키·마우스를 보낼 때는 대상 PID·HWND를 고정하고, 입력 직전마다 전경 창을 확인한다(루트 `AGENTS.md` 3A.4).
 - 측정 전에 앱 데이터 폴더(`%APPDATA%\workbench-tauri`)를 백업하고 끝나면 되돌린다(v0.4와 같음).
+- 측정·확인 때는 자기가 띄운 프로세스만 닫는다. 띄운 프로세스의 PID를 기록해 두고, 가능하면 `CloseMainWindow`로, 아니면 `Stop-Process -Id <띄운 PID>`로 닫는다. 이미 열려 있던 Zed·앱 창과 프로세스는 닫거나 `Stop-Process`하지 않는다. 이름으로 모든 프로세스를 끝내지 않는다(`Stop-Process -Name` 금지). (core-leader 결정, 사용자 위임 core D-13, ORDER-03, 2026-11-07)
 
 ---
 
@@ -101,6 +102,7 @@ herdr session
 
 - 화면을 다루는 확인(자동 검증 스크립트, 디스플레이 배율 변경, 앱 창 포커스·입력·캡처)은 같은 갈래 안에서도 한 번에 하나만 한다(core D-1).
 - 사용자가 UI를 직접 확인하는 동안에는 core-leader가 `[SCREEN-OK]`를 보내지 않는다(core D-4).
+- 마우스·키 입력이 필요한 확인: checker(agy)는 격리 데스크톱에서 돌아 입력이 들어가지 않는다. 그래서 `tauri-leader`가 화면 차례 안에서 `tools/win-input.ps1`(SendInput)을 실행하고 출력·캡처 파일을 남긴다. checker는 그 파일로 판정한다(ORDER-02에서 쓴 방식). (core-leader 결정, 사용자 위임 core D-13, ORDER-03, 2026-11-07)
 
 ### 5.4 기타
 

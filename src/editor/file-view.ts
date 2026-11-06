@@ -50,7 +50,7 @@ export function createFileView(text: string, path: string, editable: boolean, ho
     state: EditorState.create({
       doc: text,
       extensions: [
-        ...editorExtensions,
+        ...editorExtensions(extension),
         // Key context (v0.2 D-3): Editor, plus `extension == …` for bindings such as the Markdown preview keys (I-044).
         EditorView.editorAttributes.of({ "data-keymap-context": extension ? `Editor extension=${extension}` : "Editor" }),
         readOnly.of(EditorState.readOnly.of(!editable)),

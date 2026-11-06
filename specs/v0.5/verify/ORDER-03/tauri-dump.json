@@ -1,0 +1,250 @@
+{
+  "pid": 43784,
+  "ui_computed": [
+    {
+      "s": "body",
+      "font-family": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "font-size": "16px",
+      "font-weight": "400",
+      "line-height": "normal",
+      "font-feature-settings": "\"calt\" 0"
+    },
+    {
+      "s": ".title-bar",
+      "font-family": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "font-size": "16px",
+      "font-weight": "400",
+      "line-height": "normal",
+      "font-feature-settings": "\"calt\" 0"
+    },
+    {
+      "s": ".project-name",
+      "font-family": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "font-size": "14px",
+      "font-weight": "400",
+      "line-height": "normal",
+      "font-feature-settings": "\"calt\" 0"
+    },
+    {
+      "s": ".menu-name",
+      "missing": true
+    },
+    {
+      "s": ".tree-row, [role=treeitem]",
+      "font-family": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "font-size": "16px",
+      "font-weight": "400",
+      "line-height": "normal",
+      "font-feature-settings": "\"calt\" 0"
+    },
+    {
+      "s": ".tab",
+      "missing": true
+    },
+    {
+      "s": ".status-bar",
+      "font-family": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "font-size": "16px",
+      "font-weight": "400",
+      "line-height": "normal",
+      "font-feature-settings": "\"calt\" 0"
+    }
+  ],
+  "ui_rendered": {
+    "selector": ".title-bar",
+    "fonts": [
+      {
+        "familyName": "Segoe Fluent Icons",
+        "postScriptName": "SegoeFluentIcons",
+        "isCustomFont": false,
+        "glyphCount": 3
+      }
+    ]
+  },
+  "open_specs": "ok",
+  "open_v05": "ok",
+  "open_spec": "ok",
+  "editor_computed": [
+    {
+      "s": ".cm-editor",
+      "font-family": "Lilex, \"Malgun Gothic\", monospace",
+      "font-size": "15px",
+      "font-weight": "400",
+      "line-height": "normal",
+      "font-feature-settings": "normal"
+    },
+    {
+      "s": ".cm-scroller",
+      "font-family": "Lilex, \"Malgun Gothic\", monospace",
+      "font-size": "15px",
+      "font-weight": "400",
+      "line-height": "24.27px",
+      "font-feature-settings": "normal"
+    },
+    {
+      "s": ".cm-content",
+      "font-family": "Lilex, \"Malgun Gothic\", monospace",
+      "font-size": "15px",
+      "font-weight": "400",
+      "line-height": "24.27px",
+      "font-feature-settings": "normal"
+    },
+    {
+      "s": ".cm-line",
+      "font-family": "Lilex, \"Malgun Gothic\", monospace",
+      "font-size": "15px",
+      "font-weight": "400",
+      "line-height": "24.27px",
+      "font-feature-settings": "normal"
+    },
+    {
+      "s": ".cm-gutters",
+      "font-family": "Lilex, \"Malgun Gothic\", monospace",
+      "font-size": "15px",
+      "font-weight": "400",
+      "line-height": "24.27px",
+      "font-feature-settings": "normal"
+    },
+    {
+      "s": ".cm-lineNumbers .cm-gutterElement",
+      "font-family": "Lilex, \"Malgun Gothic\", monospace",
+      "font-size": "15px",
+      "font-weight": "400",
+      "line-height": "24.27px",
+      "font-feature-settings": "normal"
+    }
+  ],
+  "mark_hangul": "> 버전: v0.5 · 작성일: 2026-11-06 · 상태: 확정 (core-leader 판정, 사용자 위",
+  "editor_rendered_hangul": {
+    "selector": ".cm-line[data-o3=hangul]",
+    "fonts": [
+      {
+        "familyName": "Lilex",
+        "postScriptName": "Lilex-Regular",
+        "isCustomFont": true,
+        "glyphCount": 57
+      },
+      {
+        "familyName": "Malgun Gothic",
+        "postScriptName": "MalgunGothic",
+        "isCustomFont": false,
+        "glyphCount": 16
+      }
+    ]
+  },
+  "editor_geometry": {
+    "gutterWidth": 99,
+    "contentLeft": 639,
+    "firstLineTop": 100,
+    "scrollerTop": 100,
+    "scrollWidth": 885,
+    "clientWidth": 885,
+    "scrollHeight": 12715,
+    "clientHeight": 721
+  },
+  "cursor_wrapped": {
+    "x": 679,
+    "y": 156.53125,
+    "h": 72.796875
+  },
+  "active_line": {
+    "activeLineHeight": 72.796875,
+    "bg": "rgba(205, 214, 244, 0.07)",
+    "gutterBg": "rgba(205, 214, 244, 0.07)",
+    "gutterColor": "rgb(203, 166, 247)"
+  },
+  "open_preview": "ok",
+  "preview_computed": [
+    {
+      "s": ".markdown-body",
+      "font-family": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "font-size": "16px",
+      "font-weight": "400",
+      "line-height": "24px",
+      "font-feature-settings": "\"calt\" 0"
+    },
+    {
+      "s": ".markdown-body p",
+      "font-family": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "font-size": "16px",
+      "font-weight": "400",
+      "line-height": "24px",
+      "font-feature-settings": "\"calt\" 0"
+    },
+    {
+      "s": ".markdown-body h1",
+      "font-family": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "font-size": "28px",
+      "font-weight": "600",
+      "line-height": "35px",
+      "font-feature-settings": "\"calt\" 0"
+    },
+    {
+      "s": ".markdown-body h2",
+      "font-family": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "font-size": "22.4px",
+      "font-weight": "600",
+      "line-height": "28px",
+      "font-feature-settings": "\"calt\" 0"
+    },
+    {
+      "s": ".markdown-body pre",
+      "missing": true
+    },
+    {
+      "s": ".markdown-body pre code",
+      "missing": true
+    },
+    {
+      "s": ".markdown-body code",
+      "font-family": "Lilex, \"Malgun Gothic\", monospace",
+      "font-size": "14px",
+      "font-weight": "400",
+      "line-height": "21px",
+      "font-feature-settings": "\"calt\" 0"
+    }
+  ],
+  "preview_rendered_p": {
+    "selector": ".markdown-body p",
+    "fonts": [
+      {
+        "familyName": "Malgun Gothic",
+        "postScriptName": "MalgunGothic",
+        "isCustomFont": false,
+        "glyphCount": 16
+      },
+      {
+        "familyName": "IBM Plex Sans",
+        "postScriptName": "IBMPlexSans",
+        "isCustomFont": true,
+        "glyphCount": 55
+      }
+    ]
+  },
+  "split": [
+    "Split RightCtrl-K Right",
+    "Split LeftCtrl-K Left",
+    "Split UpCtrl-K Up",
+    "Split DownCtrl-K Down"
+  ],
+  "split_right": "ok",
+  "pane_borders": [
+    {
+      "r": {
+        "x": 540,
+        "y": 100,
+        "width": 449.5,
+        "height": 721,
+        "top": 100,
+        "right": 989.5,
+        "bottom": 821,
+        "left": 540
+      },
+      "border": "0px none rgb(205, 214, 244)",
+      "radius": "0px",
+      "outline": "rgb(205, 214, 244) none 3px",
+      "parentBorder": "0px none rgb(205, 214, 244)",
+      "parentRadius": "0px"
+    }
+  ]
+}

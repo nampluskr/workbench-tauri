@@ -21,6 +21,8 @@ const zedEditorTheme = EditorView.theme({
     height: "100%",
     fontFamily: BUFFER_FONT_FAMILY,
     fontSize: "var(--typography-buffer-font-size)",
+    fontWeight: "var(--font-weight-default)", // I-14
+    fontFeatureSettings: "normal", // I-14: UI calt setting does not apply to the buffer
     color: "var(--editor-foreground)",
     backgroundColor: "var(--editor-background)",
   },
@@ -80,7 +82,8 @@ const zedEditorTheme = EditorView.theme({
     },
 });
 
-export const editorExtensions = [
+export const editorExtensions = (extension: string) => [
+  /^(md|markdown)$/.test(extension) ? EditorView.lineWrapping : [], // I-8: same extensions as Markdown preview
   EditorView.cspNonce.of(document.getElementById("csp-nonce-carrier")?.nonce ?? ""),
   lineNumbers(),
   highlightActiveLine(),

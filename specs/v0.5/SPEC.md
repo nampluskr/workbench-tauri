@@ -182,21 +182,21 @@ I-8, 사용자 2026-11-06.
 
 **요구**
 
-편집 영역 스크롤바가 보이는 조건(마우스가 편집 영역 위·밖)을 Zed와 같게 한다.
+편집 영역 스크롤바가 보이는 조건을 Zed와 같게 한다. 판정 기준은 Zed 실제 동작이다. 스크롤할 내용이 있으면 세로 스크롤바가 마우스 위치와 상관없이 늘 보이고, 가로 스크롤바는 내용이 가로로 넘칠 때만 보인다(마크다운은 I-8 줄바꿈으로 넘치지 않는다).
 
 **정해진 결과**
 
-조건이 Zed와 같다. 지금 tauri는 세로·가로 스크롤바가 늘 보인다(`refs/compare/I-9-tauri.png`).
+세로 스크롤바는 스크롤할 내용이 있으면 마우스가 창 밖·편집 영역 밖·편집 영역 위에 있을 때, 스크롤 중과 멈춘 뒤에 늘 보이고 사라지지 않는다. 가로 스크롤바는 내용이 가로로 넘칠 때만 보인다. 지금 tauri는 세로·가로 스크롤바가 늘 보인다(`refs/compare/I-9-tauri.png`).
+
+Zed 확인(tauri-leader 2026-11-07): Zed 기본 설정(`settings.json`에 `scrollbar` 항목 없음, Windows `DynamicScrollbars` 없음)에서 SendInput으로 마우스를 옮기고 휠을 굴려 캡처했다(`specs/v0.5/verify/I-9/zed-*.png`, 판정 `specs/v0.5/verify/I-9/zed-scrollbar.md`). 세로 thumb는 타이틀 바·편집 영역 위·휠 직후·휠 뒤 3초·다시 타이틀 바 3초·창 밖 3초 여섯 상태에서 모두 보였고 숨김은 없었다. 내용이 가로로 넘치지 않는 파일에서 가로 스크롤바는 보이지 않았다.
 
 **판정 방법**
 
-마우스가 편집 영역 밖에 있을 때와 위에 있을 때 스크롤바가 보이는 조건이 Zed와 같다(Zed의 실제 동작은 갈래가 먼저 확인한다). V3.
+마우스가 편집 영역 밖에 있을 때와 위에 있을 때, 스크롤 중과 멈춘 뒤에 스크롤바가 보이는 조건이 위 Zed 확인 결과와 같다. 세로는 늘 보이고, 가로는 내용이 가로로 넘칠 때만 보인다. V3.
 
 **출처**
 
-I-9, 사용자 2026-11-06.
-
-미정: Zed가 스크롤할 때 스크롤바를 보이는지. 갈래가 Zed에서 먼저 확인해 이 절에 적는다(I-9 확인한 사실).
+I-9(기대 정정 core-leader, 사용자 위임 core D-13, 2026-11-07), 사용자 2026-11-06.
 
 ---
 
@@ -307,10 +307,25 @@ UI, 편집 영역, 미리보기 본문, 미리보기 코드 블록의 글꼴 이
 
 I-14, core D-10, 사용자 2026-11-06.
 
-미정:
-- Zed가 쓰는 한글 고딕 계열 글꼴의 정확한 이름. 갈래가 확인해 이 절에 적는다(I-14 한글 글꼴).
-- 넣을 굵기·스타일 파일과 글꼴 버전(core D-10, Phase 3).
-- `spec/zed-metrics.toml`에 위 글꼴 값의 항목 ID가 있는지. 없으면 루트 `AGENTS.md` 3장대로 leader에게 보고한다(원본 workbench-gpui).
+**Zed 한글 대체 글꼴**
+
+Zed에서 한글은 Malgun Gothic(맑은 고딕)으로 그려진다. 편집 영역 한글의 고딕 계열 판정은 이 이름으로 한다.
+
+- 확인 방법: Zed와 같은 시스템 API인 DirectWrite `IDWriteFactory2::GetSystemFontFallback` → `IDWriteFontFallback::MapCharacters`로 "가나다한글"을 질의했다. 시스템 글꼴 컬렉션, 굵기 400, normal style·stretch, 기본 패밀리 Lilex와 IBM Plex Sans 각각, 로캘 ko-KR·en-US 둘 다. 네 경우 모두 Malgun Gothic / 맑은 고딕, 굵기 400, scale 1, 5글자 매핑.
+- 확인: 2026-11-07 tauri-coder(K-03). 출력 `%TEMP%\v05-K-03-dwrite.txt`.
+- 한계: Zed가 실제 요청하는 로캘과 실행 중인 Zed의 렌더링 결과는 확인하지 않았다(같은 API 질의 결과다).
+
+**글꼴 값의 스펙 ID**
+
+크기·줄 높이·제목 굵기는 `spec/zed-metrics.toml`의 `typography.ui_font_size`(16), `typography.buffer_font_size`(15), `editor.line_height.comfortable_multiplier`(1.618), `markdown_preview.heading.font_weight`(600)를 쓴다. 글꼴 이름, 굵기 400, `calt` 끔은 I-14 표가 직접 정한 값이다(core D-12 예외). 굵기·스타일 파일과 버전은 `DECISIONS.md` D-1에 있다.
+
+**미리보기 코드 블록의 글자 크기**
+
+미리보기 코드 블록은 I-14에 따라 에디터 글꼴의 이름·굵기·합자·줄 높이(1.618)를 따른다. 글자 크기는 따르지 않고 K-03 전 값(미리보기 본문에서 상속한 16)을 유지한다. (리더 결정, 사용자 위임 core D-13, ORDER-03, 2026-11-07)
+
+**Zed와 다른 점**
+
+편집 영역 줄 번호 열 폭이 Zed와 다르다. tauri 99px(E-002 최소 4ch + E-003 왼쪽 3ch + E-004 오른쪽 4ch = 11ch × Lilex 15px `0` 폭 9px), Zed 약 64px(약 7ch)로 tauri가 약 35px 넓다. 글꼴을 Zed와 같게 바꾼 뒤에도 남아 글꼴로는 풀리지 않는다(C-13, `specs/v0.5/verify/ORDER-03/ORDER-03-judgement.md` 2.3, 2026-11-07). 1번 줄 위 여백은 차이 0으로 풀렸다.
 
 ---
 

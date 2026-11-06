@@ -9,6 +9,7 @@ export const PROJECT_PANEL_ITEM_HEIGHT = 26; // project_panel.item.height (L-36)
 // Buffer font size stays in px (L-08); every other length goes through rem().
 const METRICS: Record<string, string> = {
   "units.rem_size": `${REM_SIZE}px`, // L-01
+  "typography.ui_font_size": rem(16), // L-08
   "typography.buffer_font_size": "15px", // L-08
   "typography.size.default": rem(14), // L-05 (label default: tree name, tab title, title bar folder button)
   "editor.gutter.min_line_number_digits": "4", // E-002
@@ -209,21 +210,28 @@ export const MENU_KEYBOARD_OFFSET = { x: 2, y: 2 }; // menu.context.keyboard_off
 export const MENU_WINDOW_MARGIN = 8; // menu.context.window_margin (I-314, I-501)
 export const MENU_SHORTCUT_ACTIVATE_DELAY_MS = 50; // menu.shortcut_activate_delay (I-520)
 
-// System monospace stand-in; Lilex is out of scope (INTENT).
-export const BUFFER_FONT_FAMILY = "Consolas, monospace";
+// I-14: bundled Zed families; DirectWrite maps Korean to Malgun Gothic on this PC.
+const UI_FONT_FAMILY = '"IBM Plex Sans", "Malgun Gothic", sans-serif';
+export const BUFFER_FONT_FAMILY = '"Lilex", "Malgun Gothic", monospace';
+const FONT_WEIGHT = 400; // I-14: default UI and buffer weight
+const UI_FONT_FEATURE_SETTINGS = '"calt" 0'; // I-14: disable UI contextual alternates
 
 /** Publish the metrics as CSS variables on :root (constructable sheet, no inline style). */
-export function applyMetrics(): void {
+export async function applyMetrics(): Promise<void> {
   const vars = Object.entries(METRICS).map(
     ([id, value]) => `--${id.replace(/[._]/g, "-")}: ${value};`,
   );
 
   // E-005: gutter margin = |descent| of the buffer font. CSS cannot read it.
+  await document.fonts.load(`${FONT_WEIGHT} ${METRICS["typography.buffer_font_size"]} "Lilex"`);
   const ctx = document.createElement("canvas").getContext("2d")!;
   ctx.font = `${METRICS["typography.buffer_font_size"]} ${BUFFER_FONT_FAMILY}`;
   const descent = Math.abs(ctx.measureText("0").fontBoundingBoxDescent);
   vars.push(`--editor-gutter-margin: ${descent}px;`);
   vars.push(`--buffer-font-family: ${BUFFER_FONT_FAMILY};`); // L-103: code in the Markdown preview uses the buffer font
+  vars.push(`--ui-font-family: ${UI_FONT_FAMILY};`);
+  vars.push(`--font-weight-default: ${FONT_WEIGHT};`);
+  vars.push(`--ui-font-feature-settings: ${UI_FONT_FEATURE_SETTINGS};`);
 
   const sheet = new CSSStyleSheet();
   sheet.replaceSync(`:root { font-size: var(--units-rem-size); ${vars.join(" ")} }`);

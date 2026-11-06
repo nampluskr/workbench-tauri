@@ -72,6 +72,28 @@
     - checker의 첫 state 호출이 창이 보이기 전이라 실패해, 측정 명령은 tauri-leader가 대체 방식으로 실행했다(`HERDR-SETUP.md` 5.5).
     - 사용자 확인 필요: 없음.
 
+### Phase 3 — 편집 영역과 글꼴
+
+- **ORDER-03 편집 영역과 글꼴 (R-7, R-8, R-9, R-13, R-14 / I-7, I-8, I-9, I-13, I-14)** (2026-11-07)
+  - 무엇을 했나:
+    - K-03(I-14): IBM Plex Sans `@ibm/plex-sans@1.1.0`(Regular·Italic·SemiBold·SemiBoldItalic woff2, `license.txt`)과 Lilex 2.630(Regular·Italic·Bold·BoldItalic woff2, `OFL.txt`)을 `public/fonts/`에 넣고 `@font-face` 8개로 읽게 했다(`src/app.css`). UI는 `"IBM Plex Sans", "Malgun Gothic", sans-serif`·16·400·`"calt" 0`, 에디터는 `"Lilex", "Malgun Gothic", monospace`·15·400·1.618이다(`src/spec/metrics.ts`, `src/editor/extensions.ts`). `applyMetrics`를 비동기로 바꿔 Lilex를 읽은 뒤 E-005 descent를 계산하고 유일한 호출부 `src/index.tsx`에서 await한다(회귀 테스트 `src/spec/metrics.test.ts` 하나). CSP 변경 없음(`default-src 'self'`).
+    - K-03 DirectWrite: `IDWriteFactory2::GetSystemFontFallback` → `MapCharacters`로 Zed 한글 대체 글꼴이 Malgun Gothic(맑은 고딕)임을 확인했다(ko-KR·en-US, `%TEMP%\v05-K-03-dwrite.txt`).
+    - K-03-R1(core 결정: UI 16은 rem 기준값이고 요소별 크기는 유지): 폼 요소 공통 `font-size`·`font-weight` 상속과 `.markdown-body pre`의 15px 지정을 지웠다. 미리보기 코드 블록 크기는 K-03 전 값(본문에서 상속한 16)으로 돌아갔다.
+    - K-04(I-8·I-13): `.md`·`.markdown`에만 CodeMirror `EditorView.lineWrapping`을 넣었다(`src/editor/extensions.ts`, `src/editor/file-view.ts`, 테스트 `src/editor/extensions.test.ts` 하나). I-13은 `highlightActiveLine`·`highlightActiveLineGutter`가 줄바꿈된 논리 줄 전체를 강조해 코드 수정이 없다(코드 확인).
+    - I-9: 두 갈래가 확인한 Zed 동작(세로 thumb 늘 보임·숨김 없음, 가로는 넘칠 때만)으로 core ITEMS I-9 기대가 정정되었다. tauri는 이미 같아 코드 수정이 없다(`.cm-scroller` `overflow: auto`, 캡처).
+    - 문서(W-11~W-13): SPEC R-14에 한글 대체 글꼴·스펙 ID·미리보기 코드 블록 크기·Zed와 다른 점, DECISIONS D-1에 글꼴 파일·출처·CSP, HERDR-SETUP 3장·5.3에 띄운 PID만 닫기와 입력 스크립트 방식, SPEC R-9를 I-9 정정 기준으로 적었다.
+  - 결과: I-14·I-7·I-8·I-13 충족. I-9는 정정 기준으로 tauri가 이미 Zed와 같다. 1번 줄 위 여백 차이 0으로 풀렸다. 미리보기 코드 블록은 Lilex·16px·400·줄 높이 25.888px(1.618)·`font-feature-settings: normal`, Rendered Lilex+Malgun Gothic이다(`specs/v0.5/verify/ORDER-03/tauri-dump-pre.json`).
+  - 검증:
+    - V1: `npm.cmd run typecheck` 통과, `npm.cmd run test -- src/spec/metrics.test.ts src/editor/markdown.test.ts` 6/6(K-03·K-03-R1), `npm.cmd run test -- src/editor/extensions.test.ts` 1/1(K-04), `git diff --check` 통과(`%TEMP%\v05-K-03-cmd.txt`, `v05-K-03-R1-cmd.txt`, `v05-K-04-cmd.txt`).
+    - 리뷰: C-10(K-03)·C-11(K-04) PASS(`%TEMP%\v05-C-10-report.md`, `v05-C-11-report.md`).
+    - Zed I-9: tauri-leader가 SendInput(`tools/win-input.ps1`)으로 캡처하고 C-12가 판정했다(`specs/v0.5/verify/I-9/zed-*.png`, `zed-scrollbar.md`, `%TEMP%\v05-C-12-report.md`).
+    - V2·V3: C-13 통과 8, 불일치 1(줄 번호 열 폭), 미리보기 코드 블록은 별도 덤프로 확인(`specs/v0.5/verify/ORDER-03/ORDER-03-judgement.md`, `tauri-dump-pre.json`, `%TEMP%\v05-C-13-report.md`). 측정 조건: 창 클라이언트 1440×852, 100%, 테마는 Zed One Dark·tauri Catppuccin Mocha로 다르다(core-leader 결정으로 그대로, 색 판정 제외).
+    - 화면 차례: `[SCREEN-REQ]`·`[SCREEN-OK]`·`[SCREEN-DONE]`를 3회 주고받았다(core D-4). Zed·앱은 띄운 PID만 닫았다.
+  - 특이사항:
+    - Zed와 다른 점: 줄 번호 열 폭 tauri 99px, Zed 약 64px. 글꼴로 풀리지 않아 SPEC R-14에 적었다.
+    - 리더 결정(사용자 위임 core D-13): 미리보기 코드 블록은 줄 높이 1.618을 유지하고 크기는 16이다.
+    - 사용자 확인 필요(V4): I-14 글자 모양·한글 간격의 인상.
+
 ## 사용자 요청 작업
 
 없음.

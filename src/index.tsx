@@ -19,7 +19,7 @@ if (!root) {
 // The window starts hidden (tauri.conf.json "visible": false): the WebView would otherwise show
 // its default white page until the theme is applied. Show it even if startup fails.
 try {
-  applyMetrics();
+  await applyMetrics();
   await applyTheme();
   await loadUserKeymap();
   await loadWorkspace();
