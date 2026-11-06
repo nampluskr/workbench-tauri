@@ -120,6 +120,27 @@
     - 탭 경로 툴팁(R-11)·경로 줄(R-12)은 지금 없어 Phase 9에서 다시 본다.
     - 사용자 확인 필요(V4): 네이티브 대화 상자의 `₩` 표시.
 
+### Phase 5 — 아이콘 모양
+
+- **ORDER-05 UI 아이콘을 Zed 원본으로 (R-1·R-18 / I-1·I-18)** (2026-11-07)
+  - 무엇을 했나:
+    - K-08: Zed `4304dec732a75505066de5ce2dbbfb2bec369498`의 `assets/icons/`(UI 299, `file_icons/` 96, `LICENSES`)와 루트 `LICENSE-GPL`·`LICENSE-APACHE`를 `src/assets/zed-icons/`(`.gitignore`)에 받는 `tools/fetch-zed-icons.ps1`을 만들고, UI 아이콘을 그 SVG로 바꿨다(`src/shell/Icon.tsx`, `src/shell/icon-svg.ts`, 테스트 `src/shell/icon-svg.test.ts`, `src/App.tsx`, `src/shell/Pane.tsx`, `src/shell/ProjectTree.tsx`). 쓰지 않게 된 자체 SVG 14개를 지웠다.
+    - K-08-R1(리더 결정): 등록 폴더 목록(`src/shell/Sidebar.tsx`)도 Zed `folder.svg`로 바꾸고 자체 `folder.svg`를 지웠다(gpui 갈래와 같다).
+    - tauri-leader가 화면 차례 1회로 tauri와 Zed를 캡처했다(클라이언트 1440×852, 100%).
+    - 문서(W-06): SPEC R-1에 출처·두는 곳·라이선스·다시 채우기·없을 때 모습·대응 표·유지 자리, R-18에 결과, DECISIONS D-2(복사본 위치·없을 때 모습)·D-3(등록 폴더 목록 아이콘), PLAN Phase 5 done.
+  - 결과:
+    - UI 아이콘은 Zed 원본 SVG에서 나온다(대응 표 `SPEC.md` R-1). 상태 바 왼쪽 dock 여닫기는 `file_tree.svg`(트리 모양), Add Project는 `folder_add.svg`("+")다.
+    - 유지 2곳: 파일 트리 일반 파일은 자체 `file.svg`(Zed는 확장자별 아이콘 테마, Phase 7), Windows 창 버튼은 Segoe Fluent 글리프(Zed도 같은 글리프).
+    - 복사본이 없으면 교체한 자리는 같은 크기의 빈 칸이고 버튼·툴팁·기능은 그대로다.
+  - 검증:
+    - V1: 복사본 있음·없음 각각 `npm.cmd run typecheck` 통과, `npm.cmd run test` 114/114, `npm.cmd run tauri build -- --debug --no-bundle` 통과. `node --test src/shell/icon-svg.test.ts` 1/1, `cargo check` 경고 없음, `git diff --check` 통과. `git status`·`git ls-files src/assets/zed-icons`에 복사본 없음(`%TEMP%\v05-K-08-report.md`, `v05-K-08-R1-report.md`).
+    - V3: 상태 바 왼쪽(패널 토글·`folder_add`·`file_tree`), 탭 바(화살표·`+`·분할·확대), 미리보기 탭 아이콘이 Zed와 같은 모양(`specs/v0.5/verify/ORDER-05/` tauri-1~3, zed-1·2, zoom-*, `tauri-icons.json`). 판정은 checker C-19(`specs/v0.5/verify/ORDER-05/ORDER-05-judgement.md`).
+    - 문서: V0(실행 없음).
+  - 특이사항:
+    - 조건 차이: 사용자 Zed 아이콘 테마가 Catppuccin Latte라(설정은 읽기만 함) 파일 트리 폴더·파일 아이콘은 화면 비교가 안 되고 코드 출처(Zed 기본 테마 `file_icons.rs` 폴더 = `folder.svg`/`folder_open.svg`)로 판정한다. Zed는 Restricted Mode로 열었다(신뢰 목록에 더하지 않음).
+    - 빌드 경고: Vite 500 kB 초과 chunk, `web-tree-sitter` direct eval 2건(복사본 있음·없음 같음, 범위 밖).
+    - 사용자 확인 필요: 없음(시각 품질은 Phase 12 V4에서 함께 본다).
+
 ## 사용자 요청 작업
 
 없음.

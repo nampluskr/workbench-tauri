@@ -1,15 +1,22 @@
-// D-20: Lucide SVGs from gpui-kit-assets 0.8.1 (src/assets/icons, ISC, LICENSE-LUCIDE there).
-// File names are gpui's IconName in kebab case (FolderOpen -> folder-open.svg).
-const svgs = import.meta.glob<string>("../assets/icons/*.svg", { query: "?raw", import: "default", eager: true });
+// Core D-9: restore the ignored, pinned Zed copies with tools/fetch-zed-icons.ps1.
+const svgs = import.meta.glob<string>("../assets/zed-icons/*.svg", { query: "?raw", import: "default", eager: true });
+// Generic file icons stay until Phase 7 file icon themes.
+const legacy = import.meta.glob<string>("../assets/icons/*.svg", { query: "?raw", import: "default", eager: true });
 
 import { tooltip, type Tip } from "./tooltip.ts";
+import { themedSvg } from "./icon-svg.ts";
 
 export type IconName =
-  | "folder" | "folder-open" | "panel-left" | "panel-right" | "plus" | "maximize" | "arrow-left" | "arrow-right" | "menu" | "file" | "folder-closed" | "close" | "pin" | "minimize" | "eye" | "file-doc";
+  | "folder" | "folder_open" | "folder_add" | "file_tree" | "threads_sidebar_left_open" | "threads_sidebar_left_closed"
+  | "split" | "plus" | "maximize" | "arrow_left" | "arrow_right" | "menu" | "close" | "pin" | "minimize" | "eye" | "file_doc"
+  | "file";
 
-/** Inline SVG so `stroke="currentColor"` follows the theme text color; size comes from the container CSS. */
+/** Missing Zed copies leave an empty slot with the existing spec dimensions. */
 export default function Icon(props: { name: IconName }) {
-  return <span class="icon" aria-hidden="true" innerHTML={svgs[`../assets/icons/${props.name}.svg`]} />;
+  const svg = () => props.name === "file"
+    ? legacy["../assets/icons/file.svg"]
+    : svgs[`../assets/zed-icons/${props.name}.svg`];
+  return <span class="icon" aria-hidden="true" innerHTML={themedSvg(svg())} />;
 }
 
 /**

@@ -21,7 +21,7 @@
 | core D-11 ITEMS가 SPEC 역할 | `SPEC.md`(I-n을 R-n으로 옮기고 판정 방법은 그대로) |
 | core D-12 core ITEMS가 갈래 지침보다 우선 | 루트 `AGENTS.md` 레포 규칙·3장·5장, 루트 `INTENT.md` "다루지 않는 것", `SPEC.md` R-2·R-22, `PLAN.md` Phase 8 |
 
-갈래가 정해 갈래 문서에 남기라고 한 것 중 core D-8·D-9의 복사본 폴더 경로, 복사본이 없을 때의 모습, 다시 채우는 방법, 복사 출처 커밋은 미정이다. 해당 Phase(5·7)에서 정해 이 문서에 더한다. core D-10의 굵기·스타일 파일과 버전은 아래 D-1에 있다.
+갈래가 정해 갈래 문서에 남기라고 한 것 중 core D-9의 것은 아래 D-2에 있다. core D-8의 복사본 폴더 경로, 복사본이 없을 때의 모습, 다시 채우는 방법, 복사 출처는 미정이다. Phase 7에서 정해 이 문서에 더한다. core D-10의 굵기·스타일 파일과 버전은 아래 D-1에 있다.
 
 ## 갈래 결정
 
@@ -51,9 +51,40 @@ Zed 기본 글꼴 두 가지의 공식 릴리스 woff2와 라이선스 파일을
 
 core D-10, `SPEC.md` R-14, tauri-coder K-03 보고(2026-11-07).
 
+### D-2. core D-9 Zed UI 아이콘 복사본의 위치와 없을 때의 모습
+
+**결정**
+
+- 출처: Zed `zed-industries/zed` 커밋 `4304dec732a75505066de5ce2dbbfb2bec369498`의 `assets/icons/` 전체(UI SVG 299개, `file_icons/` 96개, `knockouts/`, `LICENSES`)와 루트 `LICENSE-GPL`·`LICENSE-APACHE`.
+- 위치: `src/assets/zed-icons/`. `.gitignore`에 `src/assets/zed-icons/`를 더해 커밋하지 않는다. 라이선스 파일도 같은 폴더에 둔다.
+- 다시 채우기: 레포에 커밋한 `tools/fetch-zed-icons.ps1`(PowerShell 7)을 레포 루트에서 실행한 뒤 다시 빌드한다. 스크립트는 TEMP 임시 폴더에 위 커밋을 sparse checkout(`blob:none`, depth 1)으로 받아 아이콘 폴더와 두 라이선스만 덮어쓰고, 커밋·개수·라이선스를 확인하며, 끝나면 임시 폴더를 지운다.
+- 읽는 방식: SVG를 Vite eager raw glob으로 빌드 때 넣고, 그릴 때만 고정색을 `currentColor`로 바꾼다(`src/shell/icon-svg.ts`, 테스트 `src/shell/icon-svg.test.ts`). 원본 파일은 고치지 않는다. CSP·의존성은 바꾸지 않는다.
+- 없을 때의 모습: 교체한 자리는 같은 크기의 빈 칸이다. 버튼·툴팁·접근성 이름·기능은 그대로이고 앱은 죽지 않는다. 폴더 전체가 없으면 glob이 빈 객체가 되고, SVG 하나가 빠지면 그 자리만 빈 칸이다. 유지한 자리(자체 `file.svg`, Windows 창 버튼 글리프)는 그대로 보인다.
+
+**이유**
+
+두 갈래 저장소가 공개라 Zed 아이콘을 커밋하지 않는다(core D-9). 빈 칸은 대체 그림을 직접 그리지 않으면서(core D-9) 레이아웃과 기능을 지킨다. eager glob이라 복사본 여부가 빌드 때 정해지고 실행 중 읽기 오류가 없다.
+
+**출처**
+
+core D-9·D-13, `SPEC.md` R-1, tauri-coder K-08 보고(2026-11-07, 복사본 있음·없음 각각 typecheck·test 114/114·디버그 빌드 통과).
+
+### D-3. 등록 폴더 목록 아이콘을 Zed `folder.svg`로
+
+**결정**
+
+사이드바의 등록 폴더 목록(`src/shell/Sidebar.tsx`)은 자체 `folder.svg` 대신 Zed `folder.svg`(IconName `Folder`)를 쓴다. 자체 `folder.svg`는 지웠다.
+
+**이유**
+
+Zed 일반 프로젝트 label에는 아이콘이 없다(Zed `4304dec732` `crates/sidebar/src/sidebar.rs:708~711`). 아이콘을 빼면 레이아웃이 바뀌어 Phase 5 범위 밖이다(폴더 보기 패널 모양은 R-21, Phase 10). 그래서 자리는 두고 모양을 gpui 갈래(`D:\projects\workbench-gpui\src\ui\folders.rs:781`, Zed `folder`)와 같게 맞춰 두 갈래 대응 표가 같은 자리에 다른 아이콘을 고르지 않게 했다(ORDER-05 3.1).
+
+**출처**
+
+tauri-leader 결정(사용자 위임 core D-13, ORDER-05, 2026-11-07), tauri-coder K-08-R1 보고.
+
 에이전트 운영의 리더 결정(카드·보고 파일 위치, 카드 ID 체계)은 설계 결정이 아니라서 `HERDR-SETUP.md` 5장에 둔다.
 
 ## 미결 사항
 
-- core D-8·D-9 복사본의 `.gitignore` 폴더 경로, 복사본이 없을 때 앱의 모습, 다시 채우는 방법(Phase 5·7).
-- core D-9 복사 출처 Zed 커밋(Phase 5).
+- core D-8 복사본의 `.gitignore` 폴더 경로, 복사본이 없을 때 앱의 모습, 다시 채우는 방법, 복사 출처(Phase 7).

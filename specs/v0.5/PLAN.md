@@ -206,7 +206,7 @@ R-1~R-23은 모두 위 표의 한 Phase에 대응한다.
 | Phase 2 — 창 | R-6 | done | - | 없음 |
 | Phase 3 — 편집 영역과 글꼴 | R-7 · R-8 · R-9 · R-13 · R-14 | done | - | 없음 |
 | Phase 4 — 글자 표시 | R-20 | done | - | R-11·R-12 자리는 Phase 9, 네이티브 대화 상자는 Phase 12 V4 |
-| Phase 5 — 아이콘 모양 | R-1 · R-18 | todo | - | 없음 |
+| Phase 5 — 아이콘 모양 | R-1 · R-18 | done | - | 파일 트리 일반 파일 아이콘은 Phase 7, Windows 창 버튼은 Zed와 같은 Segoe 글리프 유지 |
 | Phase 6 — 타이틀 바 메뉴 | R-2 · R-17 | todo | - | 없음 |
 | Phase 7 — 테마·아이콘 테마 | R-3 · R-4 | todo | - | 없음 |
 | Phase 8 — 상태 바 | R-5 · R-19 · R-22 | todo | - | 없음 |

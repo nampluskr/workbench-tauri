@@ -8,7 +8,7 @@ import { resizeHandle } from "./shell/dock.ts";
 import { dockOpen, sidebarOpen, toggleDock, togglePanelFocus, toggleSidebar } from "./shell/panels.ts";
 import { addFolder } from "./workspace/store.ts";
 
-// Icon choice per element follows workbench-gpui v0.3 src/ui/layout.rs (D-20).
+// Core D-9 / I-18: icon names follow the pinned Zed sources (K-08 report).
 export default function App() {
   return (
     <>
@@ -21,7 +21,7 @@ export default function App() {
           <div class="group grow">
             {/* L-232: two rows, Toggle Sidebar and Focus Sidebar, each with its key. */}
             <IconButton
-              name="panel-left"
+              name="threads_sidebar_left_open"
               label="Toggle Sidebar"
               onClick={toggleSidebar}
               tips={[
@@ -31,7 +31,7 @@ export default function App() {
             />
           </div>
           <div class="group">
-            <IconButton name="folder" label="Add Project" action="workspace::Open" onClick={() => void addFolder()} />
+            <IconButton name="folder_add" label="Add Project" action="workspace::Open" onClick={() => void addFolder()} />
           </div>
         </div>
       </aside>
@@ -50,19 +50,19 @@ export default function App() {
           <div class="group grow">
             <Show when={!sidebarOpen()}>
               <IconButton
-                name="panel-left"
+                name="threads_sidebar_left_closed"
                 label="Open Folder Sidebar"
                 action="multi_workspace::ToggleWorkspaceSidebar"
                 onClick={toggleSidebar}
               />
-              <IconButton name="folder" label="Add Project" action="workspace::Open" onClick={() => void addFolder()} />
+              <IconButton name="folder_add" label="Add Project" action="workspace::Open" onClick={() => void addFolder()} />
             </Show>
             {/* L-253 / L-254: open and active it closes the Dock, otherwise it opens the panel. */}
             <Show
               when={dockOpen()}
-              fallback={<IconButton name="folder-open" label="Project Panel" action="project_panel::ToggleFocus" onClick={togglePanelFocus} />}
+              fallback={<IconButton name="file_tree" label="Project Panel" action="project_panel::ToggleFocus" onClick={togglePanelFocus} />}
             >
-              <IconButton name="folder-open" label="Close Left Dock" action="workspace::ToggleLeftDock" onClick={toggleDock} />
+              <IconButton name="file_tree" label="Close Left Dock" action="workspace::ToggleLeftDock" onClick={toggleDock} />
             </Show>
           </div>
         </footer>

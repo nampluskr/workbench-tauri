@@ -32,6 +32,57 @@ UI의 모든 아이콘이 D-9로 복사한 Zed 원본 SVG에서 나온다(코드
 
 I-1, core D-9, 사용자 2026-11-06.
 
+**아이콘 출처와 복사본**
+
+- 출처: Zed `zed-industries/zed` 커밋 `4304dec732a75505066de5ce2dbbfb2bec369498`의 `assets/icons/`(UI SVG 299개, `file_icons/` 96개, `knockouts/`, `LICENSES`)와 저장소 루트 `LICENSE-GPL`·`LICENSE-APACHE`. 이 PC의 Zed 설치 폴더에서는 읽지 않았다.
+- 두는 곳: `src/assets/zed-icons/`. `.gitignore`에 걸려 있어 커밋하지 않는다. 라이선스 파일(`LICENSES`, `LICENSE-GPL`, `LICENSE-APACHE`)도 같은 폴더에 둔다.
+- 다시 채우는 방법: 레포 루트에서 PowerShell 7로 `./tools/fetch-zed-icons.ps1`을 실행한 뒤 다시 빌드한다(dev는 재시작). SVG는 빌드 때 eager glob으로 들어가므로 빌드 뒤에 채우면 반영되지 않는다. 스크립트는 위 커밋을 sparse checkout으로 받아 아이콘 폴더와 두 라이선스만 복사하고, 커밋·개수(299/96)·라이선스 존재를 스스로 확인한다. 내려받기는 core-leader 허락(core D-13).
+- 그리는 방식: 원본 SVG의 고정색(`black`, `#DCE0E5` 등)을 그릴 때만 `currentColor`로 바꿔 테마 색을 따른다. 원본 파일은 고치지 않는다. 크기는 기존 `.icon` 크기를 그대로 쓴다.
+- 복사본이 없을 때: 교체한 자리는 같은 크기의 빈 칸이다. 버튼·툴팁·접근성 이름·기능은 그대로이고 앱은 죽지 않는다. 유지한 자리(아래)는 그대로 보인다. 폴더 전체가 없어도, SVG 한 개만 빠져도 같다(`DECISIONS.md` D-2).
+
+**대응 표**
+
+Zed `IconName`은 `crates/icons/src/icons.rs:9`의 snake_case와 `:314~316`의 경로 규칙으로 `assets/icons/<snake_case>.svg`에 대응한다. Zed 근거는 모두 위 커밋 기준이다. 앱 자리의 줄은 ORDER-05 변경 뒤 기준이다.
+
+| 앱 자리 | Zed IconName | SVG | Zed 근거(파일:줄) |
+|---|---|---|---|
+| 타이틀 바 앱 메뉴 (`src/shell/AppMenu.tsx:218`) | Menu | `menu.svg` | `crates/title_bar/src/application_menu.rs:192~197` |
+| 등록 폴더 사이드바 아래 토글 (`src/App.tsx:24`) | ThreadsSidebarLeftOpen | `threads_sidebar_left_open.svg` | `crates/sidebar/src/sidebar.rs:7475~7495` |
+| 사이드바 닫힌 상태의 상태 바 토글 (`src/App.tsx:53`) | ThreadsSidebarLeftClosed | `threads_sidebar_left_closed.svg` | `crates/workspace/src/status_bar.rs:232~263` |
+| 사이드바 아래 Add Project (`src/App.tsx:34`) | FolderAdd | `folder_add.svg` | `crates/sidebar/src/sidebar.rs:6772~6775` |
+| 상태 바 Add Project (`src/App.tsx:58`) | FolderAdd | `folder_add.svg` | 같은 Add Project 기능, 위 근거 |
+| 상태 바 Project Panel / Close Left Dock (`src/App.tsx:63,65`) | FileTree | `file_tree.svg` | `crates/project_panel/src/project_panel.rs:8278~8285`, `crates/workspace/src/dock.rs:1411~1415` |
+| 탭 바 뒤로 (`src/shell/Pane.tsx:380`) | ArrowLeft | `arrow_left.svg` | `crates/workspace/src/pane.rs:3508~3527` |
+| 탭 바 앞으로 (`src/shell/Pane.tsx:383`) | ArrowRight | `arrow_right.svg` | `crates/workspace/src/pane.rs:3531~3535` |
+| 탭 닫기 (`src/shell/Pane.tsx:287`) | Close | `close.svg` | `crates/workspace/src/pane.rs:3053~3058` |
+| 고정 탭 해제 (`src/shell/Pane.tsx:274`) | Pin | `pin.svg` | `crates/workspace/src/pane.rs:3037~3044` |
+| 미리보기 탭 아이콘 (`src/shell/Pane.tsx:255`) | FileDoc | `file_doc.svg` | `crates/markdown_preview/src/markdown_preview_view.rs:1663~1664` |
+| 탭 바 New… (`src/shell/Pane.tsx:392`) | Plus | `plus.svg` | `crates/workspace/src/pane.rs:4364~4367` |
+| 탭 바 Split Pane (`src/shell/Pane.tsx:345`) | Split | `split.svg` | `crates/workspace/src/pane.rs:4388~4393` |
+| Pane 확대 (`src/shell/Pane.tsx:361`) | Maximize | `maximize.svg` | `crates/workspace/src/pane.rs:4416~4418` |
+| Pane 확대 해제 (`src/shell/Pane.tsx:361`) | Minimize | `minimize.svg` | `crates/workspace/src/pane.rs:4419~4420` |
+| Markdown 미리보기 버튼 (`src/shell/Pane.tsx:412`) | Eye | `eye.svg` | `crates/zed/src/zed/quick_action_bar/preview.rs:40~44,64~66` |
+| 파일 트리 닫힌 폴더 (`src/shell/ProjectTree.tsx:158`) | Folder | `folder.svg` | `crates/project_panel/src/project_panel.rs:7111~7113` → `crates/file_icons/src/file_icons.rs:254~259` |
+| 파일 트리 열린 폴더 (`src/shell/ProjectTree.tsx:158`) | FolderOpen | `folder_open.svg` | `crates/file_icons/src/file_icons.rs:261~268` |
+| 등록 폴더 목록 (`src/shell/Sidebar.tsx:77`) | Folder | `folder.svg` | 리더 결정(`DECISIONS.md` D-3). gpui `src/ui/folders.rs:781`과 같다 |
+
+- 파일 트리 폴더 두 가지는 Zed 기본 아이콘 테마(`file_icons/folder.svg`·`folder_open.svg`)와 UI SVG가 바이트 단위로 같아(SHA256 `49FFC6E8…845B`, `4E15D512…DBC9`) UI SVG를 쓴다.
+- 등록 폴더 목록: Zed 일반 프로젝트 label에는 아이콘이 없다(`crates/sidebar/src/sidebar.rs:708~711`). 아이콘을 빼면 레이아웃이 바뀌어 이번 범위 밖이므로 gpui 갈래와 같은 Zed `folder.svg`로 맞췄다.
+
+**유지한 자리(Zed SVG가 아님)**
+
+| 앱 자리 | 지금 쓰는 것 | 이유 |
+|---|---|---|
+| 파일 트리 일반 파일 (`src/shell/ProjectTree.tsx:158`) | 자체 `src/assets/icons/file.svg`(라이선스 `LICENSE-LUCIDE` 유지) | Zed는 확장자·파일명별 아이콘 테마로 고른다(`crates/project_panel/src/project_panel.rs:7102~7105` → `crates/file_icons/src/file_icons.rs:28~94`). 하나로 대응할 SVG가 없어 Phase 7(R-3 아이콘 테마 "Zed 기본")에서 바꾼다. `file_icons/` 96개는 이번에 복사만 했다. |
+| Windows 창 최소화·최대화·복원·닫기 (`src/shell/TitleBar.tsx:11~15`) | Segoe Fluent 글리프 | Zed도 Windows에서 SVG가 아닌 Segoe Fluent 글리프 e921/e922/e923/e8bb를 쓴다(`crates/platform_title_bar/src/platforms/platform_windows.rs:15~30,78~83`). |
+
+**확인 결과**
+
+- 코드 출처(V1, tauri-coder K-08·K-08-R1): 복사본 있음·없음 각각 `npm.cmd run typecheck` 통과, `npm.cmd run test` 114/114, `npm.cmd run tauri build -- --debug --no-bundle` 통과. `git status`·`git ls-files src/assets/zed-icons`에 복사본이 없다.
+- 화면(V3, tauri-leader 2026-11-07, 클라이언트 1440×852·100%): 상태 바 왼쪽(패널 토글·`folder_add`·`file_tree`), 탭 바(화살표·`+`·분할·확대), 미리보기 탭 아이콘이 Zed와 같은 모양이다(`specs/v0.5/verify/ORDER-05/` tauri-1~3, zed-1·2, zoom-*).
+- 조건 차이: 사용자 Zed의 아이콘 테마가 Catppuccin Latte라(설정은 읽기만 하고 바꾸지 않았다) 파일 트리 폴더·파일 아이콘은 화면으로 비교할 수 없어 위 코드 출처(Zed 기본 테마 `file_icons.rs`)로 판정한다. Zed는 Restricted Mode로 열었다(신뢰 목록에 더하지 않았다).
+- 판정: checker C-19, `specs/v0.5/verify/ORDER-05/ORDER-05-judgement.md`.
+
 ---
 
 ## R-2. 타이틀 바 오른쪽 최소화 버튼 앞에 "v" 메뉴를 둔다
@@ -416,6 +467,15 @@ I-17, 사용자 2026-11-06("Help 제안대로").
 **출처**
 
 I-18, core D-9, 사용자 2026-11-06.
+
+**결과**
+
+- 아이콘 출처·복사본·복사본이 없을 때의 모습은 R-1 "아이콘 출처와 복사본"과 같다.
+- 왼쪽 dock 여닫기(상태 바 Project Panel / Close Left Dock, `src/App.tsx:63,65`): Zed `FileTree` → `file_tree.svg`(트리 모양). 근거 `crates/project_panel/src/project_panel.rs:8278~8285`, `crates/workspace/src/dock.rs:1411~1415`.
+- Add Project(상태 바 `src/App.tsx:58`, 사이드바 아래 `src/App.tsx:34`): Zed `FolderAdd` → `folder_add.svg`("+"가 붙은 폴더). 근거 `crates/sidebar/src/sidebar.rs:6772~6775`.
+- 사이드바 토글(`src/App.tsx:24,53`): Zed `ThreadsSidebarLeftOpen`·`ThreadsSidebarLeftClosed`(R-1 대응 표).
+- 화면(V3, tauri-leader 2026-11-07, 1440×852·100%): 상태 바 왼쪽 세 버튼이 Zed와 같은 모양이다(`specs/v0.5/verify/ORDER-05/zoom-open-statusbar.png`, `zoom-closed-statusbar.png`, zed-1·2). 판정은 checker C-19(`specs/v0.5/verify/ORDER-05/ORDER-05-judgement.md`).
+- 버튼 종류·순서(R-22)와 켜짐 표시(R-19)는 Phase 8이다.
 
 ---
 

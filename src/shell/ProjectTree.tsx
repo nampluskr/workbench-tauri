@@ -155,7 +155,7 @@ export default function ProjectTree(props: { ctx: FolderContext }) {
                 <div class="tree-item">
                   <For each={row.guides}>{() => <span class="tree-indent" />}</For>
                   <div class="tree-main">
-                    <Icon name={row.isDir ? (row.expanded ? "folder-open" : "folder-closed") : "file"} />
+                    <Icon name={row.isDir ? (row.expanded ? "folder_open" : "folder") : "file"} />
                     <Show
                       when={editing(row)}
                       fallback={

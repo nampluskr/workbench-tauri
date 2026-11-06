@@ -252,7 +252,7 @@ function TabList(props: { ctx: FolderContext; pane: PaneState }) {
               {/* L-69 / I-080: a preview tab always has the FileDoc icon and "Preview {file name}", cut at 24 characters. */}
               <Show when={tab.markdown}>
                 <span class="tab-icon">
-                  <Icon name="file-doc" />
+                  <Icon name="file_doc" />
                 </span>
               </Show>
               <span class="tab-title" classList={{ deleted: status().deleted }}>
@@ -342,7 +342,7 @@ function SplitButton(props: { ctx: FolderContext; pane: PaneState }) {
       onClick={(e) => open(e.currentTarget)}
       ref={(el) => tooltip(el, () => (menuOpen() ? null : { title: "Split Pane" }))} // L-244: text only, none while the menu is open
     >
-      <Icon name="panel-right" />
+      <Icon name="split" />
     </button>
   );
 }
@@ -377,10 +377,10 @@ function PaneView(props: { ctx: FolderContext | null; pane: PaneState | null }) 
       <div class="tab-bar">
         <div class="tab-bar-edge start">
           <button class="icon-button" aria-label="Go Back" disabled ref={(el) => tooltip(el, () => ({ title: "Go Back" }))}>
-            <Icon name="arrow-left" />
+            <Icon name="arrow_left" />
           </button>
           <button class="icon-button" aria-label="Go Forward" disabled ref={(el) => tooltip(el, () => ({ title: "Go Forward" }))}>
-            <Icon name="arrow-right" />
+            <Icon name="arrow_right" />
           </button>
         </div>
         <Show when={props.ctx && props.pane}>

@@ -1,0 +1,431 @@
+{
+  "pid": 2628,
+  "states": {
+    "start": [
+      {
+        "label": null,
+        "x": 8,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -1911196890,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": null,
+        "x": 8,
+        "y": 72.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -1911196890,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Toggle Sidebar",
+        "x": 8,
+        "y": 830,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": 1597462098,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Add Project",
+        "x": 277,
+        "y": 830,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -92482863,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Open Application Menu",
+        "x": 312,
+        "y": 9,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": 2001775906,
+        "svgHead": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"none\"><path"
+      },
+      {
+        "label": null,
+        "x": 307,
+        "y": 38,
+        "w": 16,
+        "h": 16,
+        "empty": false,
+        "svgHash": -451804607,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": null,
+        "x": 327,
+        "y": 64,
+        "w": 16,
+        "h": 16,
+        "empty": false,
+        "svgHash": -1911196890,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Go Back",
+        "x": 550,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -1615934353,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Go Forward",
+        "x": 576,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": 825950138,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Close Left Dock",
+        "x": 304,
+        "y": 830,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -1817331885,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      }
+    ],
+    "open": [
+      {
+        "label": null,
+        "x": 8,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -1911196890,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": null,
+        "x": 8,
+        "y": 72.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -1911196890,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Toggle Sidebar",
+        "x": 8,
+        "y": 830,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": 1597462098,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Add Project",
+        "x": 277,
+        "y": 830,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -92482863,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Open Application Menu",
+        "x": 312,
+        "y": 9,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": 2001775906,
+        "svgHead": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"none\"><path"
+      },
+      {
+        "label": null,
+        "x": 307,
+        "y": 38,
+        "w": 16,
+        "h": 16,
+        "empty": false,
+        "svgHash": -451804607,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": null,
+        "x": 327,
+        "y": 64,
+        "w": 16,
+        "h": 16,
+        "empty": false,
+        "svgHash": -451804607,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": null,
+        "x": 347,
+        "y": 90,
+        "w": 16,
+        "h": 16,
+        "empty": false,
+        "svgHash": 784615270,
+        "svgHead": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 2"
+      },
+      {
+        "label": "Go Back",
+        "x": 550,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -1615934353,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Go Forward",
+        "x": 576,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": 825950138,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Close Tab",
+        "x": 685.375,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": 365636371,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": null,
+        "x": 725.375,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -1217359867,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Close Tab",
+        "x": 859.78125,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": 365636371,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "New…",
+        "x": 1364,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -911811951,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Split Pane",
+        "x": 1390,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -524932524,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Zoom In",
+        "x": 1416,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": 1651103387,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Close Left Dock",
+        "x": 304,
+        "y": 830,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -1817331885,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      }
+    ],
+    "sidebarClosed": [
+      {
+        "label": "Open Application Menu",
+        "x": 12,
+        "y": 9,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": 2001775906,
+        "svgHead": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"none\"><path"
+      },
+      {
+        "label": null,
+        "x": 7,
+        "y": 38,
+        "w": 16,
+        "h": 16,
+        "empty": false,
+        "svgHash": -451804607,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": null,
+        "x": 27,
+        "y": 64,
+        "w": 16,
+        "h": 16,
+        "empty": false,
+        "svgHash": -451804607,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": null,
+        "x": 47,
+        "y": 90,
+        "w": 16,
+        "h": 16,
+        "empty": false,
+        "svgHash": 784615270,
+        "svgHead": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 2"
+      },
+      {
+        "label": "Go Back",
+        "x": 250,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -1615934353,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Go Forward",
+        "x": 276,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": 825950138,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Close Tab",
+        "x": 385.375,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": 365636371,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": null,
+        "x": 425.375,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -1217359867,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Close Tab",
+        "x": 559.78125,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": 365636371,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "New…",
+        "x": 1364,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -911811951,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Split Pane",
+        "x": 1390,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -524932524,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Zoom In",
+        "x": 1416,
+        "y": 41.5,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": 1651103387,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Open Folder Sidebar",
+        "x": 4,
+        "y": 830,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -1889378695,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Add Project",
+        "x": 30,
+        "y": 830,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -92482863,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      },
+      {
+        "label": "Close Left Dock",
+        "x": 56,
+        "y": 830,
+        "w": 14,
+        "h": 14,
+        "empty": false,
+        "svgHash": -1817331885,
+        "svgHead": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3"
+      }
+    ]
+  }
+}
