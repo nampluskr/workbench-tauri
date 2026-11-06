@@ -15,7 +15,8 @@ type Point = { x: number; y: number };
 type Keys = (string[] | undefined)[];
 
 const [open, setOpen] = createSignal<number | null>(null); // title bar menu: index in MENUS
-const [context, setContext] = createSignal<{ at: Point; list: MenuEntry[]; keys: Keys } | null>(null); // right-click menu
+// right-click menu; `right`: `at` is the popup's top-right corner (I-706 split button), else its top-left
+const [context, setContext] = createSignal<{ at: Point; list: MenuEntry[]; keys: Keys; right: boolean } | null>(null);
 const [selected, setSelected] = createSignal<number | null>(null); // index in the shown entries
 const [shortcuts, setShortcuts] = createSignal<Keys[]>([]); // title bar menu: per menu, per entry
 let restore: HTMLElement | null = null; // focus before the menu opened (I-309)
@@ -24,7 +25,7 @@ let restore: HTMLElement | null = null; // focus before the menu opened (I-309)
 let pointer: Point = { x: -1, y: -1 };
 let pointerAtOpen = pointer;
 
-const isOpen = () => open() !== null || context() !== null;
+export const isOpen = () => open() !== null || context() !== null;
 const entries = (): MenuEntry[] => context()?.list ?? (open() === null ? [] : MENUS[open()!].entries);
 
 /** Lookup of the shortcut of an entry in the context focused just before the menu opened (I-307). */
@@ -51,11 +52,11 @@ function openMenu(index: number): void {
 }
 
 /** R-15, R-14 and later the project panel: a right-click menu at `at`. Entries run a function or a command. */
-export function openContextMenu(at: Point, list: MenuEntry[]): void {
+export function openContextMenu(at: Point, list: MenuEntry[], right = false): void {
   if (!isOpen()) remember();
   batch(() => {
     setOpen(null);
-    setContext({ at, list, keys: keysOf(list) });
+    setContext({ at, list, keys: keysOf(list), right });
     setSelected(null);
   });
 }
@@ -165,10 +166,10 @@ export default function AppMenu() {
   document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
 
   /** Measure the popup at the origin, then put it where `anchor` says and keep it in the window (I-314, I-501). */
-  const place = (el: HTMLElement, anchor: Point) => {
+  const place = (el: HTMLElement, anchor: Point, right = false) => {
     sheet.replaceSync(".menu { left: 0px; top: 0px; }");
     const { width, height } = el.getBoundingClientRect();
-    const at = placeMenu(anchor, { w: width, h: height }, { w: innerWidth, h: innerHeight });
+    const at = placeMenu(right ? { x: anchor.x - width, y: anchor.y } : anchor, { w: width, h: height }, { w: innerWidth, h: innerHeight });
     sheet.replaceSync(`.menu { left: ${at.x}px; top: ${at.y}px; }`);
     el.focus({ preventScroll: true }); // so the menu keys work
   };
@@ -194,7 +195,7 @@ export default function AppMenu() {
   });
   createEffect(() => {
     const c = context();
-    if (c && contextPopup) place(contextPopup, c.at);
+    if (c && contextPopup) place(contextPopup, c.at, c.right);
   });
 
   return (

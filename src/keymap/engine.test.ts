@@ -84,3 +84,14 @@ test("R-5: every browser accelerator key to block normalizes into BROWSER_KEYS",
   ];
   for (const [e] of keys) assert.ok(BROWSER_KEYS.has(strokeOf(e)!), `${e.key} ${e.code}`);
 });
+
+test("v0.2 D-3: `key == value` matches a node holding key=value; it combines with names and is shown in its own context", () => {
+  const keymap = new Keymap();
+  keymap.add("default", [{ keys: "ctrl-shift-v", action: "markdown::OpenPreview", context: "Editor && extension == md" }]);
+  const editor = (ext: string) => [new Set(["Workspace"]), new Set(["Editor", `extension=${ext}`])];
+  assert.deepEqual(keymap.dispatch(["ctrl-shift-v"], editor("md")), { type: "match", action: "markdown::OpenPreview" });
+  assert.deepEqual(keymap.dispatch(["ctrl-shift-v"], editor("txt")), { type: "none" });
+  assert.deepEqual(keymap.dispatch(["ctrl-shift-v"], [new Set(["extension=md"])]), { type: "none" }); // Editor is needed too
+  assert.equal(keymap.keyForAnywhere("markdown::OpenPreview", [new Set(["Workspace"])]), "ctrl-shift-v");
+  assert.throws(() => keymap.add("default", [{ keys: "a", action: "x", context: "extension ==" }]));
+});

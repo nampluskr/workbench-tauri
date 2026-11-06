@@ -3,7 +3,7 @@ import TitleBar from "./shell/TitleBar.tsx";
 import { IconButton } from "./shell/Icon.tsx";
 import FolderList from "./shell/Sidebar.tsx";
 import ProjectPanel from "./shell/ProjectPanel.tsx";
-import { PaneBody, TabList } from "./shell/Pane.tsx";
+import { PaneArea } from "./shell/Pane.tsx";
 import { resizeHandle } from "./shell/dock.ts";
 import { dockOpen, sidebarOpen, toggleDock, togglePanelFocus, toggleSidebar } from "./shell/panels.ts";
 import { addFolder } from "./workspace/store.ts";
@@ -42,22 +42,8 @@ export default function App() {
             <div class="dock-resize-handle" ref={resizeHandle} />
             <ProjectPanel />
           </aside>
-          {/* L-15: one Pane = tab bar + active item. The tabs are the active folder's (R-26). tabindex: focus lands here (A-17). */}
-          <section class="pane" tabindex="-1" data-keymap-context="Pane">
-            <div class="tab-bar">
-              <div class="tab-bar-edge start">
-                <IconButton name="arrow-left" label="Go Back" />
-                <IconButton name="arrow-right" label="Go Forward" />
-              </div>
-              <TabList />
-              <div class="tab-bar-edge end">
-                <IconButton name="plus" label="New…" />
-                <IconButton name="panel-right" label="Split Pane" />
-                <IconButton name="maximize" label="Zoom In" />
-              </div>
-            </div>
-            <PaneBody />
-          </section>
+          {/* L-15 / D-8: the active folder's split tree of Panes (R-26, R-9). */}
+          <PaneArea />
         </div>
         {/* A-11.8 / A-11.9: with the sidebar closed its toggle and Add Project come to the left of the status bar. */}
         <footer class="status-bar">

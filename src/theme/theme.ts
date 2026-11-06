@@ -51,13 +51,22 @@ export const TARGET_TOKENS = [
   "error", // status.error (P-020, P-021): inline name input with an error
   "warning", // status.warning (P-020, P-021): inline name input with a warning; tab conflict dot (L-65)
   "text.accent", // Color::Accent (L-65, I-071): modified tab dot
+  "pane_group.border", // I-725: split line
+  "drop_target.background", // T-40.7 / I-714 / I-715: tab drag targets
+  "drop_target.border", // T-26.13 / I-715: the tab drop line
+  "toolbar.background", // E-038 / E-121: the editor toolbar (Markdown tabs)
 ] as const;
 export type Token = (typeof TARGET_TOKENS)[number];
 
 // T-26 rules that touch the target tokens: value taken from another token when the JSON has none.
-// T-26.3. (`theme.fallback.*` colors only feed non-target tokens.)
+// T-26.3, T-26.4.
 const FALLBACK_FROM: Partial<Record<Token, Token>> = {
   "scrollbar.thumb.active_background": "scrollbar.thumb.background",
+  "pane_group.border": "border", // T-26.4
+};
+// T-26 values for target tokens no theme has: theme.fallback.* in spec/zed-metrics.toml.
+const FALLBACK_VALUE: Partial<Record<Token, string>> = {
+  "drop_target.border": "#d7dadf", // theme.fallback."drop_target.border" (T-26.13)
 };
 
 /** "players[0].selection" -> "--players-0-selection" (PROGRESS W-7 naming rule). */
@@ -88,7 +97,7 @@ export function resolveTokens(style: ThemeStyle): Record<Token, string> {
   const out = {} as Record<Token, string>;
   for (const token of TARGET_TOKENS) {
     const from = FALLBACK_FROM[token];
-    const value = rawValue(style, token) ?? (from && rawValue(style, from));
+    const value = rawValue(style, token) ?? (from && rawValue(style, from)) ?? FALLBACK_VALUE[token];
     if (value === undefined) throw new Error(`theme has no value for ${token}`);
     out[token] = formatColor(parseColor(value));
   }

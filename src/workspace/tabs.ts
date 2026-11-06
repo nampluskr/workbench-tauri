@@ -1,6 +1,28 @@
-// Tab list rules of one folder's Pane (R-26, I-061~I-064, I-087). No DOM, no editor: the view lives beside the tab.
+// Tab list rules of one folder's Pane (R-26, R-8, I-060~I-068, I-087). No DOM, no editor: the view lives beside the tab.
+// Pinned tabs are the leading run of the list (I-065, I-719): pinning is a place in the Pane, not a file property.
 
-export type TabInfo = { path: string; preview: boolean };
+/** `markdown`: a Markdown preview tab of `path` (R-11), a different item from the editor tab of the same path. */
+export type TabInfo = { path: string; preview: boolean; pinned?: boolean; markdown?: boolean };
+
+/** How many tabs the pin area holds. */
+export function pinnedCount(tabs: TabInfo[]): number {
+  let n = 0;
+  while (n < tabs.length && tabs[n].pinned) n++;
+  return n;
+}
+
+/** I-065 / I-014: pinning drops the preview state and moves the tab to the end of the pin area; unpinning moves it just after. */
+export function togglePin<T extends TabInfo>(tabs: T[], index: number, active: number | null): { tabs: T[]; active: number | null } {
+  const tab = tabs[index];
+  const rest = tabs.filter((_, i) => i !== index);
+  const at = pinnedCount(rest);
+  const next = [...rest.slice(0, at), { ...tab, pinned: !tab.pinned, preview: false }, ...rest.slice(at)];
+  return { tabs: next, active: active === null ? null : active === index ? at : next.indexOf(tabs[active]) };
+}
+
+/** I-010 / I-076: Ctrl+PageUp / PageDown move by position, wrapping at the ends. */
+export const stepTab = (count: number, active: number | null, dir: 1 | -1): number | null =>
+  count === 0 ? null : active === null ? (dir === 1 ? 0 : count - 1) : (active + dir + count) % count;
 
 export type Opened<T extends TabInfo> = { tabs: T[]; active: number; created: boolean; replaced: T | null };
 
@@ -18,8 +40,9 @@ export function openTab<T extends TabInfo>(
   maxPreview: number,
   make: () => T,
   keep: (tab: T) => boolean = () => false,
+  markdown = false,
 ): Opened<T> {
-  const at = tabs.findIndex((t) => t.path === path);
+  const at = tabs.findIndex((t) => t.path === path && !!t.markdown === markdown); // I-068 / I-079
   if (at >= 0) {
     const next = [...tabs];
     if (!preview && next[at].preview) next[at] = { ...next[at], preview: false };
@@ -36,7 +59,8 @@ export function openTab<T extends TabInfo>(
       return { tabs: next, active: at, created: true, replaced };
     }
   }
-  const index = active === null ? tabs.length : Math.min(active + 1, tabs.length);
+  // I-067: right after the active tab, never inside the pin area.
+  const index = Math.max(active === null ? tabs.length : Math.min(active + 1, tabs.length), pinnedCount(tabs));
   return { tabs: [...tabs.slice(0, index), tab, ...tabs.slice(index)], active: index, created: true, replaced: null };
 }
 

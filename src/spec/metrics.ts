@@ -67,6 +67,56 @@ const METRICS: Record<string, string> = {
   "tab.padding_x": rem(4), // L-24
   "tab.gap": rem(4), // L-24
   "tab.active_padding_bottom": rem(1), // L-63
+  "pane.split_line_thickness": rem(1), // I-725
+  "pane.split_line_mouse_hitbox": rem(4), // I-725
+  "pane.directional_drop_overlay_ratio": "0.5", // I-714
+  "pane.tab_drop_line_width": rem(2), // I-715
+  "pane.tab_bar_end_drop_min_width": rem(24), // I-716
+  "pane.zoomed_padding": rem(8), // L-17
+  "pane.zoomed_border": rem(1), // L-17
+  "toolbar.padding_y": rem(6), // E-038
+  "toolbar.padding_x": rem(8), // E-038
+  "toolbar.border_bottom": rem(1), // E-038
+  "toolbar.min_height": rem(32), // E-038
+  "toolbar.quick_actions_gap": rem(1), // E-038
+  "markdown_preview.max_width": rem(800), // L-101
+  "markdown_preview.container_padding": rem(16), // L-102
+  "markdown_preview.body.font_size": rem(16), // L-103
+  "markdown_preview.body.line_height_multiplier": "1.5", // L-103
+  "markdown_preview.paragraph_gap": rem(16), // L-103
+  "markdown_preview.list_gap": rem(12), // L-103
+  "markdown_preview.heading.font_weight": "600", // L-104
+  "markdown_preview.heading.line_height_multiplier": "1.25", // L-104
+  "markdown_preview.h1.font_size": rem(28), // L-104
+  "markdown_preview.h2.font_size": rem(22.4), // L-104
+  "markdown_preview.h3.font_size": rem(19.2), // L-104
+  "markdown_preview.h4.font_size": rem(16), // L-104
+  "markdown_preview.h5.font_size": rem(14), // L-104
+  "markdown_preview.h6.font_size": rem(13.6), // L-104
+  "markdown_preview.h1.padding_bottom": rem(8), // L-105
+  "markdown_preview.h1.border_bottom": rem(1), // L-105
+  "markdown_preview.h2.padding_bottom": rem(4), // L-105
+  "markdown_preview.h2.border_bottom": rem(1), // L-105
+  "markdown_preview.blockquote.padding_left": rem(16), // L-106
+  "markdown_preview.blockquote.border_left": rem(4), // L-106
+  "markdown_preview.table.border_outer": rem(1.5), // L-107
+  "markdown_preview.table.corner_radius": rem(4), // L-107
+  "markdown_preview.table.cell_padding_x": rem(10), // L-107
+  "markdown_preview.table.cell_padding_y": rem(4), // L-107
+  "markdown_preview.table.cell_border": rem(1), // L-107
+  "markdown_preview.table.header_font_weight": "600", // L-107
+  "markdown_preview.link.underline_width": rem(1), // L-108
+  "markdown_preview.link.underline_opacity": "0.5", // L-108
+  "markdown_preview.inline_code.font_size": rem(14), // L-109
+  "markdown_preview.inline_code.background_opacity": "0.08", // L-109
+  "markdown_preview.code_block.padding": rem(12), // L-109
+  "markdown_preview.code_block.margin_y": rem(16), // L-109
+  "markdown_preview.code_block.corner_radius": rem(6), // L-109
+  "markdown_preview.frontmatter.border": rem(1), // L-111
+  "markdown_preview.frontmatter.corner_radius": rem(4), // L-111
+  "markdown_preview.frontmatter.key_cell_font_weight": "600", // L-111
+  "markdown_preview.frontmatter.value_border_left": rem(1), // L-111
+  "markdown_preview.frontmatter.row_border_top": rem(1), // L-111
   "tab.start_slot.width": rem(12), // L-25 (modified dot)
   "tab.start_slot.height": rem(12), // L-25
   "tab.end_slot.width": rem(14), // L-25 (close button)
@@ -144,6 +194,9 @@ export const PROJECT_PANEL_NAME_TOOLTIP_DELAY_MS = 1500; // project_panel.name_t
 export const TREE_OVERSCAN_ROWS = 10; // rows drawn beyond the visible range on each side (D-9)
 export const PANE_MAX_PREVIEW_TABS = 1; // pane.max_preview_tabs (I-062)
 export const TAB_MAX_TITLE_CHARS = 24; // tab.max_title_chars (L-26)
+export const PANE_MIN_DRAG = { w: 80, h: 100 }; // pane.min_drag_width / min_drag_height (I-726)
+export const PANE_DROP_TARGET_SIZE_RATIO = 0.2; // pane.drop_target_size_ratio (I-712)
+export const MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS = 200; // markdown_preview.parse_debounce (I-082)
 
 // Editor values that script reads.
 export const EDITOR_TAB_SIZE = 4; // editor.tab_size (E-055)
@@ -170,6 +223,7 @@ export function applyMetrics(): void {
   ctx.font = `${METRICS["typography.buffer_font_size"]} ${BUFFER_FONT_FAMILY}`;
   const descent = Math.abs(ctx.measureText("0").fontBoundingBoxDescent);
   vars.push(`--editor-gutter-margin: ${descent}px;`);
+  vars.push(`--buffer-font-family: ${BUFFER_FONT_FAMILY};`); // L-103: code in the Markdown preview uses the buffer font
 
   const sheet = new CSSStyleSheet();
   sheet.replaceSync(`:root { font-size: var(--units-rem-size); ${vars.join(" ")} }`);

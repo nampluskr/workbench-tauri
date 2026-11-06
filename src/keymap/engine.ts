@@ -57,9 +57,10 @@ export function parseKeys(keys: string): string[] {
 
 // --- context predicates ------------------------------------------------------
 
-// shortcut: identifiers, `!`, `&&`, `||`, parentheses only; no `>` child or `key == value` (Zed has both). Add when a binding needs them.
+// A context node holds names ("Editor") and key-value pairs as "key=value" ("extension=md").
+// shortcut: identifiers, `key == value`, `!`, `&&`, `||`, parentheses only; no `>` child or `!=` (Zed has both). Add when a binding needs them.
 function parsePredicate(source: string): (node: ContextNode) => boolean {
-  const tokens = source.match(/&&|\|\||[!()]|[\w-]+/g) ?? [];
+  const tokens = source.match(/&&|\|\||==|[!()]|[\w-]+/g) ?? [];
   let pos = 0;
   const or = (): ((n: ContextNode) => boolean) => {
     let left = and();
@@ -75,7 +76,13 @@ function parsePredicate(source: string): (node: ContextNode) => boolean {
     const t = tokens[pos++];
     if (t === "!") { const inner = unary(); return (n) => !inner(n); }
     if (t === "(") { const inner = or(); pos++; return inner; }
-    if (!t || /^(&&|\|\||\))$/.test(t)) throw new Error(`bad context predicate: ${source}`);
+    if (!t || /^(&&|\|\||\)|==)$/.test(t)) throw new Error(`bad context predicate: ${source}`);
+    if (tokens[pos] === "==") {
+      const value = tokens[pos + 1];
+      if (!value || !/^[\w-]+$/.test(value)) throw new Error(`bad context predicate: ${source}`);
+      pos += 2;
+      return (n) => n.has(`${t}=${value}`);
+    }
     return (n) => n.has(t);
   };
   const result = or();
@@ -166,7 +173,9 @@ export class Keymap {
     let found: string | undefined;
     for (const entry of this.entries) {
       if (!sameAction(entry.action, action)) continue;
-      const names = [...(entry.context ?? "").matchAll(/(!?)\s*([\w-]+)/g)].filter((m) => !m[1]).map((m) => m[2]);
+      const names = [...(entry.context ?? "").matchAll(/(!?)\s*([\w-]+)(?:\s*==\s*([\w-]+))?/g)]
+        .filter((m) => !m[1])
+        .map((m) => (m[3] ? `${m[2]}=${m[3]}` : m[2]));
       const result = this.dispatch(entry.strokes, [...base, new Set(names)]);
       if (result.type === "match" && sameAction(result.action, action)) found = entry.strokes.join(" ");
     }

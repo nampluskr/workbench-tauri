@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { activeAfterClose, openTab, tabEdges, type TabInfo } from "./tabs.ts";
+import { activeAfterClose, openTab, pinnedCount, stepTab, tabEdges, togglePin, type TabInfo } from "./tabs.ts";
 
 const tab = (path: string, preview: boolean): TabInfo => ({ path, preview });
 const open = (tabs: TabInfo[], active: number | null, path: string, preview: boolean) => openTab(tabs, active, path, preview, 1, () => tab(path, preview));
@@ -61,4 +61,23 @@ test("I-062: a modified preview tab is not replaced; the new preview goes after 
   assert.deepEqual([names(first.tabs), first.active, first.replaced], [["a", "dirty*", "b*"], 2, null]);
   const second = openKeep(first.tabs, 2, "c");
   assert.deepEqual([names(second.tabs), second.active, second.replaced?.path], [["a", "dirty*", "c*"], 2, "b"]);
+});
+
+test("I-065 / I-067: pinning moves to the end of the pin area and ends preview; unpinning moves just after it; new tabs stay out of it", () => {
+  const pin = (path: string) => ({ path, preview: false, pinned: true });
+  const tabs = [pin("p1"), pin("p2"), tab("a", false), tab("b", true)];
+  assert.equal(pinnedCount(tabs), 2);
+  const pinned = togglePin(tabs, 3, 3);
+  assert.deepEqual([names(pinned.tabs), pinned.tabs[2].pinned, pinned.active], [["p1", "p2", "b", "a"], true, 2]);
+  const unpinned = togglePin(pinned.tabs, 0, 3);
+  assert.deepEqual([names(unpinned.tabs), unpinned.tabs[2].pinned, unpinned.active], [["p2", "b", "p1", "a"], false, 3]);
+  const opened = openTab(tabs, 0, "new", false, 1, () => tab("new", false));
+  assert.deepEqual([names(opened.tabs), opened.active], [["p1", "p2", "new", "a", "b*"], 2]); // after the active tab, past the pins
+});
+
+test("I-010: Ctrl+PageUp / PageDown go by position and wrap", () => {
+  assert.equal(stepTab(3, 2, 1), 0);
+  assert.equal(stepTab(3, 0, -1), 2);
+  assert.equal(stepTab(3, 1, 1), 2);
+  assert.equal(stepTab(0, null, 1), null);
 });

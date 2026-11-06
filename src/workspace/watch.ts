@@ -2,7 +2,7 @@ import { createEffect, createMemo, createRoot, on, untrack } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { eventDirs, goneDirs } from "./changes.ts";
-import { forget, refreshDirs, type FolderContext } from "./context.ts";
+import { allTabs, forget, refreshDirs, type FolderContext } from "./context.ts";
 import { pathKey } from "./paths.ts";
 import { activeFolder, contextOf, markMissing, missingIds } from "./store.ts";
 import { only, rowIndex } from "./tree.ts";
@@ -32,7 +32,8 @@ async function syncTree(ctx: FolderContext, dirs: string[]): Promise<void> {
 
 /** E-086, E-087 (R-7, D-7): each tab whose file changed reads it again and judges the bytes against its save base. */
 async function reloadTabs(ctx: FolderContext, keys: Set<string> | null): Promise<void> {
-  await Promise.all(ctx.tabs().filter((tab) => keys === null || keys.has(pathKey(tab.path))).map((tab) => tab.file.doc.read()));
+  const docs = new Set(allTabs(ctx).filter((tab) => keys === null || keys.has(pathKey(tab.path))).map((tab) => tab.file.doc)); // once per file (D-8)
+  await Promise.all([...docs].map((doc) => doc.read()));
 }
 
 let pending = new Set<string>();

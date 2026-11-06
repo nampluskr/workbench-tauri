@@ -4,10 +4,11 @@ import {
   drawSelection,
   highlightActiveLine,
   highlightActiveLineGutter,
+  keymap,
   lineNumbers,
   rectangularSelection,
 } from "@codemirror/view";
-import { history } from "@codemirror/commands";
+import { cursorDocEnd, cursorDocStart, history, selectDocEnd, selectDocStart } from "@codemirror/commands";
 import { BUFFER_FONT_FAMILY, EDITOR_TAB_SIZE, EDITOR_UNDO_GROUP_INTERVAL_MS } from "../spec/metrics.ts";
 
 // Metric variables come from applyMetrics() (spec/metrics.ts); color variables come
@@ -94,6 +95,11 @@ export const editorExtensions = [
   rectangularSelection({ eventFilter: (e) => e.button === 0 && e.ctrlKey && e.shiftKey }),
   EditorState.tabSize.of(EDITOR_TAB_SIZE), // E-055
   history({ newGroupDelay: EDITOR_UNDO_GROUP_INTERVAL_MS }), // E-059c; the keys are the app keymap's editor::Undo / Redo
-  EditorView.editorAttributes.of({ "data-keymap-context": "Editor" }),
+  // I-051 / I-053: the browser's own Ctrl+Home / End stops where the drawn lines end (CM6 draws only those in view). Like
+  // the other cursor keys (I-048 ~ I-055) they are the editor's, not the app keymap's.
+  keymap.of([
+    { key: "Mod-Home", run: cursorDocStart, shift: selectDocStart },
+    { key: "Mod-End", run: cursorDocEnd, shift: selectDocEnd },
+  ]),
   zedEditorTheme,
 ];

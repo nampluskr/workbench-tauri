@@ -36,8 +36,8 @@
 | --- | --- | --- |
 | CP949 저장 인코딩(D-5) | **[의존성]** `encoding_rs` =0.8.44(`src-tauri/Cargo.toml`). 03-tauri 3.1 목록 밖이다. 개정 2026-11-06: Phase 2에서 `impl-core`가 crates.io 최신 안정판으로 설치하고 이 버전으로 고정했다 | 사용자 승인 2026-11-06(INTENT 결정 7) |
 | 되돌리기·다시 실행(D-3, SPEC R-2·R-14의 `editor::Undo`·`editor::Redo`, `editor.undo.group_interval`) | **[의존성]** `@codemirror/commands` 6.11.1(`package.json`). 개정 2026-11-06: Phase 2에서 `impl`이 이 버전으로 고정해 설치했다. 함께 들어온 하위 의존성(`package-lock.json`): `@codemirror/language` 6.13.1, `@lezer/common` 1.5.5, `@lezer/highlight` 1.2.5, `@lezer/lr` 1.4.12 | 사용자 승인 2026-11-06 |
-| 마크다운 렌더(D-10) | **[의존성]** `markdown-it` 15.0.3(`package.json`, 03-tauri 3.2) | 사용자 승인 2026-11-06(INTENT 결정 8) |
-| 렌더 결과 정화(D-10) | **[의존성]** `dompurify` 3.4.17(`package.json`, 03-tauri 3.2. 라이선스 MPL-2.0 OR Apache-2.0) | 사용자 승인 2026-11-06(INTENT 결정 8) |
+| 마크다운 렌더(D-10) | **[의존성]** `markdown-it` 15.0.3(`package.json`, 03-tauri 3.2). 개정 2026-11-06: Phase 3에서 `impl`이 `--save-exact`로 설치했다. 함께 들어온 하위 의존성(`package-lock.json`): `argparse` 3.0.4, `entities` 8.1.0(`markdown-it` 아래 중첩), `linkify-it` 6.1.0, `mdurl` 2.1.0, `punycode.js` 2.3.1, `uc.micro` 3.0.0 | 사용자 승인 2026-11-06(INTENT 결정 8) |
+| 렌더 결과 정화(D-10) | **[의존성]** `dompurify` 3.4.17(`package.json`, 03-tauri 3.2. 라이선스 MPL-2.0 OR Apache-2.0). 개정 2026-11-06: Phase 3에서 `impl`이 `--save-exact`로 설치했다. 함께 들어온 선택 하위 의존성(`package-lock.json`): `@types/trusted-types` 2.0.7 | 사용자 승인 2026-11-06(INTENT 결정 8) |
 | `markdown-it` 타입 | 새 의존성 없이, 쓰는 API만 담은 작은 `.d.ts`를 레포에 둔다. `markdown-it` 15는 타입 선언을 함께 싣지 않는다. 쓰는 API가 넓어지면 `@types/markdown-it`(승인 필요)로 바꾼다는 조건을 `shortcut:` 주석으로 남긴다 | 리더 결정(사용자 위임 2026-11-06) (Q-7) |
 
 - 버전은 정확히 고정하고 lock 파일을 함께 올린다(v0.2 PLAN "의존성", 03-tauri R-31).

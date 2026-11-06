@@ -98,7 +98,23 @@ body { background: var(--background); color: var(--text); font-size: 1rem; }
 }
 
 /* L-15: Pane = tab bar + active item. */
-.pane { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.pane { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; background: var(--background); }
+/* D-8 / I-723: the split tree. Child sizes (flex-grow) come from an adopted sheet (Pane.tsx); groups are not positioned, so
+   a zoomed Pane is placed against the body (L-17). */
+.pane-area, .pane-group, .pane-group-child { flex: 1; min-width: 0; min-height: 0; display: flex; }
+.pane-group.v { flex-direction: column; }
+.pane-group-child { flex-basis: 0; }
+/* I-725: a line of split_line_thickness in pane_group.border; the grab area is split_line_mouse_hitbox, centred on it. */
+.split-handle { position: relative; flex: none; background: var(--pane-group-border); }
+.split-handle.h { width: var(--pane-split-line-thickness); cursor: col-resize; }
+.split-handle.v { height: var(--pane-split-line-thickness); cursor: row-resize; }
+.split-handle::before { content: ""; position: absolute; z-index: 1; }
+.split-handle.h::before { top: 0; bottom: 0; left: calc((var(--pane-split-line-thickness) - var(--pane-split-line-mouse-hitbox)) / 2); width: var(--pane-split-line-mouse-hitbox); }
+.split-handle.v::before { left: 0; right: 0; top: calc((var(--pane-split-line-thickness) - var(--pane-split-line-mouse-hitbox)) / 2); height: var(--pane-split-line-mouse-hitbox); }
+/* L-17 / I-730: the zoomed Pane covers the body with zoomed_padding around it and a zoomed_border line. */
+.workspace-body { position: relative; }
+.pane.zoomed { position: absolute; z-index: 2; inset: var(--pane-zoomed-padding); border: var(--pane-zoomed-border) solid var(--border); }
+.icon-button.selected { background: var(--ghost-element-selected); } /* I-730: the Zoom button while zoomed */
 /* L-61: [start area] + [tabs] + [filler] + [end area]. */
 .tab-bar {
   flex-shrink: 0;
@@ -118,10 +134,23 @@ body { background: var(--background); color: var(--text); font-size: 1rem; }
 .tab-bar-edge.start { border-right: var(--tab-end-buttons-area-border-start-right) solid var(--border); }
 .tab-bar-edge.end { border-left: var(--tab-end-buttons-area-border-end-left) solid var(--border); }
 .pane-body { flex: 1; min-height: 0; position: relative; }
-.pane-body > .cm-editor { position: absolute; inset: 0; }
-
+.pane-item, .pane-item > .cm-editor { position: absolute; inset: 0; }
+/* I-714: the body overlay, all of it for the center, the directional_drop_overlay_ratio share of one side for a split. */
+.drop-overlay { position: absolute; z-index: 1; inset: 0; background: var(--drop-target-background); pointer-events: none; }
+.drop-overlay.up { bottom: auto; height: calc(var(--pane-directional-drop-overlay-ratio) * 100%); }
+.drop-overlay.down { top: auto; height: calc(var(--pane-directional-drop-overlay-ratio) * 100%); }
+.drop-overlay.left { right: auto; width: calc(var(--pane-directional-drop-overlay-ratio) * 100%); }
+.drop-overlay.right { left: auto; width: calc(var(--pane-directional-drop-overlay-ratio) * 100%); }
+/* I-716: the rest of the tab bar takes a drop at the end; at least tab_bar_end_drop_min_width wide, tab height. */
+.tab-bar-drop { flex: 1 0 var(--pane-tab-bar-end-drop-min-width); height: var(--tab-bar-height); }
+.tab-bar-drop.drop { background: var(--drop-target-background); }
+/* I-715: the tab dropped on: background, and a tab_drop_line_width line on the side the tab goes. */
+.tab.drop-left, .tab.drop-right { background: var(--drop-target-background); }
+.tab.drop-left::after, .tab.drop-right::after { content: ""; position: absolute; top: 0; bottom: 0; width: var(--pane-tab-drop-line-width); background: var(--drop-target-border); }
+.tab.drop-left::after { left: 0; }
+.tab.drop-right::after { right: 0; }
 /* R-26 / L-63 (shortcut: tabs past the width are clipped, no scrolling or overflow menu in v0.2). The list carries the full-width line under the tabs; each tab draws its own sides (tabEdges). */
-.tab-list { position: relative; flex: 1; min-width: 0; display: flex; overflow: hidden; }
+.tab-list { position: relative; flex: 1; min-width: 0; display: flex; overflow: hidden; user-select: none; } /* no text selection while a tab is dragged (D-9) */
 .tab-list::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--tab-border-width); background: var(--border); }
 .tab {
   position: relative;
@@ -166,7 +195,7 @@ body { background: var(--background); color: var(--text); font-size: 1rem; }
   visibility: hidden;
   --icon-size: var(--icons-size-small);
 }
-.tab:hover .tab-close { visibility: visible; }
+.tab:hover .tab-close, .tab.pinned .tab-close { visibility: visible; } /* L-66: the Pin button of a pinned tab always shows */
 
 /* Icon button: Default height square (L-07) unless the area sets --button-size. */
 .icon-button {
@@ -359,3 +388,103 @@ body { background: var(--background); color: var(--text); font-size: 1rem; }
 }
 .tree-banner.warning { color: var(--warning); border-color: var(--warning); }
 .tree-banner.error { color: var(--error); border-color: var(--error); }
+
+/* E-038: the editor toolbar, here only on a Markdown editor tab, holding the quick action buttons (E-039). */
+.editor-toolbar {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: var(--toolbar-min-height);
+  padding: var(--toolbar-padding-y) var(--toolbar-padding-x);
+  border-bottom: var(--toolbar-border-bottom) solid var(--border-variant);
+  background: var(--toolbar-background);
+  --icon-size: var(--icons-size-small);
+}
+.toolbar-quick-actions { display: flex; gap: var(--toolbar-quick-actions-gap); }
+/* L-69: the preview tab's icon, Small and Muted as an item's own tab icon (L-67). */
+.tab-icon { flex: none; display: flex; color: var(--icon-muted); --icon-size: var(--icons-size-small); }
+
+/* R-11: the Markdown preview (01-LAYOUT 5, L-101~L-111). Values are the markdown_preview spec IDs. */
+.pane-item > .markdown-preview { position: absolute; inset: 0; }
+.markdown-preview {
+  box-sizing: border-box;
+  overflow: auto;
+  padding: var(--markdown-preview-container-padding); /* L-102 */
+  background: var(--editor-background); /* L-102 */
+  outline: none;
+}
+.markdown-body {
+  max-width: var(--markdown-preview-max-width); /* L-101: centred when wider */
+  margin: 0 auto;
+  color: var(--text);
+  font-size: var(--markdown-preview-body-font-size); /* L-103 */
+  line-height: var(--markdown-preview-body-line-height-multiplier);
+}
+.markdown-body > :first-child { margin-top: 0; }
+.markdown-body :is(p, ul, ol, blockquote, table, .frontmatter) { margin: 0 0 var(--markdown-preview-paragraph-gap); } /* L-103 */
+.markdown-body li + li { margin-top: var(--markdown-preview-list-gap); } /* L-103 list gap, read as the gap between items */
+.markdown-body :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0; /* L-104 top 24 / bottom 12 are estimates in the source: not applied */
+  font-weight: var(--markdown-preview-heading-font-weight);
+  line-height: var(--markdown-preview-heading-line-height-multiplier);
+  color: var(--text);
+}
+.markdown-body h1 { font-size: var(--markdown-preview-h1-font-size); padding-bottom: var(--markdown-preview-h1-padding-bottom); border-bottom: var(--markdown-preview-h1-border-bottom) solid var(--border-variant); }
+.markdown-body h2 { font-size: var(--markdown-preview-h2-font-size); padding-bottom: var(--markdown-preview-h2-padding-bottom); border-bottom: var(--markdown-preview-h2-border-bottom) solid var(--border-variant); }
+.markdown-body h3 { font-size: var(--markdown-preview-h3-font-size); }
+.markdown-body h4 { font-size: var(--markdown-preview-h4-font-size); }
+.markdown-body h5 { font-size: var(--markdown-preview-h5-font-size); }
+.markdown-body h6 { font-size: var(--markdown-preview-h6-font-size); color: var(--text-muted); }
+.markdown-body blockquote { /* L-106 */
+  margin-inline: 0;
+  padding: 0 0 0 var(--markdown-preview-blockquote-padding-left);
+  border-left: var(--markdown-preview-blockquote-border-left) solid var(--border);
+  color: var(--text-muted);
+}
+.markdown-body table { /* L-107 */
+  border-collapse: separate;
+  border-spacing: 0;
+  border: var(--markdown-preview-table-border-outer) solid var(--border);
+  border-radius: var(--markdown-preview-table-corner-radius);
+  overflow: hidden;
+}
+.markdown-body :is(th, td) { padding: var(--markdown-preview-table-cell-padding-y) var(--markdown-preview-table-cell-padding-x); text-align: left; }
+.markdown-body :is(th, td) + :is(th, td) { border-left: var(--markdown-preview-table-cell-border) solid var(--border); }
+.markdown-body tr + tr > *, .markdown-body tbody tr > * { border-top: var(--markdown-preview-table-cell-border) solid var(--border); }
+.markdown-body thead tr { background: var(--title-bar-background); }
+.markdown-body th { font-weight: var(--markdown-preview-table-header-font-weight); }
+.markdown-body tbody tr:nth-child(even) { background: var(--panel-background); } /* odd counting from 0 */
+.markdown-body .align-center { text-align: center; }
+.markdown-body .align-right { text-align: right; }
+.markdown-body a { /* L-108 */
+  color: var(--text-accent);
+  text-decoration: underline;
+  text-decoration-thickness: var(--markdown-preview-link-underline-width);
+  text-decoration-color: color-mix(in srgb, var(--text-accent) calc(var(--markdown-preview-link-underline-opacity) * 100%), transparent);
+}
+.markdown-body code { /* L-109 inline */
+  font-family: var(--buffer-font-family);
+  font-size: var(--markdown-preview-inline-code-font-size);
+  background: color-mix(in srgb, var(--editor-foreground) calc(var(--markdown-preview-inline-code-background-opacity) * 100%), transparent);
+}
+.markdown-body pre { /* L-109 block, no border */
+  margin: var(--markdown-preview-code-block-margin-y) 0;
+  padding: var(--markdown-preview-code-block-padding);
+  border-radius: var(--markdown-preview-code-block-corner-radius);
+  overflow-x: auto;
+}
+.markdown-body pre code { font-size: inherit; background: none; }
+.markdown-body .frontmatter { /* L-111 */
+  display: grid;
+  grid-template-columns: auto 1fr;
+  border: var(--markdown-preview-frontmatter-border) solid var(--border);
+  border-radius: var(--markdown-preview-frontmatter-corner-radius);
+  overflow: hidden;
+}
+.markdown-body .fm-key { background: var(--panel-background); font-weight: var(--markdown-preview-frontmatter-key-cell-font-weight); }
+.markdown-body .fm-value { border-left: var(--markdown-preview-frontmatter-value-border-left) solid var(--border); }
+.markdown-body .fm-key:nth-child(n + 3), .markdown-body .fm-value:nth-child(n + 3) { border-top: var(--markdown-preview-frontmatter-row-border-top) solid var(--border); }
+/* shortcut: images are blocked by CSP img-src (S-9); hidden rather than a broken-image box. */
+.markdown-body img { display: none; }

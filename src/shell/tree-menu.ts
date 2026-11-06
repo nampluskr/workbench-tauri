@@ -11,7 +11,7 @@ import {
   startNew,
   startRename,
 } from "../workspace/actions.ts";
-import { collapseEverything, expandAll, select, setSubtree, type FolderContext } from "../workspace/context.ts";
+import { collapseEverything, expandAll, openPreview, select, setSubtree, type FolderContext } from "../workspace/context.ts";
 import { activeId, addFolder, removeFolder } from "../workspace/store.ts";
 import { isDirPath, only, rowIndex } from "../workspace/tree.ts";
 import { openContextMenu } from "./AppMenu.tsx";
@@ -38,7 +38,7 @@ function groups(ctx: FolderContext, target: string): MenuItem[][] {
     item("Reveal in File Explorer", () => revealInExplorer(ctx), "project_panel::RevealInFileManager"),
     item("Open in Default App", () => openInDefaultApp(ctx), "project_panel::OpenWithSystem"),
   ];
-  if (!isDir && isMarkdown(target)) open.push(item("Open Markdown Preview", () => {}, undefined, true)); // D-15: shown, not available
+  if (!isDir && isMarkdown(target)) open.push(item("Open Markdown Preview", () => openPreview(ctx, ctx.pane(), target, false))); // D-10
 
   const fold: MenuItem[] = [];
   if (isDir && folded) fold.push(item("Unfold Directory", () => {

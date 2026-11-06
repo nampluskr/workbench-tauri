@@ -17,6 +17,7 @@
     "core:path:allow-resolve-directory",
     "dialog:allow-open",
     "opener:allow-reveal-item-in-dir",
+    { "identifier": "opener:allow-open-url", "allow": [{ "url": "https://*" }, { "url": "http://*" }] },
     { "identifier": "opener:allow-open-path", "allow": [{ "path": "**" }] }
   ]
 }

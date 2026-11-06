@@ -32,6 +32,11 @@ export function contextOf(folder: Folder): FolderContext {
   return ctx;
 }
 
+export const activeContext = (): FolderContext | null => {
+  const folder = activeFolder();
+  return folder ? contextOf(folder) : null;
+};
+
 // --- saving ------------------------------------------------------------------
 
 type Raw = Parameters<typeof serializeState>[0];

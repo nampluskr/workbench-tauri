@@ -46,6 +46,11 @@ export const BUILTIN: KeymapSection[] = [
       // I-008: several keys for one action show the last one (I-704), Ctrl-W (L-240).
       "ctrl-f4": "pane::CloseActiveItem",
       "ctrl-w": "pane::CloseActiveItem",
+      "ctrl-k ctrl-up": "workspace::ActivatePaneUp", // I-020
+      "ctrl-k ctrl-down": "workspace::ActivatePaneDown",
+      "ctrl-k ctrl-left": "workspace::ActivatePaneLeft",
+      "ctrl-k ctrl-right": "workspace::ActivatePaneRight",
+      "shift-escape": "workspace::ToggleZoom", // I-737
     },
   },
   {
@@ -99,6 +104,13 @@ export const BUILTIN: KeymapSection[] = [
     bindings: {
       "ctrl-f4": "pane::CloseActiveItem",
       "ctrl-w": "pane::CloseActiveItem",
+      "ctrl-pageup": "pane::ActivatePreviousItem", // I-010
+      "ctrl-pagedown": "pane::ActivateNextItem",
+      "ctrl-k shift-enter": "pane::TogglePinTab", // I-014
+      "ctrl-k up": "pane::SplitUp", // I-019
+      "ctrl-k down": "pane::SplitDown",
+      "ctrl-k left": "pane::SplitLeft",
+      "ctrl-k right": "pane::SplitRight",
     },
   },
   {
@@ -109,6 +121,18 @@ export const BUILTIN: KeymapSection[] = [
       "ctrl-shift-z": "editor::Redo",
       "tab": "editor::Tab", // I-059: indent, never a focus move
       "shift-tab": "editor::Backtab",
+      "ctrl-\\": "pane::SplitRight", // I-018
     },
+  },
+  {
+    context: "Editor && extension == md", // I-044 (the file view adds `extension=…` to its context)
+    bindings: {
+      "ctrl-shift-v": "markdown::OpenPreview",
+      "ctrl-k v": "markdown::OpenPreviewToTheSide",
+    },
+  },
+  {
+    context: "MarkdownPreview",
+    bindings: { "ctrl-shift-v": "markdown::CloseAndReturnToEditor" }, // I-045
   },
 ];

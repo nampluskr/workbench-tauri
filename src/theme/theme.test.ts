@@ -44,6 +44,10 @@ const VARS: [token: string, cssVar: string][] = [
   ["error", "--error"],
   ["warning", "--warning"],
   ["text.accent", "--text-accent"],
+  ["pane_group.border", "--pane-group-border"],
+  ["drop_target.background", "--drop-target-background"],
+  ["drop_target.border", "--drop-target-border"],
+  ["toolbar.background", "--toolbar-background"],
 ];
 
 test("parseColor: #RRGGBB has alpha 255, #RRGGBBAA keeps it, anything else is rejected (T-01.7)", () => {
@@ -67,7 +71,8 @@ for (const [file, name] of [
       const raw = token === "players[0].selection" ? (style.players?.[0] as any).selection : style[token];
       // T-26.3: no value for the active thumb in any theme here -> the plain thumb color.
       if (token === "scrollbar.thumb.active_background") assert.equal(raw ?? null, null);
-      const expected = raw ?? style["scrollbar.thumb.background"];
+      // T-26.3 / T-26.4: the token each one falls back to when the JSON has none; T-26.13: a fixed value.
+      const expected = raw ?? (token === "drop_target.border" ? "#d7dadf" : style[token === "pane_group.border" ? "border" : "scrollbar.thumb.background"]);
       assert.deepEqual(parseColor(vars.get(cssVar)!), parseColor(expected as string), `${token} -> ${cssVar}`);
     }
   });
