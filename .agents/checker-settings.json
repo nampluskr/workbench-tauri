@@ -1,0 +1,45 @@
+{
+  "permissions": {
+    "allow": [
+      "command(git diff)",
+      "command(git log)",
+      "command(git status)",
+      "command(git show)",
+      "command(npm run build)",
+      "command(npm run typecheck)",
+      "command(npm run test)",
+      "command(npm.cmd run build)",
+      "command(npm.cmd run typecheck)",
+      "command(npm.cmd run test)",
+      "command(npx tsc --noEmit)",
+      "command(cargo check --manifest-path src-tauri/Cargo.toml)",
+      "command(cargo test --manifest-path src-tauri/Cargo.toml)",
+      "command(cargo clippy --manifest-path src-tauri/Cargo.toml)",
+      "command(node tools/count-lines.mjs)",
+      "command(node tools/measure-m3.mjs)",
+      "command(node tools/theme-expect.mjs)",
+      "command(pwsh tools/capture-startup.ps1)",
+      "command(pwsh tools/hittest.ps1)",
+      "command(pwsh tools/win-input.ps1)"
+    ],
+    "deny": [
+      "command(git commit)",
+      "command(git push)",
+      "command(git reset)",
+      "command(git checkout)",
+      "command(git switch)",
+      "command(git branch)",
+      "command(git rm)",
+      "command(npm install)",
+      "command(npm.cmd install)",
+      "command(npm i)",
+      "command(cargo add)",
+      "command(cargo remove)",
+      "command(rm)",
+      "command(del)",
+      "command(Remove-Item)",
+      "command(curl)",
+      "command(Invoke-WebRequest)"
+    ]
+  }
+}

@@ -20,7 +20,7 @@
 | `tauri-leader` | 카드 지시, 판정, 커밋, core-leader와 화면 차례 조율(core D-4). 코드·문서는 쓰지 않는다 | Claude Code | Opus 5.5 | 세션 기본값 | 기존 세션 | 상시 |
 | `tauri-writer` | v0.5 문서(INTENT·DECISIONS·SPEC·PLAN·HERDR-SETUP)와 PROGRESS, 루트 `AGENTS.md`·`INTENT.md` | Claude Code | Opus 5.5 | medium | `claude --model claude-opus-5-5 --effort medium` | 문서 단계와 Phase 끝 |
 | `tauri-coder` | 구현 전부(프런트엔드·코어를 나누지 않는다) | Codex | gpt-6.1-sol | medium | `codex -m gpt-6.1-sol -c model_reasoning_effort=medium` | 구현 Phase 동안 |
-| `tauri-checker` | 카드 리뷰(정확성, 카드 검증 수준만큼 빌드·테스트), 화면 검증(V2·V3)과 측정. `src/`는 고치지 않는다 | agy | gemini-3.8-flash-high | - | `agy --model gemini-3.8-flash-high` | 리뷰·검증 카드가 있을 때 |
+| `tauri-checker` | 카드 리뷰(정확성, 카드 검증 수준만큼 빌드·테스트), 화면 검증(V2·V3)과 측정. `src/`는 고치지 않는다 | agy | gemini-3.8-flash-high | - | `agy --model gemini-3.8-flash-high --settings D:\projects\workbench-tauri\.agents\checker-settings.json` | 리뷰·검증 카드가 있을 때 |
 
 - worktree는 두지 않는다. coder가 하나라 같은 checkout에서 겹치지 않는다(core D-2).
 - 리뷰 독립성: coder(Codex)와 writer(Claude)의 산출물은 checker(agy)가 검토한다(core D-2).
@@ -42,6 +42,7 @@ herdr session
     └── tab: check    wJ:t8  pane wJ:pN  tauri-checker  (agy gemini-3.8-flash-high)
 ```
 
+- `tauri-checker`는 `agy --model gemini-3.8-flash-high --settings D:\projects\workbench-tauri\.agents\checker-settings.json`으로 띄운다(5.5).
 - worktree: 없음. `git worktree list`가 본 트리 하나만 보였다(tauri-leader 확인 2026-11-06).
 - v0.4 에이전트(`check`·`impl`·`impl-core`·`measure`)의 pane은 이번 세션에 남아 있지 않았다. 닫은 것은 없다(tauri-leader 확인 2026-11-06).
 - 같은 세션에 workspace `workbench-core`·`workbench-gpui`가 함께 떠 있을 수 있다. 이 레포의 에이전트는 그 워크스페이스에 입력하지 않고 파일을 쓰지 않는다(core D-7).
@@ -115,6 +116,15 @@ herdr session
   - HERDR 구성 변경(모델·effort·역할·pane, 루트 `AGENTS.md` 레포 규칙)
   - push
 - `tauri-leader`가 처리한 판단은 출처 "리더 결정(사용자 위임 2026-11-06, core ORDER-01-R2)"을 달아 `PROGRESS.md`에 남긴다. `HERDR-DECISIONS.md`는 두지 않는다.
+- checker 명령 허용(core ORDER-01-R3, 사용자 2026-11-06):
+  - 위치: 레포 `.agents/checker-settings.json`. `agy --settings`로 `tauri-checker` 세션에만 적용한다(1장 실행 명령). agy 전역 설정(`C:\Users\nampl\.gemini\antigravity-cli\settings.json`)은 레포 밖이라 고치지 않는다(core D-7). 레포 안 파일을 checker 실행 때만 쓰는 것은 리더 결정이다(agy는 레포 안 프로젝트 settings 파일이 문서화되어 있지 않다).
+  - 허용(`permissions.allow`, 명령 단어 앞부분 일치): `git diff`·`git log`·`git status`·`git show`, `npm run build`·`typecheck`·`test`(`npm.cmd` 포함), `npx tsc --noEmit`, `cargo check`·`cargo test`·`cargo clippy`(`--manifest-path src-tauri/Cargo.toml`), `tools/`의 검증·측정 스크립트(`count-lines.mjs`, `measure-m3.mjs`, `theme-expect.mjs`, `capture-startup.ps1`, `hittest.ps1`, `win-input.ps1`). 화면을 다루는 스크립트는 5.3의 차례를 따로 받는다.
+  - 허용하지 않는 것(`permissions.deny`): `git commit`·`push`·`reset`·`checkout`·`switch`·`branch`·`rm`, `npm install`·`npm.cmd install`·`npm i`, `cargo add`·`cargo remove`, `rm`·`del`·`Remove-Item`, `curl`·`Invoke-WebRequest`. 그 밖에 파일 삭제, `src/` 쓰기, 의존성 변경, 내려받기도 하지 않는다.
+  - 보고 파일 쓰기는 카드가 정한 `%TEMP%\v05-*-report.md`만 한다. 레포 밖 파일 접근은 전역 `allowNonWorkspaceAccess`가 이미 허용한다.
+  - 앱 실행(`npm run tauri dev`)은 목록에 넣지 않았다. 화면 검증 때 필요하면 그때 카드로 정한다.
+- 허용 목록의 실제 동작: allow와 deny가 함께 있으면 허용 명령도 승인 창이 뜬다(tauri-leader 시험 2026-11-06). 그래서 지금은 checker 명령이 승인 없이 돌지 않는다. deny를 빼는 조치는 사용자 조치 대기다(core-leader가 최종 보고에 올린다). 설정 파일은 지금(allow+deny) 그대로 둔다.
+- 대체 방식(core-leader 결정, 사용자 위임 2026-11-06, core D-13): checker가 실행해야 할 명령(`git diff`, 빌드·테스트·clippy, `tools/` 검증·측정 스크립트)은 `tauri-coder` 또는 `tauri-leader`가 실행하고 출력을 `%TEMP%\v05-<카드ID>-*.txt` 파일로 남긴다. `tauri-checker`는 그 파일을 읽어 판정하고 셸 명령을 실행하지 않는다. 사용자 조치로 checker 명령이 승인 없이 돌게 되면 이 대체 방식을 끝낸다.
+- 그 밖의 승인 요청에는 아래 리더 결정을 따른다.
 - 리더 결정: `tauri-leader` 세션의 자동 모드가 승인 키 입력을 막으면 그 명령을 승인하지 않는다. 읽기 전용 결과(예: `git diff`)는 `tauri-leader`가 `%TEMP%` 파일로 만들어 넘긴다. 그래도 안 되면 `[BLOCKED]`로 사용자에게 묻는다. 2026-11-06 C-01·C-02에서 `git diff` 승인 일부가 막혔다.
 
 ---
@@ -125,6 +135,8 @@ herdr session
 너는 workbench-tauri v0.5의 <이름>이다. 루트 AGENTS.md와 specs/v0.5/HERDR-SETUP.md(1장 역할, 4장 소유권, 5장 프로토콜)를 읽어라.
 읽은 뒤 자기 역할을 한 줄로 확인하고 tauri-leader의 카드를 기다려라. 카드 전에는 파일을 고치거나 앱을 실행하지 않는다.
 ```
+
+- 프롬프트를 보내기 전에 1장의 실행 명령으로 띄운다. `tauri-checker`는 `agy --model gemini-3.8-flash-high --settings D:\projects\workbench-tauri\.agents\checker-settings.json`이다(5.5).
 
 ---
 

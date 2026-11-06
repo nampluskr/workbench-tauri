@@ -39,6 +39,12 @@
   - 결과: 5.5 절이 생겼다. 0장 구독 현황은 이미 core D-2 근거("여유", 수치 없음)라 고치지 않았다(2장 B 해당 없음). 4장 "push는 core-leader 판정 뒤 사용자가 정한다"와 5.4는 5.5와 어긋나지 않아 그대로 두었다.
   - 검증: V0. 문서만 바뀌어 명령은 실행하지 않았다.
   - 특이사항: 2장 C·D는 gpui만 해당한다(tauri 해당 없음).
+- **W-04 ORDER-01-R3 checker 명령 허용** (2026-11-06)
+  - 무엇을 했나: 레포에 `.agents/checker-settings.json`(agy `permissions.allow`·`deny`)을 새로 두고, `HERDR-SETUP.md` 5.5에 "checker 명령 허용" 항목(위치, 허용 요약, 허용하지 않는 것, 보고 파일 범위, 앱 실행 제외)을 더했다. 1장 표·2장·6장의 checker 실행 명령을 `agy --model gemini-3.8-flash-high --settings D:\projects\workbench-tauri\.agents\checker-settings.json`으로 고쳤다. 5.5의 기존 리더 결정 앞에 "checker 명령은 허용 목록으로 승인 없이 돈다"를 두었다.
+  - 결과: 설정은 레포 안 파일이고 checker 세션에만 `--settings`로 적용한다. agy 전역 설정은 고치지 않았다(core D-7). ORDER-01-R3 3장 3의 금지 명령은 허용 목록에 없고 deny에 있다.
+  - 검증: V0. 문서·설정 파일만 바뀌어 명령은 실행하지 않았다. 확인 결과(checker `git diff --stat`이 승인 창 없이 도는지): leader가 checker 재시작 뒤 확인.
+  - 특이사항: 없음.
+  - 확인 결과와 대체 방식(W-05, 2026-11-06): allow와 deny가 함께 있으면 허용 명령도 승인 창이 뜬다(tauri-leader 시험 2026-11-06). deny를 빼는 조치는 사용자 조치 대기이고(core-leader가 최종 보고에 올린다), 설정 파일은 allow+deny 그대로 둔다. 대체 방식(core-leader 결정, 사용자 위임 2026-11-06, core D-13): checker가 실행해야 할 명령은 `tauri-coder` 또는 `tauri-leader`가 실행해 출력을 `%TEMP%\v05-<카드ID>-*.txt`로 남기고, `tauri-checker`는 그 파일을 읽어 판정하며 셸 명령을 실행하지 않는다. 사용자 조치로 승인 없이 돌게 되면 대체 방식을 끝낸다. `HERDR-SETUP.md` 5.5에 같은 내용을 적었다.
 
 ## 사용자 요청 작업
 
