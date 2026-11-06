@@ -49,6 +49,7 @@
   - leader 시험(2026-11-06): allow만 있어도 `command(git diff)`는 `git diff --stat`과 일치하지 않아 승인 창이 떴다. 앞부분 일치가 아니다. 앞 시험에서는 정확한 항목 `command(git diff --stat)`이 있을 때 승인 창이 뜨지 않았다.
   - 정확한 항목이나 와일드카드 항목을 더하는 지시는 tauri-leader 세션 자동 모드가 `[Self-Modification]`으로 거부해 하지 않았다(우회하지 않음, core-leader에게 알림).
   - 그래서 대체 방식(coder/leader가 실행해 `%TEMP%\v05-<카드ID>-*.txt`, checker는 파일만 읽음)을 계속 쓴다. `HERDR-SETUP.md` 5.5의 설정 항목을 "현재 파일 내용"과 실제 동작으로 고쳐 적었다.
+  - 정확한 변형 추가(W-09, 2026-11-06): core-leader가 사용자 직접 요청으로 allow에 정확한 명령 형태(`git diff --stat`, `git status --short`, `git log --oneline -5` 등과 빌드·clippy 변형)를 더했다(core D-7 예외). checker를 `--settings`로 다시 띄우자 이 세 명령이 승인 창 없이 실행되었다(tauri-leader 시험). allow는 명령 전체가 정확히 같을 때만 일치하므로, 목록에 있는 명령은 checker가 직접 실행하고, 없는 명령은 대체 방식을 쓰며 필요하면 tauri-leader가 core-leader에게 알려 목록에 더한다(`HERDR-SETUP.md` 5.5).
 - Phase 1 종료 판정: 충족(core-leader, 사용자 위임 D-13), 문서 다섯 확정 (2026-11-06, W-06).
 
 ## 사용자 요청 작업

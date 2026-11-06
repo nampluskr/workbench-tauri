@@ -58,3 +58,16 @@
   1. 사용자가 직접 `.agents/checker-settings.json` `allow`에 쓸 명령을 정확한 형태로 더한다. 예: `"command(git diff --stat)"`, `"command(git diff)"`, `"command(cargo test --manifest-path src-tauri/Cargo.toml)"`, `"command(cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings)"`, `"command(npm.cmd run test)"`. 와일드카드 문법이 있는지는 확인하지 못했다.
   2. tauri-leader 세션에 사용자가 직접 지시한다.
 - 바꾼 파일(추가): `.agents/checker-settings.json`(deny 삭제), `specs/v0.5/HERDR-SETUP.md`, `specs/v0.5/PROGRESS.md`, 이 보고. 커밋은 `git log -1 -- specs/v0.5/reports/ORDER-01-R3.md`.
+
+## core-leader가 정확한 항목을 더한 뒤 (사용자 직접 요청, 2026-11-06)
+- 확인: checker를 `agy --model gemini-3.8-flash-high --settings D:\projects\workbench-tauri\.agents\checker-settings.json`으로 다시 띄웠다. `git diff --stat`, `git status --short`, `git log --oneline -5` 세 명령이 **모두 승인 창 없이 돌았다**.
+- 기준 2: **충족**.
+- 규칙: allow 항목은 명령 전체가 정확히 같을 때만 일치한다(앞부분 일치 아님). HERDR-SETUP 5.5를 이렇게 고쳤다. 목록 밖 명령에만 대체 방식을 쓴다.
+- 목록에 없어 승인 창이 뜰 명령(core-leader가 더해 주면 된다). 앞으로 ORDER-02 V3에 필요한 것이다.
+  - 빌드: `npm.cmd run tauri build -- --debug --no-bundle`
+  - 측정 도구: `pwsh -NoProfile -File tools/win-input.ps1 -Action state`, `pwsh -NoProfile -File tools/win-input.ps1 -Action resize -DX -1200 -DY -700`
+    - 지금 목록의 `pwsh tools/win-input.ps1`은 인자가 없는 형태라 실제 호출과 맞지 않는다. `node tools/…`·`pwsh tools/…` 항목도 같다.
+  - 앱 실행·종료: `src-tauri\target\debug\workbench-tauri.exe` 실행, `Stop-Process -Name workbench-tauri`
+  - 측정 전후 앱 데이터 백업·복원(HERDR-SETUP 3장): `%APPDATA%\workbench-tauri` 폴더 이름 바꾸기·되돌리기("기록 없는 상태" 첫 실행 조건)
+  - 이 목록이 더해지기 전까지 ORDER-02 V3는 대체 방식으로 한다. tauri-leader가 실행하고 출력을 파일로 남기면, checker가 그 파일을 판정한다.
+- 바꾼 파일(추가): `.agents/checker-settings.json`(core-leader가 더한 항목), `specs/v0.5/HERDR-SETUP.md`, `specs/v0.5/PROGRESS.md`, 이 보고. 커밋은 `git log -1 -- specs/v0.5/reports/ORDER-01-R3.md`.
