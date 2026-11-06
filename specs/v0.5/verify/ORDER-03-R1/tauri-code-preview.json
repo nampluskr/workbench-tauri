@@ -1,0 +1,43 @@
+{
+  "pid": 1928,
+  "computed": [
+    {
+      "s": ".markdown-body",
+      "font-family": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "font-size": "16px",
+      "font-weight": "400",
+      "line-height": "24px",
+      "font-feature-settings": "\"calt\" 0"
+    },
+    {
+      "s": ".markdown-body pre",
+      "font-family": "Lilex, \"Malgun Gothic\", monospace",
+      "font-size": "16px",
+      "font-weight": "400",
+      "line-height": "25.888px",
+      "font-feature-settings": "normal"
+    },
+    {
+      "s": ".markdown-body pre code",
+      "font-family": "Lilex, \"Malgun Gothic\", monospace",
+      "font-size": "16px",
+      "font-weight": "400",
+      "line-height": "25.888px",
+      "font-feature-settings": "normal"
+    }
+  ],
+  "rendered": [
+    {
+      "familyName": "Lilex",
+      "postScriptName": "Lilex-Regular",
+      "isCustomFont": true,
+      "glyphCount": 383
+    },
+    {
+      "familyName": "Malgun Gothic",
+      "postScriptName": "MalgunGothic",
+      "isCustomFont": false,
+      "glyphCount": 17
+    }
+  ]
+}

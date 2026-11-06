@@ -6,15 +6,16 @@ const rem = (px: number) => `${px / REM_SIZE}rem`;
 
 export const PROJECT_PANEL_ITEM_HEIGHT = 26; // project_panel.item.height (L-36); script needs it for the virtual window
 
-// Buffer font size stays in px (L-08); every other length goes through rem().
+// Buffer font size (L-08) and measured gutter padding stay in px; other lengths go through rem().
 const METRICS: Record<string, string> = {
   "units.rem_size": `${REM_SIZE}px`, // L-01
   "typography.ui_font_size": rem(16), // L-08
   "typography.buffer_font_size": "15px", // L-08
   "typography.size.default": rem(14), // L-05 (label default: tree name, tab title, title bar folder button)
   "editor.gutter.min_line_number_digits": "4", // E-002
-  "editor.gutter.padding_left_ch": "3", // E-003
-  "editor.gutter.padding_right_ch": "4", // E-004
+  // shortcut: gutter padding measured at Lilex 15, remeasure if the buffer font or size changes.
+  "editor.gutter.padding_left": "22px", // I-14: Zed measured 2026-11-07, replaces E-003 3ch
+  "editor.gutter.padding_right": "29px", // I-14: Zed measured 2026-11-07, replaces E-004 4ch
   "editor.line_height.comfortable_multiplier": "1.618", // E-010
   "editor.cursor_width": rem(2), // E-012
   "editor.selection.corner_radius_multiplier": "0.15", // E-015

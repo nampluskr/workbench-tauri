@@ -1,0 +1,385 @@
+{
+  "pid": 29444,
+  "files": {
+    "SPEC.md": {
+      "editor": {
+        "x": 540,
+        "y": 100,
+        "width": 900,
+        "height": 721,
+        "top": 100,
+        "right": 1440,
+        "bottom": 821,
+        "left": 540
+      },
+      "gutters": {
+        "x": 540,
+        "y": 100,
+        "width": 99,
+        "height": 12860.78125,
+        "top": 100,
+        "right": 639,
+        "bottom": 12960.78125,
+        "left": 540
+      },
+      "lineNumbers": {
+        "x": 540,
+        "y": 100,
+        "width": 99,
+        "height": 12860.78125,
+        "top": 100,
+        "right": 639,
+        "bottom": 12960.78125,
+        "left": 540
+      },
+      "numberEl": {
+        "x": 540,
+        "y": 100,
+        "width": 99,
+        "height": 0,
+        "top": 100,
+        "right": 639,
+        "bottom": 100,
+        "left": 540
+      },
+      "numberElStyle": {
+        "pl": "27px",
+        "pr": "36px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "36px",
+        "w": "36px"
+      },
+      "lineNumbersStyle": {
+        "pl": "0px",
+        "pr": "0px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "auto",
+        "w": "99px"
+      },
+      "guttersStyle": {
+        "pl": "0px",
+        "pr": "0px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "auto",
+        "w": "99px"
+      },
+      "content": {
+        "x": 639,
+        "y": 100,
+        "width": 786,
+        "height": 12860.78125,
+        "top": 100,
+        "right": 1425,
+        "bottom": 12960.78125,
+        "left": 639
+      },
+      "contentStyle": {
+        "pl": "0px",
+        "pr": "0px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "auto",
+        "w": "786px"
+      },
+      "lineStyle": {
+        "pl": "5px",
+        "pr": "0px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "0px",
+        "w": "781px"
+      },
+      "digitsRight": 603,
+      "textLeft": 644,
+      "sample": "999"
+    },
+    "g50.txt": {
+      "editor": {
+        "x": 540,
+        "y": 65,
+        "width": 900,
+        "height": 756,
+        "top": 65,
+        "right": 1440,
+        "bottom": 821,
+        "left": 540
+      },
+      "gutters": {
+        "x": 540,
+        "y": 65,
+        "width": 99,
+        "height": 1237.546875,
+        "top": 65,
+        "right": 639,
+        "bottom": 1302.546875,
+        "left": 540
+      },
+      "lineNumbers": {
+        "x": 540,
+        "y": 65,
+        "width": 99,
+        "height": 1237.546875,
+        "top": 65,
+        "right": 639,
+        "bottom": 1302.546875,
+        "left": 540
+      },
+      "numberEl": {
+        "x": 540,
+        "y": 65,
+        "width": 99,
+        "height": 0,
+        "top": 65,
+        "right": 639,
+        "bottom": 65,
+        "left": 540
+      },
+      "numberElStyle": {
+        "pl": "27px",
+        "pr": "36px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "36px",
+        "w": "36px"
+      },
+      "lineNumbersStyle": {
+        "pl": "0px",
+        "pr": "0px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "auto",
+        "w": "99px"
+      },
+      "guttersStyle": {
+        "pl": "0px",
+        "pr": "0px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "auto",
+        "w": "99px"
+      },
+      "content": {
+        "x": 639,
+        "y": 65,
+        "width": 786,
+        "height": 1237.546875,
+        "top": 65,
+        "right": 1425,
+        "bottom": 1302.546875,
+        "left": 639
+      },
+      "contentStyle": {
+        "pl": "0px",
+        "pr": "0px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "auto",
+        "w": "786px"
+      },
+      "lineStyle": {
+        "pl": "5px",
+        "pr": "0px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "0px",
+        "w": "781px"
+      },
+      "digitsRight": 603,
+      "textLeft": 644,
+      "sample": "99"
+    },
+    "g1200.txt": {
+      "editor": {
+        "x": 540,
+        "y": 65,
+        "width": 900,
+        "height": 756,
+        "top": 65,
+        "right": 1440,
+        "bottom": 821,
+        "left": 540
+      },
+      "gutters": {
+        "x": 540,
+        "y": 65,
+        "width": 99,
+        "height": 29143.015625,
+        "top": 65,
+        "right": 639,
+        "bottom": 29208.015625,
+        "left": 540
+      },
+      "lineNumbers": {
+        "x": 540,
+        "y": 65,
+        "width": 99,
+        "height": 29143.015625,
+        "top": 65,
+        "right": 639,
+        "bottom": 29208.015625,
+        "left": 540
+      },
+      "numberEl": {
+        "x": 540,
+        "y": 65,
+        "width": 99,
+        "height": 0,
+        "top": 65,
+        "right": 639,
+        "bottom": 65,
+        "left": 540
+      },
+      "numberElStyle": {
+        "pl": "27px",
+        "pr": "36px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "36px",
+        "w": "36px"
+      },
+      "lineNumbersStyle": {
+        "pl": "0px",
+        "pr": "0px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "auto",
+        "w": "99px"
+      },
+      "guttersStyle": {
+        "pl": "0px",
+        "pr": "0px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "auto",
+        "w": "99px"
+      },
+      "content": {
+        "x": 639,
+        "y": 65,
+        "width": 786,
+        "height": 29143.015625,
+        "top": 65,
+        "right": 1425,
+        "bottom": 29208.015625,
+        "left": 639
+      },
+      "contentStyle": {
+        "pl": "0px",
+        "pr": "0px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "auto",
+        "w": "786px"
+      },
+      "lineStyle": {
+        "pl": "5px",
+        "pr": "0px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "0px",
+        "w": "781px"
+      },
+      "digitsRight": 603,
+      "textLeft": 644,
+      "sample": "9999"
+    },
+    "g12000.txt": {
+      "editor": {
+        "x": 540,
+        "y": 65,
+        "width": 900,
+        "height": 756,
+        "top": 65,
+        "right": 1440,
+        "bottom": 821,
+        "left": 540
+      },
+      "gutters": {
+        "x": 540,
+        "y": 65,
+        "width": 108,
+        "height": 291211.75,
+        "top": 65,
+        "right": 648,
+        "bottom": 291276.75,
+        "left": 540
+      },
+      "lineNumbers": {
+        "x": 540,
+        "y": 65,
+        "width": 108,
+        "height": 291211.75,
+        "top": 65,
+        "right": 648,
+        "bottom": 291276.75,
+        "left": 540
+      },
+      "numberEl": {
+        "x": 540,
+        "y": 65,
+        "width": 108,
+        "height": 0,
+        "top": 65,
+        "right": 648,
+        "bottom": 65,
+        "left": 540
+      },
+      "numberElStyle": {
+        "pl": "27px",
+        "pr": "36px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "36px",
+        "w": "45px"
+      },
+      "lineNumbersStyle": {
+        "pl": "0px",
+        "pr": "0px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "auto",
+        "w": "108px"
+      },
+      "guttersStyle": {
+        "pl": "0px",
+        "pr": "0px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "auto",
+        "w": "108px"
+      },
+      "content": {
+        "x": 648,
+        "y": 65,
+        "width": 777,
+        "height": 291211.75,
+        "top": 65,
+        "right": 1425,
+        "bottom": 291276.75,
+        "left": 648
+      },
+      "contentStyle": {
+        "pl": "0px",
+        "pr": "0px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "auto",
+        "w": "777px"
+      },
+      "lineStyle": {
+        "pl": "5px",
+        "pr": "0px",
+        "ml": "0px",
+        "mr": "0px",
+        "minW": "0px",
+        "w": "772px"
+      },
+      "digitsRight": 612,
+      "textLeft": 653,
+      "sample": "99999"
+    }
+  }
+}

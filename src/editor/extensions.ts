@@ -59,12 +59,12 @@ const zedEditorTheme = EditorView.theme({
     color: "var(--editor-line-number)",
     "&.cm-gutters-before": { borderRightWidth: 0 },
   },
-  // E-002/E-003/E-004: number width = max(digits, min digits) * ch, padded in ch.
+  // E-002: number width = max(digits, min digits) * ch; I-14: measured Zed padding.
   ".cm-lineNumbers .cm-gutterElement": {
     boxSizing: "content-box",
     minWidth: "calc(var(--editor-gutter-min-line-number-digits) * 1ch)",
     padding:
-      "0 calc(var(--editor-gutter-padding-right-ch) * 1ch) 0 calc(var(--editor-gutter-padding-left-ch) * 1ch)",
+      "0 var(--editor-gutter-padding-right) 0 var(--editor-gutter-padding-left)",
   },
   // E-011: gutter element + line together span the full editor width.
   ".cm-activeLine": { backgroundColor: "var(--editor-active-line-background)" },

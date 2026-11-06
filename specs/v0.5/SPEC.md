@@ -321,11 +321,17 @@ Zed에서 한글은 Malgun Gothic(맑은 고딕)으로 그려진다. 편집 영�
 
 **미리보기 코드 블록의 글자 크기**
 
-미리보기 코드 블록은 I-14에 따라 에디터 글꼴의 이름·굵기·합자·줄 높이(1.618)를 따른다. 글자 크기는 따르지 않고 K-03 전 값(미리보기 본문에서 상속한 16)을 유지한다. (리더 결정, 사용자 위임 core D-13, ORDER-03, 2026-11-07)
+미리보기 코드 블록은 I-14에 따라 에디터 글꼴의 이름·굵기·합자·줄 높이(1.618)를 따른다. 글자 크기는 16px로 Zed 실측과 같다(ORDER-03-R1: Zed와 tauri 모두 글자 16px, 줄 높이 1.618, 64자 줄 폭 612px 동일, 줄 간격 7간격 합 1px 차, tauri-leader 2026-11-07, 근거 `specs/v0.5/verify/ORDER-03-R1/`). (리더 결정, 사용자 위임 core D-13, ORDER-03, 2026-11-07)
 
-**Zed와 다른 점**
+**줄 번호 열 폭 (해소)**
 
-편집 영역 줄 번호 열 폭이 Zed와 다르다. tauri 99px(E-002 최소 4ch + E-003 왼쪽 3ch + E-004 오른쪽 4ch = 11ch × Lilex 15px `0` 폭 9px), Zed 약 64px(약 7ch)로 tauri가 약 35px 넓다. 글꼴을 Zed와 같게 바꾼 뒤에도 남아 글꼴로는 풀리지 않는다(C-13, `specs/v0.5/verify/ORDER-03/ORDER-03-judgement.md` 2.3, 2026-11-07). 1번 줄 위 여백은 차이 0으로 풀렸다.
+ORDER-03에서 편집 영역 줄 번호 열 폭이 Zed와 달랐다(tauri 99px = E-002 최소 4ch + E-003 왼쪽 3ch + E-004 오른쪽 4ch, Zed 약 64px; C-13, `specs/v0.5/verify/ORDER-03/ORDER-03-judgement.md` 2.3). ORDER-03-R1에서 해소했다.
+
+- Zed 실측(tauri-leader 2026-11-07, Zed 새 창 클라이언트 1440×852, 100%, Lilex 15): 줄 번호 왼쪽 여백 22px, 줄 번호 칸 = 자릿수(최소 4)×9px, 오른쪽 여백 29px + margin(E-005, descent 5px).
+- 스펙 E-003(3ch)·E-004(4ch)는 Zed 소스(`14b7b0e`) 값이지만 지금 Zed 화면과 달라 core D-12(ITEMS 우선)로 실측값을 쓴다.
+- 수정 뒤 tauri = Zed: 4자리 숫자 오른쪽 57px·본문 시작 92px, 5자리 66px·101px, 차 ≤1px. 근거 `specs/v0.5/verify/ORDER-03-R1/`.
+
+1번 줄 위 여백은 ORDER-03에서 차이 0으로 풀렸다.
 
 ---
 

@@ -93,6 +93,20 @@
     - Zed와 다른 점: 줄 번호 열 폭 tauri 99px, Zed 약 64px. 글꼴로 풀리지 않아 SPEC R-14에 적었다.
     - 리더 결정(사용자 위임 core D-13): 미리보기 코드 블록은 줄 높이 1.618을 유지하고 크기는 16이다.
     - 사용자 확인 필요(V4): I-14 글자 모양·한글 간격의 인상.
+- **ORDER-03-R1 줄 번호 열·미리보기 코드 블록 (R-14 / I-14)** (2026-11-07)
+  - 무엇을 했나:
+    - tauri-leader가 Zed 줄 번호 열과 미리보기 코드 블록을 실측했다(Zed 새 창 클라이언트 1440×852, 100%, Lilex 15). 줄 번호 왼쪽 여백 22px, 칸 = 자릿수(최소 4)×9px, 오른쪽 여백 29px + margin(E-005, descent 5px).
+    - K-06: 줄 번호 왼쪽·오른쪽 여백을 E-003(3ch)·E-004(4ch)에서 실측값 22px·29px로 바꿨다(`src/spec/metrics.ts` `editor.gutter.padding_left`·`padding_right`, `src/editor/extensions.ts`). E-002 최소 4자리와 E-005 margin은 그대로다. E-003·E-004는 Zed 소스(`14b7b0e`) 값이지만 지금 Zed 화면과 달라 core D-12로 실측값을 쓴다. `shortcut:` 주석에 Lilex 15 기준이라 글꼴·크기가 바뀌면 다시 잰다고 적었다.
+    - 문서(W-15): SPEC R-14 "Zed와 다른 점"을 해소로 고치고 미리보기 코드 블록 크기를 "Zed 실측과 같음"으로 고쳤다. HERDR-SETUP 3장에 Zed 측정 방식을 더했다.
+  - 결과: 줄 번호 열 tauri = Zed(4자리 숫자 오른쪽 57px·본문 92px, 5자리 66px·101px, 차 ≤1px). 미리보기 코드 블록은 Zed와 같다(글자 16px, 줄 높이 1.618, 64자 줄 폭 612px 동일, 줄 간격 7간격 합 1px 차). ORDER-03의 불일치 1(줄 번호 열 폭)이 풀렸다.
+  - 검증:
+    - V1: `npm.cmd run typecheck` 통과, `npm.cmd run test -- src/spec/metrics.test.ts src/editor/extensions.test.ts` 2/2, `npm.cmd run tauri build -- --debug --no-bundle` 성공, `git diff --check` 통과(K-06, `%TEMP%\v05-K-06-report.md`).
+    - 리뷰: C-15(K-06) PASS(`%TEMP%\v05-C-15-report.md`).
+    - 측정: Zed·tauri 수정 전후 캡처와 덤프(`specs/v0.5/verify/ORDER-03-R1/`, `%TEMP%\v05-o3r1-tauri.txt`, `v05-o3r1-after.txt`, `v05-o3r1-zed-log.txt`).
+  - 특이사항:
+    - Zed 측정 중 사용자 Zed(PID 20788) 창에 탭 4개가 열렸다(Zed 단일 인스턴스라 측정용 열기가 사용자 창으로 갔다). 사용자 창과 탭은 닫지 않았고 core-leader가 사용자에게 알렸다.
+    - 이후 `zed -n` 새 창만 재고 그 창만 `WM_CLOSE`로 닫았다. 이 방식을 `HERDR-SETUP.md` 3장에 적었다(core-leader 결정 2026-11-07).
+    - 사용자 확인 필요: 없음.
 
 ## 사용자 요청 작업
 
