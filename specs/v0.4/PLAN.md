@@ -108,6 +108,6 @@
 | --- | --- | --- | --- | --- |
 | Phase 1 — 정리와 일치 | R-1 · R-12 · R-13 | done | 3432ba5 | 없음 |
 | Phase 2 — 탭 편집과 저장 | R-2 ~ R-7 | done | 60813dc | 없음 |
-| Phase 3 — 탭 기능 | R-8 ~ R-11 · R-14 | done | - | 없음 |
+| Phase 3 — 탭 기능 | R-8 ~ R-11 · R-14 | done | 72bdaa7 | 없음 |
 
 - 상태: todo | doing | done
