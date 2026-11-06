@@ -107,6 +107,16 @@ herdr session
 - 문서가 확정되면 `tauri-writer`가 상태 줄만 바꾸고 `tauri-leader`가 커밋한다. 확정은 core-leader가 판정한 뒤 사용자가 정한다(ORDER-01 3.1).
 - Phase 끝 순서는 `PLAN.md`를 따른다.
 
+### 5.5 승인 처리
+
+- 서브 에이전트(`tauri-writer`·`tauri-coder`·`tauri-checker`)의 승인 요청은 `tauri-leader`가 대신 응답한다(위임, 사용자 2026-11-06, core ORDER-01-R2).
+- 위임에서 빠져 사용자에게 묻는 것:
+  - 의존성 추가·제거·버전 변경(루트 `AGENTS.md` 9장)
+  - HERDR 구성 변경(모델·effort·역할·pane, 루트 `AGENTS.md` 레포 규칙)
+  - push
+- `tauri-leader`가 처리한 판단은 출처 "리더 결정(사용자 위임 2026-11-06, core ORDER-01-R2)"을 달아 `PROGRESS.md`에 남긴다. `HERDR-DECISIONS.md`는 두지 않는다.
+- 리더 결정: `tauri-leader` 세션의 자동 모드가 승인 키 입력을 막으면 그 명령을 승인하지 않는다. 읽기 전용 결과(예: `git diff`)는 `tauri-leader`가 `%TEMP%` 파일로 만들어 넘긴다. 그래도 안 되면 `[BLOCKED]`로 사용자에게 묻는다. 2026-11-06 C-01·C-02에서 `git diff` 승인 일부가 막혔다.
+
 ---
 
 ## 6. 최초 지시 프롬프트
