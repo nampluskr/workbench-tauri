@@ -1,0 +1,209 @@
+{
+  "pid": 28896,
+  "spots": {
+    "sidebar-name": {
+      "selector": ".sidebar-item-name, .sidebar-item-parent",
+      "items": [
+        {
+          "text": "D:\\",
+          "family": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+          "fonts": [
+            {
+              "familyName": "IBM Plex Sans",
+              "postScriptName": "IBMPlexSans",
+              "isCustomFont": true,
+              "glyphCount": 3
+            }
+          ],
+          "hasWon": false
+        }
+      ]
+    },
+    "tree-compact": {
+      "selector": ".tree-label",
+      "items": [
+        {
+          "text": "docs\\refs",
+          "family": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+          "fonts": [
+            {
+              "familyName": "IBM Plex Sans",
+              "postScriptName": "IBMPlexSans",
+              "isCustomFont": true,
+              "glyphCount": 9
+            }
+          ],
+          "hasWon": false
+        }
+      ]
+    },
+    "tree-tooltip": {
+      "selector": ".tooltip-title",
+      "items": [
+        {
+          "text": "~\\AppData\\Local\\Temp\\v05-i20\\docs\\refs\\paths.md",
+          "family": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+          "fonts": [
+            {
+              "familyName": "IBM Plex Sans",
+              "postScriptName": "IBMPlexSans",
+              "isCustomFont": true,
+              "glyphCount": 47
+            }
+          ],
+          "hasWon": false
+        }
+      ]
+    },
+    "editor": {
+      "selector": ".cm-line",
+      "items": [
+        {
+          "text": "Plain: C:\\Users\\example\\notes.txt",
+          "family": "Lilex, \"Malgun Gothic\", monospace",
+          "fonts": [
+            {
+              "familyName": "Lilex",
+              "postScriptName": "Lilex-Regular",
+              "isCustomFont": true,
+              "glyphCount": 33
+            }
+          ],
+          "hasWon": false
+        },
+        {
+          "text": "Inline: `D:\\projects\\workbench-tauri\\src`",
+          "family": "Lilex, \"Malgun Gothic\", monospace",
+          "fonts": [
+            {
+              "familyName": "Lilex",
+              "postScriptName": "Lilex-Regular",
+              "isCustomFont": true,
+              "glyphCount": 41
+            }
+          ],
+          "hasWon": false
+        },
+        {
+          "text": "C:\\Windows\\System32\\drivers\\etc\\hosts",
+          "family": "Lilex, \"Malgun Gothic\", monospace",
+          "fonts": [
+            {
+              "familyName": "Lilex",
+              "postScriptName": "Lilex-Regular",
+              "isCustomFont": true,
+              "glyphCount": 37
+            }
+          ],
+          "hasWon": false
+        }
+      ]
+    },
+    "preview-text": {
+      "selector": ".markdown-body p",
+      "items": [
+        {
+          "text": "Plain: C:\\Users\\example\\notes.txt",
+          "family": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+          "fonts": [
+            {
+              "familyName": "IBM Plex Sans",
+              "postScriptName": "IBMPlexSans",
+              "isCustomFont": true,
+              "glyphCount": 33
+            }
+          ],
+          "hasWon": false
+        },
+        {
+          "text": "Inline: D:\\projects\\workbench-tauri\\src",
+          "family": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+          "fonts": [
+            {
+              "familyName": "Lilex",
+              "postScriptName": "Lilex-Regular",
+              "isCustomFont": true,
+              "glyphCount": 31
+            },
+            {
+              "familyName": "IBM Plex Sans",
+              "postScriptName": "IBMPlexSans",
+              "isCustomFont": true,
+              "glyphCount": 8
+            }
+          ],
+          "hasWon": false
+        }
+      ]
+    },
+    "preview-code": {
+      "selector": ".markdown-body code",
+      "items": [
+        {
+          "text": "D:\\projects\\workbench-tauri\\src",
+          "family": "Lilex, \"Malgun Gothic\", monospace",
+          "fonts": [
+            {
+              "familyName": "Lilex",
+              "postScriptName": "Lilex-Regular",
+              "isCustomFont": true,
+              "glyphCount": 31
+            }
+          ],
+          "hasWon": false
+        },
+        {
+          "text": "C:\\Windows\\System32\\drivers\\etc\\hosts\n",
+          "family": "Lilex, \"Malgun Gothic\", monospace",
+          "fonts": [
+            {
+              "familyName": "Lilex",
+              "postScriptName": "Lilex-Regular",
+              "isCustomFont": true,
+              "glyphCount": 37
+            }
+          ],
+          "hasWon": false
+        }
+      ]
+    },
+    "titlebar": {
+      "selector": ".project-name",
+      "items": [
+        {
+          "text": "D:\\",
+          "family": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+          "fonts": [
+            {
+              "familyName": "IBM Plex Sans",
+              "postScriptName": "IBMPlexSans",
+              "isCustomFont": true,
+              "glyphCount": 3
+            }
+          ],
+          "hasWon": false
+        }
+      ]
+    },
+    "tree-root": {
+      "selector": ".tree-label",
+      "items": [
+        {
+          "text": "D:\\",
+          "family": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+          "fonts": [
+            {
+              "familyName": "IBM Plex Sans",
+              "postScriptName": "IBMPlexSans",
+              "isCustomFont": true,
+              "glyphCount": 3
+            }
+          ],
+          "hasWon": false
+        }
+      ]
+    }
+  },
+  "dialog": "dialog hwnd=0x2B0274 rect=769,393,1135,576 closed=True",
+  "note": "tree-root: only the D: root row kept; listing of the drive and its capture area cropped (personal folder names)."
+}

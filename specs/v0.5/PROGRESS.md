@@ -107,6 +107,18 @@
     - Zed 측정 중 사용자 Zed(PID 20788) 창에 탭 4개가 열렸다(Zed 단일 인스턴스라 측정용 열기가 사용자 창으로 갔다). 사용자 창과 탭은 닫지 않았고 core-leader가 사용자에게 알렸다.
     - 이후 `zed -n` 새 창만 재고 그 창만 `WM_CLOSE`로 닫았다. 이 방식을 `HERDR-SETUP.md` 3장에 적었다(core-leader 결정 2026-11-07).
     - 사용자 확인 필요: 없음.
+- **ORDER-04 경로 역슬래시 표시 (R-20 / I-20)** (2026-11-07)
+  - 무엇을 했나:
+    - tauri-leader가 화면 차례 1회로 경로를 보이는 자리를 실측했다(1920×1080, 100%, 클라이언트 1440×852, 테스트 폴더 `%TEMP%\v05-i20`, 등록 폴더 `D:\`). 대상 자리 목록은 coder 정적 조사(`%TEMP%\v05-K-07-report.md`)를 따랐다.
+    - 문서(W-05): SPEC R-20 "정해진 결과"에 실측 결과·글꼴 근거·네이티브 대화 상자 판정 제외·R-11·R-12 자리를 적고, PLAN Phase 4를 done으로 했다.
+  - 결과: 앱이 그리는 자리(파일 트리 compact 행, 트리 경로 툴팁, 사이드바·타이틀 바·트리 루트, 편집기 본문, 미리보기 본문·코드)는 모두 `\`이고 `₩`가 없다. Rendered Fonts는 IBM Plex Sans 또는 Lilex뿐(Malgun Gothic 0)으로, Phase 3 글꼴(R-14) 덕분이다. 코드 변경은 없다.
+  - 검증:
+    - V3: 캡처와 덤프 `specs/v0.5/verify/ORDER-04/`(`tauri-i20.json`, `tauri-1~6-*.png`). 판정 `specs/v0.5/verify/ORDER-04/ORDER-04-judgement.md`(checker C-17).
+    - 문서: V0(실행 없음).
+  - 특이사항:
+    - 네이티브 대화 상자(미저장 닫기 확인 TaskDialog)는 `docs₩refs₩paths.md`로 보인다(`tauri-4-dialog.png`). OS 시스템 UI 글꼴(맑은 고딕) 때문이며 앱에서 바꿀 수 없다. core-leader 결정(2026-11-07, core D-13)으로 "OS 표시"로 판정에서 빼고 Phase 12 사용자 확인(V4)에 올린다. 문구의 구분자는 바꾸지 않는다.
+    - 탭 경로 툴팁(R-11)·경로 줄(R-12)은 지금 없어 Phase 9에서 다시 본다.
+    - 사용자 확인 필요(V4): 네이티브 대화 상자의 `₩` 표시.
 
 ## 사용자 요청 작업
 
