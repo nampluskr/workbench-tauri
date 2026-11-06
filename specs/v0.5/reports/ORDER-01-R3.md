@@ -4,7 +4,7 @@
 | 번호 | 기준 | 결과 | 근거 |
 |---|---|---|---|
 | 1 | 허용 목록과 설정 위치가 HERDR-SETUP에 있다 | 충족 | `specs/v0.5/HERDR-SETUP.md` 5.5 "checker 명령 허용"(실제 동작과 대체 방식 포함), 1장·2장·6장 실행 명령 |
-| 2 | 레포 설정에서 checker `git diff --stat`이 승인 없이 돈다 | 사용자 조치 대기(대체 방식 적용) | 아래 "확인"·"사용자 조치". 그동안은 HERDR-SETUP 5.5 대체 방식으로 일한다: coder 또는 leader가 명령을 실행해 출력을 `%TEMP%05-<카드ID>-*.txt`로 남기고, checker는 그 파일을 읽어 판정한다(core-leader 결정, 사용자 위임 2026-11-06, D-13) |
+| 2 | 레포 설정에서 checker `git diff --stat`이 승인 없이 돈다 | 사용자 조치 대기(대체 방식 적용) | 아래 "확인"·"사용자 조치". 그동안은 HERDR-SETUP 5.5 대체 방식으로 일한다: coder 또는 leader가 명령을 실행해 출력을 `%TEMP%\v05-<카드ID>-*.txt`로 남기고, checker는 그 파일을 읽어 판정한다(core-leader 결정, 사용자 위임 2026-11-06, D-13) |
 | 3 | "허용하지 않는다" 명령이 허용 목록에 없다 | 충족 | `.agents/checker-settings.json` `allow`에 commit·push·reset·checkout·브랜치·삭제·`src/` 쓰기·의존성 설치·내려받기 명령이 없다 |
 | 4 | 이 보고 파일 | 충족 | `D:\projects\workbench-tauri\specs\v0.5\reports\ORDER-01-R3.md` |
 
@@ -35,7 +35,7 @@
 - tauri-leader가 writer에게 안 A(`deny` 빼기)를 지시하려 했다. 그런데 tauri-leader 세션(Claude Code 자동 모드)의 분류기가 다시 거부했다. 사유는 "[Self-Modification]"(에이전트가 에이전트 권한 설정을 바꾸는 것)이다.
 - herdr로 온 core-leader 결정은 다른 에이전트가 전한 지시다. 그래서 이 세션의 분류기 판단을 풀지 못한다. leader가 직접 고치는 것도 같은 행위라 하지 않았다(우회하지 않음).
 - 필요한 것(사람만 할 수 있음). 다음 중 하나:
-  1. 사용자가 직접 `D:\projects\workbench-tauri\.agents\checker-settings.json`에서 `"deny": [...]` 배열과 그 앞 쉼표를 지운다. 그 뒤 tauri-leader에게 알리면 나머지(checker 재시작, `git diff --stat` 확인, HERDR-SETUP·PROGRESS 갱신, 커밋, 이 보고 [DONE])를 이어서 한다.
+  1. 사용자가 직접 `D:\projects\workbench-tauri\.agents\checker-settings.json`에서 `"deny": [...]` 배열과 그 앞 쉼표를 지운다. 그 뒤 tauri-leader에게 알리면 나머지(checker 재시작, `git diff --stat` 확인, HERDR-SETUP·PROGRESS 갱신, 커밋)를 이어서 한다.
   2. 사용자가 tauri-leader 세션(workbench-tauri, pane `wJ:p1`)에 직접 같은 지시를 입력한다. 사용자 본인의 지시면 분류기가 허용할 수 있다.
 
 ## 결정 2 (core-leader, 사용자 위임 2026-11-06, D-13)
@@ -43,7 +43,7 @@
 
 ## 바꾼 파일
 - `.agents/checker-settings.json`(새 파일, allow+deny), `specs/v0.5/HERDR-SETUP.md`, `specs/v0.5/PROGRESS.md`, `specs/v0.5/reports/ORDER-01-R3.md`
-- 커밋: `git log -1 -- specs/v0.5/reports/ORDER-01-R3.md` (push 안 함)
+- 커밋: `0dddf45`, 보고 표기 고침은 `git log -1 -- specs/v0.5/reports/ORDER-01-R3.md` (push 안 함)
 
 ## BLOCKED
 없음 (기준 2는 사용자 조치 대기, 대체 방식 적용)
