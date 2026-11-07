@@ -9,18 +9,32 @@ const MAX_FILES: usize = 5_000;
 const MAX_MATCHES: usize = 10_000;
 const CONTEXT_LINES: usize = 2; // Zed default excerpt_context_lines.
 
+#[derive(Clone)]
+struct SearchSnapshot { disk: Vec<u8>, text: String }
+
+struct SearchRun {
+    id: String,
+    options: Value,
+    cancelled: AtomicBool,
+    snapshots: Mutex<HashMap<PathBuf, SearchSnapshot>>,
+}
+
 #[derive(Default)]
-pub struct SearchJobs(Mutex<HashMap<String, (String, Arc<AtomicBool>)>>);
+pub struct SearchJobs(Mutex<HashMap<String, Arc<SearchRun>>>);
 
 fn is_link(meta: &fs::Metadata) -> bool {
     use std::os::windows::fs::MetadataExt;
     meta.file_type().is_symlink() || meta.file_attributes() & 0x400 != 0
 }
 
-fn roots(options: &Value) -> Result<Vec<PathBuf>, String> {
+fn roots(label: &str, options: &Value) -> Result<Vec<PathBuf>, String> {
     let saved = crate::state::read(&crate::app_data_dir()?)?;
     let state: Value = serde_json::from_str(saved["json"].as_str().ok_or("No workspace folders")?).map_err(|error| error.to_string())?;
-    let folders = state.pointer("/windows/0/folders").and_then(Value::as_array).ok_or("No workspace folders")?;
+    roots_in_state(&state, label, options)
+}
+
+fn roots_in_state(state: &Value, label: &str, options: &Value) -> Result<Vec<PathBuf>, String> {
+    let folders = crate::state::window_folders(state, label)?;
     let requested = options["roots"].as_array().ok_or("Missing workspace roots")?;
     requested.iter().map(|value| {
         let path = value.as_str().ok_or("Invalid workspace folder")?;
@@ -99,13 +113,19 @@ fn file_matches(path: &Path, text: &str, pattern: &regex::Regex, remaining: usiz
     Some(json!({"path": path.to_string_lossy(), "matches": matches, "lines": excerpts}))
 }
 
-fn search(roots: &[PathBuf], options: &Value, cancelled: &AtomicBool, mut emit: impl FnMut(Value) -> bool) -> Result<(), String> {
+fn pattern(options: &Value) -> Result<regex::Regex, String> {
     let query = options["query"].as_str().ok_or("Missing search query")?;
-    if query.is_empty() { return Ok(()); }
+    if query.is_empty() { return Err("Search query is empty".into()); }
     let flag = |key: &str| options[key].as_bool().unwrap_or(false);
     let mut source = if flag("regex") { query.to_string() } else { regex::escape(query) };
     if flag("word") { source = format!(r"\b(?:{source})\b"); }
-    let pattern = RegexBuilder::new(&source).case_insensitive(!flag("caseSensitive")).multi_line(true).build().map_err(|error| error.to_string())?;
+    RegexBuilder::new(&source).case_insensitive(!flag("caseSensitive")).multi_line(true).build().map_err(|error| error.to_string())
+}
+
+fn search(roots: &[PathBuf], options: &Value, cancelled: &AtomicBool, snapshots: Option<&Mutex<HashMap<PathBuf, SearchSnapshot>>>, mut emit: impl FnMut(Value) -> bool) -> Result<(), String> {
+    if options["query"].as_str() == Some("") { return Ok(()); }
+    let pattern = pattern(options)?;
+    let flag = |key: &str| options[key].as_bool().unwrap_or(false);
     let mut open = HashMap::new();
     if let Some(files) = options["openFiles"].as_array() {
         for file in files {
@@ -135,15 +155,16 @@ fn search(roots: &[PathBuf], options: &Value, cancelled: &AtomicBool, mut emit: 
             if !entry.file_type().is_some_and(|kind| kind.is_file()) { continue; }
             let path = safe_path(entry.path(), roots)?;
             if !seen.insert(path.clone()) || (flag("onlyOpen") && !open.contains_key(&path)) { continue; }
+            let disk = fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
             let text = match open.get(&path) {
                 Some(text) => text.clone(),
                 None => {
-                    let bytes = fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
-                    let Some(text) = decode(&bytes) else { continue };
+                    let Some(text) = decode(&disk) else { continue };
                     text
                 }
             };
             if let Some(result) = file_matches(&path, &text, &pattern, MAX_MATCHES - matched_ranges, cancelled) {
+                if let Some(snapshots) = snapshots { snapshots.lock().map_err(|error| error.to_string())?.insert(path, SearchSnapshot { disk, text }); }
                 matched_files += 1;
                 matched_ranges += result["matches"].as_array().map_or(0, Vec::len);
                 if !emit(json!({"kind": "file", "file": result})) { return Ok(()); }
@@ -159,15 +180,18 @@ fn search(roots: &[PathBuf], options: &Value, cancelled: &AtomicBool, mut emit: 
 
 #[tauri::command]
 pub async fn project_search(window: tauri::WebviewWindow, jobs: tauri::State<'_, SearchJobs>, options: Value, on_event: Channel<Value>) -> Result<(), String> {
-    let cancelled = Arc::new(AtomicBool::new(false));
     let id = options["id"].as_str().ok_or("Missing search id")?.to_string();
+    let label = window.label().to_string();
+    let mut saved_options = options.clone();
+    if let Some(object) = saved_options.as_object_mut() { object.remove("openFiles"); }
+    let run = Arc::new(SearchRun { id, options: saved_options, cancelled: AtomicBool::new(false), snapshots: Mutex::new(HashMap::new()) });
     {
         let mut jobs = jobs.0.lock().map_err(|error| error.to_string())?;
-        if let Some((_, previous)) = jobs.insert(window.label().to_string(), (id, cancelled.clone())) { previous.store(true, Ordering::Relaxed); }
+        if let Some(previous) = jobs.insert(label.clone(), run.clone()) { previous.cancelled.store(true, Ordering::Relaxed); }
     }
     tauri::async_runtime::spawn_blocking(move || {
-        let result = roots(&options).and_then(|roots| search(&roots, &options, &cancelled, |event| on_event.send(event).is_ok()));
-        on_event.send(if cancelled.load(Ordering::Relaxed) { json!({"kind": "error", "message": "Search cancelled."}) }
+        let result = roots(&label, &options).and_then(|roots| search(&roots, &options, &run.cancelled, Some(&run.snapshots), |event| on_event.send(event).is_ok()));
+        on_event.send(if run.cancelled.load(Ordering::Relaxed) { json!({"kind": "error", "message": "Search cancelled."}) }
             else { match result { Ok(()) => json!({"kind": "done"}), Err(error) => json!({"kind": "error", "message": error}) } }).map_err(|error| error.to_string())?;
         Ok(())
     }).await.map_err(|error| error.to_string())?
@@ -176,15 +200,77 @@ pub async fn project_search(window: tauri::WebviewWindow, jobs: tauri::State<'_,
 #[tauri::command]
 pub fn cancel_project_search(window: tauri::WebviewWindow, jobs: tauri::State<'_, SearchJobs>, id: String) -> Result<(), String> {
     let mut jobs = jobs.0.lock().map_err(|error| error.to_string())?;
-    if jobs.get(window.label()).is_some_and(|(running, _)| *running == id) {
-        if let Some((_, job)) = jobs.remove(window.label()) { job.store(true, Ordering::Relaxed); }
+    if jobs.get(window.label()).is_some_and(|running| running.id == id) {
+        if let Some(job) = jobs.remove(window.label()) { job.cancelled.store(true, Ordering::Relaxed); }
     }
     Ok(())
+}
+
+fn replacement_edit(snapshot: &SearchSnapshot, disk: &[u8], current_text: &str, options: &Value, index: usize, replacement: &str) -> Result<Value, String> {
+    if disk != snapshot.disk { return Err("File changed on disk since the search. Search again before replacing.".into()); }
+    if current_text != snapshot.text { return Err("Editor changed since the search. Search again before replacing.".into()); }
+    let pattern = pattern(options)?;
+    let captures = pattern.captures_iter(&snapshot.text).nth(index).ok_or("Search match no longer exists")?;
+    let found = captures.get(0).ok_or("Search match no longer exists")?;
+    let mut insert = String::new();
+    if options["regex"].as_bool() == Some(true) {
+        let escapes = regex::Regex::new(r"\\\\|\\n|\\t").expect("constant replacement escape regex");
+        let expanded = escapes.replace_all(replacement, |capture: &regex::Captures<'_>| match &capture[0] {
+            r"\n" => "\n", r"\t" => "\t", r"\\" => "\\", _ => unreachable!("constant escape regex matched another value"),
+        });
+        captures.expand(&expanded, &mut insert);
+    } else { insert.push_str(replacement); }
+    Ok(json!({"from": snapshot.text[..found.start()].encode_utf16().count(), "to": snapshot.text[..found.end()].encode_utf16().count(), "insert": insert}))
+}
+
+#[tauri::command]
+pub async fn prepare_search_replace(window: tauri::WebviewWindow, jobs: tauri::State<'_, SearchJobs>, id: String, path: String, current_text: String, index: usize, replacement: String) -> Result<Value, String> {
+    let run = jobs.0.lock().map_err(|error| error.to_string())?.get(window.label()).filter(|run| run.id == id).cloned().ok_or("Search expired. Search again before replacing.")?;
+    let label = window.label().to_string();
+    tauri::async_runtime::spawn_blocking(move || {
+        if run.cancelled.load(Ordering::Relaxed) { return Err("Search was cancelled".into()); }
+        let roots = roots(&label, &run.options)?;
+        let path = safe_path(Path::new(&path), &roots)?;
+        let snapshot = run.snapshots.lock().map_err(|error| error.to_string())?.get(&path).cloned().ok_or("File was not in search results")?;
+        let disk = fs::read(path).map_err(|error| error.to_string())?;
+        let edit = replacement_edit(&snapshot, &disk, &current_text, &run.options, index, &replacement)?;
+        if run.cancelled.load(Ordering::Relaxed) { return Err("Search was cancelled".into()); }
+        Ok(edit)
+    }).await.map_err(|error| error.to_string())?
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn roots_belong_to_the_calling_window() {
+        let base = std::env::temp_dir().join(format!("workbench-search-windows-{}", std::process::id()));
+        let first = base.join("first");
+        let second = base.join("second");
+        fs::create_dir_all(&first).unwrap();
+        fs::create_dir_all(&second).unwrap();
+        let state = json!({"windows":[{"id":"w1","folders":[{"path":first}]},{"id":"w2","folders":[{"path":second}]}]});
+        assert_eq!(roots_in_state(&state, "main", &json!({"roots":[first]})).unwrap(), vec![crate::files::normal_path(&fs::canonicalize(&first).unwrap())]);
+        assert_eq!(roots_in_state(&state, "w2", &json!({"roots":[second]})).unwrap(), vec![crate::files::normal_path(&fs::canonicalize(&second).unwrap())]);
+        assert!(roots_in_state(&state, "w2", &json!({"roots":[first]})).is_err());
+        assert!(roots_in_state(&state, "main", &json!({"roots":[second]})).is_err());
+        assert!(roots_in_state(&state, "missing", &json!({"roots":[first]})).is_err());
+        fs::remove_dir_all(base).unwrap();
+    }
+
+    #[test]
+    fn replacements_validate_snapshots_and_expand_zed_capture_syntax() {
+        let snapshot = SearchSnapshot { disk: b"\xef\xbb\xbfunchanged bytes\r\n".to_vec(), text: "가😀 old-42 old-99".into() };
+        let options = json!({"query":r"(old)-(\d+)","regex":true});
+        let edit = replacement_edit(&snapshot, &snapshot.disk, &snapshot.text, &options, 1, "${2}:$1\\n").unwrap();
+        assert_eq!(edit, json!({"from":11,"to":17,"insert":"99:old\n"}));
+        assert_eq!(replacement_edit(&snapshot, &snapshot.disk, &snapshot.text, &options, 0, "$$${1}x\\t\\\\").unwrap()["insert"], "$oldx\t\\");
+        assert_eq!(replacement_edit(&snapshot, &snapshot.disk, &snapshot.text, &json!({"query":"old"}), 0, "$1\\n").unwrap()["insert"], "$1\\n");
+        assert!(replacement_edit(&snapshot, b"changed", &snapshot.text, &options, 0, "lost").is_err());
+        assert!(replacement_edit(&snapshot, &snapshot.disk, "changed editor", &options, 0, "lost").is_err());
+        assert!(replacement_edit(&snapshot, &snapshot.disk, &snapshot.text, &options, 99, "lost").is_err());
+    }
+
     #[test]
     fn filters_unicode_options_binary_and_scope() {
         assert_eq!(decode(b"one\rtwo").as_deref(), Some("one\ntwo"));
@@ -201,21 +287,21 @@ mod tests {
         let root = crate::files::normal_path(&fs::canonicalize(root).unwrap());
         let cancelled = AtomicBool::new(false);
         let mut events = Vec::new();
-        search(std::slice::from_ref(&root), &json!({"query":"word", "word":true}), &cancelled, |e| { events.push(e); true }).unwrap();
+        search(std::slice::from_ref(&root), &json!({"query":"word", "word":true}), &cancelled, None, |e| { events.push(e); true }).unwrap();
         assert_eq!(events.len(), 1);
         assert_eq!(events[0]["file"]["matches"].as_array().unwrap().len(), 2);
         assert_eq!(events[0]["file"]["matches"][0]["column"], 5);
         assert_eq!(events[0]["file"]["lines"].as_array().unwrap().len(), 5);
         events.clear();
-        search(std::slice::from_ref(&root), &json!({"query":"W.RD", "regex":true, "caseSensitive":true, "include":"src/**/*.txt", "exclude":"ignored.txt"}), &cancelled, |e| { events.push(e); true }).unwrap();
+        search(std::slice::from_ref(&root), &json!({"query":"W.RD", "regex":true, "caseSensitive":true, "include":"src/**/*.txt", "exclude":"ignored.txt"}), &cancelled, None, |e| { events.push(e); true }).unwrap();
         assert_eq!(events[0]["file"]["matches"].as_array().unwrap().len(), 1);
         events.clear();
-        search(std::slice::from_ref(&root), &json!({"query":"word", "ignored":true}), &cancelled, |e| { events.push(e); true }).unwrap();
+        search(std::slice::from_ref(&root), &json!({"query":"word", "ignored":true}), &cancelled, None, |e| { events.push(e); true }).unwrap();
         assert_eq!(events.len(), 2);
         assert!(safe_path(&root.join("../outside"), std::slice::from_ref(&root)).is_err());
-        assert!(search(std::slice::from_ref(&root), &json!({"query":"[", "regex":true}), &cancelled, |_| true).is_err());
+        assert!(search(std::slice::from_ref(&root), &json!({"query":"[", "regex":true}), &cancelled, None, |_| true).is_err());
         cancelled.store(true, Ordering::Relaxed);
-        search(std::slice::from_ref(&root), &json!({"query":"word"}), &cancelled, |_| panic!("cancelled search emitted")).unwrap();
+        search(std::slice::from_ref(&root), &json!({"query":"word"}), &cancelled, None, |_| panic!("cancelled search emitted")).unwrap();
         fs::remove_dir_all(root).unwrap();
     }
 
@@ -229,10 +315,13 @@ mod tests {
         let cancelled = AtomicBool::new(false);
         let mut events = Vec::new();
         let options = json!({"query":"draft", "onlyOpen":true, "openFiles":[{"path":root.join("a.txt"),"text":"draft"}]});
-        search(std::slice::from_ref(&root), &options, &cancelled, |event| { events.push(event); true }).unwrap();
+        let snapshots = Mutex::new(HashMap::new());
+        search(std::slice::from_ref(&root), &options, &cancelled, Some(&snapshots), |event| { events.push(event); true }).unwrap();
         assert_eq!(events.len(), 1);
         assert!(events[0]["file"]["path"].as_str().unwrap().ends_with("a.txt"));
         assert_eq!(fs::read_to_string(root.join("a.txt")).unwrap(), "disk");
+        let snapshot = snapshots.lock().unwrap().get(&root.join("a.txt")).cloned().unwrap();
+        assert_eq!(replacement_edit(&snapshot, b"disk", "draft", &options, 0, "next").unwrap(), json!({"from":0,"to":5,"insert":"next"}));
         let literal = RegexBuilder::new("draft").build().unwrap();
         let limited = file_matches(&root.join("a.txt"), "draft draft", &literal, 1, &cancelled).unwrap();
         assert_eq!(limited["matches"].as_array().unwrap().len(), 1);
@@ -243,7 +332,7 @@ mod tests {
         assert!(result.status.success(), "{}", String::from_utf8_lossy(&result.stderr));
         assert!(safe_path(&link.join("a.txt"), std::slice::from_ref(&root)).is_err());
         events.clear();
-        search(std::slice::from_ref(&root), &options, &cancelled, |event| { events.push(event); true }).unwrap();
+        search(std::slice::from_ref(&root), &options, &cancelled, None, |event| { events.push(event); true }).unwrap();
         assert_eq!(events.len(), 1, "junction must not be traversed");
         fs::remove_dir(&link).unwrap();
         fs::remove_dir_all(root).unwrap();

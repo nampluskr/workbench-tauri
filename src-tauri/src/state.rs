@@ -9,6 +9,13 @@ const SAVE_ERROR: &str = "Could not save the window state.";
 const READ_NOTICE: &str = "Could not read the window state.";
 static STATE_LOCK: Mutex<()> = Mutex::new(());
 
+pub fn window_folders<'a>(state: &'a serde_json::Value, label: &str) -> Result<&'a [serde_json::Value], String> {
+    // User decision 2026-11-07: the main WebView maps to w1; all other labels match the saved id.
+    let id = if label == "main" { "w1" } else { label };
+    state["windows"].as_array().and_then(|windows| windows.iter().find(|window| window["id"].as_str() == Some(id)))
+        .and_then(|window| window["folders"].as_array()).map(Vec::as_slice).ok_or_else(|| "No folders for this window".into())
+}
+
 #[link(name = "kernel32")]
 extern "system" {
     fn GetLocalTime(time: *mut SYSTEMTIME);

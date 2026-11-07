@@ -218,7 +218,7 @@ pub fn run() {
             Ok(())
         })
         .register_uri_scheme_protocol("zlext", |_ctx, request| ext_protocol::respond(&request))
-        .invoke_handler(tauri::generate_handler![caption_set_colors, read_user_settings, write_user_settings, ensure_user_settings, edit_user_settings, open_settings, read_user_keymap, write_user_keymap, ensure_user_keymap, check_folder, paths_exist, read_state, write_state, files::list_dir, files::read_file, files::create_file, files::create_dir, files::rename_path, files::trash_paths, files::delete_paths, files::confirm, files::confirm_buttons, files::paste_paths, files::duplicate_path, folder_watch::watch_folder, text_io::save_text, project_search::project_search, project_search::cancel_project_search])
+        .invoke_handler(tauri::generate_handler![caption_set_colors, read_user_settings, write_user_settings, ensure_user_settings, edit_user_settings, open_settings, read_user_keymap, write_user_keymap, ensure_user_keymap, check_folder, paths_exist, read_state, write_state, files::list_dir, files::read_file, files::create_file, files::create_dir, files::rename_path, files::trash_paths, files::delete_paths, files::confirm, files::confirm_buttons, files::paste_paths, files::duplicate_path, folder_watch::watch_folder, text_io::save_text, project_search::project_search, project_search::cancel_project_search, project_search::prepare_search_replace])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

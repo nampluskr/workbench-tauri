@@ -5,7 +5,9 @@ import { commands } from "../keymap/keyboard.ts";
 import { allTabs, openFile, openTool } from "../workspace/context.ts";
 import { activateFolder, contextOf, editorContext, flushWorkspaceState, folders } from "../workspace/store.ts";
 import { underOrSame } from "../workspace/changes.ts";
-import { baseName } from "../workspace/paths.ts";
+import { baseName, pathKey } from "../workspace/paths.ts";
+import { notify } from "../shell/toast.ts";
+import { applyReplacement, type ReplacementEdit } from "./replace.ts";
 import Icon, { type IconName } from "../shell/Icon.tsx";
 import { displayChunks } from "../keymap/display.ts";
 import { tooltip } from "../shell/tooltip.ts";
@@ -20,6 +22,8 @@ function ProjectSearch(props: { setTitle: (title: string) => void; setPosition: 
   const [regex, setRegex] = createSignal(false);
   const [filters, setFilters] = createSignal(false);
   const [replace, setReplace] = createSignal(false);
+  const [replacement, setReplacement] = createSignal("");
+  const [replacing, setReplacing] = createSignal(false);
   const [include, setInclude] = createSignal("");
   const [exclude, setExclude] = createSignal("");
   const [onlyOpen, setOnlyOpen] = createSignal(false);
@@ -30,6 +34,7 @@ function ProjectSearch(props: { setTitle: (title: string) => void; setPosition: 
   const matches = createMemo(() => state().files.flatMap((file) => file.matches.map((match) => ({ file, match }))));
   let generation = 0;
   let requestId = "";
+  let confirmedOptions = "";
   let searchInput!: HTMLInputElement;
   let section!: HTMLElement;
   const open = (file: SearchFile, match: SearchMatch) => {
@@ -39,6 +44,7 @@ function ProjectSearch(props: { setTitle: (title: string) => void; setPosition: 
     openFile(contextOf(folder), file.path, false, true, match);
   };
   const selected = () => matches()[current()];
+  const searchOptions = () => ({ roots: folders().map((folder) => folder.path), query: query(), caseSensitive: caseSensitive(), word: word(), regex: regex(), include: include(), exclude: exclude(), onlyOpen: onlyOpen(), ignored: ignored() });
   createEffect(() => { const at = selected(); props.setPosition(at ? searchPosition(at.file, at.match) : ""); });
   const openSelected = () => { const at = selected(); if (at) open(at.file, at.match); };
   const move = (delta: number) => {
@@ -64,13 +70,35 @@ function ProjectSearch(props: { setTitle: (title: string) => void; setPosition: 
     const channel = new Channel<SearchEvent>();
     channel.onmessage = (event) => { if (id === generation) setState((state) => receiveSearch(state, event)); };
     try {
-      const options = { id: jobId, roots: folders().map((folder) => folder.path), query: query(), caseSensitive: caseSensitive(), word: word(), regex: regex(), include: include(), exclude: exclude(), onlyOpen: onlyOpen(), ignored: ignored(), openFiles: [...openFiles].map(([path, text]) => ({ path, text })) };
+      const params = searchOptions();
+      confirmedOptions = JSON.stringify(params);
+      const options = { ...params, id: jobId, openFiles: [...openFiles].map(([path, text]) => ({ path, text })) };
       await flushWorkspaceState();
       if (id !== generation) return;
       await invoke("project_search", { options, onEvent: channel });
     } catch (error) {
       if (id === generation) setState((state) => ({ ...state, busy: false, error: String(error) }));
     }
+  };
+  const replaceNext = async () => {
+    if (state().busy || state().error || replacing()) return;
+    if (JSON.stringify(searchOptions()) !== confirmedOptions) { await run(); return; }
+    const at = selected();
+    if (!at) return;
+    const editors = folders().flatMap((folder) => allTabs(contextOf(folder))).filter((tab) => !tab.tool && !tab.markdown && pathKey(tab.path) === pathKey(at.file.path) && tab.file.view);
+    if (new Set(editors.map((tab) => tab.file.doc)).size > 1) { notify(["File is open in multiple workspaces. Close duplicate editors before replacing."]); return; }
+    const file = editors[0]?.file;
+    const view = file?.view;
+    if (!file || !view || view.state.readOnly) { notify(["Open this file in an editable editor before replacing."]); return; }
+    const expected = view.state.doc;
+    const id = requestId;
+    setReplacing(true);
+    try {
+      const edit = await invoke<ReplacementEdit>("prepare_search_replace", { id, path: at.file.path, currentText: expected.toString(), index: at.file.matches.indexOf(at.match), replacement: replacement() });
+      if (id !== requestId || JSON.stringify(searchOptions()) !== confirmedOptions || file.doc.closed || file.view !== view || pathKey(file.doc.path) !== pathKey(at.file.path) || !applyReplacement(view, expected, edit)) throw new Error("Editor or search changed. Search again before replacing.");
+      await run();
+    } catch (error) { notify([String(error)]); }
+    finally { setReplacing(false); }
   };
   onCleanup(() => { generation++; if (requestId) void invoke("cancel_project_search", { id: requestId }).catch(() => {}); });
   const collapseAll = () => setCollapsed(collapsed().size ? new Set<string>() : new Set(state().files.map((file) => file.path)));
@@ -91,7 +119,7 @@ function ProjectSearch(props: { setTitle: (title: string) => void; setPosition: 
     if (event.altKey) {
       const action = shortcuts[`${event.shiftKey ? "shift-" : ""}${event.key.toLowerCase()}`];
       if (action) { event.preventDefault(); action(); }
-    } else if (event.key === "Enter" && event.target instanceof HTMLInputElement) { event.preventDefault(); void run(); }
+    } else if (event.key === "Enter" && event.target instanceof HTMLInputElement) { event.preventDefault(); void (event.target.getAttribute("aria-label") === "Replace in project" ? replaceNext() : run()); }
   }}>
     <div class="project-search-toolbar">
       <button type="button" aria-label="Collapse/Expand all results" onClick={collapseAll}><Icon name={collapsed().size ? "chevron_right" : "chevron_down"} /></button>
@@ -112,8 +140,8 @@ function ProjectSearch(props: { setTitle: (title: string) => void; setPosition: 
       <label><input type="checkbox" checked={onlyOpen()} onChange={(e) => setOnlyOpen(e.currentTarget.checked)} />Only Search Open Files</label>
       <label><input type="checkbox" checked={ignored()} onChange={(e) => setIgnored(e.currentTarget.checked)} />Also search files ignored by configuration</label>
     </div></Show>
-    {/* shortcut: replacement writes await a separate card with open-buffer conflict checks. */}
-    <Show when={replace()}><div class="project-search-toolbar"><input data-text-input aria-label="Replace in project" placeholder="Replace in project…" /><button type="button" disabled>Replace next</button><button type="button" disabled>Replace all</button></div></Show>
+    {/* shortcut: Replace Next supports open editors; unopened files and Replace All await 2b. */}
+    <Show when={replace()}><div class="project-search-toolbar"><input data-text-input aria-label="Replace in project" placeholder="Replace in project…" value={replacement()} onInput={(e) => setReplacement(e.currentTarget.value)} /><button type="button" disabled={state().busy || !!state().error || replacing() || !matches().length} onClick={() => void replaceNext()}>Replace next</button><button type="button" disabled>Replace all</button></div></Show>
     <Show when={state().error}><p class="search-error" role="alert">{state().error}</p></Show>
     <Show when={state().busy}><p role="status">Searching…</p></Show>
     <Show when={state().limited}><p role="status">Search Limits Reached. Try narrowing your search.</p></Show>
