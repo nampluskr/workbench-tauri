@@ -8,7 +8,7 @@ import {
   lineNumbers,
   rectangularSelection,
 } from "@codemirror/view";
-import { cursorDocEnd, cursorDocStart, history, selectDocEnd, selectDocStart } from "@codemirror/commands";
+import { cursorDocEnd, cursorDocStart, history, selectDocEnd, selectDocStart, simplifySelection } from "@codemirror/commands";
 import { BUFFER_FONT_FAMILY, EDITOR_TAB_SIZE, EDITOR_UNDO_GROUP_INTERVAL_MS } from "../spec/metrics.ts";
 
 // Metric variables come from applyMetrics() (spec/metrics.ts); color variables come
@@ -101,6 +101,7 @@ export const editorExtensions = (extension: string) => [
   // I-051 / I-053: the browser's own Ctrl+Home / End stops where the drawn lines end (CM6 draws only those in view). Like
   // the other cursor keys (I-048 ~ I-055) they are the editor's, not the app keymap's.
   keymap.of([
+    { key: "Escape", run: simplifySelection }, // K-33: Zed editor::Cancel (selection_collections.rs try_cancel): a selection collapses to its head, several ranges to the main one
     { key: "Mod-Home", run: cursorDocStart, shift: selectDocStart },
     { key: "Mod-End", run: cursorDocEnd, shift: selectDocEnd },
   ]),

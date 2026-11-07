@@ -77,3 +77,32 @@ test("K-15: input editing stays local while modified Workspace/global bindings d
   assert.ok(press(parent, "b", { ctrlKey: true }));
   assert.deepEqual(calls, ["test::local"]);
 });
+
+test("K-33: Ctrl-Shift-V without a binding is swallowed, not pasted as plain text; a Markdown editor still opens the preview", (t) => {
+  const calls: string[] = [];
+  const previous = commands.get("markdown::OpenPreview");
+  commands.set("markdown::OpenPreview", () => { calls.push("preview"); });
+  t.after(() => { if (previous) commands.set("markdown::OpenPreview", previous); else commands.delete("markdown::OpenPreview"); });
+  class Element { dataset: Record<string, string> = {}; parentElement: Element | null = null; closest() { return null; } }
+  class Input {}
+  for (const [name, value] of Object.entries({ Element, HTMLInputElement: Input })) {
+    const previous = Object.getOwnPropertyDescriptor(globalThis, name);
+    Object.defineProperty(globalThis, name, { configurable: true, value });
+    t.after(() => { if (previous) Object.defineProperty(globalThis, name, previous); else Reflect.deleteProperty(globalThis, name); });
+  }
+  const press = (target: object) => {
+    const event = { target, key: "V", code: "KeyV", ctrlKey: true, shiftKey: true, altKey: false, metaKey: false, isComposing: false, keyCode: 0,
+      defaultPrevented: false, preventDefault() { this.defaultPrevented = true; } };
+    onKeyDown(event as unknown as KeyboardEvent);
+    return event.defaultPrevented;
+  };
+  const pane = new Element();
+  pane.dataset.keymapContext = "Pane";
+  assert.ok(press(pane), "an unmatched press (focus on the Pane element) must not reach the browser's paste");
+  assert.deepEqual(calls, []);
+  const editor = new Element();
+  editor.dataset.keymapContext = "Editor extension=md";
+  editor.parentElement = pane;
+  assert.ok(press(editor));
+  assert.deepEqual(calls, ["preview"]);
+});

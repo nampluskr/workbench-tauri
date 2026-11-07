@@ -12,6 +12,7 @@ import { Keymap, strokeOf, type ContextNode } from "./engine.ts";
 export const BROWSER_KEYS: ReadonlySet<string> = new Set([
   "ctrl-p", "ctrl-f", "ctrl-r", "f5", "f3", "alt-left", "alt-right",
   "ctrl-+", "ctrl--", "ctrl-=", "ctrl-w", "ctrl-tab", "f1", "f6",
+  "ctrl-shift-v", // paste as plain text: Zed binds it only to previews, so an unmatched press must not paste
   "f10", // WebView2 would enter the window-menu mode even when the keymap does not bind F10 (e.g. a null)
 ]);
 

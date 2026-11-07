@@ -1,5 +1,7 @@
 import { createSignal } from "solid-js";
 import { commands } from "../keymap/keyboard.ts";
+import { focusPane } from "../workspace/context.ts";
+import { editorContext } from "../workspace/store.ts";
 
 // Showing and focusing the sidebar and the left Dock (R-17, A-17.1/2/7/8, I-098~I-100). Showing and focusing are
 // separate: Ctrl+Alt+J / Ctrl+B show and hide, Ctrl+Alt+; / Ctrl+Shift+E move focus.
@@ -8,14 +10,15 @@ export const [dockOpen, setDockOpen] = createSignal(true);
 
 const sidebarEl = () => document.querySelector<HTMLElement>(".sidebar-list");
 const panelEl = () => document.querySelector<HTMLElement>(".project-panel");
-const paneEl = () => document.querySelector<HTMLElement>(".pane");
+// Focus goes to the active Pane's editor, not to the Pane element: that one has no Editor keymap context (K-33).
+const focusActivePane = () => focusPane(editorContext().pane());
 const holds = (area: HTMLElement | null) => !!area && area.contains(document.activeElement);
 
 // Where focus was before it went into the sidebar or the panel, so it can go back there.
 let sidebarFrom: HTMLElement | null = null;
 let panelFrom: HTMLElement | null = null;
 const here = () => (document.activeElement instanceof HTMLElement ? document.activeElement : null);
-const back = (from: HTMLElement | null) => (from?.isConnected ? from : paneEl())?.focus();
+const back = (from: HTMLElement | null) => (from?.isConnected ? from.focus() : focusActivePane());
 
 export function focusSidebar(): void {
   if (!holds(sidebarEl())) sidebarFrom = here();
@@ -29,7 +32,7 @@ export function toggleSidebar(): void {
   const inside = holds(sidebarEl());
   setSidebarOpen(false);
   if (inside) back(sidebarFrom);
-  else paneEl()?.focus();
+  else focusActivePane();
 }
 
 /** Ctrl+Alt+;: open if closed and focus; if focus is already inside, give it back but keep the sidebar. */
@@ -42,7 +45,7 @@ export function toggleSidebarFocus(): void {
 export function toggleDock(): void {
   const inside = holds(panelEl());
   setDockOpen(!dockOpen());
-  if (inside && !dockOpen()) paneEl()?.focus();
+  if (inside && !dockOpen()) focusActivePane();
 }
 
 /** Ctrl+Shift+E: from outside open the Dock and focus the panel; from inside go back to the Pane, panel stays. */
