@@ -6,11 +6,11 @@ export const MAX_CRUMB_SEGMENTS = 12;
 
 /**
  * The file's path as Zed's `resolve_file_path` shows it: under the folder, with backslashes; the folder's name first when more
- * than one folder is open. A path outside the folder stays whole.
+ * than one folder is open. A file outside the folder shows only its name (a single-file worktree in Zed).
  */
 export function pathCrumb(root: string, rootName: string, path: string, includeRoot: boolean): string {
   const prefix = root.endsWith("\\") ? root : root + "\\";
-  if (!path.startsWith(prefix)) return path;
+  if (!path.startsWith(prefix)) return path.slice(path.lastIndexOf("\\") + 1);
   const rest = path.slice(prefix.length);
   return includeRoot ? `${rootName}\\${rest}` : rest;
 }

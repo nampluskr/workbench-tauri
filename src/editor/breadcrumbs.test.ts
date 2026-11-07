@@ -8,7 +8,12 @@ test("I-12: the path row is relative to the folder, with the folder's name first
   assert.equal(pathCrumb(root, "workbench-tauri", `${root}\\src\\shell\\Pane.tsx`, false), "src\\shell\\Pane.tsx");
   assert.equal(pathCrumb(root, "workbench-tauri", `${root}\\AGENTS.md`, true), "workbench-tauri\\AGENTS.md");
   assert.equal(pathCrumb("D:\\projects\\workbench-core", "workbench-core", "D:\\projects\\workbench-core\\specs\\v0.5\\ITEMS.md", true), "workbench-core\\specs\\v0.5\\ITEMS.md");
-  assert.equal(pathCrumb(root, "workbench-tauri", "C:\\elsewhere\\a.md", true), "C:\\elsewhere\\a.md");
+});
+
+test("I-12 / K-48: a file outside the folder shows only its name, even with several folders open", () => {
+  for (const includeRoot of [false, true]) {
+    assert.equal(pathCrumb("D:\\projects\\workbench-tauri", "workbench-tauri", "C:\\elsewhere\\a.md", includeRoot), "a.md");
+  }
 });
 
 test("I-12: Markdown crumbs are the headings that contain the cursor, as written in the source", () => {
