@@ -1,0 +1,585 @@
+{
+  "pid": 30892,
+  "sidebar": [
+    {
+      "text": "syntax",
+      "font": "14px",
+      "w": 41
+    }
+  ],
+  "sidebar_close": true,
+  "md": {
+    "ok": true,
+    "crumbs": [
+      "ample.md›# Markdown  ample"
+    ],
+    "syntax": {
+      "spans": 90,
+      "by": {
+        "cm-syntax-title": 4,
+        "cm-syntax-emphasis-strong": 2,
+        "cm-syntax-emphasis": 2,
+        "cm-syntax-link_text": 1,
+        "cm-syntax-link_uri": 1,
+        "cm-syntax-text-literal": 1,
+        "cm-syntax-punctuation-list_marker": 4,
+        "cm-syntax-punctuation-markup": 8,
+        "cm-syntax-punctuation": 6,
+        "cm-syntax-keyword": 4,
+        "cm-syntax-function": 5,
+        "cm-syntax-punctuation-bracket": 12,
+        "cm-syntax-variable-parameter": 4,
+        "cm-syntax-operator": 9,
+        "cm-syntax-type": 5,
+        "cm-syntax-punctuation-delimiter": 7,
+        "cm-syntax-comment": 1,
+        "cm-syntax-variable": 5,
+        "cm-syntax-string": 4,
+        "cm-syntax-punctuation-special": 2,
+        "cm-syntax-number": 3
+      }
+    }
+  },
+  "html": {
+    "ok": true,
+    "crumbs": [
+      "ample.html"
+    ],
+    "syntax": {
+      "spans": 207,
+      "by": {
+        "cm-syntax-punctuation-bracket": 78,
+        "cm-syntax-tag": 32,
+        "cm-syntax-comment": 1,
+        "cm-syntax-attribute": 11,
+        "cm-syntax-punctuation-delimiter": 30,
+        "cm-syntax-string": 20,
+        "cm-syntax-string-special": 6,
+        "cm-syntax-property": 4,
+        "cm-syntax-number": 3,
+        "cm-syntax-constant": 3,
+        "cm-syntax-selector": 1,
+        "cm-syntax-selector-pseudo": 1,
+        "cm-syntax-function": 6,
+        "cm-syntax-keyword": 1,
+        "cm-syntax-operator": 3,
+        "cm-syntax-variable-parameter": 1,
+        "cm-syntax-variable": 3,
+        "cm-syntax-punctuation-special": 2,
+        "cm-syntax-boolean": 1
+      }
+    }
+  },
+  "js": {
+    "ok": true,
+    "crumbs": [
+      "ample.j"
+    ],
+    "syntax": {
+      "spans": 191,
+      "by": {
+        "cm-syntax-comment": 11,
+        "cm-syntax-keyword": 18,
+        "cm-syntax-punctuation-bracket": 37,
+        "cm-syntax-variable": 18,
+        "cm-syntax-string": 11,
+        "cm-syntax-punctuation-delimiter": 33,
+        "cm-syntax-type": 4,
+        "cm-syntax-function": 9,
+        "cm-syntax-variable-parameter": 4,
+        "cm-syntax-operator": 14,
+        "cm-syntax-string-regex": 2,
+        "cm-syntax-string-escape": 1,
+        "cm-syntax-property": 8,
+        "cm-syntax-number": 7,
+        "cm-syntax-constructor": 1,
+        "cm-syntax-variable-special": 3,
+        "cm-syntax-punctuation-special": 6,
+        "cm-syntax-boolean": 1,
+        "cm-syntax-constant": 2,
+        "cm-syntax-tag": 1
+      }
+    }
+  },
+  "css": {
+    "ok": true,
+    "crumbs": [
+      "ample.c"
+    ],
+    "syntax": {
+      "spans": 141,
+      "by": {
+        "cm-syntax-comment": 1,
+        "cm-syntax-keyword": 6,
+        "cm-syntax-function": 6,
+        "cm-syntax-punctuation-bracket": 34,
+        "cm-syntax-string": 3,
+        "cm-syntax-punctuation-delimiter": 35,
+        "cm-syntax-selector-pseudo": 5,
+        "cm-syntax-variable": 5,
+        "cm-syntax-string-special": 1,
+        "cm-syntax-number": 14,
+        "cm-syntax-type": 4,
+        "cm-syntax-property": 9,
+        "cm-syntax-constant": 8,
+        "cm-syntax-operator": 4,
+        "cm-syntax-tag": 2,
+        "cm-syntax-selector": 3,
+        "cm-syntax-attribute": 1
+      }
+    }
+  },
+  "json": {
+    "ok": true,
+    "crumbs": [
+      "ample.j on"
+    ],
+    "syntax": {
+      "spans": 93,
+      "by": {
+        "cm-syntax-punctuation-bracket": 15,
+        "cm-syntax-property": 15,
+        "cm-syntax-punctuation-delimiter": 36,
+        "cm-syntax-string": 11,
+        "cm-syntax-boolean": 3,
+        "cm-syntax-number": 9,
+        "cm-syntax-constant": 1,
+        "cm-syntax-string-escape": 3
+      }
+    }
+  },
+  "go": {
+    "ok": true,
+    "crumbs": [
+      "ample.go"
+    ],
+    "syntax": {
+      "spans": 134,
+      "by": {
+        "cm-syntax-comment": 2,
+        "cm-syntax-keyword": 16,
+        "cm-syntax-namespace": 1,
+        "cm-syntax-punctuation-bracket": 38,
+        "cm-syntax-string": 6,
+        "cm-syntax-constant": 2,
+        "cm-syntax-operator": 9,
+        "cm-syntax-number": 2,
+        "cm-syntax-type": 13,
+        "cm-syntax-property": 7,
+        "cm-syntax-function": 11,
+        "cm-syntax-variable": 17,
+        "cm-syntax-punctuation-delimiter": 10
+      }
+    }
+  },
+  "sh": {
+    "ok": true,
+    "crumbs": [
+      "ample. h"
+    ],
+    "syntax": {
+      "spans": 139,
+      "by": {
+        "cm-syntax-keyword": 15,
+        "cm-syntax-comment": 1,
+        "cm-syntax-function": 11,
+        "cm-syntax-constant": 1,
+        "cm-syntax-string": 29,
+        "cm-syntax-variable": 20,
+        "cm-syntax-operator": 12,
+        "cm-syntax-number": 6,
+        "cm-syntax-punctuation-special": 21,
+        "cm-syntax-embedded": 4,
+        "cm-syntax-punctuation-bracket": 15,
+        "cm-syntax-punctuation-delimiter": 2,
+        "cm-syntax-string-regex": 2
+      }
+    }
+  },
+  "yaml": {
+    "ok": true,
+    "crumbs": [
+      "ample.yaml"
+    ],
+    "syntax": {
+      "spans": 86,
+      "by": {
+        "cm-syntax-comment": 1,
+        "cm-syntax-property": 23,
+        "cm-syntax-punctuation-delimiter": 31,
+        "cm-syntax-string": 16,
+        "cm-syntax-number": 4,
+        "cm-syntax-boolean": 1,
+        "cm-syntax-constant": 1,
+        "cm-syntax-punctuation-special": 3,
+        "cm-syntax-type": 2,
+        "cm-syntax-punctuation-bracket": 4
+      }
+    }
+  },
+  "c": {
+    "ok": true,
+    "crumbs": [
+      "ample.c"
+    ],
+    "syntax": {
+      "spans": 193,
+      "by": {
+        "cm-syntax-comment": 2,
+        "cm-syntax-preproc": 4,
+        "cm-syntax-string": 8,
+        "cm-syntax-constant": 8,
+        "cm-syntax-number": 8,
+        "cm-syntax-function": 7,
+        "cm-syntax-punctuation-bracket": 40,
+        "cm-syntax-variable": 24,
+        "cm-syntax-operator": 20,
+        "cm-syntax-keyword": 10,
+        "cm-syntax-type": 15,
+        "cm-syntax-property": 11,
+        "cm-syntax-punctuation-delimiter": 34,
+        "cm-syntax-string-escape": 2
+      }
+    }
+  },
+  "cpp": {
+    "ok": true,
+    "crumbs": [
+      "ample.cpp"
+    ],
+    "syntax": {
+      "spans": 188,
+      "by": {
+        "cm-syntax-comment": 2,
+        "cm-syntax-preproc": 3,
+        "cm-syntax-string": 11,
+        "cm-syntax-keyword": 15,
+        "cm-syntax-namespace": 10,
+        "cm-syntax-punctuation-bracket": 32,
+        "cm-syntax-operator": 29,
+        "cm-syntax-type": 16,
+        "cm-syntax-punctuation-delimiter": 26,
+        "cm-syntax-function": 9,
+        "cm-syntax-variable": 21,
+        "cm-syntax-property": 3,
+        "cm-syntax-attribute": 1,
+        "cm-syntax-number": 7,
+        "cm-syntax-string-escape": 1,
+        "cm-syntax-constant": 2
+      }
+    }
+  },
+  "tsx": {
+    "ok": true,
+    "crumbs": [
+      "ample.t x"
+    ],
+    "syntax": {
+      "spans": 203,
+      "by": {
+        "cm-syntax-comment": 2,
+        "cm-syntax-keyword": 11,
+        "cm-syntax-punctuation-bracket": 69,
+        "cm-syntax-variable": 14,
+        "cm-syntax-punctuation-delimiter": 28,
+        "cm-syntax-constant": 4,
+        "cm-syntax-string": 3,
+        "cm-syntax-type": 13,
+        "cm-syntax-operator": 10,
+        "cm-syntax-property": 10,
+        "cm-syntax-punctuation-special": 8,
+        "cm-syntax-variable-parameter": 4,
+        "cm-syntax-function": 8,
+        "cm-syntax-tag": 12,
+        "cm-syntax-attribute": 5,
+        "cm-syntax-string-special": 1,
+        "cm-syntax-number": 1
+      }
+    }
+  },
+  "diff": {
+    "ok": true,
+    "crumbs": [
+      "ample.diff"
+    ],
+    "syntax": {
+      "spans": 31,
+      "by": {
+        "cm-syntax-function": 1,
+        "cm-syntax-variable-parameter": 1,
+        "cm-syntax-keyword": 1,
+        "cm-syntax-constant": 2,
+        "cm-syntax-punctuation-special": 12,
+        "cm-syntax-number": 1,
+        "cm-syntax-diff-minus": 4,
+        "cm-syntax-diff-plus": 7,
+        "cm-syntax-attribute": 2
+      }
+    }
+  },
+  "jsonc": {
+    "ok": true,
+    "crumbs": [
+      "ample.j onc"
+    ],
+    "syntax": {
+      "spans": 62,
+      "by": {
+        "cm-syntax-comment": 4,
+        "cm-syntax-punctuation-bracket": 14,
+        "cm-syntax-property": 11,
+        "cm-syntax-punctuation-delimiter": 22,
+        "cm-syntax-string": 7,
+        "cm-syntax-boolean": 1,
+        "cm-syntax-number": 2,
+        "cm-syntax-constant": 1
+      }
+    }
+  },
+  "commit": {
+    "ok": true,
+    "crumbs": [
+      "COMMIT_EDITMSG"
+    ],
+    "syntax": {
+      "spans": 21,
+      "by": {
+        "cm-syntax-variable": 1,
+        "cm-syntax-punctuation-delimiter": 4,
+        "cm-syntax-string": 1,
+        "cm-syntax-comment": 10,
+        "cm-syntax-string-special-symbol": 1,
+        "cm-syntax-tag": 1,
+        "cm-syntax-string-special": 2,
+        "cm-syntax-diff-plus": 1
+      }
+    }
+  },
+  "md_preview": [
+    {
+      "x": 432.5,
+      "y": 414,
+      "w": 800,
+      "h": 129.5,
+      "border": "1px rgb(54, 60, 70)",
+      "radius": "6px",
+      "pad": "12px",
+      "spans": 19
+    },
+    {
+      "x": 432.5,
+      "y": 559.5,
+      "w": 800,
+      "h": 77.75,
+      "border": "1px rgb(54, 60, 70)",
+      "radius": "6px",
+      "pad": "12px",
+      "spans": 25
+    },
+    {
+      "x": 432.5,
+      "y": 653.25,
+      "w": 800,
+      "h": 103.625,
+      "border": "1px rgb(54, 60, 70)",
+      "radius": "6px",
+      "pad": "12px",
+      "spans": 17
+    }
+  ],
+  "md_preview_close": true,
+  "rs_sym": {
+    "crumbs": [
+      "ample.r ›impl Counter›pub fn bump›fn clamp"
+    ],
+    "spans": [
+      [
+        "cm-syntax-keyword",
+        "impl",
+        "rgb(180, 119, 207)"
+      ],
+      [
+        "cm-syntax-type",
+        "Counter",
+        "rgb(110, 180, 191)"
+      ],
+      [
+        "cm-syntax-keyword",
+        "pub",
+        "rgb(180, 119, 207)"
+      ],
+      [
+        "cm-syntax-keyword",
+        "fn",
+        "rgb(180, 119, 207)"
+      ],
+      [
+        "cm-syntax-function",
+        "bump",
+        "rgb(115, 173, 233)"
+      ],
+      [
+        "cm-syntax-keyword",
+        "fn",
+        "rgb(180, 119, 207)"
+      ],
+      [
+        "cm-syntax-function",
+        "clamp",
+        "rgb(115, 173, 233)"
+      ]
+    ],
+    "syntax": {
+      "spans": 183,
+      "by": {
+        "cm-syntax-comment": 2,
+        "cm-syntax-keyword": 18,
+        "cm-syntax-variable": 17,
+        "cm-syntax-punctuation-delimiter": 31,
+        "cm-syntax-type": 25,
+        "cm-syntax-comment-doc": 1,
+        "cm-syntax-punctuation-special": 1,
+        "cm-syntax-punctuation-bracket": 38,
+        "cm-syntax-property": 2,
+        "cm-syntax-operator": 23,
+        "cm-syntax-constant": 2,
+        "cm-syntax-number": 4,
+        "cm-syntax-function": 11,
+        "cm-syntax-variable-special": 2,
+        "cm-syntax-variable-parameter": 3,
+        "cm-syntax-string": 3
+      }
+    }
+  },
+  "ts_sym": {
+    "crumbs": [
+      "ample.t ›cla  Inventory›add( )›function normalize( )"
+    ],
+    "spans": [
+      [
+        "cm-syntax-keyword",
+        "class",
+        "rgb(180, 119, 207)"
+      ],
+      [
+        "cm-syntax-type",
+        "Inventory",
+        "rgb(110, 180, 191)"
+      ],
+      [
+        "cm-syntax-function",
+        "add",
+        "rgb(115, 173, 233)"
+      ],
+      [
+        "cm-syntax-punctuation-bracket",
+        "(",
+        "rgb(178, 185, 198)"
+      ],
+      [
+        "cm-syntax-punctuation-bracket",
+        ")",
+        "rgb(178, 185, 198)"
+      ],
+      [
+        "cm-syntax-keyword",
+        "function",
+        "rgb(180, 119, 207)"
+      ],
+      [
+        "cm-syntax-function",
+        "normalize",
+        "rgb(115, 173, 233)"
+      ],
+      [
+        "cm-syntax-punctuation-bracket",
+        "(",
+        "rgb(178, 185, 198)"
+      ],
+      [
+        "cm-syntax-punctuation-bracket",
+        ")",
+        "rgb(178, 185, 198)"
+      ]
+    ],
+    "syntax": {
+      "spans": 247,
+      "by": {
+        "cm-syntax-comment": 1,
+        "cm-syntax-keyword": 29,
+        "cm-syntax-punctuation-bracket": 50,
+        "cm-syntax-variable": 20,
+        "cm-syntax-string": 8,
+        "cm-syntax-punctuation-delimiter": 41,
+        "cm-syntax-type": 21,
+        "cm-syntax-property": 14,
+        "cm-syntax-punctuation-special": 14,
+        "cm-syntax-operator": 16,
+        "cm-syntax-number": 3,
+        "cm-syntax-function": 15,
+        "cm-syntax-variable-parameter": 4,
+        "cm-syntax-variable-special": 3,
+        "cm-syntax-constant": 3,
+        "cm-syntax-string-regex": 4,
+        "cm-syntax-string-escape": 1
+      }
+    }
+  },
+  "py_sym": {
+    "crumbs": [
+      "ample.py›cla  Library›def add›def normalize"
+    ],
+    "spans": [
+      [
+        "cm-syntax-keyword",
+        "class",
+        "rgb(180, 119, 207)"
+      ],
+      [
+        "cm-syntax-type",
+        "Library",
+        "rgb(110, 180, 191)"
+      ],
+      [
+        "cm-syntax-keyword",
+        "def",
+        "rgb(180, 119, 207)"
+      ],
+      [
+        "cm-syntax-function",
+        "add",
+        "rgb(115, 173, 233)"
+      ],
+      [
+        "cm-syntax-keyword",
+        "def",
+        "rgb(180, 119, 207)"
+      ],
+      [
+        "cm-syntax-function",
+        "normalize",
+        "rgb(115, 173, 233)"
+      ]
+    ],
+    "syntax": {
+      "spans": 161,
+      "by": {
+        "cm-syntax-comment": 1,
+        "cm-syntax-string": 3,
+        "cm-syntax-keyword": 18,
+        "cm-syntax-variable": 19,
+        "cm-syntax-punctuation-delimiter": 27,
+        "cm-syntax-constant": 2,
+        "cm-syntax-operator": 14,
+        "cm-syntax-function": 14,
+        "cm-syntax-punctuation-bracket": 28,
+        "cm-syntax-type": 14,
+        "cm-syntax-number": 3,
+        "cm-syntax-variable-special": 7,
+        "cm-syntax-variable-parameter": 2,
+        "cm-syntax-property": 8,
+        "cm-syntax-attribute": 1
+      }
+    }
+  }
+}

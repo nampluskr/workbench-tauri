@@ -32,6 +32,11 @@
 - 줄 사이 선은 Zed에서 묶음이 둘 이상일 때만 생겨 이번 Zed 캡처로는 확인하지 못했다(소스 기준).
 - 누름(ghost_element_active) 색은 소스 기준, 실측 안 함.
 
+## ORDER-10-R1 (core 재확인, 2026-11-07)
+- 정정: 위 표 "글자 크기" 행의 Zed 이름 잉크 폭 120은 틀렸다. 그 값은 포커스 때만 보이는 접기 화살표(x 121~128)를 포함한 `zed-sb-down.png`에서 쟀다. 포커스 없는 `zed-sb-open.png`에서 다시 재면 `workbench-tauri` 잉크 x 9~112 = **104px**(y 44~53)로 core·gpui 측정과 같다. 그때 tauri는 x 31~149 = 119px였다(글자 16px).
+- 고침(K-51, e6db40d): 폴더 이름 글자를 Zed `Label` 기본 크기 `TextSize::Default` 14px로(Zed `crates/ui/src/styles/typography.rs` 139·152, sidebar.rs 2377~ Label 크기 지정 없음). toml에 같은 뜻 ID가 없어 `src/spec/metrics.ts` 임시 `sidebar.item.font_size` 14(gpui 등록 요청).
+- V3(ORDER-11 tauri 측정 차례에 함께, `specs/v0.5/verify/ORDER-11/tauri-sidebar.png`, `tauri-v3.json`): 계산된 글자 크기 **14px**. 그 측정의 폴더는 `syntax`라 같은 글자로 잉크 폭을 대조하지 못했다: `syntax` 잉크 x 31~71 = 41px. 같은 글자 환산은 16px 때 119px × 14/16 = 104.1px로 Zed 104px와 1px 이내다(환산값이며 같은 글자 실측은 아님).
+
 ## 운영
 - coder: 19:21 Codex GPT-6.1-Sol medium으로 되돌림(사용자 지시, `/model`로 Medium 확인, HERDR-SETUP·PROGRESS 커밋 0cd7f0f). K-44·K-45는 Codex가 했다.
 - 화면 차례 1회: Zed 창 1개, tauri 1회. 레포 상태: workbench-tauri에 `.zed` 없음, 새 파일은 측정 캡처뿐.
