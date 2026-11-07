@@ -471,6 +471,23 @@
   - 결과: 언어 24개, wasm 20/20 빌드·로드. 문법 라이선스 24개 모두 MIT(css·diff·jsdoc·json·regex는 게시 커밋에서 LICENSE). 쿼리 58개 중 54개 컴파일, 4개(javascript·tsx·typescript `(?s)`, python `(?i:sql)`)는 JavaScript RegExp가 거부해 테스트 1개 실패 → K-50(로더 정규식 변환).
   - 검증: V1. typecheck 통과, `zed-grammars.test.ts` 실패 1(쿼리 4개, 기대값 바꾸지 않음), `git diff --check`·PowerShell 구문 검사 통과(`%TEMP%\v05-K-49-report.md`).
 - **W-34 ORDER-11 문서** (2026-11-07): SPEC R-15 라이선스 열·빌드 출처·쿼리 정규식, DECISIONS D-15, PROGRESS Phase 11, PLAN Phase 10·11. 검증 V0(문서만).
+- **W-35 구문 강조 샘플** (2026-11-07, 커밋 `15e063c`): `test-fixtures/syntax/`에 언어별 샘플 20개(Env는 Zed 규칙상 파일 이름이 `.env`여야 해 `env/.env`)와 README(파일 → 기대 언어, 심볼 확인 위치 sample.ts 18·sample.rs 21·sample.py 21). 검증 V0.
+- **K-50 구문 강조를 Zed 문법 복사본으로 (R-15 / I-15)** (2026-11-07, 커밋 `4929641`)
+  - 무엇을 했나: `src/syntax/assets.ts`·`catalog.ts`·`document.ts`(새로), `grammar.ts`·`highlight.ts`·`incremental.ts`, `src/editor/file-view.ts`, `src/shell/AppMenu.tsx`, `src-tauri/src/lib.rs`·`tauri.conf.json`, `ext_protocol.rs` 삭제. 복사본 config로 파일 형식 20개(숨김 4개 제외)를 고르고, 주입(마크다운 코드 블록·inline·HTML style/script·속성 등, host·combined 묶음, 순환 방지), 겹친 캡처는 Zed 순서(`syntax_map.rs:1472-1475`)대로 맨 위 하나, 쿼리 정규식 4개 변환(`(?s)` → `[\s\S]`, `(?i:sql)` → `[sS][qQ][lL]`), C++ `#has-ancestor?` 처리, 라이선스 창에 문법·쿼리 라이선스.
+  - 결과: Zed 설치 폴더를 읽던 `zlext` 스킴과 CSP의 `http://zlext.localhost`를 없앴다(축소). 복사본이 없거나 로드에 실패하면 평문. first_line_pattern 선택은 넣지 않았다. TOML은 이때 빠져 K-54로 넘겼다.
+  - 한계(shortcut): 편집마다 레이어 전체에서 주입 쿼리를 다시 돈다(Zed는 changed_ranges로 줄임). 큰 파일 성능은 V3에서 본다.
+  - 검증: V1. typecheck 통과, 관련 프런트엔드 테스트 25개, `cargo test` 24개, clippy 경고 0, `git diff --check` 통과(`%TEMP%\v05-K-50-report.md`).
+- **K-51 폴더 보기 패널 이름 글자 14px (ORDER-10-R1, R-21)** (2026-11-07, 커밋 `e6db40d`)
+  - 무엇을 했나: `src/app.css`·`src/spec/metrics.ts`. `.sidebar-item` 글자 크기를 임시 ID `sidebar.item.font_size` 14(Zed `sidebar.rs:2377~` Label 기본 크기, `typography.rs:139·152` TextSize::Default 14)로 했다.
+  - 결과: 앞서 적은 Zed 이름 잉크 폭 120은 접기 화살표가 들어간 잘못된 값이었다(leader 재측정 Zed 104, tauri 119). toml 등록 요청 `sidebar.item.font_size` 14.
+  - 검증: V1. typecheck 통과, `git diff --check` 통과(`%TEMP%\v05-K-51-report.md`). V3 재측정 대기.
+- **ORDER-11 Zed 확인 캡처** (2026-11-07, tauri-leader, 커밋 `a5141a8`): 샘플 강조·경로 줄 심볼·미리보기 코드 블록 캡처.
+- **K-54 TOML 강조 (core 결정)** (2026-11-07, 커밋 `bad70f3`)
+  - 무엇을 했나: `tools/fetch-zed-grammars.ps1`, `src/syntax/zed-grammars.test.ts`·`document.test.ts`. Zed 확장 `zed-extensions/toml` v1.1.0(커밋 8e18e50)과 문법 `tree-sitter-toml` rev 342d9be를 고정해 복사본에 더했다. 앱 코드는 바꾸지 않았다(K-50 카탈로그가 찾는다).
+  - 결과: 언어 25개·wasm 21개 빌드. path_suffixes Cargo.lock·toml·Pipfile·uv.lock. 마크다운 `+++` front matter가 TOML로 주입된다. Zed 쿼리대로 `+++` 구분자까지 주입 범위라 그 자리는 오류 노드가 될 수 있다(Zed와 같음). 설치본과 config·쿼리 9개 같음, `extension.toml` 원시 해시만 다름(SPEC R-15 TOML 행). 확장 Apache-2.0, 문법 MIT.
+  - 검증: V1. typecheck 통과, 관련 테스트 10개, `git diff --check`·PowerShell 구문 검사 통과(`%TEMP%\v05-K-54-report.md`). TOML·`+++` 색은 V3에서.
+- **coder 교체 (사용자 지시, core D-16)** (2026-11-07 23:15, W-36): 사용자 지시(core-leader 전달, D-16)로 coder를 Codex gpt-6.1-sol medium에서 Claude Code Sonnet 5.5 high로 바꿨다. 사유: Codex 5시간 한도가 9% 남았다. 카드 경계(K-54 보고 뒤, K-52 시작 전)에서 Codex를 `/quit`로 끝내고 셸 프롬프트를 `Ctrl-C`로 되돌린 뒤 같은 pane `wJ:pM`에서 `herdr agent start tauri-coder --kind claude --pane wJ:pM -- --model sonnet --effort high`로 띄웠다(이름 `tauri-coder` 유지). `/model`로 Sonnet 5.5 ✔·High effort를 확인했다(바꾸지 않음). `HERDR-SETUP.md` 1장에 같은 기록을 적었다. 검증 V0(문서만).
+- **W-36 문서** (2026-11-07): coder 교체 기록, SPEC R-15 TOML 행·HTML 비고·설치된 다른 확장 언어, PROGRESS Phase 11 K-50·K-51·K-54·캡처·W-35. 검증 V0(문서만).
 
 ## 사용자 요청 작업
 

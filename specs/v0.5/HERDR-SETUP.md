@@ -38,6 +38,7 @@
     - 2026-11-07 14:57: coder를 Codex gpt-6.1-sol medium으로 되돌렸다. 14:08 Sonnet 종료 뒤 pane에 입력이 줄 일부만 들어가 PowerShell이 계속 입력 상태로 멈춰 있던 것을 `Ctrl-C`로 풀고 `herdr agent start`로 띄웠다. 되돌린 시각: 14:57.
     - 2026-11-07 15:57: Codex gpt-6.1-sol medium의 5시간 한도가 바닥났다(K-29 진행 중, 다시 쓸 수 있는 시각 19:05). D-16대로 coder를 Claude Code Sonnet 5.5 high로 바꿨다(`herdr agent start tauri-coder --kind claude --pane wJ:pM -- --model sonnet --effort high`, 이름 `tauri-coder` 유지). K-29는 Sonnet이 작업 트리의 중간 결과에서 이어서 한다. 되돌릴지는 core-leader 지시를 따른다(앞 14:00 결정은 그 회차에만 적용).
     - 2026-11-07 19:21: 사용자 지시(core-leader 전달 [DECISION])로 coder를 Codex gpt-6.1-sol medium으로 되돌렸다. 진행 중인 카드가 없는 때(K-43 뒤) Sonnet 5.5 high를 `/exit`로 끝냈고, 셸이 프롬프트를 바로 돌려주지 않아 `Ctrl-C`로 풀고 같은 pane `wJ:pM`에서 `herdr agent start tauri-coder --kind codex --pane wJ:pM -- -m gpt-6.1-sol -c model_reasoning_effort=medium`로 띄웠다(이름 `tauri-coder` 유지, pane을 닫고 새로 띄우지 않음). `/model`로 GPT-6.1-Sol·Medium(current)을 확인했다(바꾸지 않음). 상태 줄 `GPT-6.1-Sol medium`.
+    - 2026-11-07 23:15: 사용자 지시(core-leader 전달, D-16)로 coder를 Codex gpt-6.1-sol medium에서 Claude Code Sonnet 5.5 high로 바꿨다. 사유: Codex 5시간 한도가 9% 남았다. 카드 경계(K-54 보고 뒤, K-52 시작 전)에서 Codex를 `/quit`로 끝내고 셸 프롬프트를 `Ctrl-C`로 되돌린 뒤 같은 pane `wJ:pM`에서 `herdr agent start tauri-coder --kind claude --pane wJ:pM -- --model sonnet --effort high`로 띄웠다(이름 `tauri-coder` 유지). `/model`로 Sonnet 5.5 ✔·High effort를 확인했다(바꾸지 않음).
 - Phase가 바뀔 때 서브 에이전트의 컨텍스트를 비운다. 할 일이 없는 서브 에이전트는 닫아도 된다(core D-2). ORDER-01 완료 시점에는 셋 모두 떠 있어야 한다.
 - 검증 수준(V0~V4)과 앱 실행 제한은 루트 `AGENTS.md` 3A를 그대로 쓴다.
 
