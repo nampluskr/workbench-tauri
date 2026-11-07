@@ -2,6 +2,7 @@ import { batch, createSignal, type Accessor, type Setter } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import type { EditorView } from "@codemirror/view";
 import { createFileView, setEditable } from "../editor/file-view.ts";
+import { cursorPosition } from "../editor/position.ts";
 import { notify } from "../shell/toast.ts";
 import { PANE_MAX_PREVIEW_TABS } from "../spec/metrics.ts";
 import type { Validation } from "./names.ts";
@@ -24,7 +25,7 @@ import { buildRows, collapseAll, joinPath, none, only, sortChildren, type Child,
  * What stays the same for a tab while its list entry is copied (promotion, rename): its file, editor and state. A Markdown
  * preview tab (R-11) has no editor: `element` is its body, `dispose` lets go of what it holds.
  */
-export type TabFile = { doc: Doc; view: EditorView | null; status: Accessor<Status>; element?: HTMLElement; dispose?: () => void };
+export type TabFile = { doc: Doc; view: EditorView | null; status: Accessor<Status>; position?: Accessor<string>; element?: HTMLElement; dispose?: () => void };
 export type Tab = TabInfo & { file: TabFile; focus: boolean };
 
 
@@ -258,6 +259,8 @@ export const askWarning: Ask = (main, content, buttons) =>
   invoke<number>("confirm_buttons", { title: "Warning", main, content, buttons }).catch(() => buttons.length - 1);
 
 function makeView(ctx: FolderContext, file: TabFile, text: string, editable: boolean): void {
+  const [position, setPosition] = createSignal("1:1");
+  file.position = position;
   file.view = createFileView(text, file.doc.path, editable, {
     changed: () => {
       file.doc.refresh();
@@ -266,7 +269,8 @@ function makeView(ctx: FolderContext, file: TabFile, text: string, editable: boo
     edited: () => promote(ctx, file),
     peers: () => (filesOf.get(file.doc) ?? []).flatMap((f) => (f !== file && f.view ? [f.view] : [])),
     keeper: () => liveView(file.doc),
-    cursor: (line) => {
+    cursor: (line, state) => {
+      setPosition(cursorPosition(state));
       if (!hidden.has(file)) for (const p of previews(file.doc)) p.cursor(line);
     },
   });
@@ -430,10 +434,15 @@ export function openPreview(ctx: FolderContext, from: PaneState, path: string, s
     const holder = source ? twinOf(ctx, source.file) : newFile(ctx, path);
     hidden.add(holder);
     if (!source) void holder.doc.read();
+    const [position, setPosition] = createSignal("1:1");
     const preview = createPreview({
       text: () => liveView(holder.doc)?.state.doc.toString() ?? null,
       sourcePath: () => holder.doc.path,
-      line: (line) => selectSourceLine(holder.doc, line),
+      line: (line) => {
+        // shortcut: preview clicks resolve to block starts; add token offsets if exact columns are required.
+        setPosition(`${line + 1}:1`);
+        selectSourceLine(holder.doc, line);
+      },
       link: (target) => followLink(ctx, pane, target),
     });
     const set = previewsOf.get(holder.doc) ?? new Set<Preview>();
@@ -444,7 +453,7 @@ export function openPreview(ctx: FolderContext, from: PaneState, path: string, s
       set.delete(preview);
       release(holder);
     };
-    return { path, preview: false, pinned: false, markdown: true, file: { doc: holder.doc, view: null, status, element: preview.element, dispose }, focus: false };
+    return { path, preview: false, pinned: false, markdown: true, file: { doc: holder.doc, view: null, status, position, element: preview.element, dispose }, focus: false };
   };
   const opened = openTab(pane.tabs(), pane.active(), path, false, PANE_MAX_PREVIEW_TABS, make, () => false, true);
   pane.setTabs(opened.tabs);

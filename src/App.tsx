@@ -1,4 +1,4 @@
-import { Show } from "solid-js";
+import { createMemo, Show } from "solid-js";
 import TitleBar from "./shell/TitleBar.tsx";
 import { IconButton } from "./shell/Icon.tsx";
 import FolderList from "./shell/Sidebar.tsx";
@@ -6,11 +6,14 @@ import ProjectPanel from "./shell/ProjectPanel.tsx";
 import { PaneArea } from "./shell/Pane.tsx";
 import { resizeHandle } from "./shell/dock.ts";
 import { dockOpen, sidebarOpen, toggleDock, togglePanelFocus, toggleSidebar } from "./shell/panels.ts";
-import { addFolder } from "./workspace/store.ts";
+import { addFolder, editorContext } from "./workspace/store.ts";
+import { activeTabOf } from "./workspace/context.ts";
+import { statusItems } from "./shell/status.ts";
 import { PickerHost } from "./shell/Picker.tsx";
 
 // Core D-9 / I-18: icon names follow the pinned Zed sources (K-08 report).
 export default function App() {
+  const status = createMemo(() => statusItems(activeTabOf(editorContext().pane())));
   return (
     <>
       <aside class="sidebar" hidden={!sidebarOpen()}>
@@ -66,6 +69,12 @@ export default function App() {
               <IconButton name="file_tree" label="Close Left Dock" action="workspace::ToggleLeftDock" onClick={toggleDock} />
             </Show>
           </div>
+          <Show when={status()}>{(items) => (
+            <div class="group status-items">
+              <span>{items().position}</span>
+              <span>{items().filetype}</span>
+            </div>
+          )}</Show>
         </footer>
       </div>
       <PickerHost />

@@ -224,6 +224,7 @@ const METRICS: Record<string, string> = {
   "statusbar.group_gap": rem(8), // L-29
   "statusbar.item_gap": rem(4), // L-29
   "statusbar.icon_size": rem(14), // L-92
+  "statusbar.cursor_position.font_size": rem(12), // L-97
   "tooltip.transparent_margin_left": rem(8), // L-209
   "tooltip.transparent_margin_top": rem(10), // L-209
   "tooltip.corner_radius": rem(8), // L-211

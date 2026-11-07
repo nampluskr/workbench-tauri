@@ -12,7 +12,7 @@ export type ViewHooks = {
   edited: () => void;
   peers: () => EditorView[];
   keeper: () => EditorView | null;
-  cursor: (line: number) => void;
+  cursor: (line: number, state: EditorState) => void;
 };
 
 // A change that came from a peer view: it is not passed on again and it is not this view's own edit (no preview
@@ -56,7 +56,7 @@ export function createFileView(text: string, path: string, editable: boolean, ho
         readOnly.of(EditorState.readOnly.of(!editable)),
         EditorView.updateListener.of((update) => {
           // I-083: the main cursor's line (0-based) for a preview of this file.
-          if (update.selectionSet || update.docChanged) hooks.cursor(update.state.doc.lineAt(update.state.selection.main.head).number - 1);
+          if (update.selectionSet || update.docChanged) hooks.cursor(update.state.doc.lineAt(update.state.selection.main.head).number - 1, update.state);
           if (!update.docChanged) return;
           hooks.changed();
           if (update.transactions.some((tr) => tr.docChanged && !tr.annotation(synced) && tr.annotation(Transaction.userEvent) !== undefined)) hooks.edited();

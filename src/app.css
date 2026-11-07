@@ -133,6 +133,7 @@ button, input, select, textarea {
   --icon-size: var(--statusbar-icon-size);
 }
 .group { display: flex; gap: var(--statusbar-item-gap); }
+.status-items { align-items: center; font-size: var(--statusbar-cursor-position-font-size); white-space: nowrap; }
 .sidebar-footer .group { gap: var(--sidebar-footer-gap); }
 .grow { flex: 1; }
 

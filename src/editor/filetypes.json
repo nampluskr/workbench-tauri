@@ -1,0 +1,21 @@
+[
+  {"name": "Shell Script", "path_suffixes": ["sh", "bash", "bashrc", "bash_profile", "bash_aliases", "bash_login", "bash_logout", "brushrc", "bats", "envrc", "profile", "zsh", "zshrc", "zshenv", "zsh_profile", "zsh_aliases", "zsh_histfile", "zlogin", "zprofile", "PKGBUILD", "APKBUILD", "ebuild"]},
+  {"name": "C", "path_suffixes": ["c"]},
+  {"name": "C++", "path_suffixes": ["cc", "ccm", "hh", "cpp", "cppm", "h", "hpp", "cxx", "cxxm", "hxx", "c++", "c++m", "h++", "hip", "ipp", "inl", "ino", "ixx", "cu", "cuh", "C", "H"]},
+  {"name": "CSS", "path_suffixes": ["css", "postcss", "pcss"]},
+  {"name": "Diff", "path_suffixes": ["diff", "patch"]},
+  {"name": "Env", "path_suffixes": [".env"]},
+  {"name": "Git Commit", "path_suffixes": ["TAG_EDITMSG", "MERGE_MSG", "COMMIT_EDITMSG", "NOTES_EDITMSG", "EDIT_DESCRIPTION"]},
+  {"name": "Go", "path_suffixes": ["go"]},
+  {"name": "Go Mod", "path_suffixes": ["mod"]},
+  {"name": "Go Work", "path_suffixes": ["work"]},
+  {"name": "JavaScript", "path_suffixes": ["js", "jsx", "mjs", "cjs"]},
+  {"name": "JSON", "path_suffixes": ["json", "flake.lock", "geojson", "topojson", "prettierrc", "json.dist", "deno.lock"]},
+  {"name": "JSONC", "path_suffixes": ["jsonc", "bun.lock", "devcontainer.json", "pyrightconfig.json", "tsconfig.json", "luaurc", "swcrc", "babelrc", "eslintrc", "stylelintrc", "jshintrc"]},
+  {"name": "Markdown", "path_suffixes": ["md", "mdx", "mdwn", "mdc", "markdown", "MD"]},
+  {"name": "Python", "path_suffixes": ["py", "pyi", "mpy"]},
+  {"name": "Rust", "path_suffixes": ["rs"]},
+  {"name": "TSX", "path_suffixes": ["tsx"]},
+  {"name": "TypeScript", "path_suffixes": ["ts", "cts", "mts"]},
+  {"name": "YAML", "path_suffixes": ["yml", "yaml", "pixi.lock", "clang-format", "clangd", "bst"]}
+]
