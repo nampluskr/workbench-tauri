@@ -6,6 +6,9 @@
 .project-search button[aria-pressed="true"] { color: var(--text-accent); }
 .project-search-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: var(--editor-search-bar-gap); padding: var(--picker-list-padding-y) var(--picker-input-row-padding-x); border-bottom: var(--picker-border-width) solid var(--border); }
 /* Zed: the query box is as wide as the window up to MAX_WIDTH and shrinks for the buttons after it; its border stays `border` (no focus colour). */
+/* Zed toolbar (toolbar.rs:120-150): padding 6/8, border_variant under it; the first row never wraps, the query box shrinks instead. */
+.project-search-toolbar.main { flex-wrap: nowrap; padding: var(--toolbar-padding-y) var(--toolbar-padding-x); border-bottom-color: var(--border-variant); background: var(--toolbar-background); }
+.project-search-modes, .project-search-matches, .project-search-toolbar.main > button { flex: none; }
 .project-search-input { display: flex; flex: 0 1 var(--editor-search-input-max-width); align-items: center; min-width: 0; border: var(--editor-search-input-border) solid var(--border); border-radius: var(--editor-search-input-corner-radius); background: var(--editor-background); }
 .project-search input:not([type="checkbox"]) { flex: 1; min-width: 0; min-height: var(--editor-search-input-min-height); padding-inline: var(--editor-search-input-padding-left) var(--editor-search-input-padding-right); background: var(--editor-background); color: var(--text); border: 0; outline: none; font-size: var(--editor-search-input-font-size); }
 .project-search-toolbar label { display: flex; align-items: center; }
@@ -30,9 +33,9 @@
 .search-file-header:hover .search-open-file, .search-file-header.selected .search-open-file, .project-search .search-open-file:focus-visible { visibility: visible; }
 .search-open-file kbd { font: inherit; color: var(--text-muted); }
 .search-excerpt + .search-excerpt { border-top: var(--picker-border-width) solid var(--border); }
-.project-search .search-line { display: grid; grid-template-columns: var(--editor-gutter-padding-left) calc(var(--editor-gutter-min-line-number-digits) * 1ch) var(--editor-gutter-padding-right) minmax(0, 1fr); width: 100%; padding: 0; text-align: left; font-family: var(--buffer-font-family); font-size: var(--typography-buffer-font-size); line-height: var(--search-line-height); color: var(--editor-foreground); } /* Zed wraps long lines */
+.project-search .search-line { display: grid; grid-template-columns: var(--editor-gutter-padding-left) calc(var(--editor-gutter-min-line-number-digits) * 1ch + var(--editor-gutter-padding-right)) minmax(0, 1fr); width: 100%; padding: 0; text-align: left; font-family: var(--buffer-font-family); font-size: var(--typography-buffer-font-size); line-height: var(--search-line-height); color: var(--editor-foreground); } /* Zed wraps long lines */
 .search-line-gutter { display: flex; align-items: center; justify-content: center; color: var(--icon-muted); --icon-size: var(--icons-size-xsmall); }
-.search-line-number { text-align: right; color: var(--editor-line-number); }
+.search-line-number { padding-right: var(--editor-gutter-padding-right); text-align: right; color: var(--editor-line-number); }
 .search-line.current .search-line-number { color: var(--editor-active-line-number); }
 .search-line code { min-width: 0; font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; }
 .search-line.current { background: var(--editor-active-line-background); }

@@ -146,7 +146,7 @@ function ProjectSearch(props: { setTitle: (title: string) => void; setPosition: 
       if (action) { event.preventDefault(); action(); }
     } else if (event.key === "Enter" && event.target instanceof HTMLInputElement) { event.preventDefault(); void (event.target.getAttribute("aria-label") === "Replace in project" ? replaceNext() : run()); }
   }}>
-    <div class="project-search-toolbar">
+    <div class="project-search-toolbar main">
       <button type="button" aria-label="Collapse/Expand all results" onClick={collapseAll}><Icon name={collapsed().size ? "chevron_right" : "chevron_down"} /></button>
       <div class="project-search-input"><input ref={searchInput} data-text-input aria-label="Search all files" placeholder="Search all files…" value={query()} onInput={(e) => setQuery(e.currentTarget.value)} />
         <Toggle label="Match case" icon="case_sensitive" key="alt-c" value={caseSensitive()} run={() => setCase(!caseSensitive())} />
