@@ -46,7 +46,7 @@ export const TARGET_TOKENS = [
   "border.variant", // T-40.2: tooltip, menu
   "ghost_element.selected", // I-514: keyboard-selected menu item
   "text.disabled", // I-514: disabled menu item
-  "border.focused", // A-12.5: keyboard cursor ring of a sidebar item
+  "border.focused", // Focus borders for controls and project tree rows
   "icon.muted", // A-12.1: folder icon
   "icon.disabled", // A-12.7: icon of a folder whose path is gone
   "error", // status.error (P-020, P-021): inline name input with an error
@@ -82,6 +82,15 @@ export function cssVarName(token: string): string {
 
 export type ThemeStyle = Record<string, unknown> & { players?: Record<string, unknown>[] };
 export type ThemeFile = { themes: { name: string; appearance: "light" | "dark"; style: ThemeStyle }[] };
+
+/**
+ * Zed crates/theme/src/default_colors.rs:252 blue().dark().step_8(); One Dark panel.focused_border is null.
+ * ORDER-10 V3 measured the dark default as #2870bd; leave the light default unresolved.
+ */
+export function panelFocusedBorder(style: ThemeStyle, appearance: "light" | "dark"): string | undefined {
+  const color = style["panel.focused_border"] ?? (appearance === "dark" ? "#2870bd" : undefined);
+  return typeof color === "string" ? formatColor(parseColor(color)) : undefined;
+}
 
 /** T-01.4-T-01.6: find `themes[].name` and check its shape. */
 export function findTheme(file: ThemeFile, name: string): ThemeFile["themes"][number] {

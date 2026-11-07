@@ -2,13 +2,22 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { BASE_THEME, buildRegistry, pickTheme } from "./registry.ts";
-import { parseColor, resolveTokens, themeCss } from "./theme.ts";
+import { panelFocusedBorder, parseColor, resolveTokens, themeCss } from "./theme.ts";
 
 // Every theme JSON under assets/ (committed one/ plus the .gitignore copies when present).
 const assets = new URL("./assets/", import.meta.url);
 const files = Object.fromEntries(readdirSync(assets, { recursive: true, encoding: "utf8" })
   .filter((p) => p.endsWith(".json")).map((p) => [p, readFileSync(new URL(p.replaceAll("\\", "/"), assets), "utf8")]));
 const registry = buildRegistry(files);
+
+test("K-44: panel focus uses the theme value or the measured dark default, leaving light unset", () => {
+  for (const appearance of ["dark", "light"] as const) {
+    assert.equal(panelFocusedBorder({ "panel.focused_border": "#abcdef" }, appearance), "#abcdefff");
+    assert.equal(panelFocusedBorder({ "panel.focused_border": null }, appearance), appearance === "dark" ? "#2870bdff" : undefined);
+    assert.equal(panelFocusedBorder({}, appearance), appearance === "dark" ? "#2870bdff" : undefined);
+  }
+  assert.throws(() => panelFocusedBorder({ "panel.focused_border": "bad" }, "dark"));
+});
 
 // PROGRESS Phase 2 table 1 (R-7) with the CSS variable names fixed in W-7.
 const VARS: [token: string, cssVar: string][] = [

@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { BASE_THEME, pickTheme } from "./registry.ts";
 import { registry } from "./themes.ts";
-import { formatColor, over, parseColor, resolveTokens, syntaxCss, themeCss } from "./theme.ts";
+import { formatColor, over, panelFocusedBorder, parseColor, resolveTokens, syntaxCss, themeCss } from "./theme.ts";
 
 const sheet = new CSSStyleSheet();
 /** Syntax keys of the applied theme, for the T-27.1 lookup. */
@@ -19,7 +19,9 @@ export async function applyTheme(selected?: string): Promise<void> {
   document.documentElement.dataset.appearance = appearance; // the tooltip shadow alpha differs by light/dark (L-212)
   const elementBackground = style["element.background"];
   const keymapColors = typeof elementBackground === "string" ? `:root { --element-background: ${formatColor(parseColor(elementBackground))}; }` : "";
-  sheet.replaceSync(`${themeCss(tokens)}\n${syntaxCss(style)}\n${keymapColors}`);
+  const panelBorder = panelFocusedBorder(style, appearance);
+  const panelColors = panelBorder ? `:root { --panel-focused-border: ${panelBorder}; }` : "";
+  sheet.replaceSync(`${themeCss(tokens)}\n${syntaxCss(style)}\n${keymapColors}\n${panelColors}`);
   if (!document.adoptedStyleSheets.includes(sheet)) document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
   // The native maximize button (src-tauri/src/caption.rs) cannot read CSS: send it the flat colors.
   const bar = tokens["title_bar.background"];

@@ -83,24 +83,47 @@ button, input, select, textarea {
 /* R-12: one row per folder; the list scrolls when there are many (A-16.7). */
 .sidebar-list { flex: 1; min-height: 0; overflow-y: auto; outline: none; }
 .sidebar-item {
+  position: relative;
   display: flex;
   align-items: center;
+  gap: var(--sidebar-item-icon-gap);
   box-sizing: border-box;
   height: var(--sidebar-item-row-height); /* L-34 */
   padding: 0 var(--sidebar-project-header-padding-right) 0 var(--sidebar-project-header-padding-left);
+  border: var(--sidebar-item-focus-border-width) solid transparent;
+  border-right-width: var(--sidebar-item-border-right-width);
   color: var(--text-muted); /* A-12.1 */
   --icon-size: var(--sidebar-item-icon-size);
 }
-.sidebar-item .icon { flex-shrink: 0; color: var(--icon-muted); }
+.sidebar-item .icon {
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--sidebar-item-icon-slot-size);
+  height: var(--sidebar-item-icon-slot-size);
+  color: var(--icon-muted);
+}
+.sidebar-item .icon svg { width: var(--icon-size); height: var(--icon-size); }
+/* Zed sidebar.rs:2297-2299: the separator is outside the project header's border. */
+.sidebar-item + .sidebar-item { margin-top: var(--sidebar-item-separator-width); }
+.sidebar-item + .sidebar-item::before {
+  content: "";
+  position: absolute;
+  top: calc(0px - var(--sidebar-item-focus-border-width) - var(--sidebar-item-separator-width));
+  left: calc(0px - var(--sidebar-item-focus-border-width));
+  right: calc(0px - var(--sidebar-item-border-right-width));
+  height: var(--sidebar-item-separator-width);
+  background: var(--border);
+}
 .sidebar-item-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sidebar-item-parent { color: var(--text-muted); } /* A-12.6 */
-.sidebar-item:hover { background: var(--ghost-element-hover); color: var(--text); } /* A-12.3 */
+.sidebar-item:hover { background: var(--ghost-element-hover); } /* A-12.3 */
 .sidebar-item:active { background: var(--ghost-element-active); } /* A-12.4 */
-.sidebar-item.active { background: var(--ghost-element-selected); color: var(--text); } /* A-12.2 */
+.sidebar-item.active { color: var(--text); } /* A-12.2 */
 .sidebar-item.missing, .sidebar-item.missing:hover { color: var(--text-disabled); } /* A-12.7 */
 .sidebar-item.missing .icon { color: var(--icon-disabled); }
 /* A-12.5: the keyboard cursor ring shows while the list has focus. */
-.sidebar-list:focus .sidebar-item.cursor { box-shadow: inset 0 0 0 var(--sidebar-item-focus-border-width) var(--border-focused); }
+.sidebar-list:focus .sidebar-item.cursor { border-color: var(--panel-focused-border, var(--border-focused)); }
 /* L-35 / A-11.4: padding + Default button = footer height; the top border sits outside it. */
 .sidebar-footer {
   display: flex;
