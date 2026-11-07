@@ -39,6 +39,56 @@ test("I-083 / I-084: the innermost block holding a line", () => {
   assert.equal(blockAt(blocks, 12), -1);
 });
 
+// Test-only ancestor stack for renderer-owned HTML; mirrors closest("[data-line]") without adding a DOM dependency.
+function clickedBlock(source: string, target: string): { tag: string; line: number } {
+  const html = renderMarkdown(source);
+  const at = html.indexOf(target);
+  assert.ok(at >= 0, `Missing target ${target}: ${html}`);
+  const end = target.startsWith("<") ? html.indexOf(">", at) + 1 : at;
+  const ancestors: { tag: string; line?: number }[] = [];
+  for (const match of html.slice(0, end).matchAll(/<(\/?)([a-z][a-z0-9]*)\b([^>]*)>/g)) {
+    const [, closing, tag, attrs] = match;
+    if (closing) { ancestors.pop(); continue; }
+    const line = /\bdata-line="(\d+)"/.exec(attrs)?.[1];
+    if (!/^(hr|br|img)$/.test(tag) || match.index + match[0].length === end) {
+      ancestors.push({ tag, line: line === undefined ? undefined : Number(line) + 1 });
+    }
+  }
+  const block = ancestors.findLast((node) => node.line !== undefined);
+  assert.ok(block, `No source block for ${target}: ${html}`);
+  return { tag: block.tag, line: block.line! };
+}
+
+test("K-28: preview clicks use the innermost list item, loose paragraph and quoted paragraph", () => {
+  assert.deepEqual(clickedBlock("- first\n- **itemTarget**\n  - **nestedTarget**\n", "itemTarget"), { tag: "li", line: 2 });
+  assert.deepEqual(clickedBlock("- first\n- outer\n  - **nestedTarget**\n", "nestedTarget"), { tag: "li", line: 3 });
+  assert.deepEqual(clickedBlock("- first paragraph\n\n  second **looseTarget**\n\n- next\n", "looseTarget"), { tag: "p", line: 3 });
+  assert.deepEqual(clickedBlock("> first paragraph\n>\n> second **quoteTarget**\n", "quoteTarget"), { tag: "p", line: 3 });
+});
+
+test("K-28: code clicks use the fence or indented block start, regardless of the clicked code line", () => {
+  const fenced = "intro\n\n```python\nfirstCodeTarget\nsecondCodeTarget\n```\n";
+  assert.deepEqual(clickedBlock(fenced, "firstCodeTarget"), { tag: "code", line: 3 });
+  assert.deepEqual(clickedBlock(fenced, "secondCodeTarget"), { tag: "code", line: 3 });
+  const indented = "intro\n\n    firstIndentTarget\n    secondIndentTarget\n";
+  assert.deepEqual(clickedBlock(indented, "secondIndentTarget"), { tag: "pre", line: 3 });
+});
+
+test("K-28: table cells currently use their tr source row, for both header and body", () => {
+  const table = "intro\n\n| headerTarget | other |\n| --- | --- |\n| bodyTarget | value |\n| secondRowTarget | value |\n";
+  assert.deepEqual(clickedBlock(table, "headerTarget"), { tag: "tr", line: 3 });
+  assert.deepEqual(clickedBlock(table, "bodyTarget"), { tag: "tr", line: 5 });
+  assert.deepEqual(clickedBlock(table, "secondRowTarget"), { tag: "tr", line: 6 });
+});
+
+test("K-28: paragraphs, headings, rules and both frontmatter renderings preserve their source start", () => {
+  assert.deepEqual(clickedBlock("intro\n\nparagraph **paragraphTarget**\ncontinued\n", "paragraphTarget"), { tag: "p", line: 3 });
+  assert.deepEqual(clickedBlock("intro\n\n## heading **headingTarget**\n", "headingTarget"), { tag: "h2", line: 3 });
+  assert.deepEqual(clickedBlock("intro\n\n---\n", "<hr"), { tag: "hr", line: 3 });
+  assert.deepEqual(clickedBlock("---\ntitle: frontTarget\n---\n\n# After\n", "frontTarget"), { tag: "div", line: 1 });
+  assert.deepEqual(clickedBlock("---\ntags:\n  - rawFrontTarget\n---\n", "rawFrontTarget"), { tag: "pre", line: 1 });
+});
+
 test("I-085: external URLs, local Markdown into a preview (relative to the source), Alt skips it, other files open", () => {
   const src = "C:\\w\\docs\\a.md";
   assert.deepEqual(classifyLink("https://zed.dev", src, false), { kind: "external", url: "https://zed.dev" });
