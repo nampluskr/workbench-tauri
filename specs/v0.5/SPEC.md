@@ -830,6 +830,29 @@ I-10, 사용자 2026-11-06("zed와 동일하게").
 - 파일 열기와 Go to Line 점프는 기록되고, 9줄 커서 이동은 기록되지 않는다.
 - 기록 기준(최소 줄 수 등)은 coder가 Zed 소스로 확인한다(K-38).
 
+**이동 기록 규칙 — Zed 소스 근거 (K-38, `4304dec`, `git show`로 읽기만)**
+
+| 규칙 | Zed 근거 |
+|---|---|
+| 기록은 pane마다 하나 | `crates/workspace/src/pane.rs` `NavHistory`(472) |
+| 최대 1024개, 넘으면 가장 오래된 것을 버림 | `pane.rs:323` `MAX_NAVIGATION_HISTORY_LEN`(쌓을 때 4914·4929·4945) |
+| 항목은 (파일, 커서 줄). 쌓을 때 같은 파일·같은 줄의 옛 기록을 지우고 앞으로 스택을 비움. Go Back 중에는 앞으로 스택에, Go Forward 중에는 뒤로 스택에 쌓음 | `pane.rs` `push`(4893~4960) |
+| 탭을 떠날 때(다른 탭이 활성이 될 때) 그 탭 위치를 쌓음(줄 수 제한 없음) | `crates/editor/src/items.rs:906-908` `Item::deactivated`, `pane.rs:1486-1500` `activate_item` |
+| 커서가 10줄 이상 움직이면 옛 위치를 쌓음(0줄·10줄 미만은 안 쌓음) | `crates/editor/src/editor.rs:307` `MIN_NAVIGATION_HISTORY_ROW_DELTA`, `navigation.rs:1555-1580`(`selection.rs:1605`에서 부름) |
+| Go to Line·검색 결과 열기에 따로 쌓는 코드는 없음(일반 규칙) | `project_search.rs:2408` `nav_history(false)` |
+| 되돌아갈 때 그 파일이 pane에 있으면 활성화, 없으면(닫힌 탭) 저장된 경로로 다시 엶. 이동 자체는 기록하지 않음. 이미 그 위치면 그 항목을 버리고 다음 항목 | `workspace.rs:3269-3406` `navigate_history_impl`, `pane.rs:1249-1262`·`2229-2250` `paths_by_item`, `items.rs:653-704`(694 `nav_history(false)`), `workspace.rs:3254-3261`·`3378-3384` |
+| 키: `Pane` 컨텍스트 `alt-left` → `pane::GoBack`, `alt-right` → `pane::GoForward`. 툴바 버튼도 같은 액션 | `assets/keymaps/default-windows.json` 518·521(컨텍스트 490) |
+
+**구현 (K-38)**
+
+- `src/workspace/nav-history.ts`: 순수 모델 `NavHistory`(뒤로/앞으로 스택, 위 `push` 규칙, 1024 상한, 같은 파일·같은 줄 중복 제거, 경로 비교 `pathKey`), `isFarJump`(줄 차이 10 이상), `navigateHistory`(지금 있는 곳이면 다음 항목), `NAV_BINDINGS`(Pane `alt-left`/`alt-right`, `BUILTIN` 밖 별도 목록).
+- pane마다 기록을 둔다. 분할 복제는 기록을 복사한다.
+- 활성 탭이 바뀌면 떠난 탭이 아직 pane에 있는 편집기 탭일 때 그 커서 위치를 쌓는다(닫힌 탭은 쌓지 않음). 미리보기 탭이 교체될 때도 같다.
+- 편집기에서 선택이 바뀌고 줄 차이가 10 이상이면 옛 위치를 쌓는다. 기록으로 이동한 것은 쌓지 않는다.
+- 되돌아갈 때 탭이 있으면 활성화하고 커서를 옮기며, 없으면 일반 탭으로 다시 연다.
+- 버튼: 기록이 있으면 켜지고 없으면 흐림(비활성). 툴팁 `Go Back`·`Go Forward`와 키(`Alt-Left`/`Alt-Right`).
+- 이 앱에 Go to Line이 없어 그 기록은 없다(V3는 66줄 이상 클릭으로 대신 확인). 삭제된 파일의 기록 제거는 모델에만 있고 파일 삭제 감시에 연결하지 않았다(삭제된 파일 위치로 가면 빈 읽기 전용 탭이 열림).
+
 ---
 
 ## R-11. 탭 제목에 마우스를 올리면 파일 전체 경로를 툴팁으로 보인다
@@ -858,6 +881,20 @@ I-11, 사용자 2026-11-06, 참고 화면 `refs/I-11-zed.png`.
 |---|---|---|
 | 탭 툴팁 | 탭 아래에 절대 경로 `D:\projects\workbench-tauri\AGENTS.md`(역슬래시) | `zed-tip-tab.png` |
 | "+" 버튼 툴팁 | "New…"(키 없음) | `zed-tip-plus.png` |
+
+**구현 (K-39, Zed 규칙은 소스로 확인)**
+
+| 탭 | 툴팁 | Zed 근거 |
+|---|---|---|
+| 파일 편집기 | 절대 경로(역슬래시 그대로) | `items.rs:706-722` |
+| 읽기 전용 파일 | 같은 경로 + 아래 메타 "Read-Only Tab" | `pane.rs:3099-3110` `Tooltip::with_meta` |
+| 마크다운 미리보기 | 원본 파일의 절대 경로 | `markdown_preview_view.rs:1745` |
+| Project Search | 검색어가 있으면 검색어, 없으면 "Project Search" | `project_search.rs:1132-1139` |
+| Diagnostics | "Project Diagnostics" | `diagnostics.rs:754` |
+| Settings·Keymap Editor·Extensions | 없음(`tab_tooltip_text` 구현 없음, 기본값 없음) | `item.rs:202` |
+
+- `src/workspace/tab-view.ts` `tabTooltip()`(순수, 테스트)가 위 규칙을 만들고 각 탭에 기존 `tooltip`을 붙인다. 지연·위치는 기존 툴팁 규칙(L-208)이다. 탭 안 닫기·고정 버튼의 툴팁은 그대로다.
+- 읽기 전용 판단은 편집기 `readOnly`(읽지 못한 파일이 빈 읽기 전용 탭으로 열릴 때)다. Zed `compact()`가 Windows 경로를 바꾸지 않는다고 보고 따로 처리하지 않았다(확인 못 함).
 
 ---
 
@@ -898,6 +935,21 @@ I-12, 사용자 2026-11-06("zed와 동일하게"), 참고 화면 `refs/zed-overv
 | 분할 | pane마다 자기 커서 기준: 왼쪽 `… › # AGENTS`, 오른쪽 6행 `… › # AGENTS › ## 레포 규칙` | `zed-split-right-click.png` |
 
 - 툴바 오른쪽 버튼: Zed는 미리보기(마크다운만)·검색·AI·커서·설정이다. 이 앱은 미리보기만 둔다(core ORDER-09).
+
+**범위 (core 결정 2026-11-07)**
+
+- Phase 9는 경로 + 마크다운 제목 계층까지다. 코드 파일의 심볼 계층(Zed 캡처 `zed-bc-code.png`의 `src\App.tsx › function App()`)은 Phase 11(ORDER-11)에서 한다. 지금 코드 파일은 경로만 보인다(`DECISIONS.md` D-14).
+
+**구현 (K-40)**
+
+- Zed 소스(읽기만): 경로 줄 구성 `editor.rs:11682-11721` `breadcrumbs_inner`(첫 조각은 파일 경로 한 조각, 폴더가 둘 이상이면 루트 이름 포함, 그다음 커서를 포함한 개요 심볼). 모양 `element.rs:7131-7215` `render_breadcrumb_text`(구분 "›" `Color::Placeholder`, 조각 간격 `gap_1` 4, 글씨 `Color::Muted`·버퍼 글꼴, 12개 넘으면 앞 6 + "⋯" + 뒤 6(`MAX_SEGMENTS` 7134), 길면 가로로 잘림). 마크다운 제목은 `crates/grammars/src/markdown/outline.scm`이 `atx_heading`만 `section` 안에서 항목으로 삼는다(`#` 포함, 섹션 중첩이라 제목 계층 전체).
+- `src/editor/breadcrumbs.ts`(순수, 테스트): `pathCrumb`(폴더 하나면 루트 기준 상대 경로, 둘 이상이면 `루트이름\…`, 루트 밖은 그대로, 구분 `\`), `markdownCrumbs`(커서까지 제목 스택, 같거나 높은 수준이 오면 낮은 것을 뺌, 펜스 코드·맨 앞 `---` 프런트매터 안은 무시, 닫는 `#` 뗌, 빈 제목은 `#`만), `elideCrumbs`(12개 초과 → 6 + ⋯ + 6).
+- 마크다운 편집기마다 제목 신호를 두고 커서 이동·편집 때 갱신한다. 분할 pane은 편집기마다 자기 커서 기준이다. 커서가 첫 제목 앞이면 경로만 보인다.
+- 툴바: 파일 편집기 탭에 모두 나온다(도구 탭·미리보기 탭 제외). 왼쪽 경로 줄, 오른쪽은 마크다운일 때만 미리보기 버튼. 제목 조각은 테마 `syntax.title` 색(`cm-syntax-title`, One Dark `#d07277`), 글씨 `--text-muted`·버퍼 글꼴·`--typography-size-default`(14), 구분 `--text-placeholder`, 간격 4, 넘치면 자름.
+- setext 제목은 조각이 아니다: Zed 개요 쿼리(`outline.scm`)에 setext가 없어 Zed 경로 줄에도 나오지 않는다.
+- 미리보기 탭에는 툴바가 없다: Zed 마크다운 미리보기 항목에 `breadcrumb_location`·`breadcrumbs` 구현이 없고(기본 숨김), 툴바는 보이는 항목이 없으면 그리지 않는다(`toolbar.rs:109-113`). 편집기 breadcrumb는 단일 버퍼일 때만 `PrimaryLeft`(`items.rs:1097`).
+- 글자 크기 14는 캡처(`zed-bc-md-h2.png`, `AGENTS.md` 9글자 폭 약 75px)로 맞췄다. Zed `text_ui`가 16인지 소스로 확정하지 못해 V3에서 확인한다.
+- 한계(`shortcut:`): 편집 때마다 전체 텍스트를 줄로 나눈다(매우 긴 문서에서 느리면 캐시). 인용문·목록 안의 `#`는 조각이 아니다.
 
 ---
 
@@ -1027,6 +1079,13 @@ I-16, 사용자 2026-11-06("zed와 동일하게").
 | 마우스 휠 | 세로 휠 한 칸에 가로 약 80px 이동 | `zed-wheel-*.png` |
 | 키보드로 탭 바꾸기 | `Ctrl-PageUp` 등으로 바꾸면 활성 탭이 보이게 스크롤 | `zed-first-active.png` |
 | 새 탭 위치 | 활성 탭 바로 오른쪽 | `zed-overflow.png` 계열 |
+
+**구현 (K-39)**
+
+- 이미 Zed와 같던 것: 탭 폭 그대로(`flex: none`), 줄바꿈·줄임 없음, `.tab-list { overflow: hidden }`, 화살표·목록 버튼·스크롤바 없음.
+- 휠: 세로 휠을 탭 줄의 가로 스크롤로 바꾼다. 한 칸 = 휠 줄 수 3 × 창 줄 높이(16 × 1.618) = 77.7px(Zed `gpui div.rs:3404` `pixel_delta`, `gpui_windows/events.rs:578` 휠 줄 수 기본 3). Chromium 한 칸 `deltaY` 100(= 3줄)이라 `deltaY / (100/3) × 줄 높이`(`tabWheelDelta`, 테스트 77.66). 시스템 휠 줄 수 설정은 `deltaY`에 이미 들어 있다. 상수 `WHEEL_PIXELS_PER_LINE`·`UI_LINE_HEIGHT_RATIO`는 `metrics.ts`에 출처 주석과 함께 둔다. 넘치지 않으면 움직이지 않는다. gpui `window.line_height()` 1.618은 캡처 값과 맞음만 확인했다.
+- 활성 탭 보이기: 활성 탭이 바뀌면 `scrollIntoView({ inline: "nearest", block: "nearest" })`(이미 보이면 그대로, Zed `scroll_to_item` `pane.rs:1530-1550`).
+- 하단 선: 스크롤하면 같이 움직이던 `::after` 선을 `.tab-list` 배경 선으로 바꿔 탭이 스크롤해도 전체 폭 선이 남는다.
 
 ---
 
@@ -1503,4 +1562,8 @@ I-23, 사용자 2026-11-06("나머지는 Zed와 동일하게").
 | 분할 | 포커스가 있는 pane에만 보임 | `zed-split-right-click.png` |
 
 - 마우스를 올리는 것만으로는 보이지 않는다. 기준은 pane 포커스다.
+
+**구현 (K-39, 확인만)**
+
+- 고친 것 없음. `Pane.tsx`는 `focusedPane() === pane.id`일 때만 버튼을 그린다. `focusin`이 `.pane` 안이면 그 pane id, 밖(프로젝트 패널·사이드바·상태 바)이면 `null`이라 버튼이 사라지고 hover로는 보이지 않는다(`zed-focus-panel.png`와 같음). 예외로 `.menu` 안 포커스(탭 메뉴 등)는 값을 바꾸지 않아 버튼이 남는다(I-706 의도).
 

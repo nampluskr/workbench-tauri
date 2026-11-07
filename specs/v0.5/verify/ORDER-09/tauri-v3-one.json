@@ -1,0 +1,178 @@
+{
+  "pid": 32228,
+  "mode": "one",
+  "open": {
+    "crumbs": [
+      "AGENTS.md›# AGENTS"
+    ],
+    "nav": {
+      "back": true,
+      "fwd": true,
+      "active": [
+        "AGENTS.md"
+      ]
+    },
+    "buttons": [
+      true,
+      true,
+      true
+    ]
+  },
+  "bc_h2": {
+    "crumbs": [
+      "AGENTS.md›# AGENTS›## 레포 규칙"
+    ],
+    "status": [
+      "5:57",
+      "Markdown"
+    ]
+  },
+  "tip_tab": [
+    "D:\\projects\\workbench-tauri\\AGENTS.md"
+  ],
+  "tip_back": [
+    "Go Back Alt-Left"
+  ],
+  "buttons_panel_focus": {
+    "afterPanelClick": [
+      false,
+      false,
+      false
+    ],
+    "hoverTabBar": [
+      false,
+      false,
+      false
+    ]
+  },
+  "nav": [
+    [
+      "AGENTS 5:23",
+      [
+        "5:23",
+        "Markdown"
+      ]
+    ],
+    [
+      "open App.tsx",
+      [
+        "1:1",
+        "TSX"
+      ],
+      {
+        "back": false,
+        "fwd": true,
+        "active": [
+          "App.tsx"
+        ]
+      }
+    ],
+    [
+      "ctrl+end",
+      [
+        "75:1",
+        "TSX"
+      ]
+    ],
+    [
+      "alt+left",
+      [
+        "1:1",
+        "TSX"
+      ],
+      {
+        "back": false,
+        "fwd": false,
+        "active": [
+          "App.tsx"
+        ]
+      }
+    ],
+    [
+      "alt+left",
+      [
+        "5:23",
+        "Markdown"
+      ],
+      {
+        "back": true,
+        "fwd": false,
+        "active": [
+          "AGENTS.md"
+        ]
+      }
+    ],
+    [
+      "alt+right",
+      [
+        "1:1",
+        "TSX"
+      ],
+      {
+        "back": false,
+        "fwd": false,
+        "active": [
+          "App.tsx"
+        ]
+      }
+    ],
+    [
+      "alt+right",
+      [
+        "75:1",
+        "TSX"
+      ],
+      {
+        "back": false,
+        "fwd": true,
+        "active": [
+          "App.tsx"
+        ]
+      }
+    ],
+    [
+      "crumbs code",
+      [
+        "src\\App.tsx"
+      ]
+    ]
+  ],
+  "openedTabs": [
+    "AGENTS.md",
+    "App.tsx",
+    "CLAUDE.md",
+    "index.html",
+    "INTENT.md",
+    "LICENSE",
+    "package-lock.json",
+    "package.json",
+    "tsconfig.json",
+    "vite.config.ts",
+    ".gitignore",
+    "app.css",
+    "index.tsx"
+  ],
+  "overflow": {
+    "g0": {
+      "scrollLeft": 587,
+      "scrollWidth": 1510,
+      "clientWidth": 812
+    },
+    "g1": {
+      "scrollLeft": 665,
+      "scrollWidth": 1510,
+      "clientWidth": 812
+    },
+    "g2": {
+      "scrollLeft": 587,
+      "scrollWidth": 1510,
+      "clientWidth": 812
+    },
+    "g3": {
+      "scrollLeft": 611,
+      "scrollWidth": 1510,
+      "clientWidth": 812
+    },
+    "activeVisible": true
+  }
+}

@@ -389,6 +389,22 @@
   - 결과: 문서만. 이동 기록 기준(최소 줄 수 등)은 K-38에서 coder가 Zed 소스로 확인한다.
   - 특이사항(측정 메모): workbench-core 폴더는 읽기만 했고 Zed 확인 전후 두 레포 `git status`를 확인했다(`.zed` 폴더 없음). core에 새로 생긴 `specs/v0.5/orders/ORDER-10.md`는 core-leader 카드다.
   - 검증: V0(문서만, 실행 없음).
+- **K-38 뒤로·앞으로 이동 기록 (R-10 / I-10)** (2026-11-07, 커밋 `b52f848`)
+  - 무엇을 했나: pane별 이동 기록 모델(`src/workspace/nav-history.ts`)과 연결(탭을 떠날 때·10줄 이상 이동 때 쌓기, 닫힌 탭 다시 열기, 버튼 흐림·툴팁, `Alt-Left`/`Alt-Right`)을 만들었다. 규칙은 Zed 소스로 확인했다(SPEC R-10 "이동 기록 규칙").
+  - 결과: Zed 캡처 순서(AGENTS 5:23 → App.tsx → 66줄 → 뒤로·뒤로·앞으로·앞으로 → 75줄(9줄, 기록 안 됨) → 뒤로 = App.tsx 1:1)를 테스트로 재현했다. Go to Line은 앱에 없다. 삭제된 파일 기록 제거는 모델에만 있다.
+  - 검증: V1. typecheck 통과, `npm run test` 188/188(`nav-history.test.ts` 3개)(`%TEMP%\v05-K-38-report.md`). 연결부는 코드 확인.
+  - 실측 필요(V3): Zed 순서 재현(Go to Line 대신 66줄 이상 클릭), 버튼 흐림·툴팁 키.
+- **K-39 탭 툴팁·넘침·오른쪽 버튼 조건 (R-11·R-16·R-23 / I-11·I-16·I-23)** (2026-11-07, 커밋 `3a939dd`)
+  - 무엇을 했나: 탭 툴팁 규칙(`tabTooltip`: 파일 절대 경로, 읽기 전용 메타, Project Search 검색어, Diagnostics "Project Diagnostics", Settings·Keymap·Extensions 없음). 넘침: 휠 한 칸 77.7px 가로 스크롤, 활성 탭 `scrollIntoView` nearest, 하단 선을 배경 선으로. 오른쪽 버튼 조건은 확인만(고친 것 없음).
+  - 결과: SPEC R-11·R-16·R-23 "구현"에 적었다.
+  - 검증: V1. typecheck 통과, `npm run test` 190/190(`tab-view.test.ts` 2개)(`%TEMP%\v05-K-39-report.md`).
+  - 실측 필요(V3): 탭 10개 이상 넘친 상태에서 휠 한 칸(약 78px)·활성 탭 보이기·하단 선, 탭 hover 툴팁과 지연.
+- **K-40 경로 줄 (R-12 / I-12)** (2026-11-07, 커밋 `4c92570`)
+  - 무엇을 했나: 편집기 툴바 왼쪽에 경로 + 마크다운 제목 계층(`src/editor/breadcrumbs.ts`)을 보인다. 폴더 둘이면 루트 이름부터, 분할은 pane별 커서, 12개 넘으면 6 + ⋯ + 6. 코드 파일은 경로만.
+  - 결과: core 결정(2026-11-07)으로 코드 심볼 계층은 Phase 11(`DECISIONS.md` D-14). setext 제목은 Zed 개요 쿼리에 없어 조각이 아니고, 미리보기 탭은 Zed처럼 툴바가 없다. SPEC R-12 "범위"·"구현"에 적었다.
+  - 검증: V1. typecheck 통과, `npm run test` 194/194(`breadcrumbs.test.ts` 4개)(`%TEMP%\v05-K-40-report.md`).
+  - 실측 필요(V3): 툴바 높이 45, 경로 줄 글자 x·크기(14가 맞는지)·색, 제목 색, 폴더 둘, 분할.
+- **W-28 문서** (2026-11-07): SPEC R-10(이동 기록 규칙·구현)·R-11·R-12(범위·구현)·R-16·R-23 구현, DECISIONS D-14, 이 PROGRESS K-38~K-40. 검증 V0(문서만).
 
 ## 사용자 요청 작업
 

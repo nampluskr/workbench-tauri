@@ -249,6 +249,20 @@ toml에 구분선 ID가 없어 사용자 추가 지시(core D-12)로 실측값�
 
 core-leader 결정(2026-11-07, 사용자 위임 core D-13), tauri-coder K-24 보고.
 
+### D-14. 경로 줄의 코드 심볼 계층은 Phase 11에서 한다
+
+**결정**
+
+Phase 9의 경로 줄(R-12)은 파일 경로와 마크다운 제목 계층까지 보인다. 코드 파일의 심볼 계층(Zed `src\App.tsx › function App()`, `specs/v0.5/verify/ORDER-09/zed-bc-code.png`)은 Phase 11(ORDER-11, 구문 강조)에서 한다. 그때까지 코드 파일은 경로만 보인다.
+
+**이유**
+
+심볼 계층은 언어별 문법(tree-sitter)과 개요 쿼리가 있어야 한다. 문법을 이 PC의 Zed 설치 폴더에서 읽는 것은 core D-8(실행 중에 Zed 폴더를 읽지 않고 복사본을 쓴다)에 어긋나므로, Phase 11에서 문법을 복사본으로 들인 뒤 함께 한다.
+
+**출처**
+
+core-leader 결정(2026-11-07, 사용자 위임 core D-13), tauri-coder K-40 보고.
+
 에이전트 운영의 리더 결정(카드·보고 파일 위치, 카드 ID 체계)은 설계 결정이 아니라서 `HERDR-SETUP.md` 5장에 둔다.
 
 ## 미결 사항
