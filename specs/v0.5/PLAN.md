@@ -211,7 +211,7 @@ R-1~R-23은 모두 위 표의 한 Phase에 대응한다.
 | Phase 7 — 테마·아이콘 테마 | R-3 · R-4 | 완료(core 판정 대기) | - | 남은 차이·core 확인 항목은 PROGRESS Phase 7 |
 | Phase 8 — 상태 바 | R-5 · R-19 · R-22 | 완료(core 판정 대기) | - | 남은 차이·toml 등록 요청은 PROGRESS Phase 8·SPEC R-22 |
 | Phase 9 — 탭 바와 편집 영역 상단 | R-10 · R-11 · R-12 · R-16 · R-23 | 완료(core 판정 대기) | - | 코드 심볼 경로 줄은 Phase 11(D-14). 남은 차이는 PROGRESS Phase 9 |
-| Phase 10 — 폴더 보기 패널 | R-21 | todo | - | 없음 |
+| Phase 10 — 폴더 보기 패널 | R-21 | doing | - | K-44 구현·Zed 확인·V3 끝(core 판정 대기). toml 등록 요청 5개·라이트 panel.focused_border 기본값은 SPEC R-21 |
 | Phase 11 — 구문 강조 | R-15 | todo | - | 없음 |
 | Phase 12 — 사용자 일괄 확인 | V4 | todo | - | 없음 |
 

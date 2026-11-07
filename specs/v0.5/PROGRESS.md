@@ -432,6 +432,17 @@
 - **W-29 Phase 9 마무리 문서** (2026-11-07): V3·K-41·K-42·C-26 기록, PLAN Phase 9 "완료(core 판정 대기)". 검증 V0(문서만).
 - **coder 되돌림 (사용자 지시)** (2026-11-07, W-30): 19:21에 사용자 지시(core-leader 전달 [DECISION])로 `tauri-coder`를 Codex gpt-6.1-sol medium으로 되돌렸다. 진행 중인 카드가 없는 때(K-43 뒤) Sonnet 5.5 high를 `/exit`로 끝냈고, 셸이 프롬프트를 바로 돌려주지 않아 `Ctrl-C`로 풀고 같은 pane `wJ:pM`에서 `herdr agent start tauri-coder --kind codex --pane wJ:pM -- -m gpt-6.1-sol -c model_reasoning_effort=medium`로 띄웠다(이름 유지, pane을 닫고 새로 띄우지 않음). `/model`로 GPT-6.1-Sol·Medium(current)을 확인했다(바꾸지 않음). 상태 줄 `GPT-6.1-Sol medium`. `HERDR-SETUP.md` 1장에 같은 기록을 적었다. 검증 V0(문서만).
 
+### Phase 10 — 폴더 보기 패널
+
+- **K-44 폴더 보기 패널 모양 (R-21 / I-21)** (2026-11-07, 커밋 전)
+  - 무엇을 했나: `src/app.css`, `src/spec/metrics.ts`, `src/theme/theme.ts`·`apply.ts`·`theme.test.ts`. 현재 폴더 `text`·나머지 `text.muted`, 현재 줄 배경과 1px inset 윤곽선 제거, 줄 테두리 1(오른쪽 2, 평소 투명, 사이드바 포커스 + cursor 줄만 `panel.focused_border`), 둘째 줄부터 1px `border` 구분선, 아이콘 14를 16 칸 가운데·이름과 간격 6. `panel.focused_border`가 없을 때 다크 #2870bd, 라이트는 `border.focused` 유지. `Sidebar.tsx`의 내용·순서·동작과 폭 설정은 그대로.
+  - 결과: toml에 없는 임시 값 다섯 개(`sidebar.item.border_right_width` 2, `separator_width` 1, `icon_slot_size` 16, `icon_gap` 6, `panel.focused_border` 다크 기본값 #2870bd)를 gpui 등록 요청으로 SPEC R-21에 적었다. 라이트 기본값은 미확정(core 확인 요청).
+  - 검증: V1. typecheck 통과, 관련 테스트 32/32(`workspace.test.ts`·`status.test.ts`·`theme.test.ts`), `git diff --check` 통과(`%TEMP%\v05-K-44-report.md`).
+- **ORDER-10 Zed 확인·V3** (2026-11-07, tauri-leader)
+  - 무엇을 했나: 1920×1080 100%, 클라이언트 1440×852, One Dark에서 Zed(`zed -n`, 폴더 workbench-tauri, Ctrl-Alt-J)와 tauri 폴더 보기 패널을 재고 Zed 소스 근거와 대조했다. 캡처 `specs/v0.5/verify/ORDER-10/`(zed-start·sb-open·sb-down·sb-hover·sb-end.png, tauri-two-idle·hover·focused.png, tauri-v3-two.json).
+  - 결과: 같음 — 폭 300(최소 200·최대 800, core가 앞서 본 약 220은 이번 조건에서 나오지 않음), 줄 높이 31, 여백 8/6·테두리 1(오른쪽 2), 현재 폴더 글자색·배경 없음, 키보드 선택 테두리 #2870bd, hover #363c46, 아래쪽 줄(위 선 y 821, 토글·Add Project 위치). 소스 기준 같음 — 아이콘 칸 16·간격 6(Zed 묶음 머리에는 아이콘 없음), 줄 사이 선(Zed는 묶음 하나라 캡처 없음), 누름 색. 글자 잉크 폭 120 대 119(1px 이내). 두지 않음 — 검색칸(사용자 2026-11-06), Thread History 버튼·"No threads yet" 줄(내용이라 두지 않음). 표는 SPEC R-21 "Zed 확인(2026-11-07)".
+- **W-31 Phase 10 문서** (2026-11-07): SPEC R-21 "Zed 확인(2026-11-07)" 치수 표·toml 등록 요청 표·"구현(K-44)", PROGRESS Phase 10, PLAN Phase 10 진행 현황. 검증 V0(문서만).
+
 ## 사용자 요청 작업
 
 - **HERDR 구성 규칙 추가** (2026-11-07, W-11): `HERDR-SETUP.md` 1장에 Codex 한도가 바닥나면 `tauri-coder`를 Claude Code Sonnet 5.5 high로 바꾼다는 규칙(core D-16, 사용자 결정)을 적었다. 지금은 쿠폰 적용으로 Codex gpt-6.1-sol medium 그대로다. 검증 V0(문서만).

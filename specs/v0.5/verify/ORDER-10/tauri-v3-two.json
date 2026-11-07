@@ -1,0 +1,442 @@
+{
+  "pid": 3828,
+  "mode": "two",
+  "idle": {
+    "sidebar": {
+      "x": 0,
+      "y": 0,
+      "w": 300,
+      "h": 852
+    },
+    "search": false,
+    "rows": [
+      {
+        "cls": "sidebar-item active cursor",
+        "box": {
+          "x": 0,
+          "y": 33,
+          "w": 299,
+          "h": 31
+        },
+        "icon": {
+          "x": 9,
+          "y": 40.5,
+          "w": 16,
+          "h": 16
+        },
+        "iconParent": {
+          "x": 0,
+          "y": 33,
+          "w": 299,
+          "h": 31
+        },
+        "name": {
+          "x": 31,
+          "y": 38.5,
+          "w": 119.265625,
+          "h": 20
+        },
+        "style": {
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(220, 224, 229)",
+          "borderTopWidth": "1px",
+          "borderTopColor": "rgba(0, 0, 0, 0)",
+          "borderRightWidth": "2px",
+          "borderRightColor": "rgba(0, 0, 0, 0)",
+          "borderLeftColor": "rgba(0, 0, 0, 0)",
+          "paddingLeft": "8px",
+          "paddingRight": "6px",
+          "boxShadow": "none",
+          "fontSize": "16px",
+          "lineHeight": "normal"
+        },
+        "nameColor": {
+          "color": "rgb(220, 224, 229)",
+          "fontSize": "16px"
+        }
+      },
+      {
+        "cls": "sidebar-item",
+        "box": {
+          "x": 0,
+          "y": 65,
+          "w": 299,
+          "h": 31
+        },
+        "icon": {
+          "x": 9,
+          "y": 72.5,
+          "w": 16,
+          "h": 16
+        },
+        "iconParent": {
+          "x": 0,
+          "y": 65,
+          "w": 299,
+          "h": 31
+        },
+        "name": {
+          "x": 31,
+          "y": 70.5,
+          "w": 117.796875,
+          "h": 20
+        },
+        "style": {
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(169, 175, 188)",
+          "borderTopWidth": "1px",
+          "borderTopColor": "rgba(0, 0, 0, 0)",
+          "borderRightWidth": "2px",
+          "borderRightColor": "rgba(0, 0, 0, 0)",
+          "borderLeftColor": "rgba(0, 0, 0, 0)",
+          "paddingLeft": "8px",
+          "paddingRight": "6px",
+          "boxShadow": "none",
+          "fontSize": "16px",
+          "lineHeight": "normal"
+        },
+        "nameColor": {
+          "color": "rgb(169, 175, 188)",
+          "fontSize": "16px"
+        }
+      }
+    ],
+    "footer": {
+      "x": 0,
+      "y": 821,
+      "w": 299,
+      "h": 31
+    },
+    "footerStyle": {
+      "paddingTop": "4px",
+      "gap": "4px",
+      "borderTopWidth": "1px",
+      "borderTopColor": "rgb(70, 75, 87)"
+    },
+    "footerButtons": [
+      {
+        "label": "Toggle Sidebar",
+        "box": {
+          "x": 4,
+          "y": 826,
+          "w": 22,
+          "h": 22
+        },
+        "svg": {
+          "x": 8,
+          "y": 830,
+          "w": 14,
+          "h": 14
+        }
+      },
+      {
+        "label": "Add Project",
+        "box": {
+          "x": 273,
+          "y": 826,
+          "w": 22,
+          "h": 22
+        },
+        "svg": {
+          "x": 277,
+          "y": 830,
+          "w": 14,
+          "h": 14
+        }
+      }
+    ],
+    "focused": ""
+  },
+  "hover": {
+    "sidebar": {
+      "x": 0,
+      "y": 0,
+      "w": 300,
+      "h": 852
+    },
+    "search": false,
+    "rows": [
+      {
+        "cls": "sidebar-item active cursor",
+        "box": {
+          "x": 0,
+          "y": 33,
+          "w": 299,
+          "h": 31
+        },
+        "icon": {
+          "x": 9,
+          "y": 40.5,
+          "w": 16,
+          "h": 16
+        },
+        "iconParent": {
+          "x": 0,
+          "y": 33,
+          "w": 299,
+          "h": 31
+        },
+        "name": {
+          "x": 31,
+          "y": 38.5,
+          "w": 119.265625,
+          "h": 20
+        },
+        "style": {
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(220, 224, 229)",
+          "borderTopWidth": "1px",
+          "borderTopColor": "rgba(0, 0, 0, 0)",
+          "borderRightWidth": "2px",
+          "borderRightColor": "rgba(0, 0, 0, 0)",
+          "borderLeftColor": "rgba(0, 0, 0, 0)",
+          "paddingLeft": "8px",
+          "paddingRight": "6px",
+          "boxShadow": "none",
+          "fontSize": "16px",
+          "lineHeight": "normal"
+        },
+        "nameColor": {
+          "color": "rgb(220, 224, 229)",
+          "fontSize": "16px"
+        }
+      },
+      {
+        "cls": "sidebar-item",
+        "box": {
+          "x": 0,
+          "y": 65,
+          "w": 299,
+          "h": 31
+        },
+        "icon": {
+          "x": 9,
+          "y": 72.5,
+          "w": 16,
+          "h": 16
+        },
+        "iconParent": {
+          "x": 0,
+          "y": 65,
+          "w": 299,
+          "h": 31
+        },
+        "name": {
+          "x": 31,
+          "y": 70.5,
+          "w": 117.796875,
+          "h": 20
+        },
+        "style": {
+          "backgroundColor": "rgb(54, 60, 70)",
+          "color": "rgb(169, 175, 188)",
+          "borderTopWidth": "1px",
+          "borderTopColor": "rgba(0, 0, 0, 0)",
+          "borderRightWidth": "2px",
+          "borderRightColor": "rgba(0, 0, 0, 0)",
+          "borderLeftColor": "rgba(0, 0, 0, 0)",
+          "paddingLeft": "8px",
+          "paddingRight": "6px",
+          "boxShadow": "none",
+          "fontSize": "16px",
+          "lineHeight": "normal"
+        },
+        "nameColor": {
+          "color": "rgb(169, 175, 188)",
+          "fontSize": "16px"
+        }
+      }
+    ],
+    "footer": {
+      "x": 0,
+      "y": 821,
+      "w": 299,
+      "h": 31
+    },
+    "footerStyle": {
+      "paddingTop": "4px",
+      "gap": "4px",
+      "borderTopWidth": "1px",
+      "borderTopColor": "rgb(70, 75, 87)"
+    },
+    "footerButtons": [
+      {
+        "label": "Toggle Sidebar",
+        "box": {
+          "x": 4,
+          "y": 826,
+          "w": 22,
+          "h": 22
+        },
+        "svg": {
+          "x": 8,
+          "y": 830,
+          "w": 14,
+          "h": 14
+        }
+      },
+      {
+        "label": "Add Project",
+        "box": {
+          "x": 273,
+          "y": 826,
+          "w": 22,
+          "h": 22
+        },
+        "svg": {
+          "x": 277,
+          "y": 830,
+          "w": 14,
+          "h": 14
+        }
+      }
+    ],
+    "focused": ""
+  },
+  "focused": {
+    "sidebar": {
+      "x": 0,
+      "y": 0,
+      "w": 300,
+      "h": 852
+    },
+    "search": false,
+    "rows": [
+      {
+        "cls": "sidebar-item active cursor",
+        "box": {
+          "x": 0,
+          "y": 33,
+          "w": 299,
+          "h": 31
+        },
+        "icon": {
+          "x": 9,
+          "y": 40.5,
+          "w": 16,
+          "h": 16
+        },
+        "iconParent": {
+          "x": 0,
+          "y": 33,
+          "w": 299,
+          "h": 31
+        },
+        "name": {
+          "x": 31,
+          "y": 38.5,
+          "w": 119.265625,
+          "h": 20
+        },
+        "style": {
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(220, 224, 229)",
+          "borderTopWidth": "1px",
+          "borderTopColor": "rgb(40, 112, 189)",
+          "borderRightWidth": "2px",
+          "borderRightColor": "rgb(40, 112, 189)",
+          "borderLeftColor": "rgb(40, 112, 189)",
+          "paddingLeft": "8px",
+          "paddingRight": "6px",
+          "boxShadow": "none",
+          "fontSize": "16px",
+          "lineHeight": "normal"
+        },
+        "nameColor": {
+          "color": "rgb(220, 224, 229)",
+          "fontSize": "16px"
+        }
+      },
+      {
+        "cls": "sidebar-item",
+        "box": {
+          "x": 0,
+          "y": 65,
+          "w": 299,
+          "h": 31
+        },
+        "icon": {
+          "x": 9,
+          "y": 72.5,
+          "w": 16,
+          "h": 16
+        },
+        "iconParent": {
+          "x": 0,
+          "y": 65,
+          "w": 299,
+          "h": 31
+        },
+        "name": {
+          "x": 31,
+          "y": 70.5,
+          "w": 117.796875,
+          "h": 20
+        },
+        "style": {
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(169, 175, 188)",
+          "borderTopWidth": "1px",
+          "borderTopColor": "rgba(0, 0, 0, 0)",
+          "borderRightWidth": "2px",
+          "borderRightColor": "rgba(0, 0, 0, 0)",
+          "borderLeftColor": "rgba(0, 0, 0, 0)",
+          "paddingLeft": "8px",
+          "paddingRight": "6px",
+          "boxShadow": "none",
+          "fontSize": "16px",
+          "lineHeight": "normal"
+        },
+        "nameColor": {
+          "color": "rgb(169, 175, 188)",
+          "fontSize": "16px"
+        }
+      }
+    ],
+    "footer": {
+      "x": 0,
+      "y": 821,
+      "w": 299,
+      "h": 31
+    },
+    "footerStyle": {
+      "paddingTop": "4px",
+      "gap": "4px",
+      "borderTopWidth": "1px",
+      "borderTopColor": "rgb(70, 75, 87)"
+    },
+    "footerButtons": [
+      {
+        "label": "Toggle Sidebar",
+        "box": {
+          "x": 4,
+          "y": 826,
+          "w": 22,
+          "h": 22
+        },
+        "svg": {
+          "x": 8,
+          "y": 830,
+          "w": 14,
+          "h": 14
+        }
+      },
+      {
+        "label": "Add Project",
+        "box": {
+          "x": 273,
+          "y": 826,
+          "w": 22,
+          "h": 22
+        },
+        "svg": {
+          "x": 277,
+          "y": 830,
+          "w": 14,
+          "h": 14
+        }
+      }
+    ],
+    "focused": "sidebar-list"
+  }
+}
