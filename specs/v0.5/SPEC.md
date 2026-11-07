@@ -313,7 +313,7 @@ Zed 문구는 커밋 `4304dec732` `crates/settings_ui/src/page_data.rs`(`appeara
 - 태그 판정: 확장 폴더에 `themes/*.json`이 있으면 Themes, `icon_themes/*.json`이 있으면 Icon Themes(둘 다 있으면 태그 둘). 자원 JSON이 없으면 카드가 없다.
 - 정렬: 이름순(`localeCompare`) — Catppuccin, Catppuccin Icons, macOS Classic Theme.
 - GitHub 버튼: 카드 오른쪽 아래(Zed 캡처의 GitHub 아이콘 자리)에 `github.svg` 버튼을 둔다. `repository`가 `https://`로 시작할 때만 보이고 `openUrl`로 연다(opener 권한은 이미 `https://*`, 바꾸지 않음).
-- 기본 묶음 카드 없음: One·Ayu·Gruvbox 테마와 Zed (Default) 아이콘 테마는 카드로 보이지 않는다. Zed Extensions 화면은 확장 패키지만 나열하고 본체 내장 테마·아이콘 테마는 나오지 않는다(`docs/refs/01-zed/02-INTERACTION.md` 16절 첫 문단). 이 묶음은 `extension.toml`이 없는 본체 자원이다(`DECISIONS.md` D-7).
+- 기본 묶음 카드 없음: One·Ayu·Gruvbox 테마와 Zed (Default) 아이콘 테마는 카드로 보이지 않는다(core 결정 2026-11-07, 두 갈래 공통: `extension.toml`이 있는 확장만 카드). Zed Extensions 화면은 확장 패키지만 나열하고 본체 내장 테마·아이콘 테마는 나오지 않는다(`docs/refs/01-zed/02-INTERACTION.md` 16절 첫 문단). 이 묶음은 `extension.toml`이 없는 본체 자원이다(`DECISIONS.md` D-7).
 - 복사본이 없으면 그 카드가 빠진다. 설치된 Zed 확장 폴더는 읽지 않는다.
 - 결과: Install Themes → Themes 범주에 Catppuccin·macOS Classic Theme 두 장, Install Icon Themes → Icon Themes 범주에 Catppuccin Icons 한 장.
 - 쓴 스펙 ID: X-44(탭·액션·키), X-45(머리 padding 위·좌우 16, 행 gap 16), X-46(검색 높이 32·최소 폭 384·좌우 padding 6/8·gap 8·테두리 1·반경 6·글꼴 14·줄 높이 1.3), X-48(범주 gap 8·padding 위아래 10·좌우 16·아래 테두리 1), X-49(목록 padding 좌우·아래 16, 카드 위 margin 16·높이 110·padding 12·gap 8·테두리 1·반경 6), L-05·L-06·L-07.
@@ -415,7 +415,7 @@ I-3, core D-8·D-9, 사용자 2026-11-06.
 
 - 9종, 이 순서로 보인다: Catppuccin Frappé, Catppuccin Frappé Monochrome, Catppuccin Macchiato, Catppuccin Macchiato Monochrome, Catppuccin Mocha, Catppuccin Mocha Monochrome, Zed (Default), Catppuccin Latte, Catppuccin Latte Monochrome.
 - 정렬 근거: `docs/refs/01-zed/03-THEME-ICONS.md` T-21.3(아이콘 테마 선택기도 테마 선택기와 같은 정렬)·T-32.4 — 어두운 것 먼저, 밝은 것 나중, 각각 이름의 문자열 비교 순. Zed (Default)의 appearance는 K-17이 쓴 `dark`라 어두운 Catppuccin 뒤, 밝은 Catppuccin 앞에 온다. Zed 소스 `icon_theme.rs`로는 이 PC에서 확인하지 못했다.
-- Monochrome 네 종: T-20.6은 "채용하지 않는다(판단)"지만 ORDER-07 2장이 그 확장의 아이콘 테마 전부를 요구해 넣었다.
+- Monochrome 네 종: T-20.6은 "채용하지 않는다(판단)"지만 ORDER-07 2장이 그 확장의 아이콘 테마 전부를 요구해 넣었다. core 결정(2026-11-07, 두 갈래 공통)으로 Monochrome 4종 포함 9종, 어두운 것 이름순 → 밝은 것 이름순이 확정이다.
 - 기본값은 Zed (Default)다. `settings.json`에 `icon_theme`이 없거나 목록에 없는 이름이면 Zed (Default)로 읽고 그린다(T-32.19).
 - 목록은 `src/theme/icon-themes.ts` `buildIconThemes`가 `zed-default.json`과 `icon_themes/*.json`에서 만든다. 깨진 JSON·이름 중복·appearance 틀림은 건너뛴다. 목록은 빌드 때 고정이다(복사본을 바꾸면 다시 빌드).
 
@@ -443,7 +443,7 @@ I-3, core D-8·D-9, 사용자 2026-11-06.
 - 색: Zed (Default)는 SVG를 `themedSvg`로 `currentColor`화해 트리 아이콘 색(`--icon-muted`)의 단색으로 그린다. Catppuccin은 `<img>`로 SVG 원래 색 그대로 그린다(T-20.7 "테마 색을 주입하지 않는다", T-31.8). Catppuccin 테마 안에서 Zed (Default)로 대체된 아이콘은 단색이다.
 - 그리는 곳: 파일 트리(`src/shell/ProjectTree.tsx` → `src/shell/FileIcon.tsx`)의 파일·폴더 행, 루트 폴더 행, 새 파일·폴더 입력 행(이름이 없어 기본 아이콘). 크기는 기존 `--icon-size`(L-40)다. UI 아이콘(R-1)은 바뀌지 않는다.
 - 펼침 화살표(`chevron_icons`)는 그리지 않는다. 파일 트리는 폴더 아이콘으로 열림을 보인다(L-126 `folder_indicator: icon`).
-- **탭에는 파일 아이콘이 없다.** Zed 기본 `tabs.file_icons`가 false이고(`docs/refs/01-zed/01-LAYOUT.md` L-67·L-131, `04-APP-SPEC.md` A-21.12) 사용자 Zed 설정에도 이 키가 없어, Zed 편집기 탭에 파일 아이콘이 없다. 마크다운 미리보기 탭의 책 아이콘은 탭 자체 아이콘(L-69)이라 그대로다. ORDER-07 3.2·4장 3의 "파일 트리와 탭의 파일 아이콘" 문장과 다르므로 core에 보고할 대상이다. 켜려면 `Pane.tsx` 탭 제목 앞에 `FileIcon`을 한 줄 넣으면 된다.
+- **탭에는 파일 아이콘이 없다.** Zed 기본 `tabs.file_icons`가 false이고(`docs/refs/01-zed/01-LAYOUT.md` L-67·L-131, `04-APP-SPEC.md` A-21.12) 사용자 Zed 설정에도 이 키가 없어, Zed 편집기 탭에 파일 아이콘이 없다. 마크다운 미리보기 탭의 책 아이콘은 탭 자체 아이콘(L-69)이라 그대로다. ORDER-07 3.2·4장 3의 "파일 트리와 탭의 파일 아이콘" 문장과 달랐으나, core 결정(2026-11-07, 두 갈래 공통)으로 탭에는 그리지 않고 아이콘 테마는 파일 트리에만 쓰는 것으로 확정했다.
 - 쓴 스펙 ID: T-11.1~11.7, T-20.4·20.5·20.7·20.14, T-21.3, T-22.1~22.10, T-28.5·28.7, T-31.8, T-32.4·32.10·32.11·32.16·32.19, P-010·P-011, L-40, L-67·L-131·A-21.12, L-126.
 - 복사본이 없을 때: 아래 R-4 "복사본 출처".
 
@@ -513,13 +513,13 @@ I-4, core D-8, 사용자 2026-11-06.
 | P-011 | 아이콘 테마 선택기(R-3) |
 | T-21.3~21.6, T-32.4 | 정렬, 미리 적용, 취소 되돌림, 확정 저장 |
 
-- `spec/zed-metrics.toml`에 없는 값(그림자 4겹, 창 높이 마진 160, 행 높이 계산용 줄 높이 1.618, 빈 결과 위아래 8, 체크 16)은 `docs/refs/01-zed/01-LAYOUT.md` 4.13 본문 값을 썼다(`DECISIONS.md` D-10).
+- `spec/zed-metrics.toml`에 없는 값(그림자 4겹, 창 높이 마진 160, 행 높이 계산용 줄 높이 1.618, 빈 결과 위아래 8, 체크 16)은 `docs/refs/01-zed/01-LAYOUT.md` 4.13 본문 값을 썼다(`DECISIONS.md` D-10). core 결정(2026-11-07)으로 gpui writer가 이 값에 toml ID를 붙여 올리면 그 ID 참조로 바꾼다(대기).
 - 푸터 버튼 모양은 문서에 값이 없어 `buttons.height.default`·`padding_x.default_compact`·`settings.control.corner_radius`를 빌린 투명 버튼이다.
 - 문구 출처: `01-LAYOUT.md` 4.13.5 P-010·4.13.3, `02-INTERACTION.md` 14.1·14.5(핀 커밋 14b7b0e). 원문 코드로는 확인하지 못했다.
 
 *Zed와 다르거나 하지 않은 것*
 
-- 목록 스크롤바(K-22): 포인터가 목록 위에 있을 때만 색이 보인다(P-004). 폭은 L-308 `scrollbar.width.ui` 6px, 트랙·썸은 스크롤바 토큰이다. Zed의 자동 숨김 1초(E-033)와 썸 최소 25px은 하지 않았다.
+- 목록 스크롤바(K-22): 포인터가 목록 위에 있을 때만 색이 보인다(P-004, core 결정 2026-11-07 두 갈래 공통). 폭은 L-308 `scrollbar.width.ui` 6px, 트랙·썸은 스크롤바 토큰이다. Zed의 자동 숨김 1초(E-033)와 썸 최소 25px은 하지 않았다.
 - 최대 높이 384는 목록에만 건다(입력 줄·푸터 제외). 문서가 어디에 거는지 밝히지 않아 목록으로 가정했다.
 - `Ctrl-C`로 닫기는 넣지 않았다(입력칸에서는 복사 키).
 - 입력칸이 포커스를 잃으면 닫히는 동작은 만들지 않았다. 모달이 포커스를 안에 가두므로 창 전환 때만 해당한다.
@@ -556,7 +556,7 @@ I-4, core D-8, 사용자 2026-11-06.
 
 *빠진 토큰과 대체 순서*
 
-- 순서: JSON 값 → 같은 테마의 파생 값(T-26.3·T-26.4) → 같은 밝기의 One 테마 값(dark → One Dark, light → One Light) → 고정 값(T-26.13). 이전에는 JSON 값도 T-26 대체도 없으면 테마 적용이 실패했다. One 값 근사는 `DECISIONS.md` D-8.
+- 순서: JSON 값 → 같은 테마의 파생 값(T-26.3·T-26.4) → 같은 밝기의 One 테마 값(dark → One Dark, light → One Light) → 고정 값(T-26.13). 이전에는 JSON 값도 T-26 대체도 없으면 테마 적용이 실패했다. One 값 근사는 `DECISIONS.md` D-8이고, core 결정(2026-11-07)으로 두 갈래 공통 순서다.
 - 테마별로 대체가 쓰인 토큰:
 
 | 테마 | 파생(T-26) | One 값 | 고정 |

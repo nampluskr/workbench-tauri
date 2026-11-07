@@ -146,7 +146,7 @@ Extensions 탭은 복사한 확장 셋(Catppuccin, Catppuccin Icons, macOS Class
 
 Zed의 Extensions 화면은 확장 패키지만 나열하고 본체 내장 테마·아이콘 테마는 나오지 않는다(`docs/refs/01-zed/02-INTERACTION.md` 16절 첫 문단). 기본 묶음은 `extension.toml`이 없는 본체 자원이라(One·Ayu·Gruvbox는 Zed `assets/themes/`, Zed (Default)는 코드 상수) 카드를 만들려면 값을 지어내야 한다. core D-15 "이 앱에 들어 있는 확장 자원만"의 확장은 복사한 셋이다. Zed 캡처는 스크롤돼 있어 "목록 전체에 내장 카드가 없다"는 것은 문서에 의존한다.
 
-core가 D-15를 "내장 포함"으로 읽으면 `bundledExtensions`에 합성 manifest를 넣는 작은 변경으로 바꿀 수 있다(사용자 확인 필요로 보고됨).
+core 결정(2026-11-07, 사용자 위임 core D-13, 두 갈래 공통)으로 확정: `extension.toml`이 있는 확장(Catppuccin 0.2.27, Catppuccin Icons 1.24.0, macOS Classic 0.4.0)만 카드이고 내장 테마는 보이지 않는다.
 
 **출처**
 
@@ -162,9 +162,11 @@ tauri-coder K-21 보고(2026-11-07), core D-15, core ORDER-07 3.3.
 
 macOS Classic에는 앱이 쓰는 토큰이 여럿 없고, 이전 코드는 이때 테마 적용이 실패했다. Zed도 테마 JSON을 기본(fallback) 테마 위에 덮지만 그 기본 테마 값(Zed `fallback_themes.rs`)은 One과 완전히 같지 않다. Zed 코드를 복사하지 않고, 커밋된 One 값으로 근사한다. V2에서 어긋나면 다시 정한다.
 
+core 결정(2026-11-07, 사용자 위임 core D-13)으로 이 순서(JSON → T-26 파생 → 같은 appearance One 값 → 고정 값)를 두 갈래 공통으로 쓴다.
+
 **출처**
 
-tauri-coder K-18·K-19 보고(2026-11-07), core ORDER-07 3.1.
+tauri-coder K-18·K-19 보고(2026-11-07), core ORDER-07 3.1, core-leader 결정(2026-11-07).
 
 ### D-9. 선택기 퍼지 검색은 자체 구현이다
 
@@ -188,7 +190,7 @@ tauri-coder K-19 보고(2026-11-07).
 
 **이유**
 
-추정한 값이 아니라 실측 문서에 있는 값이다. `spec/`은 gpui가 원본이라 이 레포에서 고치지 않는다(루트 `AGENTS.md` 3장). gpui toml에 넣을지는 core가 정한다.
+추정한 값이 아니라 실측 문서에 있는 값이다. `spec/`은 gpui가 원본이라 이 레포에서 고치지 않는다(루트 `AGENTS.md` 3장). core 결정(2026-11-07, 사용자 위임 core D-13): 원본 소유자 gpui writer가 이 값에 toml ID를 붙여 올리고, tauri는 그 ID로 바꿔 참조한다. gpui toml 갱신 대기 — 올라오면 `spec/`을 다시 복사하고 `metrics.ts`·`picker.css`를 ID 참조로 바꾼다.
 
 **출처**
 
@@ -199,4 +201,5 @@ tauri-coder K-19 보고(2026-11-07), 루트 `AGENTS.md` 3장.
 ## 미결 사항
 
 - core D-8 복사본 항목은 D-6에서 정했다(Phase 7).
-- core 판단 대기: 탭 파일 아이콘(ORDER-07 3.2와 Zed 기본 `tabs.file_icons` false, `SPEC.md` R-3), D-7 기본 묶음 카드, D-10 값의 gpui toml 반영.
+- core 결정(2026-11-07)으로 정해짐: 탭 파일 아이콘은 그리지 않고 아이콘 테마는 파일 트리에만(`SPEC.md` R-3), D-7 기본 묶음 카드 없음, D-8 두 갈래 공통, 테마·아이콘 테마 목록(Monochrome 포함 9종, dark → light 이름순), 선택기 스크롤바는 목록 위 포인터일 때만.
+- 대기: D-10 값의 gpui toml ID(gpui writer가 올린 뒤 tauri가 ID 참조로 바꿈).

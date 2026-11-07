@@ -264,6 +264,11 @@
     - 기본 묶음 Extensions 카드 없음(Zed 동작, `DECISIONS.md` D-7).
     - 스크롤바 자동 숨김 1초(E-033)·썸 최소 25px 생략.
   - coder 되돌림: 14:08 K-22가 끝난 뒤 Sonnet 5.5 coder를 `/quit`로 종료했다. Codex gpt-6.1-sol medium 시작은 pane `wJ:pM`이 입력에 반응하지 않아 아직 못 했다(`herdr agent start` timeout 2회). 되돌린 시각은 끝나면 leader가 다시 알린다(`HERDR-SETUP.md` 1장 같은 기록).
+- **core 결정 반영(문서)** (2026-11-07, W-17)
+  - 무엇을 했나: core-leader [DECISION](사용자 위임 core D-13, ORDER-07 두 갈래 공통) 여섯 가지를 문서에 적었다. ① 탭 파일 아이콘은 Zed 기본 `tabs.file_icons`=false대로 그리지 않고 아이콘 테마는 파일 트리에만 ② Extensions는 `extension.toml`이 있는 확장(Catppuccin 0.2.27, Catppuccin Icons 1.24.0, macOS Classic 0.4.0)만 카드, 내장 테마는 안 보임 ③ toml에 없는 선택기 값(D-10)은 gpui writer가 toml ID를 올리고 tauri는 그 ID로 바꿔 참조 ④ 빠진 토큰 대체 순서 D-8을 두 갈래 공통으로 ⑤ Monochrome 4종 포함, 테마는 dark 이름순 → light 이름순, 아이콘 테마 9종 ⑥ 선택기 스크롤바는 목록 위 포인터일 때만.
+  - 결과: DECISIONS D-7·D-8·D-10과 미결 사항, SPEC R-2 Extensions(기본 묶음 카드)·R-3(Monochrome, 탭 아이콘 확정)·R-4(선택기 스크롤바, toml 밖 값, 대체 순서)에 "core 결정 2026-11-07"을 근거로 적었다. 탭 아이콘·기본 묶음 카드의 "core 보고 대상·확인 필요" 표현을 확정으로 바꿨다(이 PROGRESS의 앞 항목은 지난 기록이라 그대로 둠).
+  - 남은 일: ③ gpui toml 갱신 대기. 올라오면 `spec/`을 다시 복사하고 `src/spec/metrics.ts`·`src/shell/picker.css`의 값을 toml ID 참조로 바꾸는 coder 카드가 필요하다.
+  - 검증: V0(문서만, 실행 없음).
 
 ## 사용자 요청 작업
 
