@@ -16,6 +16,7 @@ import {
   paneElement,
   paneInDirection,
   focusPane,
+  goThroughHistory,
   keepTab,
   panesOf,
   saveActive,
@@ -64,6 +65,7 @@ for (const [action, spec] of [["editor::Tab", indentTab], ["editor::Backtab", ba
     if (view && !view.state.readOnly) view.dispatch(spec(view.state));
   });
 }
+for (const [action, mode] of [["pane::GoBack", "back"], ["pane::GoForward", "forward"]] as const) commands.set(action, withCtx((ctx) => goThroughHistory(ctx, ctx.pane(), mode))); // I-10
 commands.set("pane::CloseActiveItem", withCtx((ctx) => activeTab() && void closeTab(ctx, activeTab()!.file)));
 commands.set("pane::TogglePinTab", withCtx((ctx) => activeTab() && togglePinTab(ctx, activeTab()!.file)));
 commands.set("pane::ActivatePreviousItem", withCtx((ctx) => stepActiveTab(ctx, -1)));
@@ -364,6 +366,12 @@ function ZoomButton(props: { ctx: FolderContext; pane: PaneState }) {
   );
 }
 
+/** I-10: the history buttons are lit while the Pane has somewhere to go (the version read keeps them in step). */
+const canGo = (pane: PaneState | null, mode: "back" | "forward") => {
+  pane?.navVersion();
+  return !!pane && (mode === "back" ? pane.nav.canGoBack : pane.nav.canGoForward);
+};
+
 /** L-15: one Pane = tab bar + active item. tabindex: focus lands here when it has no editor (A-17). */
 function PaneView(props: { ctx: FolderContext | null; pane: PaneState | null }) {
   return (
@@ -377,10 +385,10 @@ function PaneView(props: { ctx: FolderContext | null; pane: PaneState | null }) 
     >
       <div class="tab-bar">
         <div class="tab-bar-edge start">
-          <button class="icon-button" aria-label="Go Back" disabled ref={(el) => tooltip(el, () => ({ title: "Go Back" }))}>
+          <button class="icon-button" aria-label="Go Back" disabled={!canGo(props.pane, "back")} onClick={() => props.ctx && props.pane && goThroughHistory(props.ctx, props.pane, "back")} ref={(el) => tooltip(el, () => ({ title: "Go Back", action: "pane::GoBack" }))}>
             <Icon name="arrow_left" />
           </button>
-          <button class="icon-button" aria-label="Go Forward" disabled ref={(el) => tooltip(el, () => ({ title: "Go Forward" }))}>
+          <button class="icon-button" aria-label="Go Forward" disabled={!canGo(props.pane, "forward")} onClick={() => props.ctx && props.pane && goThroughHistory(props.ctx, props.pane, "forward")} ref={(el) => tooltip(el, () => ({ title: "Go Forward", action: "pane::GoForward" }))}>
             <Icon name="arrow_right" />
           </button>
         </div>
