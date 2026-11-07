@@ -123,7 +123,7 @@ button, input, select, textarea {
 .sidebar-item.missing, .sidebar-item.missing:hover { color: var(--text-disabled); } /* A-12.7 */
 .sidebar-item.missing .icon { color: var(--icon-disabled); }
 /* A-12.5: the keyboard cursor ring shows while the list has focus. */
-.sidebar-list:focus .sidebar-item.cursor { border-color: var(--panel-focused-border, var(--border-focused)); }
+.sidebar-list:focus .sidebar-item.cursor { border-color: var(--panel-focused-border); }
 /* L-35 / A-11.4: padding + Default button = footer height; the top border sits outside it. */
 .sidebar-footer {
   display: flex;

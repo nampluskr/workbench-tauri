@@ -10,11 +10,11 @@ const files = Object.fromEntries(readdirSync(assets, { recursive: true, encoding
   .filter((p) => p.endsWith(".json")).map((p) => [p, readFileSync(new URL(p.replaceAll("\\", "/"), assets), "utf8")]));
 const registry = buildRegistry(files);
 
-test("K-44: panel focus uses the theme value or the measured dark default, leaving light unset", () => {
+test("K-46: panel focus uses the theme value or the Zed dark/light default", () => {
   for (const appearance of ["dark", "light"] as const) {
     assert.equal(panelFocusedBorder({ "panel.focused_border": "#abcdef" }, appearance), "#abcdefff");
-    assert.equal(panelFocusedBorder({ "panel.focused_border": null }, appearance), appearance === "dark" ? "#2870bdff" : undefined);
-    assert.equal(panelFocusedBorder({}, appearance), appearance === "dark" ? "#2870bdff" : undefined);
+    assert.equal(panelFocusedBorder({ "panel.focused_border": null }, appearance), appearance === "dark" ? "#2870bdff" : "#0588f0ff");
+    assert.equal(panelFocusedBorder({}, appearance), appearance === "dark" ? "#2870bdff" : "#0588f0ff");
   }
   assert.throws(() => panelFocusedBorder({ "panel.focused_border": "bad" }, "dark"));
 });

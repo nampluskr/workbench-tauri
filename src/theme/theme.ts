@@ -84,12 +84,13 @@ export type ThemeStyle = Record<string, unknown> & { players?: Record<string, un
 export type ThemeFile = { themes: { name: string; appearance: "light" | "dark"; style: ThemeStyle }[] };
 
 /**
- * Zed crates/theme/src/default_colors.rs:252 blue().dark().step_8(); One Dark panel.focused_border is null.
- * ORDER-10 V3 measured the dark default as #2870bd; leave the light default unresolved.
+ * Zed 4304dec crates/theme/src/default_colors.rs:98 light step_10 / :252 dark step_8;
+ * blue() table (:1836 onward) gives #0588f0 / #2870bd. One Dark panel.focused_border is null;
+ * ORDER-10 V3 confirmed the dark default, and K-46 core approved both defaults.
  */
-export function panelFocusedBorder(style: ThemeStyle, appearance: "light" | "dark"): string | undefined {
-  const color = style["panel.focused_border"] ?? (appearance === "dark" ? "#2870bd" : undefined);
-  return typeof color === "string" ? formatColor(parseColor(color)) : undefined;
+export function panelFocusedBorder(style: ThemeStyle, appearance: "light" | "dark"): string {
+  const color = style["panel.focused_border"];
+  return formatColor(parseColor(typeof color === "string" ? color : appearance === "dark" ? "#2870bd" : "#0588f0"));
 }
 
 /** T-01.4-T-01.6: find `themes[].name` and check its shape. */

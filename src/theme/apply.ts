@@ -20,7 +20,7 @@ export async function applyTheme(selected?: string): Promise<void> {
   const elementBackground = style["element.background"];
   const keymapColors = typeof elementBackground === "string" ? `:root { --element-background: ${formatColor(parseColor(elementBackground))}; }` : "";
   const panelBorder = panelFocusedBorder(style, appearance);
-  const panelColors = panelBorder ? `:root { --panel-focused-border: ${panelBorder}; }` : "";
+  const panelColors = `:root { --panel-focused-border: ${panelBorder}; }`;
   sheet.replaceSync(`${themeCss(tokens)}\n${syntaxCss(style)}\n${keymapColors}\n${panelColors}`);
   if (!document.adoptedStyleSheets.includes(sheet)) document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
   // The native maximize button (src-tauri/src/caption.rs) cannot read CSS: send it the flat colors.
