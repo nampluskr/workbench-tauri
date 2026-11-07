@@ -77,7 +77,10 @@ test("K-10-R1: Settings, Keymap and Classic are active; custom layout is checked
   if (keymap === "separator") assert.fail();
   assert.equal(keymap.action, "zed::OpenKeymap");
   assert.ok(!keymap.disabled);
-  assert.ok([3].every((i) => USER_MENU[i] !== "separator" && USER_MENU[i].disabled));
+  const icons = USER_MENU[3];
+  if (icons === "separator") assert.fail();
+  assert.equal(icons.action, "icon_theme_selector::Toggle");
+  assert.ok(!icons.disabled);
   const themes = USER_MENU[2];
   if (themes === "separator") assert.fail();
   assert.equal(themes.action, "theme_selector::Toggle");

@@ -4,7 +4,7 @@ import { cancelEdit, commitEdit, revalidate } from "../workspace/actions.ts";
 import { NEW_ROW, readDir, type FolderContext } from "../workspace/context.ts";
 import { inputKeyAction } from "../workspace/names.ts";
 import { rowIndex, visibleRange, type Row } from "../workspace/tree.ts";
-import Icon from "./Icon.tsx";
+import FileIcon from "./FileIcon.tsx";
 import { tooltip } from "./tooltip.ts";
 import { pressMiddle, pressRow } from "./tree-commands.ts";
 import { openTreeMenu } from "./tree-menu.ts";
@@ -155,7 +155,7 @@ export default function ProjectTree(props: { ctx: FolderContext }) {
                 <div class="tree-item">
                   <For each={row.guides}>{() => <span class="tree-indent" />}</For>
                   <div class="tree-main">
-                    <Icon name={row.isDir ? (row.expanded ? "folder_open" : "folder") : "file"} />
+                    <FileIcon name={row.segments.at(-1)?.name ?? ""} dir={row.isDir} expanded={row.expanded} />
                     <Show
                       when={editing(row)}
                       fallback={

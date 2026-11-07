@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { Keymap } from "../keymap/engine.ts";
-import { themeSelector, THEME_SELECTOR_BINDINGS, type ThemeSelectorDeps } from "./selector.ts";
+import { iconThemeSelector, themeSelector, THEME_SELECTOR_BINDINGS, type ThemeSelectorDeps } from "./selector.ts";
 
 function setup(save: ThemeSelectorDeps["save"] = async () => {}) {
   const log: string[] = [];
@@ -43,4 +43,20 @@ test("select theme: Ctrl-K Ctrl-T is bound in the Workspace context", () => {
   const keymap = new Keymap();
   keymap.addSections("default", THEME_SELECTOR_BINDINGS);
   assert.deepEqual(keymap.dispatch(["ctrl-k", "ctrl-t"], [new Set(["Workspace"])]), { type: "match", action: "theme_selector::Toggle" });
+});
+
+test("select icon theme: Zed's words, the same preview, save and undo", async () => {
+  const log: string[] = [];
+  const config = iconThemeSelector({
+    themes: ["Zed (Default)", "Catppuccin Mocha"], current: "Zed (Default)",
+    preview: (name) => log.push(`preview ${name}`), save: async (name) => { log.push(`save ${name}`); },
+    fail: () => {}, installIconThemes: () => log.push("install"),
+  });
+  assert.equal(config.placeholder, "Select Icon Theme...");
+  assert.equal(config.footer.label, "Install Icon Themes");
+  config.footer.run();
+  config.preview("Catppuccin Mocha");
+  config.revert();
+  await config.confirm("Catppuccin Mocha");
+  assert.deepEqual(log, ["install", "preview Catppuccin Mocha", "preview Zed (Default)", "save Catppuccin Mocha"]);
 });

@@ -61,7 +61,7 @@ export const userMenu = (classic: () => boolean): MenuEntry[] => [
   { label: "Settings", action: "zed::OpenSettings" },
   { label: "Keymap", action: "zed::OpenKeymap" },
   { label: "Themes…", action: "theme_selector::Toggle" },
-  { label: "Icon Themes…", disabled: true },
+  { label: "Icon Themes…", action: "icon_theme_selector::Toggle" },
   { label: "Extensions", action: "zed::Extensions" },
   "separator",
   { label: "Panel Layout", get children() { return [

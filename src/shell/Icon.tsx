@@ -1,7 +1,5 @@
 // Core D-9: restore the ignored, pinned Zed copies with tools/fetch-zed-icons.ps1.
 const svgs = import.meta.glob<string>("../assets/zed-icons/*.svg", { query: "?raw", import: "default", eager: true });
-// Generic file icons stay until Phase 7 file icon themes.
-const legacy = import.meta.glob<string>("../assets/icons/*.svg", { query: "?raw", import: "default", eager: true });
 
 import { tooltip, type Tip } from "./tooltip.ts";
 import { themedSvg } from "./icon-svg.ts";
@@ -13,9 +11,7 @@ export type IconName =
 
 /** Missing Zed copies leave an empty slot with the existing spec dimensions. */
 export default function Icon(props: { name: IconName }) {
-  const svg = () => props.name === "file"
-    ? legacy["../assets/icons/file.svg"]
-    : svgs[`../assets/zed-icons/${props.name}.svg`];
+  const svg = () => svgs[`../assets/zed-icons/${props.name}.svg`];
   return <span class="icon" aria-hidden="true" innerHTML={themedSvg(svg())} />;
 }
 

@@ -273,7 +273,7 @@ button, input, select, textarea {
 }
 .icon-button:not(:disabled):hover { background: var(--ghost-element-hover); }
 .icon { display: flex; width: var(--icon-size); height: var(--icon-size); }
-.icon svg { width: 100%; height: 100%; }
+.icon svg, .icon img { display: block; width: 100%; height: 100%; }
 
 /* D-14: notification. No spec ID gives its size, position or border, so only the colors are set. */
 .toast {

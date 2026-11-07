@@ -1,14 +1,17 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { DEFAULTS, filterSettings, parseSettings, settingMenu, updateSetting } from "./model.ts";
-const THEMES = ["One Dark", "Catppuccin Mocha", "One Light"];
+const THEMES = { theme: ["One Dark", "Catppuccin Mocha", "One Light"], icon_theme: ["Zed (Default)", "Catppuccin Mocha"] };
 import { stripJsonc } from "../keymap/user.ts";
 
 test("settings defaults, invalid values and supported values", () => {
   for (const text of [null, "{}", "{broken", "[]", '{"theme":"unknown","ui_font_size":0,"buffer_font_size":"20"}']) assert.deepEqual(parseSettings(text, THEMES), DEFAULTS);
   assert.equal(DEFAULTS.theme, "One Dark");
   assert.equal(parseSettings('{"theme":"Catppuccin Mocha"}', THEMES).theme, "Catppuccin Mocha");
-  assert.equal(parseSettings('{"theme":"Catppuccin Mocha"}', []).theme, "One Dark");
+  assert.equal(parseSettings('{"theme":"Catppuccin Mocha"}', { ...THEMES, theme: [] }).theme, "One Dark");
+  assert.equal(parseSettings('{"icon_theme":"Catppuccin Mocha"}', THEMES).icon_theme, "Catppuccin Mocha");
+  assert.equal(parseSettings('{"icon_theme":"Missing"}', THEMES).icon_theme, "Zed (Default)");
+  assert.equal(parseSettings('{"icon_theme":"Catppuccin Mocha"}', { ...THEMES, icon_theme: [] }).icon_theme, "Zed (Default)");
   assert.deepEqual(parseSettings('{"theme":"One Light","ui_font_size":18.5,"buffer_font_size":20}', THEMES), { ...DEFAULTS, theme: "One Light", ui_font_size: 18.5, buffer_font_size: 20 });
 });
 
@@ -46,5 +49,5 @@ test("settings dropdown menus keep supported choices, selection and the saved va
   menu[1].run!();
   assert.equal(changed, "Catppuccin Mocha");
   const icons = settingMenu("icon_theme", DEFAULTS.icon_theme, () => {}, THEMES);
-  assert.deepEqual(icons.map((item) => [item.label, item.checked]), [["Zed (Default)", true]]);
+  assert.deepEqual(icons.map((item) => [item.label, item.checked]), [["Zed (Default)", true], ["Catppuccin Mocha", false]]);
 });

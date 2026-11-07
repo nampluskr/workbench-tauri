@@ -25,8 +25,13 @@ export function buildRegistry(files: Record<string, string>): RegisteredTheme[] 
       seen.add(name);
     }
   }
-  const rank = (t: RegisteredTheme) => (t.appearance === "dark" ? 0 : 1);
-  return out.sort((a, b) => rank(a) - rank(b) || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+  return selectorOrder(out);
+}
+
+/** Zed's theme and icon theme selector order (T-21.3): dark first, then light, each by plain string comparison. */
+export function selectorOrder<T extends { name: string; appearance: string }>(list: T[]): T[] {
+  const rank = (t: T) => (t.appearance === "dark" ? 0 : 1);
+  return list.sort((a, b) => rank(a) - rank(b) || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 }
 
 /** The named theme, or the default One Dark when the name is not in the list. */
