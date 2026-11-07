@@ -251,6 +251,7 @@ src = "specs/v0.5/verify/reviews/measure-ORDER-07.md 1절"
 "active_padding_bottom" = { value = 1, unit = "px", cond = "default", src = "01-LAYOUT 4.4절 L-63" }
 "indicator_size" = { value = 10, unit = "px", cond = "default", src = "01-LAYOUT 4.4절 L-65" }
 "secondary_path.font_size" = { value = 10, unit = "px", cond = "default", src = "01-LAYOUT 4.4절 L-69" }
+"scroll.wheel_step" = { value = 80, unit = "px", cond = "desktop_measure_100", src = "tauri Zed 캡처 D:\\projects\\workbench-tauri\\specs\\v0.5\\verify\\ORDER-09\\zed-wheel-*.png(tauri SPEC R-16, 커밋 bba6cfc), 소스 값 아님(Zed는 세로 휠을 가로 스크롤로만 바꿈, C-36 pane.rs:3653-3665). 조건 Zed 4304dec, 1440x852, 100%, One Dark, 휠 한 칸" }
 
 # ==============================================================================
 # 7. 편집기·Pane 및 분할 영역 (Pane & PaneGroup)
