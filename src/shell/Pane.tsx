@@ -26,13 +26,15 @@ import {
   type DropWhere,
   type FolderContext,
   type PaneState,
+  type Tab,
   type TabFile,
 } from "../workspace/context.ts";
 import { isGroup, minLength, resize, splitMode, toFlex, type Dir, type Group, type Node } from "../workspace/split.ts";
 import { tabEdges } from "../workspace/tabs.ts";
 import { tabTooltip, tabWheelDelta } from "../workspace/tab-view.ts";
 import { baseName, truncateName } from "../workspace/paths.ts";
-import { editorContext } from "../workspace/store.ts";
+import { elideCrumbs, pathCrumb } from "../editor/breadcrumbs.ts";
+import { editorContext, folders } from "../workspace/store.ts";
 import { isOpen as menuOpen, openContextMenu } from "./AppMenu.tsx";
 import Icon from "./Icon.tsx";
 import { tooltip } from "./tooltip.ts";
@@ -387,6 +389,28 @@ function ZoomButton(props: { ctx: FolderContext; pane: PaneState }) {
   );
 }
 
+/**
+ * I-12: Zed's breadcrumb row (element.rs render_breadcrumb_text): the path, then the Markdown headings that contain the cursor,
+ * with "›" between. The headings are drawn in the syntax colour of titles, as Zed highlights them.
+ */
+function Breadcrumbs(props: { ctx: FolderContext; tab: Tab }) {
+  const segments = () => elideCrumbs([pathCrumb(props.ctx.root, props.ctx.rootName, props.tab.path, folders().length > 1), ...(props.tab.file.headings?.() ?? [])]);
+  return (
+    <div class="breadcrumbs">
+      <For each={segments()}>
+        {(text, i) => (
+          <>
+            <Show when={i() > 0}>
+              <span class="breadcrumb-separator">›</span>
+            </Show>
+            <span classList={{ "cm-syntax-title": i() > 0 && text !== "⋯" }}>{text}</span>
+          </>
+        )}
+      </For>
+    </div>
+  );
+}
+
 /** I-10: the history buttons are lit while the Pane has somewhere to go (the version read keeps them in step). */
 const canGo = (pane: PaneState | null, mode: "back" | "forward") => {
   pane?.navVersion();
@@ -426,22 +450,25 @@ function PaneView(props: { ctx: FolderContext | null; pane: PaneState | null }) 
           </div>
         </Show>
       </div>
-      {/* E-038 / E-039: the toolbar with the Markdown preview button. Only for a Markdown editor tab: the rest of the toolbar
-          (breadcrumbs, buffer search, selection controls) is not in this version. */}
+      {/* E-038 / E-039 / I-12: the toolbar of a file editor tab: the path row on the left, on a Markdown file the preview button on the right.
+          A preview tab or a tool tab has no toolbar (Zed: those items have no toolbar items). */}
       <Show when={props.ctx && props.pane && activeTabOf(props.pane)}>
         {(tab) => (
-          <Show when={!tab().markdown && isMarkdown(tab().path)}>
+          <Show when={!tab().tool && !tab().markdown}>
             <div class="editor-toolbar">
-              <div class="toolbar-quick-actions">
-                <button
-                  class="icon-button"
-                  aria-label="Preview Markdown"
-                  onClick={(e) => openPreview(props.ctx!, props.pane!, tab().path, e.altKey)} // Alt: in a split (I-078)
-                  ref={(el) => tooltip(el, () => ({ title: "Preview Markdown", action: "markdown::OpenPreview", meta: "Alt-Click to open in a split" }))}
-                >
-                  <Icon name="eye" />
-                </button>
-              </div>
+              <Breadcrumbs ctx={props.ctx!} tab={tab()} />
+              <Show when={isMarkdown(tab().path)}>
+                <div class="toolbar-quick-actions">
+                  <button
+                    class="icon-button"
+                    aria-label="Preview Markdown"
+                    onClick={(e) => openPreview(props.ctx!, props.pane!, tab().path, e.altKey)} // Alt: in a split (I-078)
+                    ref={(el) => tooltip(el, () => ({ title: "Preview Markdown", action: "markdown::OpenPreview", meta: "Alt-Click to open in a split" }))}
+                  >
+                    <Icon name="eye" />
+                  </button>
+                </div>
+              </Show>
             </div>
           </Show>
         )}
