@@ -4,6 +4,13 @@
 
 # PROGRESS — workbench-tauri v0.5
 
+## 현재 상태(2026-11-08)
+
+- Phase 1~10: 닫힘, push 완료(core).
+- Phase 11: tauri는 ORDER-11 충족(core 판정 2026-11-08). Phase 닫힘은 gpui 보고 뒤 core가 정하고 그때 push를 지시한다. 아래 Phase 11 "ORDER-11 종료".
+- coder: Claude Code Sonnet 5.5 high(2026-11-07 23:15부터, `HERDR-SETUP.md` 1장).
+- 다음: Phase 12(V4 사용자 확인). 재료 목록 [`reports/V4-LIST.md`](reports/V4-LIST.md)(tauri-leader 작성).
+
 ## Phase별 진행
 
 ### Phase 1 — 갈래 준비
@@ -519,6 +526,8 @@
   - 결과: 편집 중 한 번에 막는 최장 동기 구간이 0.3~7초에서 26ms 이하(대부분 12~18ms)로 줄었다. 편집 합계는 1만 줄대 23~37ms, 5만 줄대 25~59ms(입력은 막지 않음). 수정 전·후 강조 비교 차이 0, 임의 편집 퍼즈에서 새 불일치 0. 전·후 표와 남는 한계(Node 한정 마크다운 첫 파싱 1.5초 정지, `textCallback` shortcut)는 SPEC R-15 "구현"의 성능.
   - 검증: V1. coder: typecheck 통과, 관련 테스트 35/35(`%TEMP%\v05-K-58-report.md`). leader 직접: `npm test` 215/215, typecheck 0 오류.
   - 실측 필요(V3): WebView2에서 큰 파일(lib.dom.d.ts 4.5만 줄) 열기·타이핑, 큰 마크다운 첫 파싱 정지 여부.
+- **ORDER-11 종료(core 2026-11-08)**: tauri ORDER-11은 충족으로 닫혔다. R1 화면 확인(커밋 `72eb7cf`): 상태 바 HTML 이름이 Zed와 같다. WebView2에서 큰 마크다운 첫 파싱의 최장 정지는 107ms이고, Node에서 본 1.5초 정지는 없었다. Phase 11 자체는 gpui 보고 뒤 core가 닫고 그때 push를 지시한다. push 안 한 커밋: `59dd1ea` ~ 이 정리 커밋(W-39).
+- **W-39 현재 상태 정리** (2026-11-08): PROGRESS 맨 위 "현재 상태(2026-11-08)", Phase 11 "ORDER-11 종료", PLAN Phase 11 진행 현황. 검증 V0(문서만).
 
 ## 사용자 요청 작업
 
