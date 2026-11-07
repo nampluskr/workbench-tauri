@@ -106,17 +106,17 @@ const METRICS: Record<string, string> = {
   "settings.control.corner_radius": rem(4), // L-10 rounded_sm; Zed ButtonLike and render_search
   "editor.gutter.min_line_number_digits": "4", // E-002
   "editor.search_bar.gap": rem(8), // E-061
-  // Project Search (K-32). No toml IDs yet; each value is read from the Zed source named here.
-  "editor.search_input.max_width": rem(1200), // ui/src/utils/search_input.rs MAX_WIDTH
-  "search_results.header.padding": rem(4), // editor.rs:303 BUFFER_HEADER_PADDING
-  "search_results.header.padding_left": rem(4), // header.rs `.pl_1()`
-  "search_results.header.padding_right": rem(8), // header.rs `.pr_2()`
-  "search_results.header.gap": rem(6), // header.rs `.gap_1p5()`
-  "search_results.header.radius": rem(2), // header.rs `.rounded_sm()`
-  "search_results.header.fold_button": rem(28), // header.rs `button_size`
-  "search_results.header.lines": "2", // editor.rs:302 FILE_HEADER_HEIGHT, in buffer lines
-  "search_results.matches.padding_left": rem(6), // project_search.rs `.pl_1p5()` before the match arrows
-  "search_results.count.min_width": rem(40), // project_search.rs `.min_w(rems_from_px(40_f32))`
+  // Project Search (K-32): toml IDs (`editor.search_input.max_width`, `[search_results]`), sources are in the toml.
+  "editor.search_input.max_width": rem(1200), // toml; Zed ui/src/utils/search_input.rs MAX_WIDTH
+  "search_results.header.padding": rem(4), // toml; editor.rs:303 BUFFER_HEADER_PADDING
+  "search_results.header.padding_left": rem(4), // toml; header.rs `.pl_1()`
+  "search_results.header.padding_right": rem(8), // toml; header.rs `.pr_2()`
+  "search_results.header.gap": rem(6), // toml; header.rs `.gap_1p5()`
+  "search_results.header.radius": rem(2), // toml; header.rs `.rounded_sm()`
+  "search_results.header.fold_button": rem(28), // toml; header.rs `button_size`
+  "search_results.header.lines": "2", // toml; editor.rs:302 FILE_HEADER_HEIGHT, in buffer lines
+  "search_results.matches.padding_left": rem(6), // toml; project_search.rs `.pl_1p5()` before the match arrows
+  "search_results.count.min_width": rem(40), // toml; project_search.rs `.min_w(rems_from_px(40_f32))`
   "editor.search_input.min_height": rem(32), // E-062
   "editor.search_input.padding_left": rem(8), // E-062
   "editor.search_input.padding_right": rem(4), // E-062
@@ -135,6 +135,9 @@ const METRICS: Record<string, string> = {
   "titlebar.window_button.width": "36px", // L-39 / A-32.2
   "titlebar.window_button.height": "32px", // L-39 / A-32.2
   "titlebar.window_button.glyph_size": "10px", // L-39 / A-32.2
+  "titlebar.window_button.close.hover_background": "#E81120", // L-84
+  "titlebar.window_button.close.hover_foreground": "#FFFFFF", // L-84
+  "titlebar.window_button.close.active_opacity": "0.8", // L-84: the pressed button shows both colours at 80%
   "sidebar.default_width": rem(300), // L-33
   "sidebar.header_height": "32px", // L-12: aligned with the fixed Windows caption.
   "sidebar.footer.padding": rem(4), // L-35

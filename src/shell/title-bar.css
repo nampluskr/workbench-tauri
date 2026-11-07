@@ -28,7 +28,9 @@
 .window-button:hover { background: var(--ghost-element-hover); }
 .window-button:active { background: var(--ghost-element-active); }
 
-/* L-84: close button is red on hover (#E81120), 80% opaque while pressed, white glyph. No toml ID exists for it. */
-.window-button.close { --close-red: 232 17 32; }
-.window-button.close:hover { background: rgb(var(--close-red)); color: #fff; }
-.window-button.close:active { background: rgb(var(--close-red) / 80%); color: #fff; }
+/* L-84: close button is red on hover, both colours at the toml active opacity while pressed. */
+.window-button.close:hover { background: var(--titlebar-window-button-close-hover-background); color: var(--titlebar-window-button-close-hover-foreground); }
+.window-button.close:active {
+  background: color-mix(in srgb, var(--titlebar-window-button-close-hover-background) calc(var(--titlebar-window-button-close-active-opacity) * 100%), transparent);
+  color: color-mix(in srgb, var(--titlebar-window-button-close-hover-foreground) calc(var(--titlebar-window-button-close-active-opacity) * 100%), transparent);
+}
