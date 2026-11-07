@@ -3,6 +3,12 @@ import { listen } from "@tauri-apps/api/event";
 import { notify } from "../shell/toast.ts";
 import { commands, keymap } from "./keyboard.ts";
 import { applyUserKeymap, ERR_LOAD } from "./user.ts";
+import { createSignal } from "solid-js";
+import { isUserKeymapPath } from "./edit.ts";
+import { eachContext } from "../workspace/store.ts";
+import { allTabs } from "../workspace/context.ts";
+
+export const [userKeymapText, setUserKeymapText] = createSignal<string | null>(null);
 
 /**
  * Lay %APPDATA%\workbench-tauri\keymap.json over the built-in keymap; a missing file is silent (R-2).
@@ -15,6 +21,10 @@ export async function loadUserKeymap(): Promise<void> {
     const text = await invoke<string | null>("read_user_keymap");
     keymap.clear("user"); // only after a successful read: a failed read keeps the bindings in use
     errors = text === null ? [] : applyUserKeymap(keymap, text, (name) => commands.has(name));
+    setUserKeymapText(text);
+    eachContext((ctx) => {
+      for (const doc of new Set(allTabs(ctx).filter((tab) => isUserKeymapPath(tab.path)).map((tab) => tab.file.doc))) void doc.read();
+    });
   } catch {
     errors = [ERR_LOAD];
   }

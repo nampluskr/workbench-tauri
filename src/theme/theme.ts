@@ -51,6 +51,7 @@ export const TARGET_TOKENS = [
   "error", // status.error (P-020, P-021): inline name input with an error
   "warning", // status.warning (P-020, P-021): inline name input with a warning; tab conflict dot (L-65)
   "text.accent", // Color::Accent (L-65, I-071): modified tab dot
+  "info.background", // Settings User scope: Zed ButtonStyle::Tinted(TintColor::Accent).
   "pane_group.border", // I-725: split line
   "drop_target.background", // T-40.7 / I-714 / I-715: tab drag targets
   "drop_target.border", // T-26.13 / I-715: the tab drop line

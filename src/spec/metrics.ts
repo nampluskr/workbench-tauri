@@ -5,10 +5,61 @@ const REM_SIZE = 16; // units.rem_size (L-01)
 const rem = (px: number) => `${px / REM_SIZE}rem`;
 
 export const PROJECT_PANEL_ITEM_HEIGHT = 26; // project_panel.item.height (L-36); script needs it for the virtual window
+export const PROJECT_PANEL_DEFAULT_WIDTH = 240; // project_panel.default_width (L-32)
 
 // Buffer font size (L-08) and measured gutter padding stay in px; other lengths go through rem().
 const METRICS: Record<string, string> = {
+  "extensions.header.padding_top": rem(16), // X-45
+  "extensions.header.padding_x": rem(16), // X-45
+  "extensions.header.row_gap": rem(16), // X-45
+  "extensions.search_input.height": rem(32), // X-46
+  "extensions.search_input.min_width": rem(384), // X-46
+  "extensions.search_input.padding_left": rem(6), // X-46
+  "extensions.search_input.padding_right": rem(8), // X-46
+  "extensions.search_input.gap": rem(8), // X-46
+  "extensions.search_input.border": rem(1), // X-46
+  "extensions.search_input.corner_radius": rem(6), // X-46
+  "extensions.search_input.font_size": rem(14), // X-46
+  "extensions.search_input.line_height_multiplier": "1.3", // X-46
+  "extensions.category_bar.gap": rem(8), // X-48
+  "extensions.category_bar.padding_y": rem(10), // X-48
+  "extensions.category_bar.padding_x": rem(16), // X-48
+  "extensions.category_bar.border_bottom": rem(1), // X-48
+  "extensions.list.padding_x": rem(16), // X-49
+  "extensions.list.padding_bottom": rem(16), // X-49
+  "extensions.card.margin_top": rem(16), // X-49
+  "extensions.card.height": rem(110), // X-49
+  "extensions.card.padding": rem(12), // X-49
+  "extensions.card.gap_y": rem(8), // X-49
+  "extensions.card.border": rem(1), // X-49
+  "extensions.card.corner_radius": rem(6), // X-49
+  "keymap_editor.padding": rem(8), // K-010
+  "keymap_editor.gap_vertical": rem(4), // K-010
+  "keymap_editor.top_row.gap": rem(8), // K-011
+  "keymap_editor.search_input.height": rem(32), // K-012
+  "keymap_editor.search_input.padding_x": rem(8), // K-012
+  "keymap_editor.search_input.border": rem(1), // K-012
+  "keymap_editor.search_input.corner_radius": rem(6), // K-012
+  "keymap_editor.button_group.gap": rem(4), // K-013
+  "keymap_editor.button_group.min_width": rem(320), // K-013
+  "keymap_editor.table.icon_column_width": rem(36), // K-022
+  "keymap_editor.table.ratio_action": "0.25", // K-022
+  "keymap_editor.table.ratio_arguments": "0.20", // K-022
+  "keymap_editor.table.ratio_keystrokes": "0.14", // K-022
+  "keymap_editor.table.ratio_context": "0.45", // K-022
+  "keymap_editor.table.ratio_source": "0.08", // K-022
+  "keymap_editor.row.border_width": rem(2), // K-030
+  "keymap_editor.icon_column_button.size": rem(18), // K-036
+  "keymap_editor.keystroke_input.padding_x": rem(12), // K-050
+  "keymap_editor.keystroke_input.gap": rem(8), // K-050
+  "keymap_editor.keystroke_input.min_height": rem(40), // K-050
+  "keymap_editor.keystroke_input.corner_radius": rem(6), // K-050
+  "keymap_editor.keystroke_input.border": rem(1), // K-050
+  "keymap_editor.modal.width": rem(544), // K-080
+  "keymap_editor.modal.body_gap": rem(10), // K-082
+  "keymap_editor.modal.footer_gap": rem(4), // K-083
   "titlebar.user_menu.button_width": rem(22), // I-608
+  "titlebar.right_group.gap": rem(4), // L-89 / I-603: user menu to native window buttons.
   "titlebar.user_menu.button_height": rem(22), // I-608
   "titlebar.user_menu.button_icon_size": rem(14), // I-601
   "titlebar.user_menu.button_corner_radius": rem(4), // I-609
@@ -16,6 +67,13 @@ const METRICS: Record<string, string> = {
   "typography.ui_font_size": rem(16), // L-08
   "typography.buffer_font_size": "15px", // L-08
   "typography.size.default": rem(14), // L-05 (label default: tree name, tab title, title bar folder button)
+  "typography.size.small": rem(12), // L-05 (SettingsSectionHeader LabelSize::Small)
+  "buttons.padding_x.large_medium": rem(8), // L-07 (Settings dropdown ButtonSize::Medium)
+  "buttons.gap": rem(4), // L-07
+  "settings.search.padding_left": rem(6), // L-10 / Zed 4304dec732 settings_ui.rs render_search pl_1p5
+  "settings.search.padding_right": rem(2), // L-10 / render_search pr_0p5
+  "settings.search.gap": rem(6), // L-10 / render_search gap_1p5
+  "settings.control.corner_radius": rem(4), // L-10 rounded_sm; Zed ButtonLike and render_search
   "editor.gutter.min_line_number_digits": "4", // E-002
   // shortcut: gutter padding measured at Lilex 15, remeasure if the buffer font or size changes.
   "editor.gutter.padding_left": "22px", // I-14: Zed measured 2026-11-07, replaces E-003 3ch
@@ -24,12 +82,12 @@ const METRICS: Record<string, string> = {
   "editor.cursor_width": rem(2), // E-012
   "editor.selection.corner_radius_multiplier": "0.15", // E-015
   "scrollbar.width.editor": rem(15), // E-030
-  "titlebar.height": rem(32), // L-21
-  "titlebar.window_button.width": rem(36), // L-39
-  "titlebar.window_button.height": rem(32), // L-39
-  "titlebar.window_button.glyph_size": rem(10), // L-39
+  "titlebar.height": "32px", // L-21: Windows caption stays fixed when UI font size changes.
+  "titlebar.window_button.width": "36px", // L-39 / A-32.2
+  "titlebar.window_button.height": "32px", // L-39 / A-32.2
+  "titlebar.window_button.glyph_size": "10px", // L-39 / A-32.2
   "sidebar.default_width": rem(300), // L-33
-  "sidebar.header_height": rem(32), // L-12
+  "sidebar.header_height": "32px", // L-12: aligned with the fixed Windows caption.
   "sidebar.footer.padding": rem(4), // L-35
   "sidebar.footer.gap": rem(4), // L-35
   "sidebar.footer.border_top": rem(1), // L-35
@@ -41,7 +99,7 @@ const METRICS: Record<string, string> = {
   "window.border_sidebar_header_bottom": rem(1), // L-302
   "window.border_sidebar_right": rem(1), // L-303
   "window.border_dock_left": rem(1), // L-16
-  "project_panel.default_width": rem(240), // L-32 (left Dock content)
+  "project_panel.default_width": rem(PROJECT_PANEL_DEFAULT_WIDTH), // L-32 (left Dock content)
   "icons.size.medium": rem(16), // L-06 (project panel file and folder icons; L-40 itself is not judged)
   "project_panel.item.height": rem(PROJECT_PANEL_ITEM_HEIGHT), // L-36 (comfortable)
   "project_panel.item.content_height": rem(24), // L-36
@@ -194,6 +252,7 @@ export const TOOLTIP_CURSOR_OFFSET = { x: 1, y: 1 }; // tooltip.cursor_offset_x 
 // Sidebar and state values that script reads.
 export const SIDEBAR_WIDTH = { default: 300, min: 200, max: 800 }; // sidebar.default_width / min_width / max_width (L-33)
 export const STATE_SAVE_DEBOUNCE_MS = 500; // app.state_save_debounce (A-24.2)
+export const KEYMAP_RECORD_MAX_STROKES = 3; // keymap_editor.record.max_keystrokes (K-055)
 export const PROJECT_NAME_MAX_CHARS = 40; // titlebar.project_name.max_chars (L-88)
 
 // Project panel and tab values that script reads.
@@ -216,6 +275,7 @@ export const USER_MENU_POPUP_OFFSET = { x: 5, y: 0 }; // titlebar.user_menu.popu
 export const MENU_KEYBOARD_OFFSET = { x: 2, y: 2 }; // menu.context.keyboard_offset_x / _y (I-502)
 export const MENU_WINDOW_MARGIN = 8; // menu.context.window_margin (I-314, I-501)
 export const MENU_SHORTCUT_ACTIVATE_DELAY_MS = 50; // menu.shortcut_activate_delay (I-520)
+export const SETTINGS_DROPDOWN_OFFSET_Y = 2; // L-10 / Zed 4304dec732 components/dropdown.rs offset y=2px.
 
 // I-14: bundled Zed families; DirectWrite maps Korean to Malgun Gothic on this PC.
 const UI_FONT_FAMILY = '"IBM Plex Sans", "Malgun Gothic", sans-serif';
@@ -224,15 +284,17 @@ const FONT_WEIGHT = 400; // I-14: default UI and buffer weight
 const UI_FONT_FEATURE_SETTINGS = '"calt" 0'; // I-14: disable UI contextual alternates
 
 /** Publish the metrics as CSS variables on :root (constructable sheet, no inline style). */
-export async function applyMetrics(): Promise<void> {
+let metricsSheet: CSSStyleSheet | undefined;
+export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15): Promise<void> {
+  const bufferSize = `${bufferFontSize}px`;
   const vars = Object.entries(METRICS).map(
     ([id, value]) => `--${id.replace(/[._]/g, "-")}: ${value};`,
   );
 
   // E-005: gutter margin = |descent| of the buffer font. CSS cannot read it.
-  await document.fonts.load(`${FONT_WEIGHT} ${METRICS["typography.buffer_font_size"]} "Lilex"`);
+  await document.fonts.load(`${FONT_WEIGHT} ${bufferSize} "Lilex"`);
   const ctx = document.createElement("canvas").getContext("2d")!;
-  ctx.font = `${METRICS["typography.buffer_font_size"]} ${BUFFER_FONT_FAMILY}`;
+  ctx.font = `${bufferSize} ${BUFFER_FONT_FAMILY}`;
   const descent = Math.abs(ctx.measureText("0").fontBoundingBoxDescent);
   vars.push(`--editor-gutter-margin: ${descent}px;`);
   vars.push(`--buffer-font-family: ${BUFFER_FONT_FAMILY};`); // L-103: code in the Markdown preview uses the buffer font
@@ -240,7 +302,8 @@ export async function applyMetrics(): Promise<void> {
   vars.push(`--font-weight-default: ${FONT_WEIGHT};`);
   vars.push(`--ui-font-feature-settings: ${UI_FONT_FEATURE_SETTINGS};`);
 
-  const sheet = new CSSStyleSheet();
-  sheet.replaceSync(`:root { font-size: var(--units-rem-size); ${vars.join(" ")} }`);
-  document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
+  vars.push(`--units-rem-size: ${uiFontSize}px; --typography-ui-font-size: ${uiFontSize}px; --typography-buffer-font-size: ${bufferSize};`);
+  metricsSheet ??= new CSSStyleSheet();
+  metricsSheet.replaceSync(`:root { font-size: var(--units-rem-size); ${vars.join(" ")} }`);
+  if (!document.adoptedStyleSheets.includes(metricsSheet)) document.adoptedStyleSheets = [...document.adoptedStyleSheets, metricsSheet];
 }

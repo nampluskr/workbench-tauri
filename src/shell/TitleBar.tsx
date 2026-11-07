@@ -37,15 +37,17 @@ function ProjectName() {
   );
 }
 
-export default function TitleBar() {
+export default function TitleBar(props: { settings?: boolean } = {}) {
   return (
     // L-81: the whole bar is the drag region (double-click toggles maximize).
     <header class="title-bar" classList={{ inactive: !focused() }} data-tauri-drag-region>
       <div class="title-left">
-        <AppMenu />
-        <Show when={!appMenuExpanded()}><ProjectName /></Show>
+        <Show when={!props.settings}>
+          <AppMenu />
+          <Show when={!appMenuExpanded()}><ProjectName /></Show>
+        </Show>
       </div>
-      <UserMenuButton />
+      <Show when={!props.settings}><UserMenuButton /></Show>
       <button class="window-button" aria-label="Minimize" onClick={() => void appWindow.minimize()}>
         {GLYPH_MINIMIZE}
       </button>

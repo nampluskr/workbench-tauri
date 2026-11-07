@@ -51,6 +51,7 @@ export function syntaxHighlighting(id: string) {
       parser: Parser | null = null;
       destroyed = false;
       parsing = false; // a sliced parse is waiting for its next slice and still owns the parser
+      themeKeys = syntaxKeys;
 
       constructor(readonly view: EditorView) {
         grammar(id).then(({ language, highlights }) => {
@@ -111,7 +112,10 @@ export function syntaxHighlighting(id: string) {
           if (update.docChanged) this.decorations = this.decorations.map(update.changes);
           return;
         }
-        if (update.docChanged || update.viewportChanged) this.decorations = this.build();
+        if (update.docChanged || update.viewportChanged || this.themeKeys !== syntaxKeys) {
+          this.themeKeys = syntaxKeys;
+          this.decorations = this.build();
+        }
       }
 
       // Decorations only for the visible ranges.

@@ -375,6 +375,7 @@ button, input, select, textarea {
 .menu-separator { height: var(--menu-separator-height); margin: var(--menu-separator-margin-y) 0; background: var(--border-variant); }
 .menu-item { align-items: center; --icon-size: var(--menu-app-menu-button-icon-size); }
 .user-menu-button {
+  margin-right: var(--titlebar-right-group-gap); /* L-89 / I-603 */
   width: var(--titlebar-user-menu-button-width);
   height: var(--titlebar-user-menu-button-height);
   border-radius: var(--titlebar-user-menu-button-corner-radius);

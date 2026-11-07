@@ -1,0 +1,44 @@
+.keymap-tab, .keymap-editor { height: 100%; min-height: 0; outline: none; }
+.keymap-editor {
+  display: flex; flex-direction: column; box-sizing: border-box;
+  padding: var(--keymap-editor-padding); gap: var(--keymap-editor-gap-vertical);
+  background: var(--editor-background); color: var(--text); font-size: var(--typography-size-default);
+}
+.keymap-top { display: flex; gap: var(--keymap-editor-top-row-gap); }
+.keymap-search { flex: 1; min-width: 0; height: var(--keymap-editor-search-input-height); box-sizing: border-box;
+  padding: 0 var(--keymap-editor-search-input-padding-x); border: var(--keymap-editor-search-input-border) solid var(--border);
+  border-radius: var(--keymap-editor-search-input-corner-radius); background: var(--editor-background); color: var(--text); }
+.keymap-editor input:focus { outline-color: var(--border-focused); }
+.keymap-buttons { display: flex; align-items: center; gap: var(--keymap-editor-button-group-gap); min-width: var(--keymap-editor-button-group-min-width); }
+.keymap-editor button { font: inherit; color: var(--text); background: none; border: 0;
+  padding: 0 var(--buttons-padding-x-default-compact); height: var(--buttons-height-default); }
+.keymap-editor button:hover { background: var(--ghost-element-hover); }
+.keymap-editor button:disabled { color: var(--text-disabled); }
+.keymap-buttons span { color: var(--text-muted); }
+.keymap-table-scroll { overflow: auto; min-height: 0; }
+.keymap-table { width: 100%; table-layout: fixed; border-collapse: collapse;
+  --keymap-ratio-sum: calc(var(--keymap-editor-table-ratio-action) + var(--keymap-editor-table-ratio-arguments) + var(--keymap-editor-table-ratio-keystrokes) + var(--keymap-editor-table-ratio-context) + var(--keymap-editor-table-ratio-source)); }
+.keymap-col-icon { width: var(--keymap-editor-table-icon-column-width); }
+.keymap-col-action { width: calc((100% - var(--keymap-editor-table-icon-column-width)) * var(--keymap-editor-table-ratio-action) / var(--keymap-ratio-sum)); }
+.keymap-col-arguments { width: calc((100% - var(--keymap-editor-table-icon-column-width)) * var(--keymap-editor-table-ratio-arguments) / var(--keymap-ratio-sum)); }
+.keymap-col-keys { width: calc((100% - var(--keymap-editor-table-icon-column-width)) * var(--keymap-editor-table-ratio-keystrokes) / var(--keymap-ratio-sum)); }
+.keymap-col-context { width: calc((100% - var(--keymap-editor-table-icon-column-width)) * var(--keymap-editor-table-ratio-context) / var(--keymap-ratio-sum)); }
+.keymap-col-source { width: calc((100% - var(--keymap-editor-table-icon-column-width)) * var(--keymap-editor-table-ratio-source) / var(--keymap-ratio-sum)); }
+.keymap-table th { font-weight: inherit; text-align: left; border-bottom: var(--keymap-editor-search-input-border) solid var(--border-variant); }
+.keymap-table td { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  border-block: var(--keymap-editor-row-border-width) solid transparent; }
+.keymap-table tbody tr:nth-child(even) { background: var(--element-background); }
+.keymap-table tbody tr:focus { outline: var(--keymap-editor-row-border-width) solid var(--border-focused); outline-offset: calc(0px - var(--keymap-editor-row-border-width)); }
+.keymap-table td:not(:nth-child(2)):not(:last-child) { color: var(--text-muted); }
+.keymap-table td:first-child button { width: var(--keymap-editor-icon-column-button-size); height: var(--keymap-editor-icon-column-button-size); padding: 0; visibility: hidden; --icon-size: var(--icons-size-small); }
+.keymap-table tr:hover td:first-child button, .keymap-table tr:focus-within td:first-child button { visibility: visible; }
+.keymap-modal { width: var(--keymap-editor-modal-width); box-sizing: border-box; background: var(--elevated-surface-background); color: var(--text); border-color: var(--border-variant); }
+.keymap-modal form, .keymap-modal label { display: flex; flex-direction: column; gap: var(--keymap-editor-modal-body-gap); }
+.keymap-modal input { font: inherit; background: var(--editor-background); color: var(--text); border: var(--keymap-editor-search-input-border) solid var(--border-variant); }
+.keymap-modal header { border-bottom: var(--keymap-editor-search-input-border) solid var(--border-variant); }
+.keymap-modal footer { display: flex; justify-content: flex-end; gap: var(--keymap-editor-modal-footer-gap); }
+.keymap-recorder { display: flex; align-items: center; justify-content: space-between; padding-inline: var(--keymap-editor-keystroke-input-padding-x);
+  gap: var(--keymap-editor-keystroke-input-gap); min-height: var(--keymap-editor-keystroke-input-min-height);
+  border-radius: var(--keymap-editor-keystroke-input-corner-radius); border: var(--keymap-editor-keystroke-input-border) solid var(--border-variant); background: var(--editor-background); }
+.keymap-recorder:focus { border-color: var(--border-focused); outline: none; }
+.keymap-error { color: var(--error); }

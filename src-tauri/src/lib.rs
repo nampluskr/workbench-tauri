@@ -4,6 +4,7 @@ mod state;
 mod files;
 mod folder_watch;
 mod text_io;
+mod user_file;
 
 use notify::{Event, EventKind, RecursiveMode, Watcher};
 use tauri::{Emitter, Manager};
@@ -16,32 +17,85 @@ fn app_data_dir() -> Result<std::path::PathBuf, String> {
 
 #[tauri::command]
 fn read_user_keymap() -> Result<Option<String>, String> {
-    match std::fs::read_to_string(app_data_dir()?.join("keymap.json")) {
-        Ok(contents) => Ok(Some(contents)),
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
-        Err(error) => Err(error.to_string()),
-    }
+    user_file::read(&app_data_dir()?, "keymap.json")
 }
 
-fn is_keymap_change(event: &Event) -> bool {
+#[tauri::command]
+fn write_user_keymap(expected: Option<String>, json: String) -> Result<(), String> {
+    user_file::write(&app_data_dir()?, "keymap.json", expected.as_deref(), &json)
+}
+
+#[tauri::command]
+fn ensure_user_keymap() -> Result<String, String> {
+    user_file::ensure(&app_data_dir()?, "keymap.json", "[]\n")
+}
+
+#[tauri::command]
+fn read_user_settings() -> Result<Option<String>, String> {
+    user_file::read(&app_data_dir()?, "settings.json")
+}
+
+#[tauri::command]
+fn write_user_settings(expected: Option<String>, json: String) -> Result<(), String> {
+    user_file::write(&app_data_dir()?, "settings.json", expected.as_deref(), &json)
+}
+
+#[tauri::command]
+fn ensure_user_settings() -> Result<String, String> {
+    user_file::ensure(&app_data_dir()?, "settings.json", "{}\n")
+}
+
+#[tauri::command]
+fn edit_user_settings(app: tauri::AppHandle) -> Result<(), String> {
+    app.emit_to("main", "edit-user-settings", ()).map_err(|error| error.to_string())?;
+    let main = app.get_webview_window("main").ok_or("main window missing")?;
+    main.unminimize().map_err(|error| error.to_string())?;
+    main.set_focus().map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+async fn open_settings(app: tauri::AppHandle) -> Result<(), String> {
+    if let Some(window) = app.get_webview_window("settings") {
+        window.unminimize().map_err(|error| error.to_string())?;
+        return window.set_focus().map_err(|error| error.to_string());
+    }
+    // I-2 Zed measured 2026-11-07, D-15.
+    // shortcut: one capture at 100%; remeasure for other DPI and fonts.
+    const SETTINGS_WIDTH: f64 = 900.0;
+    const SETTINGS_HEIGHT: f64 = 750.0;
+    let window = tauri::WebviewWindowBuilder::new(&app, "settings", tauri::WebviewUrl::App("index.html?window=settings".into()))
+        .title("Settings").inner_size(SETTINGS_WIDTH, SETTINGS_HEIGHT)
+        .decorations(false).shadow(true).visible(false).build().map_err(|error| error.to_string())?;
+    let caption_window = window.clone();
+    window.run_on_main_thread(move || {
+        match caption_window.hwnd() {
+            Ok(hwnd) => caption::install(hwnd),
+            Err(error) => eprintln!("Failed to install Settings caption: {error}"),
+        }
+    }).map_err(|error| error.to_string())?;
+    Ok(())
+}
+
+fn is_user_file_change(event: &Event, name: &str) -> bool {
     matches!(event.kind, EventKind::Create(_) | EventKind::Modify(_) | EventKind::Remove(_))
         && event.paths.iter().any(|path| {
             path.file_name()
-                .is_some_and(|name| name.eq_ignore_ascii_case("keymap.json"))
+                .is_some_and(|file| file.eq_ignore_ascii_case(name))
         })
 }
 
-fn watch_user_keymap(app: tauri::AppHandle) -> Result<notify::RecommendedWatcher, String> {
+fn watch_user_files(app: tauri::AppHandle) -> Result<notify::RecommendedWatcher, String> {
     let dir = app_data_dir()?;
     std::fs::create_dir_all(&dir).map_err(|error| error.to_string())?;
     let mut watcher = notify::recommended_watcher(move |result: notify::Result<Event>| match result {
-        Ok(event) if is_keymap_change(&event) => {
-            if let Err(error) = app.emit("user-keymap-changed", ()) {
-                eprintln!("Failed to emit keymap change: {error}");
+        Ok(event) => {
+            for (name, notification) in [("keymap.json", "user-keymap-changed"), ("settings.json", "user-settings-changed")] {
+                if is_user_file_change(&event, name) {
+                    if let Err(error) = app.emit(notification, ()) { eprintln!("Failed to emit {name} change: {error}"); }
+                }
             }
         }
-        Ok(_) => {}
-        Err(error) => eprintln!("Keymap watch error: {error}"),
+        Err(error) => eprintln!("User settings/keymap watch error: {error}"),
     })
     .map_err(|error| error.to_string())?;
     watcher.watch(&dir, RecursiveMode::NonRecursive).map_err(|error| error.to_string())?;
@@ -122,6 +176,14 @@ pub fn run() {
         .manage(folder_watch::FolderWatch::default())
         .setup(|app| {
             let main = app.get_webview_window("main").ok_or("main window missing")?;
+            let handle = app.handle().clone();
+            main.on_window_event(move |event| {
+                if matches!(event, tauri::WindowEvent::Destroyed) {
+                    if let Some(settings) = handle.get_webview_window("settings") {
+                        if let Err(error) = settings.close() { eprintln!("Failed to close Settings: {error}"); }
+                    }
+                }
+            });
             caption::install(main.hwnd()?);
             let monitor = main.current_monitor()?.ok_or("main window monitor missing")?;
             let work_area = monitor.work_area();
@@ -147,21 +209,21 @@ pub fn run() {
                 main.inner_size()?,
                 main.scale_factor()?,
             )))?;
-            match watch_user_keymap(app.handle().clone()) {
+            match watch_user_files(app.handle().clone()) {
                 Ok(watcher) => { app.manage(watcher); }
-                Err(error) => eprintln!("Failed to watch keymap: {error}"),
+                Err(error) => eprintln!("Failed to watch user settings/keymap: {error}"),
             }
             Ok(())
         })
         .register_uri_scheme_protocol("zlext", |_ctx, request| ext_protocol::respond(&request))
-        .invoke_handler(tauri::generate_handler![caption_set_colors, read_user_keymap, check_folder, paths_exist, read_state, write_state, files::list_dir, files::read_file, files::create_file, files::create_dir, files::rename_path, files::trash_paths, files::delete_paths, files::confirm, files::confirm_buttons, files::paste_paths, files::duplicate_path, folder_watch::watch_folder, text_io::save_text])
+        .invoke_handler(tauri::generate_handler![caption_set_colors, read_user_settings, write_user_settings, ensure_user_settings, edit_user_settings, open_settings, read_user_keymap, write_user_keymap, ensure_user_keymap, check_folder, paths_exist, read_state, write_state, files::list_dir, files::read_file, files::create_file, files::create_dir, files::rename_path, files::trash_paths, files::delete_paths, files::confirm, files::confirm_buttons, files::paste_paths, files::duplicate_path, folder_watch::watch_folder, text_io::save_text])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
 #[cfg(test)]
 mod tests {
-    use super::is_keymap_change;
+    use super::is_user_file_change;
     use notify::{event::{AccessKind, CreateKind, ModifyKind, RemoveKind, RenameMode}, Event, EventKind};
 
     #[test]
@@ -199,13 +261,15 @@ mod tests {
     }
 
     #[test]
-    fn filters_keymap_changes_including_renames() {
-        for kind in [EventKind::Create(CreateKind::Any), EventKind::Modify(ModifyKind::Any), EventKind::Remove(RemoveKind::Any)] {
-            assert!(is_keymap_change(&Event::new(kind).add_path("KEYMAP.JSON".into())));
-            assert!(!is_keymap_change(&Event::new(kind).add_path("state.json".into())));
+    fn filters_user_file_changes_including_renames() {
+        for name in ["keymap.json", "settings.json"] {
+            for kind in [EventKind::Create(CreateKind::Any), EventKind::Modify(ModifyKind::Any), EventKind::Remove(RemoveKind::Any)] {
+                assert!(is_user_file_change(&Event::new(kind).add_path(name.to_uppercase().into()), name));
+                assert!(!is_user_file_change(&Event::new(kind).add_path("state.json".into()), name));
+            }
+            assert!(is_user_file_change(&Event::new(EventKind::Modify(ModifyKind::Name(RenameMode::Both)))
+                .add_path("temporary".into()).add_path(name.into()), name));
+            assert!(!is_user_file_change(&Event::new(EventKind::Access(AccessKind::Any)).add_path(name.into()), name));
         }
-        assert!(is_keymap_change(&Event::new(EventKind::Modify(ModifyKind::Name(RenameMode::Both)))
-            .add_path("temporary".into()).add_path("keymap.json".into())));
-        assert!(!is_keymap_change(&Event::new(EventKind::Access(AccessKind::Any)).add_path("keymap.json".into())));
     }
 }

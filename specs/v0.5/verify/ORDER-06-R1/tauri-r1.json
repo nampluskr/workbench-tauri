@@ -1,0 +1,295 @@
+{
+  "pid": 19172,
+  "panelLayout": [
+    [
+      "SettingsCtrl-,",
+      "KeymapCtrl-K Ctrl-S",
+      "Themes…Ctrl-K Ctrl-T [disabled]",
+      "Icon Themes… [disabled]",
+      "ExtensionsCtrl-Shift-X [disabled]",
+      "Panel Layout"
+    ],
+    [
+      "✓ Classic [checked]"
+    ]
+  ],
+  "keymap": {
+    "tabs": [
+      "Keymap Editor"
+    ],
+    "ths": [
+      [
+        "",
+        [
+          548,
+          109,
+          36,
+          21
+        ]
+      ],
+      [
+        "Action",
+        [
+          584,
+          109,
+          166.59375,
+          21
+        ]
+      ],
+      [
+        "Arguments",
+        [
+          750.59375,
+          109,
+          166.59375,
+          21
+        ]
+      ],
+      [
+        "Keystrokes",
+        [
+          917.1875,
+          109,
+          166.59375,
+          21
+        ]
+      ],
+      [
+        "Context",
+        [
+          1083.78125,
+          109,
+          166.59375,
+          21
+        ]
+      ],
+      [
+        "Source",
+        [
+          1250.375,
+          109,
+          166.625,
+          21
+        ]
+      ]
+    ],
+    "rows": 91,
+    "filter": [
+      548,
+      73,
+      556,
+      32
+    ],
+    "btns": [
+      [
+        "Edit in JSON Ctrl-E",
+        [
+          1112,
+          78,
+          125.1875,
+          22
+        ]
+      ],
+      [
+        "Create Keybinding Ctrl-K",
+        [
+          1241.1875,
+          78,
+          162.640625,
+          22
+        ]
+      ]
+    ]
+  },
+  "settings": {
+    "inner": [
+      900,
+      750
+    ],
+    "title": [
+      0,
+      0,
+      900,
+      32
+    ],
+    "nav": [
+      0,
+      33,
+      226,
+      717
+    ],
+    "search": [
+      10,
+      43,
+      205,
+      28
+    ],
+    "categories": [
+      [
+        "Appearance",
+        [
+          10,
+          83,
+          205,
+          28
+        ]
+      ]
+    ],
+    "body": [
+      0,
+      32,
+      900,
+      718
+    ],
+    "scope": [
+      [
+        258,
+        58,
+        33.3,
+        20
+      ]
+    ],
+    "editJson": [
+      [
+        735.66,
+        57,
+        132.34,
+        22
+      ]
+    ],
+    "headings": [
+      [
+        "Appearance",
+        [
+          258,
+          103,
+          86.33,
+          20
+        ]
+      ],
+      [
+        "Theme",
+        [
+          258,
+          139,
+          48,
+          21
+        ]
+      ],
+      [
+        "UI Font",
+        [
+          258,
+          349,
+          67.2,
+          21
+        ]
+      ],
+      [
+        "Buffer Font",
+        [
+          258,
+          478,
+          105.61,
+          21
+        ]
+      ]
+    ],
+    "rows": [
+      [
+        "Theme NameThe name of your selected them",
+        [
+          258,
+          171,
+          610,
+          81
+        ]
+      ],
+      [
+        "Icon Theme NameThe name of your selected",
+        [
+          258,
+          252,
+          610,
+          81
+        ]
+      ],
+      [
+        "Font SizeFont size for UI elements.−+",
+        [
+          258,
+          381,
+          610,
+          81
+        ]
+      ],
+      [
+        "Font SizeFont size for editor text.−+",
+        [
+          258,
+          510,
+          610,
+          81
+        ]
+      ]
+    ],
+    "controls": [
+      [
+        "SELECT.",
+        [
+          730,
+          191,
+          138,
+          28
+        ]
+      ],
+      [
+        "SELECT.",
+        [
+          763,
+          272,
+          105,
+          28
+        ]
+      ],
+      [
+        "DIV.settings-number",
+        [
+          774,
+          401,
+          94,
+          28
+        ]
+      ],
+      [
+        "INPUT.",
+        [
+          803,
+          402,
+          36,
+          26
+        ]
+      ],
+      [
+        "DIV.settings-number",
+        [
+          774,
+          530,
+          94,
+          28
+        ]
+      ],
+      [
+        "INPUT.",
+        [
+          803,
+          531,
+          36,
+          26
+        ]
+      ]
+    ],
+    "seps": []
+  },
+  "settingsSearch": []
+}

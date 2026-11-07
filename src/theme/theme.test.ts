@@ -44,6 +44,7 @@ const VARS: [token: string, cssVar: string][] = [
   ["error", "--error"],
   ["warning", "--warning"],
   ["text.accent", "--text-accent"],
+  ["info.background", "--info-background"],
   ["pane_group.border", "--pane-group-border"],
   ["drop_target.background", "--drop-target-background"],
   ["drop_target.border", "--drop-target-border"],

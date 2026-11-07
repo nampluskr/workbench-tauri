@@ -385,7 +385,7 @@ export function closingTabs(ctx: FolderContext): Closing[] {
   const seen = new Set<Doc>();
   const out: Closing[] = [];
   for (const t of allTabs(ctx)) {
-    if (t.markdown || seen.has(t.file.doc)) continue; // a preview only reads (I-086)
+    if (t.tool || t.markdown || seen.has(t.file.doc)) continue; // non-file tabs do not own modified text
     seen.add(t.file.doc);
     out.push({ doc: t.file.doc, label: relativePath(ctx.root, ctx.rootName, t.path) });
   }
@@ -403,7 +403,7 @@ export async function closeTab(ctx: FolderContext, file: TabFile, closePinned = 
   const pane = paneOf(ctx, file);
   const tab = pane && tabIn(pane, file);
   if (!tab || closing || (tab.pinned && !closePinned)) return;
-  if (tab.markdown || shownFiles(file.doc).length > 1) return removeTab(ctx, file); // a preview only reads (I-086)
+  if (tab.tool || tab.markdown || shownFiles(file.doc).length > 1) return removeTab(ctx, file);
   closing = true;
   try {
     if (!(await confirmClose([{ doc: file.doc, label: relativePath(ctx.root, ctx.rootName, tab.path) }], askWarning))) return;
@@ -502,7 +502,7 @@ export function paneInDirection(ctx: FolderContext, from: PaneState, dir: Dir): 
 /** R-4: Ctrl+S on the active tab. A failure is told with E-083's text. */
 export async function saveActive(ctx: FolderContext): Promise<void> {
   const tab = activeTabOf(ctx.pane());
-  if (!tab) return;
+  if (!tab || tab.tool) return;
   const saved = await saveDoc(tab.file.doc, askWarning);
   if (saved === "close") removeTab(ctx, tab.file);
   else if (typeof saved === "object") notify([saveErrorText(saved.failed)]);
@@ -510,6 +510,7 @@ export async function saveActive(ctx: FolderContext): Promise<void> {
 
 /** Show `path` in the tree: open its folders, select it, scroll to it. Focus stays where it is (R-24, I-096). */
 export function reveal(ctx: FolderContext, path: string): void {
+  if (!ctx.root) return;
   if (!path.toLowerCase().startsWith(ctx.root.toLowerCase())) return;
   let at = ctx.root.length;
   for (;;) {
@@ -552,6 +553,24 @@ export function activateTab(ctx: FolderContext, pane: PaneState, index: number):
   reveal(ctx, pane.tabs()[index].path);
 }
 
+/** Non-file tabs reuse Pane activation and closing without reading their title as a path. */
+export function openTool(ctx: FolderContext, title: string, make: () => { element: HTMLElement; dispose: () => void }): void {
+  for (const pane of panesOf(ctx)) {
+    const index = pane.tabs().findIndex((t) => t.tool && t.path === title);
+    if (index >= 0) { activateTab(ctx, pane, index); focusPane(pane); return; }
+  }
+  const pane = ctx.pane();
+  const body = make();
+  const file = newFile(ctx, title);
+  file.element = body.element;
+  file.dispose = () => { body.dispose(); file.doc.closed = true; filesOf.delete(file.doc); };
+  const opened = openTab(pane.tabs(), pane.active(), title, false, PANE_MAX_PREVIEW_TABS,
+    () => ({ path: title, preview: false, tool: true, file, focus: true }));
+  pane.setTabs(opened.tabs);
+  activateTab(ctx, pane, opened.active);
+  focusPane(pane);
+}
+
 /** I-063: a double click on a tab makes it a normal one. */
 export function keepTab(ctx: FolderContext, file: TabFile): void {
   paneOf(ctx, file)?.setTabs((list) => list.map((t) => (t.file === file && t.preview ? { ...t, preview: false } : t)));
@@ -588,7 +607,7 @@ const opposite = { up: "down", down: "up", left: "right", right: "left" } as con
 export function splitPane(ctx: FolderContext, pane: PaneState, dir: Dir, mode: "clone" | "empty" | "move"): void {
   const tab = activeTabOf(pane);
   if (mode !== "empty" && !tab) return; // I-708: nothing to clone or move
-  if (mode === "clone" && tab!.markdown) return; // a preview cannot be split (I-707 / I-708)
+  if (mode === "clone" && (tab!.markdown || tab!.tool)) return;
   const fresh = newPane();
   let side: Dir = dir;
   let focus = fresh;
@@ -623,7 +642,7 @@ export function dropTab(ctx: FolderContext, file: TabFile, to: PaneState, where:
   const from = paneOf(ctx, file);
   const tab = from && tabIn(from, file);
   if (!from || !tab) return;
-  if (tab.markdown) copy = false; // I-718: a preview cannot be copied, so it moves
+  if (tab.markdown || tab.tool) copy = false; // non-file tabs move instead of duplicating their state
   let target = to;
   if (where.kind === "split") {
     target = newPane();

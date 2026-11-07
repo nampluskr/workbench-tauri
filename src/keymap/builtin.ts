@@ -1,8 +1,7 @@
 import type { KeymapSection } from "./engine.ts";
 
-// Built-in keymap (D-2): the result of 01-zed 02-INTERACTION section 1 (Windows + VSCode overlay) for the
-// v0.2 and v0.4 actions, re-typed in Zed's keymap.json shape. The expected rows are pinned in specs/v0.4/PROGRESS.md
-// (Phase 2, R-1 table (v0.4)); builtin.test.ts compares this file with that table.
+// Built-in keymap (D-2), checked for menu actions against Zed Windows 4304dec732 (K-13).
+// The binding set still matches the v0.4 PROGRESS R-1 table; only Redo's display order changes below.
 // Section order is the tie-break order at equal depth (later wins, I-702): `menu` first, as in workbench-gpui.
 export const BUILTIN: KeymapSection[] = [
   {
@@ -117,8 +116,8 @@ export const BUILTIN: KeymapSection[] = [
     context: "Editor",
     bindings: {
       "ctrl-z": "editor::Undo",
-      "ctrl-y": "editor::Redo",
       "ctrl-shift-z": "editor::Redo",
+      "ctrl-y": "editor::Redo", // K-13: Zed's first Redo key (default-windows.json:78); last wins display here.
       "tab": "editor::Tab", // I-059: indent, never a focus move
       "shift-tab": "editor::Backtab",
       "ctrl-\\": "pane::SplitRight", // I-018

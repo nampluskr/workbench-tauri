@@ -1,0 +1,147 @@
+{
+  "pid": 21224,
+  "vButton": {
+    "right": 1328,
+    "minimizeLeft": 1332,
+    "gap": 4,
+    "w": 22,
+    "h": 22
+  },
+  "userMenu": [
+    [
+      "SettingsCtrl-,",
+      "KeymapCtrl-K Ctrl-S",
+      "Themes…Ctrl-K Ctrl-T [disabled]",
+      "Icon Themes… [disabled]",
+      "ExtensionsCtrl-Shift-X",
+      "---",
+      "Panel Layout"
+    ]
+  ],
+  "menuFile": [
+    [
+      "Open Folder...Ctrl-K Ctrl-O",
+      "---",
+      "SaveCtrl-S",
+      "---",
+      "Close EditorCtrl-W",
+      "Close WindowCtrl-Shift-W"
+    ]
+  ],
+  "menuEdit": [
+    [
+      "UndoCtrl-Z",
+      "RedoCtrl-Y"
+    ]
+  ],
+  "extensions": {
+    "tabs": [
+      "Extensions"
+    ],
+    "search": [
+      585,
+      121,
+      619,
+      20
+    ],
+    "buttons": [
+      "All",
+      "Installed",
+      "Not Installed",
+      "All",
+      "Themes",
+      "Icon Themes"
+    ],
+    "cards": [
+      [
+        "One DarkThemesInstalledZed Industries",
+        [
+          556,
+          206,
+          868,
+          110
+        ]
+      ],
+      [
+        "One DarkThemesInstalled",
+        [
+          569,
+          219,
+          842,
+          18
+        ]
+      ],
+      [
+        "One DarkThemes",
+        [
+          569,
+          219,
+          117,
+          18
+        ]
+      ],
+      [
+        "One LightThemesInstalledZed Industries",
+        [
+          556,
+          332,
+          868,
+          110
+        ]
+      ],
+      [
+        "One LightThemesInstalled",
+        [
+          569,
+          345,
+          842,
+          18
+        ]
+      ],
+      [
+        "One LightThemes",
+        [
+          569,
+          345,
+          119,
+          18
+        ]
+      ],
+      [
+        "Zed (Default)Icon ThemesInstalled",
+        [
+          556,
+          458,
+          868,
+          110
+        ]
+      ],
+      [
+        "Zed (Default)Icon ThemesInstalled",
+        [
+          569,
+          471,
+          842,
+          18
+        ]
+      ],
+      [
+        "Zed (Default)Icon Themes",
+        [
+          569,
+          471,
+          169,
+          18
+        ]
+      ]
+    ]
+  },
+  "settingsTitleText": "\n\n",
+  "settingsDropdown": [
+    [
+      "✓ Catppuccin Mocha [checked]",
+      "Catppuccin Latte",
+      "One Light"
+    ]
+  ]
+}

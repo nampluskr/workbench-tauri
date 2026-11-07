@@ -30,14 +30,14 @@ import {
 import { isGroup, minLength, resize, splitMode, toFlex, type Dir, type Group, type Node } from "../workspace/split.ts";
 import { tabEdges } from "../workspace/tabs.ts";
 import { baseName, truncateName } from "../workspace/paths.ts";
-import { activeContext } from "../workspace/store.ts";
+import { editorContext } from "../workspace/store.ts";
 import { isOpen as menuOpen, openContextMenu } from "./AppMenu.tsx";
 import Icon from "./Icon.tsx";
 import { tooltip } from "./tooltip.ts";
 
 // The active folder's center area (R-26, R-8, R-9, A-15.1): its split tree of Panes, each a tab bar and the active tab's
 // editor. Keys act on the active Pane (the one focus was last in).
-const context = createMemo(activeContext);
+const context = createMemo(editorContext);
 const activeTab = () => {
   const ctx = context();
   return ctx ? activeTabOf(ctx.pane()) : undefined;
@@ -326,7 +326,7 @@ function PaneBody(props: { pane: PaneState | null }) {
 /** I-706 / I-707: the split popup (Split Right, Left, Up, Down), anchored at its top right. */
 function SplitButton(props: { ctx: FolderContext; pane: PaneState }) {
   // An editor can be split (clone); a Markdown preview cannot, so it moves when there are two tabs or more.
-  const mode = () => splitMode(!!activeTabOf(props.pane), !activeTabOf(props.pane)?.markdown, props.pane.tabs().length);
+  const mode = () => activeTabOf(props.pane)?.tool ? null : splitMode(!!activeTabOf(props.pane), !activeTabOf(props.pane)?.markdown, props.pane.tabs().length);
   const open = (button: HTMLElement) => {
     const m = mode();
     if (!m) return;

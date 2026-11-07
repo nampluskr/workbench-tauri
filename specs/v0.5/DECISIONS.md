@@ -83,6 +83,41 @@ Zed 일반 프로젝트 label에는 아이콘이 없다(Zed `4304dec732` `crates
 
 tauri-leader 결정(사용자 위임 core D-13, ORDER-05, 2026-11-07), tauri-coder K-08-R1 보고.
 
+### D-4. 사용자 settings.json 처리 (두 갈래 기준)
+
+**결정**
+
+- 파일: `%APPDATA%\workbench-tauri\settings.json`. 형식과 키 이름은 Zed settings.json과 같다(JSONC). Zed 파일은 읽거나 쓰지 않는다.
+- 읽기: 파일이나 키가 없으면 지금 상수가 기본값이다. 잘못된 값은 그 키만 기본값으로 읽는다. 문법이 깨진 파일은 기본값으로 읽되 GUI 저장으로 덮어쓰지 않는다(저장 거부).
+- 쓰기: 디스크 원문을 다시 읽고 바꾼 최상위 키의 값 범위만 바꾼다. 다른 키·주석·BOM·줄바꿈은 그대로다. 같은 키가 여럿이면 모두 바꾼다.
+- 저장: 읽을 때의 원문(expected)과 디스크를 비교해 다르면 거부하고, 새로 만든 임시 파일에 쓰고 sync한 뒤 교체 직전에 다시 비교하고 원자 교체한다(`src-tauri/src/user_file.rs`, keymap.json과 같은 모듈). Rust 명령은 경로 인자를 받지 않고 고정 파일만 다룬다.
+- 다시 읽기: 기존 폴더 감시기가 settings.json 변경을 알리면 두 창이 다시 읽어 바로 적용한다.
+
+**이유**
+
+설정 파일은 사용자가 직접 고치는 JSONC라 주석과 다른 키를 잃으면 데이터 손실이다. 잘못된 키 하나 때문에 다른 설정까지 버리지 않는다. 두 갈래가 같은 파일 형식·처리를 가져야 한다(core D-15).
+
+**출처**
+
+core-leader 결정(2026-11-07, core D-13 위임): tauri 방식을 두 갈래 기준으로 정함. tauri-coder K-10-R1 보고, tauri-checker C-22(PASS).
+
+### D-5. Settings 창 capability
+
+**결정**
+
+- 새 capability `src-tauri/capabilities/settings.json`을 `windows: ["settings"]`(Settings 창 label)에만 건다.
+- 권한: `core:window`의 show, minimize, toggle-maximize, close, is-maximized, start-dragging, internal-toggle-maximize와 `core:event`의 listen, unlisten뿐이다.
+- 창 만들기, 메인 창 포커스, 파일 읽기·쓰기는 고정 동작의 Rust 명령으로 하므로 범용 JS 권한(파일·셸·오프너 등)은 주지 않는다.
+- main의 `default` capability와 CSP·devCsp는 바꾸지 않았다.
+
+**이유**
+
+Settings 창은 자기 타이틀 바(창 버튼·끌기)와 설정 변경 이벤트만 필요하다. 루트 `AGENTS.md` 5장(쓰는 권한만 개별 허용, CSP 끄지 않음).
+
+**출처**
+
+tauri-leader 승인(K-10-R1 카드, settings 창 label에 필요한 권한만), tauri-coder K-10-R1 보고, tauri-checker C-22(PASS).
+
 에이전트 운영의 리더 결정(카드·보고 파일 위치, 카드 ID 체계)은 설계 결정이 아니라서 `HERDR-SETUP.md` 5장에 둔다.
 
 ## 미결 사항

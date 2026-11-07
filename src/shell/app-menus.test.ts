@@ -1,11 +1,41 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { APP_NAME, appMenus, USER_MENU } from "./app-menus.ts";
-import { first, type MenuEntry } from "./menu.ts";
+import { APP_NAME, appMenus, userMenu } from "./app-menus.ts";
+import { isClassicLayout } from "./layout.ts";
+import { PROJECT_PANEL_DEFAULT_WIDTH } from "../spec/metrics.ts";
+import { first, shortcutForEntry, type MenuEntry } from "./menu.ts";
 import { FONT_LICENSES, licenseText } from "./licenses.ts";
 import { displayChunks } from "../keymap/display.ts";
+import { BUILTIN } from "../keymap/builtin.ts";
+import { Keymap } from "../keymap/engine.ts";
 
 const labels = (entries: MenuEntry[]) => entries.map((e) => e === "separator" ? "---" : e.label);
+
+test("K-13: menu shortcuts match Zed Windows primary keys without changing Close Editor's action", () => {
+  const keymap = new Keymap();
+  keymap.addSections("default", BUILTIN);
+  const stack = [new Set(["Workspace"]), new Set(["Pane"]), new Set(["Editor", "extension=md"])];
+  const menus = appMenus(() => false);
+  const items = menus.flatMap((menu) => menu.entries).flatMap((entry) => entry !== "separator" && entry.children ? entry.children : [entry]);
+  const keys = Object.fromEntries(items.filter((entry) => entry !== "separator").map((entry) => [entry.label, shortcutForEntry(entry, keymap, stack)?.join(" ")]));
+  assert.deepEqual(keys, {
+    [`Quit ${APP_NAME}`]: "Ctrl-Q", "Open Folder...": "Ctrl-K Ctrl-O", Save: "Ctrl-S",
+    "Close Editor": "Ctrl-W", "Close Window": "Ctrl-Shift-W", Undo: "Ctrl-Z", Redo: "Ctrl-Y",
+    "Toggle Left Dock": "Ctrl-B", "Toggle Folder Sidebar": "Ctrl-Alt-J", "Focus Folder Sidebar": "Ctrl-Alt-;",
+    "Split Up": "Ctrl-K Up", "Split Down": "Ctrl-K Down", "Split Left": "Ctrl-K Left", "Split Right": "Ctrl-\\",
+    "Maximize Pane": "Shift-Escape", "Project Panel": "Ctrl-Shift-E",
+    "Open Markdown Preview": "Ctrl-Shift-V", "Open Markdown Preview to the Side": "Ctrl-K V",
+    "Previous Tab": "Ctrl-PageUp", "Next Tab": "Ctrl-PageDown", Minimize: undefined, Zoom: undefined,
+    "View Dependency Licenses": undefined, "File Bug Report...": undefined, "Request Feature...": undefined, [`${APP_NAME} Repository`]: undefined,
+  });
+  const close = menus[1].entries[4];
+  if (close === "separator") assert.fail();
+  assert.equal(close.action, "workspace::CloseActiveItem");
+  assert.deepEqual(keymap.dispatch(["ctrl-w"], stack), { type: "match", action: "pane::CloseActiveItem" });
+  for (const key of ["ctrl-y", "ctrl-shift-z"]) assert.deepEqual(keymap.dispatch([key], stack), { type: "match", action: "editor::Redo" });
+  keymap.addSections("user", [{ context: "Editor", bindings: { "ctrl-alt-y": "editor::Redo" } }]);
+  assert.deepEqual(shortcutForEntry(menus[2].entries[1], keymap, stack), ["Ctrl-Alt-Y"]);
+});
 
 test("K-09: implemented menus keep the pinned Zed order and split submenu", () => {
   let disabled = false;
@@ -38,15 +68,35 @@ test("K-09: Help sends the repository's issue and repository URLs, without openi
   ]);
 });
 
-test("K-09: user menu has display-only shortcuts and a reachable disabled layout submenu", () => {
+test("K-10-R1: Settings, Keymap and Classic are active; custom layout is checked and disabled", () => {
+  let classic = true;
+  const USER_MENU = userMenu(() => classic);
   assert.deepEqual(labels(USER_MENU), ["Settings", "Keymap", "Themes…", "Icon Themes…", "Extensions", "---", "Panel Layout"]);
-  assert.deepEqual(USER_MENU.slice(0, 5).map((e) => e !== "separator" && e.shortcut ? displayChunks(e.shortcut) : []), [["Ctrl-,"], ["Ctrl-K", "Ctrl-S"], ["Ctrl-K", "Ctrl-T"], [], ["Ctrl-Shift-X"]]);
-  assert.ok(USER_MENU.slice(0, 5).every((e) => e !== "separator" && e.disabled && !e.action));
-  assert.equal(first(USER_MENU), 6);
+  assert.deepEqual(USER_MENU.slice(0, 5).map((e) => e !== "separator" && e.shortcut ? displayChunks(e.shortcut) : []), [[], [], ["Ctrl-K", "Ctrl-T"], [], []]);
+  const keymap = USER_MENU[1];
+  if (keymap === "separator") assert.fail();
+  assert.equal(keymap.action, "zed::OpenKeymap");
+  assert.ok(!keymap.disabled);
+  assert.ok([2, 3].every((i) => USER_MENU[i] !== "separator" && USER_MENU[i].disabled));
+  const extensions = USER_MENU[4];
+  if (extensions === "separator") assert.fail();
+  assert.equal(extensions.action, "zed::Extensions");
+  assert.ok(!extensions.disabled);
+  assert.equal(first(USER_MENU), 0);
+  const settings = USER_MENU[0];
+  if (settings === "separator") assert.fail();
+  assert.equal(settings.action, "zed::OpenSettings");
   const panel = USER_MENU[6];
   if (panel === "separator") assert.fail();
-  assert.deepEqual(labels(panel.children!), ["Classic", "Agentic"]);
-  assert.equal(first(panel.children!), null);
+  assert.deepEqual(labels(panel.children!), ["Classic"]);
+  assert.equal(first(panel.children!), 0);
+  assert.equal(panel.children![0] !== "separator" && panel.children![0].checked, true);
+  classic = false;
+  assert.deepEqual(labels(panel.children!), ["Classic", "Custom"]);
+  assert.deepEqual(panel.children!.map((item) => item === "separator" ? null : [item.checked, !!item.disabled]), [[false, false], [true, true]]);
+  assert.ok(isClassicLayout(true, PROJECT_PANEL_DEFAULT_WIDTH));
+  assert.ok(!isClassicLayout(false, PROJECT_PANEL_DEFAULT_WIDTH));
+  assert.ok(!isClassicLayout(true, PROJECT_PANEL_DEFAULT_WIDTH + 1));
 });
 
 test("K-09: license notices retain available text when a copy is missing", async () => {

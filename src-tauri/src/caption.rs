@@ -8,7 +8,7 @@
 //! `HTMAXBUTTON`, tracks hover/press itself and draws the button with GDI.
 //! The colors come from the theme (`set_colors`), the maximize/restore glyph from `IsZoomed`.
 
-use std::sync::atomic::{AtomicBool, AtomicU32, Ordering::Relaxed};
+use std::{collections::HashMap, sync::{Arc, LazyLock, Mutex, atomic::{AtomicBool, AtomicU32, Ordering::Relaxed}}};
 
 use windows::core::{w, PCWSTR};
 use windows::Win32::Foundation::{COLORREF, HWND, LPARAM, LRESULT, POINT, RECT, WPARAM};
@@ -26,7 +26,7 @@ use windows::Win32::UI::Shell::{DefSubclassProc, SetWindowSubclass};
 use windows::Win32::UI::WindowsAndMessaging::{
     FindWindowExW, GetClientRect, GetWindowRect, IsZoomed, ShowWindow, HTMAXBUTTON, SW_MAXIMIZE,
     SW_RESTORE, WM_DPICHANGED, WM_NCACTIVATE, WM_NCHITTEST, WM_NCLBUTTONDBLCLK, WM_NCLBUTTONDOWN,
-    WM_NCLBUTTONUP, WM_NCMOUSELEAVE, WM_NCMOUSEMOVE, WM_PAINT, WM_SIZE,
+    WM_NCLBUTTONUP, WM_NCMOUSELEAVE, WM_NCMOUSEMOVE, WM_NCDESTROY, WM_PAINT, WM_SIZE,
 };
 
 // Spec IDs (spec/zed-metrics.toml): titlebar.window_button.{width,height,glyph_size}; 01-zed L-83.
@@ -38,10 +38,17 @@ const GLYPH_RESTORE: u16 = 0xE923;
 
 // Window procedures re-enter each other (SetWindowRgn, ShowWindow), so the state is lock-free.
 // COLORS: background, inactive background, hover, pressed, glyph (COLORREF).
-static COLORS: [AtomicU32; 5] = [const { AtomicU32::new(0) }; 5];
-static HOVER: AtomicBool = AtomicBool::new(false);
-static PRESSED: AtomicBool = AtomicBool::new(false);
-static ACTIVE: AtomicBool = AtomicBool::new(true);
+struct Caption {
+    colors: [AtomicU32; 5],
+    hover: AtomicBool,
+    pressed: AtomicBool,
+    active: AtomicBool,
+}
+static CAPTIONS: LazyLock<Mutex<HashMap<isize, Arc<Caption>>>> = LazyLock::new(|| Mutex::new(HashMap::new()));
+
+fn caption(top: HWND) -> Option<Arc<Caption>> {
+    CAPTIONS.lock().ok()?.get(&(top.0 as isize)).cloned()
+}
 
 fn scale(top: HWND) -> f64 {
     // SAFETY: plain Win32 query on a window handle of this process.
@@ -97,13 +104,13 @@ fn apply_region(top: HWND) {
     }
 }
 
-fn paint(top: HWND) {
-    let color = |i: usize| COLORREF(COLORS[i].load(Relaxed));
-    let background = if PRESSED.load(Relaxed) {
+fn paint(top: HWND, state: &Caption) {
+    let color = |i: usize| COLORREF(state.colors[i].load(Relaxed));
+    let background = if state.pressed.load(Relaxed) {
         color(3)
-    } else if HOVER.load(Relaxed) {
+    } else if state.hover.load(Relaxed) {
         color(2)
-    } else if ACTIVE.load(Relaxed) {
+    } else if state.active.load(Relaxed) {
         color(0)
     } else {
         color(1)
@@ -141,6 +148,12 @@ unsafe extern "system" fn top_proc(
     _id: usize,
     _data: usize,
 ) -> LRESULT {
+    if msg == WM_NCDESTROY {
+        let result = DefSubclassProc(top, msg, wparam, lparam);
+        if let Ok(mut captions) = CAPTIONS.lock() { captions.remove(&(top.0 as isize)); }
+        return result;
+    }
+    let Some(state) = caption(top) else { return DefSubclassProc(top, msg, wparam, lparam) };
     let on_button = wparam.0 == HTMAXBUTTON as usize;
     match msg {
         WM_NCHITTEST => {
@@ -160,30 +173,30 @@ unsafe extern "system" fn top_proc(
                 dwHoverTime: 0,
             };
             _ = TrackMouseEvent(&mut track);
-            HOVER.store(true, Relaxed);
+            state.hover.store(true, Relaxed);
             redraw(top);
             // Fall through to the default handling: that is what starts the snap flyout.
         }
         WM_NCMOUSELEAVE => {
-            HOVER.store(false, Relaxed);
-            PRESSED.store(false, Relaxed);
+            state.hover.store(false, Relaxed);
+            state.pressed.store(false, Relaxed);
             redraw(top);
         }
         // Handled here: the default would draw a classic caption button.
         WM_NCLBUTTONDOWN | WM_NCLBUTTONDBLCLK if on_button => {
-            PRESSED.store(true, Relaxed);
+            state.pressed.store(true, Relaxed);
             redraw(top);
             return LRESULT(0);
         }
         WM_NCLBUTTONUP if on_button => {
-            if PRESSED.swap(false, Relaxed) {
+            if state.pressed.swap(false, Relaxed) {
                 _ = ShowWindow(top, if IsZoomed(top).as_bool() { SW_RESTORE } else { SW_MAXIMIZE });
             }
             redraw(top);
             return LRESULT(0);
         }
         WM_NCACTIVATE => {
-            ACTIVE.store(wparam.0 != 0, Relaxed);
+            state.active.store(wparam.0 != 0, Relaxed);
             redraw(top);
         }
         WM_SIZE | WM_DPICHANGED => {
@@ -194,7 +207,7 @@ unsafe extern "system" fn top_proc(
         }
         WM_PAINT => {
             let result = DefSubclassProc(top, msg, wparam, lparam);
-            paint(top);
+            paint(top, &state);
             return result;
         }
         _ => {}
@@ -203,8 +216,13 @@ unsafe extern "system" fn top_proc(
 }
 
 pub fn install(top: HWND) {
-    // SAFETY: `top` is the live main window; the subclass lives as long as the window.
-    unsafe { _ = SetWindowSubclass(top, Some(top_proc), 1, 0) };
+    let state = Arc::new(Caption {
+        colors: [const { AtomicU32::new(0) }; 5],
+        hover: AtomicBool::new(false), pressed: AtomicBool::new(false), active: AtomicBool::new(true),
+    });
+    // SAFETY: called on the live window's UI thread; the subclass is removed with the window.
+    if !unsafe { SetWindowSubclass(top, Some(top_proc), 1, 0) }.as_bool() { return; }
+    if let Ok(mut captions) = CAPTIONS.lock() { captions.insert(top.0 as isize, state); }
     apply_region(top);
     redraw(top);
 }
@@ -218,7 +236,8 @@ pub fn set_colors(top: HWND, colors: &[String; 5]) -> Result<(), String> {
             .ok_or_else(|| format!("bad color {s}"))
     };
     let parsed = colors.iter().map(parse).collect::<Result<Vec<_>, _>>()?;
-    for (slot, value) in COLORS.iter().zip(parsed) {
+    let state = caption(top).ok_or("Caption is not installed")?;
+    for (slot, value) in state.colors.iter().zip(parsed) {
         slot.store(value, Relaxed);
     }
     redraw(top);

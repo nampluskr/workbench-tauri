@@ -1,0 +1,87 @@
+/* I-2 Zed measured 2026-11-07, D-15.
+   shortcut: one capture at 100%; remeasure spacing and glyph placement for other DPI and fonts. */
+.settings-window {
+  --settings-nav-width: 225px;
+  --settings-border: 1px;
+  --settings-search-margin: 10px;
+  --settings-control-height: 28px;
+  --settings-category-gap: 12px;
+  --settings-category-padding: 12px;
+  --settings-content-padding: 32px;
+  --settings-toolbar-top: 24px;
+  --settings-title-gap: 24px;
+  --settings-section-gap: 16px;
+  --settings-row-padding: 20px;
+  --settings-description-pitch: 19px;
+  --settings-name-pitch: 21px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+.settings-window .title-left { flex: 1; }
+.settings-body { display: flex; flex: 1; min-height: 0; border-top: var(--settings-border) solid var(--border); }
+.settings-nav { display: flex; flex-direction: column; width: var(--settings-nav-width); flex-shrink: 0; border-right: var(--settings-border) solid var(--border); background: var(--panel-background); }
+.settings-search {
+  display: flex;
+  align-items: center;
+  gap: var(--settings-search-gap);
+  box-sizing: border-box;
+  width: calc(100% - var(--settings-search-margin) * 2);
+  height: var(--settings-control-height);
+  margin: var(--settings-search-margin) var(--settings-search-margin) 0;
+  background: var(--editor-background);
+  color: var(--text);
+  border: var(--settings-border) solid var(--border);
+  padding-left: var(--settings-search-padding-left);
+  padding-right: var(--settings-search-padding-right);
+  border-radius: var(--settings-control-corner-radius);
+  --icon-size: var(--icons-size-medium);
+}
+.settings-search .icon { flex-shrink: 0; color: var(--icon-muted); }
+.settings-search input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  font-size: var(--typography-size-default);
+  background: transparent;
+  color: inherit;
+}
+.settings-search input:focus-visible { outline: none; }
+.settings-category {
+  display: flex;
+  align-items: center;
+  gap: var(--titlebar-left-group-gap);
+  box-sizing: border-box;
+  width: calc(100% - var(--settings-search-margin) * 2);
+  height: var(--settings-control-height);
+  margin: var(--settings-category-gap) var(--settings-search-margin) 0;
+  padding-inline: var(--settings-category-padding);
+  text-align: left;
+  background: var(--ghost-element-selected);
+  color: var(--text);
+  font-size: var(--typography-size-default); /* L-05: TreeViewItem uses LabelSize::Default. */
+  --icon-size: var(--icons-size-small);
+  border: var(--settings-border) solid var(--border);
+}
+.settings-content { flex: 1; min-width: 0; overflow: auto; padding: var(--settings-toolbar-top) var(--settings-content-padding); background: var(--background); }
+.settings-toolbar { display: flex; align-items: center; justify-content: space-between; }
+.settings-toolbar button { height: var(--buttons-height-default); padding-inline: var(--buttons-padding-x-default-compact); }
+.settings-scope { display: flex; align-items: center; height: var(--buttons-height-default); padding-inline: var(--buttons-padding-x-default-compact); font-size: var(--typography-size-default); background: var(--info-background); color: var(--text-accent); border-radius: var(--settings-control-corner-radius); }
+.settings-content h1 { font: inherit; margin: var(--settings-title-gap) 0 0; }
+.settings-content h2 { font: inherit; font-family: var(--buffer-font-family); font-size: var(--typography-size-small); color: var(--text-muted); margin: var(--settings-section-gap) 0 0; padding-bottom: var(--settings-search-margin); border-bottom: var(--settings-border) solid var(--border); }
+.settings-row { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--settings-category-gap); padding-block: var(--settings-row-padding); border-bottom: var(--settings-border) solid var(--border); }
+.settings-copy { min-width: 0; font-size: var(--typography-size-default); line-height: var(--settings-description-pitch); }
+.settings-copy p { margin: calc(var(--settings-name-pitch) - var(--settings-description-pitch)) 0 0; color: var(--text-muted); }
+.settings-content button, .settings-number { color: var(--text); background: var(--element-background, var(--elevated-surface-background)); border: var(--settings-border) solid var(--border); font-size: var(--typography-size-default); }
+.settings-dropdown { display: flex; align-items: center; gap: var(--buttons-gap); height: var(--settings-control-height); padding-inline: var(--buttons-padding-x-large-medium); border-radius: var(--settings-control-corner-radius); flex-shrink: 0; --icon-size: var(--icons-size-small); }
+.settings-dropdown .icon { color: var(--icon-muted); }
+.settings-number { display: flex; flex-shrink: 0; height: var(--settings-control-height); box-sizing: border-box; }
+.settings-number input { width: var(--settings-content-padding); min-width: 0; text-align: center; font: inherit; background: transparent; color: inherit; border: 0; appearance: textfield; }
+.settings-number input::-webkit-inner-spin-button { appearance: none; }
+.settings-number button { border: 0; background: transparent; width: var(--settings-control-height); padding: 0; }
+.settings-window button:hover { background: var(--ghost-element-hover); }
+.settings-window button:focus-visible, .settings-number input:focus-visible, .settings-search:focus-within { outline: var(--settings-border) solid var(--border-focused); }
+.settings-window :is(:disabled, [aria-disabled="true"]) { color: var(--text-disabled); }

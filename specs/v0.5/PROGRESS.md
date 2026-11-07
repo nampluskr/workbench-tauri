@@ -171,6 +171,47 @@
     - 빌드 경고: Vite 500 kB 초과 chunk, `web-tree-sitter` direct eval 2건(기존, 범위 밖).
     - 사용자 확인 필요: 라이선스 대화 상자의 시각 품질(`tauri-licenses.png`, Phase 12 V4에서 함께 본다).
 
+- **ORDER-06-R1 "v" 메뉴 화면 (R-2 / I-2, core D-15)** (2026-11-07, 완료·core 판정 대기)
+  - 무엇을 했나:
+    - K-10(Settings 창·Panel Layout): `[BLOCKED]`. Settings 창 크기·배치 수치가 `spec/zed-metrics.toml`에 없고, gpui에 Settings 행·테마 선택지 공통 표가 없었다(`%TEMP%\v05-K-10-report.md`).
+    - core-leader 결정(2026-11-07, core D-13): Settings 파일 `%APPDATA%\workbench-<갈래>\settings.json`(Zed 형식·키), 범주 Appearance 하나에 Theme·Icon Theme·UI Font Size·Buffer Font Size, Panel Layout은 Classic만(왼쪽 dock 열기 + 기본 폭 240px L-32), Custom은 기본과 다를 때.
+    - tauri-leader가 Zed Settings 창(`zed-settings-window.png`)과 "v" 버튼(`zed-v-menu.png`)을 실측했다(1440×852·100%).
+    - K-10-R1: 완료. 위 결정·실측으로 Settings 별도 창(`Ctrl-,`·"v" 메뉴, label `settings`, 900×750, 이미 있으면 앞으로)과 Appearance 네 행, settings.json 저장·감시·바로 적용(DECISIONS D-4), Settings 창 capability(D-5), Panel Layout Classic(왼쪽 dock 열기 + 기본 폭 240)·Custom을 만들었다. K-11의 `user_keymap.rs`를 공통 `user_file.rs`로 옮겼다. 창별 캡션 상태를 HWND마다 나눴다. 변경 `src/settings/`(신규 model·model.test·load·main·Settings.tsx·settings.css), `src/index.tsx`, `src/keymap/keyboard.ts`, `src/shell/TitleBar.tsx`·`AppMenu.tsx`·`app-menus.ts`·`app-menus.test.ts`·`dock.ts`·`layout.ts`(신규)·`menu.ts`·`KeymapEditor.tsx`, `src/spec/metrics.ts`·`metrics.test.ts`, `src/syntax/highlight.ts`, `src/theme/apply.ts`, `src-tauri/src/lib.rs`·`caption.rs`·`user_file.rs`, `src-tauri/capabilities/settings.json`(신규).
+    - tauri-leader 화면 확인(2026-11-07): Settings 치수가 Zed 실측과 같고, Keymap Editor 탭·열·91행, Panel Layout은 Classic만 체크. 모양 차이 6가지를 찾았다(`specs/v0.5/verify/ORDER-06-R1/`).
+    - core-leader 결정(2026-11-07): settings.json 처리는 tauri 방식(주석 보존, 잘못된 키만 기본값)을 두 갈래 기준으로 한다. 메뉴 키는 Zed Windows 기본 키맵, 메뉴에는 첫 키, Close Editor는 `Ctrl-W`(두 갈래 공통).
+    - K-13: 완료. 메뉴 키를 Zed `default-windows.json`에 맞췄다(Redo 표시 `Ctrl-Y`, Close Editor `Ctrl-W` 표시, 다른 메뉴 키는 이미 같음). "v" 버튼 오른쪽 4px를 `titlebar.right_group.gap`(L-89/I-603)으로 맞췄다. Licenses 고지 경로를 확인했다(Catppuccin 고지는 Phase 7로 인계). 변경 `src/keymap/builtin.ts`, `src/shell/app-menus.ts`·`AppMenu.tsx`·`menu.ts`·`app-menus.test.ts`, `src/spec/metrics.ts`, `src/app.css`.
+    - K-14: 완료. Settings 모양 차이를 고쳤다: 타이틀 바 글자 없앰, 검색 돋보기, 범주 `chevron_right`·14px, User 칩 `info.background`, 소제목 12px·`text.muted`·버퍼 글꼴, 자체 드롭다운(기존 메뉴 팝업), 검색 범위에 페이지 제목·소제목 추가. 변경 `src/settings/Settings.tsx`·`settings.css`·`model.ts`·`model.test.ts`, `src/shell/TitleBar.tsx`·`Icon.tsx`·`AppMenu.tsx`, `src/keymap/keyboard.ts`, `src/spec/metrics.ts`, `src/theme/theme.ts`·`theme.test.ts`.
+    - K-12(Extensions 탭): 완료. `Ctrl-Shift-X`·"v" 메뉴로 파일이 아닌 탭 "Extensions"를 열고, 제목·검색·`All`/`Installed`/`Not Installed`·칩 `All`/`Themes`/`Icon Themes`·카드 목록을 만들었다. 카드는 복사한 자원만(One Dark·One Light·Zed (Default)), 메타데이터는 원본에 있는 것만, 오른쪽은 "Installed" 문구만이다. 네트워크·설치 기능은 없다(core D-8). 스펙 X-44~X-49. 변경 `src/extensions/`(신규 Extensions.tsx·extensions.css·model.ts·model.test.ts), `src/index.tsx`, `src/keymap/keyboard.ts`, `src/shell/KeymapEditor.tsx`·`app-menus.ts`·`app-menus.test.ts`, `src/spec/metrics.ts`.
+    - tauri-leader 화면 재확인(2026-11-07): "v" 버튼 간격 4, 메뉴 키 표시, Extensions 탭, K-14 뒤 Settings 모양을 확인했다. Extensions 검색에 포커스가 있을 때 `Ctrl-,`가 동작하지 않는 것을 찾았다.
+    - K-15(leader 재확인에서 나온 수정): 입력란 포커스에서도 Workspace·전역 바인딩을 dispatch하고 편집 키·IME·AltGr는 입력에 남기도록 v0.2 입력 보호 규칙을 고쳤다. 변경 `src/keymap/keyboard.ts`, `src/keymap/keyboard.test.ts`(신규). 재확인에서 Extensions 검색 포커스에서 `Ctrl-,`로 Settings 창이 열린다.
+    - K-11(Keymap Editor): 완료. `Ctrl-K Ctrl-S`·"v" 메뉴로 편집 영역 탭 "Keymap Editor"를 열고, 필터·`Edit in JSON`·`Create Keybinding`, Edit·Action·Arguments·Keystrokes·Context·Source 표, 바인딩 편집 모달(녹화 최대 3타 K-055)을 만들었다. `%APPDATA%\workbench-tauri\keymap.json`에 JSONC를 보존하며 override 섹션을 더해 저장하고 바로 적용한다. Panel Layout에서 Agentic을 뺐다(Classic은 K-10-R1까지 비활성). 변경 `src/index.tsx`, `src/keymap/edit.ts`(신규)·`edit.test.ts`(신규)·`keyboard.ts`·`load.ts`, `src/shell/KeymapEditor.tsx`(신규)·`keymap-editor.css`(신규)·`AppMenu.tsx`·`Icon.tsx`·`Pane.tsx`·`app-menus.ts`·`app-menus.test.ts`, `src/spec/metrics.ts`, `src/theme/apply.ts`, `src/workspace/context.ts`·`store.ts`·`tabs.ts`·`watch.ts`, `src-tauri/src/lib.rs`·`user_keymap.rs`(신규).
+    - 문서(W-08): SPEC R-2 "2단계" 절(core 결정, Settings 창 Zed 실측 표, "v" 버튼 Zed 실측, Keymap Editor).
+    - 문서(W-09): SPEC R-2 2단계에 Settings 창·Panel Layout·메뉴 키·화면 확인·gpui와 다른 점, R-17에 메뉴 키 기준과 표(Redo `Ctrl-Y`, Close Editor `Ctrl-W`)·Licenses 확인, DECISIONS D-4(settings.json 처리, 두 갈래 기준)·D-5(Settings 창 capability).
+    - 문서(W-10): SPEC R-2 2단계에 Extensions 탭·Zed와 다른 점, 입력란 포커스 키 처리, 화면 재확인, 남은 차이, K-12·K-15·C-23 확인 결과. PLAN Phase 6 비고 "2단계 완료(core 판정 대기)".
+  - 결과: 완료(core 판정 대기). "v" 메뉴 Settings(별도 창)·Keymap(탭)·Extensions(탭)·Panel Layout(Classic·Custom)이 ORDER-06-R1 범위대로 열리고 동작한다. Settings 치수는 Zed 실측과 같다. Themes…·Icon Themes…는 Phase 7까지 비활성이다.
+  - 남은 차이: Settings 범주 글자 시작 x 39(Zed 43, 4px 왼쪽).
+  - 검증:
+    - V1(K-11): `npm.cmd run typecheck` 통과, 관련 테스트 18/18·10/10, `npm.cmd run test` 123/123, `cargo check` 경고 없음, `cargo clippy -- -D warnings` 통과, `cargo test` 20개 통과, `npm.cmd run tauri build -- --debug --no-bundle` 통과, `git diff --check` 통과(`%TEMP%\v05-K-11-report.md`). 테스트는 실제 `%APPDATA%`를 쓰지 않았다.
+    - V1(K-10-R1): typecheck 통과, `npm.cmd run test` 126/126, `cargo check`·`cargo clippy -- -D warnings` 통과, `cargo test` 20개, 디버그 빌드 통과, `git diff --check` 통과(`%TEMP%\v05-K-10-R1-report.md`).
+    - V1(K-13): 관련 10/10, typecheck, `npm.cmd run test` 127/127, 디버그 빌드 통과(`%TEMP%\v05-K-13-report.md`).
+    - V1(K-14): 관련 19/19·14/14, typecheck, `npm.cmd run test` 128/128, 디버그 빌드 통과(`%TEMP%\v05-K-14-report.md`).
+    - 리뷰(C-22, K-11·K-10-R1): PASS. 데이터 손실 방지, 고정 경로, capability 범위, main capability·CSP 불변, 회귀 없음(`%TEMP%\v05-C-22-report.md`).
+    - 화면 확인(tauri-leader, 1440×852·100%): Settings 900×750·탐색 225+1·검색 205×28·범주 28·padding 32·컨트롤 28·버튼 22가 Zed 실측과 같음. Keymap Editor 탭·열·91행. Panel Layout Classic만 체크(`specs/v0.5/verify/ORDER-06-R1/tauri-r1.json`, `tauri-settings.png`, `tauri-keymap-editor.png`, `tauri-panel-layout.png`).
+    - V1(K-12): typecheck 통과, `npm.cmd run test` 130/130, 디버그 빌드 통과, `git diff --check` 통과(`%TEMP%\v05-K-12-report.md`).
+    - V1(K-15): `src/keymap/keyboard.test.ts` 통과, typecheck 통과, 전체 131/131, 디버그 빌드 통과(`%TEMP%\v05-K-15-report.md`).
+    - 리뷰(C-23, K-13·K-14·K-12): PASS, 지적 없음. typecheck, `npm.cmd run test` 131/131, `cargo test` 20개, `cargo clippy -- -D warnings` 경고 0(`%TEMP%\v05-C-23-report.md`).
+    - 화면 재확인(tauri-leader, 1440×852·100%): "v" 버튼 22×22·최소화와 간격 4(Zed와 같음), Close Editor `Ctrl-W`·Redo `Ctrl-Y`·Extensions `Ctrl-Shift-X` 활성, Extensions 탭 구성과 카드 3개, K-14 뒤 Settings 모양, K-15 뒤 입력 포커스에서 `Ctrl-,` 동작(`specs/v0.5/verify/ORDER-06-R1/tauri-recheck.json`, `tauri-extensions.png`, `tauri-settings-after.png`, `tauri-settings-dropdown.png`, `tauri-user-menu.png`, `tauri-menu-edit.png`).
+    - 문서: V0(실행 없음).
+  - 특이사항:
+    - C-22 권고: Settings 창이 파괴될 때 창별 캡션 상태 맵에서 그 항목을 지우면 더 깔끔하다(지금도 실질 누수는 아님).
+    - Phase 7 인계: 테마를 복사할 때 Catppuccin MIT 고지(T-17.2)를 Licenses에 넣는다. 복사한 테마 JSON은 Extensions 목록에 다음 빌드부터 자동으로 들어가므로 목록이 늘어나는지 확인한다(ORDER-06-R1 2.3).
+    - Extensions의 Zed와 다른 점: 복사 자원만, 칩 셋, 설치·제거·다운로드 수 없음, 단어 포함 검색, Headline 크기는 스펙에 없어 UI 글자 크기(SPEC R-2).
+    - K-15 한계: 입력 포커스에서 수정자 없는 타건으로 끝나는 chord(예 `Ctrl-K V`)와 `Ctrl`+`Alt` Workspace 키는 이어지지 않는다(`shortcut:` 주석).
+    - gpui와 다른 점(K-10-R1 읽은 시점): 테마 선택지(Phase 7에서 통일), settings.json 처리(core가 tauri 방식을 기준으로 정함, D-4), gpui Settings 창 치수 아직 없음.
+    - Keymap Editor에서 하지 않은 것: 키로 찾기·필터 메뉴 버튼, 열 드래그, 가상 목록, 충돌 배너 전체, REC 애니메이션, 인자 있는 바인딩의 GUI 편집. 스펙에 없는 Keymap 행 높이·머리글 padding·모달 바깥 padding·작은 단축키 글꼴은 추정하지 않았다(SPEC R-2).
+    - gpui 대조(K-11 읽은 시점): gpui Keymap은 아직 화면이 없어 열·문구를 대조할 수 없다. 파일 형식(Zed keymap.json 섹션 배열)은 같다. gpui 구현 뒤 다시 대조한다.
+    - 빌드 경고: Vite 500 kB 초과 chunk, `web-tree-sitter` direct eval 2건(기존, 범위 밖).
+
 ## 사용자 요청 작업
 
 없음.

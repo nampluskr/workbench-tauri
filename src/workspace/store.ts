@@ -26,6 +26,9 @@ export const activeFolder = (): Folder | null => folders().find((f) => f.id === 
 
 // Work context per folder (A-15): tree state and tabs. Made on first use, dropped with the folder (R-14).
 const contexts = new Map<string, FolderContext>();
+// A real Pane for utility tabs and their JSON files before a project is opened; never registered as a folder.
+export const emptyContext = newContext("", "");
+export const editorContext = (): FolderContext => activeContext() ?? emptyContext;
 export function contextOf(folder: Folder): FolderContext {
   let ctx = contexts.get(folder.id);
   if (!ctx) contexts.set(folder.id, (ctx = newContext(folder.path, folderName(folder.path))));
@@ -80,7 +83,7 @@ export function guardClose(): Promise<unknown> {
     if (asking) return; // a second request while the question is open
     asking = true;
     try {
-      if (!(await confirmClose([...contexts.values()].flatMap(closingTabs), askWarning))) return;
+      if (!(await confirmClose([emptyContext, ...contexts.values()].flatMap(closingTabs), askWarning))) return;
     } finally {
       asking = false;
     }
@@ -201,4 +204,4 @@ export const moveCursor = (dir: 1 | -1): void => void setCursorId(nextCursor(fol
 export const setCursor = (id: string): void => void setCursorId(id);
 
 /** Run `fn` on every folder's context (a rename or move can touch the tabs and trees of several folders). */
-export const eachContext = (fn: (ctx: FolderContext) => void): void => contexts.forEach(fn);
+export const eachContext = (fn: (ctx: FolderContext) => void): void => { fn(emptyContext); contexts.forEach(fn); };

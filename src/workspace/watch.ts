@@ -32,7 +32,7 @@ async function syncTree(ctx: FolderContext, dirs: string[]): Promise<void> {
 
 /** E-086, E-087 (R-7, D-7): each tab whose file changed reads it again and judges the bytes against its save base. */
 async function reloadTabs(ctx: FolderContext, keys: Set<string> | null): Promise<void> {
-  const docs = new Set(allTabs(ctx).filter((tab) => keys === null || keys.has(pathKey(tab.path))).map((tab) => tab.file.doc)); // once per file (D-8)
+  const docs = new Set(allTabs(ctx).filter((tab) => !tab.tool && (keys === null || keys.has(pathKey(tab.path)))).map((tab) => tab.file.doc)); // once per file (D-8)
   await Promise.all([...docs].map((doc) => doc.read()));
 }
 

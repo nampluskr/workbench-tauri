@@ -1,4 +1,7 @@
 import { BUILTIN } from "./builtin.ts";
+import { KEYMAP_EDITOR_BINDINGS } from "./edit.ts";
+import { SETTINGS_BINDINGS } from "../settings/model.ts";
+import { EXTENSIONS_BINDINGS } from "../extensions/model.ts";
 import { Keymap, strokeOf, type ContextNode } from "./engine.ts";
 
 // D-5: Tauri 2.12.5 does not expose WebView2's AreBrowserAcceleratorKeysEnabled (wry has it,
@@ -12,10 +15,13 @@ export const BROWSER_KEYS: ReadonlySet<string> = new Set([
 
 export const keymap = new Keymap();
 keymap.addSections("default", BUILTIN);
+keymap.addSections("default", KEYMAP_EDITOR_BINDINGS);
+keymap.addSections("default", SETTINGS_BINDINGS);
+keymap.addSections("default", EXTENSIONS_BINDINGS);
 /** Action name -> handler. Its keys are the actions keymap.json may name (K-085). */
 export const commands = new Map<string, () => void>();
 // Actions whose behavior arrives in a later Phase are registered as no-ops; that Phase replaces them with commands.set.
-for (const { bindings } of BUILTIN) for (const action of Object.values(bindings)) if (typeof action === "string") commands.set(action, () => {});
+for (const { bindings } of [...BUILTIN, ...KEYMAP_EDITOR_BINDINGS, ...EXTENSIONS_BINDINGS]) for (const action of Object.values(bindings)) if (typeof action === "string") commands.set(action, () => {});
 
 /** An open menu takes over a matched action here (I-520). Return true when it handled the action. */
 export const hooks: { beforeCommand: ((action: string) => boolean) | null } = { beforeCommand: null };
@@ -38,16 +44,26 @@ function contextStack(target: EventTarget | null): ContextNode[] {
 /** Context stack of the focused element, as the keymap sees it (menus and tooltips look keys up here). */
 export const focusStack = (): ContextNode[] => contextStack(document.activeElement);
 
-function onKeyDown(e: KeyboardEvent): void {
+export function onKeyDown(e: KeyboardEvent): void {
+  if (e.target instanceof Element && e.target.closest("[data-keymap-recording]")) { pending = []; return; }
   const stroke = strokeOf(e);
   if (!stroke) return;
-  // A text input the app made (the tree's name input) takes its keys itself: the panel's bindings (Backspace, Left, Space...)
-  // must not eat them. Only the browser's own accelerators are still stopped.
-  if (e.target instanceof HTMLInputElement && "textInput" in e.target.dataset) {
-    if (BROWSER_KEYS.has(stroke)) e.preventDefault();
-    return;
+  const input = e.target instanceof HTMLInputElement;
+  if (input) {
+    // shortcut: inputs dispatch only modified, non-editing Workspace/global keys; extend for unmodified chords after Zed input-context verification.
+    const editing = /^(backspace|delete|left|right|up|down|home|end|pageup|pagedown|insert|enter|escape|tab)$/.test(e.key.toLowerCase().replace(/^arrow/, "")) ||
+      ((e.ctrlKey || e.metaKey) && !e.altKey && (e.shiftKey ? /^[avzy]$/i : /^[acxvzy]$/i).test(e.key));
+    if (e.isComposing || e.keyCode === 229 || e.key === "Dead" || (e.ctrlKey && e.altKey) || editing) {
+      pending = [];
+      return;
+    }
+    if (!(e.ctrlKey || e.altKey || e.metaKey)) {
+      pending = [];
+      if (BROWSER_KEYS.has(stroke)) e.preventDefault();
+      return;
+    }
   }
-  const stack = contextStack(e.target);
+  const stack = input ? [WORKSPACE_ROOT] : contextStack(e.target);
   let strokes = [...pending, stroke];
   let result = keymap.dispatch(strokes, stack);
   // A stroke that does not continue the chord starts over on its own.

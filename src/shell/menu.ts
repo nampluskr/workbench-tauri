@@ -1,11 +1,16 @@
 import { MENU_WINDOW_MARGIN } from "../spec/metrics.ts";
+import { displayChunks, shortcutFor } from "../keymap/display.ts";
+import type { ContextNode, Keymap } from "../keymap/engine.ts";
 
 // Menu logic shared by the app menu and (Phase 5) the right-click menu: what can be selected, and where a popup goes.
 
 /** An entry runs `run`, or else the command named `action`; `action` is also what the shortcut is looked up for. */
-export type MenuItem = { label: string; action?: string; run?: () => void; disabled?: boolean; shortcut?: string; url?: string; children?: MenuEntry[] };
+export type MenuItem = { label: string; action?: string; run?: () => void; disabled?: boolean; checked?: boolean; shortcut?: string; url?: string; children?: MenuEntry[] };
 export type MenuEntry = MenuItem | "separator";
 export type Menu = { name: string; entries: MenuEntry[] };
+
+export const shortcutForEntry = (entry: MenuEntry, keymap: Keymap, stack: ContextNode[]): string[] | undefined =>
+  entry === "separator" ? undefined : entry.shortcut ? displayChunks(entry.shortcut) : entry.action ? shortcutFor(keymap, entry.action, stack) : undefined;
 
 /** A disabled sibling still dismisses the child, without becoming selected. */
 export function hoverMenuItem(entry: MenuItem, index: number, childParent: number | null, inChild = false) {

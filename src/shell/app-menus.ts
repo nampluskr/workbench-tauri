@@ -14,7 +14,7 @@ export function appMenus(markdownDisabled: () => boolean): Menu[] {
       "separator",
       { label: "Save", action: "workspace::Save" },
       "separator",
-      { label: "Close Editor", action: "workspace::CloseActiveItem" },
+      { label: "Close Editor", action: "workspace::CloseActiveItem", shortcut: "ctrl-w" }, // K-13: show Zed's key, keep close_pinned behavior.
       { label: "Close Window", action: "workspace::CloseWindow" },
     ] },
     { name: "Edit", entries: [
@@ -56,16 +56,16 @@ export function appMenus(markdownDisabled: () => boolean): Menu[] {
   ];
 }
 
-// Phase 6 stage 1: show shortcuts without installing bindings for absent screens.
-export const USER_MENU: MenuEntry[] = [
-  { label: "Settings", shortcut: "ctrl-,", disabled: true },
-  { label: "Keymap", shortcut: "ctrl-k ctrl-s", disabled: true },
+// Phase 6: implemented screens use actions; later screens keep their disabled shortcuts.
+export const userMenu = (classic: () => boolean): MenuEntry[] => [
+  { label: "Settings", action: "zed::OpenSettings" },
+  { label: "Keymap", action: "zed::OpenKeymap" },
   { label: "Themes…", shortcut: "ctrl-k ctrl-t", disabled: true },
   { label: "Icon Themes…", disabled: true },
-  { label: "Extensions", shortcut: "ctrl-shift-x", disabled: true },
+  { label: "Extensions", action: "zed::Extensions" },
   "separator",
-  { label: "Panel Layout", children: [
-    { label: "Classic", disabled: true },
-    { label: "Agentic", disabled: true },
-  ] },
+  { label: "Panel Layout", get children() { return [
+    { label: "Classic", action: "workspace::UseClassicLayout", checked: classic() },
+    ...(!classic() ? [{ label: "Custom", checked: true, disabled: true }] : []),
+  ]; } },
 ];

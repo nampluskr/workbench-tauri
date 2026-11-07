@@ -33,4 +33,7 @@ test("E-005: wait for the bundled font before measuring the gutter margin", asyn
   await applying;
   assert.equal(document.adoptedStyleSheets.length, 1);
   assert.match(css, /--editor-gutter-margin: 3px;/);
+  await applyMetrics(20, 18);
+  assert.equal(document.adoptedStyleSheets.length, 1, "font changes reuse the metric sheet");
+  assert.match(css, /--units-rem-size: 20px; --typography-ui-font-size: 20px; --typography-buffer-font-size: 18px;/);
 });

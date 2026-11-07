@@ -7,9 +7,12 @@ import { loadHome } from "./shell/home.ts";
 import { installTooltips } from "./shell/tooltip.ts";
 import { guardClose, loadWorkspace } from "./workspace/store.ts";
 import { installWatcher } from "./workspace/watch.ts";
-import { applyTheme } from "./theme/apply.ts";
-import { applyMetrics } from "./spec/metrics.ts";
+import { loadSettings, watchSettings } from "./settings/load.ts";
+import SettingsWindow from "./settings/Settings.tsx";
+import { installSettingsCommands } from "./settings/main.ts";
 import "./app.css";
+import "./shell/KeymapEditor.tsx";
+import "./extensions/Extensions.tsx";
 
 const root = document.getElementById("root");
 if (!root) {
@@ -19,17 +22,22 @@ if (!root) {
 // The window starts hidden (tauri.conf.json "visible": false): the WebView would otherwise show
 // its default white page until the theme is applied. Show it even if startup fails.
 try {
-  await applyMetrics();
-  await applyTheme();
-  await loadUserKeymap();
-  await loadWorkspace();
-  await loadHome();
-  installKeyboard();
-  installTooltips();
-  render(() => <App />, root);
-  await watchUserKeymap();
-  await installWatcher();
-  await guardClose();
+  await watchSettings();
+  await loadSettings();
+  if (getCurrentWindow().label === "settings") {
+    render(() => <SettingsWindow />, root);
+  } else {
+    await installSettingsCommands();
+    await loadUserKeymap();
+    await loadWorkspace();
+    await loadHome();
+    installKeyboard();
+    installTooltips();
+    render(() => <App />, root);
+    await watchUserKeymap();
+    await installWatcher();
+    await guardClose();
+  }
 } finally {
   await getCurrentWindow().show();
 }

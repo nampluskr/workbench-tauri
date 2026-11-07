@@ -1,15 +1,17 @@
 import { batch, createEffect, createSignal, For, onCleanup, onMount, Show } from "solid-js";
-import { displayChunks, shortcutFor } from "../keymap/display.ts";
-import { commands, focusStack, hooks, keymap } from "../keymap/keyboard.ts";
+import { commands, focusStack, hooks, keymap, onKeyDown } from "../keymap/keyboard.ts";
 import { MENU_POPUP_OFFSET, MENU_SHORTCUT_ACTIVATE_DELAY_MS, USER_MENU_POPUP_OFFSET } from "../spec/metrics.ts";
-import { appMenus, USER_MENU } from "./app-menus.ts";
+import { appMenus, userMenu } from "./app-menus.ts";
+import { dockOpen, setDockOpen } from "./panels.ts";
+import { dockWidth, resetDockWidth } from "./dock.ts";
+import { isClassicLayout } from "./layout.ts";
 import { activeTabOf, closeTab } from "../workspace/context.ts";
-import { activeContext } from "../workspace/store.ts";
+import { editorContext as activeContext } from "../workspace/store.ts";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { notify } from "./toast.ts";
 import { FONT_LICENSES, licenseText } from "./licenses.ts";
 import Icon from "./Icon.tsx";
-import { closeOnFocusOut, cycle, first, hoverMenuItem, last, placeMenu, placeSubmenu, step, type MenuEntry } from "./menu.ts";
+import { closeOnFocusOut, cycle, first, hoverMenuItem, last, placeMenu, placeSubmenu, shortcutForEntry, step, type MenuEntry } from "./menu.ts";
 import { tooltip } from "./tooltip.ts";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
@@ -41,6 +43,7 @@ let pointer: Point = { x: -1, y: -1 };
 let pointerAtOpen = pointer;
 
 export const isOpen = () => open() !== null || context() !== null;
+export const isContextMenuOpen = (list: MenuEntry[]) => context()?.list === list;
 export const appMenuExpanded = () => open() !== null;
 const rootEntries = (): MenuEntry[] => context()?.list ?? (open() === null ? [] : MENUS[open()!].entries);
 const entries = (): MenuEntry[] => child()?.list ?? rootEntries();
@@ -48,7 +51,7 @@ const entries = (): MenuEntry[] => child()?.list ?? rootEntries();
 /** Lookup of the shortcut of an entry in the context focused just before the menu opened (I-307). */
 const keysOf = (list: MenuEntry[]): Keys => {
   const stack = menuStack;
-  return list.map((e) => e === "separator" ? undefined : e.shortcut ? displayChunks(e.shortcut) : e.action ? shortcutFor(keymap, e.action, stack) : undefined);
+  return list.map((e) => shortcutForEntry(e, keymap, stack));
 };
 
 function remember(): void {
@@ -147,8 +150,10 @@ commands.set("menu::SelectChild", () => {
 commands.set("menu::SelectParent", () => child() ? closeChild() : open() !== null && openMenu(cycle(MENUS.length, open()!, -1)));
 commands.set("app_menu::Toggle", () => (isOpen() ? closeMenu(true) : openMenu(0)));
 
+const USER_MENU = userMenu(() => isClassicLayout(dockOpen(), dockWidth()));
+commands.set("workspace::UseClassicLayout", () => { setDockOpen(true); resetDockWidth(); });
 const appWindow = getCurrentWindow();
-commands.set("zed::Quit", () => void appWindow.close()); // one window, so closing it ends the app
+commands.set("zed::Quit", () => void appWindow.close()); // Main-window destruction also closes Settings after the save guard.
 commands.set("workspace::CloseWindow", () => void appWindow.close());
 commands.set("zed::Minimize", () => void appWindow.minimize());
 commands.set("zed::Zoom", () => void appWindow.toggleMaximize());
@@ -180,8 +185,10 @@ function Entries(props: { list: MenuEntry[]; keys: Keys; child?: boolean }) {
         ) : (
           <div
             class="menu-item"
+            id={`menu-${props.child ? "child" : "root"}-item-${i()}`}
             classList={{ selected: !props.child && child() ? child()!.parent === i() : selected() === i(), disabled: entry.disabled }}
-            role="menuitem"
+            role={entry.checked !== undefined ? "menuitemcheckbox" : "menuitem"}
+            aria-checked={entry.checked}
             aria-disabled={entry.disabled || undefined}
             aria-haspopup={entry.children ? "menu" : undefined}
             aria-expanded={entry.children ? child()?.parent === i() : undefined}
@@ -194,7 +201,7 @@ function Entries(props: { list: MenuEntry[]; keys: Keys; child?: boolean }) {
             }}
             onClick={() => run(i(), !!props.child)}
           >
-            <span>{entry.label}</span>
+            <span><Show when={entry.checked}>✓ </Show>{entry.label}</span>
             <Show when={props.keys[i()]}>
               {(chunks) => (
                 <span class="menu-shortcut">
@@ -217,7 +224,7 @@ function Entries(props: { list: MenuEntry[]; keys: Keys; child?: boolean }) {
   );
 }
 
-export default function AppMenu() {
+export default function AppMenu(props: { popupOnly?: boolean } = {}) {
   let root!: HTMLDivElement;
   let bar: HTMLDivElement | undefined;
   let popup: HTMLDivElement | undefined;
@@ -295,10 +302,11 @@ export default function AppMenu() {
     <div
       class="app-menu"
       ref={root}
+      onKeyDown={(event) => { if (props.popupOnly) onKeyDown(event); }}
       // I-519: check settled focus so removing a submenu does not close its replacement.
       onFocusOut={() => closeOnFocusOut(root, () => isOpen() && closeMenu(false))}
     >
-      <Show
+      <Show when={!props.popupOnly}><Show
         when={open() !== null}
         fallback={
           <button
@@ -330,10 +338,10 @@ export default function AppMenu() {
         <div class="menu menu-root" ref={popup} tabindex="-1" role="menu" data-keymap-context="menu">
           <Entries list={rootEntries()} keys={shortcuts()[open() ?? 0] ?? []} />
         </div>
-      </Show>
+      </Show></Show>
       <Show when={context()}>
         {(c) => (
-          <div class="menu menu-root" ref={contextPopup} tabindex="-1" role="menu" data-keymap-context="menu">
+          <div id="context-menu" class="menu menu-root" ref={contextPopup} tabindex="-1" role="menu" aria-label={props.popupOnly ? "Settings options" : undefined} aria-activedescendant={selected() !== null && !child() ? `menu-root-item-${selected()}` : undefined} data-keymap-context="menu">
             <Entries list={c().list} keys={c().keys} />
           </div>
         )}

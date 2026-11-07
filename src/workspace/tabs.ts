@@ -2,7 +2,7 @@
 // Pinned tabs are the leading run of the list (I-065, I-719): pinning is a place in the Pane, not a file property.
 
 /** `markdown`: a Markdown preview tab of `path` (R-11), a different item from the editor tab of the same path. */
-export type TabInfo = { path: string; preview: boolean; pinned?: boolean; markdown?: boolean };
+export type TabInfo = { path: string; preview: boolean; pinned?: boolean; markdown?: boolean; tool?: boolean };
 
 /** How many tabs the pin area holds. */
 export function pinnedCount(tabs: TabInfo[]): number {
