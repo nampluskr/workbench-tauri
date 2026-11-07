@@ -1310,25 +1310,25 @@ I-22, 사용자 2026-11-06("나머지는 Zed와 동일하게"), core D-12(루트
 - toml ID `statusbar.padding_x`·`statusbar.toggle_gap`은 gpui가 올리는 중이다(core-leader 결정). tauri는 그때까지 임시 metrics 값을 쓴다(K-31).
 - tauri V3(K-31 전): 잉크 x 5·37·68·95, 구분선 x 26·57. K-31 뒤 다시 잰다.
 
-*toml에 없는 값(gpui 등록 요청, core-leader 결정 2026-11-07)*
+*toml에 없던 값 — 등록됨(gpui W-38, tauri K-35·K-36)*
 
-`src/spec/metrics.ts`에서 "no toml ID yet"(또는 "No toml IDs yet")가 달린 항목 전부다. 모두 12개(상태 바 2, Project Search 10). 여기에 `metrics.ts` 밖의 `src/shell/title-bar.css:31` 닫기 버튼 색(L-84) 한 행을 더해 표는 13행이다(W-24). gpui가 원본 `spec/zed-metrics.toml`에 같은 ID로 올리면 이 레포로 다시 복사하고 주석을 지운다. 이 레포의 `spec/`은 고치지 않았다.
+처음에는 `src/spec/metrics.ts`에서 "no toml ID yet"(또는 "No toml IDs yet")가 달린 12개(상태 바 2, Project Search 10)와 `metrics.ts` 밖의 `src/shell/title-bar.css:31` 닫기 버튼 색(L-84) 한 행, 모두 13행을 gpui에 등록 요청했다(core-leader 결정 2026-11-07, W-23·W-24). gpui가 원본 `spec/zed-metrics.toml`에 모두 올렸고(상태 바 2개는 K-35가 복사한 gpui toml에 이미 있었고, 나머지 10개와 닫기 버튼 ID 3개는 W-38), tauri는 K-35(상태 바 2개)·K-36(나머지 10개와 닫기 버튼)에서 `spec/` 세 파일을 다시 복사하고 참조를 바꿨다. 값은 모두 그대로다. 이제 `src`에 "no toml ID"가 없다(K-36 확인).
 
-| ID(`metrics.ts` 키) | 값 | Zed 출처(`4304dec`, 파일:줄) | 쓰는 곳 | 상태 |
+| toml ID | 값 | Zed 출처(`4304dec`, 파일:줄) | 쓰는 곳 | 상태 |
 |---|---|---|---|---|
-| `statusbar.padding_x` | 4 | `crates/workspace/src/status_bar.rs:153` `.p(DynamicSpacing::Base04)`(네 변) | 상태 바 좌우 padding(K-31) | gpui가 올리는 중 |
-| `statusbar.toggle_gap` | 2 | `crates/workspace/src/status_bar.rs:281` `gap_0p5`(280~287 행) | 사이드바 토글과 구분선 사이(K-31) | gpui가 올리는 중 |
-| `editor.search_input.max_width` | 1200 | `crates/ui/src/utils/search_input.rs` `MAX_WIDTH` | Project Search 검색칸 최대 폭(`flex: 0 1 1200px`, K-32) | 등록 요청 |
-| `search_results.header.padding` | 4 | `crates/editor/src/editor.rs:303` `BUFFER_HEADER_PADDING` | 결과 머리줄 안쪽 여백(K-32) | 등록 요청 |
-| `search_results.header.padding_left` | 4 | `crates/editor/src/element/header.rs` `.pl_1()` | 결과 머리줄 왼쪽(K-32) | 등록 요청 |
-| `search_results.header.padding_right` | 8 | `crates/editor/src/element/header.rs` `.pr_2()` | 결과 머리줄 오른쪽(K-32) | 등록 요청 |
-| `search_results.header.gap` | 6 | `crates/editor/src/element/header.rs` `.gap_1p5()` | 결과 머리줄 항목 간격(K-32) | 등록 요청 |
-| `search_results.header.radius` | 2 | `crates/editor/src/element/header.rs` `.rounded_sm()` | 결과 머리줄 모서리(K-32). 2px는 gpui 쪽 정의로 알려진 값이고 소스에서 직접 확인 못 함 | 등록 요청 |
-| `search_results.header.fold_button` | 28 | `crates/editor/src/element/header.rs` `button_size` | 결과 머리줄 접기 버튼(K-32) | 등록 요청 |
-| `search_results.header.lines` | 2(버퍼 줄 수) | `crates/editor/src/editor.rs:302` `FILE_HEADER_HEIGHT` | 결과 머리줄 높이(K-32) | 등록 요청 |
-| `search_results.matches.padding_left` | 6 | `crates/search/src/project_search.rs` `.pl_1p5()`(일치 화살표 앞) | `‹ ›`·`1/19` 묶음 왼쪽(K-32) | 등록 요청 |
-| `search_results.count.min_width` | 40 | `crates/search/src/project_search.rs` `.min_w(rems_from_px(40_f32))` | `1/19` 개수 최소 폭(K-32) | 등록 요청 |
-| (없음, `src/shell/title-bar.css:31` CSS 변수 `--close-red`) | 닫기 버튼 hover 배경 `#E81120`(232,17,32)·흰 글자, 누름 80% 불투명 | L-84, `crates/platform_title_bar/src/platforms/platform_windows.rs:104-128`(Zed `14b7b0e`, `docs/refs/01-zed/01-LAYOUT.md`) | 타이틀 바 Windows 창 닫기 버튼(`metrics.ts` 밖) | 등록 요청 |
+| `statusbar.padding_x` | 4 | `crates/workspace/src/status_bar.rs:153` `.p(DynamicSpacing::Base04)`(네 변) | 상태 바 좌우 padding(K-31) | 등록됨(gpui, tauri K-35) |
+| `statusbar.toggle_gap` | 2 | `crates/workspace/src/status_bar.rs:281` `gap_0p5`(280~287 행) | 사이드바 토글과 구분선 사이(K-31) | 등록됨(gpui, tauri K-35) |
+| `editor.search_input.max_width` | 1200 | `crates/ui/src/utils/search_input.rs` `MAX_WIDTH` | Project Search 검색칸 최대 폭(`flex: 0 1 1200px`, K-32) | 등록됨(gpui W-38, tauri K-36) |
+| `search_results.header.padding` | 4 | `crates/editor/src/editor.rs:303` `BUFFER_HEADER_PADDING` | 결과 머리줄 안쪽 여백(K-32) | 등록됨(gpui W-38, tauri K-36) |
+| `search_results.header.padding_left` | 4 | `crates/editor/src/element/header.rs` `.pl_1()` | 결과 머리줄 왼쪽(K-32) | 등록됨(gpui W-38, tauri K-36) |
+| `search_results.header.padding_right` | 8 | `crates/editor/src/element/header.rs` `.pr_2()` | 결과 머리줄 오른쪽(K-32) | 등록됨(gpui W-38, tauri K-36) |
+| `search_results.header.gap` | 6 | `crates/editor/src/element/header.rs` `.gap_1p5()` | 결과 머리줄 항목 간격(K-32) | 등록됨(gpui W-38, tauri K-36) |
+| `search_results.header.radius` | 2 | `crates/editor/src/element/header.rs` `.rounded_sm()` | 결과 머리줄 모서리(K-32). 2px는 gpui 쪽 정의로 알려진 값이고 소스에서 직접 확인 못 함(gpui `spec/ambiguous.md` 6절에 확인 필요로 남음) | 등록됨(gpui W-38, tauri K-36) |
+| `search_results.header.fold_button` | 28 | `crates/editor/src/element/header.rs` `button_size` | 결과 머리줄 접기 버튼(K-32) | 등록됨(gpui W-38, tauri K-36) |
+| `search_results.header.lines` | 2(버퍼 줄 수) | `crates/editor/src/editor.rs:302` `FILE_HEADER_HEIGHT` | 결과 머리줄 높이(K-32) | 등록됨(gpui W-38, tauri K-36) |
+| `search_results.matches.padding_left` | 6 | `crates/search/src/project_search.rs` `.pl_1p5()`(일치 화살표 앞) | `‹ ›`·`1/19` 묶음 왼쪽(K-32) | 등록됨(gpui W-38, tauri K-36) |
+| `search_results.count.min_width` | 40 | `crates/search/src/project_search.rs` `.min_w(rems_from_px(40_f32))`. 같은 값 ID `editor.search_results_count.min_width`(E-067)가 따로 있음 | `1/19` 개수 최소 폭(K-32) | 등록됨(gpui W-38, tauri K-36) |
+| `titlebar.window_button.close.hover_background` / `.hover_foreground` / `.active_opacity` | `#E81120`(232,17,32) / `#FFFFFF` / 0.8 | L-84, `crates/platform_title_bar/src/platforms/platform_windows.rs:104-128`(Zed `14b7b0e`, `docs/refs/01-zed/01-LAYOUT.md`) | 타이틀 바 Windows 창 닫기 버튼(`src/shell/title-bar.css`, CSS 변수 `--titlebar-window-button-close-*`). 누름 때 배경과 글자를 모두 80%로(이전에는 글자 100%) | 등록됨(gpui W-38, tauri K-36) |
 
 - 머리줄 `header.rs`·`project_search.rs` 항목은 K-32 보고에 줄 번호가 없다(`header.rs` 700~1000, `project_search.rs` 3126~3185 범위에서 읽음).
 

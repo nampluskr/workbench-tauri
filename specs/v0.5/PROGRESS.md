@@ -364,6 +364,17 @@
   - 결과 파일: `specs/v0.5/verify/ORDER-08/tauri-v3-re.json`, `tauri-re-*.png`.
 - **W-23 문서** (2026-11-07): SPEC R-22 "toml에 없는 값" 표(12개)·"Project Search 갱신"(K-29~K-32), R-5 Escape 한 줄, 이 PROGRESS의 K-29~K-33·V3 1차. 검증 V0(문서만). coder 교체(15:57)는 W-21 항목 그대로.
 - **W-24 Phase 8 마무리 문서** (2026-11-07): 앱 실행 5회 이유, K-34·재측정 결과, SPEC R-22 "toml에 없는 값" 표에 L-84 닫기 버튼 색 행, PLAN Phase 8 "완료(core 판정 대기)". 검증 V0(문서만).
+- **K-35 상태 바 값 2개 toml ID 반영** (2026-11-07, 커밋 `49e390f`)
+  - 무엇을 했나: gpui `spec/` 세 파일(`zed-metrics.toml`·`INDEX.md`·`ambiguous.md`)을 다시 복사하고, `src/spec/metrics.ts`의 `statusbar.padding_x`(4)·`statusbar.toggle_gap`(2) 주석 "no toml ID yet"을 toml 키와 Zed 출처로 바꿨다. 값은 그대로다.
+  - 결과: 두 값이 toml ID(toml 276·277행)와 같다. Project Search 10개는 K-36으로 남겼다.
+  - 검증: V0. typecheck 통과, `npm run test` 185/185, `spec/` 세 파일이 gpui와 바이트 단위 같음(`cmp`)(`%TEMP%\v05-K-35-report.md`).
+- **K-36 나머지 10개·닫기 버튼 색 toml ID 반영 (gpui W-38)** (2026-11-07, 커밋 `bb7b043`)
+  - 무엇을 했나: gpui W-38(`D:\projects\workbench-gpui\specs\v0.5\cards\W-38.report.md`)이 tauri SPEC R-22 표의 나머지를 toml에 올린 뒤 `spec/` 세 파일을 다시 복사했다. Project Search 10개(`editor.search_input.max_width`, `search_results.header.*` 7개, `search_results.matches.padding_left`, `search_results.count.min_width`)의 이름·값이 toml과 같아 주석만 toml 출처로 바꿨다. 닫기 버튼은 `titlebar.window_button.close.hover_background` `#E81120`·`.hover_foreground` `#FFFFFF`·`.active_opacity` 0.8을 `metrics.ts`에 올리고 `src/shell/title-bar.css`의 하드코딩 색을 `--titlebar-window-button-close-*` 변수로 바꿨다.
+  - 결과: `src`에 "no toml ID"가 0개다. SPEC R-22 표를 "등록됨(gpui W-38, tauri K-35·K-36)"으로 고쳤다(W-25). 누름 상태는 toml 설명대로 배경과 글자 모두 80%라, 이전(글자 100%)과 누름 중 글자만 달라진다.
+  - 검증: V1. typecheck 통과, `npm run test` 185/185, `grep -rniE "no toml ID" src tools src-tauri/src` 0개, `spec/` 세 파일 gpui와 바이트 단위 같음(`%TEMP%\v05-K-36-report.md`).
+  - 실측 필요(V3): 닫기 버튼 hover 색 `#E81120`·누름 80%(hover·누름 조작이 필요해 V2로는 못 잼).
+  - 특이사항: `search_results.header.radius` 2는 소스로 직접 확인하지 못한 값이라 gpui `spec/ambiguous.md` 6절에 확인 필요로 남아 있다.
+- **W-25 문서** (2026-11-07): SPEC R-22 "toml에 없던 값" 표를 등록됨으로, ID 칸을 toml ID로(닫기 버튼 행은 ID 3개), PROGRESS K-35·K-36. 검증 V0(문서만).
 
 ## 사용자 요청 작업
 
