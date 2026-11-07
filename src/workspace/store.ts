@@ -43,6 +43,7 @@ export const activeContext = (): FolderContext | null => {
 // --- saving ------------------------------------------------------------------
 
 type Raw = Parameters<typeof serializeState>[0];
+export { write as flushWorkspaceState };
 let raw: Raw = {};
 let canWrite = false; // false until a state was read, and for good when the core or the file says read-only
 let dirty = false;

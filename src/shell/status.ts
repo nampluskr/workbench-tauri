@@ -21,6 +21,10 @@ export function statusButtons(sidebarOpen: boolean, dockOpen: boolean): StatusBu
 }
 
 export function statusItems(tab: Tab | undefined): { position: string; filetype: string } | undefined {
-  if (!tab || tab.tool || !tab.file.position) return;
+  if (tab?.tool) {
+    const position = tab.file.toolPosition?.();
+    return position ? { position, filetype: "" } : undefined;
+  }
+  if (!tab || !tab.file.position) return;
   return { position: tab.file.position(), filetype: tab.markdown ? "Markdown" : filetype(tab.path) };
 }

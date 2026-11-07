@@ -1,11 +1,11 @@
-import { shortcutFor } from "../keymap/display.ts";
+import { displayChunks, shortcutFor } from "../keymap/display.ts";
 import { focusStack, keymap } from "../keymap/keyboard.ts";
 import { TOOLTIP_CURSOR_OFFSET, TOOLTIP_DELAY_MS } from "../spec/metrics.ts";
 
 // One tooltip for the whole window (D-5): a DOM box, shown after a delay at the pointer position (R-6).
 
 /** One row: the title, plus the shortcut of `action` when the keymap has one, plus an optional meta line. */
-export type Tip = { title: string; action?: string; meta?: string };
+export type Tip = { title: string; action?: string; shortcut?: string; meta?: string };
 /** Several rows are drawn one under the other with a line between (L-232). Null means no tooltip now (L-205). */
 export type TipSpec = Tip | Tip[] | null;
 
@@ -41,7 +41,7 @@ function element(tag: string, className: string, text?: string): HTMLElement {
 function row(tip: Tip): HTMLElement {
   const head = element("div", "tooltip-head");
   head.append(element("span", "tooltip-title", tip.title));
-  const chunks = tip.action ? shortcutFor(keymap, tip.action, focusStack()) : undefined;
+  const chunks = tip.shortcut ? displayChunks(tip.shortcut) : tip.action ? shortcutFor(keymap, tip.action, focusStack()) : undefined;
   if (chunks) {
     const shortcut = element("span", "tooltip-shortcut");
     // The plain spaces keep textContent readable ("Ctrl-K Ctrl-O"); flex layout ignores them.

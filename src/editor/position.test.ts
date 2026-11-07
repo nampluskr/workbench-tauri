@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { EditorSelection, EditorState } from "@codemirror/state";
-import { cursorPosition } from "./position.ts";
+import { cursorPosition, locationOffset } from "./position.ts";
 
 const state = (doc: string, ranges: [number, number][], mainIndex = ranges.length - 1) => EditorState.create({
   doc,
@@ -21,4 +21,11 @@ test("I-5: selections, lines and characters follow Zed's order and exclude an un
   assert.equal(cursorPosition(state("ab\ncd\nef", [[0, 4]])), "2:2 (2 lines, 4 characters)");
   assert.equal(cursorPosition(state("ab\ncd\nef", [[0, 1], [3, 6]])), "3:1 (2 selections, 2 lines, 4 characters)");
   assert.equal(cursorPosition(state("ab\ncd\nef", [[0, 0], [3, 3]], 0)), "1:1 (2 selections)");
+});
+
+test("K-26: search locations use UTF-16 offsets and clamp stale results to the current document", () => {
+  const doc = EditorState.create({ doc: "first\n가😀 word" }).doc;
+  assert.equal(locationOffset(doc, { line: 2, column: 5 }), 10);
+  assert.equal(locationOffset(doc, { line: 99, column: 99 }), doc.length);
+  assert.equal(locationOffset(doc, { line: 0, column: 0 }), 0);
 });

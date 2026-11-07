@@ -2,7 +2,8 @@ import { batch, createSignal, type Accessor, type Setter } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import type { EditorView } from "@codemirror/view";
 import { createFileView, setEditable } from "../editor/file-view.ts";
-import { cursorPosition } from "../editor/position.ts";
+import type { IconName } from "../shell/Icon.tsx";
+import { cursorPosition, locationOffset } from "../editor/position.ts";
 import { notify } from "../shell/toast.ts";
 import { PANE_MAX_PREVIEW_TABS } from "../spec/metrics.ts";
 import type { Validation } from "./names.ts";
@@ -25,7 +26,7 @@ import { buildRows, collapseAll, joinPath, none, only, sortChildren, type Child,
  * What stays the same for a tab while its list entry is copied (promotion, rename): its file, editor and state. A Markdown
  * preview tab (R-11) has no editor: `element` is its body, `dispose` lets go of what it holds.
  */
-export type TabFile = { doc: Doc; view: EditorView | null; status: Accessor<Status>; position?: Accessor<string>; element?: HTMLElement; dispose?: () => void };
+export type TabFile = { doc: Doc; view: EditorView | null; status: Accessor<Status>; position?: Accessor<string>; toolPosition?: Accessor<string>; title?: Accessor<string>; icon?: IconName; location?: { line: number; column: number }; element?: HTMLElement; dispose?: () => void };
 export type Tab = TabInfo & { file: TabFile; focus: boolean };
 
 
@@ -274,6 +275,14 @@ function makeView(ctx: FolderContext, file: TabFile, text: string, editable: boo
       if (!hidden.has(file)) for (const p of previews(file.doc)) p.cursor(line);
     },
   });
+  if (file.location) locateFile(file, file.location);
+}
+
+function locateFile(file: TabFile, location: { line: number; column: number }): void {
+  file.location = location;
+  if (!file.view) return;
+  file.view.dispatch({ selection: { anchor: locationOffset(file.view.state.doc, location) }, scrollIntoView: true });
+  file.location = undefined;
 }
 
 /** A new file for a tab; the editors are made when the first read ends. */
@@ -535,7 +544,7 @@ export function reveal(ctx: FolderContext, path: string): void {
  * R-26: open a file in the active Pane as a preview tab (one click, Space) or a normal one (double or middle click,
  * `focusEditor`). A file already shown in another Pane gets a second view of the same Doc (D-8).
  */
-export function openFile(ctx: FolderContext, path: string, preview: boolean, focusEditor: boolean): void {
+export function openFile(ctx: FolderContext, path: string, preview: boolean, focusEditor: boolean, location?: { line: number; column: number }): void {
   const pane = ctx.pane();
   const shown = allTabs(ctx).find((t) => t.path === path);
   const make = (): Tab => ({ path, preview, pinned: false, file: shown ? twinOf(ctx, shown.file) : newFile(ctx, path), focus: false });
@@ -549,6 +558,7 @@ export function openFile(ctx: FolderContext, path: string, preview: boolean, foc
     setActiveTab(pane, opened.active);
   });
   const tab = opened.tabs[opened.active];
+  if (location) locateFile(tab.file, location);
   tab.focus = focusEditor;
   if (focusEditor) tab.file.view?.focus();
   if (opened.created && !shown) void tab.file.doc.read();
@@ -563,7 +573,7 @@ export function activateTab(ctx: FolderContext, pane: PaneState, index: number):
 }
 
 /** Non-file tabs reuse Pane activation and closing without reading their title as a path. */
-export function openTool(ctx: FolderContext, title: string, make: () => { element: HTMLElement; dispose: () => void }): void {
+export function openTool(ctx: FolderContext, title: string, make: () => { element: HTMLElement; dispose: () => void; title?: Accessor<string>; icon?: IconName; toolPosition?: Accessor<string> }): void {
   for (const pane of panesOf(ctx)) {
     const index = pane.tabs().findIndex((t) => t.tool && t.path === title);
     if (index >= 0) { activateTab(ctx, pane, index); focusPane(pane); return; }
@@ -572,6 +582,9 @@ export function openTool(ctx: FolderContext, title: string, make: () => { elemen
   const body = make();
   const file = newFile(ctx, title);
   file.element = body.element;
+  file.title = body.title;
+  file.icon = body.icon;
+  file.toolPosition = body.toolPosition;
   file.dispose = () => { body.dispose(); file.doc.closed = true; filesOf.delete(file.doc); };
   const opened = openTab(pane.tabs(), pane.active(), title, false, PANE_MAX_PREVIEW_TABS,
     () => ({ path: title, preview: false, tool: true, file, focus: true }));

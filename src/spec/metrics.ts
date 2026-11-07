@@ -104,6 +104,13 @@ const METRICS: Record<string, string> = {
   "settings.search.gap": rem(6), // L-10 / render_search gap_1p5
   "settings.control.corner_radius": rem(4), // L-10 rounded_sm; Zed ButtonLike and render_search
   "editor.gutter.min_line_number_digits": "4", // E-002
+  "editor.search_bar.gap": rem(8), // E-061
+  "editor.search_input.min_height": rem(32), // E-062
+  "editor.search_input.padding_left": rem(8), // E-062
+  "editor.search_input.padding_right": rem(4), // E-062
+  "editor.search_input.border": rem(1), // E-062
+  "editor.search_input.corner_radius": rem(6), // E-062
+  "editor.search_input.font_size": rem(14), // E-063
   // shortcut: gutter padding measured at Lilex 15, remeasure if the buffer font or size changes.
   "editor.gutter.padding_left": "22px", // I-14: Zed measured 2026-11-07, replaces E-003 3ch
   "editor.gutter.padding_right": "29px", // I-14: Zed measured 2026-11-07, replaces E-004 4ch

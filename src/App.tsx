@@ -61,7 +61,7 @@ export default function App() {
           <Show when={status()}>{(items) => (
             <div class="group status-items">
               <span>{items().position}</span>
-              <span>{items().filetype}</span>
+              <Show when={items().filetype}><span>{items().filetype}</span></Show>
             </div>
           )}</Show>
         </footer>

@@ -39,6 +39,7 @@ test("I-5: active editor and preview status follows each tab; tools, loading edi
   assert.deepEqual(statusItems(tab), { position: "5:28 (5 characters)", filetype: "Python" });
   assert.equal(statusItems(undefined), undefined);
   assert.equal(statusItems({ ...tab, tool: true }), undefined);
+  assert.deepEqual(statusItems({ ...tab, tool: true, file: { ...tab.file, toolPosition: () => "45:35 (8 characters)" } }), { position: "45:35 (8 characters)", filetype: "" });
   assert.equal(statusItems({ ...tab, file: { ...tab.file, position: undefined } }), undefined);
   const preview = { ...tab, markdown: true, file: { ...tab.file, position: () => "8:1" } };
   assert.deepEqual(statusItems(preview), { position: "8:1", filetype: "Markdown" });

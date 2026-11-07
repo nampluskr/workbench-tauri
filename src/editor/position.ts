@@ -1,4 +1,9 @@
-import type { EditorState } from "@codemirror/state";
+import type { EditorState, Text } from "@codemirror/state";
+
+export function locationOffset(doc: Text, location: { line: number; column: number }): number {
+  const line = doc.line(Math.max(1, Math.min(location.line, doc.lines)));
+  return Math.min(line.to, line.from + Math.max(0, location.column - 1));
+}
 
 /** I-5: Unicode scalar counts, excluding a selection's final line when it ends at column zero. */
 export function cursorPosition(state: EditorState): string {

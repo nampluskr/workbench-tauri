@@ -255,8 +255,9 @@ function TabList(props: { ctx: FolderContext; pane: PaneState }) {
                   <Icon name="file_doc" />
                 </span>
               </Show>
+              <Show when={tab.file.icon}>{(name) => <span class="tab-icon"><Icon name={name()} /></span>}</Show>
               <span class="tab-title" classList={{ deleted: status().deleted }}>
-                {truncateName(tab.markdown ? `Preview ${baseName(tab.path)}` : baseName(tab.path), TAB_MAX_TITLE_CHARS)}
+                {truncateName(tab.file.title?.() ?? (tab.markdown ? `Preview ${baseName(tab.path)}` : baseName(tab.path)), TAB_MAX_TITLE_CHARS)}
               </span>
               {/* I-073 / L-66: right side, shown on hover; it asks like every other close. A pinned tab has the Pin button
                   instead, which unpins (L-241). L-240 / L-241: the key only on the active tab. */}
