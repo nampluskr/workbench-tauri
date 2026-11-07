@@ -1356,7 +1356,20 @@ I-22, 사용자 2026-11-06("나머지는 Zed와 동일하게"), core D-12(루트
   - Replace All 단축키(`Ctrl-Enter`)는 넣지 않았다.
 - 결과 열기(K-31): Alt-Enter·Open File·결과 줄 클릭은 일치를 선택해서 연다(anchor = 시작, head = 끝). 상태 바는 head 기준이라 `45:35 (8 characters)`가 된다(R-5 Zed 확인과 같음).
 - 화면(K-32, Zed `project_search.rs` 1085~1117·2517~2573·3126~3185, `editor/src/element/header.rs` 700~1000):
-  - 빈 상태: 제목 `typography.size.large`(16, L-05) 보통 굵기, 안내 Muted·아래 여백 8, 항목 버튼 높이 22·좌우 4·아이콘↔문구 4, 키는 문구 바로 뒤(간격 4) Small Muted, 항목 간격 4.
+  - 빈 상태(K-32 시점): 제목 `typography.size.large`(16, L-05) 보통 굵기, 안내 Muted·아래 여백 8, 항목 버튼 높이 22·좌우 4·아이콘↔문구 4, 키는 문구 바로 뒤(간격 4) Small Muted, 항목 간격 4.
+  - 빈 상태 글자 크기(core-leader 결정 2026-11-07, K-37): Zed `4304dec` 소스 값을 쓴다. gpui W-39가 toml `[project_search]`에 올렸고 K-37에서 참조로 바꿨다.
+
+    | toml ID | 값 | 자리 | K-37 전 |
+    |---|---|---|---|
+    | `project_search.landing.heading_size` | 16 | 제목 "Search All Files" | `typography.size.large` 16(같음) |
+    | `project_search.landing.subtitle_size` | 14 | 안내 문구 | `typography.size.default` 14(같음) |
+    | `project_search.landing.subtitle_margin_bottom` | 8 | 안내 문구 아래 여백 | `editor.search_bar.gap` 8(같음) |
+    | `project_search.landing.action_label_size` | 14 | 다섯 줄 문구 | `typography.size.default` 14(같음) |
+    | `project_search.landing.key_size` | 14 | 다섯 줄 키 | `typography.size.small` 12 → **14로 바뀜** |
+    | `project_search.landing.gap` | 4 | 항목 간격 | `statusbar.item_gap` 4(같음) |
+
+    - 버튼 높이·좌우 padding·아이콘↔문구 간격(`buttons.*`)과 문구↔키 간격(`buttons.gap`)은 `[project_search]`에 ID가 없어 그대로 둔다.
+    - 재확인 대상, Phase 12 V4: Zed 캡처(`specs/v0.5/verify/ORDER-08/zed-search-empty.png`)의 안내·다섯 줄·키 글자는 약 13px로 보여 소스 14와 약 1px 다르다(제목 16은 일치). 원인은 확인하지 못했다(`spec/ambiguous.md` 6절).
   - 검색칸: 포커스 윤곽 없음(Zed `border_color_for` 2577~2582는 오류가 아니면 늘 `border`). 이전/다음은 `chevron_left`/`chevron_right`. 필터·바꾸기 묶음(gap 4) 뒤에 왼쪽 1px `border.variant`의 `‹ ›` + `1/19` 묶음. 개수는 Small, 일치가 선택되면 Disabled 색. 검색칸은 1200까지 줄어들 수 있어 묶음이 칸 바로 뒤에 온다.
   - 결과 머리줄: 버퍼 줄 2개 높이, 안쪽 여백 4, 1px `border`, 둥근 모서리, 배경 `editor.subheader.background`, hover `element.hover`, 접기 버튼 28, 파일 이름은 버퍼 글꼴, 경로는 버퍼 글꼴 Muted. 경로는 작업 공간 폴더 기준 상대 폴더에 `\`를 붙이고 루트 파일이면 비운다. 폴더가 둘 이상이면 루트 이름을 앞에 붙인다(Zed `include_root`). "Open File"은 선택되었거나 hover일 때만, `Alt-Enter` 키는 선택되었을 때만 보인다. 머리줄 클릭은 접기, 이름 클릭은 파일 열기(Zed 1170~1190).
   - 일치 강조: `search.match_background`, 선택된 일치는 `search.active_match_background`(Zed 2501~2509). 토큰 `search.match_background`·`search.active_match_background`·`editor.subheader.background`·`element.hover`를 `TARGET_TOKENS`에 더했다.

@@ -375,6 +375,12 @@
   - 실측 필요(V3): 닫기 버튼 hover 색 `#E81120`·누름 80%(hover·누름 조작이 필요해 V2로는 못 잼).
   - 특이사항: `search_results.header.radius` 2는 소스로 직접 확인하지 못한 값이라 gpui `spec/ambiguous.md` 6절에 확인 필요로 남아 있다.
 - **W-25 문서** (2026-11-07): SPEC R-22 "toml에 없던 값" 표를 등록됨으로, ID 칸을 toml ID로(닫기 버튼 행은 ID 3개), PROGRESS K-35·K-36. 검증 V0(문서만).
+- **K-37 Project Search 빈 화면 글자 크기를 toml ID로 (core-leader 결정, gpui W-39)** (2026-11-07, 커밋 `2d09250`)
+  - 무엇을 했나: gpui `spec/` 세 파일을 다시 복사하고, toml `[project_search]`의 `project_search.landing.heading_size` 16·`subtitle_size` 14·`subtitle_margin_bottom` 8·`action_label_size` 14·`key_size` 14·`gap` 4를 `metrics.ts`에 올려 `src/search/search.css` 빈 화면 규칙이 쓰게 했다.
+  - 결과: 값이 바뀐 곳은 키 크기 12 → 14뿐이다(Zed 소스 값, core-leader 결정 2026-11-07). SPEC R-22 "Project Search 갱신"에 표를 적었다. Zed 캡처의 약 13px과의 차이는 재확인 대상, Phase 12 V4(`spec/ambiguous.md` 6절).
+  - 검증: V1. typecheck 통과, `npm run test` 185/185, `spec/` 세 파일 gpui와 바이트 단위 같음(`%TEMP%\v05-K-37-report.md`).
+  - 실측 필요: 빈 화면 제목·안내·다섯 줄·키 글자 크기(소스 14 대 캡처 약 13).
+- **W-26 문서** (2026-11-07): SPEC R-22 빈 화면 글자 크기 표와 V4 재확인, PROGRESS K-37. 검증 V0(문서만).
 
 ## 사용자 요청 작업
 
