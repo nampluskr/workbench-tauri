@@ -85,12 +85,14 @@ test("K-50: Markdown injects inline text and a path-suffix fence, edits reuse pa
   assert.ok(ids.includes("rust"));
   const number = state.doc.toString().indexOf("42");
   assert.ok(syntax.highlights(0, state.doc.length, keys).some((span) => span.key === "number" && span.from === number && span.to === number + 2));
-  const rustParser = [...syntax.layers.values()].find((layer) => layer.syntax.config.id === "rust")!.parser;
+  const parserOf = () => (syntax as unknown as { parsers: Map<unknown, unknown> }).parsers.get([...syntax.layers.values()].find((layer) => layer.syntax.config.id === "rust")!.syntax);
+  const rustParser = parserOf(); // K-58: one parser per language, shared by its layers
+  assert.ok(rustParser);
   const change = state.update({ changes: { from: number, to: number + 2, insert: "73" } });
   assert.equal(await syntax.update(change.state.doc, change.changes, () => true), false, "cancelled edits do not publish");
   assert.equal(await syntax.update(change.state.doc, change.changes, () => false), true);
   state = change.state;
-  assert.equal([...syntax.layers.values()].find((layer) => layer.syntax.config.id === "rust")!.parser, rustParser);
+  assert.equal(parserOf(), rustParser);
   const fresh = new SyntaxDocument(config("markdown"), configs, load);
   await fresh.update(state.doc, null, () => false);
   assert.deepEqual(syntax.highlights(0, state.doc.length, keys), fresh.highlights(0, state.doc.length, keys));
@@ -197,4 +199,32 @@ test("K-55: git-firefly names choose their language from the extension's path_su
     ["git-rebase-todo", "gitrebase"],
     [".git\\config", undefined], // Zed's gitconfig suffixes (extension 0.1.9) do not list a plain "config"
   ]) assert.equal(fileLanguage(configs, path!)?.id, expected, path);
+});
+
+test("K-58: injection layers after edits (changed-range query, untouched layers kept) match a fresh parse", { skip: !available }, async () => {
+  const fence = (language: string, body: string) => "```" + language + "\n" + body + "\n```\n";
+  const text = Array.from({ length: 6 }, (_, i) => `## Part ${i}\n\n` + fence("rust", `fn f${i}() { let n = ${i}; }`) + "\n" + fence("js", `const v${i} = "s";`)).join("\n");
+  const edits: [number, number, string][] = []; // [from, to, insert] against the text at that step
+  const at = (needle: string, n = 0) => { let i = -1; for (let k = 0; k <= n; k++) i = text.indexOf(needle, i + 1); return i; };
+  edits.push([at("let n = 2") + 4, at("let n = 2") + 4, "x"]); // inside an injected block
+  edits.push([0, 0, "intro\n\n"]); // before everything: every layer moves
+  edits.push([text.length, text.length, "\n" + fence("python", "def g(): return 1")]); // a new block at the end
+  edits.push([at("```rust", 3), at("```rust", 3) + 3, ""]); // an opening fence loses its backticks: layers appear/disappear
+  edits.push([at("## Part 1"), at("## Part 1"), "```js\n"]); // swallows following text into one fence
+  let doc = EditorState.create({ doc: text }).doc;
+  const syntax = new SyntaxDocument(config("markdown"), configs, load);
+  assert.equal(await syntax.update(doc, null, () => false), true);
+  let shift = 0;
+  for (const [from, to, insert] of edits) {
+    const state = EditorState.create({ doc });
+    const tr = state.update({ changes: { from: from + (insert === "intro\n\n" ? 0 : 0), to, insert } });
+    doc = tr.newDoc; shift++;
+    assert.equal(await syntax.update(doc, tr.changes, () => false), true);
+    const fresh = new SyntaxDocument(config("markdown"), configs, load);
+    await fresh.update(doc, null, () => false);
+    assert.deepEqual(syntax.highlights(0, doc.length, keys), fresh.highlights(0, doc.length, keys), `edit ${shift}`);
+    assert.equal(syntax.layers.size, fresh.layers.size, `layers after edit ${shift}`);
+    fresh.destroy();
+  }
+  syntax.destroy();
 });
