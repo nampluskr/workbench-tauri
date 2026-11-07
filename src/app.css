@@ -480,6 +480,7 @@ button, input, select, textarea {
 .toolbar-quick-actions { display: flex; gap: var(--toolbar-quick-actions-gap); }
 /* L-69: the preview tab's icon, Small and Muted as an item's own tab icon (L-67). */
 .tab-icon { flex: none; display: flex; color: var(--icon-muted); --icon-size: var(--icons-size-small); }
+.tab-icon-success { color: var(--success); }
 
 /* R-11: the Markdown preview (01-LAYOUT 5, L-101~L-111). Values are the markdown_preview spec IDs. */
 .pane-item > .markdown-preview { position: absolute; inset: 0; }

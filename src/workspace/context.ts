@@ -26,7 +26,7 @@ import { buildRows, collapseAll, joinPath, none, only, sortChildren, type Child,
  * What stays the same for a tab while its list entry is copied (promotion, rename): its file, editor and state. A Markdown
  * preview tab (R-11) has no editor: `element` is its body, `dispose` lets go of what it holds.
  */
-export type TabFile = { doc: Doc; view: EditorView | null; status: Accessor<Status>; position?: Accessor<string>; toolPosition?: Accessor<string>; title?: Accessor<string>; icon?: IconName; location?: { line: number; column: number }; element?: HTMLElement; dispose?: () => void };
+export type TabFile = { doc: Doc; view: EditorView | null; status: Accessor<Status>; position?: Accessor<string>; toolPosition?: Accessor<string>; title?: Accessor<string>; icon?: IconName; iconSuccess?: boolean; location?: { line: number; column: number }; element?: HTMLElement; dispose?: () => void };
 export type Tab = TabInfo & { file: TabFile; focus: boolean };
 
 
@@ -573,7 +573,7 @@ export function activateTab(ctx: FolderContext, pane: PaneState, index: number):
 }
 
 /** Non-file tabs reuse Pane activation and closing without reading their title as a path. */
-export function openTool(ctx: FolderContext, title: string, make: () => { element: HTMLElement; dispose: () => void; title?: Accessor<string>; icon?: IconName; toolPosition?: Accessor<string> }): void {
+export function openTool(ctx: FolderContext, title: string, make: () => { element: HTMLElement; dispose: () => void; title?: Accessor<string>; icon?: IconName; iconSuccess?: boolean; toolPosition?: Accessor<string> }): void {
   for (const pane of panesOf(ctx)) {
     const index = pane.tabs().findIndex((t) => t.tool && t.path === title);
     if (index >= 0) { activateTab(ctx, pane, index); focusPane(pane); return; }
@@ -584,6 +584,7 @@ export function openTool(ctx: FolderContext, title: string, make: () => { elemen
   file.element = body.element;
   file.title = body.title;
   file.icon = body.icon;
+  file.iconSuccess = body.iconSuccess;
   file.toolPosition = body.toolPosition;
   file.dispose = () => { body.dispose(); file.doc.closed = true; filesOf.delete(file.doc); };
   const opened = openTab(pane.tabs(), pane.active(), title, false, PANE_MAX_PREVIEW_TABS,
