@@ -1050,40 +1050,60 @@ I-15, 사용자 2026-11-06.
 
 **언어 목록 (ORDER-11, Zed 4304dec)**
 
-출처: Zed 커밋 `4304dec732`. 언어 설정 `crates/grammars/src/<이름>/config.toml`, 내장 등록 `crates/languages/src/lib.rs` 91~229행 `built_in_languages`(23개, 아래 표와 같음), 문법 등록 `crates/grammars/src/grammars.rs` `native_grammars`(문법 이름 → crate), 버전 루트 `Cargo.toml` 947~968행과 `Cargo.lock`. 문법 열은 config.toml `grammar` 키다. 숨김(`hidden = true`)은 사용자가 고르는 언어 목록에 없고 주입이나 내부에만 쓰인다. 라이선스는 이 Zed 소스에 문법 저장소의 LICENSE가 없어 모두 확인 필요다.
+출처: Zed 커밋 `4304dec732`. 언어 설정 `crates/grammars/src/<이름>/config.toml`, 내장 등록 `crates/languages/src/lib.rs` 91~229행 `built_in_languages`(23개, 아래 표와 같음), 문법 등록 `crates/grammars/src/grammars.rs` `native_grammars`(문법 이름 → crate), 버전 루트 `Cargo.toml` 947~968행과 `Cargo.lock`. 문법 열은 config.toml `grammar` 키다. 숨김(`hidden = true`)은 사용자가 고르는 언어 목록에 없고 주입이나 내부에만 쓰인다. 문법 라이선스는 K-49에서 문법 저장소 LICENSE 본문으로 확인했다(24행 모두 MIT). crate에 LICENSE가 없는 css·diff·jsdoc·json·regex는 crate의 `.cargo_vcs_info.json` 게시 커밋 archive에서 parser.c SHA256이 crate와 같은지 대조한 뒤 LICENSE만 가져왔다(열에 게시 커밋). 쿼리 라이선스는 문법과 따로다: Zed 쿼리(`crates/grammars`) GPL-3.0, HTML 확장 쿼리(`extensions/html`) Apache-2.0.
 
 | 언어 이름(`name`) | 확장자·파일 이름(`path_suffixes`), `first_line_pattern` | 문법 → crate·저장소 | 버전/rev | 쿼리 파일 | 문법 라이선스 |
 | --- | --- | --- | --- | --- | --- |
-| Shell Script | sh bash bashrc bash_profile bash_aliases bash_login bash_logout brushrc bats envrc profile zsh zshrc zshenv zsh_profile zsh_aliases zsh_histfile zlogin zprofile PKGBUILD APKBUILD ebuild; `^#!.*\b(?:ash\|bash\|bats\|dash\|sh\|zsh)\b` | `bash` → tree-sitter-bash (crates.io) | 0.25.1 (Cargo.toml 947) | brackets · highlights · indents · injections · overrides · redactions · runnables · textobjects | 확인 필요 |
-| C | c | `c` → tree-sitter-c (crates.io) | 0.24.1 (948) | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | 확인 필요 |
-| C++ | cc ccm hh cpp cppm h hpp cxx cxxm hxx c++ c++m h++ hip ipp inl ino ixx cu cuh C H; `^//.*-\*-\s*C\+\+\s*-\*-` | `cpp` → tree-sitter-cpp, git https://github.com/tree-sitter/tree-sitter-cpp | 0.23.4, rev 5cb9b693cfd7bfacab1d9ff4acac1a4150700609 (949) | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | 확인 필요 |
-| CSS | css postcss pcss | `css` → tree-sitter-css (crates.io) | 0.23.2 (950, `"0.23"`) | brackets · highlights · indents · injections · outline · overrides · textobjects | 확인 필요 |
-| Diff | diff patch | `diff` → tree-sitter-diff (crates.io) | 0.1.0 (951) | highlights · injections | 확인 필요 |
-| Env | .env | `bash` → tree-sitter-bash (Shell Script와 같은 문법) | 0.25.1 (947) | brackets · highlights · injections · overrides · redactions | 확인 필요 |
-| Git Commit | TAG_EDITMSG MERGE_MSG COMMIT_EDITMSG NOTES_EDITMSG EDIT_DESCRIPTION | `gitcommit` → tree-sitter-gitcommit, git https://github.com/zed-industries/tree-sitter-git-commit | 0.0.1, rev 88309716a69dd13ab83443721ba6e0b491d37ee9 (954) | highlights · injections | 확인 필요 |
-| Go | go; `^//.*\bgo run\b` | `go` → tree-sitter-go, git https://github.com/zed-industries/tree-sitter-go | 0.25.0, rev 6862a49e3c5a7567a6c576420e9a8f944e198a85 (955) | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | 확인 필요 |
-| Go Mod | mod | `gomod` → tree-sitter-gomod(package 이름, 의존성 이름 tree-sitter-go-mod), git https://github.com/camdencheek/tree-sitter-go-mod | 1.1.1, rev 2e886870578eeba1927a2dc4bd2e2b3f598c5f9a (956) | highlights · injections · structure | 확인 필요 |
-| Go Work | work | `gowork` → tree-sitter-gowork, git https://github.com/zed-industries/tree-sitter-go-work | 0.0.1, rev acb0617bf7f4fda02c6217676cc64acb89536dc7 (957) | highlights · injections | 확인 필요 |
-| JavaScript | js jsx mjs cjs; `^#!.*\b(?:[/ ]node\|deno run.*--ext[= ]js)\b` | `tsx` → tree-sitter-typescript의 TSX 문법(TSX와 같은 문법, 쿼리는 javascript 폴더 것) | TypeScript 행과 같음 | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | 확인 필요 |
-| JSDoc (주입 전용/내부, hidden) | 없음 | `jsdoc` → tree-sitter-jsdoc (crates.io) | 0.23.2 (960, `"0.23"`) | brackets · highlights | 확인 필요 |
-| JSON | json flake.lock geojson topojson prettierrc json.dist deno.lock | `json` → tree-sitter-json (crates.io) | 0.24.8 (961, `"0.24"`) | brackets · highlights · indents · outline · overrides · redactions · runnables · textobjects | 확인 필요 |
-| JSONC | jsonc bun.lock devcontainer.json pyrightconfig.json tsconfig.json luaurc swcrc babelrc eslintrc stylelintrc jshintrc | `jsonc` → tree-sitter-json(JSON과 같은 crate, `grammars.rs`에서 jsonc 이름으로 한 번 더 등록) | 0.24.8 (961) | brackets · highlights · indents · injections · outline · overrides · redactions · textobjects | 확인 필요 |
-| Markdown | md mdx mdwn mdc markdown MD | `markdown` → tree-sitter-md 블록 문법(`LANGUAGE`), git https://github.com/zed-industries/tree-sitter-markdown (9a23c1a 포크, serialize 버퍼 넘침 수정) | 0.3.2, rev b596e737286780d7bfa9fcddceaeeb754574b352 (962) | brackets · highlights · indents · injections · outline · textobjects | 확인 필요 |
-| Markdown-Inline (주입 전용/내부, hidden) | 없음 | `markdown-inline` → tree-sitter-md 인라인 문법(`INLINE_LANGUAGE`) | Markdown 행과 같음 | highlights · injections | 확인 필요 |
-| Python | py pyi mpy; `^#!.*((\bpython[0-9.]*\b)\|(\buv run\b))` | `python` → tree-sitter-python (crates.io) | 0.25.0 (963, `"0.25"`) | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | 확인 필요 |
-| Regex (주입 전용/내부, hidden) | 없음 | `regex` → tree-sitter-regex (crates.io) | 0.24.3 (964, `"0.24"`) | brackets · highlights | 확인 필요 |
-| Rust | rs | `rust` → tree-sitter-rust (crates.io) | 0.24.2 (966) | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | 확인 필요 |
-| TSX | tsx | `tsx` → tree-sitter-typescript의 TSX 문법(`LANGUAGE_TSX`) | TypeScript 행과 같음 | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | 확인 필요 |
-| TypeScript | ts cts mts; `^#!.*\b(?:deno run\|ts-node\|bun\|tsx\|[/ ]node)\b` | `typescript` → tree-sitter-typescript(`LANGUAGE_TYPESCRIPT`), git https://github.com/zed-industries/tree-sitter-typescript (upstream PR 347 반영) | 0.23.2, rev e2c53597d6a5d9cf7bbe8dccde576fe1e46c5899 (967) | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | 확인 필요 |
-| YAML | yml yaml pixi.lock clang-format clangd bst | `yaml` → tree-sitter-yaml, git https://github.com/zed-industries/tree-sitter-yaml | 0.6.1, rev baff0b51c64ef6a1fb1f8390f3ad6015b83ec13a (968) | brackets · highlights · injections · outline · overrides · redactions · textobjects | 확인 필요 |
-| Zed Keybind Context (주입 전용/내부, hidden) | 없음 | `rust` → tree-sitter-rust(Rust와 같은 문법) | 0.24.2 (966) | brackets · highlights | 확인 필요 |
-| HTML (Zed 레포 안 확장, 내장 아님) | html htm shtml (`extensions/html/languages/html/config.toml`) | `html` → https://github.com/tree-sitter/tree-sitter-html (`extensions/html/extension.toml` `[grammars.html]`, 확장 버전 0.3.2) | commit bfa075d83c6b97cd48440b3829ab8d24a2319809 | brackets · highlights · indents · injections · outline · overrides (`extensions/html/languages/html/`) | 확인 필요 |
+| Shell Script | sh bash bashrc bash_profile bash_aliases bash_login bash_logout brushrc bats envrc profile zsh zshrc zshenv zsh_profile zsh_aliases zsh_histfile zlogin zprofile PKGBUILD APKBUILD ebuild; `^#!.*\b(?:ash\|bash\|bats\|dash\|sh\|zsh)\b` | `bash` → tree-sitter-bash (crates.io) | 0.25.1 (Cargo.toml 947) | brackets · highlights · indents · injections · overrides · redactions · runnables · textobjects | MIT |
+| C | c | `c` → tree-sitter-c (crates.io) | 0.24.1 (948) | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | MIT |
+| C++ | cc ccm hh cpp cppm h hpp cxx cxxm hxx c++ c++m h++ hip ipp inl ino ixx cu cuh C H; `^//.*-\*-\s*C\+\+\s*-\*-` | `cpp` → tree-sitter-cpp, git https://github.com/tree-sitter/tree-sitter-cpp | 0.23.4, rev 5cb9b693cfd7bfacab1d9ff4acac1a4150700609 (949) | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | MIT |
+| CSS | css postcss pcss | `css` → tree-sitter-css (crates.io) | 0.23.2 (950, `"0.23"`) | brackets · highlights · indents · injections · outline · overrides · textobjects | MIT (crate에 LICENSE 없음, 게시 커밋 c0d581e32d183a536731ed6c3a72758b27e20411) |
+| Diff | diff patch | `diff` → tree-sitter-diff (crates.io) | 0.1.0 (951) | highlights · injections | MIT (crate에 LICENSE 없음, 게시 커밋 4867e8470e1b0ad7364c4e3ffab762c361bbb635) |
+| Env | .env | `bash` → tree-sitter-bash (Shell Script와 같은 문법) | 0.25.1 (947) | brackets · highlights · injections · overrides · redactions | MIT |
+| Git Commit | TAG_EDITMSG MERGE_MSG COMMIT_EDITMSG NOTES_EDITMSG EDIT_DESCRIPTION | `gitcommit` → tree-sitter-gitcommit, git https://github.com/zed-industries/tree-sitter-git-commit | 0.0.1, rev 88309716a69dd13ab83443721ba6e0b491d37ee9 (954) | highlights · injections | MIT |
+| Go | go; `^//.*\bgo run\b` | `go` → tree-sitter-go, git https://github.com/zed-industries/tree-sitter-go | 0.25.0, rev 6862a49e3c5a7567a6c576420e9a8f944e198a85 (955) | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | MIT |
+| Go Mod | mod | `gomod` → tree-sitter-gomod(package 이름, 의존성 이름 tree-sitter-go-mod), git https://github.com/camdencheek/tree-sitter-go-mod | 1.1.1, rev 2e886870578eeba1927a2dc4bd2e2b3f598c5f9a (956) | highlights · injections · structure | MIT |
+| Go Work | work | `gowork` → tree-sitter-gowork, git https://github.com/zed-industries/tree-sitter-go-work | 0.0.1, rev acb0617bf7f4fda02c6217676cc64acb89536dc7 (957) | highlights · injections | MIT |
+| JavaScript | js jsx mjs cjs; `^#!.*\b(?:[/ ]node\|deno run.*--ext[= ]js)\b` | `tsx` → tree-sitter-typescript의 TSX 문법(TSX와 같은 문법, 쿼리는 javascript 폴더 것) | TypeScript 행과 같음 | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | MIT |
+| JSDoc (주입 전용/내부, hidden) | 없음 | `jsdoc` → tree-sitter-jsdoc (crates.io) | 0.23.2 (960, `"0.23"`) | brackets · highlights | MIT (crate에 LICENSE 없음, 게시 커밋 b253abf68a73217b7a52c0ec254f4b6a7bb86665) |
+| JSON | json flake.lock geojson topojson prettierrc json.dist deno.lock | `json` → tree-sitter-json (crates.io) | 0.24.8 (961, `"0.24"`) | brackets · highlights · indents · outline · overrides · redactions · runnables · textobjects | MIT (crate에 LICENSE 없음, 게시 커밋 ee35a6ebefcef0c5c416c0d1ccec7370cfca5a24) |
+| JSONC | jsonc bun.lock devcontainer.json pyrightconfig.json tsconfig.json luaurc swcrc babelrc eslintrc stylelintrc jshintrc | `jsonc` → tree-sitter-json(JSON과 같은 crate, `grammars.rs`에서 jsonc 이름으로 한 번 더 등록) | 0.24.8 (961) | brackets · highlights · indents · injections · outline · overrides · redactions · textobjects | MIT (crate에 LICENSE 없음, 게시 커밋 ee35a6ebefcef0c5c416c0d1ccec7370cfca5a24) |
+| Markdown | md mdx mdwn mdc markdown MD | `markdown` → tree-sitter-md 블록 문법(`LANGUAGE`), git https://github.com/zed-industries/tree-sitter-markdown (9a23c1a 포크, serialize 버퍼 넘침 수정) | 0.3.2, rev b596e737286780d7bfa9fcddceaeeb754574b352 (962) | brackets · highlights · indents · injections · outline · textobjects | MIT |
+| Markdown-Inline (주입 전용/내부, hidden) | 없음 | `markdown-inline` → tree-sitter-md 인라인 문법(`INLINE_LANGUAGE`) | Markdown 행과 같음 | highlights · injections | MIT |
+| Python | py pyi mpy; `^#!.*((\bpython[0-9.]*\b)\|(\buv run\b))` | `python` → tree-sitter-python (crates.io) | 0.25.0 (963, `"0.25"`) | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | MIT |
+| Regex (주입 전용/내부, hidden) | 없음 | `regex` → tree-sitter-regex (crates.io) | 0.24.3 (964, `"0.24"`) | brackets · highlights | MIT (crate에 LICENSE 없음, 게시 커밋 4470c59041416e8a2a9fa343595ca28ed91f38b8) |
+| Rust | rs | `rust` → tree-sitter-rust (crates.io) | 0.24.2 (966) | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | MIT |
+| TSX | tsx | `tsx` → tree-sitter-typescript의 TSX 문법(`LANGUAGE_TSX`) | TypeScript 행과 같음 | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | MIT |
+| TypeScript | ts cts mts; `^#!.*\b(?:deno run\|ts-node\|bun\|tsx\|[/ ]node)\b` | `typescript` → tree-sitter-typescript(`LANGUAGE_TYPESCRIPT`), git https://github.com/zed-industries/tree-sitter-typescript (upstream PR 347 반영) | 0.23.2, rev e2c53597d6a5d9cf7bbe8dccde576fe1e46c5899 (967) | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | MIT |
+| YAML | yml yaml pixi.lock clang-format clangd bst | `yaml` → tree-sitter-yaml, git https://github.com/zed-industries/tree-sitter-yaml | 0.6.1, rev baff0b51c64ef6a1fb1f8390f3ad6015b83ec13a (968) | brackets · highlights · injections · outline · overrides · redactions · textobjects | MIT |
+| Zed Keybind Context (주입 전용/내부, hidden) | 없음 | `rust` → tree-sitter-rust(Rust와 같은 문법) | 0.24.2 (966) | brackets · highlights | MIT |
+| HTML (Zed 레포 안 확장, 내장 아님) | html htm shtml (`extensions/html/languages/html/config.toml`) | `html` → https://github.com/tree-sitter/tree-sitter-html (`extensions/html/extension.toml` `[grammars.html]`, 확장 버전 0.3.2) | commit bfa075d83c6b97cd48440b3829ab8d24a2319809 | brackets · highlights · indents · injections · outline · overrides (`extensions/html/languages/html/`) | MIT |
 
 - `crates/languages/src/lib.rs`에서 위 23개 밖에 내장으로 등록되는 언어는 없다. 같은 커밋 레포 안 확장은 `extensions/html`·`glsl`·`proto`·`test-extension` 넷이고 내장이 아니다(ORDER-11이 명시한 HTML만 표에 넣었다).
 - 루트 Cargo.toml에 있지만 `native_grammars`에 없는 문법:
   - tree-sitter-html 0.23(959, lock 0.23.2): `crates/editor`(테스트 지원 기능·dev-dependencies)와 `crates/language` dev-dependencies에서 테스트에만 쓴다. 앱의 HTML 강조는 위 확장의 문법(commit bfa075d)을 쓴다.
   - tree-sitter-elixir 0.3(952, lock 0.3.4), tree-sitter-heex(958, rev 1dd45142fbb05562e35b2040c6129c9bca346592), tree-sitter-embedded-template 0.23.0(953, lock 0.23.2), tree-sitter-ruby 0.23(965, lock 0.23.1): `crates/language` dev-dependencies에서 테스트에만 쓴다. 목록 밖.
 - 쿼리 열의 이름 가운데 색에 쓰는 것은 `highlights`(강조)·`injections`(주입)·`outline`(경로 줄 심볼)이다. 나머지(brackets·indents·overrides·textobjects 등)는 편집 기능용이다.
+
+**빌드 출처 (사용자 허락 2026-11-07, core-leader 전달)**
+
+- 문법 wasm은 tree-sitter CLI로 문법 저장소의 parser.c(와 scanner)를 그대로 빌드한다. 문법을 재생성하지 않는다(parser.c 그대로). crate 문법은 Zed `Cargo.lock`의 버전·checksum으로 검증하고, git 문법은 lock의 저장소·rev, HTML은 `extensions/html/extension.toml`의 commit을 쓴다. 공유 문법을 합쳐 wasm 20개(언어 24개).
+- 빌드 도구(K-47·K-49):
+
+| 도구 | 버전 | URL | SHA256 |
+| --- | --- | --- | --- |
+| tree-sitter CLI Windows x64 (gzip) | 0.27.1 | https://github.com/tree-sitter/tree-sitter/releases/download/v0.27.1/tree-sitter-windows-x64.gz | e21184878f908f91c753b78a76a0766e61954e06627b46088d70d66233424531 (스크립트에 고정, 로컬 파일과 대조) |
+| wasi-sdk (CLI가 자동으로 받음) | 34.0 | https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-34/wasi-sdk-34.0-x86_64-windows.tar.gz | cccb5c323a9b34f0349a9b09e8804a0a7632c68c3310f4b5f437ed57d7e71d8f (GitHub 자산 메타데이터 값, 로컬 압축 해시는 확인 안 함) |
+| Binaryen (CLI가 자동으로 받음) | 132 | https://github.com/WebAssembly/binaryen/releases/download/version_132/binaryen-version_132-x86_64-windows.tar.gz | 2089428ec98c899b45ee5d00636ddd6e2da8636cc473ef50b165cc25793ef7cb (GitHub 자산 메타데이터 값, 로컬 압축 해시는 확인 안 함) |
+
+- CLI와 자동 도구 캐시는 실행마다 고유한 `%TEMP%` 폴더(`workbench-zed-grammars-*`)에 두고 끝나면 그 폴더만 지운다. `LOCALAPPDATA`·`XDG_CACHE_HOME`·`XDG_CONFIG_HOME`은 자식 프로세스에서만 바꾼다.
+- 복사본 위치 `src/assets/zed-grammars/`(`.gitignore`, wasm·쿼리·manifest·라이선스·빌드 로그). 다시 만들기 `tools/fetch-zed-grammars.ps1`(커밋 `bc95568`). 복사본이 없으면 강조 없이 평문(ORDER-11 2장).
+
+**쿼리 정규식**
+
+- Zed 쿼리 4개의 정규식을 web-tree-sitter(JavaScript RegExp)가 거부한다: `javascript/injections.scm`·`tsx/injections.scm`·`typescript/injections.scm` 5행 `(?s)`(dot-all), `python/injections.scm` 25행 `(?i:sql)`(범위 대소문자 무시). K-49에서 쿼리 58개 중 54개 컴파일, 이 4개 실패.
+- 로더가 같은 뜻의 JavaScript 정규식으로 바꿔 컴파일한다. 복사본 원문은 바꾸지 않는다(K-50).
+- gpui(Rust `regex`)는 이 문법을 받아들여 해당 없음.
 
 **하이라이트 이름 → 테마 syntax 토큰**
 

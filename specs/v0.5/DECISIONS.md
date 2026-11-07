@@ -263,6 +263,23 @@ Phase 9의 경로 줄(R-12)은 파일 경로와 마크다운 제목 계층까지
 
 core-leader 결정(2026-11-07, 사용자 위임 core D-13), tauri-coder K-40 보고.
 
+### D-15. 문법 wasm 빌드와 쿼리 복사본
+
+**결정**
+
+- 문법 wasm은 공식 tree-sitter CLI 바이너리 1개(0.27.1 Windows x64, SHA256 고정)로 빌드한다. CLI와 CLI가 받는 wasi-sdk 34.0·Binaryen 132는 실행마다 `%TEMP%`의 고유 폴더에서만 쓰고 지운다. 빌드 도구는 레포 의존성(`package.json`·`Cargo.toml`)에 넣지 않는다. 문법은 재생성하지 않고 Zed `Cargo.lock`(HTML은 `extension.toml`)이 고정한 소스의 parser.c를 그대로 쓴다.
+- 문법 wasm과 Zed 쿼리 복사본은 `src/assets/zed-grammars/`(`.gitignore`)에 두고 커밋하지 않는다. 다시 채우는 스크립트 `tools/fetch-zed-grammars.ps1`(Zed 4304dec 고정)를 커밋한다.
+- JavaScript RegExp가 거부하는 Zed 쿼리 정규식(`(?s)`, `(?i:…)`)은 로더가 같은 뜻으로 바꿔 컴파일하고, 복사본 원문은 바꾸지 않는다.
+- 값·URL·해시는 `SPEC.md` R-15 "빌드 출처"와 "쿼리 정규식".
+
+**이유**
+
+ORDER-11 2장은 Zed와 같은 저장소·같은 버전의 문법과 Zed 쿼리를 요구하고, 쿼리는 Zed 앱 저장소 것이라 레포에 커밋하지 않고 `.gitignore` 복사본과 스크립트로 둔다(D-9 아이콘과 같은 방식). tauri는 `web-tree-sitter`로 wasm을 읽으므로 같은 소스를 wasm으로 빌드해야 하고, 빌드 도구를 의존성으로 들이지 않으려고 고정 해시 바이너리를 임시 폴더에서만 쓴다(K-47 spike로 확인).
+
+**출처**
+
+core ORDER-11 2장, core D-18, 사용자 허락(2026-11-07, core-leader 전달), tauri-coder K-47·K-49·K-50 보고.
+
 에이전트 운영의 리더 결정(카드·보고 파일 위치, 카드 ID 체계)은 설계 결정이 아니라서 `HERDR-SETUP.md` 5장에 둔다.
 
 ## 미결 사항

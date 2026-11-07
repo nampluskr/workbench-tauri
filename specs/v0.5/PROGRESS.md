@@ -449,6 +449,28 @@
   - 결과: PASS. 지적 2건(spec/ 동기화, 주석)은 K-45로 처리했다.
   - 검증: `npm test` 197/197, `cargo test` 25개, clippy 경고 0.
 - **W-31 Phase 10 문서** (2026-11-07, 커밋 `f80d615`): SPEC R-21 "Zed 확인(2026-11-07)" 치수 표·toml 등록 요청 표·"구현(K-44)", PROGRESS Phase 10, PLAN Phase 10 진행 현황. 검증 V0(문서만).
+- **K-46 panel.focused_border 라이트 기본값 (R-21 후속, core 답)** (2026-11-07, 커밋 `540b5e3`)
+  - 무엇을 했나: `src/theme/theme.ts`·`apply.ts`·`src/app.css`·`theme.test.ts`. 테마 값이 없을 때 라이트 #0588f0(Zed `default_colors.rs:98` `blue().light().step_10()`), 다크 #2870bd(`:252`). `apply.ts` 조건부 발행과 `app.css`의 `border.focused` 대체를 없앴다.
+  - 결과: R-21의 라이트 기본값 미확정이 풀렸다(SPEC R-21, W-33).
+  - 검증: V1. typecheck 통과, `theme.test.ts` 23/23, `git diff --check` 통과(`%TEMP%\v05-K-46-report.md`).
+
+### Phase 11 — 구문 강조
+
+- **K-48 폴더 밖 파일의 경로 줄은 파일 이름만 (R-12 / I-12, core 정정)** (2026-11-07, 커밋 `296e01d`)
+  - 무엇을 했나: `src/editor/breadcrumbs.ts`·`breadcrumbs.test.ts`. 폴더 밖 파일은 마지막 `\` 뒤 파일 이름만 보인다(예: `C:\elsewhere\a.md` → `a.md`), 폴더 수와 관계없음.
+  - 원인(Zed 근거): 폴더 밖 파일은 단일 파일 워크트리가 되어 상대 경로가 비고 `root_name`이 파일 이름이다(`editor.rs:11682-11704`, `buffer.rs:5533-5540`, `worktree_store.rs:502-514`, `worktree.rs:536-543`·`1279-1288`).
+  - 검증: V1. typecheck 통과, `breadcrumbs.test.ts` 5/5, `git diff --check` 통과(`%TEMP%\v05-K-48-report.md`).
+- **W-33 ORDER-11 언어 목록·대응 표** (2026-11-07, 커밋 `5dbf6d9`): SPEC R-15 언어 목록(Zed 4304dec 23개 + HTML), 하이라이트 이름 → 테마 syntax 토큰, 주입, I-12 outline 규칙, R-16 휠 core 결정, R-21 panel.focused_border 기본값 core 결정. 검증 V0(문서만).
+- **Phase 9 push** (2026-11-07, tauri-leader): `d42a0df..5dbf6d9`.
+- **K-47 문법 wasm 빌드 spike** (2026-11-07, 레포 변경 없음)
+  - 무엇을 했나: tree-sitter CLI 0.27.1(SHA256 고정)로 Rust(0.24.2)·Markdown block·inline(zed-industries rev b596e73)을 `%TEMP%`에서 wasm으로 빌드하고 기존 `loadLanguage`·`compileQuery`로 읽었다. CLI가 wasi-sdk 34.0·Binaryen 132를 자동으로 받았다.
+  - 결과: wasm 3개 빌드·로드 성공, 샘플 ERROR 노드 0, 쿼리 8개 컴파일. 이 빌드에서는 `skipDylinkNeeded` 우회가 필요 없었다. C++ scanner 문법은 따로 확인이 필요하다고 남겼다.
+  - 검증: V1(임시 스크립트 assert, `%TEMP%\v05-K-47-report.md`).
+- **K-49 문법·쿼리 복사본 스크립트** (2026-11-07, 커밋 `bc95568`)
+  - 무엇을 했나: `tools/fetch-zed-grammars.ps1`, `.gitignore`(`src/assets/zed-grammars/`), `src/syntax/zed-grammars.test.ts`. Zed 4304dec 쿼리와 Cargo.lock 고정 문법을 받아 wasm으로 빌드하고 manifest·라이선스·빌드 로그와 함께 복사본에 둔다. 임시 폴더는 실행마다 고유하게 만들고 끝나면 지운다.
+  - 결과: 언어 24개, wasm 20/20 빌드·로드. 문법 라이선스 24개 모두 MIT(css·diff·jsdoc·json·regex는 게시 커밋에서 LICENSE). 쿼리 58개 중 54개 컴파일, 4개(javascript·tsx·typescript `(?s)`, python `(?i:sql)`)는 JavaScript RegExp가 거부해 테스트 1개 실패 → K-50(로더 정규식 변환).
+  - 검증: V1. typecheck 통과, `zed-grammars.test.ts` 실패 1(쿼리 4개, 기대값 바꾸지 않음), `git diff --check`·PowerShell 구문 검사 통과(`%TEMP%\v05-K-49-report.md`).
+- **W-34 ORDER-11 문서** (2026-11-07): SPEC R-15 라이선스 열·빌드 출처·쿼리 정규식, DECISIONS D-15, PROGRESS Phase 11, PLAN Phase 10·11. 검증 V0(문서만).
 
 ## 사용자 요청 작업
 
