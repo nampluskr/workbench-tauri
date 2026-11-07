@@ -951,6 +951,20 @@ I-12, 사용자 2026-11-06("zed와 동일하게"), 참고 화면 `refs/zed-overv
 - 글자 크기 14는 캡처(`zed-bc-md-h2.png`, `AGENTS.md` 9글자 폭 약 75px)로 맞췄다. Zed `text_ui`가 16인지 소스로 확정하지 못해 V3에서 확인한다.
 - 한계(`shortcut:`): 편집 때마다 전체 텍스트를 줄로 나눈다(매우 긴 문서에서 느리면 캐시). 인용문·목록 안의 `#`는 조각이 아니다.
 
+
+**코드 파일 심볼(K-52, ORDER-11)**
+
+- Zed 규칙(소스 읽기만): `buffer.rs` 4782~4797 `symbols_containing`(커서 ±1 범위에 닿는 outline 항목, (시작 오름차순·끝 내림차순), 앞 항목보다 깊은 것만 남김), 4988~5110 `next_outline_item`(`@name`·`@context`만, `@context.extra` 제외, 여러 줄 노드는 첫 줄까지, 틈이 있으면 공백 한 칸, 조각마다 하이라이트 색). 자세한 규칙은 R-15 "I-12 코드 파일 심볼(outline)".
+- `( )`가 TypeScript에만 보이는 이유: typescript·tsx·javascript `outline.scm`이 매개변수 목록의 여는·닫는 괄호를 `@context`로 잡는다. 사이에 매개변수가 있어 닫는 괄호 앞에 틈이 생기므로 공백이 들어가 `add( )`가 된다. Python(`"def" @context name: (_) @name`)·Rust outline에는 괄호 캡처가 없어 `def add`·`pub fn bump`다.
+- 구현: 모든 레이어(주입 포함)의 outline을 커서 ±1 범위만 쿼리한다. 커서 이동·편집·구문 분석 끝마다 다시 계산하고, 트리가 편집보다 뒤처진 동안은 이전 줄을 둔다. 심볼 글자는 색 범위별 `cm-syntax-*` span으로 그린다. outline.scm이 없는 언어는 심볼 없이 경로만. 마크다운은 지금 제목 계층(K-40) 그대로.
+- V3(2026-11-07, `specs/v0.5/verify/ORDER-11/tauri-v3.json`, `tauri-*-sym.png` 대 `zed-*-sym.png`): Zed 캡처와 같은 글자, 문법 색(keyword #b477cf, type rgb(110,180,191), function rgb(115,173,233)).
+
+| 파일·줄 | 경로 줄 심볼 |
+| --- | --- |
+| `test-fixtures/syntax/sample.rs` 21 | `impl Counter › pub fn bump › fn clamp` |
+| `test-fixtures/syntax/sample.ts` 18 | `class Inventory › add( ) › function normalize( )` |
+| `test-fixtures/syntax/sample.py` 21 | `class Library › def add › def normalize` |
+
 ---
 
 ## R-13. 커서가 있는 줄의 배경과 줄 번호를 강조한다
@@ -1114,7 +1128,7 @@ I-15, 사용자 2026-11-06.
 - Zed: 테마 `syntax` 키를 정렬된 맵(`BTreeMap`)에 넣고, 캡처 이름마다 "첫 마디(`.` 앞) 이상, 캡처 이름 이하" 범위를 뒤에서부터 보며 "캡처 이름이 그 키로 시작하고 남은 부분이 없거나 `.`으로 시작하는" 첫 키를 고른다(`crates/syntax_theme/src/syntax_theme.rs` 87~102 `highlight_id`). 점 경계 앞부분 가운데 가장 긴 키다. 예: `@keyword.control.import` → 테마에 `keyword.control`이 있으면 그것, 없으면 `keyword`, 둘 다 없으면 색 없음. 이 대응은 문법마다 캡처 이름 목록으로 한 번 만든다(`crates/language/src/language.rs` 1298~1301 `HighlightMap::from_ids`).
 - Zed: 한 글자 위에 캡처가 여럿 겹치면 시작 위치 순서로 쌓고 맨 위(마지막에 쌓인) 캡처 하나의 색만 쓴다. 테마 키가 없는 캡처는 쌓지 않아 바깥 캡처 색이 남는다(`crates/language/src/buffer.rs` 5909~5922 쌓기, 5967~5972 맨 위 하나).
 - tauri 지금(`src/syntax/grammar.ts` `themeKey`): 캡처 이름 끝에서 `.` 마디를 하나씩 떼며 테마 키를 찾는다. 점 경계 가장 긴 앞부분이라 Zed 규칙과 같다.
-- tauri 지금과 다른 점(코드는 고치지 않음):
+- tauri 지금과 다른 점(W-33 때. 아래 "구현(K-50·K-54·K-55·K-56)"으로 셋 다 풀림):
   - 겹침: tauri(`src/syntax/highlight.ts` `build`)는 일치하는 캡처마다 CM6 mark를 겹쳐 넣어 CSS 클래스가 함께 붙는다. 같은 범위의 두 캡처에서 보이는 색이 Zed의 "맨 위 캡처 하나"와 같은지는 보장되지 않는다. 확인 필요.
   - 주입: tauri는 한 문법의 highlights만 쓰고 주입 언어를 강조하지 않는다.
   - 문법 출처: tauri는 실행 중 설치된 Zed 확장 폴더에서 문법을 읽는다(`zlext` 스킴). ORDER-11(core D-8)대로 이 Phase에서 복사본으로 바꾼다.
@@ -1139,6 +1153,69 @@ I-15, 사용자 2026-11-06.
   - 앞에서부터 깊이가 바로 앞에 남긴 항목보다 클 때만 남긴다. 그래서 바깥에서 안쪽으로 이어지는 한 줄기만 남는다.
 - 심볼 글자(`buffer.rs` 4988~5110 `next_outline_item`): `@name`과 `@context` 캡처(경로 줄은 `@context.extra`를 빼고 부름) 노드를 소스 순서대로 잇는다. 사이에 소스상 틈이 있으면 공백 하나를 넣는다. 여러 줄 노드는 첫 줄 끝에서 자른다. 색은 편집기와 같은 하이라이트(위 "하이라이트 이름 → 테마 syntax 토큰")를 그대로 붙인다. `@name`이 없으면 항목이 아니다. 예: `src\App.tsx › function App()`(`zed-bc-code.png`, R-12).
 - tauri 지금: 경로 + 마크다운 ATX 제목만(K-40, `src/editor/breadcrumbs.ts`). 코드 심볼은 이 Phase(D-14).
+
+
+**구현(K-50·K-54·K-55·K-56)**
+
+- 복사본 로더(`src/syntax/assets.ts`): `src/assets/zed-grammars/`의 config를 한 번에, 쿼리와 wasm은 필요할 때 읽는다. 실행 중 Zed 설치·확장 폴더를 읽지 않는다(core D-8). Zed 확장 폴더를 읽던 `zlext` 스킴(`ext_protocol.rs`)과 CSP의 `http://zlext.localhost`를 없앴다. 복사본이 없거나 읽기에 실패하면 평문이고 앱은 죽지 않는다.
+- 파일 형식 → 언어(`src/syntax/catalog.ts`): config의 `path_suffixes`로 고른다(전체 이름 또는 `.접미사`, 가장 긴 것, 숨김 언어 제외). first_line_pattern은 쓰지 않는다. 상태 바 파일 형식 이름도 같은 카탈로그를 쓴다(K-56, `src/editor/filetype.ts`). 복사본이 없으면 내장 19개 이름만 나온다. 확장 언어 TOML(K-54)·git-firefly 4개(K-55)를 더해 언어 29개, wasm 25개.
+- 겹친 캡처: Zed 순서(`syntax_map.rs` 1472~1475, 시작 오름차순·끝 내림차순·주입 깊이)로 놓고 맨 위 하나만 칠한다(`buffer.rs` 5909~5922·5967~5972). 테마 키가 없는 캡처는 앞 색을 지우지 않는다(`src/syntax/document.ts`).
+- 주입: 재귀. host 캡처별 묶음, `injection.combined` 언어별 묶음, 그 밖은 일치마다 하나. 같은 언어·같은 범위는 다시 들어가지 않아 순환하지 않는다. 언어 이름 규칙은 위 "주입(injection)" 그대로다. 마크다운 `+++`는 Zed 쿼리대로 구분자까지 TOML에 넘긴다.
+- 정규식 4개 변환: `(?s)…` → `[\s\S]`, `(?i:sql)` → `[sS][qQ][lL]`(원문 쿼리는 그대로, `compileQuery`에서만, 이 형태만 지원하는 `shortcut:` 주석).
+- 술어: `#eq?`·`#match?`·`#any-of?` 계열과 `#set!`은 web-tree-sitter 처리를 쓴다. cpp `highlights.scm:54`의 `#has-ancestor?`는 지정 노드 조상에 `call_expression`이 있을 때만 맞게 했다. 모르는 술어는 그 패턴을 맞지 않게 한다.
+- 성능: 8ms 조각 파싱(`PARSE_SLICE_MS`), 보이는 영역의 캡처만 칠한다. 편집은 이전 트리를 고쳐 증분 파싱한다. 한계(`shortcut:`): 편집마다 레이어 전체 트리에서 주입 쿼리를 동기로 돈다. Zed는 changed_ranges로 좁힌다. 큰 파일 시간은 재지 않았다.
+- 라이선스: Licenses 창에 문법 MIT, Zed 쿼리 GPL-3.0·Apache-2.0, HTML·TOML·git-firefly 확장 Apache-2.0을 보인다.
+
+**V3 (2026-11-07)**
+
+조건: 1440×852, 100%, One Dark, 폴더 `test-fixtures/syntax`. 결과 `specs/v0.5/verify/ORDER-11/tauri-v3.json`, 캡처 `tauri-*.png`·`zed-*.png`. 강조 span 수는 편집 영역의 `cm-syntax-*` span 개수, 캡처 키 수는 그 span이 쓴 테마 키(클래스) 가짓수다.
+
+| 파일 | 언어 | 강조 span 수 | 캡처 키 수 |
+| --- | --- | ---: | ---: |
+| `sample.md` | Markdown | 90 | 21 |
+| `sample.html` | HTML | 207 | 19 |
+| `sample.js` | JavaScript | 191 | 20 |
+| `sample.css` | CSS | 141 | 17 |
+| `sample.json` | JSON | 93 | 8 |
+| `sample.go` | Go | 134 | 13 |
+| `sample.sh` | Shell Script | 139 | 13 |
+| `sample.yaml` | YAML | 86 | 10 |
+| `sample.c` | C | 193 | 14 |
+| `sample.cpp` | C++ | 188 | 16 |
+| `sample.tsx` | TSX | 203 | 17 |
+| `sample.diff` | Diff | 31 | 9 |
+| `sample.jsonc` | JSONC | 62 | 8 |
+| `COMMIT_EDITMSG` | Git Commit | 21 | 8 |
+| `sample.rs`(심볼 위치) | Rust | 183 | 16 |
+| `sample.ts`(심볼 위치) | TypeScript | 247 | 17 |
+| `sample.py`(심볼 위치) | Python | 161 | 15 |
+
+- 마크다운·HTML 색 대조(Zed 캡처 대 tauri 캡처, 토큰별 가장 진한 픽셀): 45개 중 39개가 차이 24 이하(ClearType 렌더 차이). 나머지 6개는 측정 쪽 원인이다: Zed 커서가 1행 `#` 위에 있음, Zed의 CSS 색 견본 ■은 언어 서버 기능이라 구문 강조가 아님, 열 계산 어긋남 2개, `fn` 1개 안티에일리어싱.
+- 상태 바 파일 형식 이름: HTML이 Zed와 달라 K-56에서 카탈로그와 같게 고쳤다. 재측정은 다음 화면 차례.
+
+**미리보기 코드 블록(K-53, ORDER-11 3.3)**
+
+- Zed도 미리보기의 코드 블록을 언어별로 강조한다(`specs/v0.5/verify/ORDER-11/zed-md-preview.png`). 언어는 fence 정보 이름을 `language_for_name_or_extension`으로 찾고, 실패하고 공백이 있으면 첫 단어로 다시 찾는다(`markdown.rs` 1284~1398). 이 앱은 편집기 주입과 같은 이름 규칙을 쓰고, 언어가 없거나 복사본이 없으면 평문이다.
+- 블록 모양(`markdown.rs` 272~279 기본, 376~388 미리보기 덮어쓰기): 테두리 1px `border_variant`, 배경 `editor_background`, 안쪽 12, 위아래 바깥 16, 반지름 6. L-109의 "no border"는 `CodeBlockRenderer::Default { border: false }`(`markdown_preview_view.rs` 1121)를 잘못 읽은 것이다. 이 bool은 바깥 컨테이너에 테두리를 더할지(`markdown.rs` 2888)이고 블록 자체 1px 테두리(272)와 별개다. gpui에 L-109 정정을 요청한다.
+- 구현: 렌더 뒤 `pre > code[class*=language-]`를 DOM API로 `span.cm-syntax-*`로 나눈다(HTML 문자열을 만들지 않아 DOMPurify 설정 그대로). 새 렌더가 오면 낡은 결과를 버린다.
+- V3: 블록 3개 모두 테두리 1px rgb(54,60,70), 반지름 6, 안쪽 12, 강조 span 19·25·17.
+
+**V3에서 본 범위 밖 차이(다음 Phase 후보)**
+
+이번에 고치지 않는다.
+
+- 편집기 줄 높이: Zed 24.0, tauri 약 24.3px(29행 y Zed 794 / tauri 801).
+- 마크다운 미리보기 본문 왼쪽 x: Zed 456, tauri 433. 문단·목록 간격도 다르다.
+- Zed 미리보기에는 현재 블록 왼쪽 막대가 있다.
+
+**toml에 없는 값(gpui 등록 요청)**
+
+| 임시 ID | 값 | Zed 근거 | 지금 위치 |
+| --- | --- | --- | --- |
+| `markdown_preview.code_block.border` | 1 | `markdown.rs` 272~279 `border_1` solid `border_variant` (K-53) | `src/spec/metrics.ts` |
+| `sidebar.item.font_size` | 14 | `sidebar.rs` 2377~ Label 기본 크기, `typography.rs` 139·152 `TextSize::Default` (K-51, R-21) | `src/spec/metrics.ts` |
+
+K-57(spec/ gpui 동기화)로 `sidebar.item.border_right_width`·`separator_width`·`icon_slot_size`·`icon_gap`·`panel.focused_border`(#2870bd)는 toml ID가 되었다. K-57 보고 전이라 남은 임시 값은 지금 `metrics.ts`에서 확인한 위 둘이다.
 
 ---
 

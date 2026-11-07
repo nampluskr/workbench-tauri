@@ -488,6 +488,32 @@
   - 검증: V1. typecheck 통과, 관련 테스트 10개, `git diff --check`·PowerShell 구문 검사 통과(`%TEMP%\v05-K-54-report.md`). TOML·`+++` 색은 V3에서.
 - **coder 교체 (사용자 지시, core D-16)** (2026-11-07 23:15, W-36): 사용자 지시(core-leader 전달, D-16)로 coder를 Codex gpt-6.1-sol medium에서 Claude Code Sonnet 5.5 high로 바꿨다. 사유: Codex 5시간 한도가 9% 남았다. 카드 경계(K-54 보고 뒤, K-52 시작 전)에서 Codex를 `/quit`로 끝내고 셸 프롬프트를 `Ctrl-C`로 되돌린 뒤 같은 pane `wJ:pM`에서 `herdr agent start tauri-coder --kind claude --pane wJ:pM -- --model sonnet --effort high`로 띄웠다(이름 `tauri-coder` 유지). `/model`로 Sonnet 5.5 ✔·High effort를 확인했다(바꾸지 않음). `HERDR-SETUP.md` 1장에 같은 기록을 적었다. 검증 V0(문서만).
 - **W-36 문서** (2026-11-07): coder 교체 기록, SPEC R-15 TOML 행·HTML 비고·설치된 다른 확장 언어, PROGRESS Phase 11 K-50·K-51·K-54·캡처·W-35. 검증 V0(문서만).
+- **K-52 코드 파일 경로 줄 심볼 (R-12 / I-12)** (2026-11-07, 커밋 `290d1d2`)
+  - 무엇을 했나: `src/syntax/assets.ts`(outline.scm), `document.ts`(`symbols`), `highlight.ts`, `outline.test.ts`(새로), `src/editor/headings.ts`·`file-view.ts`·`breadcrumbs.ts`, `src/workspace/context.ts`, `src/shell/Pane.tsx`. Zed `symbols_containing`·`next_outline_item` 규칙대로 커서 ±1 범위의 outline 항목을 이어 문법 색으로 그린다. 마크다운 제목 계층은 그대로.
+  - 결과: sample.rs·ts·py 심볼 글자가 Zed 캡처와 같다(SPEC R-12 "코드 파일 심볼"). TS의 `( )`는 outline.scm이 괄호를 `@context`로 잡아서다.
+  - 검증: V1. typecheck 통과, 관련 테스트 10/10, `git diff --check` 통과(`%TEMP%\v05-K-52-report.md`).
+- **K-53 미리보기 코드 블록 강조·테두리 (ORDER-11 3.3)** (2026-11-07, 커밋 `290d1d2`)
+  - 무엇을 했나: `src/syntax/document.ts`(`codeBlockHighlights`), `src/shell/markdown-preview.ts`, `src/app.css`, `src/spec/metrics.ts`(임시 `markdown_preview.code_block.border` 1). 렌더 뒤 코드 블록을 DOM API로 칠하고, 블록에 1px `border_variant` 테두리.
+  - 결과: Zed 미리보기도 코드 블록을 강조하고 1px 테두리가 있다(`markdown.rs` 272~279). L-109 "no border"는 잘못 읽은 것이라 gpui에 정정 요청.
+  - 검증: V1. typecheck 통과, 관련 테스트 5/5, `git diff --check` 통과(`%TEMP%\v05-K-53-report.md`).
+- **K-55 git-firefly 확장 4언어** (2026-11-07, 커밋 `290d1d2`)
+  - 무엇을 했나: `tools/fetch-zed-grammars.ps1`, `zed-grammars.test.ts`·`document.test.ts`. 확장 `d1y/git_firefly` v0.1.9(커밋 c63c6c0287ab5c8eb3872cf2bc8803e21c7a9675)와 문법 4개(git_config 3a61756a, git_rebase 39bf3b75, gitattributes 1b7af09d, gitignore f4685bf1)를 고정해 복사본에 더했다. 앱 코드 변경 없음.
+  - 결과: 언어 29개, wasm 25개. 설치본과 언어 파일 12/12 같고 `extension.toml` 원시 해시만 다르다(K-54와 같은 이유). `.git/config`는 확장 config에 `config` 이름이 없어 고르지 않는다(Zed config대로, core 확인 요청). 확장 Apache-2.0, 문법 MIT.
+  - 검증: V1. 스크립트 종료 코드 0, typecheck 통과, 관련 테스트 11/11, PowerShell 구문 검사·`git diff --check` 통과(`%TEMP%\v05-K-55-report.md`).
+- **ORDER-11 V3** (2026-11-07, tauri-leader, 캡처 커밋 `a25696e`)
+  - 1차: 측정 스크립트가 파일 트리 줄을 찾지 못해 파일을 열지 못했다(측정 쪽 문제, 앱 문제 아님).
+  - 2차: 트리 줄을 이름으로 찾아 성공. 결과 `specs/v0.5/verify/ORDER-11/tauri-v3.json`.
+  - 결과: 형식 14개 + 심볼 위치 3개 모두 강조됨. 마크다운·HTML 색은 45개 중 39개가 차이 24 이하(ClearType), 나머지 6개는 측정 쪽 원인. 심볼 3개가 Zed와 같은 글자·문법 색. 미리보기 코드 블록 3개 테두리 1px·반지름 6·안쪽 12. 상태 바 HTML 이름 차이 → K-56. 범위 밖 차이(줄 높이 24.0/약 24.3, 미리보기 본문 x 456/433·간격, 현재 블록 막대)는 다음 Phase 후보. 표는 SPEC R-15 "V3 (2026-11-07)".
+- **K-56 상태 바 파일 형식 이름을 강조 카탈로그와 같게 (R-5, V3 발견)** (2026-11-07, 커밋 `59dd1ea`)
+  - 무엇을 했나: `src/editor/filetype.ts`, `src/syntax/assets.ts`(카탈로그 등록), `filetype.test.ts`. 후보 = 카탈로그의 보이는 언어 + 카탈로그에 없는 내장 항목, 이름 맞추기는 K-50 `fileLanguage` 그대로.
+  - 결과: HTML·TOML·Git Ignore 등이 이름으로 나온다. 복사본이 없으면 내장 19개 이름만.
+  - 검증: V1. typecheck 통과, 관련 테스트 5/5, `git diff --check` 통과(`%TEMP%\v05-K-56-report.md`). V3 재측정은 다음 화면 차례.
+- **C-28 리뷰 (K-46·K-48~K-55·K-51)** (2026-11-07, tauri-checker)
+  - 결과: PASS. zlext 제거·CSP 축소, 미리보기 칠하기는 DOM API만, 스크립트 고정 커밋·SHA256·압축 경로 검사·임시 폴더 정리, 실행 코드에 Zed 설치 경로 없음, 복사본 없을 때 평문, 하드코딩·인라인 style·경고 억제·의존성 변경 없음. 지적: gpui `spec/` 미동기화 → K-57.
+  - 검증 숫자 정정: checker 보고의 숫자(npm 197, cargo 25)는 이전 회차 값이었다. leader가 직접 다시 실행: typecheck 0 오류, `npm test` 214/214, `cargo test` 24개, clippy 경고 0(`%TEMP%\v05-C-28-report.md`).
+- **K-57 spec/ gpui 동기화·임시 값 교체** (2026-11-07, 커밋 전): gpui `spec/INDEX.md`·`zed-metrics.toml`·`ambiguous.md` 복사, `sidebar.item.*` 4개·`panel.focused_border` #2870bd가 toml ID가 됨, `scroll.wheel_step` 77.7로 정정됨(tauri 값 그대로). 보고 전이라 결과·검증은 보고 뒤에 적는다.
+- **Phase 10 push** (2026-11-07, tauri-leader): `a25696e`까지.
+- **W-37 ORDER-11 문서** (2026-11-07): SPEC R-12 코드 파일 심볼, R-15 구현·V3·미리보기 코드 블록·범위 밖 차이·toml 등록 요청, PROGRESS Phase 11, PLAN Phase 10·11. 검증 V0(문서만).
 
 ## 사용자 요청 작업
 
