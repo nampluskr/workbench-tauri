@@ -206,25 +206,28 @@ pub fn cancel_project_search(window: tauri::WebviewWindow, jobs: tauri::State<'_
     Ok(())
 }
 
-fn replacement_edit(snapshot: &SearchSnapshot, disk: &[u8], current_text: &str, options: &Value, index: usize, replacement: &str) -> Result<Value, String> {
+/// Edits for `count` matches starting at match `start` of the search snapshot; every guard of K-29 applies to each file.
+fn replacement_edits(snapshot: &SearchSnapshot, disk: &[u8], current_text: &str, options: &Value, start: usize, count: usize, replacement: &str) -> Result<Vec<Value>, String> {
     if disk != snapshot.disk { return Err("File changed on disk since the search. Search again before replacing.".into()); }
     if current_text != snapshot.text { return Err("Editor changed since the search. Search again before replacing.".into()); }
-    let pattern = pattern(options)?;
-    let captures = pattern.captures_iter(&snapshot.text).nth(index).ok_or("Search match no longer exists")?;
-    let found = captures.get(0).ok_or("Search match no longer exists")?;
-    let mut insert = String::new();
-    if options["regex"].as_bool() == Some(true) {
+    let template = if options["regex"].as_bool() == Some(true) {
         let escapes = regex::Regex::new(r"\\\\|\\n|\\t").expect("constant replacement escape regex");
-        let expanded = escapes.replace_all(replacement, |capture: &regex::Captures<'_>| match &capture[0] {
+        escapes.replace_all(replacement, |capture: &regex::Captures<'_>| match &capture[0] {
             r"\n" => "\n", r"\t" => "\t", r"\\" => "\\", _ => unreachable!("constant escape regex matched another value"),
-        });
-        captures.expand(&expanded, &mut insert);
-    } else { insert.push_str(replacement); }
-    Ok(json!({"from": snapshot.text[..found.start()].encode_utf16().count(), "to": snapshot.text[..found.end()].encode_utf16().count(), "insert": insert}))
+        }).into_owned()
+    } else { replacement.replace('$', "$$") };
+    let edits: Vec<Value> = pattern(options)?.captures_iter(&snapshot.text).skip(start).take(count).filter_map(|captures| {
+        let found = captures.get(0)?;
+        let mut insert = String::new();
+        captures.expand(&template, &mut insert);
+        Some(json!({"from": snapshot.text[..found.start()].encode_utf16().count(), "to": snapshot.text[..found.end()].encode_utf16().count(), "insert": insert}))
+    }).collect();
+    if count == 0 || edits.len() != count { return Err("Search match no longer exists".into()); }
+    Ok(edits)
 }
 
 #[tauri::command]
-pub async fn prepare_search_replace(window: tauri::WebviewWindow, jobs: tauri::State<'_, SearchJobs>, id: String, path: String, current_text: String, index: usize, replacement: String) -> Result<Value, String> {
+pub async fn prepare_search_replace(window: tauri::WebviewWindow, jobs: tauri::State<'_, SearchJobs>, id: String, path: String, current_text: String, range: (usize, usize), replacement: String) -> Result<Vec<Value>, String> {
     let run = jobs.0.lock().map_err(|error| error.to_string())?.get(window.label()).filter(|run| run.id == id).cloned().ok_or("Search expired. Search again before replacing.")?;
     let label = window.label().to_string();
     tauri::async_runtime::spawn_blocking(move || {
@@ -233,9 +236,9 @@ pub async fn prepare_search_replace(window: tauri::WebviewWindow, jobs: tauri::S
         let path = safe_path(Path::new(&path), &roots)?;
         let snapshot = run.snapshots.lock().map_err(|error| error.to_string())?.get(&path).cloned().ok_or("File was not in search results")?;
         let disk = fs::read(path).map_err(|error| error.to_string())?;
-        let edit = replacement_edit(&snapshot, &disk, &current_text, &run.options, index, &replacement)?;
+        let edits = replacement_edits(&snapshot, &disk, &current_text, &run.options, range.0, range.1, &replacement)?;
         if run.cancelled.load(Ordering::Relaxed) { return Err("Search was cancelled".into()); }
-        Ok(edit)
+        Ok(edits)
     }).await.map_err(|error| error.to_string())?
 }
 
@@ -259,16 +262,43 @@ mod tests {
     }
 
     #[test]
+    fn replace_all_skips_only_files_that_changed_after_the_search() {
+        let root = std::env::temp_dir().join(format!("workbench-search-all-{}", std::process::id()));
+        fs::create_dir_all(&root).unwrap();
+        for (name, text) in [("a.txt", "x x"), ("b.txt", "x"), ("c.txt", "x x x")] { fs::write(root.join(name), text).unwrap(); }
+        let root = crate::files::normal_path(&fs::canonicalize(root).unwrap());
+        let options = json!({"query":"x"});
+        let snapshots = Mutex::new(HashMap::new());
+        let mut shown = HashMap::new();
+        search(std::slice::from_ref(&root), &options, &AtomicBool::new(false), Some(&snapshots), |event| { shown.insert(PathBuf::from(event["file"]["path"].as_str().unwrap()), event["file"]["matches"].as_array().unwrap().len()); true }).unwrap();
+        assert_eq!(shown.len(), 3);
+        fs::write(root.join("b.txt"), "x changed").unwrap();
+        let mut done = 0;
+        for (path, count) in &shown {
+            let snapshot = snapshots.lock().unwrap().get(path).cloned().unwrap();
+            let disk = fs::read(path).unwrap(); // a file with no editor: the editor text is the disk text the search read
+            let edits = replacement_edits(&snapshot, &disk, &snapshot.text, &options, 0, *count, "y");
+            if path.ends_with("b.txt") { assert!(edits.is_err()); } else { assert_eq!(edits.unwrap().len(), *count); done += 1; }
+        }
+        assert_eq!(done, 2);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
     fn replacements_validate_snapshots_and_expand_zed_capture_syntax() {
         let snapshot = SearchSnapshot { disk: b"\xef\xbb\xbfunchanged bytes\r\n".to_vec(), text: "가😀 old-42 old-99".into() };
         let options = json!({"query":r"(old)-(\d+)","regex":true});
-        let edit = replacement_edit(&snapshot, &snapshot.disk, &snapshot.text, &options, 1, "${2}:$1\\n").unwrap();
-        assert_eq!(edit, json!({"from":11,"to":17,"insert":"99:old\n"}));
-        assert_eq!(replacement_edit(&snapshot, &snapshot.disk, &snapshot.text, &options, 0, "$$${1}x\\t\\\\").unwrap()["insert"], "$oldx\t\\");
-        assert_eq!(replacement_edit(&snapshot, &snapshot.disk, &snapshot.text, &json!({"query":"old"}), 0, "$1\\n").unwrap()["insert"], "$1\\n");
-        assert!(replacement_edit(&snapshot, b"changed", &snapshot.text, &options, 0, "lost").is_err());
-        assert!(replacement_edit(&snapshot, &snapshot.disk, "changed editor", &options, 0, "lost").is_err());
-        assert!(replacement_edit(&snapshot, &snapshot.disk, &snapshot.text, &options, 99, "lost").is_err());
+        let edit = replacement_edits(&snapshot, &snapshot.disk, &snapshot.text, &options, 1, 1, "${2}:$1\\n").unwrap();
+        assert_eq!(edit, vec![json!({"from":11,"to":17,"insert":"99:old\n"})]);
+        let all = replacement_edits(&snapshot, &snapshot.disk, &snapshot.text, &options, 0, 2, "$2").unwrap();
+        assert_eq!(all, vec![json!({"from":4,"to":10,"insert":"42"}), json!({"from":11,"to":17,"insert":"99"})]);
+        assert_eq!(replacement_edits(&snapshot, &snapshot.disk, &snapshot.text, &options, 0, 1, "$$${1}x\\t\\\\").unwrap()[0]["insert"], "$oldx\t\\");
+        assert_eq!(replacement_edits(&snapshot, &snapshot.disk, &snapshot.text, &json!({"query":"old"}), 0, 1, "$1\\n").unwrap()[0]["insert"], "$1\\n");
+        assert!(replacement_edits(&snapshot, b"changed", &snapshot.text, &options, 0, 2, "lost").is_err());
+        assert!(replacement_edits(&snapshot, &snapshot.disk, "changed editor", &options, 0, 2, "lost").is_err());
+        assert!(replacement_edits(&snapshot, &snapshot.disk, &snapshot.text, &options, 99, 1, "lost").is_err());
+        assert!(replacement_edits(&snapshot, &snapshot.disk, &snapshot.text, &options, 0, 3, "lost").is_err(), "more edits than matches");
+        assert!(replacement_edits(&snapshot, &snapshot.disk, &snapshot.text, &options, 0, 0, "lost").is_err());
     }
 
     #[test]
@@ -321,7 +351,7 @@ mod tests {
         assert!(events[0]["file"]["path"].as_str().unwrap().ends_with("a.txt"));
         assert_eq!(fs::read_to_string(root.join("a.txt")).unwrap(), "disk");
         let snapshot = snapshots.lock().unwrap().get(&root.join("a.txt")).cloned().unwrap();
-        assert_eq!(replacement_edit(&snapshot, b"disk", "draft", &options, 0, "next").unwrap(), json!({"from":0,"to":5,"insert":"next"}));
+        assert_eq!(replacement_edits(&snapshot, b"disk", "draft", &options, 0, 1, "next").unwrap(), vec![json!({"from":0,"to":5,"insert":"next"})]);
         let literal = RegexBuilder::new("draft").build().unwrap();
         let limited = file_matches(&root.join("a.txt"), "draft draft", &literal, 1, &cancelled).unwrap();
         assert_eq!(limited["matches"].as_array().unwrap().len(), 1);

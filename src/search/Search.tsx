@@ -80,26 +80,51 @@ function ProjectSearch(props: { setTitle: (title: string) => void; setPosition: 
       if (id === generation) setState((state) => ({ ...state, busy: false, error: String(error) }));
     }
   };
-  const replaceNext = async () => {
-    if (state().busy || state().error || replacing()) return;
-    if (JSON.stringify(searchOptions()) !== confirmedOptions) { await run(); return; }
-    const at = selected();
-    if (!at) return;
-    const editors = folders().flatMap((folder) => allTabs(contextOf(folder))).filter((tab) => !tab.tool && !tab.markdown && pathKey(tab.path) === pathKey(at.file.path) && tab.file.view);
-    if (new Set(editors.map((tab) => tab.file.doc)).size > 1) { notify(["File is open in multiple workspaces. Close duplicate editors before replacing."]); return; }
-    const file = editors[0]?.file;
-    const view = file?.view;
-    if (!file || !view || view.state.readOnly) { notify(["Open this file in an editable editor before replacing."]); return; }
+  const tabsOf = (path: string) => folders().flatMap((folder) => allTabs(contextOf(folder))).filter((tab) => !tab.tool && !tab.markdown && pathKey(tab.path) === pathKey(path));
+  const sleep = (ms: number) => new Promise((done) => setTimeout(done, ms));
+  /**
+   * Replace `count` results of one file from `start` in its editor Doc and leave it unsaved: Zed edits the buffers of the results and never saves
+   * them. A file without an editor opens in a regular tab first. Returns an error text, or "" when done.
+   */
+  const replaceIn = async (id: string, file: SearchFile, start: number, count: number): Promise<string> => {
+    const ready = () => tabsOf(file.path).find((tab) => tab.file.view);
+    if (new Set(tabsOf(file.path).map((tab) => tab.file.doc)).size > 1) return "File is open in multiple workspaces. Close duplicate editors before replacing.";
+    if (!tabsOf(file.path).length) {
+      const folder = folders().find((folder) => underOrSame(folder.path, file.path));
+      if (folder) openFile(contextOf(folder), file.path, false, false);
+    }
+    for (let waited = 0; !ready() && tabsOf(file.path).length && waited < 5000; waited += 25) await sleep(25); // the editor exists after the first read
+    const tab = ready();
+    const view = tab?.file.view;
+    if (!tab || !view || view.state.readOnly) return "Open this file in an editable editor before replacing.";
     const expected = view.state.doc;
-    const id = requestId;
-    setReplacing(true);
     try {
-      const edit = await invoke<ReplacementEdit>("prepare_search_replace", { id, path: at.file.path, currentText: expected.toString(), index: at.file.matches.indexOf(at.match), replacement: replacement() });
-      if (id !== requestId || JSON.stringify(searchOptions()) !== confirmedOptions || file.doc.closed || file.view !== view || pathKey(file.doc.path) !== pathKey(at.file.path) || !applyReplacement(view, expected, edit)) throw new Error("Editor or search changed. Search again before replacing.");
-      await run();
-    } catch (error) { notify([String(error)]); }
-    finally { setReplacing(false); }
+      const edits = await invoke<ReplacementEdit[]>("prepare_search_replace", { id, path: file.path, currentText: expected.toString(), range: [start, count], replacement: replacement() });
+      if (id !== requestId || JSON.stringify(searchOptions()) !== confirmedOptions || tab.file.doc.closed || tab.file.view !== view || pathKey(tab.file.doc.path) !== pathKey(file.path) || !applyReplacement(view, expected, edits)) return "Editor or search changed. Search again before replacing.";
+    } catch (error) { return String(error); }
+    return "";
   };
+  const replaceWith = async (work: (id: string) => Promise<void>) => {
+    if (state().busy || state().error || replacing() || !matches().length) return;
+    if (JSON.stringify(searchOptions()) !== confirmedOptions) { await run(); return; }
+    setReplacing(true);
+    try { await work(requestId); await run(); } finally { setReplacing(false); }
+  };
+  const replaceNext = () => replaceWith(async (id) => {
+    const at = selected();
+    const error = at && await replaceIn(id, at.file, at.file.matches.indexOf(at.match), 1);
+    if (error) notify([error]);
+  });
+  // A file that cannot be replaced is skipped; the others are done, and the count is reported at the end (Zed has no such message).
+  const replaceAll = () => replaceWith(async (id) => {
+    let skipped = 0;
+    let reason = "";
+    for (const file of state().files) {
+      const error = await replaceIn(id, file, 0, file.matches.length);
+      if (error) { skipped++; reason ||= error; }
+    }
+    if (skipped) notify([`${skipped} file${skipped > 1 ? "s were" : " was"} not replaced. ${reason}`]);
+  });
   onCleanup(() => { generation++; if (requestId) void invoke("cancel_project_search", { id: requestId }).catch(() => {}); });
   const collapseAll = () => setCollapsed(collapsed().size ? new Set<string>() : new Set(state().files.map((file) => file.path)));
   const toggleFile = (path: string) => setCollapsed((old) => { const next = new Set(old); if (!next.delete(path)) next.add(path); return next; });
@@ -140,8 +165,7 @@ function ProjectSearch(props: { setTitle: (title: string) => void; setPosition: 
       <label><input type="checkbox" checked={onlyOpen()} onChange={(e) => setOnlyOpen(e.currentTarget.checked)} />Only Search Open Files</label>
       <label><input type="checkbox" checked={ignored()} onChange={(e) => setIgnored(e.currentTarget.checked)} />Also search files ignored by configuration</label>
     </div></Show>
-    {/* shortcut: Replace Next supports open editors; unopened files and Replace All await 2b. */}
-    <Show when={replace()}><div class="project-search-toolbar"><input data-text-input aria-label="Replace in project" placeholder="Replace in project…" value={replacement()} onInput={(e) => setReplacement(e.currentTarget.value)} /><button type="button" disabled={state().busy || !!state().error || replacing() || !matches().length} onClick={() => void replaceNext()}>Replace next</button><button type="button" disabled>Replace all</button></div></Show>
+    <Show when={replace()}><div class="project-search-toolbar"><input data-text-input aria-label="Replace in project" placeholder="Replace in project…" value={replacement()} onInput={(e) => setReplacement(e.currentTarget.value)} /><button type="button" disabled={state().busy || !!state().error || replacing() || !matches().length} onClick={() => void replaceNext()}>Replace next</button><button type="button" disabled={state().busy || !!state().error || replacing() || !matches().length} onClick={() => void replaceAll()}>Replace all</button></div></Show>
     <Show when={state().error}><p class="search-error" role="alert">{state().error}</p></Show>
     <Show when={state().busy}><p role="status">Searching…</p></Show>
     <Show when={state().limited}><p role="status">Search Limits Reached. Try narrowing your search.</p></Show>
