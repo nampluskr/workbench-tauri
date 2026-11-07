@@ -17,13 +17,16 @@ const assets = new Map<string, IconAsset>([
   ...Object.entries(imageUrls).map(([p, url]): [string, IconAsset] => [virtual(p), { kind: "image", url }]),
 ]);
 
-// A theme JSON under icon_themes/ is relative to the extension root (its parent); any other is relative to its folder.
+// A theme JSON under icon_themes/ is relative to the extension root (its parent); the generated Zed (Default) JSON
+// is relative to the asset root (tools/fetch-zed-themes.ps1), so its root is "".
 const sources: IconSource[] = Object.entries(jsons).map(([path, json]) => {
   const file = virtual(path);
   const inExtension = /\/icon_themes\/[^/]+$/.test(file);
-  return { json, root: file.replace(inExtension ? /\/icon_themes\/[^/]+$/ : /\/[^/]+$/, "") };
+  return { json, root: inExtension ? file.replace(/\/icon_themes\/[^/]+$/, "") : "" };
 });
 
+/** Paths of the copied icon theme JSON files (the Extensions tab tags an extension that has some). */
+export const iconThemeFiles = Object.keys(jsons);
 export const iconThemes = buildIconThemes(sources, new Set(assets.keys()));
 export const iconThemeNames = iconThemes.map((t) => t.name);
 export const assetOf = (path: string): IconAsset | undefined => assets.get(path);

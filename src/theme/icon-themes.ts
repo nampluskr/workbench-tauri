@@ -20,17 +20,17 @@ const record = (value: unknown): Record<string, unknown> =>
   value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : {};
 
 /**
- * A theme's icon path -> an asset path. Paths are relative to the theme's root (`root`, "/"-separated, no drive).
- * Absolute paths, URLs and backslashes are rejected, so is a path that climbs above the asset space, and the
- * result must be one of `assets` (the copied icon folders), so nothing else can be reached (T-32.11).
- * shortcut: ".." is allowed inside the asset space because the generated Zed (Default) JSON points at ../../zed-icons.
+ * A theme's icon path -> an asset path. Paths are relative to the theme's root (`root`, "/"-separated, no drive;
+ * "" is the asset root). Absolute paths, URLs, backslashes and ".." are rejected, and the result must be one of
+ * `assets` (the copied icon folders), so nothing else can be reached (T-32.11, AGENTS 5).
  */
 export function resolveAsset(root: string, path: unknown, assets: ReadonlySet<string>): string | undefined {
   if (typeof path !== "string" || path.includes("\\") || path.includes("\0") || /^\/|^[a-z][a-z0-9+.-]*:/i.test(path)) return undefined;
   const parts = root.split("/").filter(Boolean);
   for (const part of path.split("/")) {
     if (part === "" || part === ".") continue;
-    if (part === "..") { if (!parts.pop()) return undefined; } else parts.push(part);
+    if (part === "..") return undefined;
+    parts.push(part);
   }
   const resolved = parts.join("/");
   return assets.has(resolved) ? resolved : undefined;

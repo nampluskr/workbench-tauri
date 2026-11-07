@@ -7,14 +7,14 @@ const ZED = "zed-icons/file_icons/";
 const CAT = "icon-themes/cat/icons/";
 const assets = new Set(["file", "rust", "docker", "book", "tsx", "json", "folder", "folder_open"].map((n) => `${ZED}${n}.svg`)
   .concat(["readme", "markdown", "folder_src", "folder_src_open", "_folder", "_folder_open"].map((n) => `${CAT}${n}.svg`)));
-const icon = (name: string, dir = ZED, prefix = "../../zed-icons/file_icons/") => ({ path: `${prefix}${name}.svg`, dir });
+const icon = (name: string) => ({ path: `${ZED}${name}.svg` }); // the generated Zed JSON: paths from the asset root
 
 const zedJson = JSON.stringify({ name: "Zed (Default)", themes: [{
   name: "Zed (Default)", appearance: "dark",
   file_stems: { Dockerfile: "docker" },
   file_suffixes: { rs: "rust", bak: "backup", md: "markdown", tsx: "tsx", json: "json" },
   file_icons: { default: icon("file"), rust: icon("rust"), docker: icon("docker"), markdown: icon("book"), tsx: icon("tsx"), json: icon("json") },
-  directory_icons: { collapsed: "../../zed-icons/file_icons/folder.svg", expanded: "../../zed-icons/file_icons/folder_open.svg" },
+  directory_icons: { collapsed: `${ZED}folder.svg`, expanded: `${ZED}folder_open.svg` },
 }] });
 const catJson = JSON.stringify({ name: "Cat", themes: [
   { name: "Cat Dark", appearance: "dark", file_stems: { README: "readme" }, file_suffixes: { md: "markdown" },
@@ -24,7 +24,7 @@ const catJson = JSON.stringify({ name: "Cat", themes: [
     chevron_icons: { collapsed: null, expanded: null } },
   { name: "Cat Light", appearance: "light", directory_icons: {}, file_icons: {} },
 ] });
-const list = buildIconThemes([{ json: catJson, root: "icon-themes/cat" }, { json: zedJson, root: "icon-themes/zed" }, { json: "{", root: "x" }, { json: "null", root: "x" }], assets);
+const list = buildIconThemes([{ json: catJson, root: "icon-themes/cat" }, { json: zedJson, root: "" }, { json: "{", root: "x" }, { json: "null", root: "x" }], assets);
 
 test("icon theme list: dark first then light by name; bad files are skipped", () => {
   assert.deepEqual(list.map((t) => t.name), ["Cat Dark", "Zed (Default)", "Cat Light"]);
@@ -33,7 +33,7 @@ test("icon theme list: dark first then light by name; bad files are skipped", ()
 
 test("icon paths: relative to the theme root, inside the copied folders only (T-32.11)", () => {
   assert.equal(resolveAsset("icon-themes/cat", "./icons/readme.svg", assets), `${CAT}readme.svg`);
-  for (const bad of ["/zed-icons/file_icons/file.svg", "C:\\x.svg", "https://x/a.svg", "..\\..\\x.svg", "../../../../zed-icons/file_icons/file.svg", "./icons/missing.svg", null, 5]) {
+  for (const bad of ["/zed-icons/file_icons/file.svg", "C:\\x.svg", "https://x/a.svg", "..\\..\\x.svg", "../zed-icons/file_icons/file.svg", "../../zed-icons/file_icons/file.svg", "icons/../icons/readme.svg", "./icons/missing.svg", null, 5]) {
     assert.equal(resolveAsset("icon-themes/cat", bad, assets), undefined, String(bad));
   }
 });
@@ -81,7 +81,7 @@ test("copied icon themes: nine themes and every returned path exists", { skip: !
     for (const f of readdirSync(new URL(base, assetsRoot), { recursive: true, encoding: "utf8" })) if (f.endsWith(".svg")) found.add(base + f.replaceAll("\\", "/"));
   }
   const sources = [
-    { json: readFileSync(new URL("zed/zed-default.json", copies), "utf8"), root: "icon-themes/zed" },
+    { json: readFileSync(new URL("zed/zed-default.json", copies), "utf8"), root: "" },
     ...readdirSync(new URL("catppuccin-icons/icon_themes/", copies)).map((f) => ({ json: readFileSync(new URL(`catppuccin-icons/icon_themes/${f}`, copies), "utf8"), root: "icon-themes/catppuccin-icons" })),
   ];
   const real = buildIconThemes(sources, found);

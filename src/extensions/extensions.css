@@ -25,7 +25,10 @@
 .extension-card-name { display: flex; align-items: baseline; gap: var(--extensions-card-gap-y); min-width: 0; }
 .extension-card-name strong { font-weight: inherit; }
 .extension-card-name span, .extension-author, .extension-status { color: var(--text-muted); }
-.extension-tag, .extension-description, .extension-author { font-size: var(--typography-size-small); }
+.extension-tag, .extension-card-bottom { display: flex; align-items: center; justify-content: space-between; gap: var(--extensions-card-gap-y); min-width: 0; }
+.extension-card-bottom .extension-author { min-width: 0; }
+.extension-card-bottom button { flex: none; --icon-size: var(--icons-size-small); }
+.extension-description, .extension-author { font-size: var(--typography-size-small); }
 .extension-tag { background: var(--element-background); border-radius: var(--extensions-card-corner-radius); padding-inline: var(--buttons-padding-x-default-compact); white-space: nowrap; }
 .extension-description, .extension-author { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .extensions-empty { margin: 0; padding-top: var(--extensions-card-padding); }

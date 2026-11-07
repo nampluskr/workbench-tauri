@@ -121,7 +121,7 @@ try {
     foreach ($key in $definitions.Keys) {
         $path = $definitions[$key]
         if ($path -cnotmatch '^icons/file_icons/[a-z0-9_]+\.svg$') { throw "Unexpected Zed icon path: $path" }
-        $fileIcons[$key] = @{ path = $path -replace '^icons/', '../../zed-icons/' }
+        $fileIcons[$key] = @{ path = $path -replace '^icons/', 'zed-icons/' }
     }
     $directories = [regex]::Match($source, '(?s)directory_icons: DirectoryIcons\s*\{\s*collapsed: Some\("([^"]+)"\.into\(\)\),\s*expanded: Some\("([^"]+)"\.into\(\)\),\s*\}')
     if (!$directories.Success -or $directories.Groups[1].Value -cne 'icons/file_icons/folder.svg' -or
@@ -135,19 +135,21 @@ try {
         file_suffixes = $suffixes
         file_icons = $fileIcons
         directory_icons = @{
-            collapsed = $directories.Groups[1].Value -replace '^icons/', '../../zed-icons/'
-            expanded = $directories.Groups[2].Value -replace '^icons/', '../../zed-icons/'
+            collapsed = $directories.Groups[1].Value -replace '^icons/', 'zed-icons/'
+            expanded = $directories.Groups[2].Value -replace '^icons/', 'zed-icons/'
         }
     }
     # The pinned upstream maps bak to backup without defining a backup icon; preserve that data.
     $undefined = @(@($stems.Values) + @($suffixes.Values) | Sort-Object -Unique | Where-Object { !$fileIcons.Contains($_) })
     if ($undefined.Count -ne 1 -or $undefined[0] -cne 'backup' -or $suffixes['bak'] -cne 'backup' -or
         $suffixes['r'] -cne 'r' -or $suffixes['R'] -cne 'r' -or $stems['Dockerfile'] -cne 'docker' -or
-        $fileIcons['default'].path -cne '../../zed-icons/file_icons/file.svg') { throw 'Unexpected Zed associations' }
+        $fileIcons['default'].path -cne 'zed-icons/file_icons/file.svg') { throw 'Unexpected Zed associations' }
     Write-Host 'Upstream undefined icon key preserved: bak -> backup (use default fallback)'
     $destination = Join-Path $root 'src/assets/icon-themes/zed'
+    # Icon paths in zed-default.json are relative to src/assets/ (no ".."): the app resolves this file against that root.
+    $assets = Join-Path $root 'src/assets'
     foreach ($path in @($fileIcons.Values | ForEach-Object { $_.path }) + @($theme.directory_icons.Values)) {
-        if (!(Test-Path -LiteralPath (Join-Path $destination $path) -PathType Leaf)) { throw "Missing Phase 5 icon: $path; run tools/fetch-zed-icons.ps1 first" }
+        if (!(Test-Path -LiteralPath (Join-Path $assets $path) -PathType Leaf)) { throw "Missing Phase 5 icon: $path; run tools/fetch-zed-icons.ps1 first" }
     }
     New-Item -ItemType Directory -Path $destination -Force | Out-Null
     $json = @{ name = 'Zed (Default)'; themes = @($theme) } | ConvertTo-Json -Depth 20
