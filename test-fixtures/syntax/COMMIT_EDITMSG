@@ -1,0 +1,15 @@
+Add greeting option to the sample tool
+
+Explain the change in the body. The greet function now takes a
+`loud` flag and prints the text in upper case when it is set.
+
+Refs: #42
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch master
+# Changes to be committed:
+#	modified:   src/greet.rs
+#	new file:   src/loud.rs
+#

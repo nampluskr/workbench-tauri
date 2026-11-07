@@ -1,0 +1,31 @@
+/* CSS sample. */
+@import url("theme.css");
+
+:root {
+  --accent: #2870bd;
+  --gap: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --accent: rgb(40 112 189 / 80%);
+  }
+}
+
+body > .card:hover,
+a[href^="https"]::after {
+  color: var(--accent);
+  margin: calc(var(--gap) * 2) auto 0;
+  font: 600 14px/1.5 "IBM Plex Sans", sans-serif;
+  transition: opacity 0.2s ease-in !important;
+}
+
+#main:not(.hidden) {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

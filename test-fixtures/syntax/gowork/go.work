@@ -1,0 +1,16 @@
+// Go Work sample.
+go 1.22
+
+toolchain go1.22.4
+
+use (
+	./app
+	./lib
+)
+
+use ./tools
+
+replace example.com/old v1.0.0 => ../old
+
+// Local modules
+use ./docs

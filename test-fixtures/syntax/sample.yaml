@@ -1,0 +1,31 @@
+# YAML sample.
+name: syntax-sample
+version: 1.2
+enabled: true
+nothing: null
+count: 0x2A
+
+anchors:
+  base: &base
+    retries: 3
+    timeout: 2.5s
+  service:
+    <<: *base
+    port: 8080
+
+steps:
+  - name: "build"
+    run: npm run build
+  - name: 'test'
+    run: |
+      npm test
+      echo done
+  - {name: lint, run: npm run lint}
+
+description: >
+  Folded text that
+  joins into one line.
+tags: [yaml, sample, fixture]
+date: 2026-11-07
+---
+second: document

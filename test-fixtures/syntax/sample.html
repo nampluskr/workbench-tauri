@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<!-- HTML sample: style, script, attributes, comments, entities. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Syntax &amp; Sample</title>
+  <style>
+    body { margin: 0; font: 14px/1.5 sans-serif; }
+    .note:hover { color: #2870bd; }
+  </style>
+</head>
+<body class="page" data-count="3">
+  <h1 id="top" style="color: red; padding: 4px">Hello &lt;world&gt; &copy; 2026</h1>
+  <p>Text with <b>bold</b>, <a href="https://example.com" target="_blank">a link</a>&nbsp;and more.</p>
+  <button type="button" onclick="greet('click')" disabled>Greet</button>
+  <ul>
+    <li>One</li>
+    <li>Two</li>
+  </ul>
+  <script>
+    const greet = (name) => {
+      console.log(`Hello, ${name}!`, 42, true);
+    };
+    document.querySelector("#top").addEventListener("click", () => greet("title"));
+  </script>
+</body>
+</html>

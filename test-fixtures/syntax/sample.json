@@ -1,0 +1,21 @@
+{
+  "name": "syntax-sample",
+  "version": "1.0.0",
+  "private": true,
+  "count": 42,
+  "ratio": 0.75,
+  "exponent": 1e-3,
+  "nothing": null,
+  "tags": ["json", "sample", "fixture"],
+  "author": {
+    "name": "Sample Author",
+    "url": "https://example.com"
+  },
+  "escaped": "line\nbreak \"quoted\" é",
+  "matrix": [
+    [1, 2, 3],
+    [4, 5, 6]
+  ],
+  "empty": {},
+  "flags": [true, false]
+}

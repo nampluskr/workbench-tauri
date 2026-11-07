@@ -1,0 +1,24 @@
+diff --git a/src/greet.rs b/src/greet.rs
+index 3b18e51..a1f2c7d 100644
+--- a/src/greet.rs
++++ b/src/greet.rs
+@@ -1,12 +1,14 @@
+ use std::fmt;
+
+-pub fn greet(name: &str) -> String {
+-    format!("Hello, {}", name)
++/// Greets someone.
++pub fn greet(name: &str, loud: bool) -> String {
++    let text = format!("Hello, {}", name);
++    if loud { text.to_uppercase() } else { text }
+ }
+
+ fn main() {
+-    println!("{}", greet("world"));
++    println!("{}", greet("world", true));
+ }
+@@ -20,3 +22,4 @@ mod tests {
+     #[test]
+     fn works() {}
++    // new comment
+ }
