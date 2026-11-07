@@ -299,6 +299,17 @@
   - 특이사항: 링크·junction을 따라가지 않는다(Zed는 루트 안 링크를 따라감). 결과 행 클릭은 그 행의 첫 일치이고 클릭한 글자의 열은 계산하지 않는다.
 - **리더 검사 (K-26 뒤)** (2026-11-07): typecheck 통과, `npm test` 177/177, `cargo test` 22개, clippy 경고 0(tauri-leader).
 - **W-19 Phase 8 문서** (2026-11-07): SPEC R-5(구현·미리보기 클릭 위치·파일 형식 대응 표)·R-22(버튼 표·Project Search 구현 범위), DECISIONS D-11~D-13, D-10 대기 해소. 검증 V0(문서만).
+- **K-27 Diagnostics 탭 (R-22 / I-22, core D-17)** (2026-11-07, 커밋 `5f68440`)
+  - 무엇을 했나: 진단 버튼·`Ctrl-Shift-M`으로 여는 Diagnostics 탭(`src/diagnostics/`)을 만들었다. 탭 제목 "No problems"와 `success` 색 `check`, 가운데 "No problems in workspace", Zed와 같은 툴바 아이콘 다섯 개(Collapse All Files, Buffer Search, Inline Assist, Refresh Diagnostics, Exclude Warnings)와 툴팁.
+  - 결과: 툴바 버튼은 모두 비활성이다. 결과가 없고(접기·검색), AI 기능이 없고(Inline Assist), 진단 출처가 없어서다(갱신·경고). 언어 서버·진단 수집은 만들지 않았다(core D-17). 캡처의 스파클은 `zed_assistant`, 새로고침은 `arrow_circle`로 Zed 소스에서 확인했다(`sparkle.svg`·`refresh_title.svg`로 추정하지 않음). SPEC R-22 "구현 — Diagnostics 탭"에 표를 적었다.
+  - 검증: V1. typecheck 통과, 관련 테스트 5/5, 액션명 보정 뒤 typecheck·진단 모델 테스트 1/1 다시 통과, `git diff --check` 통과(`%TEMP%\v05-K-27-report.md`).
+  - 실측 필요(V3): 탭 제목·체크 모양과 `success` 색, 툴바 배치·아이콘·툴팁, 가운데 본문, 재활성화·닫기, 상태 바 숨김.
+- **리더 검사 (K-27 뒤)** (2026-11-07): `npm test` 178/178(tauri-leader).
+- **K-28 미리보기 클릭 위치 확인 (R-5 / I-5, core 결정·D-13)** (2026-11-07, 커밋 `9c52d07`)
+  - 무엇을 했나: `src/editor/markdown.test.ts`에 렌더 결과 기준 테스트 4개(목록 항목·느슨한 목록 문단·코드 블록·인용 안 문단·표 행)와 테스트 전용 조상 탐색 도우미를 더했다. 앱 코드는 바꾸지 않았다.
+  - 결과: 기존 구현(`data-line` 가장 가까운 조상, 줄 + 1, 열 1)이 core 결정 "가장 안쪽 블록의 원본 시작 줄, 열 1"과 같았다. 블록 종류 표를 SPEC R-5에 적었다. 표 셀은 그 행(tr)의 시작 줄이며 현재 동작으로 두고 core 확인을 요청했다.
+  - 검증: V1. `src/editor/markdown.test.ts` 9/9(기존 5 + 새 4), typecheck 통과, `git diff --check` 통과(`%TEMP%\v05-K-28-report.md`).
+- **W-20 문서** (2026-11-07): SPEC R-5 블록 종류 표·표 셀 동작(core 확인 요청), R-22 Diagnostics 탭 구현 절, R-22 버튼 툴팁 키 표시를 코드(`status.ts`·`tooltip.ts`·`builtin.ts`)로 확인해 고침(W-19 확인 필요 해소). DECISIONS D-13에 표 위치 한 줄. 검증 V0(문서만).
 
 ## 사용자 요청 작업
 

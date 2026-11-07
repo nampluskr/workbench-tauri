@@ -642,7 +642,35 @@ I-5, 사용자 2026-11-06, 참고 화면 `refs/I-5-zed.png`, `refs/zed-split.png
 **마크다운 미리보기 클릭 위치 (core 결정 2026-11-07)**
 
 - 누른 곳을 포함하는 가장 안쪽 블록의 원본 시작 줄, 열 1이다(`DECISIONS.md` D-13). 미리보기 탭마다 따로 유지한다.
-- 블록 종류 표: K-28 보고 뒤.
+- 구현: 렌더러가 블록에 둔 `data-line`(0부터)에서 누른 곳의 가장 가까운 조상(`closest("[data-line]")`)을 찾아 `줄 + 1`, 열 1로 보인다. K-28에서 테스트로 확인했고 앱 코드는 바꾸지 않았다.
+- 링크를 누르면 링크 동작(I-085)이 먼저 처리되고 위치는 바뀌지 않는다.
+
+*블록 종류 표 (K-28)* — 표시 열은 모두 1이다. 예의 줄 번호는 테스트 원본 기준이다.
+
+| 블록 종류 | 원본 줄 기준 | 예 |
+|---|---|---|
+| 문단 | 가장 안쪽 p의 시작 줄 | 앞 문단·빈 줄 뒤의 문단 안 strong을 클릭 → 3:1 |
+| 제목 | 제목 토큰의 시작 줄 | 3행의 `## heading` 안 strong을 클릭 → h2, 3:1 |
+| 목록 항목(타이트) | 가장 안쪽 li의 시작 줄 | 둘째 항목 → 2:1, 그 안 중첩 항목 → 3:1 |
+| 목록 항목 안 문단(느슨한 목록) | li보다 안쪽인 p의 시작 줄 | 1행에서 시작한 항목의 3행 둘째 문단 → 3:1 |
+| 코드 블록(펜스) | 여는 펜스 줄 | 3행에서 연 펜스 안 어느 코드 줄을 클릭해도 → code, 3:1 |
+| 코드 블록(들여쓰기) | 코드 블록의 첫 들여쓰기 줄 | 3~4행 코드 중 둘째 줄 클릭 → pre, 3:1 |
+| 표 머리 셀 | 해당 tr의 시작 줄 | 표 머리 행 3행 → 3:1 |
+| 표 본문 셀 | 해당 tr의 시작 줄 | 표 시작 3행·본문 5행 → 5:1 |
+| 인용 안 블록 | blockquote 안 가장 안쪽 data-line 블록의 시작 줄 | 1행 인용 안 3행 둘째 문단 → p, 3:1 |
+| 수평선 | hr의 원본 줄 | 문단·빈 줄 뒤 3행 `---` → 3:1 |
+| front matter(키·값 표) | front matter 전체 블록의 여는 `---` 줄 | 2행 값 클릭 → 바깥 div, 1:1 |
+| front matter(원문 코드) | front matter 전체 블록의 여는 `---` 줄 | 중첩 YAML 항목 클릭 → pre.frontmatter-raw, 1:1 |
+
+*표 셀 → 그 행 tr의 시작 줄: 현재 동작, core 확인 요청*
+
+th·td에는 줄 정보가 없고 tr에 있어, 표 시작 줄로 통일하지 않고 그 행의 원본 시작 줄을 보인다. 구분선 행(`| --- |`)은 렌더된 셀이 없어 누를 수 없다.
+
+| 클릭 대상(테스트 원본 3~6행 표) | 가장 가까운 data-line 요소 | 표시값 |
+|---|---|---|
+| 머리 셀 | tr, data-line=2 | 3:1 |
+| 첫 본문 셀 | tr, data-line=4 | 5:1 |
+| 둘째 본문 행 셀 | tr, data-line=5 | 6:1 |
 
 **파일 형식 대응 표 (K-24)**
 
@@ -1242,17 +1270,18 @@ I-22, 사용자 2026-11-06("나머지는 Zed와 동일하게"), core D-12(루트
 
 | 버튼 | 아이콘 | 툴팁 | 키 | 액션 |
 |---|---|---|---|---|
-| 사이드바 토글(닫힘 때만) | `threads_sidebar_left_closed` | Open Folder Sidebar | `Ctrl-Alt-J` | `multi_workspace::ToggleWorkspaceSidebar` |
+| 사이드바 토글(닫힘 때만) | `threads_sidebar_left_closed` | Open Folder Sidebar | `Ctrl-Alt-J`(키맵 조회) | `multi_workspace::ToggleWorkspaceSidebar` |
 | 프로젝트 패널, dock 열림 | `file_tree` | Close Left Dock | `Ctrl-B` | `workspace::ToggleLeftDock` |
 | 프로젝트 패널, dock 닫힘 | `file_tree` | Project Panel | `Ctrl-Shift-E` | `project_panel::ToggleFocus` |
 | 검색 | `magnifying_glass` | Project Search | `Ctrl-Shift-F` | `pane::DeploySearch` |
 | 진단 | `check` | Project Diagnostics | `Ctrl-Shift-M` | `diagnostics::Deploy` |
 
 - 키 출처: Zed `4304dec` `assets/keymaps/default-windows.json` Workspace(`ctrl-shift-f` → `pane::DeploySearch`, `ctrl-shift-m` → `diagnostics::Deploy`). 새 키는 `BUILTIN`이 아니라 `STATUS_BINDINGS`에 두었다(v0.4 고정 표 테스트 유지).
+- 툴팁의 키 표시(코드 확인, W-20): 버튼은 `IconButton`에 `label`과 `action`만 주고(`src/shell/status.ts` `statusButtons`), 툴팁은 그 액션의 키를 지금 키맵에서 찾아 제목 옆에 보인다(`src/shell/tooltip.ts` `shortcutFor(keymap, action, focusStack())`). 키를 버튼에 고정하지 않으므로 표의 키는 기본 키맵 값이다: `Ctrl-Alt-J`·`Ctrl-B`·`Ctrl-Shift-E`는 `src/keymap/builtin.ts` 38~40줄, `Ctrl-Shift-F`·`Ctrl-Shift-M`은 `STATUS_BINDINGS`. 사용자 키맵을 바꾸면 툴팁의 키도 따라 바뀐다.
 - 구분선: `statusbar.left_divider.width`(1)·`statusbar.left_divider.height`(16), 색 `border`, 세로 가운데, `aria-hidden`(`DECISIONS.md` D-12). V3 대조 좌표 `x_after_sidebar_toggle` 28, `x_after_file_tree` 59, `y_top` 829(desktop_measure_100, 1440×852, One Dark)는 코드에 넣지 않았다.
 - 켜짐 표시(R-19): dock이 열리면 `file_tree`가 `text.accent` 색과 `aria-pressed=true`가 된다. 배경은 바뀌지 않는다(Zed `IconButton` 선택 기본색 `Color::Selected` → `text_accent`, `crates/ui/src/components/button/icon_button.rs:267~268`, `crates/ui/src/styles/color.rs:108`).
 - 상태 바의 Add Project(`folder_add`)는 뺐다. 사이드바 아래쪽 줄의 Add Project와 `threads_sidebar_left_open` 토글은 그대로다.
-- 진단 버튼은 K-27(Diagnostics 탭) 전까지 아무 일도 하지 않는다.
+- 진단 버튼은 K-27(Diagnostics 탭) 전까지 아무 일도 하지 않았다. K-27 뒤에는 아래 Diagnostics 탭을 연다.
 
 **구현 — Project Search 탭 (K-26)**
 
@@ -1265,6 +1294,26 @@ I-22, 사용자 2026-11-06("나머지는 Zed와 동일하게"), core D-12(루트
 - 이동·열기: 이전/다음은 일치 단위로 순환한다. 결과 행 클릭은 그 행의 첫 일치(문맥 행은 열 1), Open File은 그 파일 첫 일치, `Alt-Enter`는 현재 일치를 일반 편집 탭으로 연다.
 - 스펙 ID: E-061~E-063(검색칸). Project Search 전용 화면 수치는 추정해 넣지 않았다.
 - 하지 않은 것: Replace 쓰기(Replace 줄·입력칸·비활성 버튼만 보임, K-29 진행 중), 클릭한 글자의 열 계산.
+
+**구현 — Diagnostics 탭 (K-27)**
+
+- 열기: 상태 바 진단 버튼·`Ctrl-Shift-M`(`diagnostics::Deploy`). 같은 컨텍스트의 어느 pane에든 이미 있으면 그 탭을 다시 활성화한다(`openTool`).
+- 탭: 내부 식별은 "Project Diagnostics"로 고정하고 표시 제목은 "No problems". 앞의 `check` 아이콘은 `success` 토큰 색이다(Zed `Color::Success` → `status.success`, One Dark `#a1c181ff`). 다른 도구 탭의 아이콘 색은 그대로다.
+- 본문: 가운데 "No problems in workspace", `text.muted`.
+- 상태 바: 위치·파일 형식 신호가 없는 도구 탭이라 두 항목이 숨는다(R-5).
+- 언어 서버·진단 수집·가짜 진단 데이터·새 의존성은 없다(core D-17).
+
+| 위치 | Zed IconName / SVG | 툴팁 | 이 앱의 동작 |
+|---|---|---|---|
+| 왼쪽 | ChevronDownUp / chevron_down_up | Collapse All Files | 결과가 없어 비활성. 접힘 상태를 따로 만들지 않음 |
+| 오른쪽 1 | MagnifyingGlass / magnifying_glass | Buffer Search | 검색할 진단 내용이 없어 비활성 |
+| 오른쪽 2 | ZedAssistant / zed_assistant | Inline Assist | 지원하지 않는 AI 기능이므로 비활성. 캡처의 스파클은 이 아이콘이며 sparkle.svg로 추정하지 않음 |
+| 오른쪽 3 | ArrowCircle / arrow_circle | Refresh Diagnostics | 진단 출처·언어 서버가 없어 비활성. refresh_title.svg로 추정하지 않음 |
+| 오른쪽 4 | Warning / warning | Exclude Warnings | 경고 토큰색으로 표시하되 진단 데이터가 없어 비활성. 경고 포함/제외 상태를 만들지 않음 |
+
+- 다섯 버튼 모두 처리기가 없어 `IconButton` 규칙대로 비활성이지만 툴팁은 있다. 액션 이름은 툴팁 조회용으로만 쓰고, 이 앱에 없는 액션의 키를 새로 만들지 않았다.
+- Zed 근거(`4304dec`): `crates/diagnostics/src/diagnostics.rs:104~121`(빈 본문 문구·가운데·Muted), 같은 파일 762~772(Check + Success + No problems 탭), `crates/ui/src/styles/color.rs:109`(Success → `status.success`), `crates/diagnostics/src/toolbar_controls.rs:53~57,62~124`(오른쪽 네 아이콘과 툴팁, Inline Assist는 Zed에서 agent 설정에 따라 나타남), `crates/search/src/buffer_search.rs:110~143`(왼쪽 Collapse All Files, 접혔을 때 Expand All Files). 캡처 `specs/v0.5/verify/ORDER-08/zed-diagnostics.png`. Zed 코드는 복사하지 않았다.
+- 화면 수치는 추정하지 않고 기존 툴바·아이콘·글꼴 스펙 변수를 썼다.
 
 ---
 
