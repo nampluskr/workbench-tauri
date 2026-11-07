@@ -4,16 +4,16 @@ import { commands } from "../keymap/keyboard.ts";
 import { openTool } from "../workspace/context.ts";
 import { editorContext } from "../workspace/store.ts";
 import Icon from "../shell/Icon.tsx";
-import { bundledExtensions, CATEGORIES, emptyExtensions, filterExtensions, INSTALL_FILTERS, type Category, type InstallFilter } from "./model.ts";
+import { bundledExtensions, CATEGORIES, emptyExtensions, filterExtensions, INSTALL_FILTERS, type InstallFilter } from "./model.ts";
+import { category, setCategory } from "./state.ts";
 import { themeFiles } from "../theme/themes.ts";
 import "./extensions.css";
 
 const icons = import.meta.glob<string>("../assets/zed-icons/*.svg", { query: "?raw", import: "default", eager: true });
-const bundled = bundledExtensions(themeFiles,Object.keys(icons).length > 0);
+const bundled = bundledExtensions(themeFiles, Object.keys(icons).length > 0);
 
 function Extensions() {
   const [search, setSearch] = createSignal("");
-  const [category, setCategory] = createSignal<Category>("All");
   const [installed, setInstalled] = createSignal<InstallFilter>("All");
   const rows = createMemo(() => filterExtensions(bundled, search(), category(), installed()));
   return <section class="extensions" aria-label="Extensions">

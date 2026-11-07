@@ -17,6 +17,7 @@ const VARS: [token: string, cssVar: string][] = [
   ["title_bar.inactive_background", "--title-bar-inactive-background"],
   ["text", "--text"],
   ["text.muted", "--text-muted"],
+  ["text.placeholder", "--text-placeholder"],
   ["ghost_element.hover", "--ghost-element-hover"],
   ["ghost_element.active", "--ghost-element-active"],
   ["status_bar.background", "--status-bar-background"],

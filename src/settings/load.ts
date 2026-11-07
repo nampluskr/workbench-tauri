@@ -17,14 +17,19 @@ async function reload(): Promise<void> {
   catch (error) { notify([String(error)]); }
   try {
     await applyMetrics(next.ui_font_size, next.buffer_font_size);
-    await applyTheme(next.theme);
+    await showTheme(next.theme);
     setSettings(next);
-    document.querySelectorAll<HTMLElement>(".cm-editor").forEach((el) => {
-      const view = EditorView.findFromDOM(el);
-      view?.dispatch({}); // Rebuild visible syntax captures against the new theme's keys.
-      view?.requestMeasure();
-    });
   } catch (error) { notify([String(error)]); }
+}
+
+/** Apply a theme in memory only (the Select Theme preview) and refresh what depends on its syntax keys. */
+export async function showTheme(name: string): Promise<void> {
+  await applyTheme(name);
+  document.querySelectorAll<HTMLElement>(".cm-editor").forEach((el) => {
+    const view = EditorView.findFromDOM(el);
+    view?.dispatch({}); // Rebuild visible syntax captures against the new theme's keys.
+    view?.requestMeasure();
+  });
 }
 
 export function loadSettings(): Promise<void> {

@@ -60,7 +60,7 @@ export function appMenus(markdownDisabled: () => boolean): Menu[] {
 export const userMenu = (classic: () => boolean): MenuEntry[] => [
   { label: "Settings", action: "zed::OpenSettings" },
   { label: "Keymap", action: "zed::OpenKeymap" },
-  { label: "Themes…", shortcut: "ctrl-k ctrl-t", disabled: true },
+  { label: "Themes…", action: "theme_selector::Toggle" },
   { label: "Icon Themes…", disabled: true },
   { label: "Extensions", action: "zed::Extensions" },
   "separator",

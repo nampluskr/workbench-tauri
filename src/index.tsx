@@ -13,6 +13,7 @@ import { installSettingsCommands } from "./settings/main.ts";
 import "./app.css";
 import "./shell/KeymapEditor.tsx";
 import "./extensions/Extensions.tsx";
+import "./theme/commands.ts";
 
 const root = document.getElementById("root");
 if (!root) {

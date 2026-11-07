@@ -72,12 +72,16 @@ test("K-10-R1: Settings, Keymap and Classic are active; custom layout is checked
   let classic = true;
   const USER_MENU = userMenu(() => classic);
   assert.deepEqual(labels(USER_MENU), ["Settings", "Keymap", "Themes…", "Icon Themes…", "Extensions", "---", "Panel Layout"]);
-  assert.deepEqual(USER_MENU.slice(0, 5).map((e) => e !== "separator" && e.shortcut ? displayChunks(e.shortcut) : []), [[], [], ["Ctrl-K", "Ctrl-T"], [], []]);
+  assert.deepEqual(USER_MENU.slice(0, 5).map((e) => e !== "separator" && e.shortcut ? displayChunks(e.shortcut) : []), [[], [], [], [], []]);
   const keymap = USER_MENU[1];
   if (keymap === "separator") assert.fail();
   assert.equal(keymap.action, "zed::OpenKeymap");
   assert.ok(!keymap.disabled);
-  assert.ok([2, 3].every((i) => USER_MENU[i] !== "separator" && USER_MENU[i].disabled));
+  assert.ok([3].every((i) => USER_MENU[i] !== "separator" && USER_MENU[i].disabled));
+  const themes = USER_MENU[2];
+  if (themes === "separator") assert.fail();
+  assert.equal(themes.action, "theme_selector::Toggle");
+  assert.ok(!themes.disabled);
   const extensions = USER_MENU[4];
   if (extensions === "separator") assert.fail();
   assert.equal(extensions.action, "zed::Extensions");

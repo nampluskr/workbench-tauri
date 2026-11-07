@@ -12,6 +12,7 @@ import { eachContext, editorContext } from "../workspace/store.ts";
 import { KEYMAP_RECORD_MAX_STROKES } from "../spec/metrics.ts";
 import { SETTINGS_BINDINGS } from "../settings/model.ts";
 import { EXTENSIONS_BINDINGS } from "../extensions/model.ts";
+import { THEME_SELECTOR_BINDINGS } from "../theme/selector.ts";
 import { notify } from "./toast.ts";
 import Icon from "./Icon.tsx";
 import "./keymap-editor.css";
@@ -44,7 +45,7 @@ function KeymapEditor() {
   const [saving, setSaving] = createSignal(false);
   const actions = () => [...commands.keys()].sort();
   const loaded = createMemo(() => {
-    try { return { rows: keymapRows([...BUILTIN, ...KEYMAP_EDITOR_BINDINGS, ...SETTINGS_BINDINGS, ...EXTENSIONS_BINDINGS], userKeymapText(), actions()), error: "" }; }
+    try { return { rows: keymapRows([...BUILTIN, ...KEYMAP_EDITOR_BINDINGS, ...SETTINGS_BINDINGS, ...EXTENSIONS_BINDINGS, ...THEME_SELECTOR_BINDINGS], userKeymapText(), actions()), error: "" }; }
     catch (error) { return { rows: [], error: String(error) }; }
   });
   const rows = createMemo(() => filterBindings(loaded().rows, filter()));

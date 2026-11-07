@@ -232,7 +232,7 @@ export default function AppMenu(props: { popupOnly?: boolean } = {}) {
   let licenses!: HTMLDialogElement;
   let licenseFocus: HTMLElement | null = null;
   const [notices, setNotices] = createSignal("");
-  const copies = import.meta.glob<string>(["../assets/zed-icons/LICENSE*", "../assets/icons/LICENSE-LUCIDE", "../theme/assets/**/LICENSE"], { query: "?raw", import: "default", eager: true });
+  const copies = import.meta.glob<string>(["../assets/zed-icons/LICENSE*", "../assets/icons/LICENSE-LUCIDE", "../theme/assets/**/LICENSE*", "../assets/icon-themes/**/LICENSE*"], { query: "?raw", import: "default", eager: true });
   commands.set("zed::OpenLicenses", () => {
     licenseFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setNotices("Loading licenses…");

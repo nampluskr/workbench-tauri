@@ -22,6 +22,7 @@ export const TARGET_TOKENS = [
   "title_bar.inactive_background",
   "text",
   "text.muted",
+  "text.placeholder", // P-006: the picker input placeholder
   "ghost_element.hover",
   "ghost_element.active",
   "status_bar.background",

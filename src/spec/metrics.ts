@@ -63,6 +63,32 @@ const METRICS: Record<string, string> = {
   "titlebar.user_menu.button_height": rem(22), // I-608
   "titlebar.user_menu.button_icon_size": rem(14), // I-601
   "titlebar.user_menu.button_corner_radius": rem(4), // I-609
+  // picker.* and picker.theme_selector.*: spec/zed-metrics.toml [picker] (P-001..P-004, P-010)
+  "picker.modal_top_offset": rem(80), // P-001
+  "picker.default_width": rem(544), // P-002 (theme_selector.width is the same 544)
+  "picker.default_max_height": rem(384), // P-002
+  "picker.max_width_ratio": "0.95", // P-002
+  "picker.max_height_ratio": "0.95", // P-002
+  "picker.corner_radius": rem(8), // P-002
+  "picker.border_width": rem(1), // P-002
+  "picker.input_divider_width": rem(1), // P-003
+  "picker.input_row.height": rem(36), // P-003
+  "picker.input_row.padding_x": rem(10), // P-003
+  "picker.input_row.gap": rem(4), // P-003
+  "picker.list.padding_y": rem(4), // P-004
+  "picker.item.margin_x": rem(4), // P-004
+  "picker.item.padding_x": rem(6), // P-004
+  "picker.item.padding_y": rem(4), // P-004
+  "picker.item.corner_radius": rem(4), // P-004
+  "picker.item.gap": rem(4), // P-004
+  "picker.theme_selector.footer_padding": rem(8), // P-010
+  "picker.theme_selector.footer_border_top": rem(1), // P-010
+  // Not in the toml; values from 01-LAYOUT 4.13 text: window height margin (P-002), line height 1.618 (P-004 source
+  // calculation), empty-result padding (P-004), Check icon size (P-010).
+  "picker.window_height_margin": rem(160),
+  "picker.item.line_height_multiplier": "1.618",
+  "picker.empty.padding_y": rem(8),
+  "picker.item.check_size": rem(16),
   "units.rem_size": `${REM_SIZE}px`, // L-01
   "typography.ui_font_size": rem(16), // L-08
   "typography.buffer_font_size": "15px", // L-08

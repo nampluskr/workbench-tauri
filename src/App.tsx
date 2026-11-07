@@ -7,6 +7,7 @@ import { PaneArea } from "./shell/Pane.tsx";
 import { resizeHandle } from "./shell/dock.ts";
 import { dockOpen, sidebarOpen, toggleDock, togglePanelFocus, toggleSidebar } from "./shell/panels.ts";
 import { addFolder } from "./workspace/store.ts";
+import { PickerHost } from "./shell/Picker.tsx";
 
 // Core D-9 / I-18: icon names follow the pinned Zed sources (K-08 report).
 export default function App() {
@@ -67,6 +68,7 @@ export default function App() {
           </div>
         </footer>
       </div>
+      <PickerHost />
     </>
   );
 }

@@ -1,0 +1,78 @@
+/* P-001..P-004, P-006, P-010. Sizes come from spec/zed-metrics.toml [picker] via src/spec/metrics.ts. */
+.picker {
+  position: fixed;
+  top: var(--picker-modal-top-offset); /* P-001 */
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  width: min(var(--picker-default-width), calc(100vw * var(--picker-max-width-ratio))); /* P-002 */
+  max-width: none;
+  max-height: none;
+  overflow: hidden;
+  border: var(--picker-border-width) solid var(--border-variant); /* P-006 */
+  border-radius: var(--picker-corner-radius);
+  background: var(--elevated-surface-background);
+  color: var(--text);
+  font-size: var(--typography-size-default);
+  /* elevation_3 (P-002, 01-LAYOUT 4.13.1): four layers; the document gives them, spec/zed-metrics.toml does not. */
+  box-shadow:
+    0 2px 3px rgb(0 0 0 / 12%),
+    0 4px 8px rgb(0 0 0 / 8%),
+    0 8px 16px rgb(0 0 0 / 4%),
+    0 12px 24px rgb(0 0 0 / 12%);
+}
+.picker::backdrop { background: transparent; } /* a normal Picker does not dim the window (P-001) */
+.picker-input-row {
+  display: flex;
+  align-items: center;
+  gap: var(--picker-input-row-gap);
+  height: var(--picker-input-row-height);
+  padding: 0 var(--picker-input-row-padding-x);
+  border-bottom: var(--picker-input-divider-width) solid var(--border-variant); /* P-003 */
+}
+.picker-input { flex: 1; min-width: 0; padding: 0; border: 0; outline: none; background: none; color: var(--text); font: inherit; }
+.picker-input::placeholder { color: var(--text-placeholder); }
+.picker-list {
+  max-height: min(var(--picker-default-max-height), calc((100vh - var(--picker-window-height-margin)) * var(--picker-max-height-ratio))); /* P-002 */
+  overflow-y: auto;
+  padding: var(--picker-list-padding-y) 0;
+}
+.picker-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--picker-item-gap);
+  margin: 0 var(--picker-item-margin-x);
+  padding: var(--picker-item-padding-y) var(--picker-item-padding-x);
+  border-radius: var(--picker-item-corner-radius);
+  line-height: var(--picker-item-line-height-multiplier);
+  white-space: nowrap;
+}
+.picker-item.selected { background: var(--ghost-element-selected); } /* hover selects, so one state covers both */
+.picker-item:active { background: var(--ghost-element-active); }
+.picker-label .match { color: var(--text-accent); }
+.picker-check { display: flex; color: var(--icon-muted); --icon-size: var(--picker-item-check-size); }
+.picker-empty {
+  margin: 0 var(--picker-item-margin-x);
+  padding: var(--picker-empty-padding-y) var(--picker-item-padding-x);
+  color: var(--text-muted);
+}
+.picker-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--picker-theme-selector-footer-padding);
+  border-top: var(--picker-theme-selector-footer-border-top) solid var(--border-variant); /* P-010 */
+}
+.picker-footer button {
+  height: var(--buttons-height-default);
+  padding: 0 var(--buttons-padding-x-default-compact);
+  border: 0;
+  border-radius: var(--settings-control-corner-radius);
+  background: none;
+  color: var(--text);
+  font: inherit;
+}
+.picker-footer button:hover { background: var(--ghost-element-hover); }
+.picker-footer button:active { background: var(--ghost-element-active); }
