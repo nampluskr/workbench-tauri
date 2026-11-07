@@ -231,6 +231,30 @@ tauri-leader 2026-11-07, 캡처 `specs/v0.5/verify/ORDER-06/zed-v-menu.png`(1440
 | UI Font | Font Size | Font size for UI elements. | `ui_font_size` | 숫자 입력 + 감소·증가 버튼(1 단위, 유한한 양수만) | 16 |
 | Buffer Font | Font Size | Font size for editor text. | `buffer_font_size` | 숫자 입력 + 감소·증가 버튼(1 단위, 유한한 양수만) | 15 |
 
+*Settings 행 문구 표 (ORDER-06-R2, gpui 대조용)*
+
+Zed 문구는 커밋 `4304dec732` `crates/settings_ui/src/page_data.rs`(`appearance_page`, 556줄부터)의 값을 그대로 옮겼다(코드는 옮기지 않음). 앱 표시는 `src/settings/model.ts` `ROWS`·`Settings.tsx`다.
+
+| 자리 | 키 | Zed 문구 | page_data.rs 줄 | 앱 표시 |
+|---|---|---|---|---|
+| 페이지 제목·탐색 범주 | — | Appearance | 1686 | 같음 |
+| 소제목 | — | Theme | 559 | 같음 |
+| 소제목 | — | Buffer Font | 925 | 같음 |
+| 소제목 | — | UI Font | 1104 | 같음 |
+| 행 제목 | `theme` | Theme Name | 627 | 같음 |
+| 행 설명 | `theme` | The name of your selected theme. | 628 | 같음 |
+| 행 제목 | `icon_theme` | Icon Theme Name | 808 | 같음 |
+| 행 설명 | `icon_theme` | The name of your selected icon theme. | 809 | 같음 |
+| 행 제목 | `ui_font_size` | Font Size | 1120 | 같음 |
+| 행 설명 | `ui_font_size` | Font size for UI elements. | 1121 | 같음 |
+| 행 제목 | `buffer_font_size` | Font Size | 941 | 같음 |
+| 행 설명 | `buffer_font_size` | Font size for editor text. | 942 | 같음 |
+| 소제목 순서 | — | Theme → Buffer Font → UI Font(`concat_sections!` 1672~1675) | 1672~1675 | **다름**: Theme → UI Font → Buffer Font |
+| Theme 위 선택 행 | `theme` | Theme Mode / "Choose a static, fixed theme or dynamically select themes based on appearance and light/dark modes." | 563~564 | **다름**: 없음(Static일 때의 Theme Name 행만 둔다) |
+| Icon Theme Name 위 선택 행 | `icon_theme` | Icon Theme / "The custom set of icons Zed will associate with files and directories." | 742~743 | **다름**: 없음(Static일 때의 Icon Theme Name 행만 둔다) |
+
+- 네 행의 제목·설명 문구는 Zed와 같다. 다른 곳은 소제목 순서와 Theme Mode·Icon Theme 선택 행이 없는 것뿐이다(코드는 고치지 않았다, ORDER-06-R2는 문서만).
+
 - 드롭다운: 네이티브 select가 아니라 글자 + `chevron_up_down.svg`의 테두리 버튼이다(높이 28, 좌우 padding 8, 글꼴 14, 아이콘 14, gap 4, 반경 4; L-05·L-06·L-07). 누르면 기존 앱 메뉴 팝업을 버튼 오른쪽 아래 기준 y=2px 아래에 연다. 클릭·Enter·Space·위/아래 화살표로 열고, 선택하면 바로 저장·적용, Escape는 저장하지 않고 닫는다. 숫자 컨트롤 구성(감소·값·증가)은 Zed `components/number_field.rs`를 따랐다(Zed의 modifier별 step은 넣지 않았다).
 - 검색: 페이지 제목(Appearance), 소제목, 행 이름, 설명에서 대소문자 구분 없이 공백으로 나눈 검색어 모두를 찾는다(Zed `build_search_index`가 같은 범위를 넣는다). Zed의 fuzzy·BM25 검색은 넣지 않았다.
 - 적용: 저장하면 두 창이 설정을 다시 읽어 테마·글꼴 크기를 바로 적용한다. 파일을 직접 고쳐도 기존 감시기로 다시 읽는다. 열린 편집기는 레이아웃을 다시 재고, 테마가 바뀌면 구문 강조 색을 새 테마로 다시 맞춘다.
@@ -286,6 +310,35 @@ tauri-leader 2026-11-07, 캡처 `specs/v0.5/verify/ORDER-06/zed-v-menu.png`(1440
 - 목록은 `src/theme/assets/**/*.json`을 빌드 때 읽어 `themes` 배열의 각 이름을 카드로 만든다. 작성자·버전·설명은 그 테마, 없으면 family의 같은 필드에서만 가져오고 없으면 비운다(지어내지 않는다). 잘못된 JSON·이름 없는 항목은 건너뛴다. Phase 7에서 같은 폴더에 테마 JSON이 더해지면 다음 빌드에 자동으로 들어간다. 설치된 Zed 확장 폴더는 읽지 않는다. D-9 SVG 복사본이 없으면 `Zed (Default)` 카드가 없다.
 - Catppuccin은 복사한 자원이 아니라 목록에 없다(Phase 7).
 - 쓴 스펙 ID: X-44(탭·액션·키), X-45(머리 padding 위·좌우 16, 행 gap 16), X-46(검색 높이 32·최소 폭 384·좌우 padding 6/8·gap 8·테두리 1·반경 6·글꼴 14·줄 높이 1.3), X-48(범주 gap 8·padding 위아래 10·좌우 16·아래 테두리 1), X-49(목록 padding 좌우·아래 16, 카드 위 margin 16·높이 110·padding 12·gap 8·테두리 1·반경 6), L-05·L-06·L-07.
+
+*Extensions 화면 항목 표 (ORDER-06-R2, gpui 대조용)*
+
+근거: `src/extensions/model.ts`·`Extensions.tsx`·`extensions.css`, K-12 보고. 코드에서 확인하지 못한 것은 "미정"이다.
+
+| 자리 | 값·규칙 | 근거 |
+|---|---|---|
+| 제목 | "Extensions" | `Extensions.tsx` |
+| 검색칸 | 자리표시 "Search extensions…", 아이콘 `magnifying_glass`(D-9) | `Extensions.tsx` |
+| 설치 상태 전환 | `All` / `Installed` / `Not Installed` 순서, 처음 `All`. 검색칸 오른쪽 | `INSTALL_FILTERS` |
+| 범주 칩 | `All` / `Themes` / `Icon Themes` 순서, 처음 `All`. 검색 줄 아래 | `CATEGORIES` |
+| 검색 대상 | 이름·설명·작성자(버전·태그는 찾지 않음) | `filterExtensions` |
+| 검색 규칙 | 앞뒤 공백을 빼고 공백으로 나눈 검색어가 모두 들어 있어야 함, 대소문자 무시, 단순 포함(퍼지 아님). 검색어가 없으면 전부 | `filterExtensions` |
+| 필터 조합 | 범주 AND 설치 상태 AND 검색. `All`·`Installed`는 같은 목록(모두 번들 자원), `Not Installed`는 늘 빈 목록 | `filterExtensions` |
+| 정렬 | ① 테마 JSON 파일 경로의 `localeCompare` 순 ② 같은 파일 안은 `themes` 배열 순 ③ 아이콘 테마 `Zed (Default)`는 맨 뒤. 이름순 정렬은 하지 않고 필터 뒤에도 순서를 유지 | `bundledExtensions` |
+| 빈 상태 문구 | `All` → `No extensions`, `Installed` → `No installed extensions`, `Not Installed` → `No uninstalled extensions`. 검색어(앞뒤 공백 뺌)가 있으면 ` that match "검색어"`를 붙임 | `emptyExtensions` |
+
+| 카드 필드 | 출처 | 빈 값 처리 | 표시 |
+|---|---|---|---|
+| 이름 | 테마 JSON `themes[i].name`, 아이콘 테마는 고정 이름 `Zed (Default)` | 이름이 없는 테마 항목은 카드를 만들지 않음 | 기본 글자 크기 |
+| 버전 | 그 테마의 `version`, 없으면 family 루트 `version` | 없으면 비움(표시하지 않음) | 있으면 `v` + 버전, 이름 오른쪽, `text.muted` |
+| 태그 | 자원 유형: `Themes` 또는 `Icon Themes` | 늘 있음 | 작은 글자, `element.background` 칩 |
+| 설명 | 그 테마의 `description`, 없으면 family 루트 `description` | 없으면 빈 줄 | 작은 글자, 한 줄 말줄임 |
+| 작성자 | 그 테마의 `author`, 없으면 family 루트 `author` | 없으면 빈 줄 | 작은 글자, `text.muted`, 한 줄 말줄임 |
+| 오른쪽 상태 | 고정 문구 "Installed" | 늘 있음 | `text.muted`, 버튼 아님(누를 수 없음) |
+
+- 값은 지어내지 않는다. 아이콘 테마 `Zed (Default)`는 버전·작성자·설명이 모두 빈 값이다(복사 폴더에 메타데이터 없음). 잘못된 JSON·`themes` 배열이 없는 파일은 건너뛴다.
+- 카드 치수: X-49(위 margin 16, 높이 110, padding 12, gap 8, 테두리 1, 반경 6). 목록 X-49(좌우·아래 padding 16). 범주 줄 X-48, 검색칸 X-46, 머리 X-45, 탭·액션·키 X-44.
+- 미정: 제목·카드 이름의 전용 글자 크기(toml에 Headline 수치가 없어 기본 UI 글자 크기를 상속), 작성자 아이콘(넣지 않음).
 
 *Extensions의 Zed와 다른 점 (core D-15·D-8)*
 

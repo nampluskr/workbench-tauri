@@ -212,6 +212,11 @@
     - gpui 대조(K-11 읽은 시점): gpui Keymap은 아직 화면이 없어 열·문구를 대조할 수 없다. 파일 형식(Zed keymap.json 섹션 배열)은 같다. gpui 구현 뒤 다시 대조한다.
     - 빌드 경고: Vite 500 kB 초과 chunk, `web-tree-sitter` direct eval 2건(기존, 범위 밖).
 
+- **ORDER-06-R2 tauri 문서 (R-2 / I-2, core ORDER-06-R2 2장)** (2026-11-07, 완료)
+  - 무엇을 했나: W-12. SPEC R-2에 gpui가 대조할 표 두 개를 넣었다. (1) Extensions 화면 항목 표: 범주 칩·설치 상태 전환 순서, 검색 대상·규칙, 필터 조합, 정렬, 빈 상태 문구, 카드 필드별 출처·빈 값 처리·표시, 치수 스펙 ID(X-44~X-49). 근거는 `src/extensions/model.ts`·`Extensions.tsx`·`extensions.css`와 K-12 보고. (2) Settings 행 문구 표: Appearance 페이지 제목, 소제목 Theme·Buffer Font·UI Font, 네 행 제목·설명을 Zed `4304dec732` `page_data.rs` 문구와 줄 번호로 적고 앱 표시와 나란히 두었다. gpui SPEC R-2 Extensions 표를 읽어 다른 곳을 W-12 보고에 적었다(SPEC에는 쓰지 않음).
+  - 결과: 완료. Settings 네 행의 제목·설명 문구는 Zed와 같다. 앱이 Zed와 다른 곳은 소제목 순서(앱 Theme → UI Font → Buffer Font, Zed Theme → Buffer Font → UI Font)와 Theme Mode·Icon Theme 선택 행이 없는 것이다(코드는 고치지 않음).
+  - 검증: 문서만(V0, 실행 없음). SPEC·PROGRESS 제어 문자 0개.
+
 ## 사용자 요청 작업
 
 - **HERDR 구성 규칙 추가** (2026-11-07, W-11): `HERDR-SETUP.md` 1장에 Codex 한도가 바닥나면 `tauri-coder`를 Claude Code Sonnet 5.5 high로 바꾼다는 규칙(core D-16, 사용자 결정)을 적었다. 지금은 쿠폰 적용으로 Codex gpt-6.1-sol medium 그대로다. 검증 V0(문서만).
