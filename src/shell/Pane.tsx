@@ -1,8 +1,8 @@
-import { createMemo, createRenderEffect, createSignal, For, Show } from "solid-js";
+import { createEffect, createMemo, createRenderEffect, createSignal, For, Show } from "solid-js";
 import { redo, undo } from "@codemirror/commands";
 import { backtab, tab as indentTab } from "../editor/indent.ts";
 import { commands } from "../keymap/keyboard.ts";
-import { PANE_DROP_TARGET_SIZE_RATIO, PANE_MIN_DRAG, TAB_MAX_TITLE_CHARS } from "../spec/metrics.ts";
+import { PANE_DROP_TARGET_SIZE_RATIO, PANE_MIN_DRAG, TAB_MAX_TITLE_CHARS, UI_LINE_HEIGHT_RATIO } from "../spec/metrics.ts";
 import { bodyDrop, dropSide, lineSide } from "../workspace/drop.ts";
 import {
   activatePane,
@@ -30,6 +30,7 @@ import {
 } from "../workspace/context.ts";
 import { isGroup, minLength, resize, splitMode, toFlex, type Dir, type Group, type Node } from "../workspace/split.ts";
 import { tabEdges } from "../workspace/tabs.ts";
+import { tabTooltip, tabWheelDelta } from "../workspace/tab-view.ts";
 import { baseName, truncateName } from "../workspace/paths.ts";
 import { editorContext } from "../workspace/store.ts";
 import { isOpen as menuOpen, openContextMenu } from "./AppMenu.tsx";
@@ -208,8 +209,27 @@ function openTabMenu(e: MouseEvent, ctx: FolderContext, file: TabFile, pinned: b
 
 function TabList(props: { ctx: FolderContext; pane: PaneState }) {
   const tabs = () => props.pane.tabs();
+  let list!: HTMLDivElement;
+  // I-16: a tab that becomes the active one is scrolled into view (Zed scroll_to_item).
+  createEffect(() => {
+    props.pane.active();
+    tabs();
+    list.querySelector<HTMLElement>(".tab.active")?.scrollIntoView({ inline: "nearest", block: "nearest" });
+  });
   return (
-    <div class="tab-list" role="tablist">
+    <div
+      class="tab-list"
+      role="tablist"
+      ref={(el) => {
+        list = el;
+        // I-16: the vertical wheel scrolls the row sideways, by Zed's step. Not passive: the page must not scroll too.
+        el.addEventListener("wheel", (e) => {
+          if (e.deltaY === 0 || el.scrollWidth <= el.clientWidth) return;
+          e.preventDefault();
+          el.scrollLeft += tabWheelDelta(e.deltaY, e.deltaMode, parseFloat(getComputedStyle(document.documentElement).fontSize) * UI_LINE_HEIGHT_RATIO);
+        }, { passive: false });
+      }}
+    >
       <For each={tabs()}>
         {(tab, i) => {
           const edges = () => tabEdges(i(), tabs().length, props.pane.active());
@@ -229,6 +249,7 @@ function TabList(props: { ctx: FolderContext; pane: PaneState }) {
                 "drop-right": lineOn(props.pane, i()) === "right",
               }}
               role="tab"
+              ref={(el) => tooltip(el, () => tabTooltip({ path: tab.path, tool: tab.tool, title: tab.file.title?.(), readOnly: !!tab.file.view?.state.readOnly }))}
               aria-selected={active()}
               data-index={i()}
               onPointerDown={(e) => startTabDrag(e, props.ctx, props.pane, tab.file)}

@@ -214,9 +214,9 @@ button, input, select, textarea {
 .tab.drop-left::after, .tab.drop-right::after { content: ""; position: absolute; top: 0; bottom: 0; width: var(--pane-tab-drop-line-width); background: var(--drop-target-border); }
 .tab.drop-left::after { left: 0; }
 .tab.drop-right::after { right: 0; }
-/* R-26 / L-63 (shortcut: tabs past the width are clipped, no scrolling or overflow menu in v0.2). The list carries the full-width line under the tabs; each tab draws its own sides (tabEdges). */
-.tab-list { position: relative; flex: 1; min-width: 0; display: flex; overflow: hidden; user-select: none; } /* no text selection while a tab is dragged (D-9) */
-.tab-list::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--tab-border-width); background: var(--border); }
+/* L-63 / I-16: tabs keep their width in one row; the row is scrolled by the wheel and by activating a tab (no scrollbar, arrows or menu, like Zed).
+   The full-width line under the tabs is a background (it stays put while the tabs scroll); each tab draws its own sides (tabEdges). */
+.tab-list { position: relative; flex: 1; min-width: 0; display: flex; overflow: hidden; user-select: none; background: linear-gradient(var(--border), var(--border)) bottom / 100% var(--tab-border-width) no-repeat; } /* no text selection while a tab is dragged (D-9) */
 .tab {
   position: relative;
   z-index: 1;

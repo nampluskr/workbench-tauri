@@ -372,3 +372,8 @@ export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15): Promis
   metricsSheet.replaceSync(`:root { font-size: var(--units-rem-size); ${vars.join(" ")} }`);
   if (!document.adoptedStyleSheets.includes(metricsSheet)) document.adoptedStyleSheets = [...document.adoptedStyleSheets, metricsSheet];
 }
+
+// I-16: Zed scrolls the tab row by (wheel lines x window line height) per wheel event (gpui div.rs:3404 pixel_delta, events.rs:578);
+// a notch of the default 3 lines moves it about 78px (zed-wheel-down*.png). Chromium reports that notch as deltaY 100.
+export const WHEEL_PIXELS_PER_LINE = 100 / 3;
+export const UI_LINE_HEIGHT_RATIO = 1.618; // gpui TextStyle line_height phi(), as picker.item.line_height_ratio (P-004)
