@@ -1,5 +1,5 @@
 // I-12: the path row of an editor tab (Zed editor.rs:11682 breadcrumbs_inner + element.rs:7131 render_breadcrumb_text).
-// Segments: the file's path, then (Markdown only in this version) the headings that contain the cursor.
+// Segments: the file's path, then the Markdown headings or (other languages) the outline symbols that contain the cursor.
 
 /** element.rs:7134 MAX_SEGMENTS: a longer row keeps the first six and the last six segments with a "⋯" between. */
 export const MAX_CRUMB_SEGMENTS = 12;
@@ -48,9 +48,9 @@ export function markdownCrumbs(lines: string[], cursorLine: number): string[] {
 }
 
 /** element.rs:7140: more than MAX_CRUMB_SEGMENTS segments become the first half, "⋯" and the last half. */
-export function elideCrumbs(segments: string[]): string[] {
+export function elideCrumbs<T = string>(segments: T[], gap = "⋯" as T): T[] {
   const half = MAX_CRUMB_SEGMENTS / 2;
   const prefixEnd = Math.min(segments.length, half);
   const suffixStart = Math.max(prefixEnd, segments.length - half);
-  return suffixStart > prefixEnd ? [...segments.slice(0, prefixEnd), "⋯", ...segments.slice(suffixStart)] : segments;
+  return suffixStart > prefixEnd ? [...segments.slice(0, prefixEnd), gap, ...segments.slice(suffixStart)] : segments;
 }

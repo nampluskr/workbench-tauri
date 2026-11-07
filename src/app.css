@@ -573,13 +573,15 @@ button, input, select, textarea {
   font-size: var(--markdown-preview-inline-code-font-size);
   background: color-mix(in srgb, var(--editor-foreground) calc(var(--markdown-preview-inline-code-background-opacity) * 100%), transparent);
 }
-.markdown-body pre { /* L-109 block, no border */
+.markdown-body pre { /* L-109 block; K-53: Zed markdown.rs:272-279 gives the block a solid 1px border_variant border and the editor background (the old "no border" was wrong) */
   font-family: var(--buffer-font-family); /* I-14 */
   font-weight: var(--font-weight-default);
   line-height: var(--editor-line-height-comfortable-multiplier);
   font-feature-settings: normal;
   margin: var(--markdown-preview-code-block-margin-y) 0;
   padding: var(--markdown-preview-code-block-padding);
+  border: var(--markdown-preview-code-block-border) solid var(--border-variant);
+  background: var(--editor-background);
   border-radius: var(--markdown-preview-code-block-corner-radius);
   overflow-x: auto;
 }

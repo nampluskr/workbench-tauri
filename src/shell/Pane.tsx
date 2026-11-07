@@ -34,6 +34,7 @@ import { tabEdges } from "../workspace/tabs.ts";
 import { tabTooltip, tabWheelDelta } from "../workspace/tab-view.ts";
 import { baseName, truncateName } from "../workspace/paths.ts";
 import { elideCrumbs, pathCrumb } from "../editor/breadcrumbs.ts";
+import { syntaxClass } from "../theme/theme.ts";
 import { editorContext, folders } from "../workspace/store.ts";
 import { isOpen as menuOpen, openContextMenu } from "./AppMenu.tsx";
 import Icon from "./Icon.tsx";
@@ -390,20 +391,39 @@ function ZoomButton(props: { ctx: FolderContext; pane: PaneState }) {
 }
 
 /**
- * I-12: Zed's breadcrumb row (element.rs render_breadcrumb_text): the path, then the Markdown headings that contain the cursor,
- * with "›" between. The headings are drawn in the syntax colour of titles, as Zed highlights them.
+ * I-12: Zed's breadcrumb row (element.rs render_breadcrumb_text): the path, then the Markdown headings or the outline symbols
+ * that contain the cursor, with "›" between. A heading is drawn in the syntax colour of titles; a symbol in the colours of its
+ * own syntax ranges, as Zed highlights them.
  */
+type Crumb = { text: string; marks: { from: number; to: number; key: string }[] };
 function Breadcrumbs(props: { ctx: FolderContext; tab: Tab }) {
-  const segments = () => elideCrumbs([pathCrumb(props.ctx.root, props.ctx.rootName, props.tab.path, folders().length > 1), ...(props.tab.file.headings?.() ?? [])]);
+  const segments = () => elideCrumbs<Crumb>([
+    { text: pathCrumb(props.ctx.root, props.ctx.rootName, props.tab.path, folders().length > 1), marks: [] },
+    ...(props.tab.file.headings?.() ?? []).map((text) => ({ text, marks: [{ from: 0, to: text.length, key: "title" }] })),
+    ...(props.tab.file.symbols?.() ?? []),
+  ], { text: "⋯", marks: [] });
+  const parts = (crumb: Crumb) => {
+    const result: { text: string; key?: string }[] = [];
+    let at = 0;
+    for (const mark of crumb.marks) {
+      if (mark.from > at) result.push({ text: crumb.text.slice(at, mark.from) });
+      result.push({ text: crumb.text.slice(mark.from, mark.to), key: mark.key });
+      at = mark.to;
+    }
+    if (at < crumb.text.length) result.push({ text: crumb.text.slice(at) });
+    return result;
+  };
   return (
     <div class="breadcrumbs">
       <For each={segments()}>
-        {(text, i) => (
+        {(crumb, i) => (
           <>
             <Show when={i() > 0}>
               <span class="breadcrumb-separator">›</span>
             </Show>
-            <span classList={{ "cm-syntax-title": i() > 0 && text !== "⋯" }}>{text}</span>
+            <span>
+              <For each={parts(crumb)}>{(part) => <span class={part.key ? syntaxClass(part.key) : undefined}>{part.text}</span>}</For>
+            </span>
           </>
         )}
       </For>

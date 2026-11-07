@@ -236,6 +236,8 @@ const METRICS: Record<string, string> = {
   "markdown_preview.code_block.padding": rem(12), // L-109
   "markdown_preview.code_block.margin_y": rem(16), // L-109
   "markdown_preview.code_block.corner_radius": rem(6), // L-109
+  // No toml ID yet (K-53): Zed markdown.rs:272-279 border_widths 1px solid border_variant; requested for registration.
+  "markdown_preview.code_block.border": rem(1),
   "markdown_preview.frontmatter.border": rem(1), // L-111
   "markdown_preview.frontmatter.corner_radius": rem(4), // L-111
   "markdown_preview.frontmatter.key_cell_font_weight": "600", // L-111

@@ -9,6 +9,15 @@ $diffLicenseRepository = 'https://github.com/the-mikedavis/tree-sitter-diff'
 $diffPublishedCommit = '4867e8470e1b0ad7364c4e3ffab762c361bbb635'
 $tomlExtensionRepository = 'https://github.com/zed-extensions/toml'
 $tomlExtensionCommit = '8e18e5045841f0f265f9c8b89f138c7f7dd09e2e' # v1.1.0
+$gitFireflyRepository = 'https://github.com/d1y/git_firefly'
+$gitFireflyCommit = 'c63c6c0287ab5c8eb3872cf2bc8803e21c7a9675' # v0.1.9
+# Grammar pins of the git-firefly extension (checked against its extension.toml below); the keys are its grammar names.
+$gitFireflyGrammars = [ordered]@{
+    git_config = @('https://github.com/the-mikedavis/tree-sitter-git-config', '3a61756a81a86291a0f48e3eeeaa0692b9981aa9', 'tree-sitter-git-config')
+    git_rebase = @('https://github.com/the-mikedavis/tree-sitter-git-rebase', '39bf3b7566c86ccffd70aaa5105c7c8b76788975', 'tree-sitter-git-rebase')
+    gitattributes = @('https://github.com/tree-sitter-grammars/tree-sitter-gitattributes', '1b7af09d45b579f9f288453b95ad555f1f431645', 'tree-sitter-gitattributes')
+    gitignore = @('https://github.com/shunsambongi/tree-sitter-gitignore', 'f4685bf11ac466dd278449bcfe5fd014e94aa504', 'tree-sitter-gitignore')
+}
 $destination = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../src/assets/zed-grammars'))
 $temporary = Join-Path ([IO.Path]::GetTempPath()) ('workbench-zed-grammars-' + [guid]::NewGuid())
 $oldEnvironment = @{}
@@ -91,6 +100,21 @@ try {
     if (!$tomlLicenses.Count) { throw 'Missing TOML extension license' }
     foreach ($license in $tomlLicenses) { Copy-Item -LiteralPath $license.FullName -Destination $tomlLicenseDir }
 
+    $fireflyArchive = Join-Path $temporary 'git-firefly-extension.tar.gz'
+    Receive-File "https://codeload.github.com/d1y/git_firefly/tar.gz/$gitFireflyCommit" $fireflyArchive
+    $fireflyRoot = Expand-Source $fireflyArchive (Join-Path $temporary 'git-firefly-extension')
+    $firefly = Get-Content -Raw -LiteralPath (Join-Path $fireflyRoot 'extension.toml')
+    if ($firefly -notmatch '(?m)^version = "0\.1\.9"$') { throw 'Unexpected git-firefly extension version' }
+    $fireflyLanguages = @('gitattributes', 'gitconfig', 'gitignore', 'gitrebase')
+    foreach ($folder in $fireflyLanguages) { Copy-Item -LiteralPath (Join-Path $fireflyRoot "languages/$folder") -Destination $languageDir -Recurse }
+    $fireflyMetadata = Join-Path $stage 'extensions/git-firefly'
+    $fireflyLicenseDir = Join-Path $licenseDir 'git-firefly-extension'
+    New-Item -ItemType Directory -Path $fireflyMetadata, $fireflyLicenseDir | Out-Null
+    Copy-Item -LiteralPath (Join-Path $fireflyRoot 'extension.toml') -Destination $fireflyMetadata
+    $fireflyLicenses = @(Get-ChildItem -LiteralPath $fireflyRoot -File | Where-Object { $_.Name -match '^(LICENSE|COPYING)([.-]|$)' })
+    if (!$fireflyLicenses.Count) { throw 'Missing git-firefly extension license' }
+    foreach ($license in $fireflyLicenses) { Copy-Item -LiteralPath $license.FullName -Destination $fireflyLicenseDir }
+
     $lock = Get-Content -Raw -LiteralPath (Join-Path $checkout 'Cargo.lock')
     $packages = @{}
     foreach ($block in ($lock -split '(?m)^\[\[package\]\]')) {
@@ -115,7 +139,9 @@ try {
         @('python', 'tree-sitter-python', ''), @('regex', 'tree-sitter-regex', ''),
         @('rust', 'tree-sitter-rust', ''), @('tsx', 'tree-sitter-typescript', 'tsx'),
         @('typescript', 'tree-sitter-typescript', 'typescript'), @('yaml', 'tree-sitter-yaml', ''),
-        @('html', 'html-extension', ''), @('toml', 'tree-sitter-toml', '')
+        @('html', 'html-extension', ''), @('toml', 'tree-sitter-toml', ''),
+        @('git_config', 'tree-sitter-git-config', ''), @('git_rebase', 'tree-sitter-git-rebase', ''),
+        @('gitattributes', 'tree-sitter-gitattributes', ''), @('gitignore', 'tree-sitter-gitignore', '')
     )
     $html = Get-Content -Raw -LiteralPath (Join-Path $checkout 'extensions/html/extension.toml')
     if ($html -notmatch '(?ms)^\[grammars\.html\]\s+repository = "([^"]+)"\s+commit = "([a-f0-9]{40})"') { throw 'Missing HTML grammar source' }
@@ -123,6 +149,13 @@ try {
     if ($toml -notmatch '(?ms)^\[grammars\.toml\]\s+repository = "([^"]+)"\s+(?:rev|commit) = "([a-f0-9]{40})"') { throw 'Missing TOML grammar source' }
     if ($Matches[2] -ne '342d9be207c2dba869b9967124c679b5e6fd0ebe') { throw 'Unexpected TOML grammar commit' }
     $packages['tree-sitter-toml'] = @{ version = ''; source = "git+$($Matches[1])#$($Matches[2])"; checksum = '' }
+
+    foreach ($name in $gitFireflyGrammars.Keys) {
+        $pin = $gitFireflyGrammars[$name]
+        if ($firefly -notmatch "(?ms)^\[grammars\.$name\]\s+repository = `"([^`"]+)`"\s+(?:rev|commit) = `"([a-f0-9]{40})`"") { throw "Missing git-firefly grammar source: $name" }
+        if ($Matches[1] -ne $pin[0] -or $Matches[2] -ne $pin[1]) { throw "Unexpected git-firefly grammar pin: $name" }
+        $packages[$pin[2]] = @{ version = ''; source = "git+$($Matches[1])#$($Matches[2])"; checksum = '' }
+    }
 
     foreach ($key in @('LOCALAPPDATA', 'XDG_CACHE_HOME', 'XDG_CONFIG_HOME')) {
         $oldEnvironment[$key] = [Environment]::GetEnvironmentVariable($key, 'Process')
@@ -242,16 +275,19 @@ try {
         $toolchain[$tool[0]] = @{ version = $Matches[2]; url = "$($Matches[1])/$(if ($tool[0] -eq 'wasiSdk') { 'wasi-sdk-' } else { 'version_' })$($Matches[2])/$($Matches[3])" }
     }
     $wasmCount = @(Get-ChildItem -LiteralPath $grammarDir -Filter '*.wasm' -File).Count
-    $extensions = @(@{ name = 'toml'; version = '1.1.0'; sourceUrl = $tomlExtensionRepository; rev = $tomlExtensionCommit; archiveSha256 = (Get-FileHash -LiteralPath $tomlArchive -Algorithm SHA256).Hash.ToLowerInvariant(); licenseFiles = @($tomlLicenses | ForEach-Object { "licenses/toml-extension/$($_.Name)" }) })
-    $manifest = [ordered]@{ zedCommit = $commit; extensions = $extensions; toolchain = $toolchain; languages = $languages; grammars = @($grammars.ToArray()); expectedLanguages = 25; expectedWasms = 21; seconds = $timer.Elapsed.TotalSeconds }
+    $extensions = @(
+        @{ name = 'toml'; version = '1.1.0'; sourceUrl = $tomlExtensionRepository; rev = $tomlExtensionCommit; archiveSha256 = (Get-FileHash -LiteralPath $tomlArchive -Algorithm SHA256).Hash.ToLowerInvariant(); licenseFiles = @($tomlLicenses | ForEach-Object { "licenses/toml-extension/$($_.Name)" }) },
+        @{ name = 'git-firefly'; version = '0.1.9'; sourceUrl = $gitFireflyRepository; rev = $gitFireflyCommit; archiveSha256 = (Get-FileHash -LiteralPath $fireflyArchive -Algorithm SHA256).Hash.ToLowerInvariant(); licenseFiles = @($fireflyLicenses | ForEach-Object { "licenses/git-firefly-extension/$($_.Name)" }) }
+    )
+    $manifest = [ordered]@{ zedCommit = $commit; extensions = $extensions; toolchain = $toolchain; languages = $languages; grammars = @($grammars.ToArray()); expectedLanguages = 29; expectedWasms = 25; seconds = $timer.Elapsed.TotalSeconds }
     $manifest | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $stage 'manifest.json') -Encoding utf8
     # Preserve successful builds and failure logs even when another grammar fails.
     New-Item -ItemType Directory -Path $destination -Force | Out-Null
     Copy-Item -Path (Join-Path $stage '*') -Destination $destination -Recurse -Force
     $publishedLanguages = @(Get-ChildItem -LiteralPath (Join-Path $destination 'languages') -Directory).Count
     $publishedWasms = @(Get-ChildItem -LiteralPath (Join-Path $destination 'grammars') -Filter '*.wasm' -File).Count
-    if ($languages.Count -ne 25 -or $publishedLanguages -ne 25 -or $grammars.Count -ne 21 -or $wasmCount -ne 21 -or $publishedWasms -ne 21 -or @($grammars | Where-Object status -ne 'built').Count) {
-        throw "Incomplete grammar copies: languages=$publishedLanguages/25 wasm=$wasmCount/21 published=$publishedWasms; see $destination/manifest.json and build-logs"
+    if ($languages.Count -ne 29 -or $publishedLanguages -ne 29 -or $grammars.Count -ne 25 -or $wasmCount -ne 25 -or $publishedWasms -ne 25 -or @($grammars | Where-Object status -ne 'built').Count) {
+        throw "Incomplete grammar copies: languages=$publishedLanguages/29 wasm=$wasmCount/25 published=$publishedWasms; see $destination/manifest.json and build-logs"
     }
     Write-Output "Zed $commit : languages=$publishedLanguages wasm=$publishedWasms; destination=$destination"
 }

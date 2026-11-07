@@ -1,11 +1,11 @@
 // Pinned Zed grammars and recursive injections -> one themed mark per position.
-import type { ChangeSet } from "@codemirror/state";
+import { StateEffect, type ChangeSet } from "@codemirror/state";
 import { Decoration, ViewPlugin, type DecorationSet, type EditorView, type ViewUpdate } from "@codemirror/view";
 import { syntaxClass } from "../theme/theme.ts";
 import { syntaxKeys } from "../theme/apply.ts";
 import { languages, loadSyntax } from "./assets.ts";
 import type { LanguageConfig } from "./catalog.ts";
-import { SyntaxDocument } from "./document.ts";
+import { SyntaxDocument, type OutlineSymbol } from "./document.ts";
 
 const marks = new Map<string, Decoration>();
 const mark = (key: string) => {
@@ -13,6 +13,16 @@ const mark = (key: string) => {
   if (!value) marks.set(key, (value = Decoration.mark({ class: syntaxClass(key) })));
   return value;
 };
+
+/** Dispatched when a parse of the whole document has been committed (the path row reads symbols from that tree). */
+export const parsed = StateEffect.define<null>();
+const plugins = new WeakMap<EditorView, { syntax: SyntaxDocument; pending: ChangeSet | null }>();
+
+/** I-12: the symbols around the cursor, or null while the tree is older than the text (the caller keeps what it showed). */
+export function symbolsAtCursor(view: EditorView): OutlineSymbol[] | null {
+  const plugin = plugins.get(view);
+  return plugin && !plugin.pending ? plugin.syntax.symbols(view.state.selection.main.head, syntaxKeys) : null;
+}
 
 export function syntaxHighlighting(config: LanguageConfig) {
   return ViewPlugin.fromClass(class {
@@ -23,7 +33,7 @@ export function syntaxHighlighting(config: LanguageConfig) {
     destroyed = false;
     themeKeys = syntaxKeys;
 
-    constructor(readonly view: EditorView) { void this.parseAll(); }
+    constructor(readonly view: EditorView) { plugins.set(view, this); void this.parseAll(); }
 
     async parseAll(): Promise<void> {
       if (this.parsing || this.destroyed) return;
@@ -37,7 +47,7 @@ export function syntaxHighlighting(config: LanguageConfig) {
           this.pending = null;
           this.themeKeys = syntaxKeys;
           this.decorations = this.build();
-          this.view.dispatch({});
+          this.view.dispatch({ effects: parsed.of(null) });
           return;
         }
       } catch (error) {

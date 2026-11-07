@@ -1,6 +1,10 @@
 import DOMPurify from "dompurify";
 import { blockAt, classifyLink, renderMarkdown, type LinkTarget } from "../editor/markdown.ts";
 import { MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS } from "../spec/metrics.ts";
+import { languages, loadSyntax } from "../syntax/assets.ts";
+import { codeBlockHighlights } from "../syntax/document.ts";
+import { syntaxKeys } from "../theme/apply.ts";
+import { syntaxClass } from "../theme/theme.ts";
 
 // The body of a Markdown preview tab (R-11, D-10). Rendered with markdown-it, sanitized with DOMPurify (no script, no
 // event attributes, no style attribute; data-line attributes stay), then put in the tab's element.
@@ -28,13 +32,37 @@ export function createPreview(hooks: PreviewHooks): Preview {
   element.append(body);
   let timer = 0;
   let lastLine = -1;
+  let generation = 0;
 
   const render = () => {
     const text = hooks.text();
     if (text === null) return;
     body.innerHTML = DOMPurify.sanitize(renderMarkdown(text), { FORBID_ATTR: ["style"], ALLOW_DATA_ATTR: true });
     if (lastLine >= 0) highlight(lastLine, false);
+    void colorCodeBlocks(++generation);
   };
+
+  /** K-53: fenced code blocks get the editor's syntax colours after the render (class only, built with the DOM, not HTML). */
+  async function colorCodeBlocks(id: number): Promise<void> {
+    for (const code of body.querySelectorAll<HTMLElement>("pre > code[class*='language-']")) {
+      const name = /(?:^|\s)language-(\S+)/.exec(code.className)?.[1];
+      const text = code.textContent ?? "";
+      if (!name) continue;
+      const found = await codeBlockHighlights(name, text, languages, loadSyntax, syntaxKeys).catch(() => []);
+      if (id !== generation || !code.isConnected) return; // a newer render replaced these blocks
+      let at = 0;
+      const nodes: (string | HTMLElement)[] = [];
+      for (const span of found) {
+        if (span.from > at) nodes.push(text.slice(at, span.from));
+        const el = document.createElement("span");
+        el.className = syntaxClass(span.key);
+        el.textContent = text.slice(span.from, span.to);
+        nodes.push(el);
+        at = span.to;
+      }
+      if (found.length) code.replaceChildren(...nodes, text.slice(at));
+    }
+  }
   const blocks = () => [...body.querySelectorAll<HTMLElement>("[data-line]")];
 
   /** I-083: the block holding the source cursor is marked, and scrolled into view when it is not. */
@@ -73,6 +101,6 @@ export function createPreview(hooks: PreviewHooks): Preview {
       }, MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS);
     },
     cursor: (line) => highlight(line, true),
-    dispose: () => clearTimeout(timer),
+    dispose: () => { clearTimeout(timer); generation++; },
   };
 }

@@ -128,6 +128,8 @@ test("K-50: each visible language produces themed spans from its pinned grammar"
     javascript: 'const n = 1;', json: '{"n": 1}', jsonc: '{"n": 1}', markdown: '# Heading\n',
     python: 'def main():\n    return 1\n', rust: 'fn main() { let n = 1; }',
     tsx: 'const node = <p>hello</p>;', typescript: 'const n: number = 1;', yaml: 'name: hello\n', toml: '[server]\nport = 8080\n',
+    gitattributes: '*.txt text eol=lf\n', gitconfig: '[user]\n\tname = Ada\n', gitignore: '# build\nnode_modules/\n*.log\n',
+    gitrebase: 'pick abc1234 Add a feature\n# Rebase comment\n',
   };
   const one = JSON.parse(readFileSync(new URL("../theme/assets/one/one.json", import.meta.url), "utf8"));
   const themeKeys = new Set<string>(Object.keys(one.themes.find((theme: { name: string }) => theme.name === "One Dark").style.syntax));
@@ -185,4 +187,14 @@ test("K-50: C++ has-ancestor? colors a deeply qualified call, not the same ident
   assert.ok(spans.some((span) => span.from === source.indexOf("target") && span.to === source.indexOf("target") + 6));
   assert.equal(spans.some((span) => span.from <= source.lastIndexOf("target") && span.to > source.lastIndexOf("target")), false);
   syntax.destroy();
+});
+
+test("K-55: git-firefly names choose their language from the extension's path_suffixes", { skip: !configs.some((item) => item.id === "gitignore") }, () => {
+  for (const [path, expected] of [
+    [".gitignore", "gitignore"], ["D:\\p\\.dockerignore", "gitignore"], [".git-blame-ignore-revs", "gitignore"],
+    [".gitattributes", "gitattributes"], ["gitattributes", "gitattributes"],
+    [".gitconfig", "gitconfig"], [".gitmodules", "gitconfig"], ["config.worktree", "gitconfig"],
+    ["git-rebase-todo", "gitrebase"],
+    [".git\\config", undefined], // Zed's gitconfig suffixes (extension 0.1.9) do not list a plain "config"
+  ]) assert.equal(fileLanguage(configs, path!)?.id, expected, path);
 });

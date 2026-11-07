@@ -1,6 +1,6 @@
 import { Annotation, Compartment, EditorState, Transaction } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
-import { syntaxHighlighting } from "../syntax/highlight.ts";
+import { parsed, syntaxHighlighting } from "../syntax/highlight.ts";
 import { languages } from "../syntax/assets.ts";
 import { fileLanguage } from "../syntax/catalog.ts";
 import { isFarJump } from "../workspace/nav-history.ts";
@@ -15,6 +15,8 @@ export type ViewHooks = {
   cursor: (line: number, state: EditorState) => void;
   /** I-10: the cursor moved far (nav-history.ts isFarJump); `line` / `column` (1-based) are where it was. */
   jumped: (line: number, column: number) => void;
+  /** I-12: the cursor moved, the text changed or a parse finished: the path row's symbols may differ. */
+  crumbs: (view: EditorView) => void;
 };
 
 // A change that came from a peer view: it is not passed on again and it is not this view's own edit (no preview
@@ -68,6 +70,7 @@ export function createFileView(text: string, path: string, editable: boolean, ho
             const from = update.startState.doc.lineAt(before);
             if (isFarJump(from.number, update.state.doc.lineAt(update.state.selection.main.head).number)) hooks.jumped(from.number, before - from.from + 1);
           }
+          if (update.selectionSet || update.docChanged || update.transactions.some((tr) => tr.effects.some((effect) => effect.is(parsed)))) hooks.crumbs(update.view);
           if (!update.docChanged) return;
           hooks.changed();
           if (update.transactions.some((tr) => tr.docChanged && !tr.annotation(synced) && tr.annotation(Transaction.userEvent) !== undefined)) hooks.edited();

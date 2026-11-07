@@ -2,8 +2,10 @@ import { batch, createSignal, type Accessor, type Setter } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import type { EditorState } from "@codemirror/state";
 import type { EditorView } from "@codemirror/view";
+import type { OutlineSymbol } from "../syntax/document.ts";
 import { createHeadings } from "../editor/headings.ts";
 import { createFileView, navigated, setEditable } from "../editor/file-view.ts";
+import { symbolsAtCursor } from "../syntax/highlight.ts";
 import type { IconName } from "../shell/Icon.tsx";
 import { cursorPosition, locationOffset } from "../editor/position.ts";
 import { notify } from "../shell/toast.ts";
@@ -33,7 +35,7 @@ export type FileLocation = { line: number; column: number; endLine?: number; end
  * What stays the same for a tab while its list entry is copied (promotion, rename): its file, editor and state. A Markdown
  * preview tab (R-11) has no editor: `element` is its body, `dispose` lets go of what it holds.
  */
-export type TabFile = { doc: Doc; view: EditorView | null; status: Accessor<Status>; position?: Accessor<string>; headings?: Accessor<string[]>; updateHeadings?: (state: EditorState) => void; toolPosition?: Accessor<string>; title?: Accessor<string>; icon?: IconName; iconSuccess?: boolean; location?: FileLocation; element?: HTMLElement; dispose?: () => void };
+export type TabFile = { doc: Doc; view: EditorView | null; status: Accessor<Status>; position?: Accessor<string>; headings?: Accessor<string[]>; symbols?: Accessor<OutlineSymbol[]>; updateHeadings?: (state: EditorState, found?: OutlineSymbol[] | null) => void; toolPosition?: Accessor<string>; title?: Accessor<string>; icon?: IconName; iconSuccess?: boolean; location?: FileLocation; element?: HTMLElement; dispose?: () => void };
 export type Tab = TabInfo & { file: TabFile; focus: boolean };
 
 
@@ -283,14 +285,14 @@ function makeView(ctx: FolderContext, file: TabFile, text: string, editable: boo
     edited: () => promote(ctx, file),
     peers: () => (filesOf.get(file.doc) ?? []).flatMap((f) => (f !== file && f.view ? [f.view] : [])),
     keeper: () => liveView(file.doc),
+    crumbs: (view) => file.updateHeadings?.(view.state, symbolsAtCursor(view)),
     jumped: (line, column) => paneOf(ctx, file)?.nav.push({ path: file.doc.path, line, column }),
     cursor: (line, state) => {
       setPosition(cursorPosition(state));
-      file.updateHeadings?.(state);
       if (!hidden.has(file)) for (const p of previews(file.doc)) p.cursor(line);
     },
   });
-  file.updateHeadings?.(file.view.state);
+  file.updateHeadings?.(file.view.state, symbolsAtCursor(file.view));
   if (file.location) locateFile(file, file.location);
 }
 
@@ -328,7 +330,7 @@ function newFile(ctx: FolderContext, path: string): TabFile {
   };
   const doc: Doc = new Doc(path, editor, io, setStatus);
   const headings = createHeadings(path);
-  const file: TabFile = { doc, view: null, status, headings: headings.read, updateHeadings: headings.update };
+  const file: TabFile = { doc, view: null, status, headings: headings.read, symbols: headings.symbols, updateHeadings: headings.update };
   filesOf.set(doc, [file]);
   statusOf.set(doc, status);
   return file;
@@ -337,7 +339,7 @@ function newFile(ctx: FolderContext, path: string): TabFile {
 /** A second tab of the same file (ClonePane, or the file opened in another Pane): same Doc, its own view. */
 function twinOf(ctx: FolderContext, file: TabFile): TabFile {
   const headings = createHeadings(file.doc.path);
-  const twin: TabFile = { doc: file.doc, view: null, status: statusOf.get(file.doc)!, headings: headings.read, updateHeadings: headings.update };
+  const twin: TabFile = { doc: file.doc, view: null, status: statusOf.get(file.doc)!, headings: headings.read, symbols: headings.symbols, updateHeadings: headings.update };
   filesOf.get(file.doc)!.push(twin);
   const live = liveView(file.doc);
   if (live) makeView(ctx, twin, live.state.doc.toString(), !live.state.readOnly);
