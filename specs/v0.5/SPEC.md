@@ -75,7 +75,7 @@ Zed `IconName`은 `crates/icons/src/icons.rs:9`의 snake_case와 `:314~316`의 �
 |---|---|---|
 | Windows 창 최소화·최대화·복원·닫기 (`src/shell/TitleBar.tsx:11~15`) | Segoe Fluent 글리프 | Zed도 Windows에서 SVG가 아닌 Segoe Fluent 글리프 e921/e922/e923/e8bb를 쓴다(`crates/platform_title_bar/src/platforms/platform_windows.rs:15~30,78~83`). |
 
-- 파일 트리 일반 파일: Phase 5에서는 자체 Lucide `src/assets/icons/file.svg`(라이선스 `LICENSE-LUCIDE`)를 유지했다. Phase 7(K-20)에서 파일 트리의 파일·폴더 아이콘을 아이콘 테마(R-3)로 바꾸고 Lucide `file.svg`와 `LICENSE-LUCIDE`를 지웠다. `Icon`의 `file`은 Zed UI `zed-icons/file.svg`이고, 아이콘 테마 복사본이 없을 때의 대체로만 쓴다.
+- 파일 트리 일반 파일: Phase 5에서는 자체 Lucide `src/assets/icons/file.svg`(라이선스 `LICENSE-LUCIDE`)를 유지했다. Phase 7(K-20)에서 Lucide `file.svg`와 `LICENSE-LUCIDE`를 지웠다. 지금 파일 트리의 파일·폴더 아이콘은 아이콘 테마(R-3, 기본 Zed (Default))에서 나온다. 아이콘 테마가 없으면 UI 아이콘(`zed-icons`)의 `file`·`folder`·`folder_open`으로 대체한다.
 
 **확인 결과**
 
@@ -519,7 +519,7 @@ I-4, core D-8, 사용자 2026-11-06.
 
 *Zed와 다르거나 하지 않은 것*
 
-- 목록 스크롤바 기본 숨김(P-004)은 하지 않았다(기본 스크롤바).
+- 목록 스크롤바(K-22): 포인터가 목록 위에 있을 때만 색이 보인다(P-004). 폭은 L-308 `scrollbar.width.ui` 6px, 트랙·썸은 스크롤바 토큰이다. Zed의 자동 숨김 1초(E-033)와 썸 최소 25px은 하지 않았다.
 - 최대 높이 384는 목록에만 건다(입력 줄·푸터 제외). 문서가 어디에 거는지 밝히지 않아 목록으로 가정했다.
 - `Ctrl-C`로 닫기는 넣지 않았다(입력칸에서는 복사 키).
 - 입력칸이 포커스를 잃으면 닫히는 동작은 만들지 않았다. 모달이 포커스를 안에 가두므로 창 전환 때만 해당한다.
@@ -988,7 +988,7 @@ Help → View Dependency Licenses는 앱 안의 읽기 전용 DOM `<dialog>`에 
 
 - 글꼴: `public/fonts/ibm-plex-sans/license.txt`, `public/fonts/lilex/OFL.txt`를 같은 출처에서 읽는다(CSP 변경 없음).
 - Zed 아이콘: `src/assets/zed-icons/LICENSES`, `LICENSE-GPL`, `LICENSE-APACHE`를 빌드에 넣는다. `.gitignore` 복사본이 없으면 그 이름과 `License copy unavailable.`를 보인다.
-- 자체 아이콘: 없음. Phase 7(K-20)에서 Lucide `file.svg`와 `LICENSE-LUCIDE`를 지우고 glob에서 뺐다.
+- 자체 아이콘: 없음. Phase 7(K-20)에서 Lucide `file.svg`와 `LICENSE-LUCIDE`를 지우고 glob에서 뺐다. 파일 아이콘은 아이콘 테마(기본 Zed (Default))이고, 없으면 UI 아이콘(`zed-icons`) `file`·`folder`로 대체한다.
 - 테마·아이콘 테마: `src/theme/assets/**/LICENSE*`(Zed Ayu·Gruvbox의 `zed/LICENSES` 포함)와 `src/assets/icon-themes/**/LICENSE*`(Phase 7 K-19에서 넓힘). 복사본이 없으면 glob이 비어 그 항목만 빠진다.
 - 파일마다 실패를 따로 처리해, 한 파일이 없어도 다른 라이선스가 보이고 앱이 죽지 않는다.
 - K-13 확인: Zed UI 아이콘, 자체 파일 아이콘, One Dark·One Light, IBM Plex Sans, Lilex의 고지가 모두 위 경로로 들어 있다. Catppuccin은 지금 복사한 자원이 아니라 설치된 Zed 확장을 읽는 상태라 고지가 없다. Phase 7에서 테마를 복사할 때 Catppuccin MIT 고지(T-17.2)를 함께 넣는다.

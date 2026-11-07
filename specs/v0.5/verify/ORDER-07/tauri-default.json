@@ -1,0 +1,196 @@
+{
+  "pid": 19704,
+  "mode": "default",
+  "settingsExists": false,
+  "probe": {
+    "vars": {
+      "--background": "#3b414dff",
+      "--border": "#464b57ff",
+      "--text": "#dce0e5ff",
+      "--text-accent": "#74ade8ff",
+      "--title-bar-background": "#3b414dff",
+      "--status-bar-background": "#3b414dff",
+      "--panel-background": "#2f343eff",
+      "--tab-bar-background": "#2f343eff",
+      "--tab-active-background": "#282c33ff",
+      "--editor-background": "#282c33ff",
+      "--editor-foreground": "#acb2beff",
+      "--editor-active-line-background": "#2f343ebf",
+      "--players-0-selection": "#74ade83d",
+      "--editor-line-number": "#4e5a5fff"
+    },
+    "points": {
+      "title_bar": [
+        984,
+        2
+      ],
+      "status_bar": [
+        840,
+        824
+      ],
+      "panel": [
+        360,
+        782
+      ],
+      "tab_bar": [
+        1180,
+        36
+      ],
+      "tab_active": [
+        601.3515625,
+        36
+      ],
+      "editor": [
+        1400,
+        781
+      ],
+      "active_line": [
+        1395,
+        112.1328125
+      ]
+    },
+    "computed": {
+      "text": "rgb(172, 178, 190)",
+      "line_number": "rgb(78, 90, 95)"
+    },
+    "panelElement": "tree-scroll"
+  },
+  "iconOfReadme": {
+    "tag": "svg",
+    "src": null
+  },
+  "colours": [
+    {
+      "place": "title_bar",
+      "token": "title_bar.background",
+      "json": "#3b414dff",
+      "css": "#3b414dff",
+      "pixel": "rgb(60,65,77)",
+      "expect": "rgb(59,65,77)",
+      "diff": 1,
+      "source": "JSON",
+      "pass": true
+    },
+    {
+      "place": "status_bar",
+      "token": "status_bar.background",
+      "json": "#3b414dff",
+      "css": "#3b414dff",
+      "pixel": "rgb(60,65,77)",
+      "expect": "rgb(59,65,77)",
+      "diff": 1,
+      "source": "JSON",
+      "pass": true
+    },
+    {
+      "place": "panel",
+      "token": "panel.background",
+      "json": "#2f343eff",
+      "css": "#2f343eff",
+      "pixel": "rgb(48,52,62)",
+      "expect": "rgb(47,52,62)",
+      "diff": 1,
+      "source": "JSON",
+      "pass": true
+    },
+    {
+      "place": "tab_bar",
+      "token": "tab_bar.background",
+      "json": "#2f343eff",
+      "css": "#2f343eff",
+      "pixel": "rgb(48,52,62)",
+      "expect": "rgb(47,52,62)",
+      "diff": 1,
+      "source": "JSON",
+      "pass": true
+    },
+    {
+      "place": "tab_active",
+      "token": "tab.active_background",
+      "json": "#282c33ff",
+      "css": "#282c33ff",
+      "pixel": "rgb(41,44,51)",
+      "expect": "rgb(40,44,51)",
+      "diff": 1,
+      "source": "JSON",
+      "pass": true
+    },
+    {
+      "place": "editor",
+      "token": "editor.background",
+      "json": "#282c33ff",
+      "css": "#282c33ff",
+      "pixel": "rgb(41,44,51)",
+      "expect": "rgb(40,44,51)",
+      "diff": 1,
+      "source": "JSON",
+      "pass": true
+    },
+    {
+      "place": "active_line",
+      "token": "editor.active_line.background",
+      "json": "#2f343ebf",
+      "css": "#2f343ebf",
+      "pixel": "rgb(46,50,59)",
+      "expect": "rgb(45,50,59)",
+      "diff": 1,
+      "source": "JSON",
+      "pass": true
+    },
+    {
+      "place": "selection",
+      "token": "players[0].selection",
+      "json": "#74ade83d",
+      "css": "#74ade83d",
+      "pixel": null,
+      "expect": "rgb(58,75,94)",
+      "diff": null,
+      "source": "JSON",
+      "pass": false
+    },
+    {
+      "place": "text",
+      "token": "editor.foreground",
+      "json": "#acb2beff",
+      "css": "rgb(172, 178, 190)",
+      "pixel": null,
+      "expect": null,
+      "diff": null,
+      "source": "JSON",
+      "pass": true
+    },
+    {
+      "place": "line_number",
+      "token": "editor.line_number",
+      "json": "#4e5a5f",
+      "css": "rgb(78, 90, 95)",
+      "pixel": null,
+      "expect": null,
+      "diff": null,
+      "source": "JSON",
+      "pass": true
+    },
+    {
+      "place": "border",
+      "token": "border",
+      "json": "#464b57ff",
+      "css": "#464b57ff",
+      "pixel": null,
+      "expect": null,
+      "diff": null,
+      "source": "JSON",
+      "pass": true
+    },
+    {
+      "place": "accent",
+      "token": "text.accent",
+      "json": "#74ade8ff",
+      "css": "#74ade8ff",
+      "pixel": null,
+      "expect": null,
+      "diff": null,
+      "source": "JSON",
+      "pass": true
+    }
+  ]
+}

@@ -243,6 +243,27 @@
     - 원본 특이점: Zed (Default) 대응의 `bak → backup`은 `backup` 정의가 없어 기본 파일 아이콘으로 그린다.
     - Extensions 범주는 탭을 닫았다 열어도 마지막 값을 유지한다(Install Themes 뒤 메뉴로 열면 Themes 범주).
     - 테마 JSON은 시작 때 한 번 파싱(약 340KB), 아이콘 테마 목록은 빌드 때 고정. `dist` 약 16MB(Catppuccin SVG 5천여 개).
+- **ORDER-07 마무리: K-22·C-24·V3** (2026-11-07, 완료·core 판정 대기)
+  - 무엇을 했나:
+    - K-22(커밋 `14f15c0`): 선택기 목록 스크롤바는 포인터가 목록 위일 때만 색이 보인다(P-004, 폭 L-308 6px `scrollbar.width.ui`, 트랙·썸 토큰). `settings.json`에 새 키를 덧붙일 때 앞 값 뒤 쉼표·첫 키 들여쓰기·줄바꿈 형식을 유지한다(`appendEntry`, 테스트 1건).
+    - C-24: tauri-checker가 K-17~K-21을 리뷰했다.
+    - V3(2026-11-07): 화면 측정과 Zed 대조.
+    - W-16: PROGRESS·HERDR-SETUP·SPEC(Lucide 언급, 선택기 스크롤바)·PLAN(Phase 7 상태) 문서.
+  - 결과:
+    - C-24 PASS: 복사본 추적 0건, 실행 중 Zed 폴더·네트워크 읽기 없음, 고정 커밋·태그 일치, `resolveAsset` 거부 9건 테스트, `cargo test` 20개·clippy 경고 0.
+    - V3: One Dark 8곳이 Zed와 차이 1 이하. 21테마 CSS 값 = JSON(macOS Classic Dark `text.accent`만 대체값). 그린 색 차이는 평면 3 이하, 반투명 선택 7 이하. Catppuccin Latte 아이콘 22행 일치. 선택기 프레임 x 448–991, top 80으로 Zed와 같다. 테마 21·아이콘 테마 9 목록, Esc 복원·Enter 저장 확인.
+  - 검증:
+    - V1(K-22): typecheck 통과, `npm run test` 168/168.
+    - V3: 측정 조건 1920×1080·100%, 창 1440×852. 결과 파일 `specs/v0.5/verify/ORDER-07/`(`tauri-*.png`·`tauri-*.json`, `zed-*.png`, `cmp-icons-zed-top-tauri-bottom.png`).
+    - 문서(W-16): V0(실행 없음).
+  - 남은 차이(이 Phase 밖이거나 결정 필요):
+    - Zed "View Theme Docs" 없음(ORDER-07 3.1에서 제외).
+    - 선택기 구문 색 미리보기(Phase 11).
+    - 파일 트리 정렬(`package.json`/`package-lock.json` 순서)과 `.git` 표시(이 Phase 밖).
+    - 탭 파일 아이콘: Zed 기본 `tabs.file_icons`=false라 그리지 않음(core 확인).
+    - 기본 묶음 Extensions 카드 없음(Zed 동작, `DECISIONS.md` D-7).
+    - 스크롤바 자동 숨김 1초(E-033)·썸 최소 25px 생략.
+  - coder 되돌림: 14:08 K-22가 끝난 뒤 Sonnet 5.5 coder를 `/quit`로 종료했다. Codex gpt-6.1-sol medium 시작은 pane `wJ:pM`이 입력에 반응하지 않아 아직 못 했다(`herdr agent start` timeout 2회). 되돌린 시각은 끝나면 leader가 다시 알린다(`HERDR-SETUP.md` 1장 같은 기록).
 
 ## 사용자 요청 작업
 

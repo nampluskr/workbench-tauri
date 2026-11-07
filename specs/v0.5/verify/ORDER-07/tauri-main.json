@@ -1,0 +1,5315 @@
+{
+  "pid": 41268,
+  "mode": "main",
+  "themes": {
+    "Catppuccin Latte": {
+      "probe0": {
+        "vars": {
+          "--background": "#d7dce5ff",
+          "--border": "#ccd0daff",
+          "--text": "#4c4f69ff",
+          "--text-accent": "#8839efff",
+          "--title-bar-background": "#dce0e8ff",
+          "--status-bar-background": "#dce0e8ff",
+          "--panel-background": "#e6e9efff",
+          "--tab-bar-background": "#dce0e8ff",
+          "--tab-active-background": "#eff1f5ff",
+          "--editor-background": "#eff1f5ff",
+          "--editor-foreground": "#4c4f69ff",
+          "--editor-active-line-background": "#4c4f6912",
+          "--players-0-selection": "#7c7f934d",
+          "--editor-line-number": "#8c8fa1ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(76, 79, 105)",
+          "line_number": "rgb(140, 143, 161)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#d7dce5ff",
+          "--border": "#ccd0daff",
+          "--text": "#4c4f69ff",
+          "--text-accent": "#8839efff",
+          "--title-bar-background": "#dce0e8ff",
+          "--status-bar-background": "#dce0e8ff",
+          "--panel-background": "#e6e9efff",
+          "--tab-bar-background": "#dce0e8ff",
+          "--tab-active-background": "#eff1f5ff",
+          "--editor-background": "#eff1f5ff",
+          "--editor-foreground": "#4c4f69ff",
+          "--editor-active-line-background": "#4c4f6912",
+          "--players-0-selection": "#7c7f934d",
+          "--editor-line-number": "#8c8fa1ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(76, 79, 105)",
+          "line_number": "rgb(140, 143, 161)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#dce0e8",
+          "css": "#dce0e8ff",
+          "pixel": "rgb(221,224,232)",
+          "expect": "rgb(220,224,232)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#dce0e8",
+          "css": "#dce0e8ff",
+          "pixel": "rgb(221,224,232)",
+          "expect": "rgb(220,224,232)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#e6e9ef",
+          "css": "#e6e9efff",
+          "pixel": "rgb(231,233,239)",
+          "expect": "rgb(230,233,239)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#dce0e8",
+          "css": "#dce0e8ff",
+          "pixel": "rgb(221,224,232)",
+          "expect": "rgb(220,224,232)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#eff1f5",
+          "css": "#eff1f5ff",
+          "pixel": "rgb(239,241,245)",
+          "expect": "rgb(239,241,245)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#eff1f5",
+          "css": "#eff1f5ff",
+          "pixel": "rgb(239,241,245)",
+          "expect": "rgb(239,241,245)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#4c4f6912",
+          "css": "#4c4f6912",
+          "pixel": "rgb(227,230,235)",
+          "expect": "rgb(227,229,235)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#7c7f934d",
+          "css": "#7c7f934d",
+          "pixel": "rgb(205,206,215)",
+          "expect": "rgb(204,207,215)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#4c4f69",
+          "css": "rgb(76, 79, 105)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#8c8fa1",
+          "css": "rgb(140, 143, 161)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#ccd0da",
+          "css": "#ccd0daff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#8839ef",
+          "css": "#8839efff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "Catppuccin Frappé": {
+      "probe0": {
+        "vars": {
+          "--background": "#383c52ff",
+          "--border": "#414559ff",
+          "--text": "#c6d0f5ff",
+          "--text-accent": "#ca9ee6ff",
+          "--title-bar-background": "#232634ff",
+          "--status-bar-background": "#232634ff",
+          "--panel-background": "#292c3cff",
+          "--tab-bar-background": "#232634ff",
+          "--tab-active-background": "#303446ff",
+          "--editor-background": "#303446ff",
+          "--editor-foreground": "#c6d0f5ff",
+          "--editor-active-line-background": "#c6d0f512",
+          "--players-0-selection": "#949cbb40",
+          "--editor-line-number": "#838ba7ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(198, 208, 245)",
+          "line_number": "rgb(131, 139, 167)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#383c52ff",
+          "--border": "#414559ff",
+          "--text": "#c6d0f5ff",
+          "--text-accent": "#ca9ee6ff",
+          "--title-bar-background": "#232634ff",
+          "--status-bar-background": "#232634ff",
+          "--panel-background": "#292c3cff",
+          "--tab-bar-background": "#232634ff",
+          "--tab-active-background": "#303446ff",
+          "--editor-background": "#303446ff",
+          "--editor-foreground": "#c6d0f5ff",
+          "--editor-active-line-background": "#c6d0f512",
+          "--players-0-selection": "#949cbb40",
+          "--editor-line-number": "#838ba7ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(198, 208, 245)",
+          "line_number": "rgb(131, 139, 167)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#232634",
+          "css": "#232634ff",
+          "pixel": "rgb(36,38,52)",
+          "expect": "rgb(35,38,52)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#232634",
+          "css": "#232634ff",
+          "pixel": "rgb(36,38,52)",
+          "expect": "rgb(35,38,52)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#292c3c",
+          "css": "#292c3cff",
+          "pixel": "rgb(42,43,60)",
+          "expect": "rgb(41,44,60)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#232634",
+          "css": "#232634ff",
+          "pixel": "rgb(36,38,52)",
+          "expect": "rgb(35,38,52)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#303446",
+          "css": "#303446ff",
+          "pixel": "rgb(49,51,70)",
+          "expect": "rgb(48,52,70)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#303446",
+          "css": "#303446ff",
+          "pixel": "rgb(49,51,70)",
+          "expect": "rgb(48,52,70)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#c6d0f512",
+          "css": "#c6d0f512",
+          "pixel": "rgb(60,62,82)",
+          "expect": "rgb(59,63,82)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#949cbb40",
+          "css": "#949cbb40",
+          "pixel": "rgb(75,77,99)",
+          "expect": "rgb(73,78,99)",
+          "diff": 2,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#c6d0f5",
+          "css": "rgb(198, 208, 245)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#838ba7",
+          "css": "rgb(131, 139, 167)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#414559",
+          "css": "#414559ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#ca9ee6",
+          "css": "#ca9ee6ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "Catppuccin Macchiato": {
+      "probe0": {
+        "vars": {
+          "--background": "#2c2f46ff",
+          "--border": "#363a4fff",
+          "--text": "#cad3f5ff",
+          "--text-accent": "#c6a0f6ff",
+          "--title-bar-background": "#181926ff",
+          "--status-bar-background": "#181926ff",
+          "--panel-background": "#1e2030ff",
+          "--tab-bar-background": "#181926ff",
+          "--tab-active-background": "#24273aff",
+          "--editor-background": "#24273aff",
+          "--editor-foreground": "#cad3f5ff",
+          "--editor-active-line-background": "#cad3f512",
+          "--players-0-selection": "#939ab740",
+          "--editor-line-number": "#8087a2ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(202, 211, 245)",
+          "line_number": "rgb(128, 135, 162)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#2c2f46ff",
+          "--border": "#363a4fff",
+          "--text": "#cad3f5ff",
+          "--text-accent": "#c6a0f6ff",
+          "--title-bar-background": "#181926ff",
+          "--status-bar-background": "#181926ff",
+          "--panel-background": "#1e2030ff",
+          "--tab-bar-background": "#181926ff",
+          "--tab-active-background": "#24273aff",
+          "--editor-background": "#24273aff",
+          "--editor-foreground": "#cad3f5ff",
+          "--editor-active-line-background": "#cad3f512",
+          "--players-0-selection": "#939ab740",
+          "--editor-line-number": "#8087a2ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(202, 211, 245)",
+          "line_number": "rgb(128, 135, 162)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#181926",
+          "css": "#181926ff",
+          "pixel": "rgb(25,25,38)",
+          "expect": "rgb(24,25,38)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#181926",
+          "css": "#181926ff",
+          "pixel": "rgb(25,25,38)",
+          "expect": "rgb(24,25,38)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#1e2030",
+          "css": "#1e2030ff",
+          "pixel": "rgb(31,31,48)",
+          "expect": "rgb(30,32,48)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#181926",
+          "css": "#181926ff",
+          "pixel": "rgb(25,25,38)",
+          "expect": "rgb(24,25,38)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#24273a",
+          "css": "#24273aff",
+          "pixel": "rgb(37,38,58)",
+          "expect": "rgb(36,39,58)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#24273a",
+          "css": "#24273aff",
+          "pixel": "rgb(37,38,58)",
+          "expect": "rgb(36,39,58)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#cad3f512",
+          "css": "#cad3f512",
+          "pixel": "rgb(48,50,71)",
+          "expect": "rgb(48,51,71)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#939ab740",
+          "css": "#939ab740",
+          "pixel": "rgb(65,66,89)",
+          "expect": "rgb(64,68,89)",
+          "diff": 2,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#cad3f5",
+          "css": "rgb(202, 211, 245)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#8087a2",
+          "css": "rgb(128, 135, 162)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#363a4f",
+          "css": "#363a4fff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#c6a0f6",
+          "css": "#c6a0f6ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "Catppuccin Mocha": {
+      "probe0": {
+        "vars": {
+          "--background": "#27273bff",
+          "--border": "#313244ff",
+          "--text": "#cdd6f4ff",
+          "--text-accent": "#cba6f7ff",
+          "--title-bar-background": "#11111bff",
+          "--status-bar-background": "#11111bff",
+          "--panel-background": "#181825ff",
+          "--tab-bar-background": "#11111bff",
+          "--tab-active-background": "#1e1e2eff",
+          "--editor-background": "#1e1e2eff",
+          "--editor-foreground": "#cdd6f4ff",
+          "--editor-active-line-background": "#cdd6f412",
+          "--players-0-selection": "#9399b240",
+          "--editor-line-number": "#7f849cff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(205, 214, 244)",
+          "line_number": "rgb(127, 132, 156)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#27273bff",
+          "--border": "#313244ff",
+          "--text": "#cdd6f4ff",
+          "--text-accent": "#cba6f7ff",
+          "--title-bar-background": "#11111bff",
+          "--status-bar-background": "#11111bff",
+          "--panel-background": "#181825ff",
+          "--tab-bar-background": "#11111bff",
+          "--tab-active-background": "#1e1e2eff",
+          "--editor-background": "#1e1e2eff",
+          "--editor-foreground": "#cdd6f4ff",
+          "--editor-active-line-background": "#cdd6f412",
+          "--players-0-selection": "#9399b240",
+          "--editor-line-number": "#7f849cff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(205, 214, 244)",
+          "line_number": "rgb(127, 132, 156)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#11111b",
+          "css": "#11111bff",
+          "pixel": "rgb(18,17,27)",
+          "expect": "rgb(17,17,27)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#11111b",
+          "css": "#11111bff",
+          "pixel": "rgb(18,17,27)",
+          "expect": "rgb(17,17,27)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#181825",
+          "css": "#181825ff",
+          "pixel": "rgb(25,24,37)",
+          "expect": "rgb(24,24,37)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#11111b",
+          "css": "#11111bff",
+          "pixel": "rgb(18,17,27)",
+          "expect": "rgb(17,17,27)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#1e1e2e",
+          "css": "#1e1e2eff",
+          "pixel": "rgb(31,29,46)",
+          "expect": "rgb(30,30,46)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#1e1e2e",
+          "css": "#1e1e2eff",
+          "pixel": "rgb(31,29,46)",
+          "expect": "rgb(30,30,46)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#cdd6f412",
+          "css": "#cdd6f412",
+          "pixel": "rgb(44,42,60)",
+          "expect": "rgb(42,43,60)",
+          "diff": 2,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#9399b240",
+          "css": "#9399b240",
+          "pixel": "rgb(60,60,79)",
+          "expect": "rgb(59,61,79)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#cdd6f4",
+          "css": "rgb(205, 214, 244)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#7f849c",
+          "css": "rgb(127, 132, 156)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#313244",
+          "css": "#313244ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#cba6f7",
+          "css": "#cba6f7ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "Catppuccin Latte - No Italics": {
+      "probe0": {
+        "vars": {
+          "--background": "#d7dce5ff",
+          "--border": "#ccd0daff",
+          "--text": "#4c4f69ff",
+          "--text-accent": "#8839efff",
+          "--title-bar-background": "#dce0e8ff",
+          "--status-bar-background": "#dce0e8ff",
+          "--panel-background": "#e6e9efff",
+          "--tab-bar-background": "#dce0e8ff",
+          "--tab-active-background": "#eff1f5ff",
+          "--editor-background": "#eff1f5ff",
+          "--editor-foreground": "#4c4f69ff",
+          "--editor-active-line-background": "#4c4f6912",
+          "--players-0-selection": "#7c7f934d",
+          "--editor-line-number": "#8c8fa1ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(76, 79, 105)",
+          "line_number": "rgb(140, 143, 161)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#d7dce5ff",
+          "--border": "#ccd0daff",
+          "--text": "#4c4f69ff",
+          "--text-accent": "#8839efff",
+          "--title-bar-background": "#dce0e8ff",
+          "--status-bar-background": "#dce0e8ff",
+          "--panel-background": "#e6e9efff",
+          "--tab-bar-background": "#dce0e8ff",
+          "--tab-active-background": "#eff1f5ff",
+          "--editor-background": "#eff1f5ff",
+          "--editor-foreground": "#4c4f69ff",
+          "--editor-active-line-background": "#4c4f6912",
+          "--players-0-selection": "#7c7f934d",
+          "--editor-line-number": "#8c8fa1ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(76, 79, 105)",
+          "line_number": "rgb(140, 143, 161)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#dce0e8",
+          "css": "#dce0e8ff",
+          "pixel": "rgb(221,224,232)",
+          "expect": "rgb(220,224,232)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#dce0e8",
+          "css": "#dce0e8ff",
+          "pixel": "rgb(221,224,232)",
+          "expect": "rgb(220,224,232)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#e6e9ef",
+          "css": "#e6e9efff",
+          "pixel": "rgb(231,233,239)",
+          "expect": "rgb(230,233,239)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#dce0e8",
+          "css": "#dce0e8ff",
+          "pixel": "rgb(221,224,232)",
+          "expect": "rgb(220,224,232)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#eff1f5",
+          "css": "#eff1f5ff",
+          "pixel": "rgb(239,241,245)",
+          "expect": "rgb(239,241,245)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#eff1f5",
+          "css": "#eff1f5ff",
+          "pixel": "rgb(239,241,245)",
+          "expect": "rgb(239,241,245)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#4c4f6912",
+          "css": "#4c4f6912",
+          "pixel": "rgb(227,230,235)",
+          "expect": "rgb(227,229,235)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#7c7f934d",
+          "css": "#7c7f934d",
+          "pixel": "rgb(205,206,215)",
+          "expect": "rgb(204,207,215)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#4c4f69",
+          "css": "rgb(76, 79, 105)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#8c8fa1",
+          "css": "rgb(140, 143, 161)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#ccd0da",
+          "css": "#ccd0daff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#8839ef",
+          "css": "#8839efff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "Catppuccin Frappé - No Italics": {
+      "probe0": {
+        "vars": {
+          "--background": "#383c52ff",
+          "--border": "#414559ff",
+          "--text": "#c6d0f5ff",
+          "--text-accent": "#ca9ee6ff",
+          "--title-bar-background": "#232634ff",
+          "--status-bar-background": "#232634ff",
+          "--panel-background": "#292c3cff",
+          "--tab-bar-background": "#232634ff",
+          "--tab-active-background": "#303446ff",
+          "--editor-background": "#303446ff",
+          "--editor-foreground": "#c6d0f5ff",
+          "--editor-active-line-background": "#c6d0f512",
+          "--players-0-selection": "#949cbb40",
+          "--editor-line-number": "#838ba7ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(198, 208, 245)",
+          "line_number": "rgb(131, 139, 167)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#383c52ff",
+          "--border": "#414559ff",
+          "--text": "#c6d0f5ff",
+          "--text-accent": "#ca9ee6ff",
+          "--title-bar-background": "#232634ff",
+          "--status-bar-background": "#232634ff",
+          "--panel-background": "#292c3cff",
+          "--tab-bar-background": "#232634ff",
+          "--tab-active-background": "#303446ff",
+          "--editor-background": "#303446ff",
+          "--editor-foreground": "#c6d0f5ff",
+          "--editor-active-line-background": "#c6d0f512",
+          "--players-0-selection": "#949cbb40",
+          "--editor-line-number": "#838ba7ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(198, 208, 245)",
+          "line_number": "rgb(131, 139, 167)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#232634",
+          "css": "#232634ff",
+          "pixel": "rgb(36,38,52)",
+          "expect": "rgb(35,38,52)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#232634",
+          "css": "#232634ff",
+          "pixel": "rgb(36,38,52)",
+          "expect": "rgb(35,38,52)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#292c3c",
+          "css": "#292c3cff",
+          "pixel": "rgb(42,43,60)",
+          "expect": "rgb(41,44,60)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#232634",
+          "css": "#232634ff",
+          "pixel": "rgb(36,38,52)",
+          "expect": "rgb(35,38,52)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#303446",
+          "css": "#303446ff",
+          "pixel": "rgb(49,51,70)",
+          "expect": "rgb(48,52,70)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#303446",
+          "css": "#303446ff",
+          "pixel": "rgb(49,51,70)",
+          "expect": "rgb(48,52,70)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#c6d0f512",
+          "css": "#c6d0f512",
+          "pixel": "rgb(60,62,82)",
+          "expect": "rgb(59,63,82)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#949cbb40",
+          "css": "#949cbb40",
+          "pixel": "rgb(75,77,99)",
+          "expect": "rgb(73,78,99)",
+          "diff": 2,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#c6d0f5",
+          "css": "rgb(198, 208, 245)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#838ba7",
+          "css": "rgb(131, 139, 167)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#414559",
+          "css": "#414559ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#ca9ee6",
+          "css": "#ca9ee6ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "Catppuccin Macchiato - No Italics": {
+      "probe0": {
+        "vars": {
+          "--background": "#2c2f46ff",
+          "--border": "#363a4fff",
+          "--text": "#cad3f5ff",
+          "--text-accent": "#c6a0f6ff",
+          "--title-bar-background": "#181926ff",
+          "--status-bar-background": "#181926ff",
+          "--panel-background": "#1e2030ff",
+          "--tab-bar-background": "#181926ff",
+          "--tab-active-background": "#24273aff",
+          "--editor-background": "#24273aff",
+          "--editor-foreground": "#cad3f5ff",
+          "--editor-active-line-background": "#cad3f512",
+          "--players-0-selection": "#939ab740",
+          "--editor-line-number": "#8087a2ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(202, 211, 245)",
+          "line_number": "rgb(128, 135, 162)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#2c2f46ff",
+          "--border": "#363a4fff",
+          "--text": "#cad3f5ff",
+          "--text-accent": "#c6a0f6ff",
+          "--title-bar-background": "#181926ff",
+          "--status-bar-background": "#181926ff",
+          "--panel-background": "#1e2030ff",
+          "--tab-bar-background": "#181926ff",
+          "--tab-active-background": "#24273aff",
+          "--editor-background": "#24273aff",
+          "--editor-foreground": "#cad3f5ff",
+          "--editor-active-line-background": "#cad3f512",
+          "--players-0-selection": "#939ab740",
+          "--editor-line-number": "#8087a2ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(202, 211, 245)",
+          "line_number": "rgb(128, 135, 162)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#181926",
+          "css": "#181926ff",
+          "pixel": "rgb(25,25,38)",
+          "expect": "rgb(24,25,38)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#181926",
+          "css": "#181926ff",
+          "pixel": "rgb(25,25,38)",
+          "expect": "rgb(24,25,38)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#1e2030",
+          "css": "#1e2030ff",
+          "pixel": "rgb(31,31,48)",
+          "expect": "rgb(30,32,48)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#181926",
+          "css": "#181926ff",
+          "pixel": "rgb(25,25,38)",
+          "expect": "rgb(24,25,38)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#24273a",
+          "css": "#24273aff",
+          "pixel": "rgb(37,38,58)",
+          "expect": "rgb(36,39,58)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#24273a",
+          "css": "#24273aff",
+          "pixel": "rgb(37,38,58)",
+          "expect": "rgb(36,39,58)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#cad3f512",
+          "css": "#cad3f512",
+          "pixel": "rgb(48,50,71)",
+          "expect": "rgb(48,51,71)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#939ab740",
+          "css": "#939ab740",
+          "pixel": "rgb(65,66,89)",
+          "expect": "rgb(64,68,89)",
+          "diff": 2,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#cad3f5",
+          "css": "rgb(202, 211, 245)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#8087a2",
+          "css": "rgb(128, 135, 162)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#363a4f",
+          "css": "#363a4fff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#c6a0f6",
+          "css": "#c6a0f6ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "Catppuccin Mocha - No Italics": {
+      "probe0": {
+        "vars": {
+          "--background": "#27273bff",
+          "--border": "#313244ff",
+          "--text": "#cdd6f4ff",
+          "--text-accent": "#cba6f7ff",
+          "--title-bar-background": "#11111bff",
+          "--status-bar-background": "#11111bff",
+          "--panel-background": "#181825ff",
+          "--tab-bar-background": "#11111bff",
+          "--tab-active-background": "#1e1e2eff",
+          "--editor-background": "#1e1e2eff",
+          "--editor-foreground": "#cdd6f4ff",
+          "--editor-active-line-background": "#cdd6f412",
+          "--players-0-selection": "#9399b240",
+          "--editor-line-number": "#7f849cff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(205, 214, 244)",
+          "line_number": "rgb(127, 132, 156)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#27273bff",
+          "--border": "#313244ff",
+          "--text": "#cdd6f4ff",
+          "--text-accent": "#cba6f7ff",
+          "--title-bar-background": "#11111bff",
+          "--status-bar-background": "#11111bff",
+          "--panel-background": "#181825ff",
+          "--tab-bar-background": "#11111bff",
+          "--tab-active-background": "#1e1e2eff",
+          "--editor-background": "#1e1e2eff",
+          "--editor-foreground": "#cdd6f4ff",
+          "--editor-active-line-background": "#cdd6f412",
+          "--players-0-selection": "#9399b240",
+          "--editor-line-number": "#7f849cff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(205, 214, 244)",
+          "line_number": "rgb(127, 132, 156)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#11111b",
+          "css": "#11111bff",
+          "pixel": "rgb(18,17,27)",
+          "expect": "rgb(17,17,27)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#11111b",
+          "css": "#11111bff",
+          "pixel": "rgb(18,17,27)",
+          "expect": "rgb(17,17,27)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#181825",
+          "css": "#181825ff",
+          "pixel": "rgb(25,24,37)",
+          "expect": "rgb(24,24,37)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#11111b",
+          "css": "#11111bff",
+          "pixel": "rgb(18,17,27)",
+          "expect": "rgb(17,17,27)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#1e1e2e",
+          "css": "#1e1e2eff",
+          "pixel": "rgb(31,29,46)",
+          "expect": "rgb(30,30,46)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#1e1e2e",
+          "css": "#1e1e2eff",
+          "pixel": "rgb(31,29,46)",
+          "expect": "rgb(30,30,46)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#cdd6f412",
+          "css": "#cdd6f412",
+          "pixel": "rgb(44,42,60)",
+          "expect": "rgb(42,43,60)",
+          "diff": 2,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#9399b240",
+          "css": "#9399b240",
+          "pixel": "rgb(60,60,79)",
+          "expect": "rgb(59,61,79)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#cdd6f4",
+          "css": "rgb(205, 214, 244)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#7f849c",
+          "css": "rgb(127, 132, 156)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#313244",
+          "css": "#313244ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#cba6f7",
+          "css": "#cba6f7ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "macOS Classic Light": {
+      "probe0": {
+        "vars": {
+          "--background": "#ffffffff",
+          "--border": "#d2d2d2ff",
+          "--text": "#000000ff",
+          "--text-accent": "#1f6ae2ff",
+          "--title-bar-background": "#fefefeff",
+          "--status-bar-background": "#e9e9e9ff",
+          "--panel-background": "#f9f9f9ff",
+          "--tab-bar-background": "#e9e9e9ff",
+          "--tab-active-background": "#ffffffff",
+          "--editor-background": "#ffffffff",
+          "--editor-foreground": "#000000ff",
+          "--editor-active-line-background": "#f0f0f0ff",
+          "--players-0-selection": "#3b9ee53d",
+          "--editor-line-number": "#929292ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(0, 0, 0)",
+          "line_number": "rgb(146, 146, 146)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#ffffffff",
+          "--border": "#d2d2d2ff",
+          "--text": "#000000ff",
+          "--text-accent": "#1f6ae2ff",
+          "--title-bar-background": "#fefefeff",
+          "--status-bar-background": "#e9e9e9ff",
+          "--panel-background": "#f9f9f9ff",
+          "--tab-bar-background": "#e9e9e9ff",
+          "--tab-active-background": "#ffffffff",
+          "--editor-background": "#ffffffff",
+          "--editor-foreground": "#000000ff",
+          "--editor-active-line-background": "#f0f0f0ff",
+          "--players-0-selection": "#3b9ee53d",
+          "--editor-line-number": "#929292ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(0, 0, 0)",
+          "line_number": "rgb(146, 146, 146)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#FEFEFE",
+          "css": "#fefefeff",
+          "pixel": "rgb(254,254,254)",
+          "expect": "rgb(254,254,254)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#E9E9E9",
+          "css": "#e9e9e9ff",
+          "pixel": "rgb(233,233,233)",
+          "expect": "rgb(233,233,233)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#F9F9F9",
+          "css": "#f9f9f9ff",
+          "pixel": "rgb(249,249,249)",
+          "expect": "rgb(249,249,249)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#E9E9E9",
+          "css": "#e9e9e9ff",
+          "pixel": "rgb(233,233,233)",
+          "expect": "rgb(233,233,233)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#FFFFFF",
+          "css": "#ffffffff",
+          "pixel": "rgb(255,255,255)",
+          "expect": "rgb(255,255,255)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#ffffff",
+          "css": "#ffffffff",
+          "pixel": "rgb(255,255,255)",
+          "expect": "rgb(255,255,255)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#F0F0F0",
+          "css": "#f0f0f0ff",
+          "pixel": "rgb(240,240,240)",
+          "expect": "rgb(240,240,240)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#3b9ee53d",
+          "css": "#3b9ee53d",
+          "pixel": "rgb(214,231,249)",
+          "expect": "rgb(208,232,249)",
+          "diff": 6,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#000000",
+          "css": "rgb(0, 0, 0)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#929292",
+          "css": "rgb(146, 146, 146)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#D2D2D2",
+          "css": "#d2d2d2ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#1f6ae2",
+          "css": "#1f6ae2ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "macOS Classic Dark": {
+      "probe0": {
+        "vars": {
+          "--background": "#131313ff",
+          "--border": "#404040ff",
+          "--text": "#cacccaff",
+          "--text-accent": "#74ade8ff",
+          "--title-bar-background": "#323232ff",
+          "--status-bar-background": "#272727ff",
+          "--panel-background": "#1e1d1eff",
+          "--tab-bar-background": "#232323ff",
+          "--tab-active-background": "#131313ff",
+          "--editor-background": "#131313ff",
+          "--editor-foreground": "#ddddddff",
+          "--editor-active-line-background": "#272727ff",
+          "--players-0-selection": "#72cffe3d",
+          "--editor-line-number": "#8f8f8fff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(221, 221, 221)",
+          "line_number": "rgb(143, 143, 143)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#131313ff",
+          "--border": "#404040ff",
+          "--text": "#cacccaff",
+          "--text-accent": "#74ade8ff",
+          "--title-bar-background": "#323232ff",
+          "--status-bar-background": "#272727ff",
+          "--panel-background": "#1e1d1eff",
+          "--tab-bar-background": "#232323ff",
+          "--tab-active-background": "#131313ff",
+          "--editor-background": "#131313ff",
+          "--editor-foreground": "#ddddddff",
+          "--editor-active-line-background": "#272727ff",
+          "--players-0-selection": "#72cffe3d",
+          "--editor-line-number": "#8f8f8fff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(221, 221, 221)",
+          "line_number": "rgb(143, 143, 143)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#323232",
+          "css": "#323232ff",
+          "pixel": "rgb(50,50,50)",
+          "expect": "rgb(50,50,50)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#272727",
+          "css": "#272727ff",
+          "pixel": "rgb(39,39,39)",
+          "expect": "rgb(39,39,39)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#1E1D1E",
+          "css": "#1e1d1eff",
+          "pixel": "rgb(30,29,30)",
+          "expect": "rgb(30,29,30)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#232323",
+          "css": "#232323ff",
+          "pixel": "rgb(35,35,35)",
+          "expect": "rgb(35,35,35)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#131313",
+          "css": "#131313ff",
+          "pixel": "rgb(19,19,19)",
+          "expect": "rgb(19,19,19)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#131313",
+          "css": "#131313ff",
+          "pixel": "rgb(19,19,19)",
+          "expect": "rgb(19,19,19)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#272727",
+          "css": "#272727ff",
+          "pixel": "rgb(39,39,39)",
+          "expect": "rgb(39,39,39)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#72cffe3d",
+          "css": "#72cffe3d",
+          "pixel": "rgb(45,63,75)",
+          "expect": "rgb(42,64,75)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#DDDDDD",
+          "css": "rgb(221, 221, 221)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#8F8F8F",
+          "css": "rgb(143, 143, 143)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#404040",
+          "css": "#404040ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": null,
+          "css": "#74ade8ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "대체",
+          "pass": true
+        }
+      ]
+    },
+    "One Dark": {
+      "probe0": {
+        "vars": {
+          "--background": "#3b414dff",
+          "--border": "#464b57ff",
+          "--text": "#dce0e5ff",
+          "--text-accent": "#74ade8ff",
+          "--title-bar-background": "#3b414dff",
+          "--status-bar-background": "#3b414dff",
+          "--panel-background": "#2f343eff",
+          "--tab-bar-background": "#2f343eff",
+          "--tab-active-background": "#282c33ff",
+          "--editor-background": "#282c33ff",
+          "--editor-foreground": "#acb2beff",
+          "--editor-active-line-background": "#2f343ebf",
+          "--players-0-selection": "#74ade83d",
+          "--editor-line-number": "#4e5a5fff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(172, 178, 190)",
+          "line_number": "rgb(78, 90, 95)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#3b414dff",
+          "--border": "#464b57ff",
+          "--text": "#dce0e5ff",
+          "--text-accent": "#74ade8ff",
+          "--title-bar-background": "#3b414dff",
+          "--status-bar-background": "#3b414dff",
+          "--panel-background": "#2f343eff",
+          "--tab-bar-background": "#2f343eff",
+          "--tab-active-background": "#282c33ff",
+          "--editor-background": "#282c33ff",
+          "--editor-foreground": "#acb2beff",
+          "--editor-active-line-background": "#2f343ebf",
+          "--players-0-selection": "#74ade83d",
+          "--editor-line-number": "#4e5a5fff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(172, 178, 190)",
+          "line_number": "rgb(78, 90, 95)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#3b414dff",
+          "css": "#3b414dff",
+          "pixel": "rgb(60,65,77)",
+          "expect": "rgb(59,65,77)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#3b414dff",
+          "css": "#3b414dff",
+          "pixel": "rgb(60,65,77)",
+          "expect": "rgb(59,65,77)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#2f343eff",
+          "css": "#2f343eff",
+          "pixel": "rgb(48,52,62)",
+          "expect": "rgb(47,52,62)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#2f343eff",
+          "css": "#2f343eff",
+          "pixel": "rgb(48,52,62)",
+          "expect": "rgb(47,52,62)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#282c33ff",
+          "css": "#282c33ff",
+          "pixel": "rgb(41,44,51)",
+          "expect": "rgb(40,44,51)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#282c33ff",
+          "css": "#282c33ff",
+          "pixel": "rgb(41,44,51)",
+          "expect": "rgb(40,44,51)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#2f343ebf",
+          "css": "#2f343ebf",
+          "pixel": "rgb(46,50,59)",
+          "expect": "rgb(45,50,59)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#74ade83d",
+          "css": "#74ade83d",
+          "pixel": "rgb(61,74,95)",
+          "expect": "rgb(58,75,94)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#acb2beff",
+          "css": "rgb(172, 178, 190)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#4e5a5f",
+          "css": "rgb(78, 90, 95)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#464b57ff",
+          "css": "#464b57ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#74ade8ff",
+          "css": "#74ade8ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "One Light": {
+      "probe0": {
+        "vars": {
+          "--background": "#dcdcddff",
+          "--border": "#c9c9caff",
+          "--text": "#242529ff",
+          "--text-accent": "#5c78e2ff",
+          "--title-bar-background": "#dcdcddff",
+          "--status-bar-background": "#dcdcddff",
+          "--panel-background": "#ebebecff",
+          "--tab-bar-background": "#ebebecff",
+          "--tab-active-background": "#fafafaff",
+          "--editor-background": "#fafafaff",
+          "--editor-foreground": "#242529ff",
+          "--editor-active-line-background": "#ebebecbf",
+          "--players-0-selection": "#5c78e23d",
+          "--editor-line-number": "#b4b4bbff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(36, 37, 41)",
+          "line_number": "rgb(180, 180, 187)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#dcdcddff",
+          "--border": "#c9c9caff",
+          "--text": "#242529ff",
+          "--text-accent": "#5c78e2ff",
+          "--title-bar-background": "#dcdcddff",
+          "--status-bar-background": "#dcdcddff",
+          "--panel-background": "#ebebecff",
+          "--tab-bar-background": "#ebebecff",
+          "--tab-active-background": "#fafafaff",
+          "--editor-background": "#fafafaff",
+          "--editor-foreground": "#242529ff",
+          "--editor-active-line-background": "#ebebecbf",
+          "--players-0-selection": "#5c78e23d",
+          "--editor-line-number": "#b4b4bbff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(36, 37, 41)",
+          "line_number": "rgb(180, 180, 187)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#dcdcddff",
+          "css": "#dcdcddff",
+          "pixel": "rgb(220,220,221)",
+          "expect": "rgb(220,220,221)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#dcdcddff",
+          "css": "#dcdcddff",
+          "pixel": "rgb(220,220,221)",
+          "expect": "rgb(220,220,221)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#ebebecff",
+          "css": "#ebebecff",
+          "pixel": "rgb(235,235,236)",
+          "expect": "rgb(235,235,236)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#ebebecff",
+          "css": "#ebebecff",
+          "pixel": "rgb(235,235,236)",
+          "expect": "rgb(235,235,236)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#fafafaff",
+          "css": "#fafafaff",
+          "pixel": "rgb(250,250,250)",
+          "expect": "rgb(250,250,250)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#fafafaff",
+          "css": "#fafafaff",
+          "pixel": "rgb(250,250,250)",
+          "expect": "rgb(250,250,250)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#ebebecbf",
+          "css": "#ebebecbf",
+          "pixel": "rgb(239,239,240)",
+          "expect": "rgb(239,239,240)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#5c78e23d",
+          "css": "#5c78e23d",
+          "pixel": "rgb(215,217,244)",
+          "expect": "rgb(212,219,244)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#242529ff",
+          "css": "rgb(36, 37, 41)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#b4b4bb",
+          "css": "rgb(180, 180, 187)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#c9c9caff",
+          "css": "#c9c9caff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#5c78e2ff",
+          "css": "#5c78e2ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "Ayu Dark": {
+      "probe0": {
+        "vars": {
+          "--background": "#313337ff",
+          "--border": "#3f4043ff",
+          "--text": "#bfbdb6ff",
+          "--text-accent": "#5ac1feff",
+          "--title-bar-background": "#313337ff",
+          "--status-bar-background": "#313337ff",
+          "--panel-background": "#1f2127ff",
+          "--tab-bar-background": "#1f2127ff",
+          "--tab-active-background": "#0d1016ff",
+          "--editor-background": "#0d1016ff",
+          "--editor-foreground": "#bfbdb6ff",
+          "--editor-active-line-background": "#1f2127bf",
+          "--players-0-selection": "#5ac1fe3d",
+          "--editor-line-number": "#4b4c4eff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(191, 189, 182)",
+          "line_number": "rgb(75, 76, 78)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#313337ff",
+          "--border": "#3f4043ff",
+          "--text": "#bfbdb6ff",
+          "--text-accent": "#5ac1feff",
+          "--title-bar-background": "#313337ff",
+          "--status-bar-background": "#313337ff",
+          "--panel-background": "#1f2127ff",
+          "--tab-bar-background": "#1f2127ff",
+          "--tab-active-background": "#0d1016ff",
+          "--editor-background": "#0d1016ff",
+          "--editor-foreground": "#bfbdb6ff",
+          "--editor-active-line-background": "#1f2127bf",
+          "--players-0-selection": "#5ac1fe3d",
+          "--editor-line-number": "#4b4c4eff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(191, 189, 182)",
+          "line_number": "rgb(75, 76, 78)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#313337ff",
+          "css": "#313337ff",
+          "pixel": "rgb(49,51,55)",
+          "expect": "rgb(49,51,55)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#313337ff",
+          "css": "#313337ff",
+          "pixel": "rgb(49,51,55)",
+          "expect": "rgb(49,51,55)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#1f2127ff",
+          "css": "#1f2127ff",
+          "pixel": "rgb(31,33,39)",
+          "expect": "rgb(31,33,39)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#1f2127ff",
+          "css": "#1f2127ff",
+          "pixel": "rgb(31,33,39)",
+          "expect": "rgb(31,33,39)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#0d1016ff",
+          "css": "#0d1016ff",
+          "pixel": "rgb(14,16,22)",
+          "expect": "rgb(13,16,22)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#0d1016ff",
+          "css": "#0d1016ff",
+          "pixel": "rgb(14,16,22)",
+          "expect": "rgb(13,16,22)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#1f2127bf",
+          "css": "#1f2127bf",
+          "pixel": "rgb(28,29,35)",
+          "expect": "rgb(26,29,35)",
+          "diff": 2,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#5ac1fe3d",
+          "css": "#5ac1fe3d",
+          "pixel": "rgb(38,58,78)",
+          "expect": "rgb(31,58,77)",
+          "diff": 7,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#bfbdb6ff",
+          "css": "rgb(191, 189, 182)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#4b4c4e",
+          "css": "rgb(75, 76, 78)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#3f4043ff",
+          "css": "#3f4043ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#5ac1feff",
+          "css": "#5ac1feff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "Ayu Light": {
+      "probe0": {
+        "vars": {
+          "--background": "#dcdddeff",
+          "--border": "#cfd1d2ff",
+          "--text": "#5c6166ff",
+          "--text-accent": "#3b9ee5ff",
+          "--title-bar-background": "#dcdddeff",
+          "--status-bar-background": "#dcdddeff",
+          "--panel-background": "#ececedff",
+          "--tab-bar-background": "#ececedff",
+          "--tab-active-background": "#fcfcfcff",
+          "--editor-background": "#fcfcfcff",
+          "--editor-foreground": "#5c6166ff",
+          "--editor-active-line-background": "#ececedbf",
+          "--players-0-selection": "#3b9ee53d",
+          "--editor-line-number": "#b0b3b5ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(92, 97, 102)",
+          "line_number": "rgb(176, 179, 181)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#dcdddeff",
+          "--border": "#cfd1d2ff",
+          "--text": "#5c6166ff",
+          "--text-accent": "#3b9ee5ff",
+          "--title-bar-background": "#dcdddeff",
+          "--status-bar-background": "#dcdddeff",
+          "--panel-background": "#ececedff",
+          "--tab-bar-background": "#ececedff",
+          "--tab-active-background": "#fcfcfcff",
+          "--editor-background": "#fcfcfcff",
+          "--editor-foreground": "#5c6166ff",
+          "--editor-active-line-background": "#ececedbf",
+          "--players-0-selection": "#3b9ee53d",
+          "--editor-line-number": "#b0b3b5ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(92, 97, 102)",
+          "line_number": "rgb(176, 179, 181)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#dcdddeff",
+          "css": "#dcdddeff",
+          "pixel": "rgb(220,221,222)",
+          "expect": "rgb(220,221,222)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#dcdddeff",
+          "css": "#dcdddeff",
+          "pixel": "rgb(220,221,222)",
+          "expect": "rgb(220,221,222)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#ececedff",
+          "css": "#ececedff",
+          "pixel": "rgb(236,236,237)",
+          "expect": "rgb(236,236,237)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#ececedff",
+          "css": "#ececedff",
+          "pixel": "rgb(236,236,237)",
+          "expect": "rgb(236,236,237)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#fcfcfcff",
+          "css": "#fcfcfcff",
+          "pixel": "rgb(252,252,252)",
+          "expect": "rgb(252,252,252)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#fcfcfcff",
+          "css": "#fcfcfcff",
+          "pixel": "rgb(252,252,252)",
+          "expect": "rgb(252,252,252)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#ececedbf",
+          "css": "#ececedbf",
+          "pixel": "rgb(240,240,241)",
+          "expect": "rgb(240,240,241)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#3b9ee53d",
+          "css": "#3b9ee53d",
+          "pixel": "rgb(212,229,247)",
+          "expect": "rgb(206,230,247)",
+          "diff": 6,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#5c6166ff",
+          "css": "rgb(92, 97, 102)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#b0b3b5",
+          "css": "rgb(176, 179, 181)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#cfd1d2ff",
+          "css": "#cfd1d2ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#3b9ee5ff",
+          "css": "#3b9ee5ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "Ayu Mirage": {
+      "probe0": {
+        "vars": {
+          "--background": "#464a52ff",
+          "--border": "#53565dff",
+          "--text": "#cccac2ff",
+          "--text-accent": "#72cffeff",
+          "--title-bar-background": "#464a52ff",
+          "--status-bar-background": "#464a52ff",
+          "--panel-background": "#353944ff",
+          "--tab-bar-background": "#353944ff",
+          "--tab-active-background": "#242835ff",
+          "--editor-background": "#242835ff",
+          "--editor-foreground": "#cccac2ff",
+          "--editor-active-line-background": "#353944bf",
+          "--players-0-selection": "#72cffe3d",
+          "--editor-line-number": "#575c6bff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(204, 202, 194)",
+          "line_number": "rgb(87, 92, 107)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#464a52ff",
+          "--border": "#53565dff",
+          "--text": "#cccac2ff",
+          "--text-accent": "#72cffeff",
+          "--title-bar-background": "#464a52ff",
+          "--status-bar-background": "#464a52ff",
+          "--panel-background": "#353944ff",
+          "--tab-bar-background": "#353944ff",
+          "--tab-active-background": "#242835ff",
+          "--editor-background": "#242835ff",
+          "--editor-foreground": "#cccac2ff",
+          "--editor-active-line-background": "#353944bf",
+          "--players-0-selection": "#72cffe3d",
+          "--editor-line-number": "#575c6bff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(204, 202, 194)",
+          "line_number": "rgb(87, 92, 107)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#464a52ff",
+          "css": "#464a52ff",
+          "pixel": "rgb(71,74,82)",
+          "expect": "rgb(70,74,82)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#464a52ff",
+          "css": "#464a52ff",
+          "pixel": "rgb(71,74,82)",
+          "expect": "rgb(70,74,82)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#353944ff",
+          "css": "#353944ff",
+          "pixel": "rgb(54,57,68)",
+          "expect": "rgb(53,57,68)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#353944ff",
+          "css": "#353944ff",
+          "pixel": "rgb(54,57,68)",
+          "expect": "rgb(53,57,68)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#242835ff",
+          "css": "#242835ff",
+          "pixel": "rgb(37,40,53)",
+          "expect": "rgb(36,40,53)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#242835ff",
+          "css": "#242835ff",
+          "pixel": "rgb(37,40,53)",
+          "expect": "rgb(36,40,53)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#353944bf",
+          "css": "#353944bf",
+          "pixel": "rgb(49,52,64)",
+          "expect": "rgb(49,53,64)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#72cffe3d",
+          "css": "#72cffe3d",
+          "pixel": "rgb(59,79,101)",
+          "expect": "rgb(55,80,101)",
+          "diff": 4,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#cccac2ff",
+          "css": "rgb(204, 202, 194)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#575c6b",
+          "css": "rgb(87, 92, 107)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#53565dff",
+          "css": "#53565dff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#72cffeff",
+          "css": "#72cffeff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "Gruvbox Dark": {
+      "probe0": {
+        "vars": {
+          "--background": "#4c4642ff",
+          "--border": "#5b534dff",
+          "--text": "#fbf1c7ff",
+          "--text-accent": "#83a598ff",
+          "--title-bar-background": "#4c4642ff",
+          "--status-bar-background": "#4c4642ff",
+          "--panel-background": "#3a3735ff",
+          "--tab-bar-background": "#3a3735ff",
+          "--tab-active-background": "#282828ff",
+          "--editor-background": "#282828ff",
+          "--editor-foreground": "#ebdbb2ff",
+          "--editor-active-line-background": "#3a3735bf",
+          "--players-0-selection": "#83a5983d",
+          "--editor-line-number": "#6e6b5eff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(235, 219, 178)",
+          "line_number": "rgb(110, 107, 94)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#4c4642ff",
+          "--border": "#5b534dff",
+          "--text": "#fbf1c7ff",
+          "--text-accent": "#83a598ff",
+          "--title-bar-background": "#4c4642ff",
+          "--status-bar-background": "#4c4642ff",
+          "--panel-background": "#3a3735ff",
+          "--tab-bar-background": "#3a3735ff",
+          "--tab-active-background": "#282828ff",
+          "--editor-background": "#282828ff",
+          "--editor-foreground": "#ebdbb2ff",
+          "--editor-active-line-background": "#3a3735bf",
+          "--players-0-selection": "#83a5983d",
+          "--editor-line-number": "#6e6b5eff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(235, 219, 178)",
+          "line_number": "rgb(110, 107, 94)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#4c4642ff",
+          "css": "#4c4642ff",
+          "pixel": "rgb(75,70,66)",
+          "expect": "rgb(76,70,66)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#4c4642ff",
+          "css": "#4c4642ff",
+          "pixel": "rgb(75,70,66)",
+          "expect": "rgb(76,70,66)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#3a3735ff",
+          "css": "#3a3735ff",
+          "pixel": "rgb(58,55,53)",
+          "expect": "rgb(58,55,53)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#3a3735ff",
+          "css": "#3a3735ff",
+          "pixel": "rgb(58,55,53)",
+          "expect": "rgb(58,55,53)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#282828ff",
+          "css": "#282828ff",
+          "pixel": "rgb(40,40,40)",
+          "expect": "rgb(40,40,40)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#282828ff",
+          "css": "#282828ff",
+          "pixel": "rgb(40,40,40)",
+          "expect": "rgb(40,40,40)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#3a3735bf",
+          "css": "#3a3735bf",
+          "pixel": "rgb(53,51,50)",
+          "expect": "rgb(53,51,50)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#83a5983d",
+          "css": "#83a5983d",
+          "pixel": "rgb(62,70,66)",
+          "expect": "rgb(62,70,67)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#ebdbb2ff",
+          "css": "rgb(235, 219, 178)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#6e6b5e",
+          "css": "rgb(110, 107, 94)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#5b534dff",
+          "css": "#5b534dff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#83a598ff",
+          "css": "#83a598ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "Gruvbox Dark Hard": {
+      "probe0": {
+        "vars": {
+          "--background": "#4c4642ff",
+          "--border": "#5b534dff",
+          "--text": "#fbf1c7ff",
+          "--text-accent": "#83a598ff",
+          "--title-bar-background": "#4c4642ff",
+          "--status-bar-background": "#4c4642ff",
+          "--panel-background": "#393634ff",
+          "--tab-bar-background": "#393634ff",
+          "--tab-active-background": "#1d2021ff",
+          "--editor-background": "#1d2021ff",
+          "--editor-foreground": "#ebdbb2ff",
+          "--editor-active-line-background": "#393634bf",
+          "--players-0-selection": "#83a5983d",
+          "--editor-line-number": "#6e6b5eff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(235, 219, 178)",
+          "line_number": "rgb(110, 107, 94)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#4c4642ff",
+          "--border": "#5b534dff",
+          "--text": "#fbf1c7ff",
+          "--text-accent": "#83a598ff",
+          "--title-bar-background": "#4c4642ff",
+          "--status-bar-background": "#4c4642ff",
+          "--panel-background": "#393634ff",
+          "--tab-bar-background": "#393634ff",
+          "--tab-active-background": "#1d2021ff",
+          "--editor-background": "#1d2021ff",
+          "--editor-foreground": "#ebdbb2ff",
+          "--editor-active-line-background": "#393634bf",
+          "--players-0-selection": "#83a5983d",
+          "--editor-line-number": "#6e6b5eff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(235, 219, 178)",
+          "line_number": "rgb(110, 107, 94)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#4c4642ff",
+          "css": "#4c4642ff",
+          "pixel": "rgb(75,70,66)",
+          "expect": "rgb(76,70,66)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#4c4642ff",
+          "css": "#4c4642ff",
+          "pixel": "rgb(75,70,66)",
+          "expect": "rgb(76,70,66)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#393634ff",
+          "css": "#393634ff",
+          "pixel": "rgb(57,54,52)",
+          "expect": "rgb(57,54,52)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#393634ff",
+          "css": "#393634ff",
+          "pixel": "rgb(57,54,52)",
+          "expect": "rgb(57,54,52)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#1d2021ff",
+          "css": "#1d2021ff",
+          "pixel": "rgb(29,32,33)",
+          "expect": "rgb(29,32,33)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#1d2021ff",
+          "css": "#1d2021ff",
+          "pixel": "rgb(29,32,33)",
+          "expect": "rgb(29,32,33)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#393634bf",
+          "css": "#393634bf",
+          "pixel": "rgb(49,48,47)",
+          "expect": "rgb(50,48,47)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#83a5983d",
+          "css": "#83a5983d",
+          "pixel": "rgb(54,64,61)",
+          "expect": "rgb(53,64,61)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#ebdbb2ff",
+          "css": "rgb(235, 219, 178)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#6e6b5e",
+          "css": "rgb(110, 107, 94)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#5b534dff",
+          "css": "#5b534dff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#83a598ff",
+          "css": "#83a598ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "Gruvbox Dark Soft": {
+      "probe0": {
+        "vars": {
+          "--background": "#4c4642ff",
+          "--border": "#5b534dff",
+          "--text": "#fbf1c7ff",
+          "--text-accent": "#83a598ff",
+          "--title-bar-background": "#4c4642ff",
+          "--status-bar-background": "#4c4642ff",
+          "--panel-background": "#3b3735ff",
+          "--tab-bar-background": "#3b3735ff",
+          "--tab-active-background": "#32302fff",
+          "--editor-background": "#32302fff",
+          "--editor-foreground": "#ebdbb2ff",
+          "--editor-active-line-background": "#3b3735bf",
+          "--players-0-selection": "#83a5983d",
+          "--editor-line-number": "#6e6b5eff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(235, 219, 178)",
+          "line_number": "rgb(110, 107, 94)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#4c4642ff",
+          "--border": "#5b534dff",
+          "--text": "#fbf1c7ff",
+          "--text-accent": "#83a598ff",
+          "--title-bar-background": "#4c4642ff",
+          "--status-bar-background": "#4c4642ff",
+          "--panel-background": "#3b3735ff",
+          "--tab-bar-background": "#3b3735ff",
+          "--tab-active-background": "#32302fff",
+          "--editor-background": "#32302fff",
+          "--editor-foreground": "#ebdbb2ff",
+          "--editor-active-line-background": "#3b3735bf",
+          "--players-0-selection": "#83a5983d",
+          "--editor-line-number": "#6e6b5eff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(235, 219, 178)",
+          "line_number": "rgb(110, 107, 94)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#4c4642ff",
+          "css": "#4c4642ff",
+          "pixel": "rgb(75,70,66)",
+          "expect": "rgb(76,70,66)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#4c4642ff",
+          "css": "#4c4642ff",
+          "pixel": "rgb(75,70,66)",
+          "expect": "rgb(76,70,66)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#3b3735ff",
+          "css": "#3b3735ff",
+          "pixel": "rgb(59,55,53)",
+          "expect": "rgb(59,55,53)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#3b3735ff",
+          "css": "#3b3735ff",
+          "pixel": "rgb(59,55,53)",
+          "expect": "rgb(59,55,53)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#32302fff",
+          "css": "#32302fff",
+          "pixel": "rgb(50,48,47)",
+          "expect": "rgb(50,48,47)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#32302fff",
+          "css": "#32302fff",
+          "pixel": "rgb(50,48,47)",
+          "expect": "rgb(50,48,47)",
+          "diff": 0,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#3b3735bf",
+          "css": "#3b3735bf",
+          "pixel": "rgb(57,53,52)",
+          "expect": "rgb(57,53,51)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#83a5983d",
+          "css": "#83a5983d",
+          "pixel": "rgb(70,77,72)",
+          "expect": "rgb(69,76,72)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#ebdbb2ff",
+          "css": "rgb(235, 219, 178)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#6e6b5e",
+          "css": "rgb(110, 107, 94)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#5b534dff",
+          "css": "#5b534dff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#83a598ff",
+          "css": "#83a598ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "Gruvbox Light": {
+      "probe0": {
+        "vars": {
+          "--background": "#d9c8a4ff",
+          "--border": "#c8b899ff",
+          "--text": "#282828ff",
+          "--text-accent": "#0b6678ff",
+          "--title-bar-background": "#d9c8a4ff",
+          "--status-bar-background": "#d9c8a4ff",
+          "--panel-background": "#ecddb4ff",
+          "--tab-bar-background": "#ecddb4ff",
+          "--tab-active-background": "#fbf1c7ff",
+          "--editor-background": "#fbf1c7ff",
+          "--editor-foreground": "#282828ff",
+          "--editor-active-line-background": "#ecddb4bf",
+          "--players-0-selection": "#0b66783d",
+          "--editor-line-number": "#a9a389ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(40, 40, 40)",
+          "line_number": "rgb(169, 163, 137)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#d9c8a4ff",
+          "--border": "#c8b899ff",
+          "--text": "#282828ff",
+          "--text-accent": "#0b6678ff",
+          "--title-bar-background": "#d9c8a4ff",
+          "--status-bar-background": "#d9c8a4ff",
+          "--panel-background": "#ecddb4ff",
+          "--tab-bar-background": "#ecddb4ff",
+          "--tab-active-background": "#fbf1c7ff",
+          "--editor-background": "#fbf1c7ff",
+          "--editor-foreground": "#282828ff",
+          "--editor-active-line-background": "#ecddb4bf",
+          "--players-0-selection": "#0b66783d",
+          "--editor-line-number": "#a9a389ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(40, 40, 40)",
+          "line_number": "rgb(169, 163, 137)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#d9c8a4ff",
+          "css": "#d9c8a4ff",
+          "pixel": "rgb(214,201,164)",
+          "expect": "rgb(217,200,164)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#d9c8a4ff",
+          "css": "#d9c8a4ff",
+          "pixel": "rgb(214,201,164)",
+          "expect": "rgb(217,200,164)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#ecddb4ff",
+          "css": "#ecddb4ff",
+          "pixel": "rgb(233,222,180)",
+          "expect": "rgb(236,221,180)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#ecddb4ff",
+          "css": "#ecddb4ff",
+          "pixel": "rgb(233,222,180)",
+          "expect": "rgb(236,221,180)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#fbf1c7ff",
+          "css": "#fbf1c7ff",
+          "pixel": "rgb(249,242,199)",
+          "expect": "rgb(251,241,199)",
+          "diff": 2,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#fbf1c7ff",
+          "css": "#fbf1c7ff",
+          "pixel": "rgb(249,242,199)",
+          "expect": "rgb(251,241,199)",
+          "diff": 2,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#ecddb4bf",
+          "css": "#ecddb4bf",
+          "pixel": "rgb(237,227,185)",
+          "expect": "rgb(240,226,185)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#0b66783d",
+          "css": "#0b66783d",
+          "pixel": "rgb(198,208,180)",
+          "expect": "rgb(194,208,180)",
+          "diff": 4,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#282828ff",
+          "css": "rgb(40, 40, 40)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#a9a389",
+          "css": "rgb(169, 163, 137)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#c8b899ff",
+          "css": "#c8b899ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#0b6678ff",
+          "css": "#0b6678ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "Gruvbox Light Hard": {
+      "probe0": {
+        "vars": {
+          "--background": "#d9c8a4ff",
+          "--border": "#c8b899ff",
+          "--text": "#282828ff",
+          "--text-accent": "#0b6678ff",
+          "--title-bar-background": "#d9c8a4ff",
+          "--status-bar-background": "#d9c8a4ff",
+          "--panel-background": "#ecddb5ff",
+          "--tab-bar-background": "#ecddb5ff",
+          "--tab-active-background": "#f9f5d7ff",
+          "--editor-background": "#f9f5d7ff",
+          "--editor-foreground": "#282828ff",
+          "--editor-active-line-background": "#ecddb5bf",
+          "--players-0-selection": "#0b66783d",
+          "--editor-line-number": "#a9a389ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(40, 40, 40)",
+          "line_number": "rgb(169, 163, 137)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#d9c8a4ff",
+          "--border": "#c8b899ff",
+          "--text": "#282828ff",
+          "--text-accent": "#0b6678ff",
+          "--title-bar-background": "#d9c8a4ff",
+          "--status-bar-background": "#d9c8a4ff",
+          "--panel-background": "#ecddb5ff",
+          "--tab-bar-background": "#ecddb5ff",
+          "--tab-active-background": "#f9f5d7ff",
+          "--editor-background": "#f9f5d7ff",
+          "--editor-foreground": "#282828ff",
+          "--editor-active-line-background": "#ecddb5bf",
+          "--players-0-selection": "#0b66783d",
+          "--editor-line-number": "#a9a389ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(40, 40, 40)",
+          "line_number": "rgb(169, 163, 137)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#d9c8a4ff",
+          "css": "#d9c8a4ff",
+          "pixel": "rgb(214,201,164)",
+          "expect": "rgb(217,200,164)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#d9c8a4ff",
+          "css": "#d9c8a4ff",
+          "pixel": "rgb(214,201,164)",
+          "expect": "rgb(217,200,164)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#ecddb5ff",
+          "css": "#ecddb5ff",
+          "pixel": "rgb(233,222,181)",
+          "expect": "rgb(236,221,181)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#ecddb5ff",
+          "css": "#ecddb5ff",
+          "pixel": "rgb(233,222,181)",
+          "expect": "rgb(236,221,181)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#f9f5d7ff",
+          "css": "#f9f5d7ff",
+          "pixel": "rgb(248,246,215)",
+          "expect": "rgb(249,245,215)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#f9f5d7ff",
+          "css": "#f9f5d7ff",
+          "pixel": "rgb(248,246,215)",
+          "expect": "rgb(249,245,215)",
+          "diff": 1,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#ecddb5bf",
+          "css": "#ecddb5bf",
+          "pixel": "rgb(237,228,190)",
+          "expect": "rgb(239,227,190)",
+          "diff": 2,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#0b66783d",
+          "css": "#0b66783d",
+          "pixel": "rgb(198,211,193)",
+          "expect": "rgb(192,211,192)",
+          "diff": 6,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#282828ff",
+          "css": "rgb(40, 40, 40)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#a9a389",
+          "css": "rgb(169, 163, 137)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#c8b899ff",
+          "css": "#c8b899ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#0b6678ff",
+          "css": "#0b6678ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    },
+    "Gruvbox Light Soft": {
+      "probe0": {
+        "vars": {
+          "--background": "#d9c8a4ff",
+          "--border": "#c8b899ff",
+          "--text": "#282828ff",
+          "--text-accent": "#0b6678ff",
+          "--title-bar-background": "#d9c8a4ff",
+          "--status-bar-background": "#d9c8a4ff",
+          "--panel-background": "#ecdcb3ff",
+          "--tab-bar-background": "#ecdcb3ff",
+          "--tab-active-background": "#f2e5bcff",
+          "--editor-background": "#f2e5bcff",
+          "--editor-foreground": "#282828ff",
+          "--editor-active-line-background": "#ecdcb3bf",
+          "--players-0-selection": "#0b66783d",
+          "--editor-line-number": "#a9a389ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ]
+        },
+        "computed": {
+          "text": "rgb(40, 40, 40)",
+          "line_number": "rgb(169, 163, 137)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "probe": {
+        "vars": {
+          "--background": "#d9c8a4ff",
+          "--border": "#c8b899ff",
+          "--text": "#282828ff",
+          "--text-accent": "#0b6678ff",
+          "--title-bar-background": "#d9c8a4ff",
+          "--status-bar-background": "#d9c8a4ff",
+          "--panel-background": "#ecdcb3ff",
+          "--tab-bar-background": "#ecdcb3ff",
+          "--tab-active-background": "#f2e5bcff",
+          "--editor-background": "#f2e5bcff",
+          "--editor-foreground": "#282828ff",
+          "--editor-active-line-background": "#ecdcb3bf",
+          "--players-0-selection": "#0b66783d",
+          "--editor-line-number": "#a9a389ff"
+        },
+        "points": {
+          "title_bar": [
+            984,
+            2
+          ],
+          "status_bar": [
+            840,
+            824
+          ],
+          "panel": [
+            360,
+            782
+          ],
+          "tab_bar": [
+            1180,
+            36
+          ],
+          "tab_active": [
+            601.3515625,
+            36
+          ],
+          "editor": [
+            1400,
+            781
+          ],
+          "active_line": [
+            1395,
+            112.1328125
+          ],
+          "selection": [
+            1421,
+            694.375
+          ]
+        },
+        "computed": {
+          "text": "rgb(40, 40, 40)",
+          "line_number": "rgb(169, 163, 137)"
+        },
+        "panelElement": "tree-scroll"
+      },
+      "rows": [
+        {
+          "place": "title_bar",
+          "token": "title_bar.background",
+          "json": "#d9c8a4ff",
+          "css": "#d9c8a4ff",
+          "pixel": "rgb(214,201,164)",
+          "expect": "rgb(217,200,164)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "status_bar",
+          "token": "status_bar.background",
+          "json": "#d9c8a4ff",
+          "css": "#d9c8a4ff",
+          "pixel": "rgb(214,201,164)",
+          "expect": "rgb(217,200,164)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "panel",
+          "token": "panel.background",
+          "json": "#ecdcb3ff",
+          "css": "#ecdcb3ff",
+          "pixel": "rgb(233,221,179)",
+          "expect": "rgb(236,220,179)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "tab_bar",
+          "token": "tab_bar.background",
+          "json": "#ecdcb3ff",
+          "css": "#ecdcb3ff",
+          "pixel": "rgb(233,221,179)",
+          "expect": "rgb(236,220,179)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "tab_active",
+          "token": "tab.active_background",
+          "json": "#f2e5bcff",
+          "css": "#f2e5bcff",
+          "pixel": "rgb(239,230,188)",
+          "expect": "rgb(242,229,188)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "editor",
+          "token": "editor.background",
+          "json": "#f2e5bcff",
+          "css": "#f2e5bcff",
+          "pixel": "rgb(239,230,188)",
+          "expect": "rgb(242,229,188)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "active_line",
+          "token": "editor.active_line.background",
+          "json": "#ecdcb3bf",
+          "css": "#ecdcb3bf",
+          "pixel": "rgb(235,224,181)",
+          "expect": "rgb(238,222,181)",
+          "diff": 3,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "selection",
+          "token": "players[0].selection",
+          "json": "#0b66783d",
+          "css": "#0b66783d",
+          "pixel": "rgb(191,199,172)",
+          "expect": "rgb(187,199,172)",
+          "diff": 4,
+          "source": "JSON",
+          "pass": false
+        },
+        {
+          "place": "text",
+          "token": "editor.foreground",
+          "json": "#282828ff",
+          "css": "rgb(40, 40, 40)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "line_number",
+          "token": "editor.line_number",
+          "json": "#a9a389",
+          "css": "rgb(169, 163, 137)",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "border",
+          "token": "border",
+          "json": "#c8b899ff",
+          "css": "#c8b899ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        },
+        {
+          "place": "accent",
+          "token": "text.accent",
+          "json": "#0b6678ff",
+          "css": "#0b6678ff",
+          "pixel": null,
+          "expect": null,
+          "diff": null,
+          "source": "JSON",
+          "pass": true
+        }
+      ]
+    }
+  },
+  "readme": {
+    "Catppuccin Latte": true,
+    "Catppuccin Frappé": true,
+    "Catppuccin Macchiato": true,
+    "Catppuccin Mocha": true,
+    "Catppuccin Latte - No Italics": true,
+    "Catppuccin Frappé - No Italics": true,
+    "Catppuccin Macchiato - No Italics": true,
+    "Catppuccin Mocha - No Italics": true,
+    "macOS Classic Light": true,
+    "macOS Classic Dark": true,
+    "One Dark": true,
+    "One Light": true,
+    "Ayu Dark": true,
+    "Ayu Light": true,
+    "Ayu Mirage": true,
+    "Gruvbox Dark": true,
+    "Gruvbox Dark Hard": true,
+    "Gruvbox Dark Soft": true,
+    "Gruvbox Light": true,
+    "Gruvbox Light Hard": true,
+    "Gruvbox Light Soft": true,
+    "(none)": true
+  },
+  "themeSelector": {
+    "placeholder": "Select Theme...",
+    "items": [
+      "Ayu Dark",
+      "Ayu Mirage",
+      "Catppuccin Frappé",
+      "Catppuccin Frappé - No Italics",
+      "Catppuccin Macchiato",
+      "Catppuccin Macchiato - No Italics",
+      "Catppuccin Mocha",
+      "Catppuccin Mocha - No Italics",
+      "Gruvbox Dark",
+      "Gruvbox Dark Hard",
+      "Gruvbox Dark Soft",
+      "One Dark",
+      "macOS Classic Dark",
+      "Ayu Light",
+      "Catppuccin Latte",
+      "Catppuccin Latte - No Italics",
+      "Gruvbox Light",
+      "Gruvbox Light Hard",
+      "Gruvbox Light Soft",
+      "One Light",
+      "macOS Classic Light"
+    ],
+    "selected": "One Dark",
+    "checked": [
+      "One Dark"
+    ],
+    "footer": [
+      "Install Themes"
+    ],
+    "rect": [
+      448,
+      80,
+      544,
+      470
+    ]
+  },
+  "previewBackground": "#131313ff",
+  "previewSelected": "macOS Classic Dark",
+  "afterEscBackground": "#3b414dff",
+  "escRestored": true,
+  "settingsUnchangedAfterEsc": true,
+  "searchResult": [
+    "Gruvbox Dark Hard"
+  ],
+  "savedSettings": "{\n  \"icon_theme\": \"Catppuccin Latte\"\n\n,\"theme\": \"Gruvbox Dark Hard\"\n}",
+  "iconSelector": {
+    "placeholder": "Select Icon Theme...",
+    "items": [
+      "Catppuccin Frappé",
+      "Catppuccin Frappé Monochrome",
+      "Catppuccin Macchiato",
+      "Catppuccin Macchiato Monochrome",
+      "Catppuccin Mocha",
+      "Catppuccin Mocha Monochrome",
+      "Zed (Default)",
+      "Catppuccin Latte",
+      "Catppuccin Latte Monochrome"
+    ],
+    "selected": "Catppuccin Latte",
+    "checked": [
+      "Catppuccin Latte"
+    ],
+    "footer": [
+      "Install Icon Themes"
+    ],
+    "rect": [
+      448,
+      80,
+      544,
+      361.765625
+    ]
+  },
+  "settingsDropdowns": {
+    "Theme Name": {
+      "current": "Gruvbox Dark Hard",
+      "count": 21,
+      "items": [
+        "Ayu Dark",
+        "Ayu Mirage",
+        "Catppuccin Frappé",
+        "Catppuccin Frappé - No Italics",
+        "Catppuccin Macchiato",
+        "Catppuccin Macchiato - No Italics",
+        "Catppuccin Mocha",
+        "Catppuccin Mocha - No Italics",
+        "Gruvbox Dark",
+        "✓ Gruvbox Dark Hard",
+        "Gruvbox Dark Soft",
+        "One Dark",
+        "macOS Classic Dark",
+        "Ayu Light",
+        "Catppuccin Latte",
+        "Catppuccin Latte - No Italics",
+        "Gruvbox Light",
+        "Gruvbox Light Hard",
+        "Gruvbox Light Soft",
+        "One Light",
+        "macOS Classic Light"
+      ]
+    },
+    "Icon Theme Name": {
+      "current": "Catppuccin Latte",
+      "count": 9,
+      "items": [
+        "Catppuccin Frappé",
+        "Catppuccin Frappé Monochrome",
+        "Catppuccin Macchiato",
+        "Catppuccin Macchiato Monochrome",
+        "Catppuccin Mocha",
+        "Catppuccin Mocha Monochrome",
+        "Zed (Default)",
+        "✓ Catppuccin Latte",
+        "Catppuccin Latte Monochrome"
+      ]
+    }
+  }
+}
