@@ -93,6 +93,7 @@ button, input, select, textarea {
   border: var(--sidebar-item-focus-border-width) solid transparent;
   border-right-width: var(--sidebar-item-border-right-width);
   color: var(--text-muted); /* A-12.1 */
+  font-size: var(--sidebar-item-font-size);
   --icon-size: var(--sidebar-item-icon-size);
 }
 .sidebar-item .icon {

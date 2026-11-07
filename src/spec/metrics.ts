@@ -297,6 +297,7 @@ const METRICS: Record<string, string> = {
   "sidebar.item.separator_width": rem(1), // crates/sidebar/src/sidebar.rs:2297-2299 border_t_1
   "sidebar.item.icon_slot_size": rem(16), // crates/ui/src/components/ai/thread_item.rs:291 icon_container size_4
   "sidebar.item.icon_gap": rem(6), // crates/ui/src/components/ai/thread_item.rs:461 content gap_1p5
+  "sidebar.item.font_size": rem(14), // Temporary (K-51): Zed sidebar.rs:2377 Label default; crates/ui/src/styles/typography.rs:139,152 TextSize::Default
   "menu.min_width": rem(200), // I-313 (inside the borders; menu.min_outer_width = 202 is this plus the two borders)
   "menu.max_height_ratio": "0.75", // I-313
   "menu.border_width": rem(1), // I-315
