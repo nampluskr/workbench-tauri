@@ -54,8 +54,10 @@ export default function App() {
         <footer class="status-bar">
           <div class="group grow">
             <For each={statusButtons(sidebarOpen(), dockOpen())}>{(button) => (<>
+              {/* Zed's hidden language-server button still takes one item gap before diagnostics (V3 measured, zed.rs:637). */}
+              <Show when={button.slotBefore}><span aria-hidden="true" /></Show>
               <IconButton {...button} onClick={() => commands.get(button.action)?.()} />
-              <Show when={button.dividerAfter}><span class="status-divider" aria-hidden="true" /></Show>
+              <Show when={button.dividerAfter}><span class={button.dividerAfter === "toggle" ? "status-divider toggle" : "status-divider"} aria-hidden="true" /></Show>
             </>)}</For>
           </div>
           <Show when={status()}>{(items) => (

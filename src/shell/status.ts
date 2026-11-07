@@ -9,14 +9,14 @@ export const STATUS_BINDINGS: KeymapSection[] = [{ context: "Workspace", binding
   "ctrl-shift-m": "diagnostics::Deploy",
 } }];
 
-type StatusButton = { name: IconName; label: string; action: string; toggled?: boolean; dividerAfter?: boolean };
+type StatusButton = { name: IconName; label: string; action: string; toggled?: boolean; dividerAfter?: boolean | "toggle"; slotBefore?: boolean };
 
 export function statusButtons(sidebarOpen: boolean, dockOpen: boolean): StatusButton[] {
   return [
-    ...(!sidebarOpen ? [{ name: "threads_sidebar_left_closed" as const, label: "Open Folder Sidebar", action: "multi_workspace::ToggleWorkspaceSidebar", dividerAfter: true }] : []),
+    ...(!sidebarOpen ? [{ name: "threads_sidebar_left_closed" as const, label: "Open Folder Sidebar", action: "multi_workspace::ToggleWorkspaceSidebar", dividerAfter: "toggle" as const }] : []),
     { name: "file_tree", label: dockOpen ? "Close Left Dock" : "Project Panel", action: dockOpen ? "workspace::ToggleLeftDock" : "project_panel::ToggleFocus", toggled: dockOpen, dividerAfter: true },
     { name: "magnifying_glass", label: "Project Search", action: "pane::DeploySearch" },
-    { name: "check", label: "Project Diagnostics", action: "diagnostics::Deploy" },
+    { name: "check", label: "Project Diagnostics", action: "diagnostics::Deploy", slotBefore: true },
   ];
 }
 

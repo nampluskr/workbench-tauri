@@ -227,6 +227,8 @@ const METRICS: Record<string, string> = {
   "icons.size.small": rem(14), // L-06 (tab close icon, L-66)
   "statusbar.height": rem(30), // L-28
   "statusbar.padding_y": rem(4), // L-28
+  "statusbar.padding_x": rem(4), // no toml ID yet: Zed status_bar.rs:153 `.p(Base04)` pads all four sides (K-31)
+  "statusbar.toggle_gap": rem(2), // no toml ID yet: Zed status_bar.rs:281 `gap_0p5` between the sidebar toggle and its divider (K-31)
   "statusbar.button_height": rem(22), // L-28
   "statusbar.group_gap": rem(8), // L-29
   "statusbar.item_gap": rem(4), // L-29

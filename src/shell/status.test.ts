@@ -14,6 +14,7 @@ test("I-22 / I-19: status buttons retain Zed's order, state, labels and tooltip 
       ...(!sidebar ? ["threads_sidebar_left_closed", "divider"] : []),
       "file_tree", "divider", "magnifying_glass", "check",
     ]);
+    assert.deepEqual(buttons.filter((button) => button.slotBefore || button.dividerAfter === "toggle").map((button) => button.name), [...(!sidebar ? ["threads_sidebar_left_closed"] : []), "check"], "K-31: Zed's gap_0p5 toggle divider and the hidden language-server slot before diagnostics");
     assert.deepEqual(buttons.map((button) => [button.name, button.label, button.toggled]), [
       ...(!sidebar ? [["threads_sidebar_left_closed", "Open Folder Sidebar", undefined]] : []),
       ["file_tree", dock ? "Close Left Dock" : "Project Panel", dock],

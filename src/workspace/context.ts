@@ -22,11 +22,14 @@ import { buildRows, collapseAll, joinPath, none, only, sortChildren, type Child,
 // The work context of one folder (A-15, R-13): what its tree has expanded, selected and read, and its tabs. It stays in
 // memory while the folder is registered and goes with it (R-14). Nothing here is saved to state.json.
 
+/** A 1-based position; with `endLine`/`endColumn` the range is selected (a Project Search match, as Zed opens it). */
+export type FileLocation = { line: number; column: number; endLine?: number; endColumn?: number };
+
 /**
  * What stays the same for a tab while its list entry is copied (promotion, rename): its file, editor and state. A Markdown
  * preview tab (R-11) has no editor: `element` is its body, `dispose` lets go of what it holds.
  */
-export type TabFile = { doc: Doc; view: EditorView | null; status: Accessor<Status>; position?: Accessor<string>; toolPosition?: Accessor<string>; title?: Accessor<string>; icon?: IconName; iconSuccess?: boolean; location?: { line: number; column: number }; element?: HTMLElement; dispose?: () => void };
+export type TabFile = { doc: Doc; view: EditorView | null; status: Accessor<Status>; position?: Accessor<string>; toolPosition?: Accessor<string>; title?: Accessor<string>; icon?: IconName; iconSuccess?: boolean; location?: FileLocation; element?: HTMLElement; dispose?: () => void };
 export type Tab = TabInfo & { file: TabFile; focus: boolean };
 
 
@@ -278,10 +281,12 @@ function makeView(ctx: FolderContext, file: TabFile, text: string, editable: boo
   if (file.location) locateFile(file, file.location);
 }
 
-function locateFile(file: TabFile, location: { line: number; column: number }): void {
+function locateFile(file: TabFile, location: FileLocation): void {
   file.location = location;
   if (!file.view) return;
-  file.view.dispatch({ selection: { anchor: locationOffset(file.view.state.doc, location) }, scrollIntoView: true });
+  const doc = file.view.state.doc;
+  const head = location.endLine === undefined || location.endColumn === undefined ? undefined : locationOffset(doc, { line: location.endLine, column: location.endColumn });
+  file.view.dispatch({ selection: { anchor: locationOffset(doc, location), head }, scrollIntoView: true });
   file.location = undefined;
 }
 
@@ -544,7 +549,7 @@ export function reveal(ctx: FolderContext, path: string): void {
  * R-26: open a file in the active Pane as a preview tab (one click, Space) or a normal one (double or middle click,
  * `focusEditor`). A file already shown in another Pane gets a second view of the same Doc (D-8).
  */
-export function openFile(ctx: FolderContext, path: string, preview: boolean, focusEditor: boolean, location?: { line: number; column: number }): void {
+export function openFile(ctx: FolderContext, path: string, preview: boolean, focusEditor: boolean, location?: FileLocation): void {
   const pane = ctx.pane();
   const shown = allTabs(ctx).find((t) => t.path === path);
   const make = (): Tab => ({ path, preview, pinned: false, file: shown ? twinOf(ctx, shown.file) : newFile(ctx, path), focus: false });

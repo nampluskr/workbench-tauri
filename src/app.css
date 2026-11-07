@@ -127,7 +127,7 @@ button, input, select, textarea {
   gap: var(--statusbar-group-gap);
   box-sizing: border-box;
   height: var(--statusbar-height);
-  padding-block: var(--statusbar-padding-y);
+  padding: var(--statusbar-padding-y) var(--statusbar-padding-x);
   background: var(--status-bar-background);
   --button-size: var(--statusbar-button-height);
   --icon-size: var(--statusbar-icon-size);
@@ -136,6 +136,7 @@ button, input, select, textarea {
 .status-items { align-items: center; font-size: var(--statusbar-cursor-position-font-size); white-space: nowrap; }
 .status-bar .icon-button[aria-pressed="true"] { color: var(--text-accent); } /* I-19: Zed IconButton Color::Selected. */
 .status-divider { flex: none; align-self: center; width: var(--statusbar-left-divider-width); height: var(--statusbar-left-divider-height); background: var(--border); }
+.status-divider.toggle { margin-left: calc(var(--statusbar-toggle-gap) - var(--statusbar-item-gap)); } /* Zed: toggle + divider sit in their own gap_0p5 row. */
 .sidebar-footer .group { gap: var(--sidebar-footer-gap); }
 .grow { flex: 1; }
 
