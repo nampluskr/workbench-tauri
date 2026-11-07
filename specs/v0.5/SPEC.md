@@ -1046,6 +1046,76 @@ I-15, 사용자 2026-11-06.
 
 미정: Zed가 지원하는 파일 형식 목록. 갈래가 Zed에서 확인해 이 절에 적는다(I-15 정한 것).
 
+미정이던 형식 목록은 아래 "언어 목록 (ORDER-11, Zed 4304dec)"으로 풀렸다(W-33).
+
+**언어 목록 (ORDER-11, Zed 4304dec)**
+
+출처: Zed 커밋 `4304dec732`. 언어 설정 `crates/grammars/src/<이름>/config.toml`, 내장 등록 `crates/languages/src/lib.rs` 91~229행 `built_in_languages`(23개, 아래 표와 같음), 문법 등록 `crates/grammars/src/grammars.rs` `native_grammars`(문법 이름 → crate), 버전 루트 `Cargo.toml` 947~968행과 `Cargo.lock`. 문법 열은 config.toml `grammar` 키다. 숨김(`hidden = true`)은 사용자가 고르는 언어 목록에 없고 주입이나 내부에만 쓰인다. 라이선스는 이 Zed 소스에 문법 저장소의 LICENSE가 없어 모두 확인 필요다.
+
+| 언어 이름(`name`) | 확장자·파일 이름(`path_suffixes`), `first_line_pattern` | 문법 → crate·저장소 | 버전/rev | 쿼리 파일 | 문법 라이선스 |
+| --- | --- | --- | --- | --- | --- |
+| Shell Script | sh bash bashrc bash_profile bash_aliases bash_login bash_logout brushrc bats envrc profile zsh zshrc zshenv zsh_profile zsh_aliases zsh_histfile zlogin zprofile PKGBUILD APKBUILD ebuild; `^#!.*\b(?:ash\|bash\|bats\|dash\|sh\|zsh)\b` | `bash` → tree-sitter-bash (crates.io) | 0.25.1 (Cargo.toml 947) | brackets · highlights · indents · injections · overrides · redactions · runnables · textobjects | 확인 필요 |
+| C | c | `c` → tree-sitter-c (crates.io) | 0.24.1 (948) | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | 확인 필요 |
+| C++ | cc ccm hh cpp cppm h hpp cxx cxxm hxx c++ c++m h++ hip ipp inl ino ixx cu cuh C H; `^//.*-\*-\s*C\+\+\s*-\*-` | `cpp` → tree-sitter-cpp, git https://github.com/tree-sitter/tree-sitter-cpp | 0.23.4, rev 5cb9b693cfd7bfacab1d9ff4acac1a4150700609 (949) | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | 확인 필요 |
+| CSS | css postcss pcss | `css` → tree-sitter-css (crates.io) | 0.23.2 (950, `"0.23"`) | brackets · highlights · indents · injections · outline · overrides · textobjects | 확인 필요 |
+| Diff | diff patch | `diff` → tree-sitter-diff (crates.io) | 0.1.0 (951) | highlights · injections | 확인 필요 |
+| Env | .env | `bash` → tree-sitter-bash (Shell Script와 같은 문법) | 0.25.1 (947) | brackets · highlights · injections · overrides · redactions | 확인 필요 |
+| Git Commit | TAG_EDITMSG MERGE_MSG COMMIT_EDITMSG NOTES_EDITMSG EDIT_DESCRIPTION | `gitcommit` → tree-sitter-gitcommit, git https://github.com/zed-industries/tree-sitter-git-commit | 0.0.1, rev 88309716a69dd13ab83443721ba6e0b491d37ee9 (954) | highlights · injections | 확인 필요 |
+| Go | go; `^//.*\bgo run\b` | `go` → tree-sitter-go, git https://github.com/zed-industries/tree-sitter-go | 0.25.0, rev 6862a49e3c5a7567a6c576420e9a8f944e198a85 (955) | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | 확인 필요 |
+| Go Mod | mod | `gomod` → tree-sitter-gomod(package 이름, 의존성 이름 tree-sitter-go-mod), git https://github.com/camdencheek/tree-sitter-go-mod | 1.1.1, rev 2e886870578eeba1927a2dc4bd2e2b3f598c5f9a (956) | highlights · injections · structure | 확인 필요 |
+| Go Work | work | `gowork` → tree-sitter-gowork, git https://github.com/zed-industries/tree-sitter-go-work | 0.0.1, rev acb0617bf7f4fda02c6217676cc64acb89536dc7 (957) | highlights · injections | 확인 필요 |
+| JavaScript | js jsx mjs cjs; `^#!.*\b(?:[/ ]node\|deno run.*--ext[= ]js)\b` | `tsx` → tree-sitter-typescript의 TSX 문법(TSX와 같은 문법, 쿼리는 javascript 폴더 것) | TypeScript 행과 같음 | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | 확인 필요 |
+| JSDoc (주입 전용/내부, hidden) | 없음 | `jsdoc` → tree-sitter-jsdoc (crates.io) | 0.23.2 (960, `"0.23"`) | brackets · highlights | 확인 필요 |
+| JSON | json flake.lock geojson topojson prettierrc json.dist deno.lock | `json` → tree-sitter-json (crates.io) | 0.24.8 (961, `"0.24"`) | brackets · highlights · indents · outline · overrides · redactions · runnables · textobjects | 확인 필요 |
+| JSONC | jsonc bun.lock devcontainer.json pyrightconfig.json tsconfig.json luaurc swcrc babelrc eslintrc stylelintrc jshintrc | `jsonc` → tree-sitter-json(JSON과 같은 crate, `grammars.rs`에서 jsonc 이름으로 한 번 더 등록) | 0.24.8 (961) | brackets · highlights · indents · injections · outline · overrides · redactions · textobjects | 확인 필요 |
+| Markdown | md mdx mdwn mdc markdown MD | `markdown` → tree-sitter-md 블록 문법(`LANGUAGE`), git https://github.com/zed-industries/tree-sitter-markdown (9a23c1a 포크, serialize 버퍼 넘침 수정) | 0.3.2, rev b596e737286780d7bfa9fcddceaeeb754574b352 (962) | brackets · highlights · indents · injections · outline · textobjects | 확인 필요 |
+| Markdown-Inline (주입 전용/내부, hidden) | 없음 | `markdown-inline` → tree-sitter-md 인라인 문법(`INLINE_LANGUAGE`) | Markdown 행과 같음 | highlights · injections | 확인 필요 |
+| Python | py pyi mpy; `^#!.*((\bpython[0-9.]*\b)\|(\buv run\b))` | `python` → tree-sitter-python (crates.io) | 0.25.0 (963, `"0.25"`) | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | 확인 필요 |
+| Regex (주입 전용/내부, hidden) | 없음 | `regex` → tree-sitter-regex (crates.io) | 0.24.3 (964, `"0.24"`) | brackets · highlights | 확인 필요 |
+| Rust | rs | `rust` → tree-sitter-rust (crates.io) | 0.24.2 (966) | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | 확인 필요 |
+| TSX | tsx | `tsx` → tree-sitter-typescript의 TSX 문법(`LANGUAGE_TSX`) | TypeScript 행과 같음 | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | 확인 필요 |
+| TypeScript | ts cts mts; `^#!.*\b(?:deno run\|ts-node\|bun\|tsx\|[/ ]node)\b` | `typescript` → tree-sitter-typescript(`LANGUAGE_TYPESCRIPT`), git https://github.com/zed-industries/tree-sitter-typescript (upstream PR 347 반영) | 0.23.2, rev e2c53597d6a5d9cf7bbe8dccde576fe1e46c5899 (967) | brackets · debugger · highlights · indents · injections · outline · overrides · runnables · textobjects | 확인 필요 |
+| YAML | yml yaml pixi.lock clang-format clangd bst | `yaml` → tree-sitter-yaml, git https://github.com/zed-industries/tree-sitter-yaml | 0.6.1, rev baff0b51c64ef6a1fb1f8390f3ad6015b83ec13a (968) | brackets · highlights · injections · outline · overrides · redactions · textobjects | 확인 필요 |
+| Zed Keybind Context (주입 전용/내부, hidden) | 없음 | `rust` → tree-sitter-rust(Rust와 같은 문법) | 0.24.2 (966) | brackets · highlights | 확인 필요 |
+| HTML (Zed 레포 안 확장, 내장 아님) | html htm shtml (`extensions/html/languages/html/config.toml`) | `html` → https://github.com/tree-sitter/tree-sitter-html (`extensions/html/extension.toml` `[grammars.html]`, 확장 버전 0.3.2) | commit bfa075d83c6b97cd48440b3829ab8d24a2319809 | brackets · highlights · indents · injections · outline · overrides (`extensions/html/languages/html/`) | 확인 필요 |
+
+- `crates/languages/src/lib.rs`에서 위 23개 밖에 내장으로 등록되는 언어는 없다. 같은 커밋 레포 안 확장은 `extensions/html`·`glsl`·`proto`·`test-extension` 넷이고 내장이 아니다(ORDER-11이 명시한 HTML만 표에 넣었다).
+- 루트 Cargo.toml에 있지만 `native_grammars`에 없는 문법:
+  - tree-sitter-html 0.23(959, lock 0.23.2): `crates/editor`(테스트 지원 기능·dev-dependencies)와 `crates/language` dev-dependencies에서 테스트에만 쓴다. 앱의 HTML 강조는 위 확장의 문법(commit bfa075d)을 쓴다.
+  - tree-sitter-elixir 0.3(952, lock 0.3.4), tree-sitter-heex(958, rev 1dd45142fbb05562e35b2040c6129c9bca346592), tree-sitter-embedded-template 0.23.0(953, lock 0.23.2), tree-sitter-ruby 0.23(965, lock 0.23.1): `crates/language` dev-dependencies에서 테스트에만 쓴다. 목록 밖.
+- 쿼리 열의 이름 가운데 색에 쓰는 것은 `highlights`(강조)·`injections`(주입)·`outline`(경로 줄 심볼)이다. 나머지(brackets·indents·overrides·textobjects 등)는 편집 기능용이다.
+
+**하이라이트 이름 → 테마 syntax 토큰**
+
+- Zed: 테마 `syntax` 키를 정렬된 맵(`BTreeMap`)에 넣고, 캡처 이름마다 "첫 마디(`.` 앞) 이상, 캡처 이름 이하" 범위를 뒤에서부터 보며 "캡처 이름이 그 키로 시작하고 남은 부분이 없거나 `.`으로 시작하는" 첫 키를 고른다(`crates/syntax_theme/src/syntax_theme.rs` 87~102 `highlight_id`). 점 경계 앞부분 가운데 가장 긴 키다. 예: `@keyword.control.import` → 테마에 `keyword.control`이 있으면 그것, 없으면 `keyword`, 둘 다 없으면 색 없음. 이 대응은 문법마다 캡처 이름 목록으로 한 번 만든다(`crates/language/src/language.rs` 1298~1301 `HighlightMap::from_ids`).
+- Zed: 한 글자 위에 캡처가 여럿 겹치면 시작 위치 순서로 쌓고 맨 위(마지막에 쌓인) 캡처 하나의 색만 쓴다. 테마 키가 없는 캡처는 쌓지 않아 바깥 캡처 색이 남는다(`crates/language/src/buffer.rs` 5909~5922 쌓기, 5967~5972 맨 위 하나).
+- tauri 지금(`src/syntax/grammar.ts` `themeKey`): 캡처 이름 끝에서 `.` 마디를 하나씩 떼며 테마 키를 찾는다. 점 경계 가장 긴 앞부분이라 Zed 규칙과 같다.
+- tauri 지금과 다른 점(코드는 고치지 않음):
+  - 겹침: tauri(`src/syntax/highlight.ts` `build`)는 일치하는 캡처마다 CM6 mark를 겹쳐 넣어 CSS 클래스가 함께 붙는다. 같은 범위의 두 캡처에서 보이는 색이 Zed의 "맨 위 캡처 하나"와 같은지는 보장되지 않는다. 확인 필요.
+  - 주입: tauri는 한 문법의 highlights만 쓰고 주입 언어를 강조하지 않는다.
+  - 문법 출처: tauri는 실행 중 설치된 Zed 확장 폴더에서 문법을 읽는다(`zlext` 스킴). ORDER-11(core D-8)대로 이 Phase에서 복사본으로 바꾼다.
+
+**주입(injection)**
+
+- 언어 결정(`crates/language/src/syntax_map.rs` 1720~1746, `crates/language/src/available_languages.rs` 218~239 `find_by_name_or_extension`):
+  - 쿼리에 `#set! injection.language "<이름>"`이 있으면 그 이름, 없으면 `@injection.language` 캡처 글자를 쓴다. 캡처 글자에 `.`이 있으면 마지막 `.` 뒤만 쓴다(예: "foo/bar/baz.rs" → "rs").
+  - 그 문자열을 대소문자 구분 없이 언어 이름(`name`) 또는 `path_suffixes`의 한 항목과 맞춘다. 맞는 언어가 없으면 주입하지 않는다(그 범위는 바깥 언어 색 그대로).
+  - `#set! injection.combined`은 같은 언어의 여러 조각을 한 문서처럼 묶어 파싱한다(1671~1686, 1755~1756).
+- 마크다운(`crates/grammars/src/markdown/injections.scm`): 코드 블록 `info_string`의 `language` 글자 → 코드 내용. 예: 언어 글자 `rust`는 이름 "Rust"와 대소문자 무시로 맞고, `ts`는 TypeScript의 확장자 `ts`로 맞는다. `inline`·`pipe_table_cell` → markdown-inline, `html_block` → html, `minus_metadata`(`---` 머리말) → yaml, `plus_metadata`(`+++`) → toml(목록에 없어 주입 안 됨). markdown-inline(`markdown-inline/injections.scm`): `html_tag` → html(combined), `latex_block` → latex(목록에 없어 주입 안 됨).
+- HTML(`extensions/html/languages/html/injections.scm`): `script_element` 안 `raw_text` → javascript, `style_element` 안 `raw_text` → css, `style="…"` 속성 값 → css, `on…="…"` 속성 값 → javascript, `comment` → comment(목록에 없어 주입 안 됨).
+- injections.scm이 있는 그 밖의 언어와 주입 대상(목록 밖 이름은 주입 안 됨): bash·css·diff·env·gitcommit·gomod·gowork·jsonc → comment만. c → c·comment·doxygen. cpp → c++·comment·doxygen과 `@injection.language` 캡처. go → bash·comment·css·csv·html·javascript·json·lua·regex·sql·xml·yaml. javascript·typescript → comment·css·glsl·graphql·html·isograph·javascript·jsdoc·json·regex·sql·typescript·WGSL/WESL·yaml(typescript는 angular도). tsx → comment·css·graphql·html·isograph·javascript·jsdoc·json·regex·sql·typescript·yaml. python → comment·sql. rust → comment·regex·rstml·rust·sql. yaml → comment·javascript. injections.scm이 없는 것: json·jsdoc·regex·zed-keybind-context.
+
+**I-12 코드 파일 심볼(outline)**
+
+- 쿼리: 언어마다 `outline.scm`(위 표 쿼리 열에 outline이 있는 c·cpp·css·go·javascript·json·jsonc·markdown·python·rust·tsx·typescript·yaml·html). 캡처 `@item`(심볼 범위), `@name`(필수), `@context`, `@context.extra`, `@open`·`@close`, `@annotation`(`crates/language_core/src/grammar.rs` 514~541).
+- 경로 줄로 가는 길: 커서(가장 새 선택의 head)가 바뀌면 `symbols_containing(cursor, 테마 syntax)`를 부른다(`crates/editor/src/editor.rs` 4021~4049). 기본 설정 `document_symbols: "off"`(`assets/settings/default.json` 1458)라 LSP가 아닌 tree-sitter outline 경로다. 경로 줄 글자는 파일 경로 하나 + 심볼 글자들이다(`editor.rs` 11682~11721 `breadcrumbs_inner`).
+- 심볼 고르기(`crates/language/src/buffer.rs` 4782~4797, 4890~4986):
+  - 범위 = 커서 - 1 ~ 커서 + 1. `@item` 노드가 이 범위와 닿는 outline 일치를 모두 모은다(주입된 언어의 outline도 포함).
+  - (시작 오름차순, 끝 내림차순)으로 정렬하고, 앞 항목 끝 안에 들어가면 한 단계 깊게 깊이를 매긴다.
+  - 앞에서부터 깊이가 바로 앞에 남긴 항목보다 클 때만 남긴다. 그래서 바깥에서 안쪽으로 이어지는 한 줄기만 남는다.
+- 심볼 글자(`buffer.rs` 4988~5110 `next_outline_item`): `@name`과 `@context` 캡처(경로 줄은 `@context.extra`를 빼고 부름) 노드를 소스 순서대로 잇는다. 사이에 소스상 틈이 있으면 공백 하나를 넣는다. 여러 줄 노드는 첫 줄 끝에서 자른다. 색은 편집기와 같은 하이라이트(위 "하이라이트 이름 → 테마 syntax 토큰")를 그대로 붙인다. `@name`이 없으면 항목이 아니다. 예: `src\App.tsx › function App()`(`zed-bc-code.png`, R-12).
+- tauri 지금: 경로 + 마크다운 ATX 제목만(K-40, `src/editor/breadcrumbs.ts`). 코드 심볼은 이 Phase(D-14).
+
 ---
 
 ## R-16. 탭이 탭 바보다 넘칠 때 Zed와 같게 처리한다
@@ -1083,7 +1153,7 @@ I-16, 사용자 2026-11-06("zed와 동일하게").
 **구현 (K-39)**
 
 - 이미 Zed와 같던 것: 탭 폭 그대로(`flex: none`), 줄바꿈·줄임 없음, `.tab-list { overflow: hidden }`, 화살표·목록 버튼·스크롤바 없음.
-- 휠: 세로 휠을 탭 줄의 가로 스크롤로 바꾼다. 한 칸 = 휠 줄 수 3 × 창 줄 높이(16 × 1.618) = 77.7px(Zed `gpui div.rs:3404` `pixel_delta`, `gpui_windows/events.rs:578` 휠 줄 수 기본 3). Chromium 한 칸 `deltaY` 100(= 3줄)이라 `deltaY / (100/3) × 줄 높이`(`tabWheelDelta`, 테스트 77.66). 시스템 휠 줄 수 설정은 `deltaY`에 이미 들어 있다. 상수 `WHEEL_PIXELS_PER_LINE`·`UI_LINE_HEIGHT_RATIO`는 `metrics.ts`에 출처 주석과 함께 둔다. 넘치지 않으면 움직이지 않는다. gpui `window.line_height()` 1.618은 캡처 값과 맞음만 확인했다.
+- 휠: 세로 휠을 탭 줄의 가로 스크롤로 바꾼다. 한 칸 = 휠 줄 수 3 × 창 줄 높이(16 × 1.618) = 77.7px(Zed `gpui div.rs:3404` `pixel_delta`, `gpui_windows/events.rs:578` 휠 줄 수 기본 3). Chromium 한 칸 `deltaY` 100(= 3줄)이라 `deltaY / (100/3) × 줄 높이`(`tabWheelDelta`, 테스트 77.66). 시스템 휠 줄 수 설정은 `deltaY`에 이미 들어 있다. 상수 `WHEEL_PIXELS_PER_LINE`·`UI_LINE_HEIGHT_RATIO`는 `metrics.ts`에 출처 주석과 함께 둔다. 넘치지 않으면 움직이지 않는다. gpui `window.line_height()` 1.618은 캡처 값과 맞음만 확인했다. toml `tab.scroll.wheel_step` 80과의 차이: core 결정(2026-11-07)으로 Zed 소스 공식(3줄 × 줄 높이) 기준인 tauri 지금 값(77.7)을 그대로 둔다.
 - 활성 탭 보이기: 활성 탭이 바뀌면 `scrollIntoView({ inline: "nearest", block: "nearest" })`(이미 보이면 그대로, Zed `scroll_to_item` `pane.rs:1530-1550`).
 - 하단 선: 스크롤하면 같이 움직이던 `::after` 선을 `.tab-list` 배경 선으로 바꿔 탭이 스크롤해도 전체 폭 선이 남는다.
 
@@ -1360,7 +1430,7 @@ I-21, 사용자 2026-11-06.
 | `sidebar.item.icon_gap` | 6 | `thread_item.rs` 461 `gap_1p5` |
 | `panel.focused_border` 다크 기본값(테마에 값이 없을 때) | #2870bd | `default_colors.rs` 252 dark blue step 8, One Dark 실측 |
 
-라이트 테마의 `panel.focused_border` 기본값은 정하지 않았다(이 앱은 그때 `border.focused`를 쓴다). core 확인 요청.
+`panel.focused_border` 기본값(core 결정 2026-11-07, K-46): 테마에 값이 없으면 다크는 Zed `default_colors.rs` 252행 `blue().dark().step_8()` = #2870bd, 라이트는 98행 `blue().light().step_10()` = #0588f0. (앞서 라이트를 정하지 않고 `border.focused`를 쓰던 것을 바꾼다.)
 
 **구현(K-44)**
 
