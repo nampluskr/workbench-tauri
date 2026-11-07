@@ -218,6 +218,32 @@
   - 후속(core ORDER-06-R2 결정, 2026-11-07): 소제목 순서를 두 갈래 모두 Zed 순서 Theme → Buffer Font → UI Font로 맞췄다(K-16, 검증 V1). Theme Mode·Icon Theme 선택 행은 core 결정대로 두지 않는다. SPEC R-2 행 표·문구 표를 고쳤다(W-13).
   - 검증: 문서만(V0, 실행 없음). SPEC·PROGRESS 제어 문자 0개.
 
+### Phase 7 — 테마·아이콘 테마
+
+- **ORDER-07 테마·아이콘 테마 (R-3·R-4 / I-3·I-4, core D-8·D-15)** (2026-11-07, 코드·문서 완료, 화면 검증 전)
+  - 무엇을 했나:
+    - K-17(커밋 `87a21ec`): `tools/fetch-zed-themes.ps1`(PowerShell 7, `fetch-zed-icons.ps1`과 같은 방식)로 고정 커밋·태그의 Zed Ayu·Gruvbox, Catppuccin v0.2.27, macOS Classic v0.4.0, Catppuccin Icons v1.24.0과 Zed (Default) 확장자 대응 문자열 표를 `.gitignore` 폴더에 복사했다. `.gitignore`에 다섯 폴더를 더했다. 테마 19종 + 커밋된 One 2종 = 21종, 아이콘 테마 Catppuccin 8종 + Zed (Default) = 9종.
+    - K-18(커밋 `0113f2c`): 테마 레지스트리(`src/theme/themes.ts`·`registry.ts`)로 복사본에서 21종 목록을 만들고, 설치된 Zed 확장(`zlext`) 읽기와 고정 테마 셋을 없앴다. 기본값 One Dark. 빠진 토큰 대체 순서(JSON → 파생 T-26 → 같은 밝기 One → 고정)를 넣었다. Settings Theme 드롭다운 21종.
+    - K-19(커밋 `df1ae22`): 모달 선택기(`src/shell/picker.ts`·`Picker.tsx`·`picker.css`)와 "Select Theme..."(미리보기·Esc 복원·저장, `Ctrl-K Ctrl-T`, Install Themes → Extensions Themes 범주). "v" 메뉴 Themes… 활성. 토큰 `text.placeholder` 추가(40개). 라이선스 glob을 `LICENSE*`와 `icon-themes`로 넓혔다.
+    - K-20(커밋 `b469be1`): 아이콘 테마 9종(`src/theme/icon-themes.ts`·`icons.ts`), 파일 트리 `FileIcon`(T-22 결정 규칙), "Select Icon Theme..."(Install Icon Themes), "v" 메뉴 Icon Themes… 활성, Settings Icon Theme 드롭다운 9종. Lucide `file.svg`·`LICENSE-LUCIDE`를 지웠다. 탭 파일 아이콘은 넣지 않았다(Zed 기본 `tabs.file_icons` false).
+    - K-21(커밋 `8313414`): Extensions 탭을 복사한 확장 셋의 `extension.toml` 카드(Catppuccin, Catppuccin Icons, macOS Classic Theme, 이름순, 태그 판정, GitHub 버튼)로 바꾸고 기본 묶음 카드를 없앴다. Zed (Default) 아이콘 경로를 `src/assets/` 기준으로 바꿔 `..`를 없애고, 경로 검사가 `..`를 모두 거부한다.
+    - W-15: SPEC R-3·R-4(목록·기본값·선택기·토큰 대응 표·빠진 토큰·아이콘 결정 규칙·색·탭 아이콘 없음, "복사본 출처" 절), R-2 Extensions 표, R-1 유지한 자리·Licenses의 Lucide 언급을 고쳤다. DECISIONS에 D-6~D-10을 더했다.
+  - 결과: 코드·문서 완료. 화면 대조(ORDER-07 4장 2·3의 V2 색 대조·V3 Zed 대조)는 아직이다.
+  - 검증:
+    - V1(K-17): 스크립트 문법 검사, 전체 실행 exit 0, 고정 커밋 4개·manifest 버전 3개 일치, 개수·이름·파일·라이선스·아이콘 경로 검사, `git check-ignore` 5030/5030, `git ls-files` 복사본 0개(`%TEMP%\v05-K-17-report.md`).
+    - V1(K-18): typecheck 통과, `npm run test` 151/151(`%TEMP%\v05-K-18-report.md`).
+    - V1(K-19): typecheck 통과, `npm run test` 158/158(`%TEMP%\v05-K-19-report.md`).
+    - V1(K-20): typecheck 통과, `npm run test` 165/165, `npm run build` 1회(SVG가 `data:` 인라인 아님)(`%TEMP%\v05-K-20-report.md`).
+    - V1(K-21): typecheck 통과, `npm run test` 167/167, `npm run build` 1회, 스크립트 재실행 exit 0(`%TEMP%\v05-K-21-report.md`).
+    - 문서(W-15): V0(실행 없음).
+  - 특이사항:
+    - core 보고 대상: 탭 파일 아이콘 없음(ORDER-07 3.2 "파일 트리와 탭"과 Zed 기본 `tabs.file_icons` false·사용자 Zed 설정에 키 없음), Extensions 기본 묶음 카드 없음(D-7, D-15 해석), toml에 없는 Picker 값(D-10, gpui toml 반영).
+    - 실측 필요: 선택기 P-001~P-006·P-010 치수·색과 위치·그림자, 21종 미리보기 전환과 색 대조, 아이콘 9종 전환·Catppuccin Latte Zed 대조·Zed (Default) 단색, Extensions 카드 3장 모양.
+    - Zed와 다른 점: 선택기 스크롤바 숨김 없음, 최대 높이 목록에만, PageUp/PageDown 처음/끝, 커서 색 토큰 없음, 미리보기 중 외부 `settings.json` 변경이면 미리보기가 풀림, 퍼지 검색 자체 구현(D-9).
+    - 원본 특이점: Zed (Default) 대응의 `bak → backup`은 `backup` 정의가 없어 기본 파일 아이콘으로 그린다.
+    - Extensions 범주는 탭을 닫았다 열어도 마지막 값을 유지한다(Install Themes 뒤 메뉴로 열면 Themes 범주).
+    - 테마 JSON은 시작 때 한 번 파싱(약 340KB), 아이콘 테마 목록은 빌드 때 고정. `dist` 약 16MB(Catppuccin SVG 5천여 개).
+
 ## 사용자 요청 작업
 
 - **HERDR 구성 규칙 추가** (2026-11-07, W-11): `HERDR-SETUP.md` 1장에 Codex 한도가 바닥나면 `tauri-coder`를 Claude Code Sonnet 5.5 high로 바꾼다는 규칙(core D-16, 사용자 결정)을 적었다. 지금은 쿠폰 적용으로 Codex gpt-6.1-sol medium 그대로다. 검증 V0(문서만).

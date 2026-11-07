@@ -21,7 +21,7 @@
 | core D-11 ITEMS가 SPEC 역할 | `SPEC.md`(I-n을 R-n으로 옮기고 판정 방법은 그대로) |
 | core D-12 core ITEMS가 갈래 지침보다 우선 | 루트 `AGENTS.md` 레포 규칙·3장·5장, 루트 `INTENT.md` "다루지 않는 것", `SPEC.md` R-2·R-22, `PLAN.md` Phase 8 |
 
-갈래가 정해 갈래 문서에 남기라고 한 것 중 core D-9의 것은 아래 D-2에 있다. core D-8의 복사본 폴더 경로, 복사본이 없을 때의 모습, 다시 채우는 방법, 복사 출처는 미정이다. Phase 7에서 정해 이 문서에 더한다. core D-10의 굵기·스타일 파일과 버전은 아래 D-1에 있다.
+갈래가 정해 갈래 문서에 남기라고 한 것 중 core D-9의 것은 아래 D-2에 있다. core D-8의 복사본 폴더 경로, 복사본이 없을 때의 모습, 다시 채우는 방법, 복사 출처는 아래 D-6에 있다(Phase 7). core D-10의 굵기·스타일 파일과 버전은 아래 D-1에 있다.
 
 ## 갈래 결정
 
@@ -59,7 +59,7 @@ core D-10, `SPEC.md` R-14, tauri-coder K-03 보고(2026-11-07).
 - 위치: `src/assets/zed-icons/`. `.gitignore`에 `src/assets/zed-icons/`를 더해 커밋하지 않는다. 라이선스 파일도 같은 폴더에 둔다.
 - 다시 채우기: 레포에 커밋한 `tools/fetch-zed-icons.ps1`(PowerShell 7)을 레포 루트에서 실행한 뒤 다시 빌드한다. 스크립트는 TEMP 임시 폴더에 위 커밋을 sparse checkout(`blob:none`, depth 1)으로 받아 아이콘 폴더와 두 라이선스만 덮어쓰고, 커밋·개수·라이선스를 확인하며, 끝나면 임시 폴더를 지운다.
 - 읽는 방식: SVG를 Vite eager raw glob으로 빌드 때 넣고, 그릴 때만 고정색을 `currentColor`로 바꾼다(`src/shell/icon-svg.ts`, 테스트 `src/shell/icon-svg.test.ts`). 원본 파일은 고치지 않는다. CSP·의존성은 바꾸지 않는다.
-- 없을 때의 모습: 교체한 자리는 같은 크기의 빈 칸이다. 버튼·툴팁·접근성 이름·기능은 그대로이고 앱은 죽지 않는다. 폴더 전체가 없으면 glob이 빈 객체가 되고, SVG 하나가 빠지면 그 자리만 빈 칸이다. 유지한 자리(자체 `file.svg`, Windows 창 버튼 글리프)는 그대로 보인다.
+- 없을 때의 모습: 교체한 자리는 같은 크기의 빈 칸이다. 버튼·툴팁·접근성 이름·기능은 그대로이고 앱은 죽지 않는다. 폴더 전체가 없으면 glob이 빈 객체가 되고, SVG 하나가 빠지면 그 자리만 빈 칸이다. 유지한 자리(자체 `file.svg`, Windows 창 버튼 글리프)는 그대로 보인다. 자체 `file.svg`는 Phase 7(K-20)에서 아이콘 테마로 바꾸며 지웠다(D-6, `SPEC.md` R-1·R-3).
 
 **이유**
 
@@ -118,8 +118,85 @@ Settings 창은 자기 타이틀 바(창 버튼·끌기)와 설정 변경 이벤
 
 tauri-leader 승인(K-10-R1 카드, settings 창 label에 필요한 권한만), tauri-coder K-10-R1 보고, tauri-checker C-22(PASS).
 
+### D-6. core D-8 테마·아이콘 테마 복사본의 위치와 없을 때의 모습
+
+**결정**
+
+- 출처·태그·커밋: Zed `4304dec732a75505066de5ce2dbbfb2bec369498`(Ayu·Gruvbox, Zed (Default) 문자열 표), `catppuccin/zed` `v0.2.27`(`83fe57ba…`), `huacnlee/zed-theme-macos-classic` `v0.4.0`(`22266e11…`), `catppuccin/zed-icons` `v1.24.0`(`fe864c99…`). 확장 셋의 버전은 이 PC에 설치된 확장의 `extension.toml`과 같다. 표 전체는 `SPEC.md` R-4 "복사본 출처".
+- 위치: 테마는 `src/theme/assets/zed/`·`catppuccin/`·`macos-classic/`, 아이콘 테마는 `src/assets/icon-themes/catppuccin-icons/`·`zed/`. 모두 `.gitignore`에 걸려 커밋하지 않는다. 커밋된 One 테마(`src/theme/assets/one/`)는 그대로 둔다. 라이선스 파일은 각 폴더에 둔다.
+- 다시 채우기: `tools/fetch-zed-icons.ps1`(Phase 5)을 먼저, 그다음 레포 루트에서 `pwsh -NoProfile -File tools/fetch-zed-themes.ps1`을 실행하고 다시 빌드한다.
+- 읽는 방식: 빌드 때 eager glob. 앱은 실행 중에 내려받지 않고 이 PC의 Zed 설치 폴더를 읽지 않는다(설치된 확장을 `zlext`로 읽던 테마 코드는 없앴다).
+- 없을 때의 모습: 테마는 One Dark·One Light만, 아이콘 테마는 빠진 것만 목록에서 빠지고 모두 없으면 파일 트리가 UI 폴더·파일 아이콘으로 그린다. Extensions 카드와 Licenses 항목은 그 묶음만 빠진다. 앱은 죽지 않는다.
+
+**이유**
+
+두 갈래 저장소가 공개라 복사본을 커밋하지 않는다(core D-8). 고정 커밋·태그로 받아 두 갈래가 같은 버전을 쓰고, 빌드 때 glob이라 복사본 여부가 빌드 때 정해져 실행 중 읽기 오류가 없다.
+
+**출처**
+
+core D-8, core ORDER-07 2장, tauri-coder K-17·K-18·K-20·K-21 보고(2026-11-07).
+
+### D-7. Extensions 탭에 기본 묶음 카드를 두지 않는다
+
+**결정**
+
+Extensions 탭은 복사한 확장 셋(Catppuccin, Catppuccin Icons, macOS Classic Theme)만 `extension.toml` 카드로 보인다. One·Ayu·Gruvbox 테마와 Zed (Default) 아이콘 테마는 카드가 없다. K-12의 One Dark·One Light·Zed (Default) 카드는 없앴다.
+
+**이유**
+
+Zed의 Extensions 화면은 확장 패키지만 나열하고 본체 내장 테마·아이콘 테마는 나오지 않는다(`docs/refs/01-zed/02-INTERACTION.md` 16절 첫 문단). 기본 묶음은 `extension.toml`이 없는 본체 자원이라(One·Ayu·Gruvbox는 Zed `assets/themes/`, Zed (Default)는 코드 상수) 카드를 만들려면 값을 지어내야 한다. core D-15 "이 앱에 들어 있는 확장 자원만"의 확장은 복사한 셋이다. Zed 캡처는 스크롤돼 있어 "목록 전체에 내장 카드가 없다"는 것은 문서에 의존한다.
+
+core가 D-15를 "내장 포함"으로 읽으면 `bundledExtensions`에 합성 manifest를 넣는 작은 변경으로 바꿀 수 있다(사용자 확인 필요로 보고됨).
+
+**출처**
+
+tauri-coder K-21 보고(2026-11-07), core D-15, core ORDER-07 3.3.
+
+### D-8. 테마에 빠진 토큰은 같은 밝기의 One 값으로 근사한다
+
+**결정**
+
+테마 JSON에 토큰이 없으면 JSON 값 → 같은 테마의 파생 값(T-26.3·T-26.4) → 같은 밝기의 One 테마 값(dark → One Dark, light → One Light) → 고정 값(T-26.13) 순서로 채운다(`resolveTokens(style, base?)`). 테마별로 쓰인 대체는 `SPEC.md` R-4 "빠진 토큰과 대체 순서".
+
+**이유**
+
+macOS Classic에는 앱이 쓰는 토큰이 여럿 없고, 이전 코드는 이때 테마 적용이 실패했다. Zed도 테마 JSON을 기본(fallback) 테마 위에 덮지만 그 기본 테마 값(Zed `fallback_themes.rs`)은 One과 완전히 같지 않다. Zed 코드를 복사하지 않고, 커밋된 One 값으로 근사한다. V2에서 어긋나면 다시 정한다.
+
+**출처**
+
+tauri-coder K-18·K-19 보고(2026-11-07), core ORDER-07 3.1.
+
+### D-9. 선택기 퍼지 검색은 자체 구현이다
+
+**결정**
+
+테마·아이콘 테마 선택기의 검색은 `src/shell/picker.ts`의 간단한 퍼지 검색이다: 글자가 순서대로 들어 있으면 맞고, 연속 일치와 단어 첫 글자에 점수를 더하며, 같은 점수는 목록 순서를 따른다. 한계는 `shortcut:` 주석으로 남겼다.
+
+**이유**
+
+앱에 퍼지 검색이 없었고(Settings·Keymap·Extensions는 부분 문자열 검색) 의존성을 더하지 않는다. 목록이 21종·9종이라 단순 구현으로 충분하다. Zed fuzzy와 동점 순서는 다를 수 있다.
+
+**출처**
+
+tauri-coder K-19 보고(2026-11-07).
+
+### D-10. 스펙 toml에 없는 Picker 값은 01-LAYOUT 4.13 본문 값을 쓴다
+
+**결정**
+
+`spec/zed-metrics.toml`에 없는 Picker 값 — 그림자 4겹(elevation_3), 창 높이 마진 160, 행 높이 계산용 줄 높이 1.618, 빈 결과 위아래 8, 체크 아이콘 16 — 은 `docs/refs/01-zed/01-LAYOUT.md` 4.13 본문 값을 쓴다. 그림자는 `src/shell/picker.css`, 나머지는 `src/spec/metrics.ts`에 "toml에 없음" 주석과 함께 둔다.
+
+**이유**
+
+추정한 값이 아니라 실측 문서에 있는 값이다. `spec/`은 gpui가 원본이라 이 레포에서 고치지 않는다(루트 `AGENTS.md` 3장). gpui toml에 넣을지는 core가 정한다.
+
+**출처**
+
+tauri-coder K-19 보고(2026-11-07), 루트 `AGENTS.md` 3장.
+
 에이전트 운영의 리더 결정(카드·보고 파일 위치, 카드 ID 체계)은 설계 결정이 아니라서 `HERDR-SETUP.md` 5장에 둔다.
 
 ## 미결 사항
 
-- core D-8 복사본의 `.gitignore` 폴더 경로, 복사본이 없을 때 앱의 모습, 다시 채우는 방법, 복사 출처(Phase 7).
+- core D-8 복사본 항목은 D-6에서 정했다(Phase 7).
+- core 판단 대기: 탭 파일 아이콘(ORDER-07 3.2와 Zed 기본 `tabs.file_icons` false, `SPEC.md` R-3), D-7 기본 묶음 카드, D-10 값의 gpui toml 반영.
