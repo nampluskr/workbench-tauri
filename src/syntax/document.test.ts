@@ -38,7 +38,7 @@ test("K-50: config suffixes select visible languages with exact case and longest
     assert.equal(fileLanguage(configs, `D:\\project\\${suffix}`)?.id, item.id, suffix);
     assert.equal(fileLanguage(configs, `D:\\project\\file.${suffix}`)?.id, item.id, suffix);
   }
-  for (const [path, expected] of [["a.C", "cpp"], ["a.c", "c"], ["a.MD", "markdown"], ["tsconfig.json", "jsonc"], ["x.json", "json"], [".env", "env"], ["x.PY", undefined], ["x.toml", undefined], ["x.regex", undefined], ["nottsconfig.json", "json"]]) {
+  for (const [path, expected] of [["a.C", "cpp"], ["a.c", "c"], ["a.MD", "markdown"], ["tsconfig.json", "jsonc"], ["x.json", "json"], [".env", "env"], ["x.PY", undefined], ["x.toml", "toml"], ["x.regex", undefined], ["nottsconfig.json", "json"]]) {
     assert.equal(fileLanguage(configs, path!)?.id, expected, path);
   }
   assert.equal(injectionLanguage(configs, "some/path/main.RS")?.id, "rust");
@@ -127,7 +127,7 @@ test("K-50: each visible language produces themed spans from its pinned grammar"
     gomod: 'module example.com/app\n\ngo 1.23\n', gowork: 'go 1.23\n\nuse ./app\n', html: '<p class="a">text</p>',
     javascript: 'const n = 1;', json: '{"n": 1}', jsonc: '{"n": 1}', markdown: '# Heading\n',
     python: 'def main():\n    return 1\n', rust: 'fn main() { let n = 1; }',
-    tsx: 'const node = <p>hello</p>;', typescript: 'const n: number = 1;', yaml: 'name: hello\n',
+    tsx: 'const node = <p>hello</p>;', typescript: 'const n: number = 1;', yaml: 'name: hello\n', toml: '[server]\nport = 8080\n',
   };
   const one = JSON.parse(readFileSync(new URL("../theme/assets/one/one.json", import.meta.url), "utf8"));
   const themeKeys = new Set<string>(Object.keys(one.themes.find((theme: { name: string }) => theme.name === "One Dark").style.syntax));
@@ -152,6 +152,27 @@ test("K-50: unavailable language leaves an empty document instead of throwing", 
   const syntax = new SyntaxDocument(missing, [], async () => undefined);
   assert.equal(await syntax.update(EditorState.create({ doc: "x" }).doc, null, () => false), true);
   assert.deepEqual(syntax.highlights(0, 1, keys), []);
+  syntax.destroy();
+});
+
+test("K-54: Markdown +++ front matter uses the pinned TOML extension grammar", { skip: !configs.some((item) => item.id === "toml") }, async () => {
+  assert.equal(fileLanguage(configs, "D:\\project\\Cargo.toml")?.id, "toml");
+  const doc = EditorState.create({ doc: '+++\nport = 8080\n+++\n\n# Heading\n' }).doc;
+  const syntax = new SyntaxDocument(config("markdown"), configs, load);
+  await syntax.update(doc, null, () => false);
+  const toml = [...syntax.layers.values()].find((layer) => layer.syntax.config.id === "toml");
+  assert.ok(toml);
+  // Zed's plus_metadata capture includes the +++ markers, which the TOML grammar treats as errors.
+  const range = toml.ranges![0];
+  const frontMatter = doc.sliceString(range.from, range.to);
+  assert.ok(frontMatter.startsWith("+++\n") && frontMatter.includes("\n+++"));
+  const reference = new Parser();
+  reference.setLanguage((await load(config("toml"))).language);
+  const tree = reference.parse(frontMatter)!;
+  assert.equal(toml.tree.rootNode.hasError, tree.rootNode.hasError);
+  tree.delete(); reference.delete();
+  const at = doc.toString().indexOf("8080");
+  assert.ok(syntax.highlights(0, doc.length, keys).some((span) => span.from === at && span.to === at + 4 && span.key === "number"));
   syntax.destroy();
 });
 

@@ -7,6 +7,8 @@ $cliSha256 = 'e21184878f908f91c753b78a76a0766e61954e06627b46088d70d66233424531'
 # The diff crate names a missing repository; its published commit is in this upstream.
 $diffLicenseRepository = 'https://github.com/the-mikedavis/tree-sitter-diff'
 $diffPublishedCommit = '4867e8470e1b0ad7364c4e3ffab762c361bbb635'
+$tomlExtensionRepository = 'https://github.com/zed-extensions/toml'
+$tomlExtensionCommit = '8e18e5045841f0f265f9c8b89f138c7f7dd09e2e' # v1.1.0
 $destination = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../src/assets/zed-grammars'))
 $temporary = Join-Path ([IO.Path]::GetTempPath()) ('workbench-zed-grammars-' + [guid]::NewGuid())
 $oldEnvironment = @{}
@@ -75,6 +77,20 @@ try {
     }
     Copy-Item -LiteralPath $htmlLicense -Destination (Join-Path $licenseDir 'html-extension/LICENSE-APACHE')
 
+    $tomlArchive = Join-Path $temporary 'toml-extension.tar.gz'
+    Receive-File "https://codeload.github.com/zed-extensions/toml/tar.gz/$tomlExtensionCommit" $tomlArchive
+    $tomlRoot = Expand-Source $tomlArchive (Join-Path $temporary 'toml-extension')
+    $toml = Get-Content -Raw -LiteralPath (Join-Path $tomlRoot 'extension.toml')
+    if ($toml -notmatch '(?m)^version = "1\.1\.0"$') { throw 'Unexpected TOML extension version' }
+    Copy-Item -LiteralPath (Join-Path $tomlRoot 'languages/toml') -Destination $languageDir -Recurse
+    $tomlMetadata = Join-Path $stage 'extensions/toml'
+    $tomlLicenseDir = Join-Path $licenseDir 'toml-extension'
+    New-Item -ItemType Directory -Path $tomlMetadata, $tomlLicenseDir | Out-Null
+    Copy-Item -LiteralPath (Join-Path $tomlRoot 'extension.toml') -Destination $tomlMetadata
+    $tomlLicenses = @(Get-ChildItem -LiteralPath $tomlRoot -File | Where-Object { $_.Name -match '^(LICENSE|COPYING)([.-]|$)' })
+    if (!$tomlLicenses.Count) { throw 'Missing TOML extension license' }
+    foreach ($license in $tomlLicenses) { Copy-Item -LiteralPath $license.FullName -Destination $tomlLicenseDir }
+
     $lock = Get-Content -Raw -LiteralPath (Join-Path $checkout 'Cargo.lock')
     $packages = @{}
     foreach ($block in ($lock -split '(?m)^\[\[package\]\]')) {
@@ -99,11 +115,14 @@ try {
         @('python', 'tree-sitter-python', ''), @('regex', 'tree-sitter-regex', ''),
         @('rust', 'tree-sitter-rust', ''), @('tsx', 'tree-sitter-typescript', 'tsx'),
         @('typescript', 'tree-sitter-typescript', 'typescript'), @('yaml', 'tree-sitter-yaml', ''),
-        @('html', 'html-extension', '')
+        @('html', 'html-extension', ''), @('toml', 'tree-sitter-toml', '')
     )
     $html = Get-Content -Raw -LiteralPath (Join-Path $checkout 'extensions/html/extension.toml')
     if ($html -notmatch '(?ms)^\[grammars\.html\]\s+repository = "([^"]+)"\s+commit = "([a-f0-9]{40})"') { throw 'Missing HTML grammar source' }
     $packages['html-extension'] = @{ version = ''; source = "git+$($Matches[1])#$($Matches[2])"; checksum = '' }
+    if ($toml -notmatch '(?ms)^\[grammars\.toml\]\s+repository = "([^"]+)"\s+(?:rev|commit) = "([a-f0-9]{40})"') { throw 'Missing TOML grammar source' }
+    if ($Matches[2] -ne '342d9be207c2dba869b9967124c679b5e6fd0ebe') { throw 'Unexpected TOML grammar commit' }
+    $packages['tree-sitter-toml'] = @{ version = ''; source = "git+$($Matches[1])#$($Matches[2])"; checksum = '' }
 
     foreach ($key in @('LOCALAPPDATA', 'XDG_CACHE_HOME', 'XDG_CONFIG_HOME')) {
         $oldEnvironment[$key] = [Environment]::GetEnvironmentVariable($key, 'Process')
@@ -223,15 +242,16 @@ try {
         $toolchain[$tool[0]] = @{ version = $Matches[2]; url = "$($Matches[1])/$(if ($tool[0] -eq 'wasiSdk') { 'wasi-sdk-' } else { 'version_' })$($Matches[2])/$($Matches[3])" }
     }
     $wasmCount = @(Get-ChildItem -LiteralPath $grammarDir -Filter '*.wasm' -File).Count
-    $manifest = [ordered]@{ zedCommit = $commit; toolchain = $toolchain; languages = $languages; grammars = @($grammars.ToArray()); expectedLanguages = 24; expectedWasms = 20; seconds = $timer.Elapsed.TotalSeconds }
+    $extensions = @(@{ name = 'toml'; version = '1.1.0'; sourceUrl = $tomlExtensionRepository; rev = $tomlExtensionCommit; archiveSha256 = (Get-FileHash -LiteralPath $tomlArchive -Algorithm SHA256).Hash.ToLowerInvariant(); licenseFiles = @($tomlLicenses | ForEach-Object { "licenses/toml-extension/$($_.Name)" }) })
+    $manifest = [ordered]@{ zedCommit = $commit; extensions = $extensions; toolchain = $toolchain; languages = $languages; grammars = @($grammars.ToArray()); expectedLanguages = 25; expectedWasms = 21; seconds = $timer.Elapsed.TotalSeconds }
     $manifest | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $stage 'manifest.json') -Encoding utf8
     # Preserve successful builds and failure logs even when another grammar fails.
     New-Item -ItemType Directory -Path $destination -Force | Out-Null
     Copy-Item -Path (Join-Path $stage '*') -Destination $destination -Recurse -Force
     $publishedLanguages = @(Get-ChildItem -LiteralPath (Join-Path $destination 'languages') -Directory).Count
     $publishedWasms = @(Get-ChildItem -LiteralPath (Join-Path $destination 'grammars') -Filter '*.wasm' -File).Count
-    if ($languages.Count -ne 24 -or $publishedLanguages -ne 24 -or $grammars.Count -ne 20 -or $wasmCount -ne 20 -or $publishedWasms -ne 20 -or @($grammars | Where-Object status -ne 'built').Count) {
-        throw "Incomplete grammar copies: languages=$publishedLanguages/24 wasm=$wasmCount/20 published=$publishedWasms; see $destination/manifest.json and build-logs"
+    if ($languages.Count -ne 25 -or $publishedLanguages -ne 25 -or $grammars.Count -ne 21 -or $wasmCount -ne 21 -or $publishedWasms -ne 21 -or @($grammars | Where-Object status -ne 'built').Count) {
+        throw "Incomplete grammar copies: languages=$publishedLanguages/25 wasm=$wasmCount/21 published=$publishedWasms; see $destination/manifest.json and build-logs"
     }
     Write-Output "Zed $commit : languages=$publishedLanguages wasm=$publishedWasms; destination=$destination"
 }

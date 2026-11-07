@@ -11,10 +11,11 @@ const manifestFile = new URL("manifest.json", root);
 test("ORDER-11: pinned grammar copies load and their Zed queries compile", { skip: !existsSync(manifestFile) }, async () => {
   const manifest = JSON.parse(readFileSync(manifestFile, "utf8"));
   assert.equal(manifest.zedCommit, "4304dec732a75505066de5ce2dbbfb2bec369498");
-  assert.equal(manifest.languages.length, 24);
-  assert.equal(manifest.grammars.length, 20);
-  assert.equal(readdirSync(new URL("grammars/", root)).filter((file) => file.endsWith(".wasm")).length, 20);
-  assert.equal(readdirSync(new URL("languages/", root)).length, 24);
+  assert.equal(manifest.languages.length, 25);
+  assert.equal(manifest.grammars.length, 21);
+  assert.equal(readdirSync(new URL("grammars/", root)).filter((file) => file.endsWith(".wasm")).length, 21);
+  assert.equal(readdirSync(new URL("languages/", root)).length, 25);
+  assert.equal(manifest.extensions.find((extension: { name: string }) => extension.name === "toml")?.rev, "8e18e5045841f0f265f9c8b89f138c7f7dd09e2e");
   await Parser.init();
   const languages = new Map();
   const failures: string[] = [];
