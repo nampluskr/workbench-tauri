@@ -108,6 +108,7 @@ const METRICS: Record<string, string> = {
   "editor.cursor_width": rem(2), // E-012
   "editor.selection.corner_radius_multiplier": "0.15", // E-015
   "scrollbar.width.editor": rem(15), // E-030
+  "scrollbar.width.ui": rem(6), // L-308: the general scrollbar (picker list)
   "titlebar.height": "32px", // L-21: Windows caption stays fixed when UI font size changes.
   "titlebar.window_button.width": "36px", // L-39 / A-32.2
   "titlebar.window_button.height": "32px", // L-39 / A-32.2
