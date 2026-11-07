@@ -225,6 +225,8 @@ const METRICS: Record<string, string> = {
   "statusbar.item_gap": rem(4), // L-29
   "statusbar.icon_size": rem(14), // L-92
   "statusbar.cursor_position.font_size": rem(12), // L-97
+  "statusbar.left_divider.width": rem(1), // measured Zed 4304dec 2026-11-07
+  "statusbar.left_divider.height": rem(16), // measured Zed 4304dec 2026-11-07
   "tooltip.transparent_margin_left": rem(8), // L-209
   "tooltip.transparent_margin_top": rem(10), // L-209
   "tooltip.corner_radius": rem(8), // L-211

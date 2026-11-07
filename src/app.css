@@ -134,6 +134,8 @@ button, input, select, textarea {
 }
 .group { display: flex; gap: var(--statusbar-item-gap); }
 .status-items { align-items: center; font-size: var(--statusbar-cursor-position-font-size); white-space: nowrap; }
+.status-bar .icon-button[aria-pressed="true"] { color: var(--text-accent); } /* I-19: Zed IconButton Color::Selected. */
+.status-divider { flex: none; align-self: center; width: var(--statusbar-left-divider-width); height: var(--statusbar-left-divider-height); background: var(--border); }
 .sidebar-footer .group { gap: var(--sidebar-footer-gap); }
 .grow { flex: 1; }
 

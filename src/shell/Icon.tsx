@@ -19,11 +19,12 @@ export default function Icon(props: { name: IconName }) {
  * Icon button: disabled until it gets an `onClick` (the tab bar end buttons stay that way, R-10). It has its
  * tooltip either way (8.1): the label with the shortcut of `action`, or the given rows.
  */
-export function IconButton(props: { name: IconName; label: string; action?: string; tips?: Tip[]; onClick?: () => void }) {
+export function IconButton(props: { name: IconName; label: string; action?: string; tips?: Tip[]; toggled?: boolean; onClick?: () => void }) {
   return (
     <button
       class="icon-button"
       aria-label={props.label}
+      aria-pressed={props.toggled}
       disabled={!props.onClick}
       onClick={() => props.onClick?.()}
       ref={(el) => tooltip(el, () => props.tips ?? { title: props.label, action: props.action })}

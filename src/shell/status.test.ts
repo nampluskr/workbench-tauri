@@ -1,8 +1,35 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createSignal } from "solid-js";
-import { statusItems } from "./status.ts";
+import { statusButtons, statusItems } from "./status.ts";
+import { commands, keymap } from "../keymap/keyboard.ts";
+import { shortcutFor } from "../keymap/display.ts";
 import type { Tab } from "../workspace/context.ts";
+
+test("I-22 / I-19: status buttons retain Zed's order, state, labels and tooltip shortcuts", () => {
+  const stack = [new Set(["Workspace"]), new Set(["Pane"]), new Set(["Editor"])];
+  for (const sidebar of [false, true]) for (const dock of [false, true]) {
+    const buttons = statusButtons(sidebar, dock);
+    assert.deepEqual(buttons.flatMap((button) => [button.name, ...(button.dividerAfter ? ["divider"] : [])]), [
+      ...(!sidebar ? ["threads_sidebar_left_closed", "divider"] : []),
+      "file_tree", "divider", "magnifying_glass", "check",
+    ]);
+    assert.deepEqual(buttons.map((button) => [button.name, button.label, button.toggled]), [
+      ...(!sidebar ? [["threads_sidebar_left_closed", "Open Folder Sidebar", undefined]] : []),
+      ["file_tree", dock ? "Close Left Dock" : "Project Panel", dock],
+      ["magnifying_glass", "Project Search", undefined],
+      ["check", "Project Diagnostics", undefined],
+    ]);
+    assert.deepEqual(buttons.map((button) => shortcutFor(keymap, button.action, stack)?.join(" ")), [
+      ...(!sidebar ? ["Ctrl-Alt-J"] : []), dock ? "Ctrl-B" : "Ctrl-Shift-E", "Ctrl-Shift-F", "Ctrl-Shift-M",
+    ]);
+  }
+  for (const [stroke, action] of [["ctrl-shift-f", "pane::DeploySearch"], ["ctrl-shift-m", "diagnostics::Deploy"]]) {
+    assert.deepEqual(keymap.dispatch([stroke], stack), { type: "match", action });
+    assert.equal(typeof commands.get(action), "function");
+    assert.doesNotThrow(() => commands.get(action)!());
+  }
+});
 
 test("I-5: active editor and preview status follows each tab; tools, loading editors and no tab hide both items", () => {
   const [position, setPosition] = createSignal("1:1");
