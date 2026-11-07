@@ -1,0 +1,35 @@
+{
+  "pid": 44228,
+  "open": {
+    "active": "cm-content cm-lineWrapping",
+    "tabs": [
+      "AGENTS.md*"
+    ],
+    "preview": false,
+    "line5": "- **사람이 정하고 묻는다** — "
+  },
+  "ctrl_shift_v": {
+    "active": "markdown-preview",
+    "tabs": [
+      "AGENTS.md",
+      "Preview AGENTS.md*"
+    ],
+    "preview": true,
+    "line5": null
+  },
+  "preview_click": {
+    "expectLine": 6,
+    "status": [
+      "6:1",
+      "Markdown"
+    ]
+  },
+  "no_tab": {
+    "status": [],
+    "dialog": [],
+    "active": "pane",
+    "tabs": [],
+    "preview": false,
+    "line5": null
+  }
+}

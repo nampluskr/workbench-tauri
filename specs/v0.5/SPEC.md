@@ -636,6 +636,7 @@ I-5, 사용자 2026-11-06, 참고 화면 `refs/I-5-zed.png`, `refs/zed-split.png
 - 위치는 주 선택의 head(커서) 기준 1부터 시작하는 `line:column`이다. 열과 선택 글자 수는 UTF-16 코드 유닛이 아닌 Unicode scalar 수다.
 - 선택 정보는 selections, lines, characters 순서로 괄호에 넣는다. selections·lines는 2 이상, characters는 1 이상일 때 보이고 단·복수를 구분한다. 빈 단일 커서는 괄호가 없다. 선택 끝이 다음 줄 시작이면 그 줄은 줄 수에 넣지 않는다. 여러 줄 선택의 개행은 글자 수에 넣는다(Zed `crates/go_to_line/src/cursor_position.rs`를 동작 이해용으로 읽음, 코드 복사 없음).
 - split에서는 편집 뷰마다 위치가 따로다. 문서 내용이 바뀌어도 갱신한다.
+- 편집기 Escape(K-33): 선택을 푼다(여럿이면 주 선택 하나, 비어 있지 않으면 head 위치 커서). Zed `editor::Cancel`(`default-windows.json` 61행, `selections_collection.rs:813-839` `try_cancel`)과 같은 규칙이라 CodeMirror `simplifySelection`을 편집기 키로 넣었다(앱 키맵 `BUILTIN`은 v0.4 표 테스트 때문에 그대로). 편집 키를 다루는 R이 따로 없어 선택 표시와 이어지는 이 절에 둔다.
 - 편집기가 준비되지 않았거나, 열린 탭이 없거나, 도구 탭이면 두 항목을 숨긴다. Project Search 탭은 현재 일치의 끝 위치와 선택 글자 수만 보이고 파일 형식은 숨긴다(R-22). 미리보기 탭의 파일 형식은 Markdown이다.
 - 글꼴 크기 `statusbar.cursor_position.font_size`(L-97), 항목 간격 `statusbar.item_gap`(L-29). 지금 오른쪽 아이콘 묶음이 없어 상태 바 오른쪽에 두 항목을 두었다. 아이콘 묶음이 생기면 이 두 항목 뒤에 놓는다.
 
@@ -1309,6 +1310,27 @@ I-22, 사용자 2026-11-06("나머지는 Zed와 동일하게"), core D-12(루트
 - toml ID `statusbar.padding_x`·`statusbar.toggle_gap`은 gpui가 올리는 중이다(core-leader 결정). tauri는 그때까지 임시 metrics 값을 쓴다(K-31).
 - tauri V3(K-31 전): 잉크 x 5·37·68·95, 구분선 x 26·57. K-31 뒤 다시 잰다.
 
+*toml에 없는 값(gpui 등록 요청, core-leader 결정 2026-11-07)*
+
+`src/spec/metrics.ts`에서 "no toml ID yet"(또는 "No toml IDs yet")가 달린 항목 전부다. 모두 12개(상태 바 2, Project Search 10). gpui가 원본 `spec/zed-metrics.toml`에 같은 ID로 올리면 이 레포로 다시 복사하고 주석을 지운다. 이 레포의 `spec/`은 고치지 않았다.
+
+| ID(`metrics.ts` 키) | 값 | Zed 출처(`4304dec`, 파일:줄) | 쓰는 곳 | 상태 |
+|---|---|---|---|---|
+| `statusbar.padding_x` | 4 | `crates/workspace/src/status_bar.rs:153` `.p(DynamicSpacing::Base04)`(네 변) | 상태 바 좌우 padding(K-31) | gpui가 올리는 중 |
+| `statusbar.toggle_gap` | 2 | `crates/workspace/src/status_bar.rs:281` `gap_0p5`(280~287 행) | 사이드바 토글과 구분선 사이(K-31) | gpui가 올리는 중 |
+| `editor.search_input.max_width` | 1200 | `crates/ui/src/utils/search_input.rs` `MAX_WIDTH` | Project Search 검색칸 최대 폭(`flex: 0 1 1200px`, K-32) | 등록 요청 |
+| `search_results.header.padding` | 4 | `crates/editor/src/editor.rs:303` `BUFFER_HEADER_PADDING` | 결과 머리줄 안쪽 여백(K-32) | 등록 요청 |
+| `search_results.header.padding_left` | 4 | `crates/editor/src/element/header.rs` `.pl_1()` | 결과 머리줄 왼쪽(K-32) | 등록 요청 |
+| `search_results.header.padding_right` | 8 | `crates/editor/src/element/header.rs` `.pr_2()` | 결과 머리줄 오른쪽(K-32) | 등록 요청 |
+| `search_results.header.gap` | 6 | `crates/editor/src/element/header.rs` `.gap_1p5()` | 결과 머리줄 항목 간격(K-32) | 등록 요청 |
+| `search_results.header.radius` | 2 | `crates/editor/src/element/header.rs` `.rounded_sm()` | 결과 머리줄 모서리(K-32). 2px는 gpui 쪽 정의로 알려진 값이고 소스에서 직접 확인 못 함 | 등록 요청 |
+| `search_results.header.fold_button` | 28 | `crates/editor/src/element/header.rs` `button_size` | 결과 머리줄 접기 버튼(K-32) | 등록 요청 |
+| `search_results.header.lines` | 2(버퍼 줄 수) | `crates/editor/src/editor.rs:302` `FILE_HEADER_HEIGHT` | 결과 머리줄 높이(K-32) | 등록 요청 |
+| `search_results.matches.padding_left` | 6 | `crates/search/src/project_search.rs` `.pl_1p5()`(일치 화살표 앞) | `‹ ›`·`1/19` 묶음 왼쪽(K-32) | 등록 요청 |
+| `search_results.count.min_width` | 40 | `crates/search/src/project_search.rs` `.min_w(rems_from_px(40_f32))` | `1/19` 개수 최소 폭(K-32) | 등록 요청 |
+
+- 머리줄 `header.rs`·`project_search.rs` 항목은 K-32 보고에 줄 번호가 없다(`header.rs` 700~1000, `project_search.rs` 3126~3185 범위에서 읽음).
+
 **구현 — Project Search 탭 (K-26)**
 
 - 열기: 상태 바 검색 버튼·`Ctrl-Shift-F`. 같은 폴더 컨텍스트에 이미 있으면 그 탭과 입력칸으로 돌아간다. 탭 아이콘 `magnifying_glass`, 제목은 검색 전 "Project Search", Enter 뒤 검색어.
@@ -1319,7 +1341,33 @@ I-22, 사용자 2026-11-06("나머지는 Zed와 동일하게"), core D-12(루트
 - 결과: 파일마다 머리줄(파일 이름·전체 경로·접기·Open File), 일치 줄 앞뒤 2줄(Zed 기본 `excerpt_context_lines` 2), 줄 번호, `search.match_background` 강조. 겹치는 발췌 줄은 한 번만 보인다. 상한 파일 5,000·일치 10,000(D-11).
 - 이동·열기: 이전/다음은 일치 단위로 순환한다. 결과 행 클릭은 그 행의 첫 일치(문맥 행은 열 1), Open File은 그 파일 첫 일치, `Alt-Enter`는 현재 일치를 일반 편집 탭으로 연다.
 - 스펙 ID: E-061~E-063(검색칸). Project Search 전용 화면 수치는 추정해 넣지 않았다.
-- 하지 않은 것: Replace 쓰기(Replace 줄·입력칸·비활성 버튼만 보임, K-29 진행 중), 클릭한 글자의 열 계산.
+- 하지 않은 것(K-26 시점): Replace 쓰기(Replace 줄·입력칸·비활성 버튼만 보임), 클릭한 글자의 열 계산. Replace는 아래 K-29·K-30에서 만들었다.
+
+**Project Search 갱신 (K-29~K-32)**
+
+- 검색 루트(K-29): 검색을 부른 창의 폴더 목록으로 검사한다(`state::window_folders`, 창 label main → w1, 그 밖은 같은 id, 리더 결정 2026-11-07). 다른 창의 폴더·없는 label은 거부한다.
+- Replace Next(K-29)·Replace All(K-30): Rust `prepare_search_replace`가 편집(UTF-16 오프셋)을 계산하고 프런트가 편집기에 반영한다. 바뀐 파일은 미저장(dirty)으로 남고 디스크에는 쓰지 않는다.
+  - Zed 근거(`4304dec` `crates/search/src/project_search.rs`, `git show`로 읽기만): `replace_next` 1407~1440과 `replace_all` 1442~1485는 결과 편집기에서 바꾸고 저장을 부르지 않는다. 테스트 `test_replace_all_with_shared_heading_prefix_does_not_loop`(6727~6801)도 버퍼 내용만 확인한다. 그래서 Zed도 미저장으로 둔다.
+  - 편집기가 없는 파일은 일반 탭으로 열어(`openFile`) 첫 읽기 뒤 바꾸고 미저장으로 둔다(리더 결정). 읽기 전용이거나 5초 안에 편집기가 안 생기면 그 파일은 건너뛴다. 편집기가 없던 파일이 많으면 탭이 그만큼 열리고, 끝난 뒤 활성 탭은 마지막으로 연 파일이다(Zed는 결과 멀티버퍼 안에서 바꿔 탭이 늘지 않음, 이 앱 구조상 다름).
+  - 데이터 손실 방지: 검색 뒤 디스크 바이트가 바뀌었거나, 편집기 텍스트가 검색 때와 다르거나, 검색 id·옵션이 바뀌었거나, 작업 공간 밖 경로면 그 파일은 거부하고 알린다. 같은 파일이 여러 작업 공간에서 열려 있으면 알림만 띄운다.
+  - Replace All은 파일마다 보이는 일치 수만큼만 바꾼다(10,000 상한 밖은 바꾸지 않음). 파일 하나는 한 번의 dispatch라 되돌리기 한 번이다. 끝에 "N file(s) was/were not replaced. <첫 사유>"를 알린다(Zed에 없는 문구, coder가 정함). 바꾼 뒤 다시 검색한다.
+  - 정규식 바꾸기의 `$1`·`${1}`·`$$`는 regex crate 규칙이고 `\n`·`\t`·`\\`도 푼다. 정규식이 아니면 글자 그대로다.
+  - Replace All 단축키(`Ctrl-Enter`)는 넣지 않았다.
+- 결과 열기(K-31): Alt-Enter·Open File·결과 줄 클릭은 일치를 선택해서 연다(anchor = 시작, head = 끝). 상태 바는 head 기준이라 `45:35 (8 characters)`가 된다(R-5 Zed 확인과 같음).
+- 화면(K-32, Zed `project_search.rs` 1085~1117·2517~2573·3126~3185, `editor/src/element/header.rs` 700~1000):
+  - 빈 상태: 제목 `typography.size.large`(16, L-05) 보통 굵기, 안내 Muted·아래 여백 8, 항목 버튼 높이 22·좌우 4·아이콘↔문구 4, 키는 문구 바로 뒤(간격 4) Small Muted, 항목 간격 4.
+  - 검색칸: 포커스 윤곽 없음(Zed `border_color_for` 2577~2582는 오류가 아니면 늘 `border`). 이전/다음은 `chevron_left`/`chevron_right`. 필터·바꾸기 묶음(gap 4) 뒤에 왼쪽 1px `border.variant`의 `‹ ›` + `1/19` 묶음. 개수는 Small, 일치가 선택되면 Disabled 색. 검색칸은 1200까지 줄어들 수 있어 묶음이 칸 바로 뒤에 온다.
+  - 결과 머리줄: 버퍼 줄 2개 높이, 안쪽 여백 4, 1px `border`, 둥근 모서리, 배경 `editor.subheader.background`, hover `element.hover`, 접기 버튼 28, 파일 이름은 버퍼 글꼴, 경로는 버퍼 글꼴 Muted. 경로는 작업 공간 폴더 기준 상대 폴더에 `\`를 붙이고 루트 파일이면 비운다. 폴더가 둘 이상이면 루트 이름을 앞에 붙인다(Zed `include_root`). "Open File"은 선택되었거나 hover일 때만, `Alt-Enter` 키는 선택되었을 때만 보인다. 머리줄 클릭은 접기, 이름 클릭은 파일 열기(Zed 1170~1190).
+  - 일치 강조: `search.match_background`, 선택된 일치는 `search.active_match_background`(Zed 2501~2509). 토큰 `search.match_background`·`search.active_match_background`·`editor.subheader.background`·`element.hover`를 `TARGET_TOKENS`에 더했다.
+  - 긴 줄은 가로 스크롤 없이 줄바꿈한다. 줄 번호가 이어지지 않는 곳에서 발췌를 나누고 둘째부터 위쪽에 1px `border`를 둔다. 줄 번호 칸은 편집기 거터 값, 현재 줄 번호는 `editor.active_line_number`.
+  - Diagnostics 툴바(같은 카드): 탭 본문 포커스 윤곽 없음, 툴바 높이 = 32 + 2 × padding_y(6) + 테두리 1 = 45(Zed `workspace/src/toolbar.rs:120-150`, E-038). Markdown 편집기 툴바도 같은 규칙이라 45가 된다.
+  - 값 가운데 toml에 없는 10개는 위 "toml에 없는 값" 표.
+- 아직 안 한 것:
+  - 제목 breadcrumb(`# … › ## …`): Markdown 구조 분석이 필요해 상대 경로까지만 했다(사용자가 요구하면 별도 카드).
+  - 발췌 위/아래 펼치기 화살표(`expand_up`·`expand_down`): 모양만, 비활성. 결과가 앞뒤 2줄로 잘려 있어 펼치려면 Rust가 줄을 더 내려줘야 한다.
+  - 머리줄 파일 아이콘·접힌 상태 포커스 테두리·더럽힘 점.
+  - Filters 줄 모양(Include/Exclude 두 칸 + 아이콘 버튼 두 개)은 Zed(`zed-search-filters.png`)와 다르다(K-32 범위 밖).
+  - 클릭한 글자의 열 계산.
 
 **구현 — Diagnostics 탭 (K-27)**
 

@@ -312,6 +312,40 @@
 - **W-20 문서** (2026-11-07): SPEC R-5 블록 종류 표·표 셀 동작(core 확인 요청), R-22 Diagnostics 탭 구현 절, R-22 버튼 툴팁 키 표시를 코드(`status.ts`·`tooltip.ts`·`builtin.ts`)로 확인해 고침(W-19 확인 필요 해소). DECISIONS D-13에 표 위치 한 줄. 검증 V0(문서만).
 - **coder 교체 기록 (core D-16)** (2026-11-07, W-21): 15:57에 Codex gpt-6.1-sol medium의 5시간 한도가 바닥났다(K-29 진행 중, 다시 쓸 수 있는 시각 19:05). D-16대로 `tauri-coder`를 Claude Code Sonnet 5.5 high로 바꿨다(`herdr agent start tauri-coder --kind claude --pane wJ:pM -- --model sonnet --effort high`, 이름 유지). K-29는 Sonnet이 작업 트리의 중간 결과에서 이어서 한다. 되돌릴지는 core-leader 지시를 따른다(앞 14:00 결정은 그 회차에만 적용). `HERDR-SETUP.md` 1장에 같은 기록을 적었다. 검증 V0(문서만).
 - **W-22 R-22 상태 바 Zed 실측 근거 (gpui 대조용, core-leader 요청)** (2026-11-07): SPEC R-22 상태 바 버튼 절에 "Zed 실측 근거(2026-11-07)" 소절을 더했다(조건, 글리프 잉크·버튼 박스·구분선 좌표 표, 간격과 Zed 소스 근거 표, 진단 ✓ 구성과 숨은 `lsp_button` 자리, padding 4, toml ID `statusbar.padding_x`·`statusbar.toggle_gap`은 gpui가 올리는 중이고 tauri는 임시 metrics 값(K-31), tauri V3(K-31 전) 잉크 5·37·68·95·구분선 26·57, K-31 뒤 재측정). 검증 V0(문서만).
+- **K-29 검색 루트·Replace Next (R-22 / I-22)** (2026-11-07, 커밋 `87a78ca`)
+  - 무엇을 했나: 검색 루트를 부른 창의 폴더로 검사한다(`state::window_folders`). Replace Next는 Rust `prepare_search_replace`가 편집을 계산하고 열린 편집기에 반영해 미저장으로 둔다. 검색 뒤 디스크·편집기·옵션이 바뀌었거나 작업 공간 밖이면 거부한다. 정규식 `$1`·`${1}`·`$$`, `\n`·`\t`·`\\`.
+  - 결과: 2a까지. Replace All과 편집기 없는 파일은 K-30으로 넘겼다. Codex가 쓴 코드를 15:57 교체 뒤 Sonnet이 읽어 확인했다(W-21).
+  - 검증: V1. typecheck 통과, `npm run test` 183/183, `cargo test` 24개, clippy 경고 0(`%TEMP%\v05-K-29-report.md`).
+- **K-30 Replace All (R-22 / I-22)** (2026-11-07, 커밋 `d8d663a`)
+  - 무엇을 했나: `replacement_edits`로 파일 하나의 일치 여럿을 한 번에 계산하고 Replace All을 만들었다. 편집기 없는 파일은 일반 탭으로 열어 미저장으로 바꾼다(리더 결정). 거부된 파일만 건너뛰고 끝에 알린다.
+  - 결과: Zed `replace_next`(1407~1440)·`replace_all`(1442~1485)도 저장하지 않음을 소스로 확인했다. SPEC R-22 "Project Search 갱신"에 적었다. 판단 기록: 건너뛴 파일 알림 문구는 Zed에 없어 coder가 정했고, 편집기 없던 파일이 많으면 탭이 그만큼 열린다.
+  - 검증: V1. typecheck 통과, `npm run test` 183/183, `cargo test` 25개(`replace_all_skips_only_files_that_changed_after_the_search` 추가), clippy 경고 0(`%TEMP%\v05-K-30-report.md`).
+  - 사용자 확인 필요: Replace All 동작(편집기 없는 파일이 탭으로 열려 미저장으로 남는지, 알림 문구).
+- **ORDER-08 V3 1차** (2026-11-07, tauri-leader, 1920×1080·100%, 창 1440×852, One Dark)
+  - 무엇을 했나: 상태 바·Project Search·Diagnostics를 재고 Zed 캡처와 맞췄다. 결과 파일 `specs/v0.5/verify/ORDER-08/tauri-v3.json`·`tauri-v3-probe.json`과 `tauri-*.png`.
+  - 결과:
+    - 같음: 위치·선택 문구 `5:23 Markdown`·`5:28 (5 characters) Markdown`, 툴팁 4개(`Open Folder Sidebar Ctrl-Alt-J`, `Close Left Dock Ctrl-B`, `Project Search Ctrl-Shift-F`, `Project Diagnostics Ctrl-Shift-M`), dock 켜짐 색 `#74ade8`, 구분선 높이 16·색 (70,75,87), 미리보기 클릭 6:1(기대 6), 탭 없음일 때 숨김, Diagnostics 문구.
+    - 다름 → K-31: 구분선 위치 −2(26·57, Zed 28·59), 아이콘 −2~−6(잉크 5·37·68·95, Zed 9·39·70·101), 검색 결과 열기 때 일치 선택 없음.
+    - 다름 → K-32: Project Search 화면(빈 상태, 검색칸, 결과 머리줄, 일치 강조 등).
+    - 다름 → K-33: 사이드바를 상태 바로 열고 `Ctrl-Alt-J`로 닫은 뒤 `Ctrl-Shift-V`가 미리보기 대신 붙여넣기가 됐다.
+  - 특이사항: 측정 중 편집기 버퍼에 클립보드 내용이 붙여넣어졌으나(probe의 `AGENTS.md*`) 저장하지 않았고 디스크는 바뀌지 않았다.
+  - 앱 실행 횟수: 3회(V3 규칙은 측정 세션당 1회). 결과 파일은 두 실행(PID 29276 `tauri-v3.json`, PID 44228 `tauri-v3-probe.json`)이다. 1회차에서 미리보기 클릭(`no li`)과 탭 없음 상태를 재지 못해 probe로 다시 쟀다. 세 번째 실행의 이유는 근거 파일에 없어 미정(leader 확인 필요).
+- **K-31 상태 바 여백·토글 간격·결과 열기 선택 (V3 불일치)** (2026-11-07, 커밋 `c281499`)
+  - 무엇을 했나: 상태 바 padding을 네 변 4로(Zed `status_bar.rs:153`), 토글과 구분선 사이를 2로(`status_bar.rs:280-287` `gap_0p5`), 진단 앞에 폭 0 자리를 두어 숨은 `lsp_button` 자리의 gap 4를 만들었다. 검색 결과를 열 때 일치를 선택한다(anchor 시작, head 끝).
+  - 결과: 예상 위치는 버튼 left 4·33·64·94, 구분선 28·59(Zed와 같음). V3로 다시 재야 확인된다. `statusbar.padding_x`·`statusbar.toggle_gap`은 toml ID가 없어 임시 metrics 값이다(SPEC R-22 "toml에 없는 값").
+  - 검증: V1. typecheck 통과, `npm run test` 183/183(`status.test.ts` 단언 추가)(`%TEMP%\v05-K-31-report.md`).
+- **K-32 Project Search·Diagnostics 화면 Zed 맞춤 (V3 불일치)** (2026-11-07, 커밋 `1724f8b`)
+  - 무엇을 했나: 빈 상태 크기·키 위치, 검색칸 포커스 윤곽 없음·`‹ ›` 아이콘·`1/19` 묶음, 결과 머리줄(상대 폴더, Open File `Alt-Enter`), 일치 강조 토큰(빠져 있던 원인), 긴 줄 줄바꿈, 발췌 경계, Diagnostics 툴바 높이 45와 포커스 윤곽.
+  - 결과: SPEC R-22 "Project Search 갱신"에 적었다. toml에 없는 값 10개는 "toml에 없는 값" 표. breadcrumb·펼치기 동작·머리줄 아이콘·Filters 줄 모양은 하지 않았다.
+  - 검증: V1. typecheck 통과, `npm run test` 184/184(`activeSpan`·`excerptsOf`·`relativeDir`, 토큰 목록 4개 추가)(`%TEMP%\v05-K-32-report.md`).
+  - 실측 필요(V3): 빈 상태, 검색칸·`‹ ›`·`1/19`, 머리줄, 일치 배경 2종, 줄바꿈, 발췌 경계·거터 화살표, Diagnostics 툴바(아이콘 y 87)·본문(y 466), 포커스 윤곽 없음.
+  - 사용자 확인 필요: 머리줄 모서리 모양과 거터 화살표 인상.
+- **K-33 포커스 복귀·Ctrl-Shift-V·편집기 Escape (V3 불일치)** (2026-11-07, 커밋 `142f1c4`)
+  - 무엇을 했나: 사이드바·dock을 닫을 때 포커스를 `.pane` 요소가 아니라 활성 편집기로 돌린다(`focusPane`). `ctrl-shift-v`를 `BROWSER_KEYS`에 넣어 바인딩이 없을 때 붙여넣기가 되지 않게 했다(Zed는 Editor 일반에 `ctrl-shift-v` 붙여넣기 없음). 편집기 Escape로 선택을 푼다(Zed `editor::Cancel`, CodeMirror `simplifySelection`).
+  - 결과: 원인은 사이드바를 연 상태 바 버튼이 사라져 포커스가 `.pane`으로 떨어져 `Editor extension=md` 컨텍스트가 없던 것이다. SPEC R-5 "구현"에 Escape 한 줄.
+  - 검증: V1. typecheck 통과, `npm run test` 185/185(`keyboard.test.ts`)(`%TEMP%\v05-K-33-report.md`).
+  - 실측 필요(V3 합성 입력): 재현 순서에서 미리보기가 열리는지, Escape로 선택이 풀리는지.
+- **W-23 문서** (2026-11-07): SPEC R-22 "toml에 없는 값" 표(12개)·"Project Search 갱신"(K-29~K-32), R-5 Escape 한 줄, 이 PROGRESS의 K-29~K-33·V3 1차. 검증 V0(문서만). coder 교체(15:57)는 W-21 항목 그대로.
 
 ## 사용자 요청 작업
 

@@ -1,0 +1,329 @@
+{
+  "pid": 29276,
+  "open": true,
+  "sidebar_close": {
+    "clicked": true,
+    "left": [
+      {
+        "cls": "icon-button",
+        "label": "Open Folder Sidebar",
+        "x": 11,
+        "left": 0,
+        "top": 826,
+        "w": 22,
+        "h": 22,
+        "color": "rgb(169, 175, 188)",
+        "bg": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "cls": "status-divider",
+        "label": null,
+        "x": 26.5,
+        "left": 26,
+        "top": 829,
+        "w": 1,
+        "h": 16,
+        "color": "rgb(220, 224, 229)",
+        "bg": "rgb(70, 75, 87)"
+      },
+      {
+        "cls": "icon-button",
+        "label": "Close Left Dock",
+        "x": 42,
+        "left": 31,
+        "top": 826,
+        "w": 22,
+        "h": 22,
+        "color": "rgb(116, 173, 232)",
+        "bg": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "cls": "status-divider",
+        "label": null,
+        "x": 57.5,
+        "left": 57,
+        "top": 829,
+        "w": 1,
+        "h": 16,
+        "color": "rgb(220, 224, 229)",
+        "bg": "rgb(70, 75, 87)"
+      },
+      {
+        "cls": "icon-button",
+        "label": "Project Search",
+        "x": 73,
+        "left": 62,
+        "top": 826,
+        "w": 22,
+        "h": 22,
+        "color": "rgb(169, 175, 188)",
+        "bg": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "cls": "icon-button",
+        "label": "Project Diagnostics",
+        "x": 99,
+        "left": 88,
+        "top": 826,
+        "w": 22,
+        "h": 22,
+        "color": "rgb(169, 175, 188)",
+        "bg": "rgba(0, 0, 0, 0)"
+      }
+    ]
+  },
+  "cursor": [
+    "5:23",
+    "Markdown"
+  ],
+  "selection": [
+    "5:28 (5 characters)",
+    "Markdown"
+  ],
+  "left_dock_open": [
+    {
+      "cls": "icon-button",
+      "label": "Open Folder Sidebar",
+      "x": 11,
+      "left": 0,
+      "top": 826,
+      "w": 22,
+      "h": 22,
+      "color": "rgb(169, 175, 188)",
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "cls": "status-divider",
+      "label": null,
+      "x": 26.5,
+      "left": 26,
+      "top": 829,
+      "w": 1,
+      "h": 16,
+      "color": "rgb(220, 224, 229)",
+      "bg": "rgb(70, 75, 87)"
+    },
+    {
+      "cls": "icon-button",
+      "label": "Close Left Dock",
+      "x": 42,
+      "left": 31,
+      "top": 826,
+      "w": 22,
+      "h": 22,
+      "color": "rgb(116, 173, 232)",
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "cls": "status-divider",
+      "label": null,
+      "x": 57.5,
+      "left": 57,
+      "top": 829,
+      "w": 1,
+      "h": 16,
+      "color": "rgb(220, 224, 229)",
+      "bg": "rgb(70, 75, 87)"
+    },
+    {
+      "cls": "icon-button",
+      "label": "Project Search",
+      "x": 73,
+      "left": 62,
+      "top": 826,
+      "w": 22,
+      "h": 22,
+      "color": "rgb(169, 175, 188)",
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "cls": "icon-button",
+      "label": "Project Diagnostics",
+      "x": 99,
+      "left": 88,
+      "top": 826,
+      "w": 22,
+      "h": 22,
+      "color": "rgb(169, 175, 188)",
+      "bg": "rgba(0, 0, 0, 0)"
+    }
+  ],
+  "tooltips": [
+    {
+      "label": "Open Folder Sidebar",
+      "tip": [
+        "Open Folder Sidebar Ctrl-Alt-J"
+      ]
+    },
+    {
+      "label": "Close Left Dock",
+      "tip": [
+        "Close Left Dock Ctrl-B"
+      ]
+    },
+    {
+      "label": "Project Search",
+      "tip": [
+        "Project Search Ctrl-Shift-F"
+      ]
+    },
+    {
+      "label": "Project Diagnostics",
+      "tip": [
+        "Project Diagnostics Ctrl-Shift-M"
+      ]
+    }
+  ],
+  "left_dock_closed": [
+    {
+      "cls": "icon-button",
+      "label": "Open Folder Sidebar",
+      "x": 11,
+      "left": 0,
+      "top": 826,
+      "w": 22,
+      "h": 22,
+      "color": "rgb(169, 175, 188)",
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "cls": "status-divider",
+      "label": null,
+      "x": 26.5,
+      "left": 26,
+      "top": 829,
+      "w": 1,
+      "h": 16,
+      "color": "rgb(220, 224, 229)",
+      "bg": "rgb(70, 75, 87)"
+    },
+    {
+      "cls": "icon-button",
+      "label": "Project Panel",
+      "x": 42,
+      "left": 31,
+      "top": 826,
+      "w": 22,
+      "h": 22,
+      "color": "rgb(169, 175, 188)",
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "cls": "status-divider",
+      "label": null,
+      "x": 57.5,
+      "left": 57,
+      "top": 829,
+      "w": 1,
+      "h": 16,
+      "color": "rgb(220, 224, 229)",
+      "bg": "rgb(70, 75, 87)"
+    },
+    {
+      "cls": "icon-button",
+      "label": "Project Search",
+      "x": 73,
+      "left": 62,
+      "top": 826,
+      "w": 22,
+      "h": 22,
+      "color": "rgb(169, 175, 188)",
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "cls": "icon-button",
+      "label": "Project Diagnostics",
+      "x": 99,
+      "left": 88,
+      "top": 826,
+      "w": 22,
+      "h": 22,
+      "color": "rgb(169, 175, 188)",
+      "bg": "rgba(0, 0, 0, 0)"
+    }
+  ],
+  "sidebar_open": {
+    "left": [
+      {
+        "cls": "icon-button",
+        "label": "Close Left Dock",
+        "x": 251,
+        "left": 240,
+        "top": 826,
+        "w": 22,
+        "h": 22,
+        "color": "rgb(116, 173, 232)",
+        "bg": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "cls": "status-divider",
+        "label": null,
+        "x": 266.5,
+        "left": 266,
+        "top": 829,
+        "w": 1,
+        "h": 16,
+        "color": "rgb(220, 224, 229)",
+        "bg": "rgb(70, 75, 87)"
+      },
+      {
+        "cls": "icon-button",
+        "label": "Project Search",
+        "x": 282,
+        "left": 271,
+        "top": 826,
+        "w": 22,
+        "h": 22,
+        "color": "rgb(169, 175, 188)",
+        "bg": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "cls": "icon-button",
+        "label": "Project Diagnostics",
+        "x": 308,
+        "left": 297,
+        "top": 826,
+        "w": 22,
+        "h": 22,
+        "color": "rgb(169, 175, 188)",
+        "bg": "rgba(0, 0, 0, 0)"
+      }
+    ],
+    "footer": [
+      "Toggle Sidebar",
+      "Add Project"
+    ]
+  },
+  "preview": {
+    "error": "no li"
+  },
+  "search_empty": true,
+  "search_results": {
+    "status": [
+      "45:35 (8 characters)"
+    ],
+    "tab": [
+      "ponytail"
+    ]
+  },
+  "search_open": {
+    "status": [
+      "45:27",
+      "Markdown"
+    ],
+    "tab": [
+      "AGENTS.md"
+    ]
+  },
+  "diagnostics": {
+    "status": [],
+    "hasText": true
+  },
+  "no_tab": {
+    "status": [
+      "45:27",
+      "Markdown"
+    ],
+    "tabs": 2
+  }
+}

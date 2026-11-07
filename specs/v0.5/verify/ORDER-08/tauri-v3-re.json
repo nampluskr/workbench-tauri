@@ -1,0 +1,53 @@
+{
+  "pid": 22264,
+  "open": {
+    "active": "cm-content cm-lineWrapping",
+    "tabs": [
+      "AGENTS.md*"
+    ],
+    "preview": false
+  },
+  "status_right": {
+    "right": 1436,
+    "innerWidth": 1440
+  },
+  "escape": {
+    "selected": [
+      "5:28 (5 characters)",
+      "Markdown"
+    ],
+    "afterEscape": [
+      "5:28",
+      "Markdown"
+    ]
+  },
+  "ctrl_shift_v_after_sidebar": {
+    "before": {
+      "active": "cm-content cm-lineWrapping",
+      "tabs": [
+        "AGENTS.md*"
+      ],
+      "preview": false
+    },
+    "after": {
+      "active": "markdown-preview",
+      "tabs": [
+        "AGENTS.md",
+        "Preview AGENTS.md*"
+      ],
+      "preview": true
+    },
+    "line5": "- **사람이 정하고 묻는다** — 문서의 "
+  },
+  "search_empty": true,
+  "search_results": [
+    "45:35 (8 characters)"
+  ],
+  "search_open": [
+    "45:35 (8 characters)",
+    "Markdown"
+  ],
+  "diagnostics": {
+    "textY": 465.5
+  }
+}
