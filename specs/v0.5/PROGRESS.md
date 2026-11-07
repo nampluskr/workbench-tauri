@@ -221,6 +221,7 @@
 ## 사용자 요청 작업
 
 - **HERDR 구성 규칙 추가** (2026-11-07, W-11): `HERDR-SETUP.md` 1장에 Codex 한도가 바닥나면 `tauri-coder`를 Claude Code Sonnet 5.5 high로 바꾼다는 규칙(core D-16, 사용자 결정)을 적었다. 지금은 쿠폰 적용으로 Codex gpt-6.1-sol medium 그대로다. 검증 V0(문서만).
+- **coder 모델 교체 기록** (2026-11-07, W-14, core D-16): 2026-11-07 12:13에 `tauri-coder`를 Codex gpt-6.1-sol medium에서 Claude Code Sonnet 5.5 high(`claude --model sonnet --effort high`, 이름 유지, pane `wJ:pM`)로 바꿨다. 사유: Codex 5시간 한도 6% 남음, K-17(ORDER-07 복사 스크립트)이 끝난 카드 경계에서 다음 카드 K-18(큰 카드) 중간 소진을 피하려고 leader가 바꿨다. 사용자 결정(core-leader 전달): Codex 한도는 14:00에 초기화되며, 14:00 이후 진행 중인 카드가 끝나는 때에 Codex gpt-6.1-sol medium으로 되돌리고 그 시각을 `HERDR-SETUP.md`와 이 문서에 적는다(되돌린 시각 미정). `HERDR-SETUP.md` 1장에 같은 기록을 적었다. 검증 V0(문서만).
 
 ## 버전 종료
 

@@ -31,7 +31,9 @@
   - 바꾼 시각과 모델은 바꿀 때 leader가 writer 카드로 이 문서와 PROGRESS에 적게 한다.
   - Codex가 돌아온 뒤 되돌릴지는 leader가 카드 경계(진행 중인 카드가 끝난 때)에서 정한다.
   - checker(agy) 리뷰는 그대로다.
-  - 지금(2026-11-07)은 쿠폰 적용으로 Codex gpt-6.1-sol medium 그대로다.
+  - 바꾼 기록:
+    - 2026-11-07 12:13: coder를 Codex gpt-6.1-sol medium에서 Claude Code Sonnet 5.5 high(`claude --model sonnet --effort high`, 이름 `tauri-coder` 유지, pane `wJ:pM`)로 바꿨다. 사유: Codex 5시간 한도가 6% 남아, K-17(ORDER-07 복사 스크립트)이 끝난 카드 경계에서 다음 카드 K-18(큰 카드) 중간에 바닥나는 것을 피하려고 leader가 바꿨다.
+    - 되돌리기(사용자 결정, core-leader 전달): Codex 한도는 14:00에 초기화된다. 14:00 이후 진행 중인 카드가 끝나는 때에 coder를 Codex gpt-6.1-sol medium으로 되돌리고 그 시각을 이 문서와 PROGRESS에 적는다. 되돌린 시각: 미정.
 - Phase가 바뀔 때 서브 에이전트의 컨텍스트를 비운다. 할 일이 없는 서브 에이전트는 닫아도 된다(core D-2). ORDER-01 완료 시점에는 셋 모두 떠 있어야 한다.
 - 검증 수준(V0~V4)과 앱 실행 제한은 루트 `AGENTS.md` 3A를 그대로 쓴다.
 
