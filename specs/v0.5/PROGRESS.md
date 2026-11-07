@@ -514,6 +514,11 @@
 - **K-57 spec/ gpui 동기화·임시 값 교체** (2026-11-07, 커밋 전): gpui `spec/INDEX.md`·`zed-metrics.toml`·`ambiguous.md` 복사, `sidebar.item.*` 4개·`panel.focused_border` #2870bd가 toml ID가 됨, `scroll.wheel_step` 77.7로 정정됨(tauri 값 그대로). 보고 전이라 결과·검증은 보고 뒤에 적는다.
 - **Phase 10 push** (2026-11-07, tauri-leader): `a25696e`까지.
 - **W-37 ORDER-11 문서** (2026-11-07): SPEC R-12 코드 파일 심볼, R-15 구현·V3·미리보기 코드 블록·범위 밖 차이·toml 등록 요청, PROGRESS Phase 11, PLAN Phase 10·11. 검증 V0(문서만).
+- **K-58 큰 파일 입력 지연 (ORDER-11-R1, R-15)** (2026-11-08, 커밋 `42a7473`)
+  - 무엇을 했나: `src/syntax/document.ts`·`document.test.ts`. 주입 쿼리를 바뀐 범위(`Tree.getChangedRanges` + 편집 범위)·최상위 노드 단위로 좁혔다(Zed `syntax_map.rs` changed_ranges). 안 바뀐 주입 레이어 트리를 재사용하고, 언어별 파서를 공유하고, 레이어 사이에서 8ms 양보하고, 뷰포트 밖 레이어는 강조하지 않는다. 측정 스크립트는 `%TEMP%\v05-k58\`에 두고 앱에 넣지 않았다.
+  - 결과: 편집 중 한 번에 막는 최장 동기 구간이 0.3~7초에서 26ms 이하(대부분 12~18ms)로 줄었다. 편집 합계는 1만 줄대 23~37ms, 5만 줄대 25~59ms(입력은 막지 않음). 수정 전·후 강조 비교 차이 0, 임의 편집 퍼즈에서 새 불일치 0. 전·후 표와 남는 한계(Node 한정 마크다운 첫 파싱 1.5초 정지, `textCallback` shortcut)는 SPEC R-15 "구현"의 성능.
+  - 검증: V1. coder: typecheck 통과, 관련 테스트 35/35(`%TEMP%\v05-K-58-report.md`). leader 직접: `npm test` 215/215, typecheck 0 오류.
+  - 실측 필요(V3): WebView2에서 큰 파일(lib.dom.d.ts 4.5만 줄) 열기·타이핑, 큰 마크다운 첫 파싱 정지 여부.
 
 ## 사용자 요청 작업
 
