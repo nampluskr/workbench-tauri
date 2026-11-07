@@ -2,7 +2,7 @@ import { batch, createSignal, type Accessor, type Setter } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import type { EditorState } from "@codemirror/state";
 import type { EditorView } from "@codemirror/view";
-import { markdownCrumbs } from "../editor/breadcrumbs.ts";
+import { createHeadings } from "../editor/headings.ts";
 import { createFileView, navigated, setEditable } from "../editor/file-view.ts";
 import type { IconName } from "../shell/Icon.tsx";
 import { cursorPosition, locationOffset } from "../editor/position.ts";
@@ -33,7 +33,7 @@ export type FileLocation = { line: number; column: number; endLine?: number; end
  * What stays the same for a tab while its list entry is copied (promotion, rename): its file, editor and state. A Markdown
  * preview tab (R-11) has no editor: `element` is its body, `dispose` lets go of what it holds.
  */
-export type TabFile = { doc: Doc; view: EditorView | null; status: Accessor<Status>; position?: Accessor<string>; headings?: Accessor<string[]>; toolPosition?: Accessor<string>; title?: Accessor<string>; icon?: IconName; iconSuccess?: boolean; location?: FileLocation; element?: HTMLElement; dispose?: () => void };
+export type TabFile = { doc: Doc; view: EditorView | null; status: Accessor<Status>; position?: Accessor<string>; headings?: Accessor<string[]>; updateHeadings?: (state: EditorState) => void; toolPosition?: Accessor<string>; title?: Accessor<string>; icon?: IconName; iconSuccess?: boolean; location?: FileLocation; element?: HTMLElement; dispose?: () => void };
 export type Tab = TabInfo & { file: TabFile; focus: boolean };
 
 
@@ -275,12 +275,6 @@ export const askWarning: Ask = (main, content, buttons) =>
 function makeView(ctx: FolderContext, file: TabFile, text: string, editable: boolean): void {
   const [position, setPosition] = createSignal("1:1");
   file.position = position;
-  // I-12: the Markdown headings that contain the cursor, for the path row. shortcut: the whole text is split on every cursor move
-  // or edit of a Markdown file; keep the headings per document version if very long files make that slow.
-  const isMarkdown = /\.(md|markdown)$/i.test(file.doc.path);
-  const [headings, setHeadings] = createSignal<string[]>([]);
-  if (isMarkdown) file.headings = headings;
-  const headingsAt = (state: EditorState) => isMarkdown && setHeadings(markdownCrumbs(state.doc.toString().split("\n"), state.doc.lineAt(state.selection.main.head).number - 1));
   file.view = createFileView(text, file.doc.path, editable, {
     changed: () => {
       file.doc.refresh();
@@ -292,11 +286,11 @@ function makeView(ctx: FolderContext, file: TabFile, text: string, editable: boo
     jumped: (line, column) => paneOf(ctx, file)?.nav.push({ path: file.doc.path, line, column }),
     cursor: (line, state) => {
       setPosition(cursorPosition(state));
-      headingsAt(state);
+      file.updateHeadings?.(state);
       if (!hidden.has(file)) for (const p of previews(file.doc)) p.cursor(line);
     },
   });
-  headingsAt(file.view.state);
+  file.updateHeadings?.(file.view.state);
   if (file.location) locateFile(file, file.location);
 }
 
@@ -333,7 +327,8 @@ function newFile(ctx: FolderContext, path: string): TabFile {
     },
   };
   const doc: Doc = new Doc(path, editor, io, setStatus);
-  const file: TabFile = { doc, view: null, status };
+  const headings = createHeadings(path);
+  const file: TabFile = { doc, view: null, status, headings: headings.read, updateHeadings: headings.update };
   filesOf.set(doc, [file]);
   statusOf.set(doc, status);
   return file;
@@ -341,7 +336,8 @@ function newFile(ctx: FolderContext, path: string): TabFile {
 
 /** A second tab of the same file (ClonePane, or the file opened in another Pane): same Doc, its own view. */
 function twinOf(ctx: FolderContext, file: TabFile): TabFile {
-  const twin: TabFile = { doc: file.doc, view: null, status: statusOf.get(file.doc)! };
+  const headings = createHeadings(file.doc.path);
+  const twin: TabFile = { doc: file.doc, view: null, status: statusOf.get(file.doc)!, headings: headings.read, updateHeadings: headings.update };
   filesOf.get(file.doc)!.push(twin);
   const live = liveView(file.doc);
   if (live) makeView(ctx, twin, live.state.doc.toString(), !live.state.readOnly);
