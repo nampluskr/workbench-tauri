@@ -617,7 +617,21 @@ I-4, core D-8, 사용자 2026-11-06.
 
 I-5, 사용자 2026-11-06, 참고 화면 `refs/I-5-zed.png`, `refs/zed-split.png`.
 
-미정: 열린 탭이 없을 때 무엇을 보일지. Zed와 같게 하는 것으로 보고 갈래가 Zed에서 확인한다(I-5 미정).
+미정: 열린 탭이 없을 때 무엇을 보일지. Zed와 같게 하는 것으로 보고 갈래가 Zed에서 확인한다(I-5 미정). → 아래 Zed 확인으로 정해졌다.
+
+**Zed 확인(2026-11-07)**
+
+조건: core ORDER-08 2장, Zed `4304dec` 설치본 `zed -n` 새 창, 1440×852, One Dark, 사용자 `base_keymap` VSCode. 캡처 `specs/v0.5/verify/ORDER-08/zed-*.png`.
+
+| 상태 | 상태 바 오른쪽(오른쪽 아이콘 묶음 바로 앞) | 캡처 |
+|---|---|---|
+| 편집 중 | `5:23 Markdown` | `zed-cursor.png` |
+| 선택 있음 | `5:28 (5 characters) Markdown` — 위치는 선택 끝(커서), 괄호에 선택한 글자 수 | `zed-selection.png` |
+| 열린 탭 없음 | 위치·파일 형식 모두 없음, 오른쪽 아이콘만 | `zed-no-tab2.png`, `zed-end-run2.png` |
+| Project Search 결과 탭(여러 파일 묶음) | `45:35 (8 characters)`만, 파일 형식 이름 없음 | `zed-search-results.png` |
+| Diagnostics 탭 | 둘 다 없음 | `zed-diagnostics.png` |
+
+- 파일 형식 대응 표: K-24 뒤.
 
 ---
 
@@ -1071,6 +1085,14 @@ I-18, core D-9, 사용자 2026-11-06.
 
 I-19, 사용자 2026-11-06.
 
+**Zed 확인(2026-11-07)**
+
+조건은 R-5 "Zed 확인"과 같다(캡처 `specs/v0.5/verify/ORDER-08/`).
+
+- 왼쪽 dock(프로젝트 패널) 열림: 상태 바 `file_tree` 아이콘 색이 강조색(One Dark `#74ade8`, `text.accent` 계열)이 되고 배경은 바뀌지 않는다. 닫힘: 보통 아이콘 색이다(`zed-cursor.png` 대 `zed-project-click1.png`).
+- 사이드바 열림: 상태 바의 사이드바 토글이 사라지고, 사이드바 아래쪽 줄에 `threads_sidebar_left_open` 아이콘(왼쪽 절반 채움)이 보인다(`zed-dock-click1.png`).
+- Zed 사이드바 아래쪽의 시계(스레드 기록)는 AI 기능이라 이 앱 범위 밖이다(core D-17).
+
 ---
 
 ## R-20. 파일 경로의 역슬래시를 원화 기호가 아닌 `\`로 보인다
@@ -1137,6 +1159,40 @@ I-21, 사용자 2026-11-06.
 I-22, 사용자 2026-11-06("나머지는 Zed와 동일하게"), core D-12(루트 `INTENT.md` "프로젝트 전체 검색"보다 I-22가 우선한다).
 
 이 레포에는 프로젝트 검색과 진단(언어 서버) 기능이 없다. 범위에서 빼지 않고, Phase 8에서 구현이 막히면 그때 `[BLOCKED]`로 이유를 남긴다(core D-12, `PLAN.md` Phase 8).
+
+**Zed 확인(2026-11-07)**
+
+조건은 R-5 "Zed 확인"과 같다(캡처 `specs/v0.5/verify/ORDER-08/`). 툴팁의 키는 사용자 Zed 키맵 기준이다.
+
+*왼쪽 버튼 (`zed-tip-*.png`, 버튼 중심 x 14·44·74·104)*
+
+| 순서 | 아이콘 | 툴팁 | 비고 |
+|---|---|---|---|
+| 1 | `threads_sidebar_left_closed` | "Open Threads Sidebar" `Ctrl-Alt-J` | 이 앱은 폴더 사이드바다. 지금 앱 툴팁은 "Open Folder Sidebar"(`src/App.tsx`)이고 기존 결정대로 둔다 |
+| — | 세로 구분선 | | |
+| 2 | `file_tree` | dock 열림 "Close Left Dock" `Ctrl-B`, 닫힘 "Project Panel" | |
+| — | 세로 구분선 | | |
+| 3 | 돋보기 | "Project Search" `Ctrl-Shift-F` | |
+| 4 | 진단 ✓ | "Project Diagnostics" `Ctrl-Shift-M` | |
+
+- 사이드바가 닫혀 있을 때 상태 바에 Add Project(`folder_add`) 버튼이 없다. `folder_add`는 사이드바가 열렸을 때 사이드바 아래쪽 줄 오른쪽 끝에만 있다(`zed-dock-click1.png`).
+
+*Project Search 탭 (`zed-search-empty.png`, `zed-search-results.png`, `zed-search-filters.png`, `zed-search-replace-row.png`, `zed-search-end.png`, `zed-search-open.png`, `zed-tip-filter.png`, `zed-tip-replace.png`)*
+
+- 탭 제목: 돋보기 아이콘 + "Project Search"(빈 상태), 검색 뒤에는 검색어.
+- 툴바 한 줄: 왼쪽 모두 접기/펴기 버튼, 검색칸(placeholder "Search all files…"), 칸 안 오른쪽 Aa(Match case `Alt-C`)·wd(Match whole words `Alt-W`)·.*(Match with regex `Alt-R`), 칸 밖 Toggle Filters(`Alt-F`)·Toggle Replace(`Alt-Shift-H`), 이전/다음 결과 화살표, `1/19`(현재/전체, 빈 상태 `0/0`).
+- 빈 상태 가운데: "Search All Files" / "Start typing to search. For more options:" / 아이콘 + "Include/exclude specific paths `Alt-F`", "Find and replace `Alt-Shift-H`", "Match with regex `Alt-R`", "Match case `Alt-C`", "Match whole words `Alt-W`".
+- Filters 줄: "Include: e.g. src/**/*.rs", "Exclude: e.g. vendor/*, *.lock" 두 칸 + "Only Search Open Files" 토글 + "Also search files ignored by configuration" 토글(기본 꺼짐 = gitignore 파일 제외).
+- Replace 줄: "Replace in project…" 칸 + 다음 바꾸기·모두 바꾸기 아이콘 두 개(누르지 않음).
+- 결과: 파일마다 머리줄(접기 화살표, 파일 이름, 흐린 경로 또는 제목 경로 breadcrumb, 오른쪽 "Open File `Alt-Enter`"). 그 아래 일치 줄과 앞뒤 2줄 발췌(줄 번호, 위/아래로 더 펼치기 화살표), 일치 부분 강조.
+- 동작: Enter로 검색한다. `Alt-Enter`나 Open File로 그 파일·위치를 일반 편집 탭으로 연다(`zed-search-open.png`: AGENTS.md 미리보기 탭, `45:35`).
+- 참고: 사용자 Zed는 VSCode 기본 키맵이라 편집 영역 포커스에서 `Alt-Shift-H`는 다른 명령(incoming calls)이 잡았다. 툴팁 표기는 `Alt-Shift-H`다.
+
+*Diagnostics 탭 (`zed-diagnostics.png`)*
+
+- 탭 제목 "✓ No problems"(✓ 초록).
+- 툴바 왼쪽 접기 버튼, 오른쪽 아이콘 4개(검색, 스파클, 새로고침, 경고 토글).
+- 가운데 "No problems in workspace".
 
 ---
 

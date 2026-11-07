@@ -35,6 +35,7 @@
     - 2026-11-07 12:13: coder를 Codex gpt-6.1-sol medium에서 Claude Code Sonnet 5.5 high(`claude --model sonnet --effort high`, 이름 `tauri-coder` 유지, pane `wJ:pM`)로 바꿨다. 사유: Codex 5시간 한도가 6% 남아, K-17(ORDER-07 복사 스크립트)이 끝난 카드 경계에서 다음 카드 K-18(큰 카드) 중간에 바닥나는 것을 피하려고 leader가 바꿨다.
     - 되돌리기(사용자 결정, core-leader 전달): Codex 한도는 14:00에 초기화된다. 14:00 이후 진행 중인 카드가 끝나는 때에 coder를 Codex gpt-6.1-sol medium으로 되돌리고 그 시각을 이 문서와 PROGRESS에 적는다. 되돌린 시각: 미정.
     - 2026-11-07 14:08: K-22가 끝난 뒤 Sonnet 5.5 coder를 `/quit`로 종료했다. Codex gpt-6.1-sol medium 시작은 pane `wJ:pM`이 입력에 반응하지 않아 아직 못 했다(`herdr agent start` timeout 2회). 되돌린 시각은 끝나면 leader가 다시 알린다(지금은 이 상태 그대로 적음).
+    - 2026-11-07 14:57: coder를 Codex gpt-6.1-sol medium으로 되돌렸다. 14:08 Sonnet 종료 뒤 pane에 입력이 줄 일부만 들어가 PowerShell이 계속 입력 상태로 멈춰 있던 것을 `Ctrl-C`로 풀고 `herdr agent start`로 띄웠다. 되돌린 시각: 14:57.
 - Phase가 바뀔 때 서브 에이전트의 컨텍스트를 비운다. 할 일이 없는 서브 에이전트는 닫아도 된다(core D-2). ORDER-01 완료 시점에는 셋 모두 떠 있어야 한다.
 - 검증 수준(V0~V4)과 앱 실행 제한은 루트 `AGENTS.md` 3A를 그대로 쓴다.
 
