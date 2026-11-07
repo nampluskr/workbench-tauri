@@ -277,6 +277,28 @@
   - 무엇을 했나: core ORDER-08 2장의 Zed 확인 결과(Zed `4304dec` 설치본, 1440×852, One Dark, 사용자 `base_keymap` VSCode, 캡처 `specs/v0.5/verify/ORDER-08/zed-*.png`)를 SPEC에 "Zed 확인(2026-11-07)"으로 적었다. R-5: 편집 중·선택 있음·열린 탭 없음·Project Search 결과 탭·Diagnostics 탭의 상태 바 오른쪽 표시(R-5 "열린 탭 없음" 미정이 풀림). R-19: dock 열림 `file_tree` 강조색, 사이드바 열림 때 토글이 사이드바 아래로 감. R-22: 왼쪽 버튼 순서·툴팁·구분선, Add Project 없음, Project Search 탭 구성·동작, Diagnostics 탭 구성.
   - 결과: 문서만. 파일 형식 대응 표는 자리만 두었다("대응 표: K-24 뒤").
   - 검증: V0(문서만, 실행 없음).
+- **K-23 선택기 값을 gpui toml ID로 (core ORDER-07 결정 3, ORDER-08 추가 지시)** (2026-11-07, 커밋 `9509ae4`)
+  - 무엇을 했나: gpui `spec/zed-metrics.toml`·`spec/ambiguous.md`·`spec/INDEX.md`를 그대로 복사하고, `src/spec/metrics.ts`·`src/shell/picker.css`의 선택기 값(그림자 `shadow.1~4`, `line_height_ratio`, `theme_selector.check_icon_size`, `item.font_size` 등)을 toml ID 참조로 바꿨다. 값은 같다.
+  - 결과: `DECISIONS.md` D-10의 대기가 끝났다. `measured.*`와 ambiguous 2건(384 범위·행 높이)은 바꾸지 않았다.
+  - 검증: V1. typecheck 통과, `npm.cmd run test` 168/168, `git diff --check` 통과, spec 세 파일이 gpui 원본과 바이트 단위로 같음(`%TEMP%\v05-K-23-report.md`).
+- **K-24 상태 바 위치·파일 형식 (R-5 / I-5)** (2026-11-07, 커밋 `c26e851`)
+  - 무엇을 했나: 상태 바 오른쪽에 `{line}:{column}`(선택 정보 포함)과 파일 형식 이름을 보인다(`src/editor/position.ts`·`filetype.ts`·`filetypes.json`, `src/shell/status.ts`). 파일 형식 대응 표는 Zed `crates/grammars/src/*/config.toml`에서 뽑았다. 미리보기는 누른 블록의 원본 시작 줄·열 1.
+  - 결과: SPEC R-5 "구현"·"파일 형식 대응 표"에 적었다. 미리보기 클릭 위치는 core 결정(2026-11-07)으로 "가장 안쪽 블록의 원본 시작 줄, 열 1"이 확정됐다(`DECISIONS.md` D-13). 블록 종류 표는 K-28 뒤.
+  - 검증: V1. typecheck 통과, 관련 테스트 9/9(한글·보조 평면·결합 문자 포함), `git diff --check` 통과(`%TEMP%\v05-K-24-report.md`).
+  - 실측 필요(V3): 상태 바 오른쪽 배치, L-29 간격, L-97 글꼴, 커서·선택·탭/pane/폴더 전환, 도구 탭·빈 탭 숨김, 미리보기 클릭 위치.
+- **K-25 상태 바 왼쪽 버튼·켜짐 표시·구분선 (R-19·R-22 / I-19·I-22)** (2026-11-07, 커밋 `c5e78a3`)
+  - 무엇을 했나: 왼쪽 버튼을 사이드바 토글(닫힘 때만) → `file_tree` → 검색 → 진단(✓) 순서로 바꾸고 상태 바 Add Project를 뺐다. dock 열림이면 `file_tree`가 `text.accent`. 새 액션 `pane::DeploySearch`(`Ctrl-Shift-F`)·`diagnostics::Deploy`(`Ctrl-Shift-M`)를 `STATUS_BINDINGS`로 연결했다. 구분선은 사용자 추가 지시로 실측값(1×16, `border`)으로 넣었다가 core-leader NOTICE로 gpui `statusbar.left_divider.*` ID로 바꿨다(gpui `spec/zed-metrics.toml`·`INDEX.md` 다시 복사).
+  - 결과: SPEC R-22 "구현 — 상태 바 왼쪽 버튼"에 적었다(`DECISIONS.md` D-12).
+  - 검증: V1. typecheck 통과, 관련 테스트 7/7, 구분선 뒤 3/3, ID 반영 뒤 3/3, `git diff --check` 통과, spec 두 파일 gpui와 바이트 단위 같음(`%TEMP%\v05-K-25-report.md`).
+  - 실측 필요(V3): 버튼 순서·위치·툴팁, dock 열림/닫힘 색과 배경, 사이드바 열림/닫힘 토글 이동, 구분선 폭·높이·색과 좌표 x 28·59, y 829.
+- **K-26 Project Search 탭 (R-22 / I-22)** (2026-11-07, 커밋 `1ac4fbe`)
+  - 무엇을 했나: Rust `src-tauri/src/project_search.rs`(백그라운드 순회·검색, Channel 결과, 취소)와 `src/search/`(탭 UI)로 Project Search를 만들었다. 의존성 `ignore` =0.4.34·`regex` =1.13.1을 더하고 라이선스 원문 4개를 `src/licenses/`에 두어 Licenses 창에 연결했다.
+  - 결과: SPEC R-22 "구현 — Project Search 탭", `DECISIONS.md` D-11에 적었다. Replace 쓰기는 분리했다(K-29 진행 중).
+  - 검증: V1. typecheck 통과, 프런트 관련 테스트 13/13, Rust 검색 테스트 2/2, `cargo check`·`cargo clippy -- -D warnings` 통과, 라이선스 4개가 배포본과 바이트 단위 같음(`%TEMP%\v05-K-26-report.md`).
+  - 실측 필요(V3): 빈 상태·툴바·필터·Replace 줄·결과·접기·이전/다음·파일 위치 열기·탭 재활성화·검색 취소·상태 바.
+  - 특이사항: 링크·junction을 따라가지 않는다(Zed는 루트 안 링크를 따라감). 결과 행 클릭은 그 행의 첫 일치이고 클릭한 글자의 열은 계산하지 않는다.
+- **리더 검사 (K-26 뒤)** (2026-11-07): typecheck 통과, `npm test` 177/177, `cargo test` 22개, clippy 경고 0(tauri-leader).
+- **W-19 Phase 8 문서** (2026-11-07): SPEC R-5(구현·미리보기 클릭 위치·파일 형식 대응 표)·R-22(버튼 표·Project Search 구현 범위), DECISIONS D-11~D-13, D-10 대기 해소. 검증 V0(문서만).
 
 ## 사용자 요청 작업
 

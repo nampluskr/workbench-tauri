@@ -513,7 +513,7 @@ I-4, core D-8, 사용자 2026-11-06.
 | P-011 | 아이콘 테마 선택기(R-3) |
 | T-21.3~21.6, T-32.4 | 정렬, 미리 적용, 취소 되돌림, 확정 저장 |
 
-- `spec/zed-metrics.toml`에 없는 값(그림자 4겹, 창 높이 마진 160, 행 높이 계산용 줄 높이 1.618, 빈 결과 위아래 8, 체크 16)은 `docs/refs/01-zed/01-LAYOUT.md` 4.13 본문 값을 썼다(`DECISIONS.md` D-10). core 결정(2026-11-07)으로 gpui writer가 이 값에 toml ID를 붙여 올리면 그 ID 참조로 바꾼다(대기).
+- `spec/zed-metrics.toml`에 없는 값(그림자 4겹, 창 높이 마진 160, 행 높이 계산용 줄 높이 1.618, 빈 결과 위아래 8, 체크 16)은 `docs/refs/01-zed/01-LAYOUT.md` 4.13 본문 값을 썼다(`DECISIONS.md` D-10). core 결정(2026-11-07)으로 gpui writer가 이 값에 toml ID를 붙여 올렸고, K-23에서 그 ID 참조로 바꿨다.
 - 푸터 버튼 모양은 문서에 값이 없어 `buttons.height.default`·`padding_x.default_compact`·`settings.control.corner_radius`를 빌린 투명 버튼이다.
 - 문구 출처: `01-LAYOUT.md` 4.13.5 P-010·4.13.3, `02-INTERACTION.md` 14.1·14.5(핀 커밋 14b7b0e). 원문 코드로는 확인하지 못했다.
 
@@ -631,7 +631,46 @@ I-5, 사용자 2026-11-06, 참고 화면 `refs/I-5-zed.png`, `refs/zed-split.png
 | Project Search 결과 탭(여러 파일 묶음) | `45:35 (8 characters)`만, 파일 형식 이름 없음 | `zed-search-results.png` |
 | Diagnostics 탭 | 둘 다 없음 | `zed-diagnostics.png` |
 
-- 파일 형식 대응 표: K-24 뒤.
+**구현 (K-24)**
+
+- 위치는 주 선택의 head(커서) 기준 1부터 시작하는 `line:column`이다. 열과 선택 글자 수는 UTF-16 코드 유닛이 아닌 Unicode scalar 수다.
+- 선택 정보는 selections, lines, characters 순서로 괄호에 넣는다. selections·lines는 2 이상, characters는 1 이상일 때 보이고 단·복수를 구분한다. 빈 단일 커서는 괄호가 없다. 선택 끝이 다음 줄 시작이면 그 줄은 줄 수에 넣지 않는다. 여러 줄 선택의 개행은 글자 수에 넣는다(Zed `crates/go_to_line/src/cursor_position.rs`를 동작 이해용으로 읽음, 코드 복사 없음).
+- split에서는 편집 뷰마다 위치가 따로다. 문서 내용이 바뀌어도 갱신한다.
+- 편집기가 준비되지 않았거나, 열린 탭이 없거나, 도구 탭이면 두 항목을 숨긴다. Project Search 탭은 현재 일치의 끝 위치와 선택 글자 수만 보이고 파일 형식은 숨긴다(R-22). 미리보기 탭의 파일 형식은 Markdown이다.
+- 글꼴 크기 `statusbar.cursor_position.font_size`(L-97), 항목 간격 `statusbar.item_gap`(L-29). 지금 오른쪽 아이콘 묶음이 없어 상태 바 오른쪽에 두 항목을 두었다. 아이콘 묶음이 생기면 이 두 항목 뒤에 놓는다.
+
+**마크다운 미리보기 클릭 위치 (core 결정 2026-11-07)**
+
+- 누른 곳을 포함하는 가장 안쪽 블록의 원본 시작 줄, 열 1이다(`DECISIONS.md` D-13). 미리보기 탭마다 따로 유지한다.
+- 블록 종류 표: K-28 보고 뒤.
+
+**파일 형식 대응 표 (K-24)**
+
+- 출처: Zed `4304dec732a75505066de5ce2dbbfb2bec369498` `crates/grammars/src/*/config.toml` 23개의 `name`·`path_suffixes`만 뽑았다(`src/editor/filetypes.json`). `file_names`·`filenames` 필드는 없었다. 경로 대응이 없는 JSDoc·Markdown-Inline·Regex·Zed Keybind Context 4개는 뺐다.
+- 규칙: 파일 이름 전체 또는 점으로 나눈 suffix를 비교해 가장 긴 일치를 쓴다(`tsconfig.json`이 `json`보다 먼저). 대소문자는 원본 그대로 구분한다(`c` → C, `C` → C++). 대응이 없으면 Plain Text다.
+- 외부 확장의 언어는 이 표에 없어 넣지 않았다(예: `toml`은 Plain Text). 첫 줄 패턴(`first_line_pattern`) 검출은 하지 않는다.
+
+| Zed name | path_suffixes (원본 순서) |
+|---|---|
+| Shell Script | sh, bash, bashrc, bash_profile, bash_aliases, bash_login, bash_logout, brushrc, bats, envrc, profile, zsh, zshrc, zshenv, zsh_profile, zsh_aliases, zsh_histfile, zlogin, zprofile, PKGBUILD, APKBUILD, ebuild |
+| C | c |
+| C++ | cc, ccm, hh, cpp, cppm, h, hpp, cxx, cxxm, hxx, c++, c++m, h++, hip, ipp, inl, ino, ixx, cu, cuh, C, H |
+| CSS | css, postcss, pcss |
+| Diff | diff, patch |
+| Env | .env |
+| Git Commit | TAG_EDITMSG, MERGE_MSG, COMMIT_EDITMSG, NOTES_EDITMSG, EDIT_DESCRIPTION |
+| Go | go |
+| Go Mod | mod |
+| Go Work | work |
+| JavaScript | js, jsx, mjs, cjs |
+| JSON | json, flake.lock, geojson, topojson, prettierrc, json.dist, deno.lock |
+| JSONC | jsonc, bun.lock, devcontainer.json, pyrightconfig.json, tsconfig.json, luaurc, swcrc, babelrc, eslintrc, stylelintrc, jshintrc |
+| Markdown | md, mdx, mdwn, mdc, markdown, MD |
+| Python | py, pyi, mpy |
+| Rust | rs |
+| TSX | tsx |
+| TypeScript | ts, cts, mts |
+| YAML | yml, yaml, pixi.lock, clang-format, clangd, bst |
 
 ---
 
@@ -1193,6 +1232,39 @@ I-22, 사용자 2026-11-06("나머지는 Zed와 동일하게"), core D-12(루트
 - 탭 제목 "✓ No problems"(✓ 초록).
 - 툴바 왼쪽 접기 버튼, 오른쪽 아이콘 4개(검색, 스파클, 새로고침, 경고 토글).
 - 가운데 "No problems in workspace".
+
+**구현 — 상태 바 왼쪽 버튼 (K-25)**
+
+| 상태 | 순서 |
+|---|---|
+| 사이드바 닫힘 | `threads_sidebar_left_closed` → 구분선 → `file_tree` → 구분선 → `magnifying_glass` → `check` |
+| 사이드바 열림 | `file_tree` → 구분선 → `magnifying_glass` → `check` |
+
+| 버튼 | 아이콘 | 툴팁 | 키 | 액션 |
+|---|---|---|---|---|
+| 사이드바 토글(닫힘 때만) | `threads_sidebar_left_closed` | Open Folder Sidebar | `Ctrl-Alt-J` | `multi_workspace::ToggleWorkspaceSidebar` |
+| 프로젝트 패널, dock 열림 | `file_tree` | Close Left Dock | `Ctrl-B` | `workspace::ToggleLeftDock` |
+| 프로젝트 패널, dock 닫힘 | `file_tree` | Project Panel | `Ctrl-Shift-E` | `project_panel::ToggleFocus` |
+| 검색 | `magnifying_glass` | Project Search | `Ctrl-Shift-F` | `pane::DeploySearch` |
+| 진단 | `check` | Project Diagnostics | `Ctrl-Shift-M` | `diagnostics::Deploy` |
+
+- 키 출처: Zed `4304dec` `assets/keymaps/default-windows.json` Workspace(`ctrl-shift-f` → `pane::DeploySearch`, `ctrl-shift-m` → `diagnostics::Deploy`). 새 키는 `BUILTIN`이 아니라 `STATUS_BINDINGS`에 두었다(v0.4 고정 표 테스트 유지).
+- 구분선: `statusbar.left_divider.width`(1)·`statusbar.left_divider.height`(16), 색 `border`, 세로 가운데, `aria-hidden`(`DECISIONS.md` D-12). V3 대조 좌표 `x_after_sidebar_toggle` 28, `x_after_file_tree` 59, `y_top` 829(desktop_measure_100, 1440×852, One Dark)는 코드에 넣지 않았다.
+- 켜짐 표시(R-19): dock이 열리면 `file_tree`가 `text.accent` 색과 `aria-pressed=true`가 된다. 배경은 바뀌지 않는다(Zed `IconButton` 선택 기본색 `Color::Selected` → `text_accent`, `crates/ui/src/components/button/icon_button.rs:267~268`, `crates/ui/src/styles/color.rs:108`).
+- 상태 바의 Add Project(`folder_add`)는 뺐다. 사이드바 아래쪽 줄의 Add Project와 `threads_sidebar_left_open` 토글은 그대로다.
+- 진단 버튼은 K-27(Diagnostics 탭) 전까지 아무 일도 하지 않는다.
+
+**구현 — Project Search 탭 (K-26)**
+
+- 열기: 상태 바 검색 버튼·`Ctrl-Shift-F`. 같은 폴더 컨텍스트에 이미 있으면 그 탭과 입력칸으로 돌아간다. 탭 아이콘 `magnifying_glass`, 제목은 검색 전 "Project Search", Enter 뒤 검색어.
+- 툴바: 검색칸 "Search all files…", Match case(`Alt-C`)·Match whole words(`Alt-W`)·Match with regex(`Alt-R`), Toggle Filters(`Alt-F`)·Toggle Replace(`Alt-Shift-H`), 결과 이동과 현재/전체 수, 파일별 접기와 모두 접기/펴기. 빈 상태의 제목·안내·다섯 행은 위 Zed 확인 문구와 Zed 아이콘(Filter·Replace·Regex·CaseSensitive·WholeWord)이다(Zed `crates/search/src/project_search.rs:2530~2571`).
+- Filters: Include/Exclude는 쉼표로 나눈 glob. Only Search Open Files, Also search files ignored by configuration(기본 꺼짐). 기본은 숨김·gitignore 규칙을 따르고, ignored를 켜면 gitignore·global·exclude·`.ignore` 필터를 풀고 숨김 규칙은 둔다.
+- 실행: Enter. Rust `spawn_blocking`에서 순회·검색하고 Tauri Channel로 파일 단위 결과를 보내 UI를 막지 않는다. 새 검색은 같은 창의 이전 검색을 취소하고, 취소된 탭에는 "Search cancelled."를 보인다.
+- 범위: 요청한 루트가 저장된 작업 공간 폴더 목록과 같아야 한다. 외부 루트·외부 열린 버퍼 경로는 백엔드에서 거부한다. 심볼릭 링크·junction은 따라가지 않는다(`DECISIONS.md` D-11). 작업 공간 안의 열린 편집 뷰는 미저장 텍스트로 찾는다. 디스크 파일은 UTF-8/BOM·UTF-16 BOM·CP949를 읽고 NUL 바이너리·디코딩 실패 파일은 뺀다. 검색은 파일을 쓰지 않는다.
+- 결과: 파일마다 머리줄(파일 이름·전체 경로·접기·Open File), 일치 줄 앞뒤 2줄(Zed 기본 `excerpt_context_lines` 2), 줄 번호, `search.match_background` 강조. 겹치는 발췌 줄은 한 번만 보인다. 상한 파일 5,000·일치 10,000(D-11).
+- 이동·열기: 이전/다음은 일치 단위로 순환한다. 결과 행 클릭은 그 행의 첫 일치(문맥 행은 열 1), Open File은 그 파일 첫 일치, `Alt-Enter`는 현재 일치를 일반 편집 탭으로 연다.
+- 스펙 ID: E-061~E-063(검색칸). Project Search 전용 화면 수치는 추정해 넣지 않았다.
+- 하지 않은 것: Replace 쓰기(Replace 줄·입력칸·비활성 버튼만 보임, K-29 진행 중), 클릭한 글자의 열 계산.
 
 ---
 

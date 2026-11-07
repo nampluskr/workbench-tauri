@@ -190,11 +190,64 @@ tauri-coder K-19 보고(2026-11-07).
 
 **이유**
 
-추정한 값이 아니라 실측 문서에 있는 값이다. `spec/`은 gpui가 원본이라 이 레포에서 고치지 않는다(루트 `AGENTS.md` 3장). core 결정(2026-11-07, 사용자 위임 core D-13): 원본 소유자 gpui writer가 이 값에 toml ID를 붙여 올리고, tauri는 그 ID로 바꿔 참조한다. gpui toml 갱신 대기 — 올라오면 `spec/`을 다시 복사하고 `metrics.ts`·`picker.css`를 ID 참조로 바꾼다.
+추정한 값이 아니라 실측 문서에 있는 값이다. `spec/`은 gpui가 원본이라 이 레포에서 고치지 않는다(루트 `AGENTS.md` 3장). core 결정(2026-11-07, 사용자 위임 core D-13): 원본 소유자 gpui writer가 이 값에 toml ID를 붙여 올리고, tauri는 그 ID로 바꿔 참조한다. gpui toml 갱신 대기 — 올라오면 `spec/`을 다시 복사하고 `metrics.ts`·`picker.css`를 ID 참조로 바꾼다. → K-23(커밋 `9509ae4`)에서 gpui `spec/` 세 파일을 복사하고 선택기 값을 toml ID 참조로 바꿨다.
 
 **출처**
 
 tauri-coder K-19 보고(2026-11-07), 루트 `AGENTS.md` 3장.
+
+### D-11. Project Search 의존성과 검색 범위
+
+**결정**
+
+- 직접 의존성 두 개를 정확한 버전으로 더한다(`src-tauri/Cargo.toml`).
+
+| crate | 버전 | 배포본 라이선스 | 쓰는 곳 |
+|---|---|---|---|
+| `ignore` | `=0.4.34` | Unlicense OR MIT | 폴더 순회, `.gitignore`·숨김 규칙, Include/Exclude glob(`ignore::overrides`) |
+| `regex` | `=1.13.1` | MIT OR Apache-2.0 | 대소문자·단어 단위·정규식 일치 |
+
+- core 승인 문구는 두 crate를 "MIT/Unlicense"로 적었으나, `regex` 1.13.1 배포본의 실제 라이선스는 MIT OR Apache-2.0이다. 실제 배포본 기준으로 적는다.
+- 전이 의존성(새로 `Cargo.lock`에 들어온 것): `bstr`, `crossbeam-deque`, `crossbeam-epoch`, `globset`(모두 `ignore`가 씀). `regex` 1.13.1은 이미 lock에 있었고 이번에 직접 의존성이 됐다.
+- 라이선스 원문 4개(`ignore`의 MIT·Unlicense, `regex`의 MIT·Apache-2.0)를 배포본과 바이트 단위로 같게 `src/licenses/`에 두고 Licenses 창(Help → View Dependency Licenses) glob에 연결했다.
+- 심볼릭 링크·junction은 따라가지 않는다(`follow_links(false)`와 Windows reparse-point 검사). Zed는 링크를 canonicalize해 루트 밖 대상만 외부로 구분하고 루트 안 링크는 따라가므로 이 점이 다르다(Zed `4304dec` `crates/worktree/src/worktree.rs:5562~5625`).
+- 결과 상한: 파일 5,000개, 일치 10,000개(Zed `crates/project/src/project_search.rs:166~167`). 상한에 닿으면 표시한다.
+
+**이유**
+
+core D-12(ITEMS가 갈래 지침보다 우선, 목록 밖 의존성 허용)와 core D-17(Project Search 범위)에 따라 실제로 찾는 검색이 필요하다. gitignore 규칙과 glob을 몇 줄로 다시 만들 수 없어 Zed와 같은 동작의 crate를 쓴다. 링크를 따라가지 않는 것은 작업 공간 밖 파일을 읽지 않기 위한 보안 처리다(카드 지시).
+
+**출처**
+
+core D-12·D-17, core-leader 승인(2026-11-07, 사용자 위임 core D-13), tauri-coder K-26 보고(2026-11-07).
+
+### D-12. 상태 바 왼쪽 구분선 값
+
+**결정**
+
+상태 바 왼쪽 구분선(사이드바 토글 뒤, `file_tree` 뒤)은 처음에 Zed 실측값(폭 1px, 높이 16px, 색 `border`, Zed `4304dec` 2026-11-07)으로 넣고, gpui toml ID가 올라온 뒤 `statusbar.left_divider.width`·`statusbar.left_divider.height`(색 `left_divider.color` = `border`)를 참조하도록 바꿨다. 좌표(`x_after_sidebar_toggle` 28, `x_after_file_tree` 59, `y_top` 829)는 코드에 넣지 않고 V3 대조에만 쓴다.
+
+**이유**
+
+toml에 구분선 ID가 없어 사용자 추가 지시(core D-12)로 실측값을 먼저 쓰고, core-leader NOTICE로 gpui 원본에 ID가 생겨 그 ID로 바꿨다(루트 `AGENTS.md` 3장, `spec/`은 gpui 원본을 그대로 복사).
+
+**출처**
+
+사용자 추가 지시(2026-11-07), core-leader NOTICE(2026-11-07), tauri-coder K-25 보고.
+
+### D-13. 마크다운 미리보기 클릭 위치
+
+**결정**
+
+마크다운 미리보기에서 누른 곳의 상태 바 위치는 누른 곳을 포함하는 가장 안쪽 블록의 원본 시작 줄, 열 1이다(`{line}:1 Markdown`). 블록 종류 표는 K-28 보고 뒤에 `SPEC.md` R-5에 채운다.
+
+**이유**
+
+미리보기의 글자 하나를 원본 열로 되돌리는 계산은 하지 않고, 이미 있는 블록 `data-line` 대응(I-084)을 그대로 쓴다.
+
+**출처**
+
+core-leader 결정(2026-11-07, 사용자 위임 core D-13), tauri-coder K-24 보고.
 
 에이전트 운영의 리더 결정(카드·보고 파일 위치, 카드 ID 체계)은 설계 결정이 아니라서 `HERDR-SETUP.md` 5장에 둔다.
 
@@ -202,4 +255,4 @@ tauri-coder K-19 보고(2026-11-07), 루트 `AGENTS.md` 3장.
 
 - core D-8 복사본 항목은 D-6에서 정했다(Phase 7).
 - core 결정(2026-11-07)으로 정해짐: 탭 파일 아이콘은 그리지 않고 아이콘 테마는 파일 트리에만(`SPEC.md` R-3), D-7 기본 묶음 카드 없음, D-8 두 갈래 공통, 테마·아이콘 테마 목록(Monochrome 포함 9종, dark → light 이름순), 선택기 스크롤바는 목록 위 포인터일 때만.
-- 대기: D-10 값의 gpui toml ID(gpui writer가 올린 뒤 tauri가 ID 참조로 바꿈).
+- D-10 값의 gpui toml ID: K-23에서 반영해 끝났다.
