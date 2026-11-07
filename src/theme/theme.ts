@@ -57,6 +57,10 @@ export const TARGET_TOKENS = [
   "drop_target.background", // T-40.7 / I-714 / I-715: tab drag targets
   "drop_target.border", // T-26.13 / I-715: the tab drop line
   "toolbar.background", // E-038 / E-121: the editor toolbar (Markdown tabs)
+  "search.match_background", // Project Search: Zed highlight_background of every match (project_search.rs:2501)
+  "search.active_match_background", // Project Search: the selected match
+  "editor.subheader.background", // Project Search: Zed buffer header (header.rs:`editor_subheader_background`)
+  "element.hover", // Project Search: Zed buffer header hover
 ] as const;
 export type Token = (typeof TARGET_TOKENS)[number];
 

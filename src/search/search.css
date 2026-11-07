@@ -1,24 +1,41 @@
-.project-search-tab, .project-search { height: 100%; min-width: 0; }
-.project-search { display: flex; flex-direction: column; background: var(--editor-background); color: var(--text); --icon-size: var(--statusbar-icon-size); }
+.project-search-tab, .project-search { height: 100%; min-width: 0; outline: none; } /* Zed shows no focus ring on the tab body */
+.project-search { display: flex; flex-direction: column; background: var(--editor-background); color: var(--text); --icon-size: var(--statusbar-icon-size); --search-line-height: calc(var(--typography-buffer-font-size) * var(--editor-line-height-comfortable-multiplier)); }
 .project-search button { color: inherit; background: transparent; border: 0; font: inherit; cursor: pointer; }
 .project-search button:disabled { color: var(--text-disabled); cursor: default; }
 .project-search button:hover:not(:disabled) { background: var(--ghost-element-hover); }
 .project-search button[aria-pressed="true"] { color: var(--text-accent); }
 .project-search-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: var(--editor-search-bar-gap); padding: var(--picker-list-padding-y) var(--picker-input-row-padding-x); border-bottom: var(--picker-border-width) solid var(--border); }
-.project-search-input { display: flex; flex: 1; align-items: center; min-width: 0; border: var(--editor-search-input-border) solid var(--border); border-radius: var(--editor-search-input-corner-radius); background: var(--editor-background); }
-.project-search input:not([type="checkbox"]) { flex: 1; min-width: 0; min-height: var(--editor-search-input-min-height); padding-inline: var(--editor-search-input-padding-left) var(--editor-search-input-padding-right); background: var(--editor-background); color: var(--text); border: 0; font-size: var(--editor-search-input-font-size); }
+/* Zed: the query box is as wide as the window up to MAX_WIDTH and shrinks for the buttons after it; its border stays `border` (no focus colour). */
+.project-search-input { display: flex; flex: 0 1 var(--editor-search-input-max-width); align-items: center; min-width: 0; border: var(--editor-search-input-border) solid var(--border); border-radius: var(--editor-search-input-corner-radius); background: var(--editor-background); }
+.project-search input:not([type="checkbox"]) { flex: 1; min-width: 0; min-height: var(--editor-search-input-min-height); padding-inline: var(--editor-search-input-padding-left) var(--editor-search-input-padding-right); background: var(--editor-background); color: var(--text); border: 0; outline: none; font-size: var(--editor-search-input-font-size); }
 .project-search-toolbar label { display: flex; align-items: center; }
-.search-count { font-size: var(--statusbar-cursor-position-font-size); }
-.project-search-empty { margin: auto; display: flex; flex-direction: column; }
-.project-search-empty button { display: flex; align-items: center; gap: var(--editor-search-bar-gap); text-align: left; }
-.project-search-empty kbd { margin-left: auto; }
-.project-search-results { overflow: auto; flex: 1; }
-.search-file-header { display: flex; align-items: center; gap: var(--editor-search-bar-gap); background: var(--panel-background); padding: var(--picker-list-padding-y) var(--picker-input-row-padding-x); }
-.search-file-header button { display: flex; align-items: center; gap: var(--picker-item-gap); }
-.search-file-header > span { flex: 1; overflow-wrap: anywhere; color: var(--text-muted); }
-.search-line { display: flex; width: 100%; text-align: left; white-space: pre; }
-.search-line code { font-family: var(--buffer-font-family); font-size: var(--typography-buffer-font-size); }
-.search-line-number { color: var(--editor-line-number); padding-inline: var(--picker-input-row-padding-x); }
+.project-search-modes { display: flex; gap: var(--buttons-gap); }
+.project-search-matches { display: flex; align-items: center; margin-left: var(--buttons-gap); padding-left: var(--search-results-matches-padding-left); border-left: var(--editor-search-input-border) solid var(--border-variant); }
+.search-count { margin-left: var(--editor-search-bar-gap); min-width: var(--search-results-count-min-width); font-size: var(--typography-size-small); }
+.search-count.active { color: var(--text-disabled); } /* Zed: Color::Disabled while a match is selected */
+.project-search-empty { margin: auto; display: flex; flex-direction: column; gap: var(--statusbar-item-gap); }
+.project-search-empty h2 { margin: 0; font-size: var(--typography-size-large); font-weight: normal; }
+.project-search-empty p { margin: 0 0 var(--editor-search-bar-gap); color: var(--text-muted); font-size: var(--typography-size-default); }
+.project-search-empty button { display: flex; align-items: center; gap: var(--buttons-gap); height: var(--buttons-height-default); padding-inline: var(--buttons-padding-x-default-compact); text-align: left; font-size: var(--typography-size-default); }
+.project-search-empty kbd { margin-left: var(--buttons-gap); font: inherit; font-size: var(--typography-size-small); color: var(--text-muted); }
+.project-search-results { overflow-x: hidden; overflow-y: auto; flex: 1; }
+/* Zed buffer header (editor/src/element/header.rs): a bordered box two buffer lines high with a 4px margin. */
+.search-file-header { display: flex; align-items: center; gap: var(--search-results-header-gap); box-sizing: border-box; margin: var(--search-results-header-padding); height: calc(var(--search-line-height) * var(--search-results-header-lines) - 2 * var(--search-results-header-padding)); padding: 0 var(--search-results-header-padding-right) 0 var(--search-results-header-padding-left); border: var(--picker-border-width) solid var(--border); border-radius: var(--search-results-header-radius); background: var(--editor-subheader-background); cursor: pointer; }
+.search-file-header:hover { background: var(--element-hover); }
+.project-search .search-fold { flex: none; display: flex; align-items: center; justify-content: center; width: var(--search-results-header-fold-button); height: var(--search-results-header-fold-button); }
+.project-search .search-file-name { padding: 0; font-family: var(--buffer-font-family); font-size: var(--typography-buffer-font-size); }
+.project-search .search-file-name:hover:not(:disabled) { background: transparent; }
+.search-file-dir { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--text-muted); font-family: var(--buffer-font-family); font-size: var(--typography-buffer-font-size); }
+.project-search .search-open-file { flex: none; display: flex; align-items: center; gap: var(--buttons-gap); height: var(--buttons-height-default); padding-inline: var(--buttons-padding-x-default-compact); border: var(--picker-border-width) solid color-mix(in srgb, var(--border) 60%, transparent); border-radius: var(--search-results-header-radius); background: var(--elevated-surface-background); visibility: hidden; }
+.search-file-header:hover .search-open-file, .search-file-header.selected .search-open-file, .project-search .search-open-file:focus-visible { visibility: visible; }
+.search-open-file kbd { font: inherit; color: var(--text-muted); }
+.search-excerpt + .search-excerpt { border-top: var(--picker-border-width) solid var(--border); }
+.project-search .search-line { display: grid; grid-template-columns: var(--editor-gutter-padding-left) calc(var(--editor-gutter-min-line-number-digits) * 1ch) var(--editor-gutter-padding-right) minmax(0, 1fr); width: 100%; padding: 0; text-align: left; font-family: var(--buffer-font-family); font-size: var(--typography-buffer-font-size); line-height: var(--search-line-height); color: var(--editor-foreground); } /* Zed wraps long lines */
+.search-line-gutter { display: flex; align-items: center; justify-content: center; color: var(--icon-muted); --icon-size: var(--icons-size-xsmall); }
+.search-line-number { text-align: right; color: var(--editor-line-number); }
+.search-line.current .search-line-number { color: var(--editor-active-line-number); }
+.search-line code { min-width: 0; font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; }
 .search-line.current { background: var(--editor-active-line-background); }
 .search-match { background: var(--search-match-background); }
+.search-match.active { background: var(--search-active-match-background); }
 .search-error { color: var(--error); }

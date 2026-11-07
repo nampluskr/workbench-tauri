@@ -472,7 +472,7 @@ button, input, select, textarea {
   justify-content: flex-end;
   align-items: center;
   box-sizing: border-box;
-  min-height: var(--toolbar-min-height);
+  min-height: calc(var(--toolbar-min-height) + 2 * var(--toolbar-padding-y) + var(--toolbar-border-bottom)); /* E-038: 32 is the row (toolbar.rs min_h_8); the box adds its padding and border. */
   padding: var(--toolbar-padding-y) var(--toolbar-padding-x);
   border-bottom: var(--toolbar-border-bottom) solid var(--border-variant);
   background: var(--toolbar-background);

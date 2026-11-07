@@ -10,17 +10,42 @@ export function receiveSearch(state: SearchState, event: SearchEvent): SearchSta
   return { ...state, busy: event.kind !== "done" && state.busy, limited: state.limited || event.kind === "limit" };
 }
 
-/** Overlapping multiline matches share one highlight; offsets are UTF-16 for DOM and CodeMirror. */
-export function highlightParts(text: string, spans: [number, number][]): { text: string; match: boolean }[] {
-  const parts: { text: string; match: boolean }[] = [];
+/** Overlapping multiline matches share one highlight; offsets are UTF-16 for DOM and CodeMirror. `active` is the selected match's span in this line. */
+export function highlightParts(text: string, spans: [number, number][], active?: [number, number]): { text: string; match: boolean; active: boolean }[] {
+  const parts: { text: string; match: boolean; active: boolean }[] = [];
   let end = 0;
   for (const [from, to] of [...spans].sort((a, b) => a[0] - b[0])) {
-    if (from > end) parts.push({ text: text.slice(end, from), match: false });
-    if (to > end) parts.push({ text: text.slice(Math.max(from, end), to), match: true });
+    if (from > end) parts.push({ text: text.slice(end, from), match: false, active: false });
+    if (to > end) parts.push({ text: text.slice(Math.max(from, end), to), match: true, active: !!active && from === active[0] && to === active[1] });
     end = Math.max(end, to);
   }
-  if (end < text.length) parts.push({ text: text.slice(end), match: false });
+  if (end < text.length) parts.push({ text: text.slice(end), match: false, active: false });
   return parts;
+}
+
+/** The selected match's span inside one excerpt row, or undefined when the match does not touch it. */
+export function activeSpan(match: SearchMatch | undefined, row: { number: number; text: string }): [number, number] | undefined {
+  if (!match || row.number < match.line || row.number > match.endLine) return;
+  return [row.number === match.line ? match.column - 1 : 0, row.number === match.endLine ? match.endColumn - 1 : row.text.length];
+}
+
+/** Zed's excerpts: runs of consecutive line numbers; a gap starts a new excerpt. */
+export function excerptsOf(lines: SearchFile["lines"]): SearchFile["lines"][] {
+  const excerpts: SearchFile["lines"][] = [];
+  for (const line of lines) {
+    const last = excerpts[excerpts.length - 1];
+    if (last && last[last.length - 1].number + 1 === line.number) last.push(line);
+    else excerpts.push([line]);
+  }
+  return excerpts;
+}
+
+/** Zed's buffer header path: the folder of the file below the workspace root, with a trailing separator ("" for a root file); `rootName` is added when several folders are open. */
+export function relativeDir(path: string, root: string, rootName?: string): string {
+  const rel = path.slice(root.length).replace(/^[\\/]+/, "");
+  const cut = Math.max(rel.lastIndexOf("\\"), rel.lastIndexOf("/"));
+  const dir = cut >= 0 ? rel.slice(0, cut + 1) : "";
+  return rootName ? `${rootName}\\${dir}` : dir;
 }
 
 export const nextMatch = (index: number, total: number, delta: number): number => total ? (index + delta + total) % total : 0;

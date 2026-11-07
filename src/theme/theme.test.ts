@@ -52,6 +52,10 @@ const VARS: [token: string, cssVar: string][] = [
   ["drop_target.background", "--drop-target-background"],
   ["drop_target.border", "--drop-target-border"],
   ["toolbar.background", "--toolbar-background"],
+  ["search.match_background", "--search-match-background"],
+  ["search.active_match_background", "--search-active-match-background"],
+  ["editor.subheader.background", "--editor-subheader-background"],
+  ["element.hover", "--element-hover"],
 ];
 
 test("parseColor: #RRGGBB has alpha 255, #RRGGBBAA keeps it, anything else is rejected (T-01.7)", () => {

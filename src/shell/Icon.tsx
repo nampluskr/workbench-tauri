@@ -9,7 +9,7 @@ export type IconName =
   | "split" | "plus" | "maximize" | "arrow_left" | "arrow_right" | "menu" | "close" | "pin" | "minimize" | "eye" | "file_doc"
   | "file" | "check" | "chevron_down" | "chevron_right" | "chevron_up" | "chevron_up_down" | "magnifying_glass" | "pencil" | "github"
   | "filter" | "replace" | "regex" | "case_sensitive" | "whole_word"
-  | "chevron_down_up" | "zed_assistant" | "arrow_circle" | "warning";
+  | "chevron_down_up" | "zed_assistant" | "arrow_circle" | "warning" | "chevron_left" | "expand_up" | "expand_down";
 
 /** Missing Zed copies leave an empty slot with the existing spec dimensions. */
 export default function Icon(props: { name: IconName }) {

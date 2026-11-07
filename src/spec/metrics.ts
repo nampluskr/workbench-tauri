@@ -97,6 +97,7 @@ const METRICS: Record<string, string> = {
   "typography.buffer_font_size": "15px", // L-08
   "typography.size.default": rem(14), // L-05 (label default: tree name, tab title, title bar folder button)
   "typography.size.small": rem(12), // L-05 (SettingsSectionHeader LabelSize::Small)
+  "typography.size.large": rem(16), // L-05 (Project Search landing title, LabelSize::Large)
   "buttons.padding_x.large_medium": rem(8), // L-07 (Settings dropdown ButtonSize::Medium)
   "buttons.gap": rem(4), // L-07
   "settings.search.padding_left": rem(6), // L-10 / Zed 4304dec732 settings_ui.rs render_search pl_1p5
@@ -105,6 +106,17 @@ const METRICS: Record<string, string> = {
   "settings.control.corner_radius": rem(4), // L-10 rounded_sm; Zed ButtonLike and render_search
   "editor.gutter.min_line_number_digits": "4", // E-002
   "editor.search_bar.gap": rem(8), // E-061
+  // Project Search (K-32). No toml IDs yet; each value is read from the Zed source named here.
+  "editor.search_input.max_width": rem(1200), // ui/src/utils/search_input.rs MAX_WIDTH
+  "search_results.header.padding": rem(4), // editor.rs:303 BUFFER_HEADER_PADDING
+  "search_results.header.padding_left": rem(4), // header.rs `.pl_1()`
+  "search_results.header.padding_right": rem(8), // header.rs `.pr_2()`
+  "search_results.header.gap": rem(6), // header.rs `.gap_1p5()`
+  "search_results.header.radius": rem(2), // header.rs `.rounded_sm()`
+  "search_results.header.fold_button": rem(28), // header.rs `button_size`
+  "search_results.header.lines": "2", // editor.rs:302 FILE_HEADER_HEIGHT, in buffer lines
+  "search_results.matches.padding_left": rem(6), // project_search.rs `.pl_1p5()` before the match arrows
+  "search_results.count.min_width": rem(40), // project_search.rs `.min_w(rems_from_px(40_f32))`
   "editor.search_input.min_height": rem(32), // E-062
   "editor.search_input.padding_left": rem(8), // E-062
   "editor.search_input.padding_right": rem(4), // E-062
@@ -225,6 +237,7 @@ const METRICS: Record<string, string> = {
   "tab.end_slot.height": rem(14), // L-25
   "tab.indicator_size": rem(10), // L-65
   "icons.size.small": rem(14), // L-06 (tab close icon, L-66)
+  "icons.size.xsmall": rem(12), // L-06 (Project Search excerpt expand arrows)
   "statusbar.height": rem(30), // L-28
   "statusbar.padding_y": rem(4), // L-28
   "statusbar.padding_x": rem(4), // no toml ID yet: Zed status_bar.rs:153 `.p(Base04)` pads all four sides (K-31)

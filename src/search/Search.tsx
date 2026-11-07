@@ -11,7 +11,7 @@ import { applyReplacement, type ReplacementEdit } from "./replace.ts";
 import Icon, { type IconName } from "../shell/Icon.tsx";
 import { displayChunks } from "../keymap/display.ts";
 import { tooltip } from "../shell/tooltip.ts";
-import { emptySearch, highlightParts, nextMatch, receiveSearch, searchPosition, type SearchEvent, type SearchFile, type SearchMatch } from "./model.ts";
+import { activeSpan, emptySearch, excerptsOf, highlightParts, nextMatch, relativeDir, receiveSearch, searchPosition, type SearchEvent, type SearchFile, type SearchMatch } from "./model.ts";
 import "./search.css";
 
 function ProjectSearch(props: { setTitle: (title: string) => void; setPosition: (position: string) => void }) {
@@ -153,11 +153,15 @@ function ProjectSearch(props: { setTitle: (title: string) => void; setPosition: 
         <Toggle label="Match whole words" icon="whole_word" key="alt-w" value={word()} run={() => setWord(!word())} />
         <Toggle label="Match with regex" icon="regex" key="alt-r" value={regex()} run={() => setRegex(!regex())} />
       </div>
-      <Toggle label="Toggle Filters" icon="filter" key="alt-f" value={filters()} run={toggleFilters} />
-      <Toggle label="Toggle Replace" icon="replace" key="alt-shift-h" value={replace()} run={toggleReplace} />
-      <button type="button" aria-label="Previous result" disabled={!matches().length} onClick={() => move(-1)}><Icon name="chevron_up" /></button>
-      <button type="button" aria-label="Next result" disabled={!matches().length} onClick={() => move(1)}><Icon name="chevron_down" /></button>
-      <span class="search-count" aria-live="polite">{matches().length ? current() + 1 : 0}/{matches().length}</span>
+      <div class="project-search-modes">
+        <Toggle label="Toggle Filters" icon="filter" key="alt-f" value={filters()} run={toggleFilters} />
+        <Toggle label="Toggle Replace" icon="replace" key="alt-shift-h" value={replace()} run={toggleReplace} />
+      </div>
+      <div class="project-search-matches">
+        <button type="button" aria-label="Previous result" disabled={!matches().length} onClick={() => move(-1)}><Icon name="chevron_left" /></button>
+        <button type="button" aria-label="Next result" disabled={!matches().length} onClick={() => move(1)}><Icon name="chevron_right" /></button>
+        <span class="search-count" classList={{ active: !!matches().length }} aria-live="polite">{matches().length ? current() + 1 : 0}/{matches().length}</span>
+      </div>
     </div>
     <Show when={filters()}><div class="project-search-toolbar">
       <input data-text-input aria-label="Include paths" placeholder="Include: e.g. src/**/*.rs" value={include()} onInput={(e) => setInclude(e.currentTarget.value)} />
@@ -170,13 +174,24 @@ function ProjectSearch(props: { setTitle: (title: string) => void; setPosition: 
     <Show when={state().busy}><p role="status">Searching…</p></Show>
     <Show when={state().limited}><p role="status">Search Limits Reached. Try narrowing your search.</p></Show>
     <Show when={submitted()} fallback={<div class="project-search-empty"><h2>Search All Files</h2><p>Start typing to search. For more options:</p><For each={guides}>{(guide) => <button type="button" onClick={() => { guide.run(); searchInput.focus(); }}><Icon name={guide.icon} /><span>{guide.text}</span><kbd>{displayChunks(guide.key).join(" ")}</kbd></button>}</For></div>}>
-      <div class="project-search-results"><For each={state().files}>{(file) => <article>
-        <header class="search-file-header"><button type="button" aria-expanded={!collapsed().has(file.path)} onClick={() => toggleFile(file.path)}><Icon name={collapsed().has(file.path) ? "chevron_right" : "chevron_down"} /><strong>{baseName(file.path)}</strong></button><span>{file.path}</span><button type="button" onClick={() => open(file, file.matches[0])} ref={(el) => tooltip(el, () => ({ title: "Open File", shortcut: "alt-enter" }))}>Open File</button></header>
-        <Show when={!collapsed().has(file.path)}><For each={file.lines}>{(line) => <button type="button" class="search-line" classList={{ current: selected()?.file === file && selected()?.match.line === line.number }} aria-label={`${baseName(file.path)} line ${line.number}`} onClick={() => {
-          const match = file.matches.find((match) => match.line === line.number) ?? { line: line.number, column: 1, endLine: line.number, endColumn: 1 };
-          open(file, match);
-        }}><span class="search-line-number">{line.number}</span><code><For each={highlightParts(line.text, line.spans)}>{(part) => <span classList={{ "search-match": part.match }}>{part.text}</span>}</For></code></button>}</For></Show>
-      </article>}</For><Show when={!state().busy && !state().files.length && !state().error}><p>No results.</p></Show></div>
+      <div class="project-search-results"><For each={state().files}>{(file) => {
+        const root = () => folders().find((folder) => underOrSame(folder.path, file.path));
+        const dir = () => { const at = root(); return at ? relativeDir(file.path, at.path, folders().length > 1 ? baseName(at.path) : undefined) : ""; };
+        const isSelected = () => selected()?.file === file;
+        return <article>
+          <header class="search-file-header" classList={{ selected: isSelected() }} onClick={() => toggleFile(file.path)}>
+            <button type="button" class="search-fold" aria-label={collapsed().has(file.path) ? "Unfold Excerpt" : "Fold Excerpt"} aria-expanded={!collapsed().has(file.path)}><Icon name={collapsed().has(file.path) ? "chevron_right" : "chevron_down"} /></button>
+            <button type="button" class="search-file-name" onClick={(event) => { event.stopPropagation(); open(file, file.matches[0]); }}>{baseName(file.path)}</button>
+            <span class="search-file-dir">{dir()}</span>
+            <button type="button" class="search-open-file" onClick={(event) => { event.stopPropagation(); open(file, file.matches[0]); }} ref={(el) => tooltip(el, () => ({ title: "Open File", shortcut: "alt-enter" }))}>Open File<Show when={isSelected()}><kbd>{displayChunks("alt-enter").join(" ")}</kbd></Show></button>
+          </header>
+          <Show when={!collapsed().has(file.path)}><For each={excerptsOf(file.lines)}>{(excerpt) => <div class="search-excerpt"><For each={excerpt}>{(line, index) => <button type="button" class="search-line" classList={{ current: isSelected() && selected()?.match.line === line.number }} aria-label={`${baseName(file.path)} line ${line.number}`} onClick={() => {
+            const match = file.matches.find((match) => match.line === line.number) ?? { line: line.number, column: 1, endLine: line.number, endColumn: 1 };
+            open(file, match);
+          }}><span class="search-line-gutter" aria-hidden="true"><Show when={index() === 0} fallback={<Show when={index() === excerpt.length - 1}><Icon name="expand_down" /></Show>}><Icon name="expand_up" /></Show></span><span class="search-line-number">{line.number}</span><code><For each={highlightParts(line.text, line.spans, activeSpan(isSelected() ? selected()?.match : undefined, line))}>{(part) => <span classList={{ "search-match": part.match, active: part.active }}>{part.text}</span>}</For></code></button>}</For></div>}</For></Show>
+        </article>;
+      }}</For>
+      <Show when={!state().busy && !state().files.length && !state().error}><p>No results.</p></Show></div>
     </Show>
   </section>;
 }
