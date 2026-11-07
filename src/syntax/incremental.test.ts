@@ -1,7 +1,7 @@
-// SPEC R-11 V1. Uses the installed Zed HTML grammar (D-13): this PC only.
+// SPEC R-11 V1: pinned HTML copy only.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { EditorState } from "@codemirror/state";
 import { Parser, type Edit, type Node, type Tree } from "web-tree-sitter";
 import { loadLanguage } from "./grammar.ts";
@@ -9,15 +9,15 @@ import { editTree, mostlyReplaced, parseDoc, parseDocSliced } from "./incrementa
 
 await Parser.init();
 const parser = new Parser();
-parser.setLanguage(
-  await loadLanguage(new Uint8Array(readFileSync(`${process.env.LOCALAPPDATA}/Zed/extensions/installed/html/grammars/html.wasm`))),
-);
+const wasmPath = new URL("../assets/zed-grammars/grammars/html.wasm", import.meta.url);
+const available = existsSync(wasmPath);
+if (available) parser.setLanguage(await loadLanguage(new Uint8Array(readFileSync(wasmPath))));
 
 // Every node with its range: catches reused nodes left at wrong offsets by a bad edit.
 const shape = (node: Node): string =>
   `${node.type}[${node.startIndex},${node.endIndex},${node.startPosition.row}:${node.startPosition.column}](${node.children.map((c) => shape(c!)).join(" ")})`;
 
-test("each transaction: one Tree.edit per change, parse gets the edited old tree, result equals a full parse", () => {
+test("each transaction: one Tree.edit per change, parse gets the edited old tree, result equals a full parse", { skip: !available }, () => {
   // Sibling elements, so a misplaced edit leaves a reused node at a wrong offset.
   let state = EditorState.create({ doc: "<a>é</a>\n<b>2</b>\n<i>3</i>\n<s>4</s>\n<u>5</u>\n" });
   let tree = parseDoc(parser, state.doc, null)!;
@@ -62,7 +62,7 @@ test("each transaction: one Tree.edit per change, parse gets the edited old tree
   }
 });
 
-test("R-30: a parse in slices gives the thread back between slices and ends with the same tree as one parse", async () => {
+test("R-30: a parse in slices gives the thread back between slices and ends with the same tree as one parse", { skip: !available }, async () => {
   const state = EditorState.create({ doc: '<div class="row"><span id="a1">some text &amp; more</span></div>\n'.repeat(20000) });
   let ticks = 0;
   const timer = setInterval(() => ticks++, 1); // runs only if a slice ends and the event loop turns

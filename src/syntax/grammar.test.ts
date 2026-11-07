@@ -1,22 +1,24 @@
-// SPEC R-9 V1. Reads the installed Zed HTML extension directly (D-13): this PC only.
+// ORDER-11 V1: ignored pinned copies only; no installed Zed files.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { Parser, type Language } from "web-tree-sitter";
-import { compileQuery, loadLanguage, skipDylinkNeeded, themeKey } from "./grammar.ts";
+import { compileQuery, loadLanguage, predicateRegex, skipDylinkNeeded, themeKey } from "./grammar.ts";
 
-const ext = `${process.env.LOCALAPPDATA}/Zed/extensions/installed/html`;
-const wasm = new Uint8Array(readFileSync(`${ext}/grammars/html.wasm`));
-const scm = (name: string) => readFileSync(`${ext}/languages/html/${name}.scm`, "utf8");
+const root = new URL("../assets/zed-grammars/", import.meta.url);
+const wasmPath = new URL("grammars/html.wasm", root);
+const available = existsSync(wasmPath);
+const scm = (name: string) => readFileSync(new URL(`languages/html/${name}.scm`, root), "utf8");
 
 await Parser.init();
 let html: Language;
+if (available) html = await loadLanguage(new Uint8Array(readFileSync(wasmPath)));
 
-test("D-12: html.wasm fails as is, loads from the patched in-memory copy, the original stays intact", async () => {
+test("D-12: the dylink workaround only retags NEEDED on an in-memory copy", async () => {
+  const encode = (text: string) => [...new TextEncoder().encode(text)];
+  const wasm = new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 0, 20, 8, ...encode("dylink.0"), 2, 9, 1, 7, ...encode("libc.so")]);
   const before = wasm.slice();
   await assert.rejects(loadLanguage(new Uint8Array(0)));
-  await assert.rejects(import("web-tree-sitter").then(({ Language }) => Language.load(wasm)));
-  html = await loadLanguage(wasm);
   assert.deepEqual(wasm, before);
   assert.notDeepEqual(skipDylinkNeeded(wasm), wasm);
 });
@@ -27,7 +29,7 @@ const parse = (source: string) => {
   return parser.parse(source)!;
 };
 
-test("the six .scm compile and highlights.scm yields captures", () => {
+test("the six .scm compile and highlights.scm yields captures", { skip: !available }, () => {
   for (const name of ["brackets", "highlights", "indents", "injections", "outline", "overrides"]) {
     assert.doesNotThrow(() => compileQuery(html, scm(name)), name);
   }
@@ -38,7 +40,7 @@ test("the six .scm compile and highlights.scm yields captures", () => {
   );
 });
 
-test("W-9 predicates P-1..P-7", () => {
+test("W-9 predicates P-1..P-7", { skip: !available }, () => {
   const injections = compileQuery(html, scm("injections"));
   const brackets = compileQuery(html, scm("brackets"));
   const injected = (source: string) =>
@@ -60,11 +62,8 @@ test("W-9 predicates P-1..P-7", () => {
   assert.deepEqual(props("<div></div>", "<div>"), [{ "newline.only": null, "rainbow.exclude": null }]); // P-7
 });
 
-test("T-27.1: longest dot-boundary prefix among Mocha syntax keys, else no style", () => {
-  const catppuccin = JSON.parse(
-    readFileSync(`${process.env.LOCALAPPDATA}/Zed/extensions/installed/catppuccin/themes/catppuccin-mauve.json`, "utf8"),
-  );
-  const keys = new Set(Object.keys(catppuccin.themes.find((t: any) => t.name === "Catppuccin Mocha").style.syntax));
+test("T-27.1: longest dot-boundary prefix among theme syntax keys, else no style", () => {
+  const keys = new Set(["tag", "tag.doctype", "punctuation", "punctuation.bracket", "string", "string.special", "keyword"]);
   assert.equal(themeKey("tag.doctype", keys), "tag.doctype"); // exact key
   assert.equal(themeKey("punctuation.bracket.html", keys), "punctuation.bracket"); // longest prefix
   assert.equal(themeKey("string.special", keys), "string.special");
@@ -72,7 +71,7 @@ test("T-27.1: longest dot-boundary prefix among Mocha syntax keys, else no style
   assert.equal(themeKey("nothing.here", keys), null);
 });
 
-test("range units: QueryOptions indexes are bytes (code units x 2), Node indexes are code units", () => {
+test("range units: QueryOptions indexes are bytes (code units x 2), Node indexes are code units", { skip: !available }, () => {
   const source = "<p>é</p><b>x</b>"; // `<b>` starts at code unit 8
   const query = compileQuery(html, scm("highlights"));
   const tags = (from: number, to: number) =>
@@ -81,30 +80,11 @@ test("range units: QueryOptions indexes are bytes (code units x 2), Node indexes
   assert.deepEqual(tags(8, 16), [["b", 9], ["b", 14]]);
 });
 
-// R-19 other grammar: TOML extension (Markdown/JSON are built into Zed, not extensions; user 2026-11-05).
-const tomlExt = `${process.env.LOCALAPPDATA}/Zed/extensions/installed/toml`;
-const tomlScm = ["brackets", "highlights", "indents", "injections", "outline", "overrides", "redactions", "textobjects"];
-
-test("TOML: toml.wasm loads with or without the dylink workaround, the eight .scm compile, a sample parses cleanly", async () => {
-  const bytes = new Uint8Array(readFileSync(`${tomlExt}/grammars/toml.wasm`));
-  // It also lists libc.so as NEEDED, yet loads as is (unlike html.wasm); the app patches every grammar the same way.
-  assert.notDeepEqual(skipDylinkNeeded(bytes), bytes);
-  await import("web-tree-sitter").then(({ Language }) => Language.load(bytes));
-  const toml = await loadLanguage(bytes);
-  for (const name of tomlScm) {
-    assert.doesNotThrow(() => compileQuery(toml, readFileSync(`${tomlExt}/languages/toml/${name}.scm`, "utf8")), name);
-  }
-  const parser = new Parser();
-  parser.setLanguage(toml);
-  const tree = parser.parse('# c\n[server]\nname = "a\tb"\nport = 8080\nok = true\nlist = [1, 2]\n')!;
-  assert.equal(tree.rootNode.hasError, false);
-  const highlights = compileQuery(toml, readFileSync(`${tomlExt}/languages/toml/highlights.scm`, "utf8"));
-  const names = [...new Set(highlights.captures(tree.rootNode).map((c) => c.name))].sort();
-  const catppuccin = JSON.parse(
-    readFileSync(`${process.env.LOCALAPPDATA}/Zed/extensions/installed/catppuccin/themes/catppuccin-mauve.json`, "utf8"),
-  );
-  const keys = new Set(Object.keys(catppuccin.themes.find((t: any) => t.name === "Catppuccin Mocha").style.syntax));
-  assert.equal(themeKey("property", keys), "property");
-  assert.equal(themeKey("string.escape", keys), "string.escape");
-  assert.equal(themeKey("punctuation.bracket", keys), "punctuation.bracket");
+test("K-50: the two pinned regex forms preserve matching and rejection", () => {
+  const jsdoc = new RegExp(predicateRegex("(?s)^/[*][*][^*].*[*]/$"));
+  assert.ok(jsdoc.test("/** docs\nmore docs */"));
+  assert.equal(jsdoc.test("/* ordinary comment */"), false);
+  const sql = new RegExp(predicateRegex("^(#|#\\s+)(?i:sql)\\s*$"));
+  assert.ok(sql.test("# SQL "));
+  assert.equal(sql.test("# sqlite"), false);
 });

@@ -1,4 +1,4 @@
-// Grammar WASM + queries of an installed Zed extension (SPEC R-9, D-11/D-12/D-13).
+// Pinned grammar WASM + Zed queries (ORDER-11, D-8/D-18).
 // Environment-free: the caller supplies the bytes/text, so node tests read the same files from disk.
 import { Language, Query } from "web-tree-sitter";
 
@@ -35,13 +35,17 @@ export function skipDylinkNeeded(original: Uint8Array): Uint8Array {
 
 export const loadLanguage = (wasm: Uint8Array) => Language.load(skipDylinkNeeded(wasm));
 
-/** Grammar file and query names inside an extension, from its id only (Markdown/JSON: same shape). */
-export const grammarPaths = (id: string) => ({
-  wasm: `${id}/grammars/${id}.wasm`,
-  highlights: `${id}/languages/${id}/highlights.scm`,
-});
+/** K-50: preserve the meaning of the four pinned Rust-regex predicates in JS. */
+export function predicateRegex(pattern: string): string {
+  // shortcut: only the pinned JSDoc dot-all pattern and Python SQL flag group; review new query revisions separately.
+  return (pattern === "(?s)^/[*][*][^*].*[*]/$" ? "^/[*][*][^*][\\s\\S]*[*]/$" : pattern).replaceAll("(?i:sql)", "[sS][qQ][lL]");
+}
 
-export const compileQuery = (language: Language, source: string) => new Query(language, source);
+export const compileQuery = (language: Language, source: string) => new Query(language, source.replace(
+  /(\(#(?:not-)?match\?\s+@[^\s()]+\s+)("(?:\\.|[^"\\])*")/g,
+  (whole, prefix: string, literal: string) => literal.includes("(?s)") || literal.includes("(?i:sql)")
+    ? prefix + JSON.stringify(predicateRegex(JSON.parse(literal))) : whole,
+));
 
 /** T-27.1: the longest theme key that matches the capture name on a dot boundary, else null. */
 export function themeKey(capture: string, keys: ReadonlySet<string>): string | null {

@@ -1,7 +1,7 @@
 // CM6 <-> Tree-sitter incremental parsing (SPEC R-11). Indexes and Points are UTF-16 code units
 // (web-tree-sitter 0.27.1; only QueryOptions takes bytes).
 import type { ChangeSet, Text } from "@codemirror/state";
-import { Edit, type Parser, type Point, type Tree } from "web-tree-sitter";
+import { Edit, type Parser, type Point, type Range, type Tree } from "web-tree-sitter";
 
 const point = (doc: Text, pos: number): Point => {
   const line = doc.lineAt(pos);
@@ -47,10 +47,11 @@ export function parseDoc(parser: Parser, doc: Text, oldTree: Tree | null): Tree 
  * scrolling and menus stay live. A cancelled web-tree-sitter parse resumes where it stopped on the next call, so `parser`
  * must belong to this parse alone. `stop` says the result is no longer wanted (the view went away); null is returned then.
  */
-export async function parseDocSliced(parser: Parser, doc: Text, sliceMs: number, stop: () => boolean): Promise<Tree | null> {
+export async function parseDocSliced(parser: Parser, doc: Text, sliceMs: number, stop: () => boolean, oldTree: Tree | null = null, includedRanges?: Range[]): Promise<Tree | null> {
   for (;;) {
     const start = performance.now();
-    const tree = parser.parse((index) => (index < doc.length ? doc.sliceString(index, index + CHUNK) : undefined), null, {
+    const tree = parser.parse((index) => (index < doc.length ? doc.sliceString(index, index + CHUNK) : undefined), oldTree, {
+      includedRanges,
       progressCallback: () => performance.now() - start > sliceMs, // true cancels this slice
     });
     if (tree) return tree;

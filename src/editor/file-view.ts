@@ -1,11 +1,10 @@
 import { Annotation, Compartment, EditorState, Transaction } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 import { syntaxHighlighting } from "../syntax/highlight.ts";
+import { languages } from "../syntax/assets.ts";
+import { fileLanguage } from "../syntax/catalog.ts";
 import { isFarJump } from "../workspace/nav-history.ts";
 import { editorExtensions } from "./extensions.ts";
-
-// D-1 / R-26: only these files get the v0.1 grammars; every other extension stays plain.
-const HIGHLIGHTED = new Set(["html", "toml"]);
 
 /** `peers`: the other views of the same file (D-8: one file in two Panes); `keeper`: the one with the file's undo history. */
 export type ViewHooks = {
@@ -40,6 +39,7 @@ export function extensionOf(path: string): string {
  */
 export function createFileView(text: string, path: string, editable: boolean, hooks: ViewHooks): EditorView {
   const extension = extensionOf(path);
+  const language = fileLanguage(languages, path);
   return new EditorView({
     dispatchTransactions(trs, view) {
       view.update(trs);
@@ -72,7 +72,7 @@ export function createFileView(text: string, path: string, editable: boolean, ho
           hooks.changed();
           if (update.transactions.some((tr) => tr.docChanged && !tr.annotation(synced) && tr.annotation(Transaction.userEvent) !== undefined)) hooks.edited();
         }),
-        ...(HIGHLIGHTED.has(extension) ? [syntaxHighlighting(extension)] : []),
+        ...(language ? [syntaxHighlighting(language)] : []),
       ],
     }),
   });
