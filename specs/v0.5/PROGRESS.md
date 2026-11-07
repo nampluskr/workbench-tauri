@@ -214,7 +214,7 @@
 
 ## 사용자 요청 작업
 
-없음.
+- **HERDR 구성 규칙 추가** (2026-11-07, W-11): `HERDR-SETUP.md` 1장에 Codex 한도가 바닥나면 `tauri-coder`를 Claude Code Sonnet 5.5 high로 바꾼다는 규칙(core D-16, 사용자 결정)을 적었다. 지금은 쿠폰 적용으로 Codex gpt-6.1-sol medium 그대로다. 검증 V0(문서만).
 
 ## 버전 종료
 

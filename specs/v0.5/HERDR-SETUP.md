@@ -25,7 +25,13 @@
 - worktree는 두지 않는다. coder가 하나라 같은 checkout에서 겹치지 않는다(core D-2).
 - 리뷰 독립성: coder(Codex)와 writer(Claude)의 산출물은 checker(agy)가 검토한다(core D-2).
 - 측정자는 직접 고치지 않는다. checker는 불일치 목록을 leader에게 보고한다(루트 `AGENTS.md` 3A.4의 7).
-- Codex는 coder에만 쓴다. 두 갈래 coder가 같은 Codex 구독을 나눠 쓴다. 한도가 바닥나면 쿠폰을 직접 쓰지 않고 core-leader에게 `[BLOCKED]`로 알린다(ORDER-01 3.2).
+- Codex는 coder에만 쓴다. 두 갈래 coder가 같은 Codex 구독을 나눠 쓴다.
+- Codex 한도가 바닥날 때(사용자 결정, core D-16, 2026-11-07):
+  - coder의 Codex 5시간 한도가 바닥나면 기다리거나 쿠폰을 쓰지 않고, coder를 Claude Code Sonnet 5.5 high로 바꿔 이어서 한다. impl 탭 coder pane에서 `claude --model sonnet --effort high`로 띄우고 이름은 그대로 `tauri-coder`다.
+  - 바꾼 시각과 모델은 바꿀 때 leader가 writer 카드로 이 문서와 PROGRESS에 적게 한다.
+  - Codex가 돌아온 뒤 되돌릴지는 leader가 카드 경계(진행 중인 카드가 끝난 때)에서 정한다.
+  - checker(agy) 리뷰는 그대로다.
+  - 지금(2026-11-07)은 쿠폰 적용으로 Codex gpt-6.1-sol medium 그대로다.
 - Phase가 바뀔 때 서브 에이전트의 컨텍스트를 비운다. 할 일이 없는 서브 에이전트는 닫아도 된다(core D-2). ORDER-01 완료 시점에는 셋 모두 떠 있어야 한다.
 - 검증 수준(V0~V4)과 앱 실행 제한은 루트 `AGENTS.md` 3A를 그대로 쓴다.
 
