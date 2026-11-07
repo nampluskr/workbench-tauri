@@ -93,12 +93,15 @@ function rawValue(style: ThemeStyle, token: Token): string | undefined {
   return typeof v === "string" ? v : undefined; // absent and null both count as "no value"
 }
 
-/** Token -> canonical color for the target tokens, JSON value first, then T-26. */
-export function resolveTokens(style: ThemeStyle): Record<Token, string> {
+/**
+ * Token -> canonical color for the target tokens: JSON value, T-26 derivation from the same theme,
+ * the `base` theme's value (the One theme of the same appearance), then the fixed T-26 value.
+ */
+export function resolveTokens(style: ThemeStyle, base?: ThemeStyle): Record<Token, string> {
   const out = {} as Record<Token, string>;
   for (const token of TARGET_TOKENS) {
     const from = FALLBACK_FROM[token];
-    const value = rawValue(style, token) ?? (from && rawValue(style, from)) ?? FALLBACK_VALUE[token];
+    const value = rawValue(style, token) ?? (from && rawValue(style, from)) ?? (base && rawValue(base, token)) ?? FALLBACK_VALUE[token];
     if (value === undefined) throw new Error(`theme has no value for ${token}`);
     out[token] = formatColor(parseColor(value));
   }

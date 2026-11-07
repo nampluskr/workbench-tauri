@@ -5,6 +5,7 @@ import Icon from "../shell/Icon.tsx";
 import AppMenu, { isContextMenuOpen, openContextMenu } from "../shell/AppMenu.tsx";
 import { commands } from "../keymap/keyboard.ts";
 import { SETTINGS_DROPDOWN_OFFSET_Y } from "../spec/metrics.ts";
+import { themeNames } from "../theme/themes.ts";
 import { filterSettings, settingMenu, type SettingKey } from "./model.ts";
 import { saveSetting, settings } from "./load.ts";
 import "./settings.css";
@@ -48,7 +49,7 @@ export default function SettingsWindow() {
                 let items: ReturnType<typeof settingMenu> = [];
                 const open = (button: HTMLButtonElement, last = false) => {
                   if (saving()) return;
-                  items = settingMenu(row.key as "theme" | "icon_theme", String(settings()[row.key]), (value) => void save(row.key, value));
+                  items = settingMenu(row.key as "theme" | "icon_theme", String(settings()[row.key]), (value) => void save(row.key, value), themeNames);
                   const at = button.getBoundingClientRect();
                   openContextMenu({ x: at.right, y: at.bottom + SETTINGS_DROPDOWN_OFFSET_Y }, items, true);
                   commands.get(last ? "menu::SelectLast" : "menu::SelectFirst")?.();

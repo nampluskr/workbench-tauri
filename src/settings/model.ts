@@ -1,11 +1,11 @@
 import { stripJsonc } from "../keymap/user.ts";
 import type { KeymapSection } from "../keymap/engine.ts";
 import type { MenuItem } from "../shell/menu.ts";
+import { DEFAULT_THEME } from "../theme/registry.ts";
 
 export const SETTINGS_BINDINGS: KeymapSection[] = [{ context: "Workspace", bindings: { "ctrl-,": "zed::OpenSettings" } }];
 
-export const THEMES = ["Catppuccin Mocha", "Catppuccin Latte", "One Light"] as const;
-export const DEFAULTS = { theme: "Catppuccin Mocha", icon_theme: "Zed (Default)", ui_font_size: 16, buffer_font_size: 15 };
+export const DEFAULTS = { theme: DEFAULT_THEME as string, icon_theme: "Zed (Default)", ui_font_size: 16, buffer_font_size: 15 };
 export type Settings = typeof DEFAULTS;
 export type SettingKey = keyof Settings;
 // Labels and descriptions: Zed 4304dec732, crates/settings_ui/src/page_data.rs (appearance_page).
@@ -22,27 +22,28 @@ function object(text: string): Record<string, unknown> {
   return value as Record<string, unknown>;
 }
 
-export function validSetting(key: SettingKey, value: unknown): boolean {
-  if (key === "theme") return typeof value === "string" && THEMES.some((name) => name === value);
+/** `themes` is the registry list (src/theme/themes.ts): a theme name outside it is invalid. */
+export function validSetting(key: SettingKey, value: unknown, themes: readonly string[]): boolean {
+  if (key === "theme") return typeof value === "string" && themes.includes(value);
   if (key === "icon_theme") return value === DEFAULTS.icon_theme;
   return typeof value === "number" && Number.isFinite(value) && value > 0;
 }
 
-export function parseSettings(text: string | null): Settings {
+export function parseSettings(text: string | null, themes: readonly string[]): Settings {
   let raw: Record<string, unknown> = {};
   try { if (text?.trim()) raw = object(text); } catch { /* Invalid files use defaults without rewriting them. */ }
-  return Object.fromEntries(Object.entries(DEFAULTS).map(([key, fallback]) => [key, validSetting(key as SettingKey, raw[key]) ? raw[key] : fallback])) as Settings;
+  return Object.fromEntries(Object.entries(DEFAULTS).map(([key, fallback]) => [key, validSetting(key as SettingKey, raw[key], themes) ? raw[key] : fallback])) as Settings;
 }
 
 export const filterSettings = (query: string) => ROWS.filter((row) =>
   query.toLowerCase().trim().split(/\s+/).every((term) => `Appearance ${row.section} ${row.name} ${row.description}`.toLowerCase().includes(term)));
 
-export const settingMenu = (key: "theme" | "icon_theme", current: string, change: (value: string) => void): MenuItem[] =>
-  (key === "theme" ? [...THEMES] : [DEFAULTS.icon_theme]).map((name) => ({ label: name, checked: name === current, run: () => change(name) }));
+export const settingMenu = (key: "theme" | "icon_theme", current: string, change: (value: string) => void, themes: readonly string[]): MenuItem[] =>
+  (key === "theme" ? themes : [DEFAULTS.icon_theme]).map((name) => ({ label: name, checked: name === current, run: () => change(name) }));
 
 /** Replace top-level value spans only; preserve comments, unknown keys, BOM and whitespace. */
-export function updateSetting(text: string | null, key: SettingKey, value: string | number): string {
-  if (!validSetting(key, value)) throw new Error(`Invalid ${key}.`);
+export function updateSetting(text: string | null, key: SettingKey, value: string | number, themes: readonly string[]): string {
+  if (!validSetting(key, value, themes)) throw new Error(`Invalid ${key}.`);
   const original = text ?? "{}\n";
   object(original); // Refuse to overwrite malformed files.
   const allTokens = [...original.matchAll(/"(?:\\.|[^"\\])*"|\/\*[\s\S]*?\*\/|\/\/[^\r\n]*|[{}\[\],:]|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|true|false|null/g)];

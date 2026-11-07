@@ -1,12 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { findTheme, parseColor, resolveTokens, themeCss, type ThemeFile } from "./theme.ts";
+import { readdirSync, readFileSync } from "node:fs";
+import { BASE_THEME, buildRegistry, pickTheme } from "./registry.ts";
+import { parseColor, resolveTokens, themeCss } from "./theme.ts";
 
-const load = (path: string | URL) => JSON.parse(readFileSync(path, "utf8")) as ThemeFile;
-// Catppuccin comes from the installed Zed extension (D-13): this test runs on this PC only.
-const catppuccin = load(`${process.env.LOCALAPPDATA}/Zed/extensions/installed/catppuccin/themes/catppuccin-mauve.json`);
-const one = load(new URL("./assets/one/one.json", import.meta.url));
+// Every theme JSON under assets/ (committed one/ plus the .gitignore copies when present).
+const assets = new URL("./assets/", import.meta.url);
+const files = Object.fromEntries(readdirSync(assets, { recursive: true, encoding: "utf8" })
+  .filter((p) => p.endsWith(".json")).map((p) => [p, readFileSync(new URL(p.replaceAll("\\", "/"), assets), "utf8")]));
+const registry = buildRegistry(files);
 
 // PROGRESS Phase 2 table 1 (R-7) with the CSS variable names fixed in W-7.
 const VARS: [token: string, cssVar: string][] = [
@@ -58,22 +60,17 @@ test("parseColor: #RRGGBB has alpha 255, #RRGGBBAA keeps it, anything else is re
   assert.throws(() => parseColor("#1e1e2"));
 });
 
-for (const [file, name] of [
-  [catppuccin, "Catppuccin Mocha"],
-  [catppuccin, "Catppuccin Latte"],
-  [one, "One Light"],
-] as const) {
-  test(`${name}: the target tokens equal the JSON value or the T-26 value`, () => {
-    const { style } = findTheme(file, name);
-    const css = themeCss(resolveTokens(style));
+for (const { name, appearance, style } of registry) {
+  test(`${name}: the target tokens equal the JSON value, the T-26 value or the One base value`, () => {
+    const base = pickTheme(registry, BASE_THEME[appearance]).style;
+    const css = themeCss(resolveTokens(style, base));
     const vars = new Map([...css.matchAll(/(--[\w-]+): (#[0-9a-f]{8});/g)].map((m) => [m[1], m[2]]));
     assert.equal(vars.size, VARS.length);
     for (const [token, cssVar] of VARS) {
-      const raw = token === "players[0].selection" ? (style.players?.[0] as any).selection : style[token];
-      // T-26.3: no value for the active thumb in any theme here -> the plain thumb color.
-      if (token === "scrollbar.thumb.active_background") assert.equal(raw ?? null, null);
-      // T-26.3 / T-26.4: the token each one falls back to when the JSON has none; T-26.13: a fixed value.
-      const expected = raw ?? (token === "drop_target.border" ? "#d7dadf" : style[token === "pane_group.border" ? "border" : "scrollbar.thumb.background"]);
+      const pick = (s: typeof style) => (token === "players[0].selection" ? (s.players?.[0] as any)?.selection : s[token]);
+      // T-26.3 / T-26.4: derived from another token of the same theme; T-26.13: a fixed value; else the base theme.
+      const derived = token === "pane_group.border" ? style.border : token === "scrollbar.thumb.active_background" ? style["scrollbar.thumb.background"] : undefined;
+      const expected = pick(style) ?? derived ?? pick(base) ?? (token === "drop_target.border" ? "#d7dadf" : undefined);
       assert.deepEqual(parseColor(vars.get(cssVar)!), parseColor(expected as string), `${token} -> ${cssVar}`);
     }
   });
