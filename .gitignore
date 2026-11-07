@@ -5,3 +5,8 @@ src-tauri/target/
 src-tauri/gen/schemas/
 .serena/
 src/assets/zed-icons/
+src/theme/assets/zed/
+src/theme/assets/catppuccin/
+src/theme/assets/macos-classic/
+src/assets/icon-themes/catppuccin-icons/
+src/assets/icon-themes/zed/
