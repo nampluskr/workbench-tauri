@@ -405,6 +405,31 @@
   - 검증: V1. typecheck 통과, `npm run test` 194/194(`breadcrumbs.test.ts` 4개)(`%TEMP%\v05-K-40-report.md`).
   - 실측 필요(V3): 툴바 높이 45, 경로 줄 글자 x·크기(14가 맞는지)·색, 제목 색, 폴더 둘, 분할.
 - **W-28 문서** (2026-11-07): SPEC R-10(이동 기록 규칙·구현)·R-11·R-12(범위·구현)·R-16·R-23 구현, DECISIONS D-14, 이 PROGRESS K-38~K-40. 검증 V0(문서만).
+- **ORDER-09 V3** (2026-11-07, tauri-leader, 1920×1080·100%, 창 1440×852, One Dark)
+  - 무엇을 했나: 경로 줄·탭 툴팁·뒤로/앞으로·오른쪽 버튼 조건·탭 넘침을 재고 Zed 확인(W-27)과 맞췄다. 결과 파일 `specs/v0.5/verify/ORDER-09/tauri-v3-one.json`·`tauri-v3-two.json`·`tauri-one-*.png`·`tauri-two-*.png`.
+  - 앱 실행 4회(매번 띄운 PID만 닫음):
+    1. 1·2회(폴더 하나·둘): 측정 스크립트가 스크롤된 트리 항목 대신 상태 바 진단 버튼을 눌러 Diagnostics 탭("No problems")이 열렸다(앱 문제 아님, K-41에서 앱 쪽 경로를 찾지 못한 것과 맞음). 경로 줄에 제목이 나오지 않았다 → K-41.
+    2. 3·4회(K-41 뒤): 아래 결과.
+  - 결과(3·4회):
+    - 같음: 경로 줄 `AGENTS.md › # AGENTS`(열자마자), 5행 `… › ## 레포 규칙`, 코드 파일 `src\App.tsx`(경로만, D-14), 폴더 둘 `workbench-tauri\AGENTS.md › # AGENTS`. 탭 툴팁 `D:\projects\workbench-tauri\AGENTS.md`. Go Back 툴팁 `Go Back Alt-Left`, 기록 없을 때 버튼 비활성, 이동 순서 Zed와 같음. 프로젝트 패널에 포커스가 있으면 오른쪽 버튼 숨김(hover에도). 탭 13개 넘침(scrollWidth 1510 / 812), 휠 한 칸 78px, 활성 탭 보임.
+    - 다름 → K-42: 경로 줄 글자 시작 x tauri 8 대 Zed 12. K-42는 코드 확인만 했고 재측정은 하지 않았다.
+    - 재지 않음: tauri 프로젝트 패널이 한 번에 한 폴더만 보여, 둘째 폴더(workbench-core) 파일 열기는 측정하지 않았다.
+  - 특이사항: Zed 확인과 tauri 실행 전후 두 레포 `git status`를 확인했다. `.zed` 없음, 앱·Zed가 쓴 파일 없음(core의 `PROGRESS.md` 수정·`ORDER-10.md`·`docs/`는 core-leader 것).
+- **K-41 경로 줄 제목이 안 나오던 것 (R-12 / I-12, V3 불일치)** (2026-11-07, 커밋 `3d64c73`)
+  - 무엇을 했나: 제목 신호를 탭 파일을 만들 때 미리 건네고(`newFile`·`twinOf`), 편집기가 생기면 값만 갱신하게 했다(`src/editor/headings.ts` `createHeadings`).
+  - 원인: K-40은 제목 신호를 편집기 생성 뒤 탭 파일에 붙였다. 탭이 생기자마자 먼저 그려진 경로 줄은 그때 신호가 없어 구독하지 못했고, 뒤에 신호가 붙어도 다시 그려지지 않았다.
+  - 결과: 3·4회 V3에서 제목이 나왔다. "No problems" 탭은 앱의 키맵·클릭 경로에서 재현되지 않아 코드는 바꾸지 않았다(측정 스크립트의 클릭이 원인).
+  - 검증: V1. typecheck 통과, `npm run test` 196/196(`headings.test.ts` 2개)(`%TEMP%\v05-K-41-report.md`).
+- **K-42 경로 줄 안쪽 여백 4 (R-12 / I-12, V3 불일치)** (2026-11-07, 커밋 `0c6355f`)
+  - 무엇을 했나: `.breadcrumbs`에 `padding-inline: var(--buttons-padding-x-default-compact)`(toml `buttons.padding_x.default_compact` 4, L-07)를 줬다.
+  - 원인: Zed 툴바 왼쪽 padding 8(`toolbar.rs:123-124`) 안에서 경로 줄이 `ButtonLike`로 한 번 더 싸여 좌우 4가 붙는다(`element.rs:7208-7211`, `button_like.rs:817-821`). 그래서 글자 시작이 8 + 4 = 12다. tauri는 이 4가 없어 8이었다.
+  - 결과: 글자 시작 12(코드 확인). Diagnostics 툴바와 미리보기 버튼 위치는 바뀌지 않는다.
+  - 검증: V1. typecheck 통과, `npm run test` 196/196(`%TEMP%\v05-K-42-report.md`). 재측정 안 함.
+- **C-26 리뷰 (K-37~K-42)** (2026-11-07, tauri-checker)
+  - 결과: PASS. 이동 기록 무한 루프·폭주 방지, 닫힌 탭 재오픈 때 작업 공간 밖 경로 차단, 1024 상한, 제목 텍스트 XSS 없음(텍스트 노드), 넘치지 않을 때 휠 차단 없음, 하드코딩 수치·인라인 style·경고 억제 없음, 의존성·CSP·capability 무변경, `spec/` gpui와 같음.
+  - 검증: typecheck 통과, `npm run test` 196/196, `cargo test` 25개, clippy 경고 0(`%TEMP%\v05-C-26-report.md`).
+  - 참고: `src-tauri/src/folder_watch.rs:169` `missing_root_is_watched_after_creation_and_recreation`는 파일시스템 알림을 기다리는 테스트라 부하 때 드물게 시간 초과가 날 수 있다(재실행 25/25). `spec/ambiguous.md:111`에 gpui W-40의 "해소" 주석이 생겼다(기능 영향 없음).
+- **W-29 Phase 9 마무리 문서** (2026-11-07): V3·K-41·K-42·C-26 기록, PLAN Phase 9 "완료(core 판정 대기)". 검증 V0(문서만).
 
 ## 사용자 요청 작업
 
