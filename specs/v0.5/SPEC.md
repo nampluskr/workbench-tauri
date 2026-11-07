@@ -222,14 +222,14 @@ tauri-leader 2026-11-07, 캡처 `specs/v0.5/verify/ORDER-06/zed-v-menu.png`(1440
 - 타이틀 바: 보이는 글자 없이 창 버튼과 끌기 영역만 둔다(K-14). 문서 제목은 "Settings"다. 창 버튼의 hover·눌림·활성 상태는 창(HWND)마다 따로 둔다.
 - 왼쪽 탐색: 검색칸에 Zed `MagnifyingGlass` → `magnifying_glass.svg` 16px, 안쪽 왼쪽 padding 6·오른쪽 2·gap 6(`settings.search.*`). 범주 행은 `chevron_right.svg` + 글자 14px(L-05). 범주는 Appearance 하나라 펼침 기능은 두지 않고 Zed 캡처의 닫힌 아이콘으로 보인다.
 - 위 줄: 범위 칩 `User` 하나(글자 14px, 높이 22, 좌우 padding 4, 반경 4, 선택 배경 테마 `info.background` — Zed Tinted(Accent)). `Edit in settings.json`은 파일이 없으면 `{}`로 만들고 메인 창의 편집기 탭으로 열며 메인 창을 앞으로 가져온다.
-- 행: Appearance 페이지에 소제목 Theme·UI Font·Buffer Font(12px, `text.muted`, 버퍼 글꼴)를 두고, 그 아래 행을 둔다. 행 이름·설명은 Zed 커밋 `4304dec732`의 `crates/settings_ui/src/page_data.rs` 문구다.
+- 행: Appearance 페이지에 소제목 Theme·Buffer Font·UI Font(Zed 순서, K-16; 12px, `text.muted`, 버퍼 글꼴)를 두고, 그 아래 행을 둔다. 행 이름·설명은 Zed 커밋 `4304dec732`의 `crates/settings_ui/src/page_data.rs` 문구다.
 
 | 소제목 | 행 이름 | 설명 | 키 | 컨트롤·선택지 | 기본값 |
 |---|---|---|---|---|---|
 | Theme | Theme Name | The name of your selected theme. | `theme` | 드롭다운: Catppuccin Mocha, Catppuccin Latte, One Light | Catppuccin Mocha |
 | Theme | Icon Theme Name | The name of your selected icon theme. | `icon_theme` | 드롭다운: Zed (Default) | Zed (Default) |
-| UI Font | Font Size | Font size for UI elements. | `ui_font_size` | 숫자 입력 + 감소·증가 버튼(1 단위, 유한한 양수만) | 16 |
 | Buffer Font | Font Size | Font size for editor text. | `buffer_font_size` | 숫자 입력 + 감소·증가 버튼(1 단위, 유한한 양수만) | 15 |
+| UI Font | Font Size | Font size for UI elements. | `ui_font_size` | 숫자 입력 + 감소·증가 버튼(1 단위, 유한한 양수만) | 16 |
 
 *Settings 행 문구 표 (ORDER-06-R2, gpui 대조용)*
 
@@ -249,11 +249,11 @@ Zed 문구는 커밋 `4304dec732` `crates/settings_ui/src/page_data.rs`(`appeara
 | 행 설명 | `ui_font_size` | Font size for UI elements. | 1121 | 같음 |
 | 행 제목 | `buffer_font_size` | Font Size | 941 | 같음 |
 | 행 설명 | `buffer_font_size` | Font size for editor text. | 942 | 같음 |
-| 소제목 순서 | — | Theme → Buffer Font → UI Font(`concat_sections!` 1672~1675) | 1672~1675 | **다름**: Theme → UI Font → Buffer Font |
-| Theme 위 선택 행 | `theme` | Theme Mode / "Choose a static, fixed theme or dynamically select themes based on appearance and light/dark modes." | 563~564 | **다름**: 없음(Static일 때의 Theme Name 행만 둔다) |
-| Icon Theme Name 위 선택 행 | `icon_theme` | Icon Theme / "The custom set of icons Zed will associate with files and directories." | 742~743 | **다름**: 없음(Static일 때의 Icon Theme Name 행만 둔다) |
+| 소제목 순서 | — | Theme → Buffer Font → UI Font(`concat_sections!` 1672~1675) | 1672~1675 | 같음(K-16, core ORDER-06-R2 결정: 두 갈래 모두 Zed 순서) |
+| Theme 위 선택 행 | `theme` | Theme Mode / "Choose a static, fixed theme or dynamically select themes based on appearance and light/dark modes." | 563~564 | **다름 — 두지 않음**(core 결정 ORDER-06-R1·R2). Static일 때의 Theme Name 행만 둔다 |
+| Icon Theme Name 위 선택 행 | `icon_theme` | Icon Theme / "The custom set of icons Zed will associate with files and directories." | 742~743 | **다름 — 두지 않음**(core 결정 ORDER-06-R1·R2). Static일 때의 Icon Theme Name 행만 둔다 |
 
-- 네 행의 제목·설명 문구는 Zed와 같다. 다른 곳은 소제목 순서와 Theme Mode·Icon Theme 선택 행이 없는 것뿐이다(코드는 고치지 않았다, ORDER-06-R2는 문서만).
+- 네 행의 제목·설명 문구와 소제목 순서는 Zed와 같다(순서는 K-16). 다른 곳은 Theme Mode·Icon Theme 선택 행을 두지 않는 것뿐이며, core 결정(ORDER-06-R1·R2)에 따른 것이다.
 
 - 드롭다운: 네이티브 select가 아니라 글자 + `chevron_up_down.svg`의 테두리 버튼이다(높이 28, 좌우 padding 8, 글꼴 14, 아이콘 14, gap 4, 반경 4; L-05·L-06·L-07). 누르면 기존 앱 메뉴 팝업을 버튼 오른쪽 아래 기준 y=2px 아래에 연다. 클릭·Enter·Space·위/아래 화살표로 열고, 선택하면 바로 저장·적용, Escape는 저장하지 않고 닫는다. 숫자 컨트롤 구성(감소·값·증가)은 Zed `components/number_field.rs`를 따랐다(Zed의 modifier별 step은 넣지 않았다).
 - 검색: 페이지 제목(Appearance), 소제목, 행 이름, 설명에서 대소문자 구분 없이 공백으로 나눈 검색어 모두를 찾는다(Zed `build_search_index`가 같은 범위를 넣는다). Zed의 fuzzy·BM25 검색은 넣지 않았다.

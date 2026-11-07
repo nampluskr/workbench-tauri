@@ -33,7 +33,7 @@ export default function SettingsWindow() {
         <div class="settings-toolbar"><span class="settings-scope" aria-label="Settings scope: User">User</span><button onClick={() => void invoke("edit_user_settings").catch((error) => setError(String(error)))}>Edit in settings.json</button></div>
         <h1 id="appearance">Appearance</h1>
         <Show when={error()}><p role="alert">{error()}</p></Show>
-        <For each={["Theme", "UI Font", "Buffer Font"]}>{(section) => <Show when={rows().some((r) => r.section === section)}>
+        <For each={["Theme", "Buffer Font", "UI Font"]}>{(section) => <Show when={rows().some((r) => r.section === section)}>
           <h2>{section}</h2>
           <For each={rows().filter((r) => r.section === section)}>{(row) => <div class="settings-row">
             <div class="settings-copy"><label id={`label-${row.key}`} for={`setting-${row.key}`}>{row.name}</label><p id={`description-${row.key}`}>{row.description}</p></div>

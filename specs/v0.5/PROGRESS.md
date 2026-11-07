@@ -215,6 +215,7 @@
 - **ORDER-06-R2 tauri 문서 (R-2 / I-2, core ORDER-06-R2 2장)** (2026-11-07, 완료)
   - 무엇을 했나: W-12. SPEC R-2에 gpui가 대조할 표 두 개를 넣었다. (1) Extensions 화면 항목 표: 범주 칩·설치 상태 전환 순서, 검색 대상·규칙, 필터 조합, 정렬, 빈 상태 문구, 카드 필드별 출처·빈 값 처리·표시, 치수 스펙 ID(X-44~X-49). 근거는 `src/extensions/model.ts`·`Extensions.tsx`·`extensions.css`와 K-12 보고. (2) Settings 행 문구 표: Appearance 페이지 제목, 소제목 Theme·Buffer Font·UI Font, 네 행 제목·설명을 Zed `4304dec732` `page_data.rs` 문구와 줄 번호로 적고 앱 표시와 나란히 두었다. gpui SPEC R-2 Extensions 표를 읽어 다른 곳을 W-12 보고에 적었다(SPEC에는 쓰지 않음).
   - 결과: 완료. Settings 네 행의 제목·설명 문구는 Zed와 같다. 앱이 Zed와 다른 곳은 소제목 순서(앱 Theme → UI Font → Buffer Font, Zed Theme → Buffer Font → UI Font)와 Theme Mode·Icon Theme 선택 행이 없는 것이다(코드는 고치지 않음).
+  - 후속(core ORDER-06-R2 결정, 2026-11-07): 소제목 순서를 두 갈래 모두 Zed 순서 Theme → Buffer Font → UI Font로 맞췄다(K-16, 검증 V1). Theme Mode·Icon Theme 선택 행은 core 결정대로 두지 않는다. SPEC R-2 행 표·문구 표를 고쳤다(W-13).
   - 검증: 문서만(V0, 실행 없음). SPEC·PROGRESS 제어 문자 0개.
 
 ## 사용자 요청 작업

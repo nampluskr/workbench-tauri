@@ -12,8 +12,8 @@ export type SettingKey = keyof Settings;
 export const ROWS: { key: SettingKey; name: string; description: string; section: string }[] = [
   { key: "theme", name: "Theme Name", description: "The name of your selected theme.", section: "Theme" },
   { key: "icon_theme", name: "Icon Theme Name", description: "The name of your selected icon theme.", section: "Theme" },
-  { key: "ui_font_size", name: "Font Size", description: "Font size for UI elements.", section: "UI Font" },
   { key: "buffer_font_size", name: "Font Size", description: "Font size for editor text.", section: "Buffer Font" },
+  { key: "ui_font_size", name: "Font Size", description: "Font size for UI elements.", section: "UI Font" },
 ];
 
 function object(text: string): Record<string, unknown> {

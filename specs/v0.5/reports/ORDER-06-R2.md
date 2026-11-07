@@ -57,3 +57,11 @@
 
 ## 5. 커밋
 - 문서 커밋 1개("v0.5 Phase 6 ORDER-06-R2: ..."). push하지 않았다.
+
+## 6. 덧붙임 — Settings 소제목 순서 (core 결정 2026-11-07)
+- 결정: 두 갈래 모두 Zed 순서 Theme → Buffer Font → UI Font(`page_data.rs` `concat_sections!` 1672~1675). Theme Mode·Icon Theme Static/Dynamic 행은 두지 않는다.
+- coder K-16(V1): `src/settings/Settings.tsx` 소제목 배열과 `src/settings/model.ts` `ROWS`의 두 Font 행 순서만 바꿨다. 문구·값·저장은 그대로다. 키보드(Tab) 순서는 DOM 순서를 따르므로 따로 고칠 곳이 없다.
+- writer W-13: SPEC R-2의 소제목 나열, 행 표 순서, 행 문구 표("소제목 순서" → 같음, 선택 행 → 두지 않음과 근거)와 PROGRESS를 고쳤다.
+- 확인: typecheck 통과, 전체 test 131/131 통과(leader 실행). 앱은 실행하지 않았다(V1).
+- 남은 차이(tauri): 없음. 선택 행 두 개는 결정대로 두지 않았다.
+- 커밋 1개 더(push 안 함).
