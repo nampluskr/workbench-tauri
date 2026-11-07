@@ -803,6 +803,33 @@ I-9(기대 정정 core-leader, 사용자 위임 core D-13, 2026-11-07), 사용�
 
 I-10, 사용자 2026-11-06("zed와 동일하게").
 
+**Zed 확인(2026-11-07)**
+
+조건: core ORDER-09, Zed `4304dec` 설치본 `zed -n` 새 창, 1440×852, 100%, One Dark, 사용자 `base_keymap` VSCode. 캡처 `specs/v0.5/verify/ORDER-09/zed-*.png`.
+
+| 항목 | Zed | 캡처 |
+|---|---|---|
+| 뒤로 툴팁 | "Go Back" + `Alt-Left` | `zed-tip-back.png` |
+| 앞으로 툴팁 | "Go Forward" + `Alt-Right` | `zed-tip-forward.png` |
+| 기록이 없을 때 | 버튼이 흐림(비활성) | `zed-tip-back.png`·`zed-tip-forward.png` |
+
+이동 기록(상태 바 위치로 확인, `zed-nav-*.png`):
+
+| 순서 | 조작 | 결과 위치 |
+|---|---|---|
+| 1 | 시작 | AGENTS.md `5:23` |
+| 2 | `Ctrl-P`로 App.tsx 열기 | App.tsx `1:1` |
+| 3 | `Ctrl-G` 66 | App.tsx `66:1` |
+| 4 | `Alt-Left` | App.tsx `1:1` |
+| 5 | `Alt-Left` | AGENTS.md `5:23` |
+| 6 | `Alt-Right` | App.tsx `1:1` |
+| 7 | `Alt-Right` | App.tsx `66:1` |
+| 8 | `Ctrl-End` | App.tsx `75:1`(9줄 이동) |
+| 9 | `Alt-Left` | App.tsx `1:1`(`66:1`이 아님) |
+
+- 파일 열기와 Go to Line 점프는 기록되고, 9줄 커서 이동은 기록되지 않는다.
+- 기록 기준(최소 줄 수 등)은 coder가 Zed 소스로 확인한다(K-38).
+
 ---
 
 ## R-11. 탭 제목에 마우스를 올리면 파일 전체 경로를 툴팁으로 보인다
@@ -822,6 +849,15 @@ I-10, 사용자 2026-11-06("zed와 동일하게").
 **출처**
 
 I-11, 사용자 2026-11-06, 참고 화면 `refs/I-11-zed.png`.
+
+**Zed 확인(2026-11-07)**
+
+조건: core ORDER-09, Zed `4304dec` 설치본 `zed -n` 새 창, 1440×852, 100%, One Dark, 사용자 `base_keymap` VSCode. 캡처 `specs/v0.5/verify/ORDER-09/zed-*.png`.
+
+| 항목 | Zed | 캡처 |
+|---|---|---|
+| 탭 툴팁 | 탭 아래에 절대 경로 `D:\projects\workbench-tauri\AGENTS.md`(역슬래시) | `zed-tip-tab.png` |
+| "+" 버튼 툴팁 | "New…"(키 없음) | `zed-tip-plus.png` |
 
 ---
 
@@ -843,7 +879,25 @@ I-11, 사용자 2026-11-06, 참고 화면 `refs/I-11-zed.png`.
 
 I-12, 사용자 2026-11-06("zed와 동일하게"), 참고 화면 `refs/zed-overview.png`, `refs/zed-split.png`.
 
-미정: 코드 파일에서 Zed가 무엇을 보이는지(심볼 계층 등). 갈래가 Zed에서 확인해 이 절에 적는다(I-12 정한 것).
+미정: 코드 파일에서 Zed가 무엇을 보이는지(심볼 계층 등). 갈래가 Zed에서 확인해 이 절에 적는다(I-12 정한 것). → 아래 Zed 확인으로 정해졌다.
+
+**Zed 확인(2026-11-07)**
+
+조건: core ORDER-09, Zed `4304dec` 설치본 `zed -n` 새 창, 1440×852, 100%, One Dark, 사용자 `base_keymap` VSCode. 캡처 `specs/v0.5/verify/ORDER-09/zed-*.png`.
+
+자리: 편집 영역 위 툴바 왼쪽.
+
+| 경우 | Zed 경로 줄 | 캡처 |
+|---|---|---|
+| 폴더 하나, 마크다운 1행 | `AGENTS.md › # AGENTS` | `zed-a-start.png` |
+| 폴더 하나, 마크다운 5행 | `AGENTS.md › # AGENTS › ## 레포 규칙`(제목 전체 계층, 제목은 문법 색) | `zed-bc-md-h2.png` |
+| 하위 폴더 파일 | 루트 기준 상대 경로 `src\App.tsx`, `src\shell\Pane.tsx` | `zed-bc-code.png` 등 |
+| 코드 파일, 66행(심볼 안) | `src\App.tsx › function App()`(심볼 계층, 문법 색) | `zed-bc-code.png` |
+| 코드 파일, 1행(심볼 밖) | 경로만 `src\App.tsx` | `zed-bc-code.png` 계열 |
+| 폴더 둘 | 루트 폴더 이름부터: `workbench-tauri\AGENTS.md › # AGENTS`, `workbench-core\specs\v0.5\ITEMS.md › # ITEMS — workbench-core v0.5` | `zed-bc-two-*.png` |
+| 분할 | pane마다 자기 커서 기준: 왼쪽 `… › # AGENTS`, 오른쪽 6행 `… › # AGENTS › ## 레포 규칙` | `zed-split-right-click.png` |
+
+- 툴바 오른쪽 버튼: Zed는 미리보기(마크다운만)·검색·AI·커서·설정이다. 이 앱은 미리보기만 둔다(core ORDER-09).
 
 ---
 
@@ -960,7 +1014,19 @@ I-15, 사용자 2026-11-06.
 
 I-16, 사용자 2026-11-06("zed와 동일하게").
 
-미정: 탭이 실제로 넘칠 때 Zed가 어떻게 하는지. 갈래가 Zed에서 확인한다(I-16 확인한 사실).
+미정: 탭이 실제로 넘칠 때 Zed가 어떻게 하는지. 갈래가 Zed에서 확인한다(I-16 확인한 사실). → 아래 Zed 확인으로 정해졌다.
+
+**Zed 확인(2026-11-07)**
+
+조건: core ORDER-09, Zed `4304dec` 설치본 `zed -n` 새 창, 1440×852, 100%, One Dark, 사용자 `base_keymap` VSCode. 캡처 `specs/v0.5/verify/ORDER-09/zed-*.png`.
+
+| 항목 | Zed | 캡처 |
+|---|---|---|
+| 넘칠 때 탭 모양 | 탭은 원래 폭 그대로 한 줄, 좌우가 잘림. 스크롤 화살표·목록 버튼·스크롤바 없음 | `zed-overflow.png` |
+| 고정되는 것 | 뒤로/앞으로 버튼과 오른쪽 버튼 묶음은 고정, 탭 줄만 가로로 움직임 | `zed-overflow.png`, `zed-wheel-*.png` |
+| 마우스 휠 | 세로 휠 한 칸에 가로 약 80px 이동 | `zed-wheel-*.png` |
+| 키보드로 탭 바꾸기 | `Ctrl-PageUp` 등으로 바꾸면 활성 탭이 보이게 스크롤 | `zed-first-active.png` |
+| 새 탭 위치 | 활성 탭 바로 오른쪽 | `zed-overflow.png` 계열 |
 
 ---
 
@@ -1423,4 +1489,18 @@ I-22, 사용자 2026-11-06("나머지는 Zed와 동일하게"), core D-12(루트
 
 I-23, 사용자 2026-11-06("나머지는 Zed와 동일하게").
 
-미정: Zed에서 이 버튼이 보이는 조건. 갈래가 Zed에서 확인한다(I-23 확인한 사실).
+미정: Zed에서 이 버튼이 보이는 조건. 갈래가 Zed에서 확인한다(I-23 확인한 사실). → 아래 Zed 확인으로 정해졌다.
+
+**Zed 확인(2026-11-07)**
+
+조건: core ORDER-09, Zed `4304dec` 설치본 `zed -n` 새 창, 1440×852, 100%, One Dark, 사용자 `base_keymap` VSCode. 캡처 `specs/v0.5/verify/ORDER-09/zed-*.png`.
+
+| 상황 | +, 분할, 최대화 버튼 | 캡처 |
+|---|---|---|
+| 그 pane에 포커스가 있음 | 보임 | `zed-focus-panel*.png` |
+| 프로젝트 패널에 포커스, 마우스를 탭 바에 올림 | 안 보임 | `zed-cond-panel-hover-tabbar.png` |
+| 프로젝트 패널에 포커스, 마우스를 편집 영역에 올림 | 안 보임 | `zed-cond-panel-hover-editor.png` |
+| 분할 | 포커스가 있는 pane에만 보임 | `zed-split-right-click.png` |
+
+- 마우스를 올리는 것만으로는 보이지 않는다. 기준은 pane 포커스다.
+

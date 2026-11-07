@@ -382,6 +382,14 @@
   - 실측 필요: 빈 화면 제목·안내·다섯 줄·키 글자 크기(소스 14 대 캡처 약 13).
 - **W-26 문서** (2026-11-07): SPEC R-22 빈 화면 글자 크기 표와 V4 재확인, PROGRESS K-37. 검증 V0(문서만).
 
+### Phase 9 — 탭 바와 편집 영역 상단
+
+- **ORDER-09 Zed 확인 결과 기록 (R-10·R-11·R-12·R-16·R-23 / I-10·I-11·I-12·I-16·I-23)** (2026-11-07, W-27)
+  - 무엇을 했나: core ORDER-09의 Zed 확인 결과(Zed `4304dec` 설치본, 1440×852, One Dark, 사용자 `base_keymap` VSCode, 캡처 `specs/v0.5/verify/ORDER-09/zed-*.png`)를 SPEC 다섯 절에 "Zed 확인(2026-11-07)" 표로 적었다(gpui가 읽어 씀). R-10 툴팁·비활성·이동 기록 순서, R-11 탭 툴팁 절대 경로·"+" 툴팁, R-12 경로 줄(마크다운·코드·폴더 둘·분할), R-16 넘침, R-23 버튼이 보이는 조건(pane 포커스). R-12·R-16·R-23의 "미정"이 풀렸다.
+  - 결과: 문서만. 이동 기록 기준(최소 줄 수 등)은 K-38에서 coder가 Zed 소스로 확인한다.
+  - 특이사항(측정 메모): workbench-core 폴더는 읽기만 했고 Zed 확인 전후 두 레포 `git status`를 확인했다(`.zed` 폴더 없음). core에 새로 생긴 `specs/v0.5/orders/ORDER-10.md`는 core-leader 카드다.
+  - 검증: V0(문서만, 실행 없음).
+
 ## 사용자 요청 작업
 
 - **HERDR 구성 규칙 추가** (2026-11-07, W-11): `HERDR-SETUP.md` 1장에 Codex 한도가 바닥나면 `tauri-coder`를 Claude Code Sonnet 5.5 high로 바꾼다는 규칙(core D-16, 사용자 결정)을 적었다. 지금은 쿠폰 적용으로 Codex gpt-6.1-sol medium 그대로다. 검증 V0(문서만).
