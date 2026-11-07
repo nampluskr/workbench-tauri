@@ -83,12 +83,15 @@ const METRICS: Record<string, string> = {
   "picker.item.gap": rem(4), // P-004
   "picker.theme_selector.footer_padding": rem(8), // P-010
   "picker.theme_selector.footer_border_top": rem(1), // P-010
-  // Not in the toml; values from 01-LAYOUT 4.13 text: window height margin (P-002), line height 1.618 (P-004 source
-  // calculation), empty-result padding (P-004), Check icon size (P-010).
-  "picker.window_height_margin": rem(160),
-  "picker.item.line_height_multiplier": "1.618",
-  "picker.empty.padding_y": rem(8),
-  "picker.item.check_size": rem(16),
+  "picker.window_height_margin": rem(160), // P-002
+  "picker.shadow.1": "0 2px 3px rgba(0,0,0,0.12)", // P-002
+  "picker.shadow.2": "0 4px 8px rgba(0,0,0,0.08)", // P-002
+  "picker.shadow.3": "0 8px 16px rgba(0,0,0,0.04)", // P-002
+  "picker.shadow.4": "0 12px 24px rgba(0,0,0,0.12)", // P-002
+  "picker.item.font_size": rem(14), // P-004
+  "picker.item.line_height_ratio": "1.618", // P-004
+  "picker.empty.padding_y": rem(8), // P-004
+  "picker.theme_selector.check_icon_size": rem(16), // P-010
   "units.rem_size": `${REM_SIZE}px`, // L-01
   "typography.ui_font_size": rem(16), // L-08
   "typography.buffer_font_size": "15px", // L-08

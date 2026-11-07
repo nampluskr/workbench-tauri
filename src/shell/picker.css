@@ -15,13 +15,13 @@
   border-radius: var(--picker-corner-radius);
   background: var(--elevated-surface-background);
   color: var(--text);
-  font-size: var(--typography-size-default);
-  /* elevation_3 (P-002, 01-LAYOUT 4.13.1): four layers; the document gives them, spec/zed-metrics.toml does not. */
+  font-size: var(--picker-item-font-size);
+  /* P-002: elevation_3. */
   box-shadow:
-    0 2px 3px rgb(0 0 0 / 12%),
-    0 4px 8px rgb(0 0 0 / 8%),
-    0 8px 16px rgb(0 0 0 / 4%),
-    0 12px 24px rgb(0 0 0 / 12%);
+    var(--picker-shadow-1),
+    var(--picker-shadow-2),
+    var(--picker-shadow-3),
+    var(--picker-shadow-4);
 }
 .picker::backdrop { background: transparent; } /* a normal Picker does not dim the window (P-001) */
 .picker-input-row {
@@ -55,13 +55,13 @@
   margin: 0 var(--picker-item-margin-x);
   padding: var(--picker-item-padding-y) var(--picker-item-padding-x);
   border-radius: var(--picker-item-corner-radius);
-  line-height: var(--picker-item-line-height-multiplier);
+  line-height: var(--picker-item-line-height-ratio);
   white-space: nowrap;
 }
 .picker-item.selected { background: var(--ghost-element-selected); } /* hover selects, so one state covers both */
 .picker-item:active { background: var(--ghost-element-active); }
 .picker-label .match { color: var(--text-accent); }
-.picker-check { display: flex; color: var(--icon-muted); --icon-size: var(--picker-item-check-size); }
+.picker-check { display: flex; color: var(--icon-muted); --icon-size: var(--picker-theme-selector-check-icon-size); }
 .picker-empty {
   margin: 0 var(--picker-item-margin-x);
   padding: var(--picker-empty-padding-y) var(--picker-item-padding-x);
