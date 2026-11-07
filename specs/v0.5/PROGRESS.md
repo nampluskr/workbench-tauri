@@ -310,6 +310,8 @@
   - 결과: 기존 구현(`data-line` 가장 가까운 조상, 줄 + 1, 열 1)이 core 결정 "가장 안쪽 블록의 원본 시작 줄, 열 1"과 같았다. 블록 종류 표를 SPEC R-5에 적었다. 표 셀은 그 행(tr)의 시작 줄이며 현재 동작으로 두고 core 확인을 요청했다.
   - 검증: V1. `src/editor/markdown.test.ts` 9/9(기존 5 + 새 4), typecheck 통과, `git diff --check` 통과(`%TEMP%\v05-K-28-report.md`).
 - **W-20 문서** (2026-11-07): SPEC R-5 블록 종류 표·표 셀 동작(core 확인 요청), R-22 Diagnostics 탭 구현 절, R-22 버튼 툴팁 키 표시를 코드(`status.ts`·`tooltip.ts`·`builtin.ts`)로 확인해 고침(W-19 확인 필요 해소). DECISIONS D-13에 표 위치 한 줄. 검증 V0(문서만).
+- **coder 교체 기록 (core D-16)** (2026-11-07, W-21): 15:57에 Codex gpt-6.1-sol medium의 5시간 한도가 바닥났다(K-29 진행 중, 다시 쓸 수 있는 시각 19:05). D-16대로 `tauri-coder`를 Claude Code Sonnet 5.5 high로 바꿨다(`herdr agent start tauri-coder --kind claude --pane wJ:pM -- --model sonnet --effort high`, 이름 유지). K-29는 Sonnet이 작업 트리의 중간 결과에서 이어서 한다. 되돌릴지는 core-leader 지시를 따른다(앞 14:00 결정은 그 회차에만 적용). `HERDR-SETUP.md` 1장에 같은 기록을 적었다. 검증 V0(문서만).
+- **W-22 R-22 상태 바 Zed 실측 근거 (gpui 대조용, core-leader 요청)** (2026-11-07): SPEC R-22 상태 바 버튼 절에 "Zed 실측 근거(2026-11-07)" 소절을 더했다(조건, 글리프 잉크·버튼 박스·구분선 좌표 표, 간격과 Zed 소스 근거 표, 진단 ✓ 구성과 숨은 `lsp_button` 자리, padding 4, toml ID `statusbar.padding_x`·`statusbar.toggle_gap`은 gpui가 올리는 중이고 tauri는 임시 metrics 값(K-31), tauri V3(K-31 전) 잉크 5·37·68·95·구분선 26·57, K-31 뒤 재측정). 검증 V0(문서만).
 
 ## 사용자 요청 작업
 

@@ -1283,6 +1283,32 @@ I-22, 사용자 2026-11-06("나머지는 Zed와 동일하게"), core D-12(루트
 - 상태 바의 Add Project(`folder_add`)는 뺐다. 사이드바 아래쪽 줄의 Add Project와 `threads_sidebar_left_open` 토글은 그대로다.
 - 진단 버튼은 K-27(Diagnostics 탭) 전까지 아무 일도 하지 않았다. K-27 뒤에는 아래 Diagnostics 탭을 연다.
 
+*Zed 실측 근거(2026-11-07, gpui 대조용)*
+
+조건: Zed `4304dec` 설치본, 클라이언트 1440×852, 100%, One Dark, 사이드바 닫힘, dock 열림. 상태 바 y 821~851(위 경계 820/821). 좌표는 클라이언트 px다.
+
+| 항목 | 사이드바 토글 | 구분선 1 | `file_tree` | 구분선 2 | 검색 | 진단 ✓ | 출처 |
+|---|---|---|---|---|---|---|---|
+| 글리프 잉크 x(배경과 다른 첫·끝 열, y 822~851) | 9–20 | | 39–48 | | 70–79 | 101–108 | `verify/ORDER-08/zed-cursor.png` |
+| 버튼 박스 x(hover 배경 `#363c46` = (54,60,70)로 잰 둥근 사각형, y 826–847, 높이 22) | 4–25 | | 33–54 | | 64–85 | 94–115 | `zed-tip-dock.png`, `zed-tip-project.png`, `zed-tip-search.png`, `zed-tip-diag.png`(각 버튼 hover) |
+| 버튼 박스 폭 | 22 | | 22 | | 22 | 22 | 위와 같음 |
+| 구분선 x, y | | 28, 829–844 | | 59, 829–844 | | | `zed-cursor.png` |
+| 구분선 색 | | (70,75,87) = `border` | | (70,75,87) = `border` | | | `zed-cursor.png` |
+
+| 간격 | 값 | Zed 근거 |
+|---|---|---|
+| 토글 박스 끝 25 → 구분선 28 | 2px | `status_bar.rs:280-287` `gap_0p5` |
+| 구분선 28 → `file_tree` 박스 33 | 4px | `dock.rs:1580-1588` `gap_1` |
+| `file_tree` 박스 끝 54 → 구분선 59 | 4px | `dock.rs:1580-1588` `gap_1` |
+| 구분선 59 → 검색 박스 64 | 4px | `dock.rs:1580-1588` `gap_1` |
+| 검색 박스 끝 85 → 진단 박스 94 | 8px = item_gap 4 + 숨은 `lsp_button` 자리의 gap 4 | `zed.rs:636-638`(`search_button`, `lsp_button`, `diagnostic_summary` 순), `lsp_button.rs:1388-1392`(`div().hidden()`) |
+| 상태 바 padding | 4(네 변) | `status_bar.rs:153` `DynamicSpacing::Base04` |
+
+- 진단 버튼: 문제 0개일 때 아이콘 ✓만(글자·숫자 없음), 폭 22.
+- 검색 → 진단 8px: Zed는 언어 서버가 없을 때 `lsp_button`을 숨겨 그리지만 그 자리의 gap 하나가 남는다. 숨은 항목이 자리를 차지하는 이유(`render_hideable_item` 래퍼)는 소스로 끝까지 확인하지 못했고, 실측과는 맞는다.
+- toml ID `statusbar.padding_x`·`statusbar.toggle_gap`은 gpui가 올리는 중이다(core-leader 결정). tauri는 그때까지 임시 metrics 값을 쓴다(K-31).
+- tauri V3(K-31 전): 잉크 x 5·37·68·95, 구분선 x 26·57. K-31 뒤 다시 잰다.
+
 **구현 — Project Search 탭 (K-26)**
 
 - 열기: 상태 바 검색 버튼·`Ctrl-Shift-F`. 같은 폴더 컨텍스트에 이미 있으면 그 탭과 입력칸으로 돌아간다. 탭 아이콘 `magnifying_glass`, 제목은 검색 전 "Project Search", Enter 뒤 검색어.
