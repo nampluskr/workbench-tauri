@@ -430,6 +430,7 @@
   - 검증: typecheck 통과, `npm run test` 196/196, `cargo test` 25개, clippy 경고 0(`%TEMP%\v05-C-26-report.md`).
   - 참고: `src-tauri/src/folder_watch.rs:169` `missing_root_is_watched_after_creation_and_recreation`는 파일시스템 알림을 기다리는 테스트라 부하 때 드물게 시간 초과가 날 수 있다(재실행 25/25). `spec/ambiguous.md:111`에 gpui W-40의 "해소" 주석이 생겼다(기능 영향 없음).
 - **W-29 Phase 9 마무리 문서** (2026-11-07): V3·K-41·K-42·C-26 기록, PLAN Phase 9 "완료(core 판정 대기)". 검증 V0(문서만).
+- **coder 되돌림 (사용자 지시)** (2026-11-07, W-30): 19:21에 사용자 지시(core-leader 전달 [DECISION])로 `tauri-coder`를 Codex gpt-6.1-sol medium으로 되돌렸다. 진행 중인 카드가 없는 때(K-43 뒤) Sonnet 5.5 high를 `/exit`로 끝냈고, 셸이 프롬프트를 바로 돌려주지 않아 `Ctrl-C`로 풀고 같은 pane `wJ:pM`에서 `herdr agent start tauri-coder --kind codex --pane wJ:pM -- -m gpt-6.1-sol -c model_reasoning_effort=medium`로 띄웠다(이름 유지, pane을 닫고 새로 띄우지 않음). `/model`로 GPT-6.1-Sol·Medium(current)을 확인했다(바꾸지 않음). 상태 줄 `GPT-6.1-Sol medium`. `HERDR-SETUP.md` 1장에 같은 기록을 적었다. 검증 V0(문서만).
 
 ## 사용자 요청 작업
 
