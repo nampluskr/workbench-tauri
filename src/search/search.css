@@ -16,11 +16,11 @@
 .project-search-matches { display: flex; align-items: center; margin-left: var(--buttons-gap); padding-left: var(--search-results-matches-padding-left); border-left: var(--editor-search-input-border) solid var(--border-variant); }
 .search-count { margin-left: var(--editor-search-bar-gap); min-width: var(--search-results-count-min-width); font-size: var(--typography-size-small); }
 .search-count.active { color: var(--text-disabled); } /* Zed: Color::Disabled while a match is selected */
-.project-search-empty { margin: auto; display: flex; flex-direction: column; gap: var(--statusbar-item-gap); }
-.project-search-empty h2 { margin: 0; font-size: var(--typography-size-large); font-weight: normal; }
-.project-search-empty p { margin: 0 0 var(--editor-search-bar-gap); color: var(--text-muted); font-size: var(--typography-size-default); }
-.project-search-empty button { display: flex; align-items: center; gap: var(--buttons-gap); height: var(--buttons-height-default); padding-inline: var(--buttons-padding-x-default-compact); text-align: left; font-size: var(--typography-size-default); }
-.project-search-empty kbd { margin-left: var(--buttons-gap); font: inherit; font-size: var(--typography-size-small); color: var(--text-muted); }
+.project-search-empty { margin: auto; display: flex; flex-direction: column; gap: var(--project-search-landing-gap); }
+.project-search-empty h2 { margin: 0; font-size: var(--project-search-landing-heading-size); font-weight: normal; }
+.project-search-empty p { margin: 0 0 var(--project-search-landing-subtitle-margin-bottom); color: var(--text-muted); font-size: var(--project-search-landing-subtitle-size); }
+.project-search-empty button { display: flex; align-items: center; gap: var(--buttons-gap); height: var(--buttons-height-default); padding-inline: var(--buttons-padding-x-default-compact); text-align: left; font-size: var(--project-search-landing-action-label-size); }
+.project-search-empty kbd { margin-left: var(--buttons-gap); font: inherit; font-size: var(--project-search-landing-key-size); color: var(--text-muted); }
 .project-search-results { overflow-x: hidden; overflow-y: auto; flex: 1; }
 /* Zed buffer header (editor/src/element/header.rs): a bordered box two buffer lines high with a 4px margin. */
 .search-file-header { display: flex; align-items: center; gap: var(--search-results-header-gap); box-sizing: border-box; margin: var(--search-results-header-padding); height: calc(var(--search-line-height) * var(--search-results-header-lines) - 2 * var(--search-results-header-padding)); padding: 0 var(--search-results-header-padding-right) 0 var(--search-results-header-padding-left); border: var(--picker-border-width) solid var(--border); border-radius: var(--search-results-header-radius); background: var(--editor-subheader-background); cursor: pointer; }

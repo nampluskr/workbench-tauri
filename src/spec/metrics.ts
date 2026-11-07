@@ -117,6 +117,13 @@ const METRICS: Record<string, string> = {
   "search_results.header.lines": "2", // toml; editor.rs:302 FILE_HEADER_HEIGHT, in buffer lines
   "search_results.matches.padding_left": rem(6), // toml; project_search.rs `.pl_1p5()` before the match arrows
   "search_results.count.min_width": rem(40), // toml; project_search.rs `.min_w(rems_from_px(40_f32))`
+  // Project Search landing page (toml [project_search], Zed project_search.rs:1032-1111, 2517-2527).
+  "project_search.landing.heading_size": rem(16),
+  "project_search.landing.subtitle_size": rem(14),
+  "project_search.landing.subtitle_margin_bottom": rem(8),
+  "project_search.landing.action_label_size": rem(14),
+  "project_search.landing.key_size": rem(14),
+  "project_search.landing.gap": rem(4),
   "editor.search_input.min_height": rem(32), // E-062
   "editor.search_input.padding_left": rem(8), // E-062
   "editor.search_input.padding_right": rem(4), // E-062

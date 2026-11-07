@@ -27,7 +27,7 @@
   - 4.9 컨텍스트 메뉴 모양 (`I-501~I-515`)
   - 4.10 스크롤바 치수 (`L-308`)
   - 4.11 글자색 상태 규칙 (`L-305~L-307`, `P-023~P-027`)
-  - 4.12 편집기 화면 (거터 `E-002`, 커서 `E-012~E-013`, 선택 모서리 `E-015`, 스크롤바 `E-030~E-034`, 툴바·빠른 동작 버튼 `E-038~E-039`, 찾기 창 `E-060~E-072`, Project Search 검색칸 최대 폭 `editor.search_input.max_width`(W-37), 결과 toml `[search_results]` `header.*`·`matches.padding_left`·`count.min_width`(Zed `4304dec`, tauri와 같은 ID, W-38; 소스 미확인 값은 `ambiguous.md` 6절), 색 토큰 `E-110~E-122`)
+  - 4.12 편집기 화면 (거터 `E-002`, 커서 `E-012~E-013`, 선택 모서리 `E-015`, 스크롤바 `E-030~E-034`, 툴바·빠른 동작 버튼 `E-038~E-039`, 찾기 창 `E-060~E-072`, Project Search 검색칸 최대 폭 `editor.search_input.max_width`(W-37), 결과 toml `[search_results]` `header.*`·`matches.padding_left`·`count.min_width`(Zed `4304dec`, tauri와 같은 ID, W-38; 소스 미확인 값은 `ambiguous.md` 6절), 빈 화면 toml `[project_search]` `landing.*`(Zed `4304dec` 소스, W-39), 색 토큰 `E-110~E-122`)
   - 4.13 Picker·대화상자·인라인 입력 (`P-001~P-021`)
   - 4.14 키맵 편집 화면 (`K-010~K-083`)
   - 4.15 확장 관리 화면 (`X-44~X-50`)
