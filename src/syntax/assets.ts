@@ -2,11 +2,13 @@ import { Parser, type Language, type Query } from "web-tree-sitter";
 import runtimeWasm from "web-tree-sitter/web-tree-sitter.wasm?url";
 import { languageConfigs, type LanguageConfig } from "./catalog.ts";
 import { compileQuery, loadLanguage } from "./grammar.ts";
+import { useLanguageCatalog } from "../editor/filetype.ts";
 
 const configs = import.meta.glob<string>("../assets/zed-grammars/languages/*/config.toml", { query: "?raw", import: "default", eager: true });
 const queries = import.meta.glob<string>(["../assets/zed-grammars/languages/*/highlights.scm", "../assets/zed-grammars/languages/*/injections.scm", "../assets/zed-grammars/languages/*/outline.scm"], { query: "?raw", import: "default" });
 const wasms = import.meta.glob<string>("../assets/zed-grammars/grammars/*.wasm", { query: "?url", import: "default" });
 export const languages = languageConfigs(configs);
+useLanguageCatalog(languages);
 export type LoadedLanguage = { config: LanguageConfig; language: Language; highlights: Query; injections?: Query; outline?: Query };
 let runtime: Promise<void> | undefined;
 const grammarCache = new Map<string, Promise<Language>>();

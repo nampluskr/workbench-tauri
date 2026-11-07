@@ -1,5 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { languageConfigs } from "../syntax/catalog.ts";
 import filetypes from "./filetypes.json" with { type: "json" };
 import { filetype } from "./filetype.ts";
 
@@ -21,4 +23,16 @@ test("I-5: compound names beat generic extensions, exact case distinguishes C an
     ["Makefile", "Plain Text"], ["file.txt", "Plain Text"], ["file.unknown", "Plain Text"],
     ["nottsconfig.json", "JSON"], ["foojson", "Plain Text"],
   ]) assert.equal(filetype(`C:\\project\\${name}`), expected, name);
+});
+
+const copies = new URL("../assets/zed-grammars/languages/", import.meta.url);
+const catalog = existsSync(copies) ? languageConfigs(Object.fromEntries(readdirSync(copies)
+  .map((name) => [`languages/${name}/config.toml`, readFileSync(new URL(`${name}/config.toml`, copies), "utf8")]))) : [];
+
+test("K-56: extension languages are named from the syntax catalog, and only when its copies exist", { skip: !catalog.some((config) => config.id === "gitignore") }, () => {
+  for (const [name, expected] of [["sample.html", "HTML"], ["Cargo.toml", "TOML"], [".gitignore", "Git Ignore"], ["a.rs", "Rust"], ["a.C", "C++"]]) {
+    assert.equal(filetype(`C:\\project\\${name}`, catalog), expected, name);
+  }
+  assert.equal(filetype("C:\\project\\sample.html", []), "Plain Text"); // no copies: only the built-in names
+  assert.equal(filetype("C:\\project\\a.rs", []), "Rust");
 });
