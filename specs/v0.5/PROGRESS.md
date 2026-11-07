@@ -329,7 +329,12 @@
     - 다름 → K-32: Project Search 화면(빈 상태, 검색칸, 결과 머리줄, 일치 강조 등).
     - 다름 → K-33: 사이드바를 상태 바로 열고 `Ctrl-Alt-J`로 닫은 뒤 `Ctrl-Shift-V`가 미리보기 대신 붙여넣기가 됐다.
   - 특이사항: 측정 중 편집기 버퍼에 클립보드 내용이 붙여넣어졌으나(probe의 `AGENTS.md*`) 저장하지 않았고 디스크는 바뀌지 않았다.
-  - 앱 실행 횟수: 3회(V3 규칙은 측정 세션당 1회). 결과 파일은 두 실행(PID 29276 `tauri-v3.json`, PID 44228 `tauri-v3-probe.json`)이다. 1회차에서 미리보기 클릭(`no li`)과 탭 없음 상태를 재지 못해 probe로 다시 쟀다. 세 번째 실행의 이유는 근거 파일에 없어 미정(leader 확인 필요).
+  - 앱 실행 횟수(W-24, leader 전달): ORDER-08 V3의 tauri 실행은 모두 5회다. 매번 띄운 PID만 닫았고 앱 데이터 복원 차이는 0이다.
+    1. o8 1차: 편집기 클릭 좌표가 화면 밖(`.cm-content` 중심)이라 커서·선택 측정이 실패했고, 사이드바가 열린 상태라 위치를 비교할 수 없었다 → 스크립트를 고쳤다.
+    2. o8 2차(`tauri-v3.json`): 본 측정.
+    3. probe(`tauri-v3-probe.json`): 미리보기 클릭·탭 없음 재측정.
+    4. 재측정(`tauri-v3-re.json`, K-31~K-33 뒤): 상태 바 위치·Escape·`Ctrl-Shift-V`·결과 열기 선택·Diagnostics. Project Search가 K-32에서 깨진 것을 발견 → K-34.
+    5. 재측정(K-34 뒤, `tauri-re-*.png` 덮어씀): Project Search 한 줄 툴바·결과 줄·강조.
 - **K-31 상태 바 여백·토글 간격·결과 열기 선택 (V3 불일치)** (2026-11-07, 커밋 `c281499`)
   - 무엇을 했나: 상태 바 padding을 네 변 4로(Zed `status_bar.rs:153`), 토글과 구분선 사이를 2로(`status_bar.rs:280-287` `gap_0p5`), 진단 앞에 폭 0 자리를 두어 숨은 `lsp_button` 자리의 gap 4를 만들었다. 검색 결과를 열 때 일치를 선택한다(anchor 시작, head 끝).
   - 결과: 예상 위치는 버튼 left 4·33·64·94, 구분선 28·59(Zed와 같음). V3로 다시 재야 확인된다. `statusbar.padding_x`·`statusbar.toggle_gap`은 toml ID가 없어 임시 metrics 값이다(SPEC R-22 "toml에 없는 값").
@@ -345,7 +350,20 @@
   - 결과: 원인은 사이드바를 연 상태 바 버튼이 사라져 포커스가 `.pane`으로 떨어져 `Editor extension=md` 컨텍스트가 없던 것이다. SPEC R-5 "구현"에 Escape 한 줄.
   - 검증: V1. typecheck 통과, `npm run test` 185/185(`keyboard.test.ts`)(`%TEMP%\v05-K-33-report.md`).
   - 실측 필요(V3 합성 입력): 재현 순서에서 미리보기가 열리는지, Escape로 선택이 풀리는지.
+- **K-34 Project Search 툴바·결과 줄 회귀 고침** (2026-11-07, 커밋 `b06c1ce`)
+  - 무엇을 했나: 첫 툴바 줄만 `flex-wrap: nowrap`으로 하고 검색칸이 줄어들게 했다(묶음들은 `flex: none`, Zed `toolbar.rs:120-150` padding). 결과 줄 grid 칸을 3개(거터 | 번호 | 코드 `minmax(0, 1fr)`)로 고쳤다.
+  - 원인:
+    - 툴바: `flex-wrap: wrap` 상태에서 검색칸 `flex-basis` 1200이 줄 폭보다 커서 줄바꿈이 먼저 일어나 검색칸이 한 줄을 차지했다.
+    - 결과 줄: grid 칸 4개에 자식 3개라 코드가 29px 칸에 들어가 글자마다 줄이 바뀌었다.
+  - 검증: V1. typecheck 통과, `npm run test` 185/185(`%TEMP%\v05-K-34-report.md`).
+- **ORDER-08 V3 재측정 결과 (K-31~K-34 뒤)** (2026-11-07, tauri-leader, 같은 조건)
+  - 상태 바: 글리프 잉크 x 9·39·70·101, 구분선 28·59로 Zed와 같다(차이 0, core 기준 1px 이내). 오른쪽 끝 여백 4(`status-items` right 1436/1440).
+  - Escape 뒤 `5:28 Markdown`(선택 해제). 사이드바 토글 → `Ctrl-Alt-J` → `Ctrl-Shift-V`로 미리보기가 열리고 붙여넣기는 없다. 결과 `Alt-Enter` 뒤 `45:35 (8 characters) Markdown`(Zed와 같음). Diagnostics 문구 y 465.5(Zed 466).
+  - Project Search: 툴바 한 줄, 머리줄 상대 폴더·Open File `Alt-Enter`, 발췌 경계·화살표, 일치 강조 두 색, 줄바꿈이 Zed 캡처와 같은 틀이다.
+  - 결과 수 tauri `1/20` 대 Zed `1/19`: 차이는 Zed 캡처 뒤에 생긴 측정 파일 `specs/v0.5/verify/ORDER-08/tauri-v3.json` 한 건이다(rg로 20건, 같은 규칙).
+  - 결과 파일: `specs/v0.5/verify/ORDER-08/tauri-v3-re.json`, `tauri-re-*.png`.
 - **W-23 문서** (2026-11-07): SPEC R-22 "toml에 없는 값" 표(12개)·"Project Search 갱신"(K-29~K-32), R-5 Escape 한 줄, 이 PROGRESS의 K-29~K-33·V3 1차. 검증 V0(문서만). coder 교체(15:57)는 W-21 항목 그대로.
+- **W-24 Phase 8 마무리 문서** (2026-11-07): 앱 실행 5회 이유, K-34·재측정 결과, SPEC R-22 "toml에 없는 값" 표에 L-84 닫기 버튼 색 행, PLAN Phase 8 "완료(core 판정 대기)". 검증 V0(문서만).
 
 ## 사용자 요청 작업
 

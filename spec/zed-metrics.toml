@@ -273,6 +273,8 @@ src = "specs/v0.5/verify/reviews/measure-ORDER-07.md 1절"
 [statusbar]
 "height" = { value = 30, unit = "px", cond = "default", src = "01-LAYOUT 4.6절 L-28" }
 "padding_y" = { value = 4, unit = "px", cond = "default", src = "01-LAYOUT 4.6절 L-28" }
+"padding_x" = { value = 4, unit = "px", cond = "desktop_measure_100", src = "Zed 4304dec732 crates/workspace/src/status_bar.rs:153 .p(DynamicSpacing::Base04) 네 변 padding 4(세로는 padding_y), tauri 확인·core-leader 지시 2026-11-07, 실측 1440x852 아이콘 시작 x 9·39·70·101" }
+"toggle_gap" = { value = 2, unit = "px", cond = "desktop_measure_100", src = "Zed 4304dec732 crates/workspace/src/status_bar.rs:280-287 사이드바 토글과 구분선 h_flex().gap_0p5(), tauri 확인·core-leader 지시 2026-11-07, 실측 1440x852 구분선 x 28·59" }
 "button_height" = { value = 22, unit = "px", cond = "default", src = "01-LAYOUT 4.6절 L-28" }
 "group_gap" = { value = 8, unit = "px", cond = "default", src = "01-LAYOUT 4.6절 L-29" }
 "item_gap" = { value = 4, unit = "px", cond = "default", src = "01-LAYOUT 4.6절 L-29" }
@@ -402,6 +404,14 @@ src = "specs/v0.5/verify/reviews/measure-ORDER-07.md 1절"
 "search_bar.narrow_threshold" = { value = 340, unit = "px", cond = "default", src = "01-LAYOUT 4.12.6절 E-069" }
 "search_error.offset_top" = { value = -4, unit = "px", cond = "default", src = "01-LAYOUT 4.12.6절 E-067" }
 "search_error.offset_left" = { value = 8, unit = "px", cond = "default", src = "01-LAYOUT 4.12.6절 E-067" }
+"search_input.max_width" = { value = 1200, unit = "px", cond = "default", src = "Zed 4304dec732 crates/ui/src/utils/search_input.rs MAX_WIDTH (tauri SPEC R-22 toml에 없는 값 표, W-37)" }
+"search_results.header.padding" = { value = 4, unit = "px", cond = "default", src = "Zed 4304dec732 crates/editor/src/editor.rs:303 BUFFER_HEADER_PADDING (tauri SPEC R-22 toml에 없는 값 표, W-37)" }
+"search_results.header.padding_left" = { value = 4, unit = "px", cond = "default", src = "Zed 4304dec732 crates/editor/src/element/header.rs .pl_1() (tauri SPEC R-22 toml에 없는 값 표, W-37)" }
+"search_results.header.padding_right" = { value = 8, unit = "px", cond = "default", src = "Zed 4304dec732 crates/editor/src/element/header.rs .pr_2() (tauri SPEC R-22 toml에 없는 값 표, W-37)" }
+"search_results.header.gap" = { value = 6, unit = "px", cond = "default", src = "Zed 4304dec732 crates/editor/src/element/header.rs .gap_1p5() (tauri SPEC R-22 toml에 없는 값 표, W-37)" }
+"search_results.header.fold_button" = { value = 28, unit = "px", cond = "default", src = "Zed 4304dec732 crates/editor/src/element/header.rs button_size (tauri SPEC R-22 toml에 없는 값 표, W-37)" }
+"search_results.header.lines" = { value = 2, unit = "lines", cond = "default", src = "Zed 4304dec732 crates/editor/src/editor.rs:302 FILE_HEADER_HEIGHT (버퍼 줄 수) (tauri SPEC R-22 toml에 없는 값 표, W-37)" }
+"search_results.matches.padding_left" = { value = 6, unit = "px", cond = "default", src = "Zed 4304dec732 crates/search/src/project_search.rs .pl_1p5() (tauri SPEC R-22 toml에 없는 값 표, W-37)" }
 "tab_size" = { value = 4, unit = "chars", cond = "default", src = "02-INTERACTION 12.1절 E-055" }
 "undo.group_interval" = { value = 300, unit = "ms", cond = "default", src = "02-INTERACTION 12.2절 E-059c" }
 "confirm_close.path_max_chars" = { value = 80, unit = "chars", cond = "default", src = "02-INTERACTION 12.4절 E-081" }

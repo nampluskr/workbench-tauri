@@ -1312,7 +1312,7 @@ I-22, 사용자 2026-11-06("나머지는 Zed와 동일하게"), core D-12(루트
 
 *toml에 없는 값(gpui 등록 요청, core-leader 결정 2026-11-07)*
 
-`src/spec/metrics.ts`에서 "no toml ID yet"(또는 "No toml IDs yet")가 달린 항목 전부다. 모두 12개(상태 바 2, Project Search 10). gpui가 원본 `spec/zed-metrics.toml`에 같은 ID로 올리면 이 레포로 다시 복사하고 주석을 지운다. 이 레포의 `spec/`은 고치지 않았다.
+`src/spec/metrics.ts`에서 "no toml ID yet"(또는 "No toml IDs yet")가 달린 항목 전부다. 모두 12개(상태 바 2, Project Search 10). 여기에 `metrics.ts` 밖의 `src/shell/title-bar.css:31` 닫기 버튼 색(L-84) 한 행을 더해 표는 13행이다(W-24). gpui가 원본 `spec/zed-metrics.toml`에 같은 ID로 올리면 이 레포로 다시 복사하고 주석을 지운다. 이 레포의 `spec/`은 고치지 않았다.
 
 | ID(`metrics.ts` 키) | 값 | Zed 출처(`4304dec`, 파일:줄) | 쓰는 곳 | 상태 |
 |---|---|---|---|---|
@@ -1328,6 +1328,7 @@ I-22, 사용자 2026-11-06("나머지는 Zed와 동일하게"), core D-12(루트
 | `search_results.header.lines` | 2(버퍼 줄 수) | `crates/editor/src/editor.rs:302` `FILE_HEADER_HEIGHT` | 결과 머리줄 높이(K-32) | 등록 요청 |
 | `search_results.matches.padding_left` | 6 | `crates/search/src/project_search.rs` `.pl_1p5()`(일치 화살표 앞) | `‹ ›`·`1/19` 묶음 왼쪽(K-32) | 등록 요청 |
 | `search_results.count.min_width` | 40 | `crates/search/src/project_search.rs` `.min_w(rems_from_px(40_f32))` | `1/19` 개수 최소 폭(K-32) | 등록 요청 |
+| (없음, `src/shell/title-bar.css:31` CSS 변수 `--close-red`) | 닫기 버튼 hover 배경 `#E81120`(232,17,32)·흰 글자, 누름 80% 불투명 | L-84, `crates/platform_title_bar/src/platforms/platform_windows.rs:104-128`(Zed `14b7b0e`, `docs/refs/01-zed/01-LAYOUT.md`) | 타이틀 바 Windows 창 닫기 버튼(`metrics.ts` 밖) | 등록 요청 |
 
 - 머리줄 `header.rs`·`project_search.rs` 항목은 K-32 보고에 줄 번호가 없다(`header.rs` 700~1000, `project_search.rs` 3126~3185 범위에서 읽음).
 

@@ -240,8 +240,8 @@ const METRICS: Record<string, string> = {
   "icons.size.xsmall": rem(12), // L-06 (Project Search excerpt expand arrows)
   "statusbar.height": rem(30), // L-28
   "statusbar.padding_y": rem(4), // L-28
-  "statusbar.padding_x": rem(4), // no toml ID yet: Zed status_bar.rs:153 `.p(Base04)` pads all four sides (K-31)
-  "statusbar.toggle_gap": rem(2), // no toml ID yet: Zed status_bar.rs:281 `gap_0p5` between the sidebar toggle and its divider (K-31)
+  "statusbar.padding_x": rem(4), // Zed status_bar.rs:153 `.p(Base04)` pads all four sides (toml statusbar.padding_x)
+  "statusbar.toggle_gap": rem(2), // Zed status_bar.rs:280-287 `gap_0p5` between the sidebar toggle and its divider (toml statusbar.toggle_gap)
   "statusbar.button_height": rem(22), // L-28
   "statusbar.group_gap": rem(8), // L-29
   "statusbar.item_gap": rem(4), // L-29
