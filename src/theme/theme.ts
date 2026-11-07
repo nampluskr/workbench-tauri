@@ -86,7 +86,8 @@ export type ThemeFile = { themes: { name: string; appearance: "light" | "dark"; 
 /**
  * Zed 4304dec crates/theme/src/default_colors.rs:98 light step_10 / :252 dark step_8;
  * blue() table (:1836 onward) gives #0588f0 / #2870bd. One Dark panel.focused_border is null;
- * ORDER-10 V3 confirmed the dark default, and K-46 core approved both defaults.
+ * ORDER-10 V3 confirmed the dark default, and K-46 core approved both defaults. The dark value is toml
+ * `theme.fallback.panel.focused_border` (K-57 sync, same #2870bd); the toml has no slot for the light value.
  */
 export function panelFocusedBorder(style: ThemeStyle, appearance: "light" | "dark"): string {
   const color = style["panel.focused_border"];

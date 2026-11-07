@@ -294,7 +294,7 @@ const METRICS: Record<string, string> = {
   "sidebar.project_header.padding_right": rem(6), // L-34
   "sidebar.item.icon_size": rem(14), // A-12.1
   "sidebar.item.focus_border_width": rem(1), // A-12.5
-  // Temporary until gpui registers toml IDs (K-44, Zed 4304dec).
+  // toml [sidebar] IDs since the K-57 spec sync (same values as K-44 measured; sources in the toml, W-45).
   "sidebar.item.border_right_width": rem(2), // crates/sidebar/src/sidebar.rs:2415-2416 border_1 / border_r_2
   "sidebar.item.separator_width": rem(1), // crates/sidebar/src/sidebar.rs:2297-2299 border_t_1
   "sidebar.item.icon_slot_size": rem(16), // crates/ui/src/components/ai/thread_item.rs:291 icon_container size_4
