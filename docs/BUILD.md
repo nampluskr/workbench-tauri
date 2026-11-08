@@ -1,23 +1,44 @@
 # BUILD — workbench-tauri 빌드·배포
 
 - 작성일: 2026-11-08
-- 기준 커밋: `f1231dc`
+- 기준 커밋: `45aed5e`
 
 배포본(release exe·NSIS 설치 파일)을 만드는 과정이다. 값은 이 PC에서 2026-11-08에 확인한 것이다.
 
+## 0. 노트북에서 처음부터
+
+`git clone` 뒤 아래 순서대로 하면 된다. 각 단계의 자세한 내용은 링크한 절에 있다.
+
+1. 도구 설치([1절](#1-필요한-도구와-버전))
+2. 레포 받기:
+   ```powershell
+   git clone https://github.com/nampluskr/workbench-tauri
+   cd workbench-tauri
+   ```
+3. 복사본 채우기([2절](#2-복사본-채우기gitignore된-폴더)): `pwsh tools/fetch-zed-icons.ps1` → `pwsh tools/fetch-zed-themes.ps1` → `pwsh tools/fetch-zed-grammars.ps1`
+4. `npm ci`(lockfile 그대로 설치. 안 되면 `npm install`). PowerShell 실행 정책에 막히면 `npm.cmd ci`
+5. `npm run tauri build`([3절](#3-빌드-명령)) → 결과는 [4절](#4-결과-파일2026-11-08) 경로
+
+- 인터넷 필요: 2~5단계 모두(GitHub·crates.io·npm 레지스트리, 첫 빌드의 NSIS 도구).
+
 ## 1. 필요한 도구와 버전
 
-| 도구 | 버전 | 비고 |
+| 도구 | 이 PC에서 확인한 버전 | 설치 |
 |---|---|---|
 | Windows | 11 x64 | Windows 전용 앱 |
-| Rust | rustc/cargo 1.99.1, `x86_64-pc-windows-msvc` | `Cargo.toml` `rust-version = "1.90"`이 최소. MSVC 빌드 도구(Visual Studio Build Tools, C++ 워크로드) 필요 |
-| Node.js / npm | v22.22.3 / 10.9.8 | `npm install`로 `@tauri-apps/cli` 2.12.4, vite 8.3.5, typescript 7.0.2 설치 |
-| Tauri | crate `tauri` =2.12.5, `tauri-build` =2.7.4, `@tauri-apps/api` 2.12.4 | 버전은 `Cargo.toml`·`package.json`에 고정 |
-| PowerShell | 7 이상 | fetch 스크립트가 `#Requires -Version 7.0` |
-| git, curl.exe, tar.exe | Windows 기본/설치본 | fetch 스크립트가 씀 |
-| tree-sitter CLI | 0.27.1 | **따로 설치하지 않는다.** `fetch-zed-grammars.ps1`이 SHA256을 검사해 임시 폴더에 받아 쓴다. CLI가 wasm 빌드용 wasi-sdk 34·binaryen 132를 받아 쓴다(`src/assets/zed-grammars/manifest.json` `toolchain`) |
-| NSIS | 3.13 | 따로 설치하지 않는다. 첫 `tauri build` 때 Tauri가 `nsis_tauri_utils`와 함께 받는다(인터넷 필요) |
-| WebView2 런타임 | 빌드 PC에 설치됨(이 PC 157.0.4341.42) | Windows 11 기본 포함 |
+| Git | 2.52.0.windows.1 | `winget install -e --id Git.Git` |
+| PowerShell 7 | 7.6.9 | `winget install -e --id Microsoft.PowerShell` (fetch 스크립트는 `pwsh`로 실행. Windows PowerShell 5.1로는 안 됨: `#Requires -Version 7.0`) |
+| Node.js 22 | v22.22.3 (npm 10.9.8) | `winget install -e --id OpenJS.NodeJS.22` (`OpenJS.NodeJS.LTS`는 지금 26.x라 쓰지 않음. 22.x면 됨) |
+| Visual Studio Build Tools 2022 (C++) | — | `winget install -e --id Microsoft.VisualStudio.2022.BuildTools --override "--wait --passive --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"` (MSVC 링커·Windows SDK. Rust MSVC 툴체인에 필요) |
+| Rust | 1.99.1 `x86_64-pc-windows-msvc` | `winget install -e --id Rustlang.Rustup` 뒤 새 터미널에서 `rustup default stable`(최소 1.90, `Cargo.toml` `rust-version`). 같은 버전을 원하면 `rustup default 1.99.1` |
+| WebView2 런타임 | 157.0.4341.42 | Windows 11 기본 포함. 없으면 `winget install -e --id Microsoft.EdgeWebView2Runtime` |
+| curl.exe, tar.exe | curl 8.21.0, bsdtar 3.8.9 | Windows 10 1803+ 기본 포함. 따로 설치 안 함 |
+| tree-sitter CLI 0.27.1, wasi-sdk 34, binaryen 132 | — | 설치 안 함. `fetch-zed-grammars.ps1`이 SHA256을 검사해 임시 폴더에 받아 쓴다(`src/assets/zed-grammars/manifest.json` `toolchain`) |
+| NSIS 3.13 | — | 설치 안 함. 첫 `tauri build` 때 Tauri가 `nsis_tauri_utils`와 함께 받는다(인터넷 필요) |
+| npm 패키지(@tauri-apps/cli 2.12.4 등) | — | `npm ci`가 `package-lock.json`대로 설치(vite 8.3.5, typescript 7.0.2 포함) |
+| Tauri | crate `tauri` =2.12.5, `tauri-build` =2.7.4, `@tauri-apps/api` 2.12.4 | 설치 안 함. 버전은 `Cargo.toml`·`package.json`에 고정 |
+
+- 설치 확인 명령: `git --version`, `pwsh -v`, `node -v`, `npm -v`, `rustc -V`, `cargo -V`
 
 ## 2. 복사본 채우기(gitignore된 폴더)
 
@@ -28,11 +49,23 @@
 3. `pwsh tools/fetch-zed-grammars.ps1` → `src/assets/zed-grammars/` (언어 29, wasm 25, 라이선스·빌드 로그·manifest.json). 지난 실행 113.7초(manifest `seconds`). 순서 의존은 없다.
 
 - 이 폴더들이 이미 있으면 다시 돌리지 않아도 된다. 2026-11-08 빌드는 기존 복사본으로 했다.
+- 복사본 폴더 목록(모두 `.gitignore`): `src/assets/zed-icons/`, `src/theme/assets/zed/`, `src/theme/assets/catppuccin/`, `src/theme/assets/macos-classic/`, `src/assets/icon-themes/catppuccin-icons/`, `src/assets/icon-themes/zed/`, `src/assets/zed-grammars/`(Zed 쿼리 포함). 이 일곱 개가 세 스크립트로 모두 채워진다.
+
+### 이 PC에만 있는 것에 기대는가
+
+tauri-leader가 세 스크립트 코드를 읽어 확인했다(2026-11-08). **이 PC에만 있는 것에 기대는 부분이 없다.**
+
+- 모든 원본을 공개 출처의 고정 커밋/버전에서 받는다: Zed 저장소 `zed-industries/zed` 커밋 `4304dec732a75505066de5ce2dbbfb2bec369498`(아이콘·테마·쿼리·문법 목록), `catppuccin/zed` 0.2.27, `huacnlee/zed-theme-macos-classic` 0.4.0, `catppuccin/zed-icons` 1.24.0, `zed-extensions/toml` v1.1.0, `d1y/git_firefly` v0.1.9, 문법 원본은 Zed `Cargo.lock`의 고정 커밋(GitHub)·crates.io 체크섬, tree-sitter CLI는 GitHub 릴리스 + SHA256.
+- 받은 것은 `%TEMP%\workbench-zed-*-<GUID>` 임시 폴더에 두고 끝나면 지운다. `D:\projects` 경로, 설치된 Zed·Zed 확장 폴더, 이전에 받은 캐시를 읽지 않는다. 문법 스크립트는 `LOCALAPPDATA`·`XDG_CACHE_HOME`·`XDG_CONFIG_HOME`을 임시 폴더로 바꿔 tree-sitter 캐시도 새로 받는다.
+- 레포 안에서 쓰는 경로는 스크립트 위치 기준 상대 경로(`$PSScriptRoot/..`)뿐이라 clone 위치가 어디든 된다.
+- 앱 코드(`src/`, `src-tauri/src/`, 설정)에도 이 PC 경로가 없다(테스트의 예시 경로 `D:\...`만 있음).
+- 그래서 노트북에서 따로 준비할 것은 없다. 1절 도구와 인터넷만 있으면 된다.
+- 참고(부분 확인): 깨끗한 clone에서 순서대로 돌려 본 결과 clone 7.6초, `fetch-zed-icons` 10초, `fetch-zed-themes` 76.1초로 성공했다. `fetch-zed-grammars`부터는 지시 정정으로 중단해 끝까지 확인하지 않았다(복제 폴더는 지움). 전체 clone 빌드는 미검증.
 
 ## 3. 빌드 명령
 
 ```powershell
-npm install                     # 처음 한 번(PowerShell 실행 정책에 막히면 npm.cmd)
+npm ci                          # 처음 한 번, lockfile 그대로(안 되면 npm install, 실행 정책에 막히면 npm.cmd ci)
 npm run tauri build             # release exe + NSIS 설치 파일
 ```
 
@@ -55,6 +88,7 @@ npm run tauri build             # release exe + NSIS 설치 파일
 - 처음부터 release 빌드(`--no-bundle` 상태, 2026-11-08): 전체 200초, 그중 Rust 컴파일 3분 5초.
 - NSIS 켠 빌드(Rust 일부 재컴파일 + NSIS 도구 첫 내려받기): 101.7초, Rust 56.1초.
 - 문법 복사본 채우기: 113.7초.
+- 노트북은 PC 사양·회선에 따라 다르다.
 
 ## 6. 다른 PC로 옮기는 법
 

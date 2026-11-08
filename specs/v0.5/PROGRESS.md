@@ -607,3 +607,7 @@
   - 무엇을 했나: [`docs/BUILD.md`](../../docs/BUILD.md)를 새로 만들었다(기준 커밋 `f1231dc`: 도구·버전, 복사본 fetch 스크립트 순서, 빌드 명령, 결과 파일, 걸린 시간, 다른 PC로 옮기는 법, 제약, 라이선스 주의, GitHub에 올리지 않는 것). 루트 `README.md`를 새로 만들어 제목과 BUILD.md 링크만 두었다.
   - 결과: 내용은 tauri-leader가 2026-11-08에 이 PC에서 확인한 값을 그대로 옮겼다. 미정: `.gitignore`에 `*.exe`·`*.zip` 추가 여부, 버전 `0.1.0` 변경 여부.
   - 검증: V0(문서만, 실행 없음).
+- **노트북 clone 빌드 순서 문서** (2026-11-08, W-43, core-leader ORDER 사용자 지시 + 정정 1·2)
+  - 무엇을 했나: [`docs/BUILD.md`](../../docs/BUILD.md)를 고쳤다(기준 커밋 `45aed5e`). 0절 "노트북에서 처음부터"(도구 설치 → clone → fetch 스크립트 셋 → `npm ci` → `npm run tauri build`), 1절 표에 winget 설치 명령·설치 확인 명령, 2절에 복사본 폴더 일곱 개와 "이 PC에만 있는 것에 기대는가" 확인 결과, 3절 `npm install` → `npm ci`(대안 `npm install`), 5절 노트북 시간 한 줄. 4·6~9절은 그대로. 스크립트·코드·설정은 고치지 않았다.
+  - 결과: 내용은 tauri-leader가 2026-11-08에 확인한 값을 그대로 옮겼다. 세 fetch 스크립트와 앱 코드는 이 PC에만 있는 것에 기대지 않는다(코드 읽기). 깨끗한 clone에서 clone·icons·themes까지 성공, grammars부터와 전체 clone 빌드는 미검증.
+  - 검증: V0(문서만, 실행 없음).
