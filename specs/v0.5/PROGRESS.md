@@ -603,3 +603,7 @@
   - 무엇을 했나: `src-tauri/tauri.conf.json` `bundle`을 `"active": true`, `"targets": ["nsis"]`로 켰다(`webviewInstallMode`는 기본값 `downloadBootstrapper`). 쓰는 법·제약은 [`reports/RELEASE.md`](reports/RELEASE.md).
   - 결과: 설치 파일 `src-tauri\target\release\bundle\nsis\workbench-tauri_0.1.0_x64-setup.exe` 6,052,343바이트(5.77 MiB), exe `src-tauri\target\release\workbench-tauri.exe` 16,972,800바이트(16.19 MiB), exe zip 예상 7.66 MiB.
   - 검증: `npm run tauri build` 성공(재시도 101.7초, Rust 경고 없음, 첫 시도는 샌드박스 네트워크 차단 os error 10013). tauri-leader가 exe를 `%TEMP%`에 복사해 단독 실행 1회: 0.58초에 창 생성, 응답 중, `CloseMainWindow`로 종료 코드 0. 다른 PC 설치·실행과 이 PC 실제 설치는 미검증.
+- **빌드 과정 문서** (2026-11-08, W-42, core-leader ORDER 사용자 지시)
+  - 무엇을 했나: [`docs/BUILD.md`](../../docs/BUILD.md)를 새로 만들었다(기준 커밋 `f1231dc`: 도구·버전, 복사본 fetch 스크립트 순서, 빌드 명령, 결과 파일, 걸린 시간, 다른 PC로 옮기는 법, 제약, 라이선스 주의, GitHub에 올리지 않는 것). 루트 `README.md`를 새로 만들어 제목과 BUILD.md 링크만 두었다.
+  - 결과: 내용은 tauri-leader가 2026-11-08에 이 PC에서 확인한 값을 그대로 옮겼다. 미정: `.gitignore`에 `*.exe`·`*.zip` 추가 여부, 버전 `0.1.0` 변경 여부.
+  - 검증: V0(문서만, 실행 없음).
