@@ -596,3 +596,10 @@
 
   (e) toml 등록 요청 남은 것(gpui): `sidebar.item.font_size` 14(SPEC R-15·R-21), `markdown_preview.code_block.border` 1(SPEC R-15), L-109 "블록 테두리 없음" 문구 정정(SPEC R-15 "미리보기 코드 블록"), 라이트 `panel.focused_border` #0588f0은 toml에 슬롯이 없어 코드(`src/theme/theme.ts`)에 있다.
 - 다음 버전: 번호와 폴더는 사람이 정한다(이 기록에서 만들지 않음).
+
+## 사용자 요청 작업(v0.5 종료 뒤)
+
+- **배포본 NSIS 설치 파일** (2026-11-08, K-59·W-41, core-leader ORDER 사용자 지시)
+  - 무엇을 했나: `src-tauri/tauri.conf.json` `bundle`을 `"active": true`, `"targets": ["nsis"]`로 켰다(`webviewInstallMode`는 기본값 `downloadBootstrapper`). 쓰는 법·제약은 [`reports/RELEASE.md`](reports/RELEASE.md).
+  - 결과: 설치 파일 `src-tauri\target\release\bundle\nsis\workbench-tauri_0.1.0_x64-setup.exe` 6,052,343바이트(5.77 MiB), exe `src-tauri\target\release\workbench-tauri.exe` 16,972,800바이트(16.19 MiB), exe zip 예상 7.66 MiB.
+  - 검증: `npm run tauri build` 성공(재시도 101.7초, Rust 경고 없음, 첫 시도는 샌드박스 네트워크 차단 os error 10013). tauri-leader가 exe를 `%TEMP%`에 복사해 단독 실행 1회: 0.58초에 창 생성, 응답 중, `CloseMainWindow`로 종료 코드 0. 다른 PC 설치·실행과 이 PC 실제 설치는 미검증.
