@@ -202,17 +202,19 @@ R-1~R-23은 모두 위 표의 한 Phase에 대응한다.
 
 | Phase | 대응 R | 상태 | 커밋 | 비고 |
 | --- | --- | --- | --- | --- |
-| Phase 1 — 갈래 준비 | 없음 | doing | - | 없음 |
+| Phase 1 — 갈래 준비 | 없음 | done | - | 없음 |
 | Phase 2 — 창 | R-6 | done | - | 없음 |
 | Phase 3 — 편집 영역과 글꼴 | R-7 · R-8 · R-9 · R-13 · R-14 | done | - | 없음 |
 | Phase 4 — 글자 표시 | R-20 | done | - | R-11·R-12 자리는 Phase 9, 네이티브 대화 상자는 Phase 12 V4 |
 | Phase 5 — 아이콘 모양 | R-1 · R-18 | done | - | 파일 트리 일반 파일 아이콘은 Phase 7, Windows 창 버튼은 Zed와 같은 Segoe 글리프 유지 |
-| Phase 6 — 타이틀 바 메뉴 | R-2 · R-17 | doing | - | 1단계 완료(core 판정 대기). 2단계 완료(core 판정 대기). Themes…·Icon Themes…는 Phase 7. View Editor Layout 하위 메뉴는 gpui와 조율 필요 |
-| Phase 7 — 테마·아이콘 테마 | R-3 · R-4 | 완료(core 판정 대기) | - | 남은 차이·core 확인 항목은 PROGRESS Phase 7 |
-| Phase 8 — 상태 바 | R-5 · R-19 · R-22 | 완료(core 판정 대기) | - | 남은 차이·toml 등록 요청은 PROGRESS Phase 8·SPEC R-22 |
-| Phase 9 — 탭 바와 편집 영역 상단 | R-10 · R-11 · R-12 · R-16 · R-23 | 완료(core 판정 대기) | - | 코드 심볼 경로 줄은 Phase 11(D-14). 남은 차이는 PROGRESS Phase 9 |
-| Phase 10 — 폴더 보기 패널 | R-21 | done(core 판정 충족, R1 포함) | - | 라이트 panel.focused_border 기본값은 K-46, 이름 글자 14px는 R1(K-51). toml 등록 요청은 SPEC R-15·R-21 |
-| Phase 11 — 구문 강조 | R-15 | tauri 충족(core 판정 2026-11-08), Phase 닫힘은 gpui 뒤 | - | 표는 SPEC R-12·R-15, 경과는 PROGRESS Phase 11 |
-| Phase 12 — 사용자 일괄 확인 | V4 | todo | - | 없음 |
+| Phase 6 — 타이틀 바 메뉴 | R-2 · R-17 | done | - | 1단계 완료(core 판정 대기). 2단계 완료(core 판정 대기). Themes…·Icon Themes…는 Phase 7. View Editor Layout 하위 메뉴는 gpui와 조율 필요 |
+| Phase 7 — 테마·아이콘 테마 | R-3 · R-4 | done | - | 남은 차이·core 확인 항목은 PROGRESS Phase 7 |
+| Phase 8 — 상태 바 | R-5 · R-19 · R-22 | done | - | 남은 차이·toml 등록 요청은 PROGRESS Phase 8·SPEC R-22 |
+| Phase 9 — 탭 바와 편집 영역 상단 | R-10 · R-11 · R-12 · R-16 · R-23 | done | - | 코드 심볼 경로 줄은 Phase 11(D-14). 남은 차이는 PROGRESS Phase 9 |
+| Phase 10 — 폴더 보기 패널 | R-21 | done | - | 라이트 panel.focused_border 기본값은 K-46, 이름 글자 14px는 R1(K-51). toml 등록 요청은 SPEC R-15·R-21 |
+| Phase 11 — 구문 강조 | R-15 | done | - | 표는 SPEC R-12·R-15, 경과는 PROGRESS Phase 11 |
+| Phase 12 — 사용자 일괄 확인 | V4 | done | 0106dde | 사용자 테스트로 끝남(2026-11-08). 판단이 없던 V4 항목은 다음 버전, PROGRESS "버전 종료" |
+
+v0.5 종료: 2026-11-08(사용자, core-leader 전달). Phase 1~11은 core가 닫고 `0106dde`까지 push했다. 판단과 남은 것은 `PROGRESS.md` "버전 종료".
 
 - 상태: todo | doing | done
