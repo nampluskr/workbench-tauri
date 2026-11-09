@@ -111,6 +111,37 @@
   - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-04/`(gpui-*·tauri-* PNG, `pixels.json`, `tauri-dark.json`, `tauri-light.json`).
   - 특이사항: gpui Sidebar는 스크롤바를 그리지 않는다(렌더러를 붙이지 않음). tauri Sidebar는 공통 모양으로 그린다. gpui는 데이터 폴더를 `%APPDATA%` 환경 변수가 아니라 Windows API로 찾으므로, leader가 사용자 gpui `state.json`·`settings.json`을 백업하고 임시 상태로 바꿔 띄운 뒤 원래 파일로 되돌렸다(SHA-256 일치 확인). 캡처는 창 영역만 잘랐고, 오른쪽 아래를 가린 데스크톱 알림 자리는 회색으로 칠했다. picker·drag·가로 스크롤바는 화면으로 재지 않고 코드로 확인했다.
 
+### Phase 5 — 탭 바와 편집 영역 상단
+
+- **K-06 뒤로·앞으로는 탭 사이만(R-12), 경로 줄 상대 경로만(R-16)** (2026-11-10, coder)
+  - 무엇을 했나:
+    - 뒤로·앞으로: 기록에 탭 객체(`TabFile`)만 저장하고 줄·열은 저장하지 않는다. 문서 안 위치 기록 코드(`NavEntry`·`NavMode`·`isFarJump`·`MIN_NAVIGATION_HISTORY_ROW_DELTA`·`placeOf`·`ViewHooks.jumped`·`navigated`·`FileLocation.noHistory`)와 닫힌 탭 재열기·커서 복원을 지웠다. 닫힌 탭은 건너뛰고, 이동할 곳이 없으면 버튼이 비활성화된다. 탭 바 버튼과 Alt+Left/Right는 같은 경로를 쓴다.
+    - 경로 줄: 열린 폴더 기준 상대 경로만 보인다(루트 이름 접두사·드라이브 문자 없음, 폴더 밖 파일은 파일명만). 제목·심볼 계층 코드(`headings.ts`·`headings.test.ts`·`outline.test.ts`, `symbolsAtCursor`·`SyntaxDocument.symbols`, outline 쿼리 로딩 등)를 지웠다. 경로 줄 자리·모양 CSS는 그대로다.
+    - 남긴 것: 마크다운 편집↔미리보기 위치 연계, 구문 강조(파싱·증분 갱신), 상태 표시 커서·Go to Line.
+  - 결과: 위와 같다.
+  - 검증: typecheck, 관련 node 테스트 31/31.
+  - 특이사항: 없음.
+- **K-07 탭 오른쪽 클릭 메뉴(R-9)** (2026-11-10, coder; core-leader 2026-11-10 승인 — 문서 기준)
+  - 무엇을 했나:
+    - 메뉴: 미리보기 탭은 core `refs/I-9-zed.png`의 묶음(닫기 묶음·Make Tab Read-Only·Pin·Show Source), 파일 탭은 같은 묶음 + `docs/refs/01-zed/02-INTERACTION.md` 11.3 I-663 경로 묶음(Copy Path·Copy Relative Path·Reveal in File Explorer·Reveal In Project Panel) + 마크다운 편집 탭만 Open Markdown Preview, 그 밖의 탭은 닫기 묶음 + Pin.
+    - Make Tab Read-Only/Editable을 탭 단위로 새로 만들었다(디스크 가독성 상태와 따로, 다른 탭에 전파하지 않음).
+    - 단축키(Ctrl-K E/T/U/W/P/R, Ctrl-Alt-Shift-T, Ctrl-Shift-E 등)를 Pane에 등록했다. 기존 Ctrl-K Shift-Enter(Pin)는 그대로 썼다.
+    - 새 파일 `src/shell/tab-menu.ts`와 테스트.
+  - 결과: 위와 같다.
+  - 검증: typecheck, 관련 node 테스트 28/28 + 2/2.
+  - 특이사항: 없음.
+- **K-07-R1 단축키 실측 실패 조사** (2026-11-10, coder)
+  - 무엇을 했나: leader V3에서 chord 단축키가 동작하지 않는 것처럼 보인 원인을 찾았다. 앱 코드는 고치지 않고 실제 modifier 순서 회귀 테스트 하나(`src/keymap/keyboard.test.ts`)만 더했다.
+  - 결과: 원인은 leader 실측 스크립트가 `tools/win-input.ps1 -Keys`에 키를 여러 인자로 넘겨 두 번째 키가 `-Mods`로 들어간 것이었다(앱 결함 아님). ORDER-02 V3의 "SendInput `ctrl+k ctrl+t`로 테마 선택 창이 열리지 않음"도 같은 스크립트 원인이다.
+  - 검증: typecheck, 관련 node 테스트 19/19.
+  - 특이사항: 없음.
+- C-09 checker [PASS]: 전체 typecheck, npm test 210, clippy 경고 0, cargo test 21, 코드 검토와 V3 판정, 지적 없음 (2026-11-10)
+- **V3(ORDER-05)** (2026-11-10, leader 측정·C-09 판정 [PASS])
+  - 무엇을 했나: debug exe, 임시 APPDATA, One Light, 임시 폴더(notes.md·app.py·main.ts·sub/lib.rs, 두 번째 폴더 other.md).
+  - 결과: 메뉴 네 종류가 승인 목록과 같다. 메뉴 동작 — Close Others, Show Source, Make Tab Read-Only(입력 막힘·라벨 전환), Copy Relative Path(붙여넣기 "app.py"), Reveal In Project Panel. 단축키 재측정 모두 동작(Ctrl-K T/E/U/W, Ctrl-Alt-Shift-T, Ctrl-K Shift-Enter, Ctrl-Shift-E, Ctrl-K Ctrl-T). 뒤로 B→A, 앞으로 B, Ctrl+End 뒤에도 탭 이동, 닫힌 탭 건너뜀. 경로 줄 `notes.md`·`app.py`·`main.ts`·`sub\lib.rs`·`other.md`(폴더 하나·둘), `›` 뒤 없음, 드라이브 문자 없음.
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-05/`(single.json, multi.json, probe.json, chords.json, PNG).
+  - 특이사항: Zed 비교는 하지 않았다 — 이 PC Zed가 사용자 것으로 떠 있고 `--user-data-dir`를 줘도 떠 있는 인스턴스로 넘어가 따로 띄울 수 없었다. 시도 중 사용자 Zed에 'o5' 폴더 창과 빈 창이 한 번씩 열려 leader가 그 두 창만 닫았다('o5'는 사용자 Zed 최근 작업 영역 기록에 남았을 수 있음, 고치지 않음). Zed 비교 캡처와 이 PC Zed 탐색 기록 확인은 사용자 확인 대기. 클립보드 읽기 권한 창이 한 번 떠 leader가 허용·차단을 누르지 않았다(거부로 끝남). 스크립트 오류로 앱을 여러 번 띄웠다.
+
 ## 사용자 요청 작업
 
 ### ORDER-01-R1 결과 검토와 제안 (2026-11-10)

@@ -1,0 +1,157 @@
+{
+  "mode": "single",
+  "crumb_notes.md": [
+    "notes.md"
+  ],
+  "crumb_app.py": [
+    "app.py"
+  ],
+  "crumb_main.ts": [
+    "main.ts"
+  ],
+  "nav": {
+    "start": [
+      "main.ts"
+    ],
+    "back1": [
+      "app.py"
+    ],
+    "back2": [
+      "notes.md"
+    ],
+    "fwd1": [
+      "app.py"
+    ],
+    "afterCloseB": [
+      "notes.md",
+      "main.ts"
+    ],
+    "backSkipsClosed": [
+      "notes.md"
+    ]
+  },
+  "menu_md_file": [
+    "Close",
+    "Close OthersCtrl-Alt-Shift-T",
+    "---",
+    "Close LeftCtrl-K E [disabled]",
+    "Close RightCtrl-K T",
+    "---",
+    "Close CleanCtrl-K U",
+    "Close AllCtrl-K W",
+    "---",
+    "Make Tab Read-Only",
+    "---",
+    "Pin TabCtrl-K Shift-Enter",
+    "---",
+    "Copy PathCtrl-K P",
+    "Copy Relative Path",
+    "---",
+    "Reveal in File ExplorerCtrl-K R",
+    "Reveal In Project PanelCtrl-Shift-E",
+    "---",
+    "Open Markdown PreviewCtrl-Shift-V"
+  ],
+  "menu_py_file": [
+    "Close",
+    "Close OthersCtrl-Alt-Shift-T",
+    "---",
+    "Close LeftCtrl-K E",
+    "Close RightCtrl-K T",
+    "---",
+    "Close CleanCtrl-K U",
+    "Close AllCtrl-K W",
+    "---",
+    "Make Tab Read-Only",
+    "---",
+    "Pin TabCtrl-K Shift-Enter",
+    "---",
+    "Copy PathCtrl-K P",
+    "Copy Relative Path",
+    "---",
+    "Reveal in File ExplorerCtrl-K R",
+    "Reveal In Project PanelCtrl-Shift-E"
+  ],
+  "tabsWithPreview": [
+    "notes.md",
+    "Preview notes.md",
+    "app.py",
+    "main.ts"
+  ],
+  "menu_preview": [
+    "Close",
+    "Close OthersCtrl-Alt-Shift-T",
+    "---",
+    "Close LeftCtrl-K E",
+    "Close RightCtrl-K T",
+    "---",
+    "Close CleanCtrl-K U",
+    "Close AllCtrl-K W",
+    "---",
+    "Make Tab Read-Only",
+    "---",
+    "Pin TabCtrl-K Shift-Enter",
+    "---",
+    "Show SourceCtrl-Shift-V"
+  ],
+  "menu_tool": [
+    "Close",
+    "Close OthersCtrl-Alt-Shift-T",
+    "---",
+    "Close LeftCtrl-K E",
+    "Close RightCtrl-K T",
+    "---",
+    "Close CleanCtrl-K U",
+    "Close AllCtrl-K W",
+    "---",
+    "Pin TabCtrl-K Shift-Enter"
+  ],
+  "readOnly": "ERR not found [...document.querySelectorAll('.cm-line')].find(l=>l.textContent.includes(\"return 1\"))",
+  "copyRelative": "ERR NotAllowedError: Failed to execute 'readText' on 'Clipboard': Read permission denied.",
+  "showSource": {
+    "tabs": [
+      "notes.md",
+      "Search",
+      "app.py",
+      "main.ts"
+    ],
+    "active": [
+      "notes.md"
+    ]
+  },
+  "closeRightKey": {
+    "before": [
+      "notes.md",
+      "Search",
+      "app.py",
+      "main.ts"
+    ],
+    "after": [
+      "notes.md",
+      "Search",
+      "app.py",
+      "main.ts"
+    ]
+  },
+  "closeOthersMenu": {
+    "before": [
+      "notes.md",
+      "Search",
+      "app.py",
+      "main.ts"
+    ],
+    "after": [
+      "main.ts"
+    ]
+  },
+  "closeAllKey": {
+    "before": [
+      "main.ts",
+      "app.py"
+    ],
+    "after": [
+      "main.ts",
+      "app.py"
+    ]
+  }
+}

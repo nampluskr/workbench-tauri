@@ -1,0 +1,61 @@
+{
+  "closeRight_ctrlK_T": {
+    "before": [
+      "notes.md",
+      "app.py",
+      "main.ts"
+    ],
+    "after": [
+      "notes.md"
+    ]
+  },
+  "closeLeft_ctrlK_E": {
+    "before": [
+      "notes.md",
+      "app.py",
+      "main.ts"
+    ],
+    "after": [
+      "main.ts"
+    ]
+  },
+  "closeOthers_ctrlAltShiftT": {
+    "before": [
+      "main.ts",
+      "notes.md",
+      "app.py"
+    ],
+    "after": [
+      "app.py"
+    ]
+  },
+  "closeClean_ctrlK_U": {
+    "before": [
+      "app.py",
+      "main.ts",
+      "notes.md"
+    ],
+    "after": []
+  },
+  "pin_ctrlK_shiftEnter": [
+    "main.ts [pinned]",
+    "notes.md",
+    "app.py"
+  ],
+  "closeAll_ctrlK_W_keepsPinned": {
+    "before": [
+      "main.ts",
+      "notes.md",
+      "app.py"
+    ],
+    "after": [
+      "main.ts"
+    ]
+  },
+  "reveal_ctrlShiftE": [
+    "app.py"
+  ],
+  "theme_ctrlK_ctrlT": {
+    "pickerOpen": true
+  }
+}

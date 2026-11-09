@@ -1,0 +1,100 @@
+{
+  "ctrlK_t_from_tab": {
+    "before": [
+      "notes.md",
+      "app.py",
+      "main.ts"
+    ],
+    "after": [
+      "notes.md",
+      "app.py",
+      "main.ts"
+    ],
+    "events": [
+      [
+        "Control",
+        "ControlLeft",
+        true,
+        false,
+        false,
+        "cm-content cm-lineWrapping"
+      ],
+      [
+        "k",
+        "KeyK",
+        true,
+        false,
+        false,
+        "cm-content cm-lineWrapping"
+      ]
+    ],
+    "active": "cm-content cm-lineWrapping"
+  },
+  "ctrlK_t_from_editor": {
+    "before": [
+      "notes.md",
+      "app.py",
+      "main.ts"
+    ],
+    "after": [
+      "notes.md",
+      "app.py",
+      "main.ts"
+    ],
+    "events": [
+      [
+        "Control",
+        "ControlLeft",
+        true,
+        false,
+        false,
+        "cm-content cm-lineWrapping"
+      ],
+      [
+        "k",
+        "KeyK",
+        true,
+        false,
+        false,
+        "cm-content cm-lineWrapping"
+      ]
+    ]
+  },
+  "ctrlK_ctrlT_theme": {
+    "pickerOpen": false,
+    "events": [
+      [
+        "Control",
+        "ControlLeft",
+        true,
+        false,
+        false,
+        "cm-content cm-lineWrapping"
+      ],
+      [
+        "k",
+        "KeyK",
+        true,
+        false,
+        false,
+        "cm-content cm-lineWrapping"
+      ],
+      [
+        "Escape",
+        "Escape",
+        false,
+        false,
+        false,
+        "cm-content cm-lineWrapping"
+      ]
+    ]
+  },
+  "readOnly": {
+    "typedVisible": false,
+    "labelAfter": "Make Tab Editable"
+  },
+  "copyRelative": "app.py",
+  "revealInPanel": [
+    "main.ts"
+  ]
+}

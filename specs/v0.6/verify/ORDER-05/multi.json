@@ -1,0 +1,18 @@
+{
+  "mode": "multi",
+  "crumb_notes.md": [
+    "notes.md"
+  ],
+  "crumb_app.py": [
+    "app.py"
+  ],
+  "crumb_main.ts": [
+    "main.ts"
+  ],
+  "crumb_sub_lib.rs": [
+    "sub\\lib.rs"
+  ],
+  "crumb_other.md": [
+    "other.md"
+  ]
+}
