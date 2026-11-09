@@ -1,5 +1,0 @@
-.diagnostics-tab, .diagnostics { height: 100%; min-width: 0; outline: none; } /* Zed draws no focus ring on the tab body */
-.diagnostics { display: flex; flex-direction: column; background: var(--editor-background); color: var(--text); }
-.diagnostics-toolbar { justify-content: space-between; }
-.diagnostics-toolbar .diagnostics-warning .icon-button { color: var(--warning); }
-.diagnostics-empty { display: flex; flex: 1; align-items: center; justify-content: center; color: var(--text-muted); font-size: var(--typography-size-default); }

@@ -11,7 +11,7 @@ function setup(save: ThemeSelectorDeps["save"] = async () => {}) {
     preview: (name) => log.push(`preview ${name}`),
     save: async (name) => { log.push(`save ${name}`); await save(name); },
     fail: (error) => log.push(`fail ${error}`),
-    installThemes: () => log.push("install"),
+    viewThemes: () => log.push("install"),
   });
   return { config, log };
 }
@@ -20,7 +20,7 @@ test("select theme: opens on the current theme with Zed's placeholder and footer
   const { config } = setup();
   assert.equal(config.placeholder, "Select Theme...");
   assert.equal(config.checked, "One Dark");
-  assert.equal(config.footer.label, "Install Themes");
+  assert.equal(config.footer.label, "View Themes");
 });
 
 test("select theme: moving previews, closing without a choice restores the opening theme", () => {
@@ -50,10 +50,10 @@ test("select icon theme: Zed's words, the same preview, save and undo", async ()
   const config = iconThemeSelector({
     themes: ["Zed (Default)", "Catppuccin Mocha"], current: "Zed (Default)",
     preview: (name) => log.push(`preview ${name}`), save: async (name) => { log.push(`save ${name}`); },
-    fail: () => {}, installIconThemes: () => log.push("install"),
+    fail: () => {}, viewIconThemes: () => log.push("install"),
   });
   assert.equal(config.placeholder, "Select Icon Theme...");
-  assert.equal(config.footer.label, "Install Icon Themes");
+  assert.equal(config.footer.label, "View Icon Themes");
   config.footer.run();
   config.preview("Catppuccin Mocha");
   config.revert();

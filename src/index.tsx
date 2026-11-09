@@ -15,7 +15,6 @@ import "./shell/KeymapEditor.tsx";
 import "./extensions/Extensions.tsx";
 import "./theme/commands.ts";
 import "./search/Search.tsx";
-import "./diagnostics/Diagnostics.tsx";
 
 const root = document.getElementById("root");
 if (!root) {

@@ -50,12 +50,10 @@ export default function App() {
           {/* L-15 / D-8: the active folder's split tree of Panes (R-26, R-9). */}
           <PaneArea />
         </div>
-        {/* I-22: the closed sidebar's toggle precedes the project panel, search and diagnostics. */}
+        {/* I-22: the closed sidebar's toggle precedes the project panel and search. */}
         <footer class="status-bar">
           <div class="group grow">
             <For each={statusButtons(sidebarOpen(), dockOpen())}>{(button) => (<>
-              {/* Zed's hidden language-server button still takes one item gap before diagnostics (V3 measured, zed.rs:637). */}
-              <Show when={button.slotBefore}><span aria-hidden="true" /></Show>
               <IconButton {...button} onClick={() => commands.get(button.action)?.()} />
               <Show when={button.dividerAfter}><span class={button.dividerAfter === "toggle" ? "status-divider toggle" : "status-divider"} aria-hidden="true" /></Show>
             </>)}</For>

@@ -28,7 +28,7 @@ import { buildRows, collapseAll, joinPath, none, only, sortChildren, type Child,
 // The work context of one folder (A-15, R-13): what its tree has expanded, selected and read, and its tabs. It stays in
 // memory while the folder is registered and goes with it (R-14). Nothing here is saved to state.json.
 
-/** A 1-based position; with `endLine`/`endColumn` the range is selected (a Project Search match, as Zed opens it). */
+/** A 1-based position; with `endLine`/`endColumn` the range is selected. */
 export type FileLocation = { line: number; column: number; endLine?: number; endColumn?: number; noHistory?: boolean };
 
 /**

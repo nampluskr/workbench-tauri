@@ -4,7 +4,7 @@ mod files;
 mod folder_watch;
 mod text_io;
 mod user_file;
-mod project_search;
+mod name_search;
 
 use notify::{Event, EventKind, RecursiveMode, Watcher};
 use tauri::{Emitter, Manager};
@@ -174,7 +174,6 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .manage(folder_watch::FolderWatch::default())
-        .manage(project_search::SearchJobs::default())
         .setup(|app| {
             let main = app.get_webview_window("main").ok_or("main window missing")?;
             let handle = app.handle().clone();
@@ -216,7 +215,7 @@ pub fn run() {
             }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![caption_set_colors, read_user_settings, write_user_settings, ensure_user_settings, edit_user_settings, open_settings, read_user_keymap, write_user_keymap, ensure_user_keymap, check_folder, paths_exist, read_state, write_state, files::list_dir, files::read_file, files::create_file, files::create_dir, files::rename_path, files::trash_paths, files::delete_paths, files::confirm, files::confirm_buttons, files::paste_paths, files::duplicate_path, folder_watch::watch_folder, text_io::save_text, project_search::project_search, project_search::cancel_project_search, project_search::prepare_search_replace])
+        .invoke_handler(tauri::generate_handler![caption_set_colors, read_user_settings, write_user_settings, ensure_user_settings, edit_user_settings, open_settings, read_user_keymap, write_user_keymap, ensure_user_keymap, check_folder, paths_exist, read_state, write_state, files::list_dir, files::read_file, files::create_file, files::create_dir, files::rename_path, files::trash_paths, files::delete_paths, files::confirm, files::confirm_buttons, files::paste_paths, files::duplicate_path, folder_watch::watch_folder, text_io::save_text, name_search::search_names])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -4805,7 +4805,6 @@ dependencies = [
  "encoding_rs",
  "ignore",
  "notify",
- "regex",
  "serde_json",
  "tauri",
  "tauri-build",

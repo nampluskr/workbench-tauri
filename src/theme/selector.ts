@@ -16,16 +16,16 @@ type SelectorDeps = {
   /** A save failed. */
   fail: (error: unknown) => void;
 };
-export type ThemeSelectorDeps = SelectorDeps & { /** Open the Extensions tab on the Themes category. */ installThemes: () => void };
-export type IconThemeSelectorDeps = SelectorDeps & { /** Open the Extensions tab on the Icon Themes category. */ installIconThemes: () => void };
+export type ThemeSelectorDeps = SelectorDeps & { /** Open the Extensions tab on the Themes category. */ viewThemes: () => void };
+export type IconThemeSelectorDeps = SelectorDeps & { /** Open the Extensions tab on the Icon Themes category. */ viewIconThemes: () => void };
 
 /** Preview while moving, save on confirm, undo on any other close (P-010, P-011, T-21). */
-function selector(placeholder: string, install: string, run: () => void, d: SelectorDeps): PickerConfig {
+function selector(placeholder: string, label: string, run: () => void, d: SelectorDeps): PickerConfig {
   return {
     placeholder,
     items: d.themes,
     checked: d.current,
-    footer: { label: install, run },
+    footer: { label, run },
     preview: d.preview,
     confirm: async (name) => {
       try { await d.save(name); }
@@ -36,6 +36,6 @@ function selector(placeholder: string, install: string, run: () => void, d: Sele
 }
 
 /** "Select Theme..." */
-export const themeSelector = (d: ThemeSelectorDeps): PickerConfig => selector("Select Theme...", "Install Themes", d.installThemes, d);
+export const themeSelector = (d: ThemeSelectorDeps): PickerConfig => selector("Select Theme...", "View Themes", d.viewThemes, d);
 /** "Select Icon Theme..." */
-export const iconThemeSelector = (d: IconThemeSelectorDeps): PickerConfig => selector("Select Icon Theme...", "Install Icon Themes", d.installIconThemes, d);
+export const iconThemeSelector = (d: IconThemeSelectorDeps): PickerConfig => selector("Select Icon Theme...", "View Icon Themes", d.viewIconThemes, d);

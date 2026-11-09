@@ -20,7 +20,7 @@ commands.set("theme_selector::Toggle", () => {
     preview: (name) => void showTheme(name).catch(report),
     save: (name) => saveSetting("theme", name),
     fail: report,
-    installThemes: () => openExtensions("Themes"),
+    viewThemes: () => openExtensions("Themes"),
   }));
 });
 
@@ -33,6 +33,6 @@ commands.set("icon_theme_selector::Toggle", () => {
     preview: setAppliedIconTheme,
     save: (name) => saveSetting("icon_theme", name),
     fail: report,
-    installIconThemes: () => openExtensions("Icon Themes"),
+    viewIconThemes: () => openExtensions("Icon Themes"),
   }));
 });
