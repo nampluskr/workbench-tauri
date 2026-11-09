@@ -1,0 +1,194 @@
+{
+  "mode": "reopen",
+  "list": [
+    "date",
+    "Zebra",
+    "banana"
+  ],
+  "layout": {
+    "sidebar": {
+      "l": 0,
+      "r": 246,
+      "w": 246
+    },
+    "dock": {
+      "l": 246,
+      "r": 486,
+      "w": 240
+    },
+    "pane": {
+      "l": 486,
+      "r": 1440,
+      "w": 954
+    }
+  },
+  "stateFile": {
+    "id": "w1",
+    "folders": [
+      {
+        "id": "f3",
+        "path": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\97f9d5ab-03c3-43c4-a1aa-7706006a799a\\scratchpad\\o6\\date",
+        "added_at": "2026-11-10T00:00:00.000Z"
+      },
+      {
+        "id": "f0",
+        "path": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\97f9d5ab-03c3-43c4-a1aa-7706006a799a\\scratchpad\\o6\\apple",
+        "added_at": "2026-11-10T00:00:00.000Z",
+        "name": "Zebra"
+      },
+      {
+        "id": "f1",
+        "path": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\97f9d5ab-03c3-43c4-a1aa-7706006a799a\\scratchpad\\o6\\banana",
+        "added_at": "2026-11-10T00:00:00.000Z"
+      }
+    ],
+    "active_folder_id": "f0",
+    "sidebar": {
+      "width": 246
+    }
+  },
+  "ctrlF_editor": " cm-content cm-lineWrapping",
+  "ctrlF_tabbar": " cm-content cm-lineWrapping",
+  "resizeProbe": {
+    "sidebar": {
+      "drag1": {
+        "sidebar": {
+          "l": 0,
+          "r": 305,
+          "w": 305
+        },
+        "dock": {
+          "l": 305,
+          "r": 545,
+          "w": 240
+        },
+        "pane": {
+          "l": 545,
+          "r": 1440,
+          "w": 895
+        }
+      },
+      "dbl": {
+        "sidebar": {
+          "l": 0,
+          "r": 240,
+          "w": 240
+        },
+        "dock": {
+          "l": 240,
+          "r": 480,
+          "w": 240
+        },
+        "pane": {
+          "l": 480,
+          "r": 1440,
+          "w": 960
+        }
+      },
+      "dragRightAfterDbl": {
+        "sidebar": {
+          "l": 0,
+          "r": 299,
+          "w": 299
+        },
+        "dock": {
+          "l": 299,
+          "r": 539,
+          "w": 240
+        },
+        "pane": {
+          "l": 539,
+          "r": 1440,
+          "w": 901
+        }
+      },
+      "dragAfterPause": {
+        "sidebar": {
+          "l": 0,
+          "r": 358,
+          "w": 358
+        },
+        "dock": {
+          "l": 358,
+          "r": 598,
+          "w": 240
+        },
+        "pane": {
+          "l": 598,
+          "r": 1440,
+          "w": 842
+        }
+      }
+    },
+    "dock": {
+      "drag1": {
+        "sidebar": {
+          "l": 0,
+          "r": 358,
+          "w": 358
+        },
+        "dock": {
+          "l": 358,
+          "r": 657,
+          "w": 299
+        },
+        "pane": {
+          "l": 657,
+          "r": 1440,
+          "w": 783
+        }
+      },
+      "dbl": {
+        "sidebar": {
+          "l": 0,
+          "r": 358,
+          "w": 358
+        },
+        "dock": {
+          "l": 358,
+          "r": 598,
+          "w": 240
+        },
+        "pane": {
+          "l": 598,
+          "r": 1440,
+          "w": 842
+        }
+      },
+      "dragRightAfterDbl": {
+        "sidebar": {
+          "l": 0,
+          "r": 358,
+          "w": 358
+        },
+        "dock": {
+          "l": 358,
+          "r": 657,
+          "w": 299
+        },
+        "pane": {
+          "l": 657,
+          "r": 1440,
+          "w": 783
+        }
+      },
+      "dragAfterPause": {
+        "sidebar": {
+          "l": 0,
+          "r": 358,
+          "w": 358
+        },
+        "dock": {
+          "l": 358,
+          "r": 716,
+          "w": 358
+        },
+        "pane": {
+          "l": 716,
+          "r": 1440,
+          "w": 724
+        }
+      }
+    }
+  }
+}

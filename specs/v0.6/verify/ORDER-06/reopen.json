@@ -1,0 +1,192 @@
+{
+  "mode": "reopen",
+  "list": [
+    "date",
+    "Zebra",
+    "banana"
+  ],
+  "layout": {
+    "sidebar": {
+      "l": 0,
+      "r": 243,
+      "w": 243
+    },
+    "dock": {
+      "l": 243,
+      "r": 483,
+      "w": 240
+    },
+    "pane": {
+      "l": 483,
+      "r": 1440,
+      "w": 957
+    }
+  },
+  "stateFile": {
+    "id": "w1",
+    "folders": [
+      {
+        "id": "f3",
+        "path": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\97f9d5ab-03c3-43c4-a1aa-7706006a799a\\scratchpad\\o6\\date",
+        "added_at": "2026-11-10T00:00:00.000Z"
+      },
+      {
+        "id": "f0",
+        "path": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\97f9d5ab-03c3-43c4-a1aa-7706006a799a\\scratchpad\\o6\\apple",
+        "added_at": "2026-11-10T00:00:00.000Z",
+        "name": "Zebra"
+      },
+      {
+        "id": "f1",
+        "path": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\97f9d5ab-03c3-43c4-a1aa-7706006a799a\\scratchpad\\o6\\banana",
+        "added_at": "2026-11-10T00:00:00.000Z"
+      }
+    ],
+    "active_folder_id": "f0",
+    "sidebar": {
+      "width": 243
+    }
+  },
+  "resizeProbe": {
+    "sidebar": {
+      "drag1": {
+        "sidebar": {
+          "l": 0,
+          "r": 302,
+          "w": 302
+        },
+        "dock": {
+          "l": 302,
+          "r": 542,
+          "w": 240
+        },
+        "pane": {
+          "l": 542,
+          "r": 1440,
+          "w": 898
+        }
+      },
+      "dbl": {
+        "sidebar": {
+          "l": 0,
+          "r": 240,
+          "w": 240
+        },
+        "dock": {
+          "l": 240,
+          "r": 480,
+          "w": 240
+        },
+        "pane": {
+          "l": 480,
+          "r": 1440,
+          "w": 960
+        }
+      },
+      "dragRightAfterDbl": {
+        "sidebar": {
+          "l": 0,
+          "r": 243,
+          "w": 243
+        },
+        "dock": {
+          "l": 243,
+          "r": 483,
+          "w": 240
+        },
+        "pane": {
+          "l": 483,
+          "r": 1440,
+          "w": 957
+        }
+      },
+      "dragAfterPause": {
+        "sidebar": {
+          "l": 0,
+          "r": 246,
+          "w": 246
+        },
+        "dock": {
+          "l": 246,
+          "r": 486,
+          "w": 240
+        },
+        "pane": {
+          "l": 486,
+          "r": 1440,
+          "w": 954
+        }
+      }
+    },
+    "dock": {
+      "drag1": {
+        "sidebar": {
+          "l": 0,
+          "r": 246,
+          "w": 246
+        },
+        "dock": {
+          "l": 246,
+          "r": 545,
+          "w": 299
+        },
+        "pane": {
+          "l": 545,
+          "r": 1440,
+          "w": 895
+        }
+      },
+      "dbl": {
+        "sidebar": {
+          "l": 0,
+          "r": 246,
+          "w": 246
+        },
+        "dock": {
+          "l": 246,
+          "r": 486,
+          "w": 240
+        },
+        "pane": {
+          "l": 486,
+          "r": 1440,
+          "w": 954
+        }
+      },
+      "dragRightAfterDbl": {
+        "sidebar": {
+          "l": 0,
+          "r": 246,
+          "w": 246
+        },
+        "dock": {
+          "l": 246,
+          "r": 489,
+          "w": 243
+        },
+        "pane": {
+          "l": 489,
+          "r": 1440,
+          "w": 951
+        }
+      },
+      "dragAfterPause": {
+        "sidebar": {
+          "l": 0,
+          "r": 246,
+          "w": 246
+        },
+        "dock": {
+          "l": 246,
+          "r": 492,
+          "w": 246
+        },
+        "pane": {
+          "l": 492,
+          "r": 1440,
+          "w": 948
+        }
+      }
+    }
+  }
+}

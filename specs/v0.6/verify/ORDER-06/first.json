@@ -1,0 +1,185 @@
+{
+  "mode": "first",
+  "list": [
+    "apple",
+    "banana",
+    "cherry",
+    "date"
+  ],
+  "layout": {
+    "sidebar": {
+      "l": 0,
+      "r": 300,
+      "w": 300
+    },
+    "dock": {
+      "l": 300,
+      "r": 540,
+      "w": 240
+    },
+    "pane": {
+      "l": 540,
+      "r": 1440,
+      "w": 900
+    }
+  },
+  "searchBox": {
+    "placeholder": "Search",
+    "rect": {
+      "l": 8,
+      "t": 39,
+      "w": 283,
+      "h": 32
+    },
+    "border": "1px solid rgb(201, 201, 202)",
+    "radius": "6px",
+    "firstItemTop": 77
+  },
+  "menu": [
+    "Rename"
+  ],
+  "rename": {
+    "list": [
+      "Zebra",
+      "banana",
+      "cherry",
+      "date"
+    ],
+    "diskApple": true,
+    "diskZebra": false
+  },
+  "hoverX": [
+    "Zebra:false",
+    "banana:false",
+    "cherry:true",
+    "date:false"
+  ],
+  "dragBottomToTop": [
+    "date",
+    "Zebra",
+    "banana",
+    "cherry"
+  ],
+  "resize": {
+    "handle": {
+      "x": 299,
+      "y": 426,
+      "l": 296,
+      "r": 302,
+      "t": 0,
+      "b": 852,
+      "w": 6,
+      "h": 852
+    },
+    "before": {
+      "sidebar": {
+        "l": 0,
+        "r": 300,
+        "w": 300
+      },
+      "dock": {
+        "l": 300,
+        "r": 540,
+        "w": 240
+      },
+      "pane": {
+        "l": 540,
+        "r": 1440,
+        "w": 900
+      }
+    },
+    "after": {
+      "sidebar": {
+        "l": 0,
+        "r": 379,
+        "w": 379
+      },
+      "dock": {
+        "l": 379,
+        "r": 619,
+        "w": 240
+      },
+      "pane": {
+        "l": 619,
+        "r": 1440,
+        "w": 821
+      }
+    },
+    "afterDbl": {
+      "sidebar": {
+        "l": 0,
+        "r": 240,
+        "w": 240
+      },
+      "dock": {
+        "l": 240,
+        "r": 480,
+        "w": 240
+      },
+      "pane": {
+        "l": 480,
+        "r": 1440,
+        "w": 960
+      }
+    },
+    "final": {
+      "sidebar": {
+        "l": 0,
+        "r": 243,
+        "w": 243
+      },
+      "dock": {
+        "l": 243,
+        "r": 483,
+        "w": 240
+      },
+      "pane": {
+        "l": 483,
+        "r": 1440,
+        "w": 957
+      }
+    },
+    "dockAfterDbl": {
+      "sidebar": {
+        "l": 0,
+        "r": 243,
+        "w": 243
+      },
+      "dock": {
+        "l": 243,
+        "r": 483,
+        "w": 240
+      },
+      "pane": {
+        "l": 483,
+        "r": 1440,
+        "w": 957
+      }
+    }
+  },
+  "ctrlF_sidebar": "Search folders ",
+  "filter": {
+    "ebr": [
+      "Zebra"
+    ],
+    "ana": [
+      "banana"
+    ],
+    "cleared": [
+      "date",
+      "Zebra",
+      "banana",
+      "cherry"
+    ]
+  },
+  "ctrlF_tree": " project-panel",
+  "ctrlF_editor": "ERR not found [...document.querySelectorAll('.tree-row')].find(r=>r.textContent.trim()==='readme.md')",
+  "closeX": {
+    "list": [
+      "date",
+      "Zebra",
+      "banana"
+    ],
+    "diskCherry": true
+  }
+}

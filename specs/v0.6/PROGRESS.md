@@ -142,6 +142,30 @@
   - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-05/`(single.json, multi.json, probe.json, chords.json, PNG).
   - 특이사항: Zed 비교는 하지 않았다 — 이 PC Zed가 사용자 것으로 떠 있고 `--user-data-dir`를 줘도 떠 있는 인스턴스로 넘어가 따로 띄울 수 없었다. 시도 중 사용자 Zed에 'o5' 폴더 창과 빈 창이 한 번씩 열려 leader가 그 두 창만 닫았다('o5'는 사용자 Zed 최근 작업 영역 기록에 남았을 수 있음, 고치지 않음). Zed 비교 캡처와 이 PC Zed 탐색 기록 확인은 사용자 확인 대기. 클립보드 읽기 권한 창이 한 번 떠 leader가 허용·차단을 누르지 않았다(거부로 끝남). 스크립트 오류로 앱을 여러 번 띄웠다.
 
+### Phase 6 — Sidebar
+
+- **K-08 Sidebar(R-10·R-11·R-19)** (2026-11-10, coder)
+  - 무엇을 했나:
+    - 항목 메뉴: Rename 하나만 남겼다. 보이는 이름만 state.json 폴더 항목의 `name`에 저장하고 path는 그대로다. 빈 이름이면 디스크 폴더 이름으로 돌아간다. Move Up/Move Down/Remove 메뉴를 지웠다.
+    - hover한 항목 오른쪽 끝 x: 기존 `removeFolder`를 그대로 불러 디스크를 건드리지 않고 수정된 탭 확인 흐름을 유지한다.
+    - 끌어 순서 바꾸기: 순서를 state.json 폴더 배열에 저장한다.
+    - Sidebar|Left Dock 경계선: Left Dock과 `resizeHandle`을 공유한다(최소 6·최대 부모−6, 두 번 누르기 240, `sidebar.width` 저장). 옛 200~800 제한을 지웠다.
+    - 맨 위 "Search" 입력란: spec에 전용 ID가 없어 Extensions 검색 X-46 값을 재사용했다. 표시 이름 기준 대소문자 무시 부분 일치(`toLowerCase().includes` — I-5 맞추기는 Rust에 있어 재사용할 수 없음). Ctrl+F는 Sidebar 컨텍스트에서만 이 입력란으로 간다.
+  - 결과: 위와 같다.
+  - 검증: typecheck, 관련 node 테스트 16/16.
+  - 특이사항: 없음.
+- **K-08-R1 경계선 두 번 누른 뒤 끌기** (2026-11-10, coder)
+  - 무엇을 했나: leader V3에서 두 번 누르기 뒤 같은 경계선을 끌면 3px만 움직였다(기존 Left Dock도 같음). `resizeHandle` pointerdown에서 기본 동작(글자 선택·끌기)을 막았다.
+  - 결과: 다시 재니 Sidebar·Left Dock 두 경계선 모두 정상이다.
+  - 검증: typecheck, 관련 node 테스트 8/8.
+  - 특이사항: 없음.
+- C-10 checker [PASS]: 전체 typecheck, npm test 212, clippy 경고 0, cargo test 21, 코드 검토와 V3 판정(Zed 비교는 core refs `I-10-zed.png`·`I-19-zed.png` 캡처로), 지적 없음 (2026-11-10)
+- **V3(ORDER-06)** (2026-11-10, leader 측정·C-10 판정 [PASS])
+  - 무엇을 했나: debug exe, 임시 APPDATA, 임시 WebView 데이터 폴더(`WEBVIEW2_USER_DATA_FOLDER`, core-leader 규칙), One Light, 임시 폴더 apple·banana·cherry·date.
+  - 결과: 메뉴는 Rename 하나. apple→Zebra, 디스크 apple 그대로. hover한 cherry에만 x, 누르면 목록에서 빠지고 디스크 그대로. date를 맨 위로 끌기. 경계선 300→379에 Left Dock·편집 영역이 함께 밀림, 두 번 누르기 240. 다시 열어도 이름·순서·너비 유지. Sidebar에서 Ctrl+F → Search, 트리·편집 영역·탭에서는 가지 않음. "ebr"→Zebra, "ana"→banana, 지우면 모두.
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-06/`(first.json, reopen.json, reopen-2.json, PNG).
+  - 특이사항: 편집 영역 Ctrl+F의 문서 안 찾기는 Phase 9에서 확인한다.
+
 ## 사용자 요청 작업
 
 ### ORDER-01-R1 결과 검토와 제안 (2026-11-10)
