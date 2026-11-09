@@ -1,0 +1,29 @@
+{
+  "ctrlSlash": {
+    "doc": "def foo():\n    return 1\n\n# x = 2/\n",
+    "events": [
+      [
+        "Control",
+        "ControlLeft",
+        true,
+        false,
+        false,
+        false
+      ],
+      [
+        "Process",
+        "Slash",
+        true,
+        false,
+        false,
+        true
+      ],
+      [
+        "beforeinput",
+        "insertCompositionText",
+        "/"
+      ]
+    ]
+  },
+  "layout": "0x0412"
+}

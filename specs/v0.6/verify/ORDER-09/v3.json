@@ -1,0 +1,85 @@
+{
+  "editMenu": [
+    "UndoCtrl+Z",
+    "RedoCtrl+Y",
+    "---",
+    "CutCtrl+X",
+    "CopyCtrl+C",
+    "PasteCtrl+V",
+    "---",
+    "FindCtrl+F [disabled]",
+    "ReplaceCtrl+H [disabled]",
+    "---",
+    "Toggle Line CommentCtrl+/",
+    "Toggle Block CommentShift+Alt+A",
+    "---",
+    "Select AllCtrl+A",
+    "Add Next OccurrenceCtrl+D [disabled]",
+    "Add Cursor AboveCtrl+Alt+Up",
+    "Add Cursor BelowCtrl+Alt+Down"
+  ],
+  "iconCode": {
+    "crumb": {
+      "x": 929,
+      "y": 87,
+      "l": 448,
+      "r": 1410
+    },
+    "icon": {
+      "x": 1421,
+      "y": 87,
+      "l": 1410,
+      "r": 1432
+    },
+    "buttons": [
+      "Find in Explorer [disabled]"
+    ]
+  },
+  "ctrlL": null,
+  "esc": null,
+  "ctrlAltDown": {
+    "multi": null,
+    "afterEsc": null
+  },
+  "ctrlA": null,
+  "blockComment": {
+    "after": "const a = 1;\nconst b = 2;\n/* const c = 3;\n */",
+    "undone": "const a = 1;\nconst b = 2;\nconst c = 3;\n"
+  },
+  "altClick": null,
+  "ctrlF_editor": {
+    "focus": "cm-content",
+    "panel": false
+  },
+  "menuCopyPaste": {
+    "clipboard": "const a = 1;\n\n",
+    "docAfterPaste": "const a = 1;\nconst b = 2;\nconst c = 3;\n\n",
+    "windows": [
+      "0x3F0706 pid=45124 class=Chrome_WidgetWin_1 title=\"\" rect=234,95,336,248",
+      "0x1B05BA pid=21140 class=Tauri Window title=\"workbench-tauri\" rect=232,89,1456,861",
+      "0x8006D6 pid=21140 class=Tao Thread Event Target title=\"\" rect=0,0,16,16"
+    ]
+  },
+  "menuUndoRedo": "ERR Command failed: pwsh -NoProfile -File D:/projects/workbench-tauri/tools/win-input.ps1 -ProcessId 21140 -Action click -X 219 -Y 16\n\u001b[31;1mwin-input.ps1: \u001b[31;1m\"Click\"��(��) \"2\"���� �μ��� �Բ� ȣ���ϴ� ���� ���ܰ� �߻���: \"not sending mouse event 0x4 at 459,106: foreground window is 0x3F0706, target is 0x1B05BA\"\u001b[0m\r\n",
+  "lineComment": "ERR not found [...document.querySelectorAll('.cm-line')].find(l=>l.textContent.includes(\"x = 2\"))",
+  "iconPy": {
+    "icon": {
+      "x": 1421,
+      "y": 87,
+      "l": 1410,
+      "r": 1432
+    },
+    "buttons": [
+      "Find in Explorer"
+    ]
+  },
+  "iconMd": {
+    "buttons": [
+      "Find in Explorer@1410-1432 [disabled]"
+    ]
+  },
+  "tooltip": [
+    "Find in Explorer"
+  ],
+  "licenses": "ERR Command failed: pwsh -NoProfile -File D:/projects/workbench-tauri/tools/win-input.ps1 -ProcessId 21140 -Action click -X 219 -Y 16\n\u001b[31;1mwin-input.ps1: \u001b[31;1m\"Click\"��(��) \"2\"���� �μ��� �Բ� ȣ���ϴ� ���� ���ܰ� �߻���: \"not sending mouse event 0x4 at 459,106: foreground window is 0x3F0706, target is 0x1B05BA\"\u001b[0m\r\n"
+}

@@ -1,0 +1,34 @@
+{
+  "ctrlSlash": {
+    "doc": "def foo():\n    return 1\n\n# x = 2\n",
+    "events": [
+      [
+        "Control",
+        "ControlLeft",
+        true,
+        false,
+        false,
+        false
+      ],
+      [
+        "Process",
+        "Slash",
+        true,
+        false,
+        false,
+        true
+      ],
+      [
+        "beforeinput",
+        "insertCompositionText",
+        "/"
+      ]
+    ]
+  },
+  "undoAndHangul": {
+    "afterUndo": "def foo():\n    return 1\n\nx = 2\n",
+    "hangulTyped": "def foo():\n    return 1\n\nx = 2 한글\n",
+    "toggleAgain": "def foo():\n    return 1\n\n# x = 2 한글\n"
+  },
+  "layout": "0x0412"
+}

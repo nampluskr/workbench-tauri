@@ -1,0 +1,118 @@
+{
+  "editMenu": [
+    "UndoCtrl+Z",
+    "RedoCtrl+Y",
+    "---",
+    "CutCtrl+X",
+    "CopyCtrl+C",
+    "PasteCtrl+V",
+    "---",
+    "FindCtrl+F [disabled]",
+    "ReplaceCtrl+H [disabled]",
+    "---",
+    "Toggle Line CommentCtrl+/",
+    "Toggle Block CommentShift+Alt+A",
+    "---",
+    "Select AllCtrl+A",
+    "Add Next OccurrenceCtrl+D [disabled]",
+    "Add Cursor AboveCtrl+Alt+Up",
+    "Add Cursor BelowCtrl+Alt+Down"
+  ],
+  "iconCode": {
+    "crumb": {
+      "x": 929,
+      "y": 87,
+      "l": 448,
+      "r": 1410
+    },
+    "icon": {
+      "x": 1421,
+      "y": 87,
+      "l": 1410,
+      "r": 1432
+    },
+    "buttons": [
+      "Find in Explorer [disabled]"
+    ]
+  },
+  "ctrlL": {
+    "cursors": 1,
+    "selBg": 2,
+    "text": "const b = 2;\n"
+  },
+  "esc": {
+    "cursors": 1,
+    "selBg": 0,
+    "text": ""
+  },
+  "ctrlAltDown": {
+    "multi": {
+      "cursors": 3,
+      "selBg": 0,
+      "text": ""
+    },
+    "afterEsc": {
+      "cursors": 1,
+      "selBg": 0,
+      "text": ""
+    }
+  },
+  "ctrlA": {
+    "cursors": 1,
+    "selBg": 3,
+    "text": "const a = 1;\nconst b = 2;\nconst c = 3;\n"
+  },
+  "blockComment": {
+    "after": "const a = 1;\nconst b = 2;\n/* const c = 3;\n */",
+    "undone": "const a = 1;\nconst b = 2;\nconst c = 3;\n"
+  },
+  "altClick": {
+    "cursors": 2,
+    "selBg": 0,
+    "text": ""
+  },
+  "ctrlF_editor": {
+    "focus": "cm-content",
+    "panel": false
+  },
+  "keyboardCopyPaste": {
+    "clipboard": "const a = 1;\n\n",
+    "docAfterPaste": "const a = 1;\nconst b = 2;\nconst c = 3;\nconst a = 1;\n\n",
+    "afterUndo": "const a = 1;\nconst b = 2;\nconst c = 3;\n"
+  },
+  "menuUndoRedo": {
+    "typed": "const a = 1;\nconst b = 2;Z\nconst c = 3;\n",
+    "undo": "const a = 1;\nconst b = 2;\nconst c = 3;\n",
+    "redo": "const a = 1;\nconst b = 2;Z\nconst c = 3;\n"
+  },
+  "lineComment": {
+    "after": "def foo():\n    return 1\n\nx = 2/\n",
+    "afterMenuToggle": "def foo():\n    return 1\n\n# x = 2/\n"
+  },
+  "iconPy": {
+    "icon": {
+      "x": 1421,
+      "y": 87,
+      "l": 1410,
+      "r": 1432
+    },
+    "buttons": [
+      "Find in Explorer"
+    ]
+  },
+  "iconMd": {
+    "buttons": [
+      "Preview Markdown@1387-1409",
+      "Find in Explorer@1410-1432 [disabled]"
+    ]
+  },
+  "tooltip": [
+    "Find in Explorer"
+  ],
+  "licenses": {
+    "hasCodiconLicense": true,
+    "hasNotice": true,
+    "ccby": true,
+    "around": "../assets/codicons/NOTICE.txt\n\nsearch.svg from @vscode/codicons 0.0.46-24\nCopyright (c) Microsoft Corporation.\nSource: https://git"
+  }
+}

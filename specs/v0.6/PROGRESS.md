@@ -204,6 +204,36 @@
   - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-08/`(nofolder.json, folder.json, quit.json, licenses-text.txt, PNG). 저장 확인 창 캡처는 화면 전체 캡처라 창 영역만 잘랐다.
   - 특이사항: Licenses 목록은 v0.5와 다르다 — Phase 2에서 regex 라이선스 두 개를 지웠고 Phase 3에서 `frontend-dependencies.txt`를 더했다(v0.6 변경). leader 스크립트 오류로 Quit 단계를 한 번 더 띄워 쟀다(`quit.json`).
 
+### Phase 9 — 문서 편집 기본 기능
+
+- **K-11 의존성 없이 되는 부분(R-17)** (2026-11-10, coder)
+  - 무엇을 했나:
+    - Edit 메뉴를 workbench-kit 기대 2대로 바꿨다: 13항목, 구분선 넷, VS Code 표기(`+` 구분, Shift+Alt+A). Find·Replace·Add Next Occurrence는 비활성이다. 다른 메뉴의 Zed 표기는 그대로다.
+    - 편집 영역 키 Ctrl+A·Ctrl+L·Ctrl+Alt+Up·Ctrl+Alt+Down·Ctrl+/·Shift+Alt+A를 Editor 컨텍스트로 더했다(CM6 명령 재사용). Alt+클릭·Esc는 기존 동작 그대로다.
+    - 주석 토큰은 언어 config의 `line_comments` 첫 토큰과 `block_comment`에서 읽는다. 토큰이 없는 일반 텍스트에서는 주석 명령이 동작하지 않는다.
+    - 메뉴 Cut/Copy/Paste를 편집기에 연결했다. 키보드 Cut/Copy/Paste는 CM6 기본 처리 그대로다.
+    - codicon `search` SVG만 복사했다(`src/assets/codicons/`, @vscode/codicons 0.0.46-24, CC BY 4.0 본문 `src/licenses/`, Licenses에 포함). 경로 줄 찾기 아이콘: 마크다운은 눈 오른쪽, 그 밖은 오른쪽 끝, 비활성, 툴팁 "Find in Explorer".
+  - 결과: 위와 같다. 겹치는 단축키 표는 coder 보고에 있다. 기존 앱 바인딩을 없앤 키는 없다.
+  - 검증: typecheck, 관련 node 테스트(19·11·4).
+  - 특이사항: 삽입 언어(HTML 안 JS, TSX의 JSX 등)의 범위별 주석 전환은 하지 않았다(`shortcut:` 주석).
+- **K-11-R1·R2 한국어 IME에서 Ctrl+/** (2026-11-10, coder)
+  - 무엇을 했나: V3에서 한국어 IME(0x0412)일 때 Ctrl+/가 key 'Process'로 와서 주석 대신 '/'가 들어갔다. stroke 변환에서 Process+Ctrl/Alt는 물리 키(code)로 정했다(R1, `src/keymap/engine.ts`). 그 직후 IME가 넣는 같은 글자 한 개 조합 입력을 300ms 안에서 한 번만 막았다(R2, `src/editor/ime.ts`). 수정자 없는 한글 조합은 그대로다.
+  - 결과: 다시 재니 주석만 토글, Ctrl+Z 한 번에 복원, 한글 입력 정상.
+  - 검증: typecheck, 관련 node 테스트(R1 16, R2 19), V3 재측정.
+  - 특이사항: 300ms를 넘기거나 다른 글자로 오는 IME 입력은 막지 않는다.
+- **검색 모듈 BLOCKED(사용자 승인 대기)**
+  - `@codemirror/search@6.7.2`(MIT, unpacked 137,655바이트, 하위 의존성은 이미 있는 crelt·view·state뿐)가 필요하다. core-leader: 더하지도 직접 구현(TS 약 400~600줄)도 하지 않는다.
+  - 승인되면 할 것: 패키지 추가, 찾기·바꾸기 창(오른쪽 위), F3/Shift+F3·Enter/Shift+Enter, Alt+C/W/R, 하나/모두 바꾸기(Ctrl+Alt+Enter, 모두 바꾸기 한 번 취소), Alt+Enter, Ctrl+D·Ctrl+Shift+L·Ctrl+K Ctrl+D, Edit 메뉴 세 항목·찾기 아이콘 활성, I-19 편집 영역 Ctrl+F 확인, workbench-kit 비교 캡처.
+- **메뉴 Paste 미정**
+  - WebView2는 메뉴에서 클립보드를 읽지 못해 `navigator.clipboard.readText`로 대신하는데, 이것이 WebView 권한 창을 띄운다(키보드 Ctrl+V는 정상).
+  - core-leader: 지금 상태를 유지한다. 선택지 셋(클립보드 플러그인 추가 / 권한 창 받아들이기 / 메뉴 Paste 비활성)은 사용자가 정한다.
+- C-13 checker [PASS]: 전체 typecheck, npm test 220, clippy 경고 0, cargo test 21, 코드 검토와 V3 판정(BLOCKED 항목 제외), 지적 없음 (2026-11-10)
+- **V3(ORDER-09)** (2026-11-10, leader 측정·C-13 판정 [PASS])
+  - 무엇을 했나: debug exe, 임시 APPDATA·WebView 데이터 폴더, One Light, 임시 폴더(notes.md·app.py·main.ts).
+  - 결과: Edit 메뉴가 기대 2와 같다. 찾기 아이콘 자리는 코드 파일 1410–1432(경로 줄 끝), 마크다운은 눈(1387–1409) 오른쪽. Ctrl+L 줄+줄바꿈, Esc 커서 하나, Ctrl+Alt+Down 커서 셋, Ctrl+A 전체, Alt+클릭 커서 둘, Shift+Alt+A 블록 주석(Ctrl+Z 복원), Ctrl+/ `# `(IME 고친 뒤), 키보드 복사·붙여넣기, 메뉴 Undo/Redo. 편집 영역 Ctrl+F는 아무것도 열리지 않고 Sidebar로도 가지 않는다. Licenses에 codicons가 있다.
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-09/`.
+  - 특이사항: workbench-kit은 띄우지 않고 소스·VS Code 기본 동작으로 비교했다. 메뉴 Copy 시험이 시스템 클립보드를 덮어썼다.
+
 ## 사용자 요청 작업
 
 ### ORDER-01-R1 결과 검토와 제안 (2026-11-10)
