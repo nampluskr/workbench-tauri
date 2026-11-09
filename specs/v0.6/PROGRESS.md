@@ -67,6 +67,34 @@
   - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-02/`(PNG 10개, `v3.json`, `v3b.json`).
   - 특이사항: 두 세션 모두 SendInput `ctrl+k ctrl+t`로 테마 선택 창이 열리지 않아 사용자 메뉴로 열었다. ORDER-02는 이 바인딩을 바꾸지 않았다(`src/theme/selector.ts` 6줄 그대로). 원인은 확인하지 않았다. 첫 실행은 이전 실행의 고아 WebView2 프로세스가 데이터 폴더를 잡고 있어 실패했고, leader가 그 프로세스를 끝낸 뒤 다시 실행했다. I-7 부분은 두 번째 세션에서 다시 쟀다.
 
+### Phase 3 — 배포
+
+- **K-03 버전 한 곳·BUILD.md·Licenses(ORDER-03, R-1~R-3)** (2026-11-10, coder)
+  - 무엇을 했나:
+    - 버전 값을 `src-tauri/tauri.conf.json` `version` 한 곳(`0.6.0`)에만 뒀다. `package.json`·`package-lock.json` 루트 `version`을 지웠고(private 패키지), `src-tauri/Cargo.toml` `version`은 생략했다(Cargo.lock 자기 패키지 0.0.0). 의존성 변경은 없다. tauri-build 2.7.4가 config version을 exe·설치 파일의 FileVersion·ProductVersion에 넣는 것을 소스로 확인했다.
+    - `docs/BUILD.md`: NSIS·exe 서명 없음, SmartScreen "Windows의 PC 보호"에서 "추가 정보 → 실행", 배포 범위 "개인 용도, 다른 사람에게 나눠 주지 않음", 버전 한 곳 규칙(버전을 끝낼 때마다 그 번호로, v0.7이면 0.7.0), 빌드 결과(K-03-R1로 갱신).
+    - Licenses 점검: Zed 쿼리(GPL-3.0)·Zed 아이콘·문법 25개·확장 2개·테마·아이콘 테마·글꼴 2개는 이미 화면에 있었다. 빠져 있던 Vite 번들 JS 의존성·web-tree-sitter 런타임 원문을 `src/licenses/frontend-dependencies.txt`에 더했다.
+  - 결과: 위와 같다.
+  - 검증: typecheck, app-menus 테스트 5/5, cargo check·clippy 통과.
+  - 특이사항: coder의 release 빌드는 사용자가 2026-11-09 22:54에 띄운 release 앱(PID 11268)이 exe를 잠가 os error 5로 실패했다. leader가 그 프로세스를 끝내지 않고 잠긴 exe 이름을 `workbench-tauri.exe.running-pid11268`로 바꾼 뒤 다시 빌드했다(파일은 그대로 남아 있다).
+- **K-04 About 버전 표시** (2026-11-10, coder; core-leader 2026-11-10 승인)
+  - 무엇을 했나: Help 메뉴 맨 아래에 "About workbench-tauri"(zed::About)를 더했다. 누르면 `<dialog>` showModal로 "{앱 이름} {버전}" 한 줄만 보인다. 버전은 `@tauri-apps/api/app` getVersion()이다. 크기·여백은 spec `about.*`(440×300, padding 16, gap 16), 배경 editor_background·글자 text다. capability `core:app:allow-version` 하나를 더했다. 아이콘·Commit·OK/Copy·링크는 없다(D-8).
+  - 결과: K-04-R1에서 제목 h1에 Extensions 제목과 같은 `font: inherit`를 줬다(spec에 Headline 수치가 없어 UA 기본 2em을 쓰지 않음).
+  - 검증: typecheck, app-menus 테스트 5/5.
+  - 특이사항: Zed P-018의 Headline 글자 크기는 spec에 없다 — 미정(core).
+- **release 빌드** (2026-11-10, leader)
+  - 무엇을 했나: `npm.cmd run tauri build`를 실행했다. 빌드 전 D: 여유는 약 64 GB였다.
+  - 결과: 성공. `workbench-tauri_0.6.0_x64-setup.exe` 5,999,959 바이트, `workbench-tauri.exe` 16,720,384 바이트, 둘 다 ProductVersion·FileVersion 0.6.0.
+  - 검증: 파일 크기·버전 속성 확인. 설치는 하지 않았다.
+  - 특이사항: 없음.
+- C-07 checker [PASS]: 전체 typecheck, npm test 210 통과, clippy 경고 0, cargo test 21 통과, 코드·BUILD.md 검토, V3 판정. 지적 셋(BUILD.md 빌드 실패 문장·0.1.0 표·About 대기 문구)은 K-03-R1로 고쳤다 (2026-11-10)
+  - 특이사항: checker가 `Test-Path` 허가 창에서 멈춰 leader가 취소하고 파일 읽기로 진행시켰다(ORDER-02의 git diff와 같은 문제). 허용 목록은 미정(사용자 설정).
+- **V3 화면 검증(ORDER-03)** (2026-11-10, leader 측정·checker C-07 판정 [PASS])
+  - 무엇을 했나: release exe, 주 모니터 100%, One Light, 임시 APPDATA에서 쟀다. 입력은 SendInput, 값은 CDP.
+  - 결과: Help 항목에 "About workbench-tauri"; About 글자 "workbench-tauri 0.6.0"뿐, 440×300, 창(1440×852) 가운데(x 500, y 276), padding·gap 16px, 버튼·링크·이미지 0; Esc로 닫힘. Licenses 항목 41개, "License copy unavailable." 0개 — Zed 쿼리 GPL(`zed-grammars/licenses/zed/LICENSE-GPL`), Zed 아이콘(LICENSES·LICENSE-GPL·LICENSE-APACHE), 문법, 글꼴 2개 포함.
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-03/`(01-about.png, 02-about-closed-by-esc.png, 03-licenses-top.png, licenses-text.txt, v3.json).
+  - 특이사항: Esc 뒤 포커스는 body다(대화 상자를 연 메뉴 항목이 메뉴와 함께 사라짐, Licenses와 같은 동작). leader 스크립트의 결과 파일 경로 오류로 앱을 세 번 띄웠다(앞 두 번은 결과 저장 실패, 마지막 세션 결과만 썼다).
+
 ## 사용자 요청 작업
 
 ### ORDER-01-R1 결과 검토와 제안 (2026-11-10)
