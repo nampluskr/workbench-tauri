@@ -62,7 +62,7 @@
 
 ## 바꾼 파일
 - `INTENT.md`, `AGENTS.md`, `specs/v0.6/INTENT.md`·`DECISIONS.md`·`HERDR-SETUP.md`·`PROGRESS.md`(6 files, +35 −30), 이 보고 파일
-- 커밋: `b41c420`(문서 변경). 이 보고는 다음 커밋. push 안 함.
+- 커밋: `b41c420`(문서 변경). 이 보고는 `c26552c`. push 안 함.
 
 ## 검토
 - checker C-02: [PASS], 다섯 항목 모두 지적 없음. checker는 `git grep`이 checker 설정 allow 목록에 없어 두 파일을 직접 읽어 확인했고, leader가 같은 grep을 돌려 출력 없음을 확인했다(위 1번).
