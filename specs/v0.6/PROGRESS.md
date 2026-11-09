@@ -23,6 +23,8 @@
   - 결과: "사람이 정하고 묻는다", "지난 버전 폴더 불변", "Zed 코드 복사 금지", "자기 워크스페이스만 쓴다"와 "`spec/`의 원본은 `workbench-gpui`다" 문장은 그대로다(ORDER-01 3.1·5장).
   - 검증: V0. 문서만 바뀌어 명령은 실행하지 않았다.
   - 특이사항: 없음.
+- C-01 checker 검토 [PASS], 지적 없음(보고 `C:\Users\nampl\AppData\Local\Temp\v06-C-01-report.md`) (2026-11-10)
+- leader 커밋 `4fa27fc`(push 안 함), ORDER-01 보고는 `specs/v0.6/reports/ORDER-01.md` (2026-11-10)
 
 ## 사용자 요청 작업
 
