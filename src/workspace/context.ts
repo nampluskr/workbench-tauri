@@ -20,7 +20,7 @@ import { inDirection, leaves, remove, split, type Dir, type Node } from "./split
 import { openUrl } from "@tauri-apps/plugin-opener";
 import type { LinkTarget } from "../editor/markdown.ts";
 import { createPreview, type Preview } from "../shell/markdown-preview.ts";
-import { activeAfterClose, closeTargets, type CloseMode, openTab, stepTab, togglePin, type TabInfo } from "./tabs.ts";
+import { activeAfterClose, closeTargets, type CloseMode, openTab, opensMarkdownPreview, stepTab, togglePin, type TabInfo } from "./tabs.ts";
 import { buildRows, collapseAll, joinPath, none, only, sortChildren, type Child, type Row, type Selection } from "./tree.ts";
 
 // The work context of one folder (A-15, R-13): what its tree has expanded, selected and read, and its tabs. It stays in
@@ -52,6 +52,8 @@ export type EditTarget = {
 export const NEW_ROW = "\0new";
 
 export type FolderContext = ReturnType<typeof newContext>;
+
+export const [lockPreview, setLockPreview] = createSignal(false);
 
 export function newContext(root: string, rootName: string) {
   const [structure, setStructure] = createSignal(0); // bumped when what the rows are built from changes
@@ -473,7 +475,7 @@ export async function closeTabGroup(ctx: FolderContext, pane: PaneState, file: T
  * R-11: open the Markdown preview of `path` (I-077), in `from`'s Pane, or with `side` in its right neighbour or a new
  * Pane split to the right (I-078; focus then stays where it was). One already there is activated (I-079).
  */
-export function openPreview(ctx: FolderContext, from: PaneState, path: string, side: boolean): void {
+export function openPreview(ctx: FolderContext, from: PaneState, path: string, side: boolean, focus = true): void {
   let pane = from;
   if (side) {
     pane = paneInDirection(ctx, from, "right") ?? newPane();
@@ -513,7 +515,7 @@ export function openPreview(ctx: FolderContext, from: PaneState, path: string, s
     return;
   }
   activateTab(ctx, pane, opened.active);
-  focusPane(pane);
+  if (focus) focusPane(pane);
 }
 
 /** I-084: the source's selection goes to the start of `line`, in the editor tabs that show it; focus does not move. */
@@ -535,13 +537,24 @@ function followLink(ctx: FolderContext, pane: PaneState, target: LinkTarget): vo
   } else if (target.kind === "external") void openUrl(target.url).catch((error) => notify([String(error)])); // only http(s) is allowed
 }
 
-/** I-086: Ctrl+Shift+V in a preview closes it and goes to its source, opening the source again if it was closed. */
+/** R-18: Show Source and Ctrl+Shift+V keep the preview and open or activate its source. */
+export function openPreviewSource(ctx: FolderContext, file: TabFile): void {
+  const pane = paneOf(ctx, file);
+  const tab = pane && tabIn(pane, file);
+  if (!pane || !tab?.markdown) return;
+  activatePane(ctx, pane);
+  const existing = panesOf(ctx).find((p) => p.tabs().some((t) => t.path === tab.path && !t.markdown && !t.tool));
+  if (existing) activatePane(ctx, existing);
+  openSource(ctx, tab.path, false, true);
+}
+
+/** The eye/OpenPreview toggle retains its existing close-and-return behavior. */
 export function closePreviewToSource(ctx: FolderContext, file: TabFile): void {
   const pane = paneOf(ctx, file);
   const tab = pane && tabIn(pane, file);
   if (!pane || !tab?.markdown) return;
   activatePane(ctx, pane);
-  openFile(ctx, tab.path, false, true); // before the preview goes, so its unsaved text is still there to share
+  openSource(ctx, tab.path, false, true);
   removeTab(ctx, file);
   focusPane(ctx.pane());
 }
@@ -586,6 +599,18 @@ export function reveal(ctx: FolderContext, path: string): void {
  * `focusEditor`). A file already shown in another Pane gets a second view of the same Doc (D-8).
  */
 export function openFile(ctx: FolderContext, path: string, preview: boolean, focusEditor: boolean, location?: FileLocation): void {
+  if (opensMarkdownPreview(path, lockPreview())) {
+    const existing = panesOf(ctx).find((p) => p.tabs().some((t) => t.path === path && !t.markdown && !t.tool));
+    if (existing) activatePane(ctx, existing);
+    else {
+      openPreview(ctx, ctx.pane(), path, false, focusEditor);
+      return;
+    }
+  }
+  openSource(ctx, path, preview, focusEditor, location);
+}
+
+function openSource(ctx: FolderContext, path: string, preview: boolean, focusEditor: boolean, location?: FileLocation): void {
   const pane = ctx.pane();
   const shown = allTabs(ctx).find((t) => t.path === path);
   const make = (): Tab => ({ path, preview, pinned: false, file: shown ? twinOf(ctx, shown.file) : newFile(ctx, path), focus: false });

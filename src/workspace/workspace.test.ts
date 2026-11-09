@@ -83,7 +83,7 @@ test("A-20, A-22.6, A-24.7: unknown keys survive a round trip; a bad active id m
   assert.equal(loaded.activeId, "a");
   assert.equal(loaded.sidebarWidth, 250);
   assert.equal(loaded.readOnly, false);
-  const out = JSON.parse(serializeState(loaded.raw, { folders: [loaded.folders[1], loaded.folders[0]], activeId: "b", sidebarWidth: 400 }));
+  const out = JSON.parse(serializeState(loaded.raw, { folders: [loaded.folders[1], loaded.folders[0]], activeId: "b", sidebarWidth: 400, lockPreview: false }));
   assert.deepEqual(out.recent, [{ path: "D:\\x" }]); // unknown top-level key
   assert.deepEqual(out.windows[0].window, { x: 1 }); // unknown key of the window
   assert.deepEqual(out.windows[0].sidebar, { open: false, width: 400 }); // sibling of the width kept
@@ -97,7 +97,7 @@ test("A-20, A-22.6, A-24.7: unknown keys survive a round trip; a bad active id m
 });
 
 test("R-11, A-22: state accepts Dock widths; invalid widths fall back to the default", () => {
-  const out = JSON.parse(serializeState({}, { folders: abc, activeId: "a", sidebarWidth: 300 }));
+  const out = JSON.parse(serializeState({}, { folders: abc, activeId: "a", sidebarWidth: 300, lockPreview: false }));
   assert.equal(out.version, STATE_VERSION);
   assert.equal(out.windows[0].folders.length, 3);
   for (const width of [6, 240, 900])
@@ -115,11 +115,24 @@ test("R-10, R-19: display names, order and width round trip; search uses renamed
   assert.equal(filterFolders(renamed, "").length, 3);
   assert.equal(folderLabel(rename(renamed, "b", "  ")[1]), "b");
   assert.equal(folderLabel({ ...abc[0], name: 12 } as unknown as Folder), "a");
-  const saved = serializeState({}, { folders: move(renamed, "c", "a"), activeId: "b", sidebarWidth: 900 });
+  const saved = serializeState({}, { folders: move(renamed, "c", "a"), activeId: "b", sidebarWidth: 900, lockPreview: false });
   const loaded = parseState(saved);
   assert.deepEqual(loaded.folders.map((f) => f.id), ["c", "a", "b"]);
   assert.equal(folderLabel(loaded.folders[2]), "Research");
   assert.equal(loaded.activeId, "b");
   assert.equal(loaded.sidebarWidth, 900);
   assert.deepEqual(displayNames(renamed.map((f) => f.path), renamed.map(folderLabel)).map((n) => n.name), ["a", "Research", "c"]);
+});
+
+test("R-18: preview lock round trips both states; old or malformed values default to off", () => {
+  for (const lockPreview of [true, false]) {
+    const saved = serializeState({ unknown: 7 }, { folders: abc, activeId: "b", sidebarWidth: 300, lockPreview });
+    const loaded = parseState(saved);
+    assert.equal(loaded.lockPreview, lockPreview);
+    assert.equal(loaded.raw.unknown, 7);
+    assert.equal(loaded.activeId, "b");
+  }
+  assert.equal(parseState(null).lockPreview, false);
+  for (const value of [undefined, null, "true", 1, false])
+    assert.equal(parseState(JSON.stringify({ windows: [{ lock_preview: value }] })).lockPreview, false);
 });

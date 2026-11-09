@@ -1,4 +1,5 @@
 search.svg from @vscode/codicons 0.0.46-24
+markdown.svg from @vscode/codicons 0.0.46-24
 Copyright (c) Microsoft Corporation.
 Source: https://github.com/microsoft/vscode-codicons
 Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0).

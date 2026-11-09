@@ -5,7 +5,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { notify } from "../shell/toast.ts";
 import { SIDEBAR_WIDTH, STATE_SAVE_DEBOUNCE_MS } from "../spec/metrics.ts";
 import { addOrActivate, move, moveCursor as nextCursor, remove, rename, type Folder } from "./folders.ts";
-import { askWarning, closingTabs, disposeContext, newContext, type FolderContext } from "./context.ts";
+import { askWarning, closingTabs, disposeContext, lockPreview, setLockPreview, newContext, type FolderContext } from "./context.ts";
 import { confirmClose } from "./closing.ts";
 import { folderName, normalizePath } from "./paths.ts";
 import { parseState, serializeState } from "./state-file.ts";
@@ -55,7 +55,7 @@ function write(): Promise<void> {
     if (!dirty || !canWrite) return;
     dirty = false;
     try {
-      await invoke("write_state", { json: serializeState(raw, { folders: folders(), activeId: activeId(), sidebarWidth: sidebarWidth() }) });
+      await invoke("write_state", { json: serializeState(raw, { folders: folders(), activeId: activeId(), sidebarWidth: sidebarWidth(), lockPreview: lockPreview() }) });
     } catch (reason) {
       dirty = true; // memory keeps the state; the next change writes it again from the start (A-24.4)
       notify([String(reason)]);
@@ -122,6 +122,7 @@ export async function loadWorkspace(): Promise<void> {
       setActiveId(loaded.activeId);
       setCursorId(loaded.activeId);
       setSidebarWidth(loaded.sidebarWidth);
+      setLockPreview(loaded.lockPreview);
     });
     await markMissing(loaded.folders);
   } catch {
@@ -200,6 +201,11 @@ export function renameFolder(id: string, name: string): void {
 
 export function resizeSidebar(width: number): void {
   setSidebarWidth(width);
+  changed();
+}
+
+export function toggleLockPreview(): void {
+  setLockPreview((locked) => !locked);
   changed();
 }
 

@@ -6,11 +6,13 @@ import ProjectPanel from "./shell/ProjectPanel.tsx";
 import { PaneArea } from "./shell/Pane.tsx";
 import { resizeHandle } from "./shell/dock.ts";
 import { dockOpen, sidebarOpen, toggleSidebar } from "./shell/panels.ts";
-import { addFolder, editorContext, sidebarWidth, resizeSidebar } from "./workspace/store.ts";
-import { activeTabOf } from "./workspace/context.ts";
+import { addFolder, editorContext, sidebarWidth, resizeSidebar, toggleLockPreview } from "./workspace/store.ts";
+import { activeTabOf, lockPreview } from "./workspace/context.ts";
 import { statusButtons, statusItems } from "./shell/status.ts";
 import { commands } from "./keymap/keyboard.ts";
 import { PickerHost } from "./shell/Picker.tsx";
+
+commands.set("markdown::ToggleLockPreview", toggleLockPreview);
 
 // Core D-9 / I-18: icon names follow the pinned Zed sources (K-08 report).
 export default function App() {
@@ -54,7 +56,7 @@ export default function App() {
         {/* I-22: the closed sidebar's toggle precedes the project panel and search. */}
         <footer class="status-bar">
           <div class="group grow">
-            <For each={statusButtons(sidebarOpen(), dockOpen())}>{(button) => (<>
+            <For each={statusButtons(sidebarOpen(), dockOpen(), lockPreview())}>{(button) => (<>
               <IconButton {...button} onClick={() => commands.get(button.action)?.()} />
               <Show when={button.dividerAfter}><span class={button.dividerAfter === "toggle" ? "status-divider toggle" : "status-divider"} aria-hidden="true" /></Show>
             </>)}</For>

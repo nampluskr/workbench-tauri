@@ -11,6 +11,7 @@ import {
   activateTab,
   activeTabOf,
   closePreviewToSource,
+  openPreviewSource,
   closeTab,
   closeTabGroup,
   reveal,
@@ -125,7 +126,7 @@ for (const [action, side] of [["markdown::OpenPreview", false], ["markdown::Open
     else if (tab && !tab.tool && !tab.markdown && isMarkdown(tab.path)) openPreview(ctx, ctx.pane(), tab.path, side);
   }));
 }
-commands.set("markdown::CloseAndReturnToEditor", withCtx((ctx) => activeTab()?.markdown && closePreviewToSource(ctx, activeTab()!.file)));
+commands.set("markdown::CloseAndReturnToEditor", withCtx((ctx) => activeTab()?.markdown && openPreviewSource(ctx, activeTab()!.file)));
 // I-737: Shift+Escape zooms the active Pane in or out.
 commands.set("workspace::ToggleZoom", withCtx((ctx) => ctx.setZoomed((z) => (z === ctx.pane() ? null : ctx.pane()))));
 
@@ -245,7 +246,7 @@ function runTabAction(ctx: FolderContext, pane: PaneState, file: TabFile, action
     case "pane::CloseActiveItem": void closeTab(ctx, file, true); break;
     case "pane::TogglePinTab": togglePinTab(ctx, file); break;
     case "pane::ToggleReadOnly": toggleTabReadOnly(file); break;
-    case "markdown::CloseAndReturnToEditor": closePreviewToSource(ctx, file); break;
+    case "markdown::CloseAndReturnToEditor": openPreviewSource(ctx, file); break;
     case "markdown::OpenPreview": openPreview(ctx, pane, tab.path, false); break;
     case "workspace::CopyPath":
     case "workspace::CopyRelativePath":

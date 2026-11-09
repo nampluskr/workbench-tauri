@@ -4,6 +4,9 @@
 /** `markdown`: a Markdown preview tab of `path` (R-11), a different item from the editor tab of the same path. */
 export type TabInfo = { path: string; preview: boolean; pinned?: boolean; markdown?: boolean; tool?: boolean };
 
+/** R-18: only Markdown files opened after locking use the preview. */
+export const opensMarkdownPreview = (path: string, locked: boolean): boolean => locked && /\.(md|markdown)$/i.test(path);
+
 /** How many tabs the pin area holds. */
 export function pinnedCount(tabs: TabInfo[]): number {
   let n = 0;
