@@ -3,7 +3,7 @@ import { PROJECT_PANEL_ITEM_HEIGHT, PROJECT_PANEL_NAME_TOOLTIP_DELAY_MS, TREE_OV
 import { cancelEdit, commitEdit, revalidate } from "../workspace/actions.ts";
 import { NEW_ROW, readDir, type FolderContext } from "../workspace/context.ts";
 import { inputKeyAction } from "../workspace/names.ts";
-import { rowIndex, visibleRange, type Row } from "../workspace/tree.ts";
+import { only, rowIndex, stickyRows, visibleRange, type Row } from "../workspace/tree.ts";
 import FileIcon from "./FileIcon.tsx";
 import { tooltip } from "./tooltip.ts";
 import { pressMiddle, pressRow } from "./tree-commands.ts";
@@ -71,11 +71,13 @@ export default function ProjectTree(props: { ctx: FolderContext }) {
   const [viewport, setViewport] = createSignal(0);
   const range = createMemo(() => visibleRange(scrollTop(), viewport(), H, rows().length, TREE_OVERSCAN_ROWS));
   const shown = createMemo(() => rows().slice(range().start, range().end));
+  const sticky = createMemo(() => stickyRows(rows(), scrollTop(), viewport(), H));
 
   const sheet = new CSSStyleSheet();
   document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
   onCleanup(() => (document.adoptedStyleSheets = document.adoptedStyleSheets.filter((s) => s !== sheet)));
-  createEffect(() => sheet.replaceSync(`.tree-spacer { height: ${rows().length * H}px; } .tree-window { transform: translateY(${range().start * H}px); }`));
+  createEffect(() => sheet.replaceSync(`.tree-spacer { height: ${rows().length * H}px; } .tree-window { transform: translateY(${range().start * H}px); }
+    ${sticky().map((item, i, all) => `.tree-sticky > :nth-child(${i + 1}) { top: ${item.top}px; z-index: ${all.length - i}; }`).join(" ")}`));
 
   // Bring a path into view once its row exists (it may still be being read), moving the least (R-24, keys).
   createEffect(() => {
@@ -83,7 +85,8 @@ export default function ProjectTree(props: { ctx: FolderContext }) {
     const index = target === null ? -1 : target === NEW_ROW ? rows().findIndex((r) => r.isNew) : rowIndex(rows(), target);
     if (index < 0) return;
     const [top, bottom] = [index * H, (index + 1) * H];
-    if (top < scroller.scrollTop) scroller.scrollTop = top;
+    const covered = sticky().length * H;
+    if (top < scroller.scrollTop + covered) scroller.scrollTop = Math.max(0, top - covered);
     else if (bottom > scroller.scrollTop + scroller.clientHeight) scroller.scrollTop = bottom - scroller.clientHeight;
     ctx.setScrollTarget(null);
   });
@@ -108,6 +111,92 @@ export default function ProjectTree(props: { ctx: FolderContext }) {
   };
   const mods = (e: MouseEvent) => ({ shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey });
 
+  const renderRow = (row: Row, stickyIndex?: number) => {
+    const pinned = stickyIndex !== undefined;
+    const isEditing = () => !pinned && editing(row);
+    const click = (e: MouseEvent, path: string) => {
+      if (!pinned) return pressRow(ctx, rows(), row, path, mods(e), e.detail);
+      if (ctx.edit()) return;
+      ctx.setSelection(only(row.path));
+      // Zed's final 1px nudge moves the real row below its sticky slot.
+      scroller.scrollTop = Math.max(0, (rows().indexOf(row) - stickyIndex) * H - 1);
+      onScroll();
+      scroller.closest<HTMLElement>(".project-panel")?.focus({ preventScroll: true });
+    };
+    return (
+      <div
+        class="tree-row"
+        classList={{
+          selected: covers(row),
+          marked: marked(row),
+          editing: isEditing(),
+          warning: isEditing() && ctx.issue()?.kind === "warning",
+          error: isEditing() && ctx.issue()?.kind === "error",
+        }}
+        role="treeitem"
+        data-path={row.isNew ? undefined : row.path}
+        aria-level={row.depth + 1}
+        aria-expanded={row.isDir && !row.isNew ? row.expanded : undefined}
+        aria-selected={covers(row) || marked(row)}
+        ref={(el) => !row.isNew && tooltip(el, () => ({ title: homePrefix(row.path) }), PROJECT_PANEL_NAME_TOOLTIP_DELAY_MS)}
+        onClick={(e) => click(e, row.path)}
+        onContextMenu={(e) => {
+          e.stopPropagation();
+          if (pinned) { e.preventDefault(); return; }
+          if (!row.isNew) openTreeMenu(ctx, { x: e.clientX, y: e.clientY }, row.path); // I-560
+        }}
+        onMouseDown={(e) => {
+          if (pinned) { e.preventDefault(); e.stopPropagation(); return; }
+          if (e.button !== 1) return;
+          e.preventDefault(); // no autoscroll
+          pressMiddle(ctx, row);
+        }}
+        onDragStart={(e) => pinned && e.preventDefault()}
+        onDragOver={(e) => pinned && e.stopPropagation()}
+        onDrop={(e) => { if (pinned) { e.preventDefault(); e.stopPropagation(); } }}
+      >
+        {/* L-38: one guide per ancestor folder, drawn over the row at depth x indent step + offset. */}
+        <div class="tree-guides">
+          <For each={row.guides}>{(guide) => <span class="tree-guide" classList={{ first: guide.first, last: guide.last }} />}</For>
+        </div>
+        <div class="tree-item">
+          <For each={row.guides}>{() => <span class="tree-indent" />}</For>
+          <div class="tree-main">
+            <FileIcon name={row.segments.at(-1)?.name ?? ""} dir={row.isDir} expanded={row.expanded} />
+            <Show
+              when={isEditing()}
+              fallback={
+                <span class="tree-label">
+                  <For each={row.segments}>
+                    {(segment, i) => (
+                      <>
+                        {i() > 0 ? "\\" : ""}
+                        <span
+                          class="tree-segment"
+                          classList={{ active: row.segments.length > 1 && ctx.selection().selected === segment.path }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            click(e, segment.path);
+                          }}
+                        >
+                          {segment.name}
+                        </span>
+                      </>
+                    )}
+                  </For>
+                </span>
+              }
+            >
+              <NameInput ctx={ctx} />
+            </Show>
+          </div>
+        </div>
+        {/* P-021: the check result hangs under the row being named. */}
+        <Show when={isEditing() && ctx.issue()}>{(issue) => <div class="tree-banner" classList={{ warning: issue().kind === "warning", error: issue().kind === "error" }}>{issue().text}</div>}</Show>
+      </div>
+    );
+  };
+
   return (
     // I-559: the empty area under the last row opens the menu of the root.
     <div
@@ -118,77 +207,12 @@ export default function ProjectTree(props: { ctx: FolderContext }) {
       role="tree"
       aria-multiselectable="true"
     >
+      <div class="tree-sticky">
+        <For each={sticky()}>{(item, i) => renderRow(rows()[item.index], i())}</For>
+      </div>
       <div class="tree-spacer">
         <div class="tree-window">
-          <For each={shown()}>
-            {(row) => (
-              <div
-                class="tree-row"
-                classList={{
-                  selected: covers(row),
-                  marked: marked(row),
-                  editing: editing(row),
-                  warning: editing(row) && ctx.issue()?.kind === "warning",
-                  error: editing(row) && ctx.issue()?.kind === "error",
-                }}
-                role="treeitem"
-                data-path={row.isNew ? undefined : row.path}
-                aria-level={row.depth + 1}
-                aria-expanded={row.isDir && !row.isNew ? row.expanded : undefined}
-                aria-selected={covers(row) || marked(row)}
-                ref={(el) => !row.isNew && tooltip(el, () => ({ title: homePrefix(row.path) }), PROJECT_PANEL_NAME_TOOLTIP_DELAY_MS)}
-                onClick={(e) => pressRow(ctx, rows(), row, row.path, mods(e), e.detail)}
-                onContextMenu={(e) => {
-                  e.stopPropagation();
-                  if (!row.isNew) openTreeMenu(ctx, { x: e.clientX, y: e.clientY }, row.path); // I-560
-                }}
-                onMouseDown={(e) => {
-                  if (e.button !== 1) return;
-                  e.preventDefault(); // no autoscroll
-                  pressMiddle(ctx, row);
-                }}
-              >
-                {/* L-38: one guide per ancestor folder, drawn over the row at depth x indent step + offset. */}
-                <div class="tree-guides">
-                  <For each={row.guides}>{(guide) => <span class="tree-guide" classList={{ first: guide.first, last: guide.last }} />}</For>
-                </div>
-                <div class="tree-item">
-                  <For each={row.guides}>{() => <span class="tree-indent" />}</For>
-                  <div class="tree-main">
-                    <FileIcon name={row.segments.at(-1)?.name ?? ""} dir={row.isDir} expanded={row.expanded} />
-                    <Show
-                      when={editing(row)}
-                      fallback={
-                        <span class="tree-label">
-                          <For each={row.segments}>
-                            {(segment, i) => (
-                              <>
-                                {i() > 0 ? "\\" : ""}
-                                <span
-                                  class="tree-segment"
-                                  classList={{ active: row.segments.length > 1 && ctx.selection().selected === segment.path }}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    pressRow(ctx, rows(), row, segment.path, mods(e), e.detail);
-                                  }}
-                                >
-                                  {segment.name}
-                                </span>
-                              </>
-                            )}
-                          </For>
-                        </span>
-                      }
-                    >
-                      <NameInput ctx={ctx} />
-                    </Show>
-                  </div>
-                </div>
-                {/* P-021: the check result hangs under the row being named. */}
-                <Show when={editing(row) && ctx.issue()}>{(issue) => <div class="tree-banner" classList={{ warning: issue().kind === "warning", error: issue().kind === "error" }}>{issue().text}</div>}</Show>
-              </div>
-            )}
-          </For>
+          <For each={shown()}>{(row) => renderRow(row)}</For>
         </div>
       </div>
     </div>

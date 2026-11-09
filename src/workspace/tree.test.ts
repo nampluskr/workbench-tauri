@@ -11,6 +11,7 @@ import {
   naturalCmp,
   only,
   sortChildren,
+  stickyRows,
   visibleRange,
   type Child,
   type Listing,
@@ -70,6 +71,35 @@ test("D-9: the virtual range is the visible rows plus overscan, clamped", () => 
   assert.deepEqual(visibleRange(2600, 260, 26, 1000, 10), { start: 90, end: 120 });
   assert.deepEqual(visibleRange(25900, 260, 26, 1000, 10), { start: 986, end: 1000 });
   assert.deepEqual(visibleRange(0, 260, 26, 0, 10), { start: 0, end: 0 });
+});
+
+test("R-13: sticky ancestors keep folded rows and yield at descendant boundaries", () => {
+  const nested = build(["docs\\guides", "src", "src\\lib"]).rows;
+  // proj, docs\\guides, a.md, src, lib, x.ts, main.ts, README.md
+  // A parent at its natural sticky slot is already drawn as an overlay (Zed anchor at a.md).
+  assert.deepEqual(stickyRows(nested, 0, 200, 20), [{ index: 0, top: 0 }, { index: 1, top: 20 }]);
+  assert.deepEqual(stickyRows(nested, 20, 200, 20), [{ index: 0, top: 0 }, { index: 1, top: 20 }]);
+  assert.deepEqual(stickyRows(nested, 21, 200, 20), [{ index: 0, top: 0 }, { index: 1, top: 19 }]);
+  // At the boundary the following subtree's parents already occupy their natural slots.
+  assert.deepEqual(stickyRows(nested, 40, 200, 20), [{ index: 0, top: 0 }, { index: 3, top: 20 }, { index: 4, top: 40 }]);
+  assert.deepEqual(stickyRows(nested, 60, 200, 20), [{ index: 0, top: 0 }, { index: 3, top: 20 }, { index: 4, top: 40 }]);
+  assert.deepEqual(stickyRows(nested, 61, 200, 20), [{ index: 0, top: 0 }, { index: 3, top: 20 }, { index: 4, top: 39 }]);
+  assert.deepEqual(stickyRows([], 0, 200, 20), []);
+  assert.deepEqual(stickyRows(nested.slice(0, 1), 0, 200, 20), []);
+});
+
+test("R-13: each root starts a separate sticky chain", () => {
+  const first = build(["docs\\guides", "src"]).rows;
+  const second = build(["docs\\guides"]).rows;
+  const forest = [...first, ...second];
+  const end = first.length * 20;
+  // The final child enters slot zero before the root starts drifting, then the next root takes over.
+  assert.deepEqual(stickyRows(forest, end - 21, 200, 20), [{ index: 0, top: 0 }]);
+  assert.deepEqual(stickyRows(forest, end - 20, 200, 20), [{ index: 0, top: 0 }]);
+  assert.deepEqual(stickyRows(forest, end - 19, 200, 20), [{ index: 0, top: -1 }]);
+  assert.deepEqual(stickyRows(forest, end - 1, 200, 20), [{ index: 0, top: -19 }]);
+  assert.deepEqual(stickyRows(forest, end, 200, 20), [{ index: first.length, top: 0 }, { index: first.length + 1, top: 20 }]);
+  assert.deepEqual(stickyRows(forest, end + 20, 200, 20), [{ index: first.length, top: 0 }, { index: first.length + 1, top: 20 }]);
 });
 
 const rows = build(["docs\\guides", "src"]).rows; // ., docs\guides, a.md, src, src\lib, main.ts, README.md

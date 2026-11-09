@@ -508,6 +508,11 @@ button, input, select, textarea {
 .tree-row:hover { background: var(--ghost-element-hover); }
 .tree-row.selected, .tree-row.marked { background: var(--ghost-element-selected); }
 .project-panel:focus-within .tree-row.selected { border-color: var(--border-focused); }
+/* R-13 / L-47: overlay rows share the ordinary row's height and indentation, without adding scroll space. */
+.tree-sticky { position: sticky; top: 0; height: 0; z-index: 1; }
+.tree-sticky > .tree-row { position: absolute; left: 0; right: 0; background: var(--panel-overlay-background); }
+.tree-sticky > .tree-row:hover { background: var(--panel-overlay-hover); }
+.tree-sticky > .tree-row.marked { background: var(--ghost-element-selected); }
 .tree-item { display: flex; align-items: center; height: var(--project-panel-item-content-height); }
 .tree-indent { flex: none; width: var(--project-panel-indent-step); } /* L-37 */
 .tree-main { display: flex; align-items: center; min-width: 0; gap: var(--project-panel-item-gap); padding-inline: var(--project-panel-item-padding-x); }

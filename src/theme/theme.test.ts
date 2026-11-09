@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { BASE_THEME, buildRegistry, pickTheme } from "./registry.ts";
-import { panelFocusedBorder, parseColor, resolveTokens, themeCss } from "./theme.ts";
+import { over, panelFocusedBorder, parseColor, resolveTokens, themeCss } from "./theme.ts";
 
 // Every theme JSON under assets/ (committed one/ plus the .gitignore copies when present).
 const assets = new URL("./assets/", import.meta.url);
@@ -62,6 +62,8 @@ const VARS: [token: string, cssVar: string][] = [
   ["toolbar.background", "--toolbar-background"],
   ["editor.subheader.background", "--editor-subheader-background"],
   ["element.hover", "--element-hover"],
+  ["panel.overlay_background", "--panel-overlay-background"],
+  ["panel.overlay_hover", "--panel-overlay-hover"],
 ];
 
 test("parseColor: #RRGGBB has alpha 255, #RRGGBBAA keeps it, anything else is rejected (T-01.7)", () => {
@@ -80,9 +82,23 @@ for (const { name, appearance, style } of registry) {
     for (const [token, cssVar] of VARS) {
       const pick = (s: typeof style) => (token === "players[0].selection" ? (s.players?.[0] as any)?.selection : s[token]);
       // T-26.3 / T-26.4: derived from another token of the same theme; T-26.13: a fixed value; else the base theme.
-      const derived = token === "pane_group.border" ? style.border : undefined;
+      const panel = (style["panel.background"] ?? base["panel.background"]) as string;
+      const hover = (style["element.hover"] ?? base["element.hover"]) as string;
+      const derived = token === "pane_group.border" ? style.border
+        : token === "panel.overlay_background" ? panel.slice(0, 7)
+        : token === "panel.overlay_hover" ? over(hover, panel) : undefined;
       const expected = pick(style) ?? derived ?? pick(base) ?? (token === "drop_target.border" ? "#d7dadf" : undefined);
       assert.deepEqual(parseColor(vars.get(cssVar)!), parseColor(expected as string), `${token} -> ${cssVar}`);
     }
   });
 }
+
+test("T-26.1/2: sticky defaults are opaque and theme overrides win", () => {
+  const base = registry[0].style;
+  const style = { ...base, "panel.background": "#00000080", "element.hover": "#ffffff80", "panel.overlay_background": null, "panel.overlay_hover": null };
+  const resolved = resolveTokens(style, base);
+  assert.equal(resolved["panel.overlay_background"], "#000000ff");
+  assert.equal(resolved["panel.overlay_hover"], "#808080ff");
+  assert.equal(resolveTokens({ ...style, "panel.overlay_background": "#123456", "panel.overlay_hover": "#abcdef" }, base)["panel.overlay_background"], "#123456ff");
+  assert.equal(resolveTokens({ ...style, "panel.overlay_hover": "#abcdef" }, base)["panel.overlay_hover"], "#abcdefff");
+});

@@ -58,6 +58,8 @@ export const TARGET_TOKENS = [
   "toolbar.background", // E-038 / E-121: the editor toolbar (Markdown tabs)
   "editor.subheader.background", // Project Search: Zed buffer header (header.rs:`editor_subheader_background`)
   "element.hover", // Project Search: Zed buffer header hover
+  "panel.overlay_background", // L-47 / T-26.1: sticky tree rows
+  "panel.overlay_hover", // T-26.2
 ] as const;
 export type Token = (typeof TARGET_TOKENS)[number];
 
@@ -112,6 +114,12 @@ function rawValue(style: ThemeStyle, token: Token): string | undefined {
 export function resolveTokens(style: ThemeStyle, base?: ThemeStyle): Record<Token, string> {
   const out = {} as Record<Token, string>;
   for (const token of TARGET_TOKENS) {
+    if (token === "panel.overlay_background" || token === "panel.overlay_hover") {
+      const panel = out["panel.background"];
+      const derived = token === "panel.overlay_background" ? panel.slice(0, 7) : over(out["element.hover"], panel);
+      out[token] = formatColor(parseColor(rawValue(style, token) ?? derived));
+      continue;
+    }
     const from = FALLBACK_FROM[token];
     const value = rawValue(style, token) ?? (from && rawValue(style, from)) ?? (base && rawValue(base, token)) ?? FALLBACK_VALUE[token];
     if (value === undefined) throw new Error(`theme has no value for ${token}`);

@@ -120,6 +120,30 @@ export function visibleRange(scrollTop: number, viewport: number, rowHeight: num
   return { start, end: Math.max(start, end) };
 }
 
+/** R-13: ancestors covering the top of the viewport; the last one yields to its last descendant. */
+export function stickyRows(rows: Row[], scrollTop: number, viewport: number, rowHeight: number): { index: number; top: number }[] {
+  const { start, end } = visibleRange(scrollTop, viewport, rowHeight, rows.length, 0);
+  // Look past the covered rows to find the ancestor chain that is still on screen.
+  for (let anchor = start; anchor < end; anchor++) {
+    const depth = rows[anchor].depth;
+    const slot = anchor - start;
+    const leavesParent = anchor + 1 < end && rows[anchor + 1].depth === depth - 1;
+    if (depth >= slot && !(leavesParent && depth <= slot + 1)) continue;
+    const parents: number[] = [];
+    let parentDepth = depth;
+    for (let i = anchor - 1; i >= 0 && parentDepth > 0; i--) {
+      if (rows[i].depth < parentDepth) {
+        parents.push(i);
+        parentDepth = rows[i].depth;
+      }
+    }
+    parents.reverse();
+    const drift = depth === slot + 1 ? Math.min(0, (anchor + 1 - parents.length) * rowHeight - scrollTop) : 0;
+    return parents.map((index, i) => ({ index, top: i * rowHeight + (i === parents.length - 1 ? drift : 0) }));
+  }
+  return [];
+}
+
 // --- selection --------------------------------------------------------------------------------------------------
 
 /** What the tree remembers per folder besides what it read from disk. */
