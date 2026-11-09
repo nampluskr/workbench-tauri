@@ -33,7 +33,7 @@
 ## 바꾼 파일
 - 새 파일: `specs/v0.6/INTENT.md`·`DECISIONS.md`·`SPEC.md`·`PLAN.md`·`HERDR-SETUP.md`·`PROGRESS.md`, 이 보고 파일
 - 고친 파일: 루트 `AGENTS.md`(v0.6 참조: 현재 상태, core ITEMS 우선, HERDR 구성 D-4, 0장·카드 파일명·3A.4·8장 경로, gpui 동결된 갈래)
-- 커밋: `4fa27fc`(문서 여섯 + AGENTS.md). PROGRESS 두 줄과 이 보고는 이어지는 커밋(아래 "커밋" 참고). push 안 함.
+- 커밋: `4fa27fc`(문서 여섯 + AGENTS.md). PROGRESS 두 줄과 이 보고는 `439b12d`. push 안 함.
 
 ## 검토
 - checker C-01: [PASS]. 3.4의 네 항목과 AGENTS.md 범위 모두 PASS, 지적 없음. 남은 지적 없음.
