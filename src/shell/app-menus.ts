@@ -8,7 +8,6 @@ export const ISSUE_URL = `${REPOSITORY_URL}/issues/new`;
 export function appMenus(markdownDisabled: () => boolean): Menu[] {
   const markdownItem = (label: string, action: string): MenuItem => ({ label, action, get disabled() { return markdownDisabled(); } });
   return [
-    { name: APP_NAME, entries: [{ label: `Quit ${APP_NAME}`, action: "zed::Quit" }] },
     { name: "File", entries: [
       { label: "Open Folder...", action: "workspace::Open" },
       "separator",
@@ -16,6 +15,8 @@ export function appMenus(markdownDisabled: () => boolean): Menu[] {
       "separator",
       { label: "Close Editor", action: "workspace::CloseActiveItem", shortcut: "ctrl-w" }, // K-13: show Zed's key, keep close_pinned behavior.
       { label: "Close Window", action: "workspace::CloseWindow" },
+      "separator",
+      { label: "Quit", action: "zed::Quit" },
     ] },
     { name: "Edit", entries: [
       { label: "Undo", action: "editor::Undo" },

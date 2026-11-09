@@ -327,7 +327,6 @@ export const TOOLTIP_CURSOR_OFFSET = { x: 1, y: 1 }; // tooltip.cursor_offset_x 
 export const SIDEBAR_WIDTH = { default: 300, min: 200, max: 800 }; // sidebar.default_width / min_width / max_width (L-33)
 export const STATE_SAVE_DEBOUNCE_MS = 500; // app.state_save_debounce (A-24.2)
 export const KEYMAP_RECORD_MAX_STROKES = 3; // keymap_editor.record.max_keystrokes (K-055)
-export const PROJECT_NAME_MAX_CHARS = 40; // titlebar.project_name.max_chars (L-88)
 
 // Project panel and tab values that script reads.
 export const PROJECT_PANEL_NAME_TOOLTIP_DELAY_MS = 1500; // project_panel.name_tooltip_delay (L-49)

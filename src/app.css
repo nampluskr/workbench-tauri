@@ -468,8 +468,7 @@ button, input, select, textarea {
   --icon-size: var(--titlebar-user-menu-button-icon-size);
 }
 /* License content uses the existing text and surface tokens without introducing layout measurements. */
-.license-dialog { background: var(--elevated-surface-background); color: var(--text); border-color: var(--border-variant); }
-.license-dialog pre { white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; }
+.licenses-tab { height: 100%; margin: 0; overflow: auto; background: var(--editor-background); color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; }
 
 .about-dialog {
   box-sizing: border-box;
@@ -527,10 +526,8 @@ button, input, select, textarea {
 .tree-guide.first::before { top: var(--project-panel-indent-guide-padding-y); }
 .tree-guide.last::before { bottom: var(--project-panel-indent-guide-padding-y); }
 
-/* L-87, L-88: the left group of the title bar. */
-.title-left { display: flex; align-items: center; gap: var(--titlebar-left-group-gap); margin-right: auto; }
-.project-name { height: var(--buttons-height-default); padding: 0; border: 0; background: none; color: var(--text); font: inherit; font-size: var(--typography-size-default); }
-.project-name.empty { color: var(--text-muted); } /* L-227 */
+/* L-87: the left group of the title bar. */
+.title-left { display: flex; align-items: center; margin-right: auto; }
 
 /* R-20 inline name input (P-019~P-021): the row keeps its height; the input fills the name's place. */
 .tree-row.editing {

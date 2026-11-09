@@ -19,7 +19,7 @@ test("K-13: menu shortcuts match Zed Windows primary keys without changing Close
   const items = menus.flatMap((menu) => menu.entries).flatMap((entry) => entry !== "separator" && entry.children ? entry.children : [entry]);
   const keys = Object.fromEntries(items.filter((entry) => entry !== "separator").map((entry) => [entry.label, shortcutForEntry(entry, keymap, stack)?.join(" ")]));
   assert.deepEqual(keys, {
-    [`Quit ${APP_NAME}`]: "Ctrl-Q", "Open Folder...": "Ctrl-K Ctrl-O", Save: "Ctrl-S",
+    Quit: "Ctrl-Q", "Open Folder...": "Ctrl-K Ctrl-O", Save: "Ctrl-S",
     "Close Editor": "Ctrl-W", "Close Window": "Ctrl-Shift-W", Undo: "Ctrl-Z", Redo: "Ctrl-Y",
     "Toggle Left Dock": "Ctrl-B", "Toggle Folder Sidebar": "Ctrl-Alt-J", "Focus Folder Sidebar": "Ctrl-Alt-;",
     "Split Up": "Ctrl-K Up", "Split Down": "Ctrl-K Down", "Split Left": "Ctrl-K Left", "Split Right": "Ctrl-\\",
@@ -28,34 +28,35 @@ test("K-13: menu shortcuts match Zed Windows primary keys without changing Close
     "Previous Tab": "Ctrl-PageUp", "Next Tab": "Ctrl-PageDown", Minimize: undefined, Zoom: undefined,
     "View Dependency Licenses": undefined, "File Bug Report...": undefined, "Request Feature...": undefined, [`${APP_NAME} Repository`]: undefined, [`About ${APP_NAME}`]: undefined,
   });
-  const close = menus[1].entries[4];
+  const close = menus[0].entries[4];
   if (close === "separator") assert.fail();
   assert.equal(close.action, "workspace::CloseActiveItem");
   assert.deepEqual(keymap.dispatch(["ctrl-w"], stack), { type: "match", action: "pane::CloseActiveItem" });
   for (const key of ["ctrl-y", "ctrl-shift-z"]) assert.deepEqual(keymap.dispatch([key], stack), { type: "match", action: "editor::Redo" });
   keymap.addSections("user", [{ context: "Editor", bindings: { "ctrl-alt-y": "editor::Redo" } }]);
-  assert.deepEqual(shortcutForEntry(menus[2].entries[1], keymap, stack), ["Ctrl-Alt-Y"]);
+  assert.deepEqual(shortcutForEntry(menus[1].entries[1], keymap, stack), ["Ctrl-Alt-Y"]);
 });
 
-test("K-09: implemented menus keep the pinned Zed order and split submenu", () => {
+test("K-10: menus start with File, end File with Quit and retain the other entries", () => {
   let disabled = false;
   const menus = appMenus(() => disabled);
-  assert.deepEqual(menus.map((m) => m.name), [APP_NAME, "File", "Edit", "View", "Go", "Window", "Help"]);
-  assert.deepEqual(labels(menus[1].entries), ["Open Folder...", "---", "Save", "---", "Close Editor", "Close Window"]);
-  assert.deepEqual(labels(menus[2].entries), ["Undo", "Redo"]);
-  assert.deepEqual(labels(menus[3].entries), ["Toggle Left Dock", "Toggle Folder Sidebar", "Focus Folder Sidebar", "Editor Layout", "Maximize Pane", "---", "Project Panel", "Open Markdown Preview", "Open Markdown Preview to the Side"]);
-  const layout = menus[3].entries[3];
+  assert.deepEqual(menus.map((m) => m.name), ["File", "Edit", "View", "Go", "Window", "Help"]);
+  assert.deepEqual(labels(menus[0].entries), ["Open Folder...", "---", "Save", "---", "Close Editor", "Close Window", "---", "Quit"]);
+  assert.deepEqual(menus[0].entries.at(-1), { label: "Quit", action: "zed::Quit" });
+  assert.deepEqual(labels(menus[1].entries), ["Undo", "Redo"]);
+  assert.deepEqual(labels(menus[2].entries), ["Toggle Left Dock", "Toggle Folder Sidebar", "Focus Folder Sidebar", "Editor Layout", "Maximize Pane", "---", "Project Panel", "Open Markdown Preview", "Open Markdown Preview to the Side"]);
+  const layout = menus[2].entries[3];
   assert.notEqual(layout, "separator");
   if (layout !== "separator") assert.deepEqual(labels(layout.children!), ["Split Up", "Split Down", "Split Left", "Split Right"]);
-  for (const item of menus[3].entries.slice(-2)) {
+  for (const item of menus[2].entries.slice(-2)) {
     if (item === "separator") assert.fail();
     assert.equal(item.disabled, false);
     disabled = true;
     assert.equal(item.disabled, true);
     disabled = false;
   }
-  assert.deepEqual(labels(menus[4].entries), ["Previous Tab", "Next Tab"]);
-  assert.deepEqual(labels(menus[5].entries), ["Minimize", "Zoom"]);
+  assert.deepEqual(labels(menus[3].entries), ["Previous Tab", "Next Tab"]);
+  assert.deepEqual(labels(menus[4].entries), ["Minimize", "Zoom"]);
 });
 
 test("K-09: Help sends the repository's issue and repository URLs, without opening a browser", () => {

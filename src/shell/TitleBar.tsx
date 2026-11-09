@@ -1,10 +1,6 @@
 import { createSignal, Show } from "solid-js";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { PROJECT_NAME_MAX_CHARS } from "../spec/metrics.ts";
-import { folderName, truncateName } from "../workspace/paths.ts";
-import { activeFolder } from "../workspace/store.ts";
-import AppMenu, { appMenuExpanded, UserMenuButton } from "./AppMenu.tsx";
-import { tooltip } from "./tooltip.ts";
+import AppMenu, { UserMenuButton } from "./AppMenu.tsx";
 import "./title-bar.css";
 
 // L-83 / L-312: window button glyph code points.
@@ -24,19 +20,6 @@ const [focused, setFocused] = createSignal(document.hasFocus());
 window.addEventListener("focus", () => setFocused(true));
 window.addEventListener("blur", () => setFocused(false));
 
-/** L-88, L-227, D-16: the active folder's name, or "Open Recent Project" (muted) with none. Pressing it does nothing. */
-function ProjectName() {
-  const name = () => {
-    const folder = activeFolder();
-    return folder ? truncateName(folderName(folder.path), PROJECT_NAME_MAX_CHARS) : null;
-  };
-  return (
-    <button class="project-name" classList={{ empty: name() === null }} ref={(el) => tooltip(el, () => ({ title: "Recent Projects" }))}>
-      {name() ?? "Open Recent Project"}
-    </button>
-  );
-}
-
 export default function TitleBar(props: { settings?: boolean } = {}) {
   return (
     // L-81: the whole bar is the drag region (double-click toggles maximize).
@@ -44,7 +27,6 @@ export default function TitleBar(props: { settings?: boolean } = {}) {
       <div class="title-left">
         <Show when={!props.settings}>
           <AppMenu />
-          <Show when={!appMenuExpanded()}><ProjectName /></Show>
         </Show>
       </div>
       <Show when={!props.settings}><UserMenuButton /></Show>

@@ -5,7 +5,7 @@ import { APP_NAME, appMenus, userMenu } from "./app-menus.ts";
 import { dockOpen, setDockOpen } from "./panels.ts";
 import { dockWidth, resetDockWidth } from "./dock.ts";
 import { isClassicLayout } from "./layout.ts";
-import { activeTabOf, closeTab } from "../workspace/context.ts";
+import { activeTabOf, closeTab, openTool } from "../workspace/context.ts";
 import { editorContext as activeContext } from "../workspace/store.ts";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { notify } from "./toast.ts";
@@ -45,7 +45,6 @@ let pointerAtOpen = pointer;
 
 export const isOpen = () => open() !== null || context() !== null;
 export const isContextMenuOpen = (list: MenuEntry[]) => context()?.list === list;
-export const appMenuExpanded = () => open() !== null;
 const rootEntries = (): MenuEntry[] => context()?.list ?? (open() === null ? [] : MENUS[open()!].entries);
 const entries = (): MenuEntry[] => child()?.list ?? rootEntries();
 
@@ -234,7 +233,6 @@ export default function AppMenu(props: { popupOnly?: boolean } = {}) {
   let bar: HTMLDivElement | undefined;
   let popup: HTMLDivElement | undefined;
   let contextPopup: HTMLDivElement | undefined;
-  let licenses!: HTMLDialogElement;
   let about!: HTMLDialogElement;
   let aboutFocus: HTMLElement | null = null;
   const [aboutVersion, setAboutVersion] = createSignal("");
@@ -245,13 +243,13 @@ export default function AppMenu(props: { popupOnly?: boolean } = {}) {
       about.showModal();
     }).catch((error) => notify([String(error)]));
   });
-  let licenseFocus: HTMLElement | null = null;
-  const [notices, setNotices] = createSignal("");
   const copies = import.meta.glob<string>(["../assets/zed-icons/LICENSE*", "../theme/assets/**/LICENSE*", "../assets/icon-themes/**/LICENSE*", "../assets/zed-grammars/licenses/**/*", "../licenses/*.txt"], { query: "?raw", import: "default", eager: true });
-  commands.set("zed::OpenLicenses", () => {
-    licenseFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    setNotices("Loading licenses…");
-    licenses.showModal();
+  commands.set("zed::OpenLicenses", () => openTool(activeContext(), "Licenses", () => {
+    const element = document.createElement("pre");
+    element.className = "licenses-tab";
+    element.tabIndex = -1;
+    element.setAttribute("aria-label", "Dependency Licenses");
+    element.textContent = "Loading licenses…";
     const sources: Record<string, () => Promise<string>> = Object.fromEntries(Object.entries(copies).map(([name, text]) => [name, async () => text]));
     for (const name of ["LICENSES", "LICENSE-GPL", "LICENSE-APACHE"]) {
       const path = `../assets/zed-icons/${name}`;
@@ -262,8 +260,9 @@ export default function AppMenu(props: { popupOnly?: boolean } = {}) {
       if (!response.ok) throw new Error("Missing copy");
       return response.text();
     };
-    void licenseText(sources).then(setNotices);
-  });
+    void licenseText(sources).then((text) => { element.textContent = text; });
+    return { element, dispose: () => {} };
+  }));
   // Position goes through an adopted sheet, not an inline style (AGENTS 5).
   const sheet = new CSSStyleSheet();
   document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
@@ -368,11 +367,6 @@ export default function AppMenu(props: { popupOnly?: boolean } = {}) {
       )}</Show>
       <dialog class="about-dialog" ref={about} aria-label={`About ${APP_NAME}`} onClose={() => aboutFocus?.focus()}>
         <h1>{APP_NAME} {aboutVersion()}</h1>
-      </dialog>
-      <dialog class="license-dialog" ref={licenses} aria-label="Dependency Licenses" onClose={() => licenseFocus?.focus()}>
-        <h1>Dependency Licenses</h1>
-        <button onClick={() => licenses.close()}>Close</button>
-        <pre>{notices()}</pre>
       </dialog>
     </div>
   );
