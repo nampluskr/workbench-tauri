@@ -1,0 +1,76 @@
+{
+  "mode": "dark",
+  "state": {
+    "frame": {
+      "x": 239,
+      "y": 89,
+      "width": 1442,
+      "height": 854
+    },
+    "clientOrigin": {
+      "x": 240,
+      "y": 90
+    },
+    "clientSize": {
+      "width": 1440,
+      "height": 852
+    },
+    "workArea": "0,0,1920,1032",
+    "layout": "0x0412",
+    "maximized": false,
+    "minimized": false,
+    "dpi": 96,
+    "foreground": false
+  },
+  "editorScroller": {
+    "x": 940,
+    "y": 466,
+    "l": 440,
+    "r": 1440,
+    "t": 110,
+    "b": 821
+  },
+  "treeScroller": {
+    "x": 320,
+    "y": 427,
+    "l": 200,
+    "r": 439,
+    "t": 33,
+    "b": 821
+  },
+  "sidebar": [
+    {
+      "cls": "sidebar-list",
+      "l": 0,
+      "r": 199,
+      "t": 33,
+      "b": 821,
+      "sw": 15
+    }
+  ],
+  "scrollbarWidths": [
+    {
+      "cls": "tree-scroll",
+      "sw": 15,
+      "sh": 0
+    },
+    {
+      "cls": "cm-scroller",
+      "sw": 15,
+      "sh": 0
+    }
+  ],
+  "searchScroller": {
+    "x": 940,
+    "y": 468,
+    "l": 440,
+    "r": 1440,
+    "t": 114,
+    "b": 821
+  },
+  "searchSw": {
+    "sw": 15,
+    "sh": 5824,
+    "ch": 707
+  }
+}

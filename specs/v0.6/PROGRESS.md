@@ -95,6 +95,22 @@
   - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-03/`(01-about.png, 02-about-closed-by-esc.png, 03-licenses-top.png, licenses-text.txt, v3.json).
   - 특이사항: Esc 뒤 포커스는 body다(대화 상자를 연 메뉴 항목이 메뉴와 함께 사라짐, Licenses와 같은 동작). leader 스크립트의 결과 파일 경로 오류로 앱을 세 번 띄웠다(앞 두 번은 결과 저장 실패, 마지막 세션 결과만 썼다).
 
+### Phase 4 — 스크롤바
+
+- **K-05 스크롤바를 gpui와 같게(ORDER-04, R-8)** (2026-11-10, coder)
+  - 무엇을 했나:
+    - gpui 값(읽기만): `D:\projects\workbench-gpui\vendor\gpui-base\src\scrollbar.rs:22-31` 패널 트랙 16·thumb 6·hover/drag 8·여백 4·최소 길이 48, 편집기 트랙 15(`src/ui/pane.rs:214-218`, `src/ui/metrics.rs:246-247`), 색 테마 키 `scrollbar.thumb.background`(기본)·`scrollbar.thumb.hover_background`(hover·drag)·`scrollbar.track.background`(트랙, One 테마는 투명)(`src/ui/theme.rs:101-102`). 화살표 없음.
+    - tauri: `src/app.css` 한 곳에 `::-webkit-scrollbar*`로 모든 스크롤바(편집 영역, Sidebar, 트리, Search 등 탭 화면, picker, Settings·Keymap·Extensions·Licenses·미리보기)를 정의했다. 트랙 15(spec `scrollbar.width.editor`; gpui 패널 16과 1px 차이), thumb 6, hover/drag 8, 여백 4. gpui 전용 값(hover 폭 8, 최소 길이 48, 모서리 6)은 `src/spec/metrics.ts`에 출처 주석과 함께 뒀다. 편집기·picker의 따로 둔 규칙을 지웠고, 쓰지 않는 `scrollbar.thumb.active_background` 토큰 발행을 지웠다. picker의 hover 때만 보이는 조건, 편집 영역 표시 조건(v0.5 I-9), 트리 스크롤 동작(I-13)은 그대로다.
+  - 결과: 위와 같다.
+  - 검증: typecheck, 관련 node 테스트 28/28.
+  - 특이사항: 없음.
+- C-08 checker [PASS]: 전체 typecheck, npm test 210, clippy 경고 0, cargo test 21, 코드 검토와 V3 판정, 지적 없음 (2026-11-10)
+- **V3 gpui·tauri 비교(ORDER-04)** (2026-11-10, leader 측정·C-08 판정 [PASS])
+  - 무엇을 했나: 주 모니터 100%, 두 앱 모두 창 1440×852, 같은 임시 폴더(폴더 30개 + 파일 120개·긴 파일). One Dark·One Light. gpui는 release exe, tauri는 debug exe. 화면 캡처의 픽셀 줄을 읽어 쟀다.
+  - 결과: 두 테마 모두 편집 영역·트리 thumb 6px, hover 8px, 오른쪽 여백 4px로 gpui와 같다. 색은 One Light 트리 `#b6b6b9`·hover `#dfdfe0`가 같고, 반투명 기본 thumb는 채널당 1 이내 차이다(합성 반올림). tauri의 편집 영역·트리·Sidebar·Search 탭 스크롤바는 서로 같고 화살표가 없다.
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-04/`(gpui-*·tauri-* PNG, `pixels.json`, `tauri-dark.json`, `tauri-light.json`).
+  - 특이사항: gpui Sidebar는 스크롤바를 그리지 않는다(렌더러를 붙이지 않음). tauri Sidebar는 공통 모양으로 그린다. gpui는 데이터 폴더를 `%APPDATA%` 환경 변수가 아니라 Windows API로 찾으므로, leader가 사용자 gpui `state.json`·`settings.json`을 백업하고 임시 상태로 바꿔 띄운 뒤 원래 파일로 되돌렸다(SHA-256 일치 확인). 캡처는 창 영역만 잘랐고, 오른쪽 아래를 가린 데스크톱 알림 자리는 회색으로 칠했다. picker·drag·가로 스크롤바는 화면으로 재지 않고 코드로 확인했다.
+
 ## 사용자 요청 작업
 
 ### ORDER-01-R1 결과 검토와 제안 (2026-11-10)

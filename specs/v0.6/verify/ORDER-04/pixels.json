@@ -1,0 +1,14 @@
+{
+  "conditions": "Primary monitor 1920x1080 at 100%, window client 1440x852 at screen (240,90) for both apps. Same fixture: 30 folders f01..f30 + folder 'tree' (a-long.txt 400+ lines, 120 files). gpui release exe (198c4c1 build), tauri debug exe of the working tree. Captures cropped to the client area (x-240, y-90); the bottom-right area (x>=1367, y>=600 in the crop) is greyed because a desktop notification overlapped it. Pixel runs read with a row/column scan in screen px.",
+  "how_shown": "editor: pointer over the text; tree and sidebar: one wheel notch over the list; hover: pointer on the thumb.",
+  "gpui": {
+    "dark":  { "editor": {"thumb_px": 6, "right_gap_px": 4, "color": "#585c63", "bg": "#282c33"}, "editor_hover": {"thumb_px": 8, "right_gap_px": 4, "color": "#363c46"}, "tree": {"thumb_px": 6, "right_gap_px": 4, "color": "#5d616b", "bg": "#2f343e"}, "sidebar": "no scrollbar drawn after wheel (columns 425-434 show only panel background)" },
+    "light": { "editor": {"thumb_px": 6, "right_gap_px": 4, "color": "#c0c1c3", "bg": "#fafafa"}, "editor_hover": {"thumb_px": 8, "right_gap_px": 4, "color": "#dfdfe0"}, "tree": {"thumb_px": 6, "right_gap_px": 4, "color": "#b6b6b9", "bg": "#ebebec"}, "sidebar": "no scrollbar drawn after wheel" }
+  },
+  "tauri": {
+    "track_px_all": "15 (offsetWidth-clientWidth of .cm-scroller, .tree-scroll, .sidebar-list, .project-search-results)",
+    "dark":  { "editor": {"thumb_px": 6, "right_gap_px": 4, "color": "#595c63"}, "editor_hover": {"thumb_px": 8, "right_gap_px": 4, "color": "#373c46"}, "tree": {"thumb_px": 6, "right_gap_px": 4, "color": "#5e626b"}, "sidebar": {"thumb_px": 6, "right_gap_px": 4, "color": "#5e626b"}, "search_tab": {"thumb_px": 6, "right_gap_px": 4, "color": "#595c63"}, "track_top": "4px gap then thumb, no arrow" , "tree_track_bottom": "background to the end, no arrow"},
+    "light": { "editor": {"thumb_px": 6, "right_gap_px": 4, "color": "#c0c0c2"}, "editor_hover": {"thumb_px": 8, "right_gap_px": 4, "color": "#dfdfe0"}, "tree": {"thumb_px": 6, "right_gap_px": 4, "color": "#b6b6b9"}, "sidebar": {"thumb_px": 6, "right_gap_px": 4, "color": "#b6b6b9"}, "search_tab": {"thumb_px": 6, "right_gap_px": 4, "color": "#c0c0c2"} }
+  },
+  "not_measured": "picker scrollbar (hover-only, same CSS rule), drag state, horizontal scrollbar (fixture line wraps: .cm-scroller has no horizontal overflow)"
+}
