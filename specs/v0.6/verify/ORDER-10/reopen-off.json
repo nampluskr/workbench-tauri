@@ -1,0 +1,14 @@
+{
+  "mode": "reopen-off",
+  "statusButtons": [
+    "Close Left Dock",
+    "Search",
+    "Lock Preview"
+  ],
+  "lockAtStart": {
+    "pressed": "false",
+    "bg": "rgb(223, 223, 224)",
+    "dockPressed": "true",
+    "dockBg": "rgba(0, 0, 0, 0)"
+  }
+}

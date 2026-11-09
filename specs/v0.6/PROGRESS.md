@@ -234,6 +234,25 @@
   - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-09/`.
   - 특이사항: workbench-kit은 띄우지 않고 소스·VS Code 기본 동작으로 비교했다. 메뉴 Copy 시험이 시스템 클립보드를 덮어썼다.
 
+### Phase 10 — 상태 바 미리보기 버튼
+
+- **K-12 Lock Preview(R-18)** (2026-11-10, coder)
+  - 무엇을 했나:
+    - codicon `markdown` SVG를 복사했다(ORDER-09 방식, `src/assets/codicons/NOTICE.txt`에 출처 한 줄). 상태 바 돋보기 오른쪽에 버튼을 두었다(툴팁 Lock Preview, Left Dock과 같은 toggled 표시).
+    - 켜짐은 `state.json`의 `lock_preview`에 저장한다(없거나 true가 아니면 꺼짐).
+    - 켜면 공통 openFile에서 .md/.markdown(대소문자 무시)을 미리보기 탭으로 연다. 이미 열린 탭은 그대로 두고, 같은 파일 편집 탭이 있으면(다른 Pane 포함) 그 탭을 선택한다.
+    - 미리보기 탭의 `Ctrl-Shift-V`와 탭 메뉴 Show Source는 같은 파일 편집 탭을 더 열고(있으면 선택) 미리보기는 남긴다. ORDER-05의 Zed 동작(미리보기를 닫고 편집 탭으로)을 R-18이 나중 요구라 leader가 바꿨다.
+    - 편집↔미리보기 연계는 같은 Doc 공유 경로(twinOf)를 재사용했다. 경로 줄 눈 아이콘과 Ctrl-K V는 그대로다.
+  - 결과: 위와 같다.
+  - 검증: typecheck, 관련 node 테스트 40.
+  - 특이사항: 없음
+- C-14 checker [PASS]: 전체 typecheck, npm test 222, clippy 경고 0, cargo test 21, 코드 검토와 V3 판정, 지적 없음 (2026-11-10)
+- **V3(ORDER-10)** (2026-11-10, leader 측정·C-14 판정 [PASS])
+  - 무엇을 했나: debug exe, 임시 APPDATA·WebView 데이터 폴더, One Light, 임시 폴더(notes.md·other.md·main.ts).
+  - 결과: 상태 바 Left Dock·Search·Lock Preview, 툴팁 Lock Preview. 꺼짐에서 md → 편집 탭, 켜도 그 탭은 편집 탭. 켜짐에서 notes.md → 미리보기만, main.ts → 편집 탭. 미리보기에서 Ctrl-Shift-V → notes.md 편집 탭이 더 열리고 미리보기 유지. 나란히 두고 편집 Section 3 → 미리보기 Section 3, 미리보기 Section 2 → 편집 "## Section 2". 켠 채·끈 채 다시 열기에서 상태 유지. Licenses에 markdown.svg.
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-10/`(first.json, reopen-on.json, reopen-off.json, PNG).
+  - 특이사항: 시스템 클립보드는 건드리지 않았다.
+
 ## 사용자 요청 작업
 
 ### ORDER-01-R1 결과 검토와 제안 (2026-11-10)

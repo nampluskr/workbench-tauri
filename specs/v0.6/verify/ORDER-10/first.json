@@ -1,0 +1,104 @@
+{
+  "mode": "first",
+  "statusButtons": [
+    "Close Left Dock",
+    "Search",
+    "Lock Preview"
+  ],
+  "lockAtStart": {
+    "pressed": "false",
+    "bg": "rgba(0, 0, 0, 0)",
+    "dockPressed": "true",
+    "dockBg": "rgba(0, 0, 0, 0)"
+  },
+  "tooltip": [
+    "Lock Preview"
+  ],
+  "offMd": {
+    "tabs": [
+      "other.md"
+    ],
+    "active": [
+      "other.md"
+    ]
+  },
+  "toggleOn": {
+    "state": {
+      "pressed": "true",
+      "bg": "rgb(223, 223, 224)",
+      "dockPressed": "true",
+      "dockBg": "rgba(0, 0, 0, 0)"
+    },
+    "tabs": [
+      "other.md"
+    ]
+  },
+  "onMd": {
+    "tabs": [
+      "other.md",
+      "Preview notes.md"
+    ],
+    "active": [
+      "Preview notes.md"
+    ]
+  },
+  "onTs": {
+    "tabs": [
+      "other.md",
+      "Preview notes.md",
+      "main.ts"
+    ],
+    "active": [
+      "main.ts"
+    ]
+  },
+  "ctrlShiftV": {
+    "first": {
+      "tabs": [
+        "other.md",
+        "Preview notes.md",
+        "main.ts"
+      ],
+      "active": [
+        "main.ts"
+      ]
+    },
+    "again": {
+      "tabs": [
+        "other.md",
+        "Preview notes.md",
+        "notes.md",
+        "main.ts"
+      ],
+      "active": [
+        "notes.md"
+      ]
+    }
+  },
+  "sync": {
+    "panes": [
+      [
+        "other.md",
+        "Preview notes.md",
+        "notes.md*",
+        "main.ts"
+      ],
+      [
+        "notes.md*"
+      ]
+    ],
+    "activeBlockAfterEditorClick": [
+      "Section 3"
+    ],
+    "editorActiveLineAfterPreviewClick": [
+      "## Section 2"
+    ],
+    "activeBlockAfterPreviewClick": [
+      "Section 2"
+    ]
+  },
+  "licenses": {
+    "markdownSvgNotice": true,
+    "ccby": true
+  }
+}
