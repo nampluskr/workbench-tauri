@@ -131,7 +131,13 @@ const METRICS: Record<string, string> = {
   "editor.cursor_width": rem(2), // E-012
   "editor.selection.corner_radius_multiplier": "0.15", // E-015
   "scrollbar.width.editor": rem(15), // E-030
-  "scrollbar.width.ui": rem(6), // L-308: the general scrollbar (picker list)
+  "scrollbar.width.ui": rem(6), // L-308; gpui-base/src/scrollbar.rs:25 THUMB_WIDTH (R-8)
+  "scrollbar.padding": rem(4), // L-308; gpui-base/src/scrollbar.rs:27 THUMB_INSET
+  // R-8 gpui sources: D:/projects/workbench-gpui/vendor/gpui-base/src/scrollbar.rs (no matching toml IDs).
+  "scrollbar.thumb.active_width": rem(8), // :29 THUMB_ACTIVE_WIDTH; hover and drag
+  "scrollbar.thumb.min_length": rem(48), // :23 MIN_THUMB_SIZE; painted length excludes both insets (:1225)
+  // gpui-component-0.8.1/src/theme/mod.rs:422,433,443,774 sets radius 6; Base clamps to half the painted width (:40-43).
+  "scrollbar.thumb.radius": rem(6),
   "titlebar.height": "32px", // L-21: Windows caption stays fixed when UI font size changes.
   "titlebar.window_button.width": "36px", // L-39 / A-32.2
   "titlebar.window_button.height": "32px", // L-39 / A-32.2

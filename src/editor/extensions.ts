@@ -30,26 +30,6 @@ const zedEditorTheme = EditorView.theme({
     fontFamily: "inherit",
     lineHeight, // E-010
   },
-  ".cm-scroller::-webkit-scrollbar": {
-    width: "var(--scrollbar-width-editor)", // E-030
-    height: "var(--scrollbar-width-editor)",
-  },
-  ".cm-scroller::-webkit-scrollbar-track": {
-    background: "var(--scrollbar-track-background)",
-  },
-  // The corner where both scrollbars meet takes the track color.
-  ".cm-scroller::-webkit-scrollbar-corner": {
-    background: "var(--scrollbar-track-background)",
-  },
-  ".cm-scroller::-webkit-scrollbar-thumb": {
-    background: "var(--scrollbar-thumb-background)",
-  },
-  ".cm-scroller::-webkit-scrollbar-thumb:hover": {
-    background: "var(--scrollbar-thumb-hover-background)",
-  },
-  ".cm-scroller::-webkit-scrollbar-thumb:active": {
-    background: "var(--scrollbar-thumb-active-background)",
-  },
   ".cm-content": { padding: 0 },
   // E-005: margin between gutter and text. It sits inside the line so that the
   // active-line rectangle (E-011) covers it.

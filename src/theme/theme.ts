@@ -39,7 +39,6 @@ export const TARGET_TOKENS = [
   "players[0].selection",
   "scrollbar.thumb.background",
   "scrollbar.thumb.hover_background",
-  "scrollbar.thumb.active_background",
   "scrollbar.track.background",
   "background",
   "elevated_surface.background", // T-40.6: tooltip, menu
@@ -65,7 +64,6 @@ export type Token = (typeof TARGET_TOKENS)[number];
 // T-26 rules that touch the target tokens: value taken from another token when the JSON has none.
 // T-26.3, T-26.4.
 const FALLBACK_FROM: Partial<Record<Token, Token>> = {
-  "scrollbar.thumb.active_background": "scrollbar.thumb.background",
   "pane_group.border": "border", // T-26.4
 };
 // T-26 values for target tokens no theme has: theme.fallback.* in spec/zed-metrics.toml.

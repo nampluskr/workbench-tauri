@@ -63,6 +63,37 @@ button, input, select, textarea {
 }
 #root { display: flex; }
 
+/* R-8: one Chromium scrollbar style for every scroll container, including CodeMirror.
+   Transparent borders inset the painted thumb without changing native scrolling or visibility. */
+::-webkit-scrollbar {
+  width: var(--scrollbar-width-editor);
+  height: var(--scrollbar-width-editor);
+}
+::-webkit-scrollbar-button { display: none; }
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: var(--scrollbar-track-background); }
+::-webkit-scrollbar-thumb {
+  --scrollbar-thumb-size: var(--scrollbar-width-ui);
+  background: var(--scrollbar-thumb-background);
+  background-clip: content-box;
+  border: var(--scrollbar-padding) solid transparent;
+  border-radius: calc(var(--scrollbar-thumb-radius) + var(--scrollbar-padding));
+}
+::-webkit-scrollbar-thumb:vertical {
+  min-height: var(--scrollbar-thumb-min-length);
+  border-left-width: calc(var(--scrollbar-width-editor) - var(--scrollbar-padding) - var(--scrollbar-thumb-size));
+}
+::-webkit-scrollbar-thumb:horizontal {
+  min-width: var(--scrollbar-thumb-min-length);
+  border-top-width: calc(var(--scrollbar-width-editor) - var(--scrollbar-padding) - var(--scrollbar-thumb-size));
+}
+::-webkit-scrollbar-thumb:hover, ::-webkit-scrollbar-thumb:active {
+  --scrollbar-thumb-size: var(--scrollbar-thumb-active-width);
+  background-color: var(--scrollbar-thumb-hover-background);
+}
+/* P-004: preserve the picker's hover-only visibility while sharing the scrollbar geometry and colors. */
+.picker-list:not(:hover)::-webkit-scrollbar-track,
+.picker-list:not(:hover)::-webkit-scrollbar-thumb { background-color: transparent; }
+
 /* L-11: [left sidebar] -> [Workspace]. L-12: the sidebar spans the full window height. */
 .sidebar {
   flex-shrink: 0;

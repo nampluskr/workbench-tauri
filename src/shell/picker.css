@@ -39,14 +39,6 @@
   overflow-y: auto;
   padding: var(--picker-list-padding-y) 0;
 }
-/* P-004: the scrollbar is hidden until the pointer is over the list. Same pieces as the editor's (E-030 tokens: track
-   and thumb colors, width L-308 6px for general UI); no layout shift, only the colors appear. */
-.picker-list::-webkit-scrollbar { width: var(--scrollbar-width-ui); }
-.picker-list::-webkit-scrollbar-track, .picker-list::-webkit-scrollbar-thumb { background: transparent; }
-.picker-list:hover::-webkit-scrollbar-track { background: var(--scrollbar-track-background); }
-.picker-list:hover::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb-background); }
-.picker-list:hover::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover-background); }
-.picker-list:hover::-webkit-scrollbar-thumb:active { background: var(--scrollbar-thumb-active-background); }
 .picker-item {
   display: flex;
   align-items: center;

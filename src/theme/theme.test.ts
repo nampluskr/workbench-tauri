@@ -43,7 +43,6 @@ const VARS: [token: string, cssVar: string][] = [
   ["players[0].selection", "--players-0-selection"],
   ["scrollbar.thumb.background", "--scrollbar-thumb-background"],
   ["scrollbar.thumb.hover_background", "--scrollbar-thumb-hover-background"],
-  ["scrollbar.thumb.active_background", "--scrollbar-thumb-active-background"],
   ["scrollbar.track.background", "--scrollbar-track-background"],
   ["background", "--background"],
   ["elevated_surface.background", "--elevated-surface-background"],
@@ -81,7 +80,7 @@ for (const { name, appearance, style } of registry) {
     for (const [token, cssVar] of VARS) {
       const pick = (s: typeof style) => (token === "players[0].selection" ? (s.players?.[0] as any)?.selection : s[token]);
       // T-26.3 / T-26.4: derived from another token of the same theme; T-26.13: a fixed value; else the base theme.
-      const derived = token === "pane_group.border" ? style.border : token === "scrollbar.thumb.active_background" ? style["scrollbar.thumb.background"] : undefined;
+      const derived = token === "pane_group.border" ? style.border : undefined;
       const expected = pick(style) ?? derived ?? pick(base) ?? (token === "drop_target.border" ? "#d7dadf" : undefined);
       assert.deepEqual(parseColor(vars.get(cssVar)!), parseColor(expected as string), `${token} -> ${cssVar}`);
     }
