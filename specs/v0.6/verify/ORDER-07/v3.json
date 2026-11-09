@@ -1,0 +1,365 @@
+{
+  "start": {
+    "scrollTop": 0,
+    "sticky": [
+      {
+        "name": "proj",
+        "top": 0,
+        "h": 26,
+        "pad": "0px",
+        "bg": "rgb(235, 235, 236)"
+      },
+      {
+        "name": "alpha",
+        "top": 26,
+        "h": 26,
+        "pad": "0px",
+        "bg": "rgb(235, 235, 236)"
+      },
+      {
+        "name": "beta",
+        "top": 52,
+        "h": 26,
+        "pad": "0px",
+        "bg": "rgb(235, 235, 236)"
+      },
+      {
+        "name": "gamma",
+        "top": 78,
+        "h": 26,
+        "pad": "0px",
+        "bg": "rgb(223, 223, 224)"
+      }
+    ],
+    "firstVisible": {
+      "n": "proj",
+      "t": 0
+    },
+    "expanded": [
+      "proj:true",
+      "alpha:true",
+      "beta:true",
+      "gamma:true"
+    ],
+    "normalRow": {
+      "h": 26,
+      "bg": "rgba(0, 0, 0, 0)"
+    }
+  },
+  "deepScroll": {
+    "scrollTop": 400,
+    "sticky": [
+      {
+        "name": "proj",
+        "top": 0,
+        "h": 26,
+        "pad": "0px",
+        "bg": "rgb(235, 235, 236)"
+      },
+      {
+        "name": "alpha",
+        "top": 26,
+        "h": 26,
+        "pad": "0px",
+        "bg": "rgb(235, 235, 236)"
+      },
+      {
+        "name": "beta",
+        "top": 52,
+        "h": 26,
+        "pad": "0px",
+        "bg": "rgb(235, 235, 236)"
+      },
+      {
+        "name": "gamma",
+        "top": 78,
+        "h": 26,
+        "pad": "0px",
+        "bg": "rgb(235, 235, 236)"
+      }
+    ],
+    "firstVisible": {
+      "n": "g13.txt",
+      "t": 16
+    },
+    "expanded": [],
+    "normalRow": {
+      "h": 26,
+      "bg": "rgba(0, 0, 0, 0)"
+    }
+  },
+  "hoverSticky": [
+    "proj:rgb(235, 235, 236)",
+    "alpha:rgb(223, 223, 224)",
+    "beta:rgb(235, 235, 236)",
+    "gamma:rgb(235, 235, 236)"
+  ],
+  "drifting": [
+    {
+      "scrollTop": 500,
+      "sticky": [
+        "proj@0",
+        "alpha@26",
+        "beta@52",
+        "gamma@78"
+      ],
+      "first": "g17.txt"
+    },
+    {
+      "scrollTop": 600,
+      "sticky": [
+        "proj@0",
+        "alpha@26",
+        "beta@52",
+        "gamma@78"
+      ],
+      "first": "g21.txt"
+    },
+    {
+      "scrollTop": 700,
+      "sticky": [
+        "proj@0",
+        "alpha@26",
+        "beta@52",
+        "gamma@78"
+      ],
+      "first": "g24.txt"
+    },
+    {
+      "scrollTop": 800,
+      "sticky": [
+        "proj@0",
+        "alpha@26",
+        "beta@52",
+        "gamma@58"
+      ],
+      "first": "g28.txt"
+    },
+    {
+      "scrollTop": 900,
+      "sticky": [
+        "proj@0",
+        "alpha@26",
+        "beta@52"
+      ],
+      "first": "b02.txt"
+    },
+    {
+      "scrollTop": 1000,
+      "sticky": [
+        "proj@0",
+        "alpha@26",
+        "beta@52"
+      ],
+      "first": "b06.txt"
+    },
+    {
+      "scrollTop": 1100,
+      "sticky": [
+        "proj@0",
+        "alpha@26",
+        "beta@52"
+      ],
+      "first": "b10.txt"
+    },
+    {
+      "scrollTop": 1200,
+      "sticky": [
+        "proj@0",
+        "alpha@26",
+        "beta@52"
+      ],
+      "first": "b14.txt"
+    },
+    {
+      "scrollTop": 1292,
+      "sticky": [
+        "proj@0",
+        "alpha@26",
+        "beta@52"
+      ],
+      "first": "b17.txt"
+    },
+    {
+      "scrollTop": 1292,
+      "sticky": [
+        "proj@0",
+        "alpha@26",
+        "beta@52"
+      ],
+      "first": "b17.txt"
+    },
+    {
+      "scrollTop": 1292,
+      "sticky": [
+        "proj@0",
+        "alpha@26",
+        "beta@52"
+      ],
+      "first": "b17.txt"
+    },
+    {
+      "scrollTop": 1292,
+      "sticky": [
+        "proj@0",
+        "alpha@26",
+        "beta@52"
+      ],
+      "first": "b17.txt"
+    }
+  ],
+  "clickSticky": {
+    "before": {
+      "scrollTop": 400,
+      "sticky": [
+        {
+          "name": "proj",
+          "top": 0,
+          "h": 26,
+          "pad": "0px",
+          "bg": "rgb(235, 235, 236)"
+        },
+        {
+          "name": "alpha",
+          "top": 26,
+          "h": 26,
+          "pad": "0px",
+          "bg": "rgb(235, 235, 236)"
+        },
+        {
+          "name": "beta",
+          "top": 52,
+          "h": 26,
+          "pad": "0px",
+          "bg": "rgb(235, 235, 236)"
+        },
+        {
+          "name": "gamma",
+          "top": 78,
+          "h": 26,
+          "pad": "0px",
+          "bg": "rgb(235, 235, 236)"
+        }
+      ],
+      "firstVisible": {
+        "n": "g13.txt",
+        "t": 16
+      },
+      "expanded": [],
+      "normalRow": {
+        "h": 26,
+        "bg": "rgba(0, 0, 0, 0)"
+      }
+    },
+    "after": {
+      "scrollTop": 0,
+      "sticky": [
+        {
+          "name": "proj",
+          "top": 0,
+          "h": 26,
+          "pad": "0px",
+          "bg": "rgb(235, 235, 236)"
+        },
+        {
+          "name": "alpha",
+          "top": 26,
+          "h": 26,
+          "pad": "0px",
+          "bg": "rgb(223, 223, 224)"
+        },
+        {
+          "name": "beta",
+          "top": 52,
+          "h": 26,
+          "pad": "0px",
+          "bg": "rgb(235, 235, 236)"
+        },
+        {
+          "name": "gamma",
+          "top": 78,
+          "h": 26,
+          "pad": "0px",
+          "bg": "rgb(235, 235, 236)"
+        }
+      ],
+      "firstVisible": {
+        "n": "proj",
+        "t": 0
+      },
+      "expanded": [
+        "proj:true",
+        "alpha:true",
+        "beta:true",
+        "gamma:true"
+      ],
+      "normalRow": {
+        "h": 26,
+        "bg": "rgba(0, 0, 0, 0)"
+      }
+    },
+    "focus": "project-panel"
+  },
+  "multiFolder": {
+    "second": {
+      "scrollTop": 300,
+      "sticky": [
+        {
+          "name": "second",
+          "top": 0,
+          "h": 26,
+          "pad": "0px",
+          "bg": "rgb(235, 235, 236)"
+        },
+        {
+          "name": "inner",
+          "top": 26,
+          "h": 26,
+          "pad": "0px",
+          "bg": "rgb(235, 235, 236)"
+        }
+      ],
+      "firstVisible": {
+        "n": "s11.txt",
+        "t": 12
+      },
+      "expanded": [
+        "inner:true"
+      ],
+      "normalRow": {
+        "h": 26,
+        "bg": "rgb(202, 202, 202)"
+      }
+    },
+    "backToProj": {
+      "scrollTop": 300,
+      "sticky": [
+        {
+          "name": "second",
+          "top": 0,
+          "h": 26,
+          "pad": "0px",
+          "bg": "rgb(235, 235, 236)"
+        },
+        {
+          "name": "inner",
+          "top": 26,
+          "h": 26,
+          "pad": "0px",
+          "bg": "rgb(235, 235, 236)"
+        }
+      ],
+      "firstVisible": {
+        "n": "s11.txt",
+        "t": 12
+      },
+      "expanded": [
+        "inner:true"
+      ],
+      "normalRow": {
+        "h": 26,
+        "bg": "rgb(202, 202, 202)"
+      }
+    }
+  }
+}

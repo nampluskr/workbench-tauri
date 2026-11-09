@@ -166,6 +166,26 @@
   - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-06/`(first.json, reopen.json, reopen-2.json, PNG).
   - 특이사항: 편집 영역 Ctrl+F의 문서 안 찾기는 Phase 9에서 확인한다.
 
+### Phase 7 — Left Dock 트리
+
+- **K-09 트리 고정 줄(R-13)** (2026-11-10, coder)
+  - 무엇을 했나:
+    - 기준: 사용자 Zed를 쓰지 않고 core `refs/I-13-zed.png`, `docs/refs/01-zed/01-LAYOUT.md` L-47·L-51, Zed 소스(커밋 14b7b0ef `project_panel.rs`·`sticky_items.rs`, leader가 받아 둔 것, 읽기만)를 기준으로 구현했다.
+    - 맨 위에 보이는 항목의 상위 폴더 사슬 전체를 고정한다. 마지막 자식이 지나가면 마지막 고정 줄이 밀려 올라간다.
+    - 고정 줄 클릭: 펼치기 없이 그 폴더가 고정 순번 자리에 오도록 스크롤한다(−1px).
+    - 색: `panel.overlay_background`/`overlay_hover`(T-26.1·T-26.2 합성).
+    - 고정 줄에서 메뉴·끌기를 막고, 키보드 선택이 고정 줄 밑에 가리지 않게 했다.
+    - 순수 함수 `stickyRows`(`src/workspace/tree.ts`)와 테스트.
+  - 결과: 위와 같다.
+  - 검증: typecheck, 관련 node 테스트 35.
+  - 특이사항: L-51의 "제외"는 core I-13이 덮는다. 이 앱은 등록 폴더마다 트리 하나라 다른 등록 폴더의 사슬은 함께 보이지 않는다.
+- C-11 checker [PASS]: 전체 typecheck, npm test 215, clippy 경고 0, cargo test 21, 코드 검토(Zed 소스 동작 일치, 복사 없음)와 V3 판정, 지적 없음 (2026-11-10)
+- **V3(ORDER-07)** (2026-11-10, leader 측정·C-11 판정 [PASS])
+  - 무엇을 했나: debug exe, 임시 APPDATA·WebView 데이터 폴더, One Light, 폴더 proj(alpha/beta/gamma 깊이 3)·second(inner).
+  - 결과: gamma 안까지 스크롤하면 proj·alpha·beta·gamma 고정(높이 26, top 0/26/52/78). gamma 끝에서 gamma 줄이 78→58로 밀린 뒤 사라짐. hover한 고정 줄만 overlay_hover. alpha 고정 줄 클릭 → 펼치기 그대로, 스크롤 0, 포커스 패널. second 폴더는 second·inner 고정. 스크롤바(Phase 4)는 바꾸지 않았다.
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-07/`(v3.json, PNG).
+  - 특이사항: Zed 비교 캡처는 사용자 확인 대기.
+
 ## 사용자 요청 작업
 
 ### ORDER-01-R1 결과 검토와 제안 (2026-11-10)
