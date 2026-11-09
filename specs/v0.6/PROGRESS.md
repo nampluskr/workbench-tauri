@@ -42,6 +42,31 @@
   - 검증: V0. 문서만 바뀌어 명령은 실행하지 않았다.
   - 특이사항: ORDER-01-R2 5번(checker `git grep`)은 사용자가 `.agents/checker-settings.json`에 직접 넣기로 했다. auto mode가 leader·writer의 권한 설정 변경을 막는다(2026-11-10). 넣은 뒤 `HERDR-SETUP.md`에 적는다.
 
+### Phase 2 — 기능 축소
+
+- **K-01 기능 축소 구현(ORDER-02, R-4~R-7)** (2026-11-10, coder)
+  - 무엇을 했나:
+    - 내용 검색 `src-tauri/src/project_search.rs`, `src/search/model.ts`·`replace.ts`와 테스트를 지웠다.
+    - 이름 검색 `src-tauri/src/name_search.rs`를 새로 뒀다. `search_names`는 대소문자를 무시한 부분 일치이고, 링크·junction을 따라가지 않고, 창 폴더 루트 밖은 거부하고, 결과는 5,000개까지다.
+    - "Search" 탭: 파일 결과는 열고, 폴더 결과는 Left Dock을 열어 트리에서 펼치고 선택한다. 대소문자·정규식·단어·Replace 버튼은 없다.
+    - `src/diagnostics/` 전체와 상태 바 진단 버튼·`Ctrl-Shift-M`을 지웠다. 버튼 자리는 비웠다(Phase 10 I-18 자리).
+    - 테마·아이콘 테마 선택 창 버튼을 "View Themes"·"View Icon Themes"로 바꿨다(콜백 이름 viewThemes·viewIconThemes). Extensions 화면은 그대로다.
+  - 결과: 언어 서버 클라이언트 코드·의존성은 원래 없었다(R-4).
+  - 검증: typecheck, cargo check, clippy, cargo test 21, 관련 node 테스트 통과.
+  - 특이사항: 없음.
+- **K-02 regex 직접 의존성 제거** (2026-11-10, coder)
+  - 무엇을 했나: `src-tauri/Cargo.toml`의 `regex = "=1.13.1"`, `Cargo.lock`의 workbench-tauri 의존성 목록 한 줄, `src/licenses/regex-1.13.1-*.txt` 두 파일을 지웠다.
+  - 결과: regex는 tauri-utils·urlpattern의 간접 의존성으로 `Cargo.lock`에 남는다.
+  - 검증: cargo check·clippy·test 21 통과, Licenses 테스트 통과.
+  - 특이사항: 근거는 core D-8, core-leader 2026-11-10.
+- C-05 checker [PASS]: 전체 typecheck, npm test 210 통과, clippy 경고 0, cargo test 21 통과, R-4~R-7 코드 검토 지적 없음 (2026-11-10)
+  - 특이사항: checker가 `git diff src-tauri/Cargo.toml` 허가 창에서 1시간 넘게 멈췄다(허용 목록에 git diff 없음). leader가 취소하고 diff를 직접 확인했다. 허용 목록 추가는 미정(사용자 설정).
+- **V3 화면 검증(ORDER-02)** (2026-11-10, leader 측정·checker C-06 판정 [PASS])
+  - 무엇을 했나: 주 모니터 100%, One Light, Catppuccin Latte, 임시 APPDATA와 임시 폴더(README.md, thread.ts, other.txt, reader/notes.txt, docs/guide.md)에서 쟀다. 입력은 SendInput(`tools/win-input.ps1`), 값은 CDP.
+  - 결과: 1~10 모두 통과 — 툴팁 "Search", `Ctrl-Shift-F`로 Search 탭, `read` → README.md·reader·thread.ts, `rdm` → 없음, 폴더 결과 reveal·선택, 파일 결과 열림, 진단 버튼 없음·`Ctrl-Shift-M` 무동작, "View Themes"→Themes 범주, "View Icon Themes"→Icon Themes 범주, 앱 프로세스는 workbench-tauri.exe·msedgewebview2.exe뿐.
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-02/`(PNG 10개, `v3.json`, `v3b.json`).
+  - 특이사항: 두 세션 모두 SendInput `ctrl+k ctrl+t`로 테마 선택 창이 열리지 않아 사용자 메뉴로 열었다. ORDER-02는 이 바인딩을 바꾸지 않았다(`src/theme/selector.ts` 6줄 그대로). 원인은 확인하지 않았다. 첫 실행은 이전 실행의 고아 WebView2 프로세스가 데이터 폴더를 잡고 있어 실패했고, leader가 그 프로세스를 끝낸 뒤 다시 실행했다. I-7 부분은 두 번째 세션에서 다시 쟀다.
+
 ## 사용자 요청 작업
 
 ### ORDER-01-R1 결과 검토와 제안 (2026-11-10)

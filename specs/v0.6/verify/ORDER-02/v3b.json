@@ -1,0 +1,23 @@
+{
+  "themeFooterByKey": [],
+  "menu_Themes": true,
+  "themeFooter": [
+    "View Themes"
+  ],
+  "themeInstall": false,
+  "extCategoryAfterThemes": [
+    "Themes"
+  ],
+  "menu_Icon Themes": true,
+  "iconFooter": [
+    "View Icon Themes"
+  ],
+  "iconInstall": false,
+  "extCategoryAfterIcons": [
+    "Icon Themes"
+  ],
+  "processTree": [
+    "msedgewebview2.exe",
+    "workbench-tauri.exe"
+  ]
+}

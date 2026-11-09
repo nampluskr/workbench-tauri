@@ -1,0 +1,48 @@
+{
+  "statusButtons": [
+    "Close Left Dock",
+    "Search"
+  ],
+  "hover": "ok",
+  "tooltip": [
+    "Search"
+  ],
+  "ctrlShiftM": "ok",
+  "tabsBeforeM": [],
+  "tabsAfterM": [],
+  "diagText": false,
+  "ctrlShiftF": "ok",
+  "tabsAfterF": [
+    "Search"
+  ],
+  "searchInput": true,
+  "searchButtons": [],
+  "resultsRead": [
+    "README.md",
+    "reader",
+    "thread.ts"
+  ],
+  "resultsRdm": [],
+  "treeSelected": [
+    "reader"
+  ],
+  "treeRows": [
+    "v3-fixture",
+    "docs",
+    "reader",
+    "other.txt",
+    "README.md",
+    "thread.ts"
+  ],
+  "fileResultFound": true,
+  "tabsAfterFile": [
+    "Search",
+    "README.md"
+  ],
+  "activeTab": [
+    "README.md"
+  ],
+  "themeFooter": [],
+  "themeInstall": false,
+  "error": "TypeError: Cannot read properties of null (reading 'x')\n    at file:///C:/Users/nampl/AppData/Local/Temp/claude/0b8282fad92e4259/97f9d5ab-03c3-43c4-a1aa-7706006a799a/scratchpad/v3.mjs:88:43"
+}
