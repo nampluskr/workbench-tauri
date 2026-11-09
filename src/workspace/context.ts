@@ -2,10 +2,8 @@ import { batch, createSignal, type Accessor, type Setter } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import type { EditorState } from "@codemirror/state";
 import type { EditorView } from "@codemirror/view";
-import type { OutlineSymbol } from "../syntax/document.ts";
-import { createHeadings } from "../editor/headings.ts";
-import { createFileView, navigated, setEditable } from "../editor/file-view.ts";
-import { symbolsAtCursor } from "../syntax/highlight.ts";
+import { createFileView } from "../editor/file-view.ts";
+import { setEditable } from "../editor/extensions.ts";
 import type { IconName } from "../shell/Icon.tsx";
 import { cursorPosition, locationOffset } from "../editor/position.ts";
 import { notify } from "../shell/toast.ts";
@@ -14,7 +12,7 @@ import type { Validation } from "./names.ts";
 import { diffRange, followListing, underOrSame } from "./changes.ts";
 import { confirmClose, saveDoc, saveErrorText, type Ask, type Closing } from "./closing.ts";
 import { Doc, type Editor, type Io, type Status } from "./doc.ts";
-import { NavHistory, navigateHistory, type NavEntry } from "./nav-history.ts";
+import { NavHistory, navigateHistory } from "./nav-history.ts";
 import { pathKey } from "./paths.ts";
 import { relativePath } from "./ops.ts";
 import { place } from "./drop.ts";
@@ -22,20 +20,20 @@ import { inDirection, leaves, remove, split, type Dir, type Node } from "./split
 import { openUrl } from "@tauri-apps/plugin-opener";
 import type { LinkTarget } from "../editor/markdown.ts";
 import { createPreview, type Preview } from "../shell/markdown-preview.ts";
-import { activeAfterClose, openTab, stepTab, togglePin, type TabInfo } from "./tabs.ts";
+import { activeAfterClose, closeTargets, type CloseMode, openTab, stepTab, togglePin, type TabInfo } from "./tabs.ts";
 import { buildRows, collapseAll, joinPath, none, only, sortChildren, type Child, type Row, type Selection } from "./tree.ts";
 
 // The work context of one folder (A-15, R-13): what its tree has expanded, selected and read, and its tabs. It stays in
 // memory while the folder is registered and goes with it (R-14). Nothing here is saved to state.json.
 
 /** A 1-based position; with `endLine`/`endColumn` the range is selected. */
-export type FileLocation = { line: number; column: number; endLine?: number; endColumn?: number; noHistory?: boolean };
+export type FileLocation = { line: number; column: number; endLine?: number; endColumn?: number };
 
 /**
  * What stays the same for a tab while its list entry is copied (promotion, rename): its file, editor and state. A Markdown
  * preview tab (R-11) has no editor: `element` is its body, `dispose` lets go of what it holds.
  */
-export type TabFile = { doc: Doc; view: EditorView | null; status: Accessor<Status>; position?: Accessor<string>; headings?: Accessor<string[]>; symbols?: Accessor<OutlineSymbol[]>; updateHeadings?: (state: EditorState, found?: OutlineSymbol[] | null) => void; toolPosition?: Accessor<string>; title?: Accessor<string>; icon?: IconName; iconSuccess?: boolean; location?: FileLocation; element?: HTMLElement; dispose?: () => void };
+export type TabFile = { doc: Doc; view: EditorView | null; readOnly?: boolean; editable?: boolean; status: Accessor<Status>; position?: Accessor<string>; toolPosition?: Accessor<string>; title?: Accessor<string>; icon?: IconName; iconSuccess?: boolean; location?: FileLocation; element?: HTMLElement; dispose?: () => void };
 export type Tab = TabInfo & { file: TabFile; focus: boolean };
 
 
@@ -211,10 +209,10 @@ export type PaneState = {
   active: Accessor<number | null>;
   setActive: Setter<number | null>;
   recent: TabFile[];
-  /** I-10: this Pane's Go Back / Go Forward history; `navVersion` changes with it so the buttons follow. */
-  nav: NavHistory;
+  /** I-12: this Pane's tab selection history; `navVersion` changes with it so the buttons follow. */
+  nav: NavHistory<TabFile>;
   navVersion: Accessor<number>;
-  /** The file whose tab was active last; leaving it records its place (Zed Item::deactivated). */
+  /** The file whose tab was active last; leaving it records the tab selection. */
   shown: TabFile | null;
 };
 
@@ -223,7 +221,7 @@ export function newPane(): PaneState {
   const [tabs, setTabs] = createSignal<Tab[]>([]);
   const [active, setActive] = createSignal<number | null>(null);
   const [navVersion, setNavVersion] = createSignal(0);
-  return { id: nextPane++, tabs, setTabs, active, setActive, recent: [], nav: new NavHistory(() => setNavVersion((n) => n + 1)), navVersion, shown: null };
+  return { id: nextPane++, tabs, setTabs, active, setActive, recent: [], nav: new NavHistory<TabFile>(() => setNavVersion((n) => n + 1)), navVersion, shown: null };
 }
 
 export const panesOf = (ctx: FolderContext): PaneState[] => leaves(ctx.tree());
@@ -277,7 +275,8 @@ export const askWarning: Ask = (main, content, buttons) =>
 function makeView(ctx: FolderContext, file: TabFile, text: string, editable: boolean): void {
   const [position, setPosition] = createSignal("1:1");
   file.position = position;
-  file.view = createFileView(text, file.doc.path, editable, {
+  file.editable = editable;
+  file.view = createFileView(text, file.doc.path, editable && !file.readOnly, {
     changed: () => {
       file.doc.refresh();
       for (const p of previews(file.doc)) p.changed();
@@ -285,14 +284,11 @@ function makeView(ctx: FolderContext, file: TabFile, text: string, editable: boo
     edited: () => promote(ctx, file),
     peers: () => (filesOf.get(file.doc) ?? []).flatMap((f) => (f !== file && f.view ? [f.view] : [])),
     keeper: () => liveView(file.doc),
-    crumbs: (view) => file.updateHeadings?.(view.state, symbolsAtCursor(view)),
-    jumped: (line, column) => paneOf(ctx, file)?.nav.push({ path: file.doc.path, line, column }),
     cursor: (line, state) => {
       setPosition(cursorPosition(state));
       if (!hidden.has(file)) for (const p of previews(file.doc)) p.cursor(line);
     },
   });
-  file.updateHeadings?.(file.view.state, symbolsAtCursor(file.view));
   if (file.location) locateFile(file, file.location);
 }
 
@@ -301,7 +297,7 @@ function locateFile(file: TabFile, location: FileLocation): void {
   if (!file.view) return;
   const doc = file.view.state.doc;
   const head = location.endLine === undefined || location.endColumn === undefined ? undefined : locationOffset(doc, { line: location.endLine, column: location.endColumn });
-  file.view.dispatch({ selection: { anchor: locationOffset(doc, location), head }, scrollIntoView: true, annotations: location.noHistory ? navigated.of(true) : [] });
+  file.view.dispatch({ selection: { anchor: locationOffset(doc, location), head }, scrollIntoView: true });
   file.location = undefined;
 }
 
@@ -317,7 +313,10 @@ function newFile(ctx: FolderContext, path: string): TabFile {
         // One change from the first to the last difference: scroll and selection stay, and the parse is incremental (R-30).
         const change = diffRange(live.state.doc.toString(), text);
         if (change.from < change.to || change.insert !== "") live.dispatch({ changes: change }); // the peers follow
-        if (editable) for (const f of files) if (f.view?.state.readOnly) setEditable(f.view, true);
+        if (editable) for (const f of files) {
+          f.editable = true;
+          if (f.view) setEditable(f.view, !f.readOnly);
+        }
       }
       const made = files.filter((f) => !f.view);
       if (made.length === 0) return;
@@ -329,8 +328,7 @@ function newFile(ctx: FolderContext, path: string): TabFile {
     },
   };
   const doc: Doc = new Doc(path, editor, io, setStatus);
-  const headings = createHeadings(path);
-  const file: TabFile = { doc, view: null, status, headings: headings.read, symbols: headings.symbols, updateHeadings: headings.update };
+  const file: TabFile = { doc, view: null, status };
   filesOf.set(doc, [file]);
   statusOf.set(doc, status);
   return file;
@@ -338,11 +336,10 @@ function newFile(ctx: FolderContext, path: string): TabFile {
 
 /** A second tab of the same file (ClonePane, or the file opened in another Pane): same Doc, its own view. */
 function twinOf(ctx: FolderContext, file: TabFile): TabFile {
-  const headings = createHeadings(file.doc.path);
-  const twin: TabFile = { doc: file.doc, view: null, status: statusOf.get(file.doc)!, headings: headings.read, symbols: headings.symbols, updateHeadings: headings.update };
+  const twin: TabFile = { doc: file.doc, view: null, status: statusOf.get(file.doc)! };
   filesOf.get(file.doc)!.push(twin);
-  const live = liveView(file.doc);
-  if (live) makeView(ctx, twin, live.state.doc.toString(), !live.state.readOnly);
+  const original = filesOf.get(file.doc)!.find((f) => f.view);
+  if (original?.view) makeView(ctx, twin, original.view.state.doc.toString(), original.editable !== false);
   return twin;
 }
 
@@ -361,20 +358,12 @@ function promote(ctx: FolderContext, file: TabFile): void {
   if (pane && tabIn(pane, file)?.preview) pane.setTabs((list) => list.map((t) => (t.file === file ? { ...t, preview: false } : t)));
 }
 
-/** I-10: where the cursor of an editor tab is, as a history entry. */
-function placeOf(tab: Tab | undefined): NavEntry | undefined {
-  if (!tab || tab.tool || tab.markdown || !tab.file.view) return;
-  const { state } = tab.file.view;
-  const line = state.doc.lineAt(state.selection.main.head);
-  return { path: tab.file.doc.path, line: line.number, column: state.selection.main.head - line.from + 1 };
-}
-
 function setActiveTab(pane: PaneState, index: number | null): void {
   const tab = index === null ? null : pane.tabs()[index];
-  // A tab that stays in the Pane but stops being the active one remembers its place; a closed one does not (it is not in `tabs`).
+  // Record selection changes only; closed tabs leave both stacks.
   const left = pane.shown && pane.shown !== tab?.file ? pane.tabs().find((t) => t.file === pane.shown) : undefined;
-  const place = placeOf(left);
-  if (place) pane.nav.push(place);
+  if (left && pane.nav.mode === "normal") pane.nav.push(left.file);
+  pane.nav.retain(pane.tabs().map((t) => t.file), tab?.file);
   pane.shown = tab?.file ?? null;
   pane.setActive(index);
   if (tab) pane.recent = [...pane.recent.filter((f) => f !== tab.file), tab.file];
@@ -460,6 +449,23 @@ export async function closeTab(ctx: FolderContext, file: TabFile, closePinned = 
     if (file.doc.dirty && !file.doc.closed) void file.doc.read(true);
   } finally {
     closing = false;
+  }
+}
+
+/** I-9: a tab lock is independent of disk readability and other views of the document. */
+export function toggleTabReadOnly(file: TabFile): void {
+  file.readOnly = !file.readOnly;
+  if (file.view) setEditable(file.view, file.editable !== false && !file.readOnly);
+}
+
+/** I-9: reuse save confirmation for each target; Cancel stops the remaining closes. */
+export async function closeTabGroup(ctx: FolderContext, pane: PaneState, file: TabFile, mode: CloseMode): Promise<void> {
+  const tabs = pane.tabs();
+  const index = tabs.findIndex((tab) => tab.file === file);
+  if (index < 0) return;
+  for (const tab of closeTargets(tabs, index, mode, (t) => !t.tool && !t.markdown && t.file.doc.dirty)) {
+    await closeTab(ctx, tab.file);
+    if (pane.tabs().some((t) => t.file === tab.file)) return;
   }
 }
 
@@ -585,9 +591,6 @@ export function openFile(ctx: FolderContext, path: string, preview: boolean, foc
   const make = (): Tab => ({ path, preview, pinned: false, file: shown ? twinOf(ctx, shown.file) : newFile(ctx, path), focus: false });
   const opened = openTab(pane.tabs(), pane.active(), path, preview, PANE_MAX_PREVIEW_TABS, make, (t) => t.file.doc.dirty);
   if (opened.replaced) {
-    // Zed records the active item's place when the next one is activated, before the replaced preview tab goes.
-    const place = pane.shown === opened.replaced.file ? placeOf(opened.replaced) : undefined;
-    if (place) pane.nav.push(place);
     release(opened.replaced.file);
     pane.recent = pane.recent.filter((f) => f !== opened.replaced!.file);
   }
@@ -632,27 +635,14 @@ export function openTool(ctx: FolderContext, title: string, make: () => { elemen
   focusPane(pane);
 }
 
-/**
- * I-10: Go Back / Go Forward in `pane` (workspace.rs navigate_history_impl). An entry whose tab is open activates it; one whose
- * tab was closed opens the file again from its path (a regular tab). The cursor goes there without being recorded itself.
- */
+/** I-12: select a previously selected tab without changing its cursor or reopening it. */
 export function goThroughHistory(ctx: FolderContext, pane: PaneState, mode: "back" | "forward"): void {
   navigateHistory(pane.nav, mode, {
-    here: () => placeOf(activeTabOf(pane)),
-    show(entry) {
-      const index = pane.tabs().findIndex((t) => !t.tool && !t.markdown && pathKey(t.path) === pathKey(entry.path));
-      const place = { line: entry.line, column: entry.column, noHistory: true };
-      if (index < 0) {
-        if (!underOrSame(ctx.root, entry.path)) return false; // the folder of that file is not this one
-        openFile(ctx, entry.path, false, true, place);
-        return true;
-      }
-      const switched = pane.active() !== index;
+    here: () => activeTabOf(pane)?.file,
+    show(file) {
+      const index = pane.tabs().findIndex((t) => t.file === file);
+      if (index < 0) return false;
       activateTab(ctx, pane, index);
-      const file = pane.tabs()[index].file;
-      const here = placeOf(pane.tabs()[index]);
-      if (here && !switched && here.line === entry.line && here.column === entry.column) return false;
-      locateFile(file, place);
       return true;
     },
   });
@@ -701,7 +691,6 @@ export function splitPane(ctx: FolderContext, pane: PaneState, dir: Dir, mode: "
   let focus = fresh;
   if (mode === "clone") {
     fresh.setTabs([{ path: tab!.path, preview: false, pinned: false, file: twinOf(ctx, tab!.file), focus: true }]);
-    fresh.nav.copyFrom(pane.nav); // pane.rs fork_nav_history
     setActiveTab(fresh, 0);
   } else if (mode === "move" && pane.tabs().length <= 1) {
     side = opposite[dir];

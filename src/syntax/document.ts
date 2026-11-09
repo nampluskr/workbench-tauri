@@ -8,8 +8,6 @@ import { editTree, mostlyReplaced, parseDocSliced } from "./incremental.ts";
 type Span = { from: number; to: number };
 type Capture = Span & { name: string; depth: number; start?: number; end?: number };
 export type Highlight = Span & { key: string };
-/** One breadcrumb symbol: its text and the syntax colour ranges inside that text. */
-export type OutlineSymbol = { text: string; marks: Highlight[] };
 /** One injection query match: its content ranges and how Zed groups it (host, combined language, or alone). `id` follows it across edits. */
 type Injection = { id: number; config: LanguageConfig; ranges: Span[]; host?: Span; combined: boolean; fresh: boolean };
 type Layer = { syntax: LoadedLanguage; tree: Tree; ranges?: Span[]; depth: number; injections: Injection[] };
@@ -309,57 +307,6 @@ export class SyntaxDocument {
       }
     }
     return resolveHighlights(all, keys).map((span) => ({ ...span, from: Math.max(from, span.from), to: Math.min(to, span.to) })).filter((span) => span.to > span.from);
-  }
-
-  /**
-   * I-12: the outline items around `position`, outermost first (Zed buffer.rs symbols_containing, :4782). Only the cursor
-   * neighbourhood is queried, so a cursor move never runs the outline over the whole file.
-   */
-  symbols(position: number, keys: ReadonlySet<string>): OutlineSymbol[] {
-    const doc = this.doc;
-    if (!doc) return [];
-    const start = Math.max(0, position - 1), end = Math.min(doc.length, position + 1);
-    type Part = Span & { name: boolean };
-    const items: { from: number; to: number; parts: Part[] }[] = [];
-    for (const layer of this.layers.values()) {
-      const query = layer.syntax.outline;
-      if (!query || (layer.ranges && !layer.ranges.some((range) => range.to >= start && range.from <= end))) continue;
-      for (const match of queryNodes(layer.tree, start, end).flatMap((node) => query.matches(node, { startIndex: start * 2, endIndex: end * 2 }))) {
-        if (!accepted(query, match)) continue;
-        const item = match.captures.find((capture) => capture.name === "item")?.node;
-        if (!item || item.endIndex < start || item.startIndex > end) continue;
-        // A part is cut at its first line end (buffer.rs:4905); "context.extra" is left out as symbols_containing asks for no extra context.
-        const parts = match.captures.flatMap(({ name, node }) => {
-          if (name !== "name" && name !== "context") return [];
-          const to = node.endPosition.row > node.startPosition.row ? doc.line(node.startPosition.row + 1).to : node.endIndex;
-          return to > node.startIndex ? [{ from: node.startIndex, to, name: name === "name" }] : [];
-        });
-        if (parts.some((part) => part.name)) items.push({ from: item.startIndex, to: item.endIndex, parts });
-      }
-    }
-    items.sort((a, b) => a.from - b.from || b.to - a.to);
-    const ends: number[] = [];
-    let previous = -1;
-    const chain = items.filter((item) => {
-      while (ends.length && ends[ends.length - 1] < item.to) ends.pop();
-      const depth = ends.length;
-      ends.push(item.to);
-      const keep = depth > previous;
-      previous = depth;
-      return keep;
-    });
-    return chain.map(({ parts }) => {
-      let text = "";
-      const marks: Highlight[] = [];
-      let last = 0;
-      for (const part of parts) {
-        if (text && part.from > last) text += " ";
-        for (const mark of this.highlights(part.from, part.to, keys)) marks.push({ ...mark, from: mark.from - part.from + text.length, to: mark.to - part.from + text.length });
-        text += doc.sliceString(part.from, part.to);
-        last = part.to;
-      }
-      return { text, marks };
-    });
   }
 
   destroy(): void {

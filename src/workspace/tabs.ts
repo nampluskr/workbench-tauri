@@ -87,3 +87,15 @@ export function tabEdges(index: number, count: number, active: number | null): {
   if (index === count - 1) return { left: false, right: true, bottom: true };
   return active !== null && index < active ? { left: true, right: false, bottom: true } : { left: false, right: true, bottom: true };
 }
+
+export type CloseMode = "others" | "left" | "right" | "clean" | "all";
+
+/** I-571..576: bulk closing leaves pinned tabs, relative to the clicked tab. */
+export function closeTargets<T extends TabInfo>(tabs: T[], index: number, mode: CloseMode, dirty: (tab: T) => boolean): T[] {
+  return tabs.filter((tab, i) => !tab.pinned && (
+    mode === "others" ? i !== index :
+    mode === "left" ? i < index :
+    mode === "right" ? i > index :
+    mode === "clean" ? !dirty(tab) : true
+  ));
+}

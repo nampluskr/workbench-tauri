@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { activeAfterClose, openTab, pinnedCount, stepTab, tabEdges, togglePin, type TabInfo } from "./tabs.ts";
+import { closeTargets, activeAfterClose, openTab, pinnedCount, stepTab, tabEdges, togglePin, type TabInfo } from "./tabs.ts";
 
 const tab = (path: string, preview: boolean): TabInfo => ({ path, preview });
 const open = (tabs: TabInfo[], active: number | null, path: string, preview: boolean) => openTab(tabs, active, path, preview, 1, () => tab(path, preview));
@@ -80,4 +80,20 @@ test("I-010: Ctrl+PageUp / PageDown go by position and wrap", () => {
   assert.equal(stepTab(3, 0, -1), 2);
   assert.equal(stepTab(3, 1, 1), 2);
   assert.equal(stepTab(0, null, 1), null);
+});
+
+test("I-9: bulk close targets are relative to the clicked tab and always retain pins", () => {
+  const tabs = [
+    { path: "pin", preview: false, pinned: true, dirty: false },
+    { path: "left", preview: false, dirty: true },
+    { path: "clicked", preview: false, dirty: false },
+    { path: "right", preview: false, dirty: false },
+  ];
+  const targets = (mode: "others" | "left" | "right" | "clean" | "all") => closeTargets(tabs, 2, mode, (tab) => tab.dirty).map((tab) => tab.path);
+  assert.deepEqual(targets("others"), ["left", "right"]);
+  assert.deepEqual(targets("left"), ["left"]);
+  assert.deepEqual(targets("right"), ["right"]);
+  assert.deepEqual(targets("clean"), ["clicked", "right"]);
+  assert.deepEqual(targets("all"), ["left", "clicked", "right"]);
+  assert.deepEqual(closeTargets(tabs, 0, "left", (tab) => tab.dirty), []);
 });

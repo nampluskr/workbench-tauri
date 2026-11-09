@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { commands, keymap, onKeyDown } from "./keyboard.ts";
+import { commands, hooks, keymap, onKeyDown, installKeyboard } from "./keyboard.ts";
 
 test("K-15: input editing stays local while modified Workspace/global bindings dispatch", (t) => {
   class Element {
@@ -78,7 +78,7 @@ test("K-15: input editing stays local while modified Workspace/global bindings d
   assert.deepEqual(calls, ["test::local"]);
 });
 
-test("K-33: Ctrl-Shift-V without a binding is swallowed, not pasted as plain text; a Markdown editor still opens the preview", (t) => {
+test("I-9: Ctrl-Shift-V dispatches from the Pane and Markdown editor; unmatched browser paste stays blocked", (t) => {
   const calls: string[] = [];
   const previous = commands.get("markdown::OpenPreview");
   commands.set("markdown::OpenPreview", () => { calls.push("preview"); });
@@ -98,11 +98,115 @@ test("K-33: Ctrl-Shift-V without a binding is swallowed, not pasted as plain tex
   };
   const pane = new Element();
   pane.dataset.keymapContext = "Pane";
-  assert.ok(press(pane), "an unmatched press (focus on the Pane element) must not reach the browser's paste");
-  assert.deepEqual(calls, []);
+  assert.ok(press(pane));
+  assert.deepEqual(calls, ["preview"]);
   const editor = new Element();
   editor.dataset.keymapContext = "Editor extension=md";
   editor.parentElement = pane;
   assert.ok(press(editor));
-  assert.deepEqual(calls, ["preview"]);
+  assert.deepEqual(calls, ["preview", "preview"]);
+  const outside = new Element();
+  calls.length = 0;
+  assert.ok(press(outside));
+  assert.deepEqual(calls, []);
+});
+
+test("I-9: Pane chords dispatch and an open menu retains the clicked preview context", (t) => {
+  class Element {
+    dataset: Record<string, string> = {};
+    parentElement: Element | null = null;
+    closest() { return null; }
+  }
+  class Input {}
+  for (const [name, value] of Object.entries({ Element, HTMLInputElement: Input })) {
+    const previous = Object.getOwnPropertyDescriptor(globalThis, name);
+    Object.defineProperty(globalThis, name, { configurable: true, value });
+    t.after(() => { if (previous) Object.defineProperty(globalThis, name, previous); else Reflect.deleteProperty(globalThis, name); });
+  }
+  const calls: string[] = [];
+  for (const action of ["pane::CloseItemsToTheLeft", "workspace::CopyPath", "pane::RevealInProjectPanel", "markdown::CloseAndReturnToEditor"]) {
+    const previous = commands.get(action);
+    commands.set(action, () => { calls.push(action); });
+    t.after(() => { if (previous) commands.set(action, previous); else commands.delete(action); });
+  }
+  const pane = new Element();
+  pane.dataset.keymapContext = "Pane";
+  const press = (target: Element, key: string, ctrlKey = false, shiftKey = false) => {
+    const event = { target, key, code: "", ctrlKey, shiftKey, altKey: false, metaKey: false, isComposing: false, keyCode: 0, preventDefault() {} };
+    onKeyDown(event as unknown as KeyboardEvent);
+  };
+  press(pane, "k", true); press(pane, "e");
+  press(pane, "k", true); press(pane, "p");
+  press(pane, "E", true, true);
+  assert.deepEqual(calls, ["pane::CloseItemsToTheLeft", "workspace::CopyPath", "pane::RevealInProjectPanel"]);
+  const menu = new Element();
+  menu.dataset.keymapContext = "menu";
+  const previousContext = hooks.context, previousCommand = hooks.beforeCommand;
+  t.after(() => { hooks.context = previousContext; hooks.beforeCommand = previousCommand; });
+  hooks.context = () => [new Set(["Workspace"]), new Set(["Pane"]), new Set(["MarkdownPreview"]), new Set(["menu"])];
+  const intercepted: string[] = [];
+  hooks.beforeCommand = (action) => { intercepted.push(action); return true; };
+  press(menu, "V", true, true);
+  press(menu, "k", true); press(menu, "e");
+  assert.deepEqual(intercepted, ["markdown::CloseAndReturnToEditor", "pane::CloseItemsToTheLeft"]);
+  assert.equal(calls.length, 3, "menu callbacks take precedence over active-tab commands");
+});
+
+test("K-07-R1: installed listeners keep chords across modifier keyup/keydown and dispatch both second strokes", (t) => {
+  class Element {
+    dataset: Record<string, string> = {};
+    parentElement: Element | null = null;
+    closest() { return null; }
+  }
+  class Input extends Element {}
+  const win = new EventTarget();
+  for (const [name, value] of Object.entries({ Element, HTMLInputElement: Input, window: win })) {
+    const previous = Object.getOwnPropertyDescriptor(globalThis, name);
+    Object.defineProperty(globalThis, name, { configurable: true, value });
+    t.after(() => { if (previous) Object.defineProperty(globalThis, name, previous); else Reflect.deleteProperty(globalThis, name); });
+  }
+  const previousContext = hooks.context, previousCommand = hooks.beforeCommand;
+  hooks.context = null;
+  hooks.beforeCommand = null;
+  t.after(() => { hooks.context = previousContext; hooks.beforeCommand = previousCommand; });
+  const calls: string[] = [];
+  for (const action of ["pane::CloseItemsToTheRight", "theme_selector::Toggle"]) {
+    const previous = commands.get(action);
+    commands.set(action, () => { calls.push(action); });
+    t.after(() => { if (previous) commands.set(action, previous); else commands.delete(action); });
+  }
+  const pane = new Element(), editor = new Element();
+  pane.dataset.keymapContext = "Pane";
+  editor.dataset.keymapContext = "Editor extension=md";
+  editor.parentElement = pane;
+  installKeyboard();
+  const observed: string[] = [];
+  win.addEventListener("keydown", (event) => observed.push((event as KeyboardEvent).key), true);
+  const send = (type: "keydown" | "keyup", key: string, code: string, ctrlKey: boolean, time: number) => {
+    const event = new Event(type, { cancelable: true });
+    Object.assign(event, { key, code, ctrlKey, shiftKey: false, altKey: false, metaKey: false });
+    Object.defineProperty(event, "target", { value: editor });
+    Object.defineProperty(event, "timeStamp", { value: time });
+    win.dispatchEvent(event);
+    return event.defaultPrevented;
+  };
+  const prefix = () => {
+    assert.equal(send("keydown", "Control", "ControlLeft", true, 0), false);
+    assert.equal(send("keydown", "k", "KeyK", true, 1), true);
+    assert.equal(send("keyup", "k", "KeyK", true, 2), false);
+    assert.equal(send("keyup", "Control", "ControlLeft", false, 3), false);
+  };
+  prefix();
+  assert.deepEqual(calls, []);
+  assert.equal(send("keydown", "t", "KeyT", false, 403), true);
+  send("keyup", "t", "KeyT", false, 404);
+  assert.deepEqual(calls, ["pane::CloseItemsToTheRight"]);
+  prefix();
+  assert.equal(send("keydown", "Control", "ControlLeft", true, 403), false);
+  assert.equal(send("keydown", "t", "KeyT", true, 404), true);
+  send("keyup", "t", "KeyT", true, 405);
+  send("keyup", "Control", "ControlLeft", false, 406);
+  assert.deepEqual(calls, ["pane::CloseItemsToTheRight", "theme_selector::Toggle"]);
+  assert.deepEqual(observed, ["Control", "k", "t", "Control", "k", "Control", "t"]);
+  assert.equal(send("keydown", "x", "KeyX", false, 407), false, "a completed chord leaves no pending stroke");
 });

@@ -1,4 +1,4 @@
-import { EditorState } from "@codemirror/state";
+import { Compartment, EditorState } from "@codemirror/state";
 import {
   EditorView,
   drawSelection,
@@ -87,3 +87,21 @@ export const editorExtensions = (extension: string) => [
   ]),
   zedEditorTheme,
 ];
+
+const readOnly = new Compartment();
+const editability = (editable: boolean) => [
+  EditorState.readOnly.of(!editable),
+  EditorView.editable.of(editable),
+  EditorView.contentAttributes.of({ tabindex: "0" }),
+];
+export const editableExtension = (editable: boolean) => readOnly.of(editability(editable));
+export const setEditable = (view: EditorView, editable: boolean) => view.dispatch({ effects: readOnly.reconfigure(editability(editable)) });
+
+/** A locked tab cannot undo; an editable peer may use a locked history keeper. */
+export function runHistory(view: EditorView, keeper: EditorView, run: (view: EditorView) => boolean): void {
+  if (view.state.readOnly) return;
+  const locked = keeper.state.readOnly;
+  if (locked) setEditable(keeper, true);
+  try { run(keeper); }
+  finally { if (locked) setEditable(keeper, false); }
+}

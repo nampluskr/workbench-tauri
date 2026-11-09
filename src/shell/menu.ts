@@ -10,7 +10,7 @@ export type MenuEntry = MenuItem | "separator";
 export type Menu = { name: string; entries: MenuEntry[] };
 
 export const shortcutForEntry = (entry: MenuEntry, keymap: Keymap, stack: ContextNode[]): string[] | undefined =>
-  entry === "separator" ? undefined : entry.shortcut ? displayChunks(entry.shortcut) : entry.action ? shortcutFor(keymap, entry.action, stack) : undefined;
+  entry === "separator" ? undefined : entry.shortcut !== undefined ? (entry.shortcut ? displayChunks(entry.shortcut) : undefined) : entry.action ? shortcutFor(keymap, entry.action, stack) : undefined;
 
 /** A disabled sibling still dismisses the child, without becoming selected. */
 export function hoverMenuItem(entry: MenuItem, index: number, childParent: number | null, inChild = false) {

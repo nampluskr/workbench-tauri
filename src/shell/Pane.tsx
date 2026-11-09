@@ -1,5 +1,7 @@
 import { createEffect, createMemo, createRenderEffect, createSignal, For, Show } from "solid-js";
+import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { redo, undo } from "@codemirror/commands";
+import { runHistory } from "../editor/extensions.ts";
 import { backtab, tab as indentTab } from "../editor/indent.ts";
 import { commands } from "../keymap/keyboard.ts";
 import { PANE_DROP_TARGET_SIZE_RATIO, PANE_MIN_DRAG, TAB_MAX_TITLE_CHARS, UI_LINE_HEIGHT_RATIO } from "../spec/metrics.ts";
@@ -10,6 +12,9 @@ import {
   activeTabOf,
   closePreviewToSource,
   closeTab,
+  closeTabGroup,
+  reveal,
+  toggleTabReadOnly,
   dropTab,
   historyView,
   openPreview,
@@ -33,9 +38,12 @@ import { isGroup, minLength, resize, splitMode, toFlex, type Dir, type Group, ty
 import { tabEdges } from "../workspace/tabs.ts";
 import { tabTooltip, tabWheelDelta } from "../workspace/tab-view.ts";
 import { baseName, truncateName } from "../workspace/paths.ts";
-import { elideCrumbs, pathCrumb } from "../editor/breadcrumbs.ts";
-import { syntaxClass } from "../theme/theme.ts";
-import { editorContext, folders } from "../workspace/store.ts";
+import { relativePath } from "../workspace/ops.ts";
+import { CLOSE_ACTIONS, tabMenu } from "./tab-menu.ts";
+import { chain } from "./chain.ts";
+import { setDockOpen } from "./panels.ts";
+import { pathCrumb } from "../editor/breadcrumbs.ts";
+import { editorContext } from "../workspace/store.ts";
 import { isOpen as menuOpen, openContextMenu } from "./AppMenu.tsx";
 import Icon from "./Icon.tsx";
 import { tooltip } from "./tooltip.ts";
@@ -59,7 +67,7 @@ for (const [action, run] of [["editor::Undo", undo], ["editor::Redo", redo]] as 
   commands.set(action, () => {
     const file = activeTab()?.file;
     const view = file?.view && historyView(file);
-    if (view) run(view);
+    if (view && file?.view) runHistory(file.view, view, run);
   });
 }
 // I-059: Tab / Shift+Tab indent and outdent (the key is taken, so focus stays in the editor).
@@ -91,7 +99,8 @@ const isMarkdown = (path: string) => /\.(md|markdown)$/i.test(path);
 for (const [action, side] of [["markdown::OpenPreview", false], ["markdown::OpenPreviewToTheSide", true]] as const) {
   commands.set(action, withCtx((ctx) => {
     const tab = activeTab();
-    if (tab && !tab.markdown && isMarkdown(tab.path)) openPreview(ctx, ctx.pane(), tab.path, side);
+    if (tab?.markdown && !side) closePreviewToSource(ctx, tab.file);
+    else if (tab && !tab.tool && !tab.markdown && isMarkdown(tab.path)) openPreview(ctx, ctx.pane(), tab.path, side);
   }));
 }
 commands.set("markdown::CloseAndReturnToEditor", withCtx((ctx) => activeTab()?.markdown && closePreviewToSource(ctx, activeTab()!.file)));
@@ -204,10 +213,52 @@ const overlayOn = (pane: PaneState | null): string | null => {
   return t.where.kind === "center" ? "center" : t.where.kind === "split" ? t.where.dir : null;
 };
 
-/** S-7 / I-577: the tab's right-click menu has one entry, its key shown; closing the menu gives focus back (v0.2 R-9). */
-function openTabMenu(e: MouseEvent, ctx: FolderContext, file: TabFile, pinned: boolean): void {
+/** I-9: menu callbacks keep the clicked tab, even when another tab is active. */
+function runTabAction(ctx: FolderContext, pane: PaneState, file: TabFile, action: string): void {
+  const tab = pane.tabs().find((t) => t.file === file);
+  if (!tab) return;
+  const mode = CLOSE_ACTIONS[action];
+  if (mode) { void closeTabGroup(ctx, pane, file, mode); return; }
+  switch (action) {
+    case "pane::CloseActiveItem": void closeTab(ctx, file, true); break;
+    case "pane::TogglePinTab": togglePinTab(ctx, file); break;
+    case "pane::ToggleReadOnly": toggleTabReadOnly(file); break;
+    case "markdown::CloseAndReturnToEditor": closePreviewToSource(ctx, file); break;
+    case "markdown::OpenPreview": openPreview(ctx, pane, tab.path, false); break;
+    case "workspace::CopyPath":
+    case "workspace::CopyRelativePath":
+      if (!tab.tool && !tab.markdown) void navigator.clipboard.writeText(action === "workspace::CopyPath" ? tab.path : relativePath(ctx.root, ctx.rootName, tab.path)).catch(() => {});
+      break;
+    case "editor::RevealInFileManager":
+      if (!tab.tool && !tab.markdown) void revealItemInDir(tab.path).catch(() => {});
+      break;
+    case "pane::RevealInProjectPanel":
+      if (!tab.tool && !tab.markdown) { setDockOpen(true); reveal(ctx, tab.path); }
+      break;
+  }
+}
+
+// Shared action names keep the project panel's handlers through the existing focus chain.
+for (const action of [...Object.keys(CLOSE_ACTIONS), "pane::ToggleReadOnly", "workspace::CopyPath", "workspace::CopyRelativePath", "editor::RevealInFileManager", "pane::RevealInProjectPanel"]) {
+  chain(action, () => !!document.activeElement?.closest(".pane"), withCtx((ctx) => {
+    const pane = ctx.pane(), tab = activeTabOf(pane);
+    if (tab) runTabAction(ctx, pane, tab.file, action);
+  }));
+}
+
+function openTabMenu(e: MouseEvent, ctx: FolderContext, pane: PaneState, file: TabFile): void {
   e.preventDefault();
-  openContextMenu({ x: e.clientX, y: e.clientY }, [{ label: pinned ? "Unpin Tab" : "Pin Tab", action: "pane::TogglePinTab", run: () => togglePinTab(ctx, file) }]);
+  const tabs = pane.tabs();
+  const index = tabs.findIndex((t) => t.file === file);
+  if (index < 0) return;
+  const tab = tabs[index];
+  const stack = [new Set(["Workspace"]), new Set(["Pane"])];
+  if (tab.markdown) stack.push(new Set(["MarkdownPreview"]));
+  else if (!tab.tool) stack.push(new Set(["Editor", "extension=" + (tab.path.split(".").at(-1)?.toLowerCase() ?? "")]));
+  const entries = tabMenu(tabs.map((t) => ({ ...t, dirty: !t.tool && !t.markdown && t.file.doc.dirty, readOnly: !!t.file.readOnly })), index);
+  openContextMenu({ x: e.clientX, y: e.clientY }, entries.map((entry) => entry === "separator" ? entry : {
+    ...entry, run: () => runTabAction(ctx, pane, file, entry.action!),
+  }), false, stack);
 }
 
 function TabList(props: { ctx: FolderContext; pane: PaneState }) {
@@ -269,7 +320,7 @@ function TabList(props: { ctx: FolderContext; pane: PaneState }) {
               }}
               onDblClick={() => keepTab(props.ctx, tab.file)} // I-063
               onAuxClick={(e) => e.button === 1 && void closeTab(props.ctx, tab.file)} // I-075 (a pinned tab is left alone, I-066)
-              onContextMenu={(e) => openTabMenu(e, props.ctx, tab.file, !!tab.pinned)}
+              onContextMenu={(e) => openTabMenu(e, props.ctx, props.pane, tab.file)}
             >
               {/* L-64, L-25: start slot with the modified dot (L-65, I-071), title, end slot with the close button. */}
               <span class="tab-slot-start">
@@ -390,48 +441,12 @@ function ZoomButton(props: { ctx: FolderContext; pane: PaneState }) {
   );
 }
 
-/**
- * I-12: Zed's breadcrumb row (element.rs render_breadcrumb_text): the path, then the Markdown headings or the outline symbols
- * that contain the cursor, with "›" between. A heading is drawn in the syntax colour of titles; a symbol in the colours of its
- * own syntax ranges, as Zed highlights them.
- */
-type Crumb = { text: string; marks: { from: number; to: number; key: string }[] };
+/** I-16: keep the path row's layout, showing only the path relative to its folder. */
 function Breadcrumbs(props: { ctx: FolderContext; tab: Tab }) {
-  const segments = () => elideCrumbs<Crumb>([
-    { text: pathCrumb(props.ctx.root, props.ctx.rootName, props.tab.path, folders().length > 1), marks: [] },
-    ...(props.tab.file.headings?.() ?? []).map((text) => ({ text, marks: [{ from: 0, to: text.length, key: "title" }] })),
-    ...(props.tab.file.symbols?.() ?? []),
-  ], { text: "⋯", marks: [] });
-  const parts = (crumb: Crumb) => {
-    const result: { text: string; key?: string }[] = [];
-    let at = 0;
-    for (const mark of crumb.marks) {
-      if (mark.from > at) result.push({ text: crumb.text.slice(at, mark.from) });
-      result.push({ text: crumb.text.slice(mark.from, mark.to), key: mark.key });
-      at = mark.to;
-    }
-    if (at < crumb.text.length) result.push({ text: crumb.text.slice(at) });
-    return result;
-  };
-  return (
-    <div class="breadcrumbs">
-      <For each={segments()}>
-        {(crumb, i) => (
-          <>
-            <Show when={i() > 0}>
-              <span class="breadcrumb-separator">›</span>
-            </Show>
-            <span>
-              <For each={parts(crumb)}>{(part) => <span class={part.key ? syntaxClass(part.key) : undefined}>{part.text}</span>}</For>
-            </span>
-          </>
-        )}
-      </For>
-    </div>
-  );
+  return <div class="breadcrumbs"><span>{pathCrumb(props.ctx.root, props.tab.path)}</span></div>;
 }
 
-/** I-10: the history buttons are lit while the Pane has somewhere to go (the version read keeps them in step). */
+/** I-12: the history buttons are lit while the Pane has somewhere to go (the version read keeps them in step). */
 const canGo = (pane: PaneState | null, mode: "back" | "forward") => {
   pane?.navVersion();
   return !!pane && (mode === "back" ? pane.nav.canGoBack : pane.nav.canGoForward);

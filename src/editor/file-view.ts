@@ -1,10 +1,9 @@
-import { Annotation, Compartment, EditorState, Transaction } from "@codemirror/state";
+import { Annotation, EditorState, Transaction } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
-import { parsed, syntaxHighlighting } from "../syntax/highlight.ts";
+import { syntaxHighlighting } from "../syntax/highlight.ts";
 import { languages } from "../syntax/assets.ts";
 import { fileLanguage } from "../syntax/catalog.ts";
-import { isFarJump } from "../workspace/nav-history.ts";
-import { editorExtensions } from "./extensions.ts";
+import { editableExtension, editorExtensions } from "./extensions.ts";
 
 /** `peers`: the other views of the same file (D-8: one file in two Panes); `keeper`: the one with the file's undo history. */
 export type ViewHooks = {
@@ -13,20 +12,11 @@ export type ViewHooks = {
   peers: () => EditorView[];
   keeper: () => EditorView | null;
   cursor: (line: number, state: EditorState) => void;
-  /** I-10: the cursor moved far (nav-history.ts isFarJump); `line` / `column` (1-based) are where it was. */
-  jumped: (line: number, column: number) => void;
-  /** I-12: the cursor moved, the text changed or a parse finished: the path row's symbols may differ. */
-  crumbs: (view: EditorView) => void;
 };
 
 // A change that came from a peer view: it is not passed on again and it is not this view's own edit (no preview
 // promotion). Only the keeper records it, with the peer's user event so its undo steps group the same way.
 const synced = Annotation.define<boolean>();
-
-// A selection change that is Go Back / Go Forward itself: it is not a new place for the history.
-export const navigated = Annotation.define<boolean>();
-
-const readOnly = new Compartment();
 
 /** "md" for "C:\w\a.MD"; "" when the file name has no extension. */
 export function extensionOf(path: string): string {
@@ -61,16 +51,10 @@ export function createFileView(text: string, path: string, editable: boolean, ho
         ...editorExtensions(extension),
         // Key context (v0.2 D-3): Editor, plus `extension == …` for bindings such as the Markdown preview keys (I-044).
         EditorView.editorAttributes.of({ "data-keymap-context": extension ? `Editor extension=${extension}` : "Editor" }),
-        readOnly.of(EditorState.readOnly.of(!editable)),
+        editableExtension(editable),
         EditorView.updateListener.of((update) => {
           // I-083: the main cursor's line (0-based) for a preview of this file.
           if (update.selectionSet || update.docChanged) hooks.cursor(update.state.doc.lineAt(update.state.selection.main.head).number - 1, update.state);
-          if (update.selectionSet && !update.transactions.some((tr) => tr.annotation(synced) || tr.annotation(navigated))) {
-            const before = update.startState.selection.main.head;
-            const from = update.startState.doc.lineAt(before);
-            if (isFarJump(from.number, update.state.doc.lineAt(update.state.selection.main.head).number)) hooks.jumped(from.number, before - from.from + 1);
-          }
-          if (update.selectionSet || update.docChanged || update.transactions.some((tr) => tr.effects.some((effect) => effect.is(parsed)))) hooks.crumbs(update.view);
           if (!update.docChanged) return;
           hooks.changed();
           if (update.transactions.some((tr) => tr.docChanged && !tr.annotation(synced) && tr.annotation(Transaction.userEvent) !== undefined)) hooks.edited();
@@ -81,5 +65,3 @@ export function createFileView(text: string, path: string, editable: boolean, ho
   });
 }
 
-/** An unreadable file became readable: let the person edit it. */
-export const setEditable = (view: EditorView, editable: boolean) => view.dispatch({ effects: readOnly.reconfigure(EditorState.readOnly.of(!editable)) });

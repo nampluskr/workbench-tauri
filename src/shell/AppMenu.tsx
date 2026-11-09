@@ -75,8 +75,9 @@ function openMenu(index: number): void {
 }
 
 /** R-15, R-14 and later the project panel: a right-click menu at `at`. Entries run a function or a command. */
-export function openContextMenu(at: Point, list: MenuEntry[], right = false): void {
+export function openContextMenu(at: Point, list: MenuEntry[], right = false, stack?: ReturnType<typeof focusStack>): void {
   if (!isOpen()) remember();
+  if (stack) menuStack = stack;
   batch(() => {
     setOpen(null);
     setChild(null);
@@ -165,10 +166,13 @@ commands.set("workspace::CloseActiveItem", () => {
 });
 
 // I-520: a shortcut pressed while the menu is open selects its item, then closes and runs it after a short delay.
+hooks.context = () => isOpen() ? [...menuStack, new Set(["menu"])] : null;
 hooks.beforeCommand = (name) => {
   if (!isOpen()) return false;
-  const index = entries().findIndex((e) => e !== "separator" && e.action === name && !e.disabled);
+  const index = entries().findIndex((e) => e !== "separator" && e.action === name);
   if (index < 0) return false;
+  const entry = entries()[index];
+  if (entry !== "separator" && entry.disabled) return true;
   setSelected(index);
   const shown = entries();
   setTimeout(() => entries() === shown && run(index), MENU_SHORTCUT_ACTIVATE_DELAY_MS);

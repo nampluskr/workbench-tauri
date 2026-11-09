@@ -5,11 +5,11 @@ import { compileQuery, loadLanguage } from "./grammar.ts";
 import { useLanguageCatalog } from "../editor/filetype.ts";
 
 const configs = import.meta.glob<string>("../assets/zed-grammars/languages/*/config.toml", { query: "?raw", import: "default", eager: true });
-const queries = import.meta.glob<string>(["../assets/zed-grammars/languages/*/highlights.scm", "../assets/zed-grammars/languages/*/injections.scm", "../assets/zed-grammars/languages/*/outline.scm"], { query: "?raw", import: "default" });
+const queries = import.meta.glob<string>(["../assets/zed-grammars/languages/*/highlights.scm", "../assets/zed-grammars/languages/*/injections.scm"], { query: "?raw", import: "default" });
 const wasms = import.meta.glob<string>("../assets/zed-grammars/grammars/*.wasm", { query: "?url", import: "default" });
 export const languages = languageConfigs(configs);
 useLanguageCatalog(languages);
-export type LoadedLanguage = { config: LanguageConfig; language: Language; highlights: Query; injections?: Query; outline?: Query };
+export type LoadedLanguage = { config: LanguageConfig; language: Language; highlights: Query; injections?: Query };
 let runtime: Promise<void> | undefined;
 const grammarCache = new Map<string, Promise<Language>>();
 const languageCache = new Map<string, Promise<LoadedLanguage | undefined>>();
@@ -33,9 +33,7 @@ export function loadSyntax(config: LanguageConfig): Promise<LoadedLanguage | und
       }
       const language = await grammar;
       const injection = queries[`../assets/zed-grammars/languages/${config.id}/injections.scm`];
-      const outline = queries[`../assets/zed-grammars/languages/${config.id}/outline.scm`];
-      return { config, language, highlights: compileQuery(language, await highlight()), injections: injection ? compileQuery(language, await injection()) : undefined,
-        outline: outline ? compileQuery(language, await outline()) : undefined };
+      return { config, language, highlights: compileQuery(language, await highlight()), injections: injection ? compileQuery(language, await injection()) : undefined };
     })().catch((error: unknown) => { console.error(`Syntax ${config.id}`, error); return undefined; });
     languageCache.set(config.id, loaded);
   }

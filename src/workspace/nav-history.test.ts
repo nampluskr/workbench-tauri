@@ -1,96 +1,117 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { isFarJump, MAX_NAVIGATION_HISTORY_LEN, NavHistory, navigateHistory, type NavEntry } from "./nav-history.ts";
+import { MAX_NAVIGATION_HISTORY_LEN, NavHistory, navigateHistory } from "./nav-history.ts";
 
-// A Pane with file tabs and a cursor each, wired the way context.ts wires it: leaving a tab records where it was, a far
-// cursor move records the place it left (Zed Item::deactivated / Editor::push_to_nav_history).
+// Selection and closing follow context.ts; cursor changes never enter navigation history.
 function pane() {
-  const nav = new NavHistory();
-  const cursor = new Map<string, { line: number; column: number }>();
-  let active: string | null = null;
-  const here = (): NavEntry | undefined => (active ? { path: active, ...cursor.get(active)! } : undefined);
-  const activate = (path: string) => {
-    if (active && active !== path && cursor.has(active)) nav.push(here()!); // the editor that stops being active remembers its place
-    if (!cursor.has(path)) cursor.set(path, { line: 1, column: 1 });
+  const nav = new NavHistory<string>();
+  const cursor = new Map<string, number>();
+  let active: string | undefined;
+  function select(path: string) {
+    if (active !== undefined && active !== path && cursor.has(active) && nav.mode === "normal") nav.push(active);
+    nav.retain([...cursor.keys()], path);
     active = path;
-  };
+  }
   const host = {
-    here,
-    show(entry: NavEntry) {
-      const switched = active !== entry.path;
-      activate(entry.path); // a closed tab is opened again from its path
-      const now = cursor.get(entry.path)!;
-      if (!switched && now.line === entry.line && now.column === entry.column) return false;
-      cursor.set(entry.path, { line: entry.line, column: entry.column });
+    here: () => active,
+    show(path: string) {
+      if (!cursor.has(path)) return false;
+      select(path);
       return true;
     },
   };
   return {
     nav,
-    open: activate,
-    jump(line: number, column = 1) {
-      const from = cursor.get(active!)!;
-      if (isFarJump(from.line, line)) nav.push({ path: active!, ...from });
-      cursor.set(active!, { line, column });
+    open(path: string) { if (!cursor.has(path)) cursor.set(path, 1); select(path); },
+    jump(line: number) { cursor.set(active!, line); },
+    close(path: string) {
+      cursor.delete(path);
+      if (active === path) active = [...cursor.keys()].at(-1);
+      nav.retain([...cursor.keys()], active);
     },
-    close(path: string) { cursor.delete(path); if (active === path) active = null; },
     goBack: () => navigateHistory(nav, "back", host),
     goForward: () => navigateHistory(nav, "forward", host),
-    at: () => `${active} ${cursor.get(active!)!.line}:${cursor.get(active!)!.column}`,
+    at: () => [active, cursor.get(active!)],
   };
 }
 
-test("I-10: Go Back / Go Forward follow Zed's recorded run (zed-tip-back.png sequence)", () => {
+test("I-12: A B C, back B, back A, forward B; cursor jumps do not become destinations", () => {
   const p = pane();
-  p.open("AGENTS.md");
-  p.jump(5, 23); // 4 rows: not recorded
-  p.open("App.tsx");
-  p.jump(66); // 65 rows: the place it left (1:1) is recorded
-  assert.deepEqual([p.nav.canGoBack, p.nav.canGoForward], [true, false]);
-  p.goBack();
-  assert.equal(p.at(), "App.tsx 1:1");
-  p.goBack();
-  assert.equal(p.at(), "AGENTS.md 5:23");
-  p.goForward();
-  assert.equal(p.at(), "App.tsx 1:1");
-  p.goForward();
-  assert.equal(p.at(), "App.tsx 66:1");
-  p.jump(75); // 9 rows: not recorded
-  p.goBack();
-  assert.equal(p.at(), "App.tsx 1:1");
-});
-
-test("I-10: a new place after Go Back clears Forward; the same file and row is kept once; a closed tab is reopened", () => {
-  const p = pane();
-  p.open("a");
+  p.open("A");
   p.jump(50);
-  p.jump(100); // records a@50
+  p.open("B");
+  p.jump(200);
+  p.open("C");
+  p.jump(500);
   p.goBack();
-  assert.equal(p.at(), "a 50:1");
-  assert.equal(p.nav.canGoForward, true);
-  p.jump(200); // a new move from a@50: Forward is gone
+  assert.deepEqual(p.at(), ["B", 200]);
+  p.goBack();
+  assert.deepEqual(p.at(), ["A", 50]);
+  assert.equal(p.nav.canGoBack, false);
+  p.goForward();
+  assert.deepEqual(p.at(), ["B", 200]);
+  p.goForward();
+  assert.deepEqual(p.at(), ["C", 500]);
   assert.equal(p.nav.canGoForward, false);
-  p.nav.push({ path: "A", line: 50, column: 7 }); // same file (case-insensitive) and row replaces the older entry
-  assert.equal(p.nav.backward.filter((e) => e.line === 50).length, 1);
-  p.open("b");
-  p.close("a");
-  p.goBack(); // the entry of the closed tab
-  assert.match(p.at(), /^(a|A) /);
 });
 
-test("I-10: an entry at the place we already are is skipped, the stack is capped and deleted files leave it", () => {
+test("I-12: repeated selection is ignored; revisiting a tab preserves earlier visits", () => {
   const p = pane();
-  p.open("a");
-  p.nav.push({ path: "a", line: 30, column: 1 });
-  p.nav.push({ path: "a", line: 1, column: 1 }); // the place we are at: popped first, moves nothing, so the next one is tried
+  p.open("A");
+  p.open("A");
+  assert.equal(p.nav.canGoBack, false);
+  p.open("B");
+  p.open("A");
+  p.open("A");
   p.goBack();
-  assert.equal(p.at(), "a 30:1");
-  const full = new NavHistory();
-  for (let line = 1; line <= MAX_NAVIGATION_HISTORY_LEN + 5; line++) full.push({ path: "x", line, column: 1 });
-  assert.equal(full.backward.length, MAX_NAVIGATION_HISTORY_LEN);
-  assert.equal(full.backward[0].line, 6);
-  full.removePath("X");
-  assert.equal(full.backward.length, 0);
-  assert.equal(isFarJump(1, 11), true); // ten rows apart
-  assert.equal(isFarJump(1, 10), false);
+  assert.deepEqual(p.at(), ["B", 1]);
+  p.goBack();
+  assert.deepEqual(p.at(), ["A", 1]);
+  p.goForward();
+  assert.deepEqual(p.at(), ["B", 1]);
+  p.goForward();
+  assert.deepEqual(p.at(), ["A", 1]);
+  p.goBack();
+  p.open("C");
+  assert.equal(p.nav.canGoForward, false);
+});
+
+test("I-12: closed tabs are skipped in both directions and cannot leave enabled dead ends", () => {
+  const p = pane();
+  for (const path of ["A", "B", "C"]) p.open(path);
+  p.close("B");
+  p.goBack();
+  assert.deepEqual(p.at(), ["A", 1]);
+  p.goForward();
+  assert.deepEqual(p.at(), ["C", 1]);
+  p.close("A");
+  assert.equal(p.nav.canGoBack, false);
+  p.open("D");
+  p.goBack();
+  p.close("D");
+  assert.equal(p.nav.canGoForward, false);
+  assert.deepEqual(p.at(), ["C", 1]);
+});
+
+test("I-12: history is bounded and an unavailable destination does not add a forward entry", () => {
+  const nav = new NavHistory<number>();
+  for (let i = 0; i < MAX_NAVIGATION_HISTORY_LEN + 5; i++) nav.push(i);
+  assert.equal(nav.backward.length, MAX_NAVIGATION_HISTORY_LEN);
+  assert.equal(nav.backward[0], 5);
+  navigateHistory(nav, "back", { here: () => -1, show: () => false });
+  assert.equal(nav.canGoBack, false);
+  assert.equal(nav.canGoForward, false);
+  assert.equal(nav.mode, "normal");
+});
+
+test("I-12: tab identity survives renames and distinguishes source and preview tabs", () => {
+  const source = { path: "A.md" }, preview = { path: "A.md" };
+  const nav = new NavHistory<typeof source>();
+  nav.push(source);
+  source.path = "renamed.md";
+  nav.retain([source, preview], preview);
+  let active = preview;
+  navigateHistory(nav, "back", { here: () => active, show: (tab) => { active = tab; return true; } });
+  assert.equal(active, source);
+  assert.deepEqual(nav.forward, [preview]);
 });

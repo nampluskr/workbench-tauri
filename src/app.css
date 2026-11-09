@@ -550,9 +550,8 @@ button, input, select, textarea {
   background: var(--toolbar-background);
   --icon-size: var(--icons-size-small);
 }
-/* I-12: Zed render_breadcrumb_text: buffer font, Muted, "›" Placeholder, gap_1 between segments; a long row is cut, not wrapped. */
+/* I-16: relative path in the buffer font, Muted; a long row is cut, not wrapped. */
 .breadcrumbs { flex: 1; min-width: 0; display: flex; align-items: center; gap: var(--statusbar-item-gap); padding-inline: var(--buttons-padding-x-default-compact); /* Zed wraps the row in a ButtonLike: px Base04 (button_like.rs:817-821) */ overflow: hidden; white-space: nowrap; color: var(--text-muted); font-family: var(--buffer-font-family); font-size: var(--typography-size-default); }
-.breadcrumb-separator { color: var(--text-placeholder); }
 .toolbar-quick-actions { display: flex; gap: var(--toolbar-quick-actions-gap); }
 /* L-69: the preview tab's icon, Small and Muted as an item's own tab icon (L-67). */
 .tab-icon { flex: none; display: flex; color: var(--icon-muted); --icon-size: var(--icons-size-small); }
