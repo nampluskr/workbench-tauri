@@ -413,6 +413,23 @@ button, input, select, textarea {
 .license-dialog { background: var(--elevated-surface-background); color: var(--text); border-color: var(--border-variant); }
 .license-dialog pre { white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; }
 
+.about-dialog {
+  box-sizing: border-box;
+  width: var(--dialog-about-width);
+  height: var(--dialog-about-height);
+  padding: var(--dialog-about-padding);
+  gap: var(--dialog-about-gap);
+  margin: auto;
+  border: 0;
+  background: var(--editor-background);
+  color: var(--text);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.about-dialog[open] { display: flex; }
+.about-dialog h1 { margin: 0; font: inherit; }
+
 /* R-16 project panel states. No spec ID sizes these texts or buttons, so only the structure is here. */
 .project-panel { height: 100%; overflow: auto; outline: none; user-select: none; }
 

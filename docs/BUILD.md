@@ -1,9 +1,9 @@
 # BUILD — workbench-tauri 빌드·배포
 
-- 작성일: 2026-11-08
+- 작성일: 2026-11-10
 - 기준 커밋: `45aed5e`
 
-배포본(release exe·NSIS 설치 파일)을 만드는 과정이다. 값은 이 PC에서 2026-11-08에 확인한 것이다.
+배포본(release exe·NSIS 설치 파일)을 만드는 과정이다. 2026-11-10 release 빌드에 성공했다. 도구·기존 측정은 각 절의 날짜를 따른다.
 
 ## 0. 노트북에서 처음부터
 
@@ -17,7 +17,7 @@
    ```
 3. 복사본 채우기([2절](#2-복사본-채우기gitignore된-폴더)): `pwsh tools/fetch-zed-icons.ps1` → `pwsh tools/fetch-zed-themes.ps1` → `pwsh tools/fetch-zed-grammars.ps1`
 4. `npm ci`(lockfile 그대로 설치. 안 되면 `npm install`). PowerShell 실행 정책에 막히면 `npm.cmd ci`
-5. `npm run tauri build`([3절](#3-빌드-명령)) → 결과는 [4절](#4-결과-파일2026-11-08) 경로
+5. `npm run tauri build`([3절](#3-빌드-명령)) → 결과는 [4절](#4-결과-파일) 경로
 
 - 인터넷 필요: 2~5단계 모두(GitHub·crates.io·npm 레지스트리, 첫 빌드의 NSIS 도구).
 
@@ -74,12 +74,16 @@ npm run tauri build             # release exe + NSIS 설치 파일
 - exe만 필요하면 `npm run tauri build -- --no-bundle`.
 - 디버그 빌드: `npm run tauri build -- --debug --no-bundle`.
 
-## 4. 결과 파일(2026-11-08)
+## 4. 결과 파일
 
-| 파일 | 경로 | 크기 |
+2026-11-10 leader의 release 빌드 결과다. 실행 중인 앱이 exe를 잠그면 빌드가 os error 5로 실패하므로 앱을 닫고 빌드한다.
+
+NSIS 설치 파일과 앱 exe는 이번 결과이며, exe zip과 프런트엔드 크기는 기존 2026-11-08 기록이다.
+
+| 파일 | 경로 | 크기·버전 |
 |---|---|---|
-| NSIS 설치 파일 | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.1.0_x64-setup.exe` | 6,052,343 바이트(5.77 MiB) |
-| 앱 exe | `src-tauri\target\release\workbench-tauri.exe` | 16,972,800 바이트(16.19 MiB) |
+| NSIS 설치 파일 | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.6.0_x64-setup.exe` | 5,999,959 바이트; ProductVersion·FileVersion `0.6.0` |
+| 앱 exe | `src-tauri\target\release\workbench-tauri.exe` | 16,720,384 바이트; ProductVersion·FileVersion `0.6.0` |
 | exe zip(Compress-Archive Optimal) | 직접 만듦(레포 밖 `%TEMP%`에서 측정) | 7.66 MiB |
 | 참고: 프런트엔드 `dist/` | exe 안에 압축돼 들어감 | 18.57 MiB(이 중 문법 복사본 11.9 MB) |
 
@@ -99,11 +103,11 @@ npm run tauri build             # release exe + NSIS 설치 파일
 
 ## 7. 알려진 제약
 
-- 코드 서명 없음 → SmartScreen "알 수 없는 게시자" 경고.
+- NSIS 설치 파일과 앱 exe 모두 코드 서명을 하지 않는다. 처음 실행할 때 SmartScreen의 "Windows의 PC 보호" 경고가 나오면 "추가 정보 → 실행"을 누른다("알 수 없는 게시자" 표시).
 - 런타임: WebView2 필요. 없는 PC는 설치할 때 인터넷이 필요하다(오프라인 설치는 `offlineInstaller`/`embedBootstrapper`, 지금 안 켬). exe만 옮기면 WebView2를 설치해 주지 않는다.
 - 콘솔 창: release 빌드는 뜨지 않는다(`src-tauri/src/main.rs`의 `windows_subsystem = "windows"`). 그래서 release exe의 `eprintln!` 로그는 보이지 않는다. 디버그 빌드는 콘솔 창이 뜬다.
 - Windows x64만.
-- 버전 `0.1.0`(tauri.conf.json `version`)이 설치 파일 이름에 나온다. 바꿀지 미정.
+- 앱 버전은 `src-tauri/tauri.conf.json`의 `version` 한 곳에서만 정한다. 버전을 끝낼 때마다 그 번호로 올린다(v0.7이면 `0.7.0`). Tauri가 이 값을 설치 파일 이름과 exe·설치 파일의 제품/파일 버전에 쓴다. private npm 패키지에는 `version`이 없고, Cargo 패키지는 생략 기본값을 쓴다. Help 메뉴의 "About workbench-tauri"가 `tauri.conf.json` 버전을 보인다.
 - 빌드 경고(기존 그대로): Vite 500 kB 넘는 chunk(index JS 3,863.55 kB), web-tree-sitter direct eval. Rust 경고 없음.
 - 빌드 PC 네트워크: 첫 빌드의 NSIS 내려받기, fetch 스크립트 모두 인터넷이 필요하다. 샌드박스(예: Codex)에서는 네트워크가 막혀 실패한다(os error 10013).
 
@@ -114,7 +118,8 @@ npm run tauri build             # release exe + NSIS 설치 파일
   - Zed UI·파일 아이콘(`src/assets/zed-icons/`, Zed 저장소 assets/icons, LICENSES 파일 참고)
   - Zed·Catppuccin·macOS Classic 테마, Catppuccin 아이콘 테마
   - tree-sitter 문법 wasm 25개(문법마다 라이선스, `src/assets/zed-grammars/licenses/`와 manifest)
-- 이 복사본은 **개인 용도**로 받은 것이다(core D-8·D-9). 배포본을 남에게 넘기면 GPL-3.0 등 각 라이선스 의무(소스 제공, 고지)가 생긴다. 라이선스 원문 파일은 지금 `dist/`에 따로 들어가지 않는다.
+- 배포 범위: **개인 용도, 다른 사람에게 나눠 주지 않음**(core I-3). 이 범위이므로 GPL 쿼리를 빼거나 외부 배포용 소스 공개 조건을 맞추는 작업은 하지 않는다.
+- 라이선스 본문은 Dependency Licenses 화면에 포함된다: `AppMenu.tsx`의 raw glob(Zed 아이콘·테마·문법·`src/licenses/*.txt`)과 `licenses.ts`의 글꼴 목록을 쓴다. IBM Plex Sans·Lilex 글꼴 본문은 `public/fonts/`에서 `dist/fonts/`로 복사된다. Vite가 번들에 넣는 JS 의존성과 tree-sitter 런타임 본문은 `src/licenses/frontend-dependencies.txt`에 원문으로 두었다(패키지 버전을 바꾸면 이 복사본도 갱신).
 - Zed 앱 코드는 복사하지 않았다(레포 규칙).
 
 ## 9. GitHub에 올리지 않는 것

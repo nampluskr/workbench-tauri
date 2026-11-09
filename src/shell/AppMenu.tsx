@@ -1,7 +1,7 @@
 import { batch, createEffect, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 import { commands, focusStack, hooks, keymap, onKeyDown } from "../keymap/keyboard.ts";
 import { MENU_POPUP_OFFSET, MENU_SHORTCUT_ACTIVATE_DELAY_MS, USER_MENU_POPUP_OFFSET } from "../spec/metrics.ts";
-import { appMenus, userMenu } from "./app-menus.ts";
+import { APP_NAME, appMenus, userMenu } from "./app-menus.ts";
 import { dockOpen, setDockOpen } from "./panels.ts";
 import { dockWidth, resetDockWidth } from "./dock.ts";
 import { isClassicLayout } from "./layout.ts";
@@ -14,6 +14,7 @@ import Icon from "./Icon.tsx";
 import { closeOnFocusOut, cycle, first, hoverMenuItem, last, placeMenu, placeSubmenu, shortcutForEntry, step, type MenuEntry } from "./menu.ts";
 import { tooltip } from "./tooltip.ts";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { getVersion } from "@tauri-apps/api/app";
 
 // The one menu implementation (R-8, R-9): the title bar menu (a button, then a horizontal bar of menu names with the
 // open menu below) and right-click menus (a popup at a point). State is module level because the keymap's menu::*
@@ -230,6 +231,16 @@ export default function AppMenu(props: { popupOnly?: boolean } = {}) {
   let popup: HTMLDivElement | undefined;
   let contextPopup: HTMLDivElement | undefined;
   let licenses!: HTMLDialogElement;
+  let about!: HTMLDialogElement;
+  let aboutFocus: HTMLElement | null = null;
+  const [aboutVersion, setAboutVersion] = createSignal("");
+  commands.set("zed::About", () => {
+    void getVersion().then((version) => {
+      aboutFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      setAboutVersion(version);
+      about.showModal();
+    }).catch((error) => notify([String(error)]));
+  });
   let licenseFocus: HTMLElement | null = null;
   const [notices, setNotices] = createSignal("");
   const copies = import.meta.glob<string>(["../assets/zed-icons/LICENSE*", "../theme/assets/**/LICENSE*", "../assets/icon-themes/**/LICENSE*", "../assets/zed-grammars/licenses/**/*", "../licenses/*.txt"], { query: "?raw", import: "default", eager: true });
@@ -351,6 +362,9 @@ export default function AppMenu(props: { popupOnly?: boolean } = {}) {
           <Entries list={c().list} keys={c().keys} child />
         </div>
       )}</Show>
+      <dialog class="about-dialog" ref={about} aria-label={`About ${APP_NAME}`} onClose={() => aboutFocus?.focus()}>
+        <h1>{APP_NAME} {aboutVersion()}</h1>
+      </dialog>
       <dialog class="license-dialog" ref={licenses} aria-label="Dependency Licenses" onClose={() => licenseFocus?.focus()}>
         <h1>Dependency Licenses</h1>
         <button onClick={() => licenses.close()}>Close</button>

@@ -9,6 +9,10 @@ export const PROJECT_PANEL_DEFAULT_WIDTH = 240; // project_panel.default_width (
 
 // Buffer font size (L-08) and measured gutter padding stay in px; other lengths go through rem().
 const METRICS: Record<string, string> = {
+  "dialog.about.width": rem(440), // P-018
+  "dialog.about.height": rem(300), // P-018
+  "dialog.about.padding": rem(16), // P-018
+  "dialog.about.gap": rem(16), // P-018
   "extensions.header.padding_top": rem(16), // X-45
   "extensions.header.padding_x": rem(16), // X-45
   "extensions.header.row_gap": rem(16), // X-45

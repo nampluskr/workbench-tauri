@@ -26,7 +26,7 @@ test("K-13: menu shortcuts match Zed Windows primary keys without changing Close
     "Maximize Pane": "Shift-Escape", "Project Panel": "Ctrl-Shift-E",
     "Open Markdown Preview": "Ctrl-Shift-V", "Open Markdown Preview to the Side": "Ctrl-K V",
     "Previous Tab": "Ctrl-PageUp", "Next Tab": "Ctrl-PageDown", Minimize: undefined, Zoom: undefined,
-    "View Dependency Licenses": undefined, "File Bug Report...": undefined, "Request Feature...": undefined, [`${APP_NAME} Repository`]: undefined,
+    "View Dependency Licenses": undefined, "File Bug Report...": undefined, "Request Feature...": undefined, [`${APP_NAME} Repository`]: undefined, [`About ${APP_NAME}`]: undefined,
   });
   const close = menus[1].entries[4];
   if (close === "separator") assert.fail();
@@ -60,7 +60,7 @@ test("K-09: implemented menus keep the pinned Zed order and split submenu", () =
 
 test("K-09: Help sends the repository's issue and repository URLs, without opening a browser", () => {
   const help = appMenus(() => true).at(-1)!.entries;
-  assert.deepEqual(labels(help), ["View Dependency Licenses", "---", "File Bug Report...", "Request Feature...", "---", `${APP_NAME} Repository`]);
+  assert.deepEqual(labels(help), ["View Dependency Licenses", "---", "File Bug Report...", "Request Feature...", "---", `${APP_NAME} Repository`, `About ${APP_NAME}`]);
   assert.deepEqual(help.flatMap((e) => e !== "separator" && e.url ? [e.url] : []), [
     "https://github.com/nampluskr/workbench-tauri/issues/new",
     "https://github.com/nampluskr/workbench-tauri/issues/new",

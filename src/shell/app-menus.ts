@@ -52,6 +52,7 @@ export function appMenus(markdownDisabled: () => boolean): Menu[] {
       { label: "Request Feature...", url: ISSUE_URL },
       "separator",
       { label: `${APP_NAME} Repository`, url: REPOSITORY_URL },
+      { label: `About ${APP_NAME}`, action: "zed::About" },
     ] },
   ];
 }

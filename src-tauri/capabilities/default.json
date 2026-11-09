@@ -4,6 +4,7 @@
   "description": "Main window permissions. Showing the window once the theme is applied, plus what the title bar calls: window buttons, drag region (drag, double-click maximize), and maximize-state tracking (isMaximized + resize event listener).",
   "windows": ["main"],
   "permissions": [
+    "core:app:allow-version",
     "core:window:allow-show",
     "core:window:allow-minimize",
     "core:window:allow-toggle-maximize",
