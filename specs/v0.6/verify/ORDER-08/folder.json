@@ -1,0 +1,97 @@
+{
+  "mode": "folder",
+  "titleLeft": {
+    "children": [
+      "DIV||workbench-tauri"
+    ],
+    "text": "workbench-tauri",
+    "dragRegion": true
+  },
+  "titleRight": [
+    "Open Application Menu",
+    "User menu",
+    "Minimize",
+    "Maximize",
+    "Close"
+  ],
+  "menuBar": {
+    "names": [
+      "File",
+      "Edit",
+      "View",
+      "Go",
+      "Window",
+      "Help"
+    ],
+    "file": [
+      "Open Folder...Ctrl-K Ctrl-O",
+      "---",
+      "SaveCtrl-S",
+      "---",
+      "Close EditorCtrl-W",
+      "Close WindowCtrl-Shift-W",
+      "---",
+      "QuitCtrl-Q"
+    ]
+  },
+  "licenses": {
+    "dialogOpen": false,
+    "tabs": [
+      "Licenses"
+    ],
+    "active": [
+      "Licenses"
+    ],
+    "sameAsOrder03": true,
+    "length": 276249,
+    "refLength": 276249,
+    "scrollable": {
+      "cls": "licenses-tab",
+      "sh": 91080,
+      "ch": 756
+    },
+    "afterOpenFile": {
+      "tabs": [
+        "Licenses",
+        "app.py"
+      ],
+      "active": [
+        "app.py"
+      ]
+    },
+    "backToLicenses": [
+      "Licenses"
+    ],
+    "reopen": {
+      "tabs": [
+        "Licenses",
+        "app.py"
+      ],
+      "active": [
+        "Licenses"
+      ]
+    },
+    "afterClose": [
+      "app.py"
+    ],
+    "reopenAfterClose": {
+      "tabs": [
+        "app.py",
+        "Licenses"
+      ],
+      "active": [
+        "Licenses"
+      ]
+    }
+  },
+  "quitDirtyAsk": {
+    "windows": [
+      "0x16072A pid=16348 class=#32770 title=\"Warning\" rect=769,404,366,162",
+      "0x1506BE pid=16348 class=Tauri Window title=\"workbench-tauri\" rect=232,89,1456,861",
+      "0x190694 pid=16348 class=Tao Thread Event Target title=\"\" rect=0,0,16,16"
+    ],
+    "dialog": null,
+    "aliveAfterCancel": true
+  },
+  "quitMenu": "ERR Command failed: pwsh -NoProfile -File D:/projects/workbench-tauri/tools/win-input.ps1 -ProcessId 16348 -Action click -X 219 -Y 16\n\u001b[31;1mwin-input.ps1: \u001b[31;1m\"Click\"��(��) \"2\"���� �μ��� �Բ� ȣ���ϴ� ���� ���ܰ� �߻���: \"not sending mouse event 0x4 at 459,106: foreground window is 0x16072A, target is 0x1506BE\"\u001b[0m\r\n"
+}

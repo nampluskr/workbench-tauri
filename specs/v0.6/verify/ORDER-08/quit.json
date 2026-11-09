@@ -1,0 +1,52 @@
+{
+  "mode": "quit",
+  "titleLeft": {
+    "children": [
+      "DIV||workbench-tauri"
+    ],
+    "text": "workbench-tauri",
+    "dragRegion": true
+  },
+  "titleRight": [
+    "Open Application Menu",
+    "User menu",
+    "Minimize",
+    "Maximize",
+    "Close"
+  ],
+  "menuBar": {
+    "names": [
+      "File",
+      "Edit",
+      "View",
+      "Go",
+      "Window",
+      "Help"
+    ],
+    "file": [
+      "Open Folder...Ctrl-K Ctrl-O",
+      "---",
+      "SaveCtrl-S",
+      "---",
+      "Close EditorCtrl-W",
+      "Close WindowCtrl-Shift-W",
+      "---",
+      "QuitCtrl-Q"
+    ]
+  },
+  "quitDirtyAsk": {
+    "windows": [
+      "0x40832 pid=35504 class=#32770 title=\"Warning\" rect=769,404,366,162",
+      "0x3A06C0 pid=35504 class=Tauri Window title=\"workbench-tauri\" rect=232,89,1456,861",
+      "0x7106B6 pid=35504 class=Tao Thread Event Target title=\"\" rect=0,0,16,16"
+    ],
+    "dialog": {
+      "hwnd": "0x40832",
+      "line": "0x40832 pid=35504 class=#32770 title=\"Warning\" rect=769,404,366,162"
+    },
+    "aliveAfterCancel": true
+  },
+  "quitMenu": {
+    "aliveAfterQuit": false
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "mode": "nofolder",
+  "titleLeft": {
+    "children": [
+      "DIV||workbench-tauri"
+    ],
+    "text": "workbench-tauri",
+    "dragRegion": true
+  },
+  "titleRight": [
+    "Open Application Menu",
+    "User menu",
+    "Minimize",
+    "Maximize",
+    "Close"
+  ],
+  "menuBar": {
+    "names": [
+      "File",
+      "Edit",
+      "View",
+      "Go",
+      "Window",
+      "Help"
+    ],
+    "file": [
+      "Open Folder...Ctrl-K Ctrl-O",
+      "---",
+      "SaveCtrl-S",
+      "---",
+      "Close EditorCtrl-W",
+      "Close WindowCtrl-Shift-W",
+      "---",
+      "QuitCtrl-Q"
+    ]
+  }
+}

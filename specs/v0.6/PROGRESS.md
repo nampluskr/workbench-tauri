@@ -185,6 +185,24 @@
   - 결과: gamma 안까지 스크롤하면 proj·alpha·beta·gamma 고정(높이 26, top 0/26/52/78). gamma 끝에서 gamma 줄이 78→58로 밀린 뒤 사라짐. hover한 고정 줄만 overlay_hover. alpha 고정 줄 클릭 → 펼치기 그대로, 스크롤 0, 포커스 패널. second 폴더는 second·inner 고정. 스크롤바(Phase 4)는 바꾸지 않았다.
   - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-07/`(v3.json, PNG).
   - 특이사항: Zed 비교 캡처는 사용자 확인 대기.
+- W-11 docs/refs `01-LAYOUT.md` L-51·L-127 sticky scroll 문구를 '포함'으로 고침(core D-9, core-leader 2026-11-10 지시, ORDER-08 커밋에 넣음) (2026-11-10)
+
+### Phase 8 — 타이틀 바 메뉴
+
+- **K-10 메뉴 줄·타이틀 바·Licenses 탭(R-14·R-15·R-20)** (2026-11-10, coder)
+  - 무엇을 했나:
+    - R-14: 앱 이름 메뉴를 지우고 File 맨 아래에 구분선과 Quit(`zed::Quit`)을 더했다. 기존 Ctrl-Q 바인딩과 저장 확인 흐름(`appWindow.close()`)을 그대로 쓴다. 다른 메뉴의 순서·내용은 그대로다.
+    - R-15: 타이틀 바 폴더 이름(`ProjectName`·`PROJECT_NAME_MAX_CHARS`·`appMenuExpanded`·관련 CSS)을 지웠다. drag region(`data-tauri-drag-region`, `title-left`의 `margin-right: auto`)은 그대로다.
+    - R-20: Licenses를 `openTool`로 탭 하나로 연다(다시 누르면 그 탭 선택). `<dialog>`·`showModal`·전용 포커스 복원을 지웠다. 목록·본문 코드(glob, `FONT_LICENSES`, `licenseText`)는 그대로다.
+  - 결과: 위와 같다.
+  - 검증: typecheck, 관련 node 테스트 22.
+  - 특이사항: W-11(docs/refs sticky scroll 문구)은 이 Phase 커밋에 함께 들어갔다(Phase 7 절의 W-11 줄 참고).
+- C-12 checker [PASS]: 전체 typecheck, npm test 215, clippy 경고 0, cargo test 21, 코드 검토와 V3 판정, 지적 없음 (2026-11-10)
+- **V3(ORDER-08)** (2026-11-10, leader 측정·C-12 판정 [PASS])
+  - 무엇을 했나: debug exe, 임시 APPDATA·WebView 데이터 폴더, One Light.
+  - 결과: 메뉴 줄 File·Edit·View·Go·Window·Help, File 맨 아래 Quit Ctrl-Q. 폴더 있음·없음 모두 타이틀 바 왼쪽에 ≡만(오른쪽 User menu·창 버튼 그대로). Licenses 탭(대화 상자 없음, 본문이 ORDER-03 캡처와 같음 276,249자, 스크롤, 다른 탭 오가기, 다시 누르면 같은 탭, 닫고 다시 열기). 편집 뒤 Ctrl-Q → "Warning" 저장 확인 창, Esc로 취소하면 앱 유지, 되돌린 뒤 File → Quit으로 종료.
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-08/`(nofolder.json, folder.json, quit.json, licenses-text.txt, PNG). 저장 확인 창 캡처는 화면 전체 캡처라 창 영역만 잘랐다.
+  - 특이사항: Licenses 목록은 v0.5와 다르다 — Phase 2에서 regex 라이선스 두 개를 지웠고 Phase 3에서 `frontend-dependencies.txt`를 더했다(v0.6 변경). leader 스크립트 오류로 Quit 단계를 한 번 더 띄워 쟀다(`quit.json`).
 
 ## 사용자 요청 작업
 
