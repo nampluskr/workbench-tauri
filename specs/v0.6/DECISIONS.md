@@ -18,6 +18,7 @@
 | core D-6 문서 편집·보기 위주, LSP 없음, 기능 축소 | `SPEC.md` R-4~R-7·R-16, `PLAN.md` Phase 2 |
 | core D-7 문서 편집 기능은 VS Code와 비슷하게 | `SPEC.md` R-17, `PLAN.md` Phase 9 |
 | core D-8 ponytail 원칙, 지금 되는 동작 유지 | `PLAN.md` 구현 원칙 |
+| core D-9 tauri 지침은 core v0.6을 따른다(gpui는 항목이 가리킬 때만, Zed와 다르게 할 수 있음, `spec/` 원본은 core) | 루트 `INTENT.md`, 루트 `AGENTS.md` 레포 규칙·1·3·5·9장, `INTENT.md` 제외 범위, `HERDR-SETUP.md` 1·4장·5.5 |
 
 ## 이 레포의 결정
 
@@ -25,7 +26,4 @@
 
 ## 미결 사항
 
-- `spec/`(Zed 실측 명세) 원본의 위치: 루트 `AGENTS.md`는 "`spec/`의 원본은 `workbench-gpui`다"라고 적었고, core 루트 INTENT는 "Zed 실측 명세의 원본은 이 프로젝트(core)에 둔다"고 한다. gpui는 동결이다. 사용자가 정한다(ORDER-01 5장).
-- 루트 `INTENT.md`의 "workbench-gpui와 같아야 한다", "두 갈래는 같은 앱이다"가 core D-1(gpui 동결)과 맞지 않는다. 루트 `INTENT.md`를 고칠지는 사용자가 정한다.
-- 루트 `INTENT.md`의 "Zed와 같아야 한다"가 core D-6·D-7과 Zed와 다르게 하는 항목(R-14·R-15·R-16·R-17)과 맞지 않는다. 루트 `INTENT.md`를 고칠지는 사용자가 정한다.
-- 루트 `AGENTS.md` "core ITEMS 우선" 규칙의 근거: v0.5에서는 core v0.5 D-12였다. core v0.6 DECISIONS에는 같은 결정이 없다. v0.6에도 같은 근거로 둘지는 사용자(core-leader)가 정한다.
+없음. ORDER-01에서 남긴 넷(`spec/` 원본 위치, 루트 `INTENT.md`의 gpui·Zed 원칙, "core ITEMS 우선"의 근거)은 core D-9로 정해져 루트 `INTENT.md`·`AGENTS.md`에 반영했다(사용자 2026-11-10, core D-9).

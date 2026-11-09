@@ -32,6 +32,6 @@ core `specs/v0.6/INTENT.md` 제외 범위를 그대로 옮기고, 이 레포에 
 - 언어 서버(LSP) 연동. 쓰지 않는다(core D-6).
 - 사용자 지시(core 카드) 없는 작업. 구현은 카드가 지시한 항목만 한다(core D-2).
 - core ITEMS 후보 C-1~C-9. 사용자가 확인해 항목이 되기 전에는 옮기지 않는다.
-- 새 파일 형식(PDF·동영상·이미지) 기능: 미정. 이번 버전에 넣을지는 사용자가 정한다(core INTENT 제외 범위).
+- 새 파일 형식(PDF·동영상·이미지) 기능. 이번 버전은 편집기 기능의 완성도를 높인다(사용자 2026-11-10, core D-9).
 - workbench-core와 workbench-gpui 레포에 쓰는 것. 읽기만 한다(루트 `AGENTS.md` 레포 규칙).
-- `spec/`의 수정(루트 `AGENTS.md` 3장). 원본을 어디에 둘지는 미정이다(사용자가 정함, ORDER-01 5장).
+- `spec/`의 수정(루트 `AGENTS.md` 3장). 원본은 core `D:\projects\workbench-core\spec\`이고 이 레포의 `spec/`는 복사본이다(사용자 2026-11-10, core D-9).

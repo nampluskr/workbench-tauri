@@ -25,6 +25,11 @@
   - 특이사항: 없음.
 - C-01 checker 검토 [PASS], 지적 없음(보고 `C:\Users\nampl\AppData\Local\Temp\v06-C-01-report.md`) (2026-11-10)
 - leader 커밋 `4fa27fc`(push 안 함), ORDER-01 보고는 `specs/v0.6/reports/ORDER-01.md` (2026-11-10)
+- **W-02 tauri 지침을 core v0.6에 맞추기(ORDER-01-R1)** (2026-11-10)
+  - 무엇을 했나: core D-9(사용자 2026-11-10)대로 루트 `INTENT.md`에서 gpui·Zed 원칙, 확장 설치, v0.5 ITEMS·D-12 예외 문장을 고쳤다. 루트 `AGENTS.md`에서 레포 규칙 10·11·12줄 괄호 근거, 19·40·44줄 "Zed 재현" 전제, 77·78·194·195·240줄의 v0.5 번호 예외와 `spec/` 원본을 고쳤다. `specs/v0.6/` INTENT·DECISIONS·HERDR-SETUP의 미정(새 파일 형식, `spec/` 원본, 루트 지침 넷, Codex 대체, `docs/BUILD.md` 작성자, 5.5 위임)을 반영했다.
+  - 결과: 고친 문장마다 원래·고친 것·근거를 `%TEMP%\v06-W-02-report.md` 표에 적었다. 네 규칙("사람이 정하고 묻는다", "지난 버전 폴더 불변", "Zed 코드 복사 금지", "자기 워크스페이스만 쓴다") 본문은 그대로다. 상태 줄은 "초안"이다.
+  - 검증: V0. 문서만 바뀌어 빌드·테스트는 실행하지 않았다. `spec/`는 tauri-leader가 `diff -rq spec D:\projects\workbench-core\spec`로 확인했다. 출력이 없었다(exit 0, 2026-11-10).
+  - 특이사항: 없음.
 
 ## 사용자 요청 작업
 

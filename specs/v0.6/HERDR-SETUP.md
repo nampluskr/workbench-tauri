@@ -25,7 +25,7 @@
 - 리뷰 독립성: coder(Codex)와 writer(Claude)의 산출물은 checker(agy)가 검토한다(ORDER-01 3.2).
 - 측정자는 직접 고치지 않는다. checker는 불일치 목록을 leader에게 보고한다(루트 `AGENTS.md` 3A.4의 7).
 - Codex는 coder에만 쓴다.
-- Codex 한도가 바닥나면 쿠폰을 직접 쓰지 말고 core-leader에게 `[BLOCKED]`로 알린다(ORDER-01 3.2). v0.5의 Sonnet 대체(core v0.5 D-16)는 v0.6에 그대로 걸리는지 정해지지 않았다: 미정.
+- Codex 한도가 바닥나면 쿠폰을 직접 쓰지 말고 core-leader에게 `[BLOCKED]`로 알린다(ORDER-01 3.2). 대체 모델(v0.5의 Sonnet 대체)은 두지 않는다. Codex는 여유가 있다(사용자 2026-11-10, core D-9).
 - Phase가 바뀔 때 서브 에이전트의 컨텍스트를 비운다.
 - 검증 수준(V0~V4)과 앱 실행 제한은 루트 `AGENTS.md` 3A를 그대로 쓴다.
 
@@ -67,7 +67,7 @@ herdr session
 | `spec/`, `docs/refs/`, 지난 버전 폴더(v0.1~v0.5) | 아무도 고치지 않는다 |
 | workbench-core, workbench-gpui, workbench-kit | 읽기만 한다 |
 
-- `docs/BUILD.md`의 쓰는 쪽(R-1·R-3)은 이 표에서 coder로 두었다. leader가 카드에서 writer로 정할 수 있다: 미정.
+- `docs/BUILD.md`(R-1·R-3)는 `tauri-coder`가 쓰고 `tauri-checker`가 검토한다. 빌드를 돌려 값을 아는 쪽이 coder다(사용자 2026-11-10, core D-9·ORDER-01-R1 2장).
 - 소유자가 아니면 그 파일을 고치지 않는다. 고쳐야 하면 `tauri-leader`에게 요청한다.
 
 ---
@@ -109,7 +109,7 @@ herdr session
 
 `specs/v0.5/HERDR-SETUP.md` 5.5를 그대로 쓴다. 바뀐 것만 적는다.
 
-- 서브 에이전트의 승인 요청은 `tauri-leader`가 대신 응답한다. 의존성 변경, HERDR 구성 변경, push는 사용자에게 묻는다(v0.5 5.5의 위임, 사용자 2026-11-06). v0.6에도 같은 위임이 걸리는지는 core v0.6 문서에 없다: 미정.
+- 서브 에이전트의 승인 요청은 `tauri-leader`가 대신 응답한다. 의존성 변경, HERDR 구성 변경, push는 사용자에게 묻는다(v0.5 5.5의 위임, 사용자 2026-11-06). v0.6에도 같은 위임이 걸린다(사용자 2026-11-10, core D-9).
 - checker 설정은 레포 `.agents/checker-settings.json`(allow 목록만, 명령 전체 일치)이고 `agy --settings`로 checker에만 적용한다. 목록에 없는 명령은 `tauri-coder` 또는 `tauri-leader`가 실행하고 출력을 `%TEMP%\v06-<카드ID>-*.txt`로 남기며, checker는 그 파일만 읽어 판정한다.
 - checker 보고 파일 쓰기는 카드가 정한 `%TEMP%\v06-*-report.md`만 한다.
 
