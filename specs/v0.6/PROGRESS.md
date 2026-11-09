@@ -30,10 +30,27 @@
   - 결과: 고친 문장마다 원래·고친 것·근거를 `%TEMP%\v06-W-02-report.md` 표에 적었다. 네 규칙("사람이 정하고 묻는다", "지난 버전 폴더 불변", "Zed 코드 복사 금지", "자기 워크스페이스만 쓴다") 본문은 그대로다. 상태 줄은 "초안"이다.
   - 검증: V0. 문서만 바뀌어 빌드·테스트는 실행하지 않았다. `spec/`는 tauri-leader가 `diff -rq spec D:\projects\workbench-core\spec`로 확인했다. 출력이 없었다(exit 0, 2026-11-10).
   - 특이사항: 없음.
+- **W-03 R1 제안 반영(ORDER-01-R2 2장 1·3·4번)** (2026-11-10)
+  - 무엇을 했나: 루트 `INTENT.md` "변하지 않는 원칙"에서 "테마·아이콘 테마는 미리 넣어 둔 것 중에서 고르기만 한다. / 받기·추가 기능은 두지 않는다." 두 줄을 지웠다. 루트 `AGENTS.md` 11줄 괄호를 "(core v0.5 D-7)"로 고치고, 3장 77줄 다음에 창 크기·글꼴 표 줄을 더했다(core v0.6 D-8).
+  - 결과: "다루지 않는 것"과 INTENT 5줄은 그대로다. 2번(194줄 커스텀 스킴)은 checker 확인 뒤, 5번(checker `git grep`)은 사용자 결정 뒤 따로 한다.
+  - 검증: V0. 문서만 바뀌어 명령은 실행하지 않았다.
+  - 특이사항: 운영 변경으로, 보고 파일에 커밋 해시를 적으려고 커밋을 따로 하는 일을 그만둔다(ORDER-01-R2 2장, 사용자 적용 2026-11-10).
+- C-03 checker 확인 [CONFIRMED]: 커스텀 스킴·asset protocol이 없고, 테마·아이콘 테마·UI 아이콘·문법 모두 `.gitignore` 폴더 복사본을 Vite `import.meta.glob`으로 함께 빌드한다(보고 `C:\Users\nampl\AppData\Local\Temp\v06-C-03-report.md`) (2026-11-10)
+- **W-04 AGENTS.md 5장 복사본 문장(ORDER-01-R2 2장 2번)** (2026-11-10)
+  - 무엇을 했나: 루트 `AGENTS.md` 5장 195줄(커스텀 스킴·A-55.2 문장)을 "Zed 테마·아이콘 테마·UI 아이콘·문법은 `.gitignore` 폴더에 복사해 함께 빌드한다. 복사본은 core ITEMS가 정한 것만 둔다."로 바꿨다. 코드는 고치지 않았다.
+  - 결과: C-03 확인 결과와 같다.
+  - 검증: V0. 문서만 바뀌어 명령은 실행하지 않았다.
+  - 특이사항: ORDER-01-R2 5번(checker `git grep`)은 사용자가 `.agents/checker-settings.json`에 직접 넣기로 했다. auto mode가 leader·writer의 권한 설정 변경을 막는다(2026-11-10). 넣은 뒤 `HERDR-SETUP.md`에 적는다.
 
 ## 사용자 요청 작업
 
-없음.
+### ORDER-01-R1 결과 검토와 제안 (2026-11-10)
+
+- 요청: 사용자가 ORDER-01-R1 결과를 "검토하고 제안해 주세요", "core-leader에게 제안을 보내 주세요"라고 요청했다(2026-11-10).
+- 조치: tauri-leader가 ORDER-01-R1 결과를 검토하고 제안 `specs/v0.6/reports/ORDER-01-R1-proposal.md`를 써서 core-leader에게 보냈다.
+- 결과: core-leader 판단을 사용자가 적용하기로 해 ORDER-01-R2로 왔다.
+- 검증: 커밋 `fa7f648`.
+- 상태: 끝남.
 
 ## 버전 종료
 

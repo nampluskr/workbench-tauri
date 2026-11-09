@@ -8,7 +8,7 @@
 - **Zed 코드 복사 금지** — Zed 앱 코드(GPL-3.0)는 동작 이해에만 참고하고 복사하지 않는다. (출처: `docs/refs/03-tauri/README.md` 1절)
 - **HERDR 문서** — `specs/{version}/HERDR-SETUP.md`(v0.4까지는 `HERDR-DECISIONS.md`도)는 버전마다 따로 두고, 사용자 승인 뒤 `tauri-writer`가 쓴다. `tauri-leader`는 코드·문서를 쓰지 않는다.
 - **HERDR 구성은 core가 정한다** — v0.6 구성은 workbench-core `specs/v0.6/DECISIONS.md` D-4다: `tauri-leader` Claude Code Opus 5.5, `tauri-writer` Claude Code Opus 5.5 medium, `tauri-coder` Codex gpt-6.1-sol medium, `tauri-checker` agy gemini-3.8-flash-high(사용자 2026-11-09). Codex는 coder에만 쓴다. 배정과 근거는 `specs/{version}/HERDR-SETUP.md`에 적고, 한도가 바뀌어 구성을 바꾸면 다시 승인받는다.
-- **자기 워크스페이스만 쓴다** — 다른 워크스페이스의 파일은 읽기만 한다 (core v0.5 D-7, v0.6 D-1).
+- **자기 워크스페이스만 쓴다** — 다른 워크스페이스의 파일은 읽기만 한다 (core v0.5 D-7).
 - **core ITEMS 우선** — workbench-core v0.6 ITEMS(I-1~I-20)가 이 레포 지침(루트 `INTENT.md`·`AGENTS.md`, docs/refs/ 출발 문서 `03-tauri/README.md`·`README.md` 포함)보다 우선한다. 부딪치면 이 레포의 지침을 고친다 (core v0.6 D-9, 사용자 2026-11-10).
 - **커밋은 tauri-leader만** — `tauri-leader`가 커밋만 한다(내용은 쓰지 않는다). `tauri-writer`·`tauri-coder`·`tauri-checker`는 커밋하지 않는다. push는 매번 사용자(또는 사용자에게 위임받은 tauri-leader) 승인 뒤에 한다.
 
@@ -75,6 +75,7 @@ cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
 ## 3. Zed 실측값 규칙
 
 - 모든 크기·간격·색상·폰트·동작 타이밍은 `spec/zed-metrics.toml`의 항목 ID로 참조한다. 수치의 기준은 이 toml 하나다. 단, core ITEMS가 직접 정한 값은 예외(core v0.6 D-9).
+- 창 크기(1440×852, 최소 360×240)와 글꼴 표는 v0.5에서 정한 값을 그대로 둔다(core v0.6 D-8).
 - `spec/`의 원본은 core `D:\projects\workbench-core\spec\`이고, 이 레포의 `spec/`는 복사본이다. 이 레포에서는 `spec/`를 고치지 않는다. 값을 바꿀 일이 있으면 core-leader에게 알린다(core v0.6 D-9).
 - 원문 실측 문서(`docs/refs/01-zed/`)는 `spec/INDEX.md`를 통해 필요한 절만 읽는다.
 - 코드에 수치를 하드코딩하지 않는다. CSS 값도 스펙 ID 이름의 상수나 CSS 변수로 둔다.
@@ -191,7 +192,7 @@ cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
 - CSP를 끄지 않는다. 허용 범위는 필요한 것만 더하고, 더한 값과 이유를 `specs/{version}/DECISIONS.md`(설계 결정, `HERDR-DECISIONS.md`가 아니다)에 적는다.
 - 인라인 `style` 속성을 쓰지 않는다. 동적 스타일은 nonce를 단 `<style>`이나 CSS 변수로 준다.
 - 색상과 테마 값은 테마 토큰의 CSS 변수로만 쓴다.
-- Zed 확장 파일은 프로젝트로 복사하지 않고 커스텀 스킴으로 읽는다. 단, `.gitignore` 폴더에 복사해 둔 Zed 테마·아이콘 테마·UI 아이콘과 core ITEMS가 복사본을 정한 것(예: I-17·I-18 codicon)은 예외(core v0.6 D-9). 경로는 확장 루트 기준 상대 경로만 허용하고, 절대 경로·`..`·루트 밖을 가리키는 링크는 거부한다(A-55.2).
+- Zed 테마·아이콘 테마·UI 아이콘·문법은 `.gitignore` 폴더에 복사해 함께 빌드한다. 복사본은 core ITEMS가 정한 것만 둔다.
 - 의존성은 `docs/refs/03-tauri/README.md` 3.1·3.2 목록 안에서만 고른다. 단, core ITEMS I-n 구현에 목록 밖 의존성이 필요하면 예외(core v0.6 D-9)이고, 승인은 9장대로 받는다. `tauri`와 `@tauri-apps/api`의 마이너 버전을 맞춘다.
 - Tauri capability는 쓰는 권한만 개별로 허용한다.
 - Rust 코어에서 `unwrap()`은 테스트와 불변 조건이 명확한 경우에만 쓴다.
