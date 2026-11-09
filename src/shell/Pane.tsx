@@ -1,7 +1,7 @@
 import { createEffect, createMemo, createRenderEffect, createSignal, For, Show } from "solid-js";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
-import { redo, undo } from "@codemirror/commands";
-import { runHistory } from "../editor/extensions.ts";
+import { addCursorAbove, addCursorBelow, redo, selectAll, selectLine, toggleBlockComment, toggleComment, undo } from "@codemirror/commands";
+import { pasteClipboard, runHistory } from "../editor/extensions.ts";
 import { backtab, tab as indentTab } from "../editor/indent.ts";
 import { commands } from "../keymap/keyboard.ts";
 import { PANE_DROP_TARGET_SIZE_RATIO, PANE_MIN_DRAG, TAB_MAX_TITLE_CHARS, UI_LINE_HEIGHT_RATIO } from "../spec/metrics.ts";
@@ -45,8 +45,9 @@ import { setDockOpen } from "./panels.ts";
 import { pathCrumb } from "../editor/breadcrumbs.ts";
 import { editorContext } from "../workspace/store.ts";
 import { isOpen as menuOpen, openContextMenu } from "./AppMenu.tsx";
-import Icon from "./Icon.tsx";
+import Icon, { IconButton } from "./Icon.tsx";
 import { tooltip } from "./tooltip.ts";
+import { notify } from "./toast.ts";
 
 // The active folder's center area (R-26, R-8, R-9, A-15.1): its split tree of Panes, each a tab bar and the active tab's
 // editor. Keys act on the active Pane (the one focus was last in).
@@ -61,6 +62,27 @@ const withCtx = (fn: (ctx: FolderContext) => void) => () => {
 };
 
 commands.set("workspace::Save", withCtx((ctx) => void saveActive(ctx)));
+for (const [action, run] of [
+  ["editor::SelectAll", selectAll], ["editor::SelectLine", selectLine],
+  ["editor::AddCursorAbove", addCursorAbove], ["editor::AddCursorBelow", addCursorBelow],
+  ["editor::ToggleComment", toggleComment], ["editor::ToggleBlockComment", toggleBlockComment],
+] as const) {
+  commands.set(action, () => {
+    const view = activeTab()?.file.view;
+    if (view) { view.focus(); run(view); }
+  });
+}
+// Keyboard clipboard events remain native CM6 events, including whole-line cut/copy.
+for (const action of ["Cut", "Copy"] as const) commands.set(`editor::${action}`, () => {
+  const view = activeTab()?.file.view;
+  if (!view || (action === "Cut" && view.state.readOnly)) return;
+  view.focus();
+  document.execCommand(action.toLowerCase());
+});
+commands.set("editor::Paste", () => {
+  const view = activeTab()?.file.view;
+  if (view) void pasteClipboard(view).catch((error) => notify([String(error)]));
+});
 // I-056: the keys match only with focus in the editor (Editor context), so the active tab's file is the one. D-8: its
 // one history is in the view that keeps it, whichever view the keys came from.
 for (const [action, run] of [["editor::Undo", undo], ["editor::Redo", redo]] as const) {
@@ -492,8 +514,8 @@ function PaneView(props: { ctx: FolderContext | null; pane: PaneState | null }) 
           <Show when={!tab().tool && !tab().markdown}>
             <div class="editor-toolbar">
               <Breadcrumbs ctx={props.ctx!} tab={tab()} />
-              <Show when={isMarkdown(tab().path)}>
-                <div class="toolbar-quick-actions">
+              <div class="toolbar-quick-actions">
+                <Show when={isMarkdown(tab().path)}>
                   <button
                     class="icon-button"
                     aria-label="Preview Markdown"
@@ -502,8 +524,9 @@ function PaneView(props: { ctx: FolderContext | null; pane: PaneState | null }) 
                   >
                     <Icon name="eye" />
                   </button>
-                </div>
-              </Show>
+                </Show>
+                <IconButton name="search" label="Find in Explorer" />
+              </div>
             </div>
           </Show>
         )}

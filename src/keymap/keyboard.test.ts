@@ -1,6 +1,66 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { commands, hooks, keymap, onKeyDown, installKeyboard } from "./keyboard.ts";
+import { strokeOf } from "./engine.ts";
+
+test("K-11-R1: modified IME Process dispatches the physical shortcut and leaves composition alone", (t) => {
+  class Element { dataset = { keymapContext: "Editor" }; parentElement = null; closest() { return null; } }
+  class Input extends Element {}
+  for (const [name, value] of Object.entries({ Element, HTMLInputElement: Input })) {
+    const previous = Object.getOwnPropertyDescriptor(globalThis, name);
+    Object.defineProperty(globalThis, name, { configurable: true, value });
+    t.after(() => { if (previous) Object.defineProperty(globalThis, name, previous); else Reflect.deleteProperty(globalThis, name); });
+  }
+  let calls = 0;
+  const previous = commands.get("editor::ToggleComment");
+  commands.set("editor::ToggleComment", () => { calls++; });
+  t.after(() => { if (previous) commands.set("editor::ToggleComment", previous); else commands.delete("editor::ToggleComment"); });
+  const event = { target: new Element(), key: "Process", code: "Slash", ctrlKey: true, altKey: false,
+    shiftKey: false, metaKey: false, defaultPrevented: false, preventDefault() { this.defaultPrevented = true; } };
+  assert.equal(strokeOf(event), "ctrl-/");
+  onKeyDown(event as unknown as KeyboardEvent);
+  assert.equal(calls, 1);
+  assert.equal(event.defaultPrevented, true, "matched keydown suppresses composition input");
+  assert.equal(strokeOf({ ...event, code: "KeyX" }), "ctrl-x");
+  assert.equal(strokeOf({ ...event, code: "Digit1", ctrlKey: false, altKey: true }), "alt-1");
+  const composing = { ...event, ctrlKey: false, defaultPrevented: false };
+  assert.equal(strokeOf(composing), null);
+  onKeyDown(composing as unknown as KeyboardEvent);
+  assert.equal(composing.defaultPrevented, false);
+  assert.equal(calls, 1);
+});
+
+test("R-17: editing keys dispatch only in Editor and unavailable search never reaches Sidebar", (t) => {
+  class Element { dataset: Record<string, string> = {}; parentElement: Element | null = null; closest() { return null; } }
+  class Input extends Element {}
+  for (const [name, value] of Object.entries({ Element, HTMLInputElement: Input })) {
+    const previous = Object.getOwnPropertyDescriptor(globalThis, name);
+    Object.defineProperty(globalThis, name, { configurable: true, value });
+    t.after(() => { if (previous) Object.defineProperty(globalThis, name, previous); else Reflect.deleteProperty(globalThis, name); });
+  }
+  const calls: string[] = [];
+  for (const action of ["editor::SelectLine", "editor::AddCursorAbove", "sidebar::Search"]) {
+    const previous = commands.get(action);
+    commands.set(action, () => { calls.push(action); });
+    t.after(() => { if (previous) commands.set(action, previous); else commands.delete(action); });
+  }
+  const editor = new Element(), outside = new Element();
+  editor.dataset.keymapContext = "Editor";
+  outside.dataset.keymapContext = "Pane";
+  const press = (target: Element, key: string, altKey = false) => {
+    const event = { target, key, code: "", ctrlKey: true, altKey, shiftKey: false, metaKey: false,
+      defaultPrevented: false, preventDefault() { this.defaultPrevented = true; } };
+    onKeyDown(event as unknown as KeyboardEvent);
+    return event.defaultPrevented;
+  };
+  assert.equal(press(editor, "l"), true);
+  assert.equal(press(editor, "ArrowUp", true), true);
+  assert.equal(press(outside, "l"), false);
+  assert.equal(press(outside, "ArrowUp", true), false);
+  assert.equal(press(editor, "f"), true);
+  for (const key of ["h", "d"]) assert.equal(press(editor, key), false);
+  assert.deepEqual(calls, ["editor::SelectLine", "editor::AddCursorAbove"]);
+});
 
 test("K-15: input editing stays local while modified Workspace/global bindings dispatch", (t) => {
   class Element {

@@ -1,5 +1,15 @@
 import type { KeymapSection } from "./engine.ts";
 
+// R-17: document editing follows VS Code; keep the pinned Zed baseline separate.
+export const EDITOR_BINDINGS: KeymapSection[] = [{ context: "Editor", bindings: {
+  "ctrl-a": "editor::SelectAll",
+  "ctrl-l": "editor::SelectLine",
+  "ctrl-alt-up": "editor::AddCursorAbove",
+  "ctrl-alt-down": "editor::AddCursorBelow",
+  "ctrl-/": "editor::ToggleComment",
+  "shift-alt-a": "editor::ToggleBlockComment",
+} }];
+
 // Built-in keymap (D-2), checked for menu actions against Zed Windows 4304dec732 (K-13).
 // The binding set still matches the v0.4 PROGRESS R-1 table; only Redo's display order changes below.
 // Section order is the tie-break order at equal depth (later wins, I-702): `menu` first, as in workbench-gpui.

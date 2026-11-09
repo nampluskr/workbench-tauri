@@ -49,6 +49,8 @@ export function createFileView(text: string, path: string, editable: boolean, ho
       doc: text,
       extensions: [
         ...editorExtensions(extension),
+        // shortcut: use the file's base comment tokens; add scope-aware tokens when embedded-language editing is required.
+        EditorState.languageData.of(() => language?.commentTokens ? [{ commentTokens: language.commentTokens }] : []),
         // Key context (v0.2 D-3): Editor, plus `extension == …` for bindings such as the Markdown preview keys (I-044).
         EditorView.editorAttributes.of({ "data-keymap-context": extension ? `Editor extension=${extension}` : "Editor" }),
         editableExtension(editable),

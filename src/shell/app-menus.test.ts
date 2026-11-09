@@ -6,7 +6,7 @@ import { PROJECT_PANEL_DEFAULT_WIDTH } from "../spec/metrics.ts";
 import { first, shortcutForEntry, type MenuEntry } from "./menu.ts";
 import { FONT_LICENSES, licenseText } from "./licenses.ts";
 import { displayChunks } from "../keymap/display.ts";
-import { BUILTIN } from "../keymap/builtin.ts";
+import { BUILTIN, EDITOR_BINDINGS } from "../keymap/builtin.ts";
 import { Keymap } from "../keymap/engine.ts";
 
 const labels = (entries: MenuEntry[]) => entries.map((e) => e === "separator" ? "---" : e.label);
@@ -14,13 +14,17 @@ const labels = (entries: MenuEntry[]) => entries.map((e) => e === "separator" ? 
 test("K-13: menu shortcuts match Zed Windows primary keys without changing Close Editor's action", () => {
   const keymap = new Keymap();
   keymap.addSections("default", BUILTIN);
+  keymap.addSections("default", EDITOR_BINDINGS);
   const stack = [new Set(["Workspace"]), new Set(["Pane"]), new Set(["Editor", "extension=md"])];
   const menus = appMenus(() => false);
   const items = menus.flatMap((menu) => menu.entries).flatMap((entry) => entry !== "separator" && entry.children ? entry.children : [entry]);
   const keys = Object.fromEntries(items.filter((entry) => entry !== "separator").map((entry) => [entry.label, shortcutForEntry(entry, keymap, stack)?.join(" ")]));
   assert.deepEqual(keys, {
     Quit: "Ctrl-Q", "Open Folder...": "Ctrl-K Ctrl-O", Save: "Ctrl-S",
-    "Close Editor": "Ctrl-W", "Close Window": "Ctrl-Shift-W", Undo: "Ctrl-Z", Redo: "Ctrl-Y",
+    "Close Editor": "Ctrl-W", "Close Window": "Ctrl-Shift-W", Undo: "Ctrl+Z", Redo: "Ctrl+Y",
+    Cut: "Ctrl+X", Copy: "Ctrl+C", Paste: "Ctrl+V", Find: "Ctrl+F", Replace: "Ctrl+H",
+    "Toggle Line Comment": "Ctrl+/", "Toggle Block Comment": "Shift+Alt+A", "Select All": "Ctrl+A",
+    "Add Next Occurrence": "Ctrl+D", "Add Cursor Above": "Ctrl+Alt+Up", "Add Cursor Below": "Ctrl+Alt+Down",
     "Toggle Left Dock": "Ctrl-B", "Toggle Folder Sidebar": "Ctrl-Alt-J", "Focus Folder Sidebar": "Ctrl-Alt-;",
     "Split Up": "Ctrl-K Up", "Split Down": "Ctrl-K Down", "Split Left": "Ctrl-K Left", "Split Right": "Ctrl-\\",
     "Maximize Pane": "Shift-Escape", "Project Panel": "Ctrl-Shift-E",
@@ -34,7 +38,7 @@ test("K-13: menu shortcuts match Zed Windows primary keys without changing Close
   assert.deepEqual(keymap.dispatch(["ctrl-w"], stack), { type: "match", action: "pane::CloseActiveItem" });
   for (const key of ["ctrl-y", "ctrl-shift-z"]) assert.deepEqual(keymap.dispatch([key], stack), { type: "match", action: "editor::Redo" });
   keymap.addSections("user", [{ context: "Editor", bindings: { "ctrl-alt-y": "editor::Redo" } }]);
-  assert.deepEqual(shortcutForEntry(menus[1].entries[1], keymap, stack), ["Ctrl-Alt-Y"]);
+  assert.deepEqual(shortcutForEntry(menus[1].entries[1], keymap, stack), ["Ctrl+Alt+Y"]);
 });
 
 test("K-10: menus start with File, end File with Quit and retain the other entries", () => {
@@ -43,7 +47,8 @@ test("K-10: menus start with File, end File with Quit and retain the other entri
   assert.deepEqual(menus.map((m) => m.name), ["File", "Edit", "View", "Go", "Window", "Help"]);
   assert.deepEqual(labels(menus[0].entries), ["Open Folder...", "---", "Save", "---", "Close Editor", "Close Window", "---", "Quit"]);
   assert.deepEqual(menus[0].entries.at(-1), { label: "Quit", action: "zed::Quit" });
-  assert.deepEqual(labels(menus[1].entries), ["Undo", "Redo"]);
+  assert.deepEqual(labels(menus[1].entries), ["Undo", "Redo", "---", "Cut", "Copy", "Paste", "---", "Find", "Replace", "---", "Toggle Line Comment", "Toggle Block Comment", "---", "Select All", "Add Next Occurrence", "Add Cursor Above", "Add Cursor Below"]);
+  assert.deepEqual(menus[1].entries.flatMap((e) => e !== "separator" && e.disabled ? [e.label] : []), ["Find", "Replace", "Add Next Occurrence"]);
   assert.deepEqual(labels(menus[2].entries), ["Toggle Left Dock", "Toggle Folder Sidebar", "Focus Folder Sidebar", "Editor Layout", "Maximize Pane", "---", "Project Panel", "Open Markdown Preview", "Open Markdown Preview to the Side"]);
   const layout = menus[2].entries[3];
   assert.notEqual(layout, "separator");

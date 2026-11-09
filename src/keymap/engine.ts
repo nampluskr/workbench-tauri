@@ -19,6 +19,10 @@ export type KeyEventLike = { key: string; code: string; ctrlKey: boolean; altKey
 
 const MODIFIER_KEYS = new Set(["Control", "Alt", "Shift", "Meta"]);
 const NO_LOGICAL_KEY = new Set(["Process", "Unidentified", "Dead"]);
+const CODE_SYMBOLS: Record<string, string> = {
+  Backquote: "`", Minus: "-", Equal: "=", BracketLeft: "[", BracketRight: "]",
+  Backslash: "\\", IntlBackslash: "\\", Semicolon: ";", Quote: "'", Comma: ",", Period: ".", Slash: "/",
+};
 
 function keyName(e: KeyEventLike): string {
   // Numpad +/- are zoom keys too; recognise them even if `key` is odd.
@@ -28,6 +32,8 @@ function keyName(e: KeyEventLike): string {
   if (NO_LOGICAL_KEY.has(e.key) || (e.key.length === 1 && e.key > "~")) {
     const m = /^(?:Key([A-Z])|Digit(\d))$/.exec(e.code);
     if (m) return (m[1] ?? m[2]).toLowerCase();
+    // IME Process hides punctuation too; modified shortcuts use its physical key.
+    if (e.key === "Process" && (e.ctrlKey || e.altKey) && CODE_SYMBOLS[e.code]) return CODE_SYMBOLS[e.code];
   }
   // Synthetic input may have an empty `code`; `key` alone decides.
   // Zed names the Menu key "menu"; the browser calls it "ContextMenu".
@@ -36,7 +42,7 @@ function keyName(e: KeyEventLike): string {
 
 /** Canonical stroke such as "ctrl-shift-p", or null for a bare modifier press. */
 export function strokeOf(e: KeyEventLike): string | null {
-  if (MODIFIER_KEYS.has(e.key)) return null;
+  if (MODIFIER_KEYS.has(e.key) || (e.key === "Process" && !e.ctrlKey && !e.altKey)) return null;
   const key = keyName(e);
   // A shifted symbol ("+" from Shift+=) already carries the shift.
   const shift = e.shiftKey && !(key.length === 1 && !/[a-z0-9]/.test(key));

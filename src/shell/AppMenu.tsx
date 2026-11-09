@@ -243,7 +243,7 @@ export default function AppMenu(props: { popupOnly?: boolean } = {}) {
       about.showModal();
     }).catch((error) => notify([String(error)]));
   });
-  const copies = import.meta.glob<string>(["../assets/zed-icons/LICENSE*", "../theme/assets/**/LICENSE*", "../assets/icon-themes/**/LICENSE*", "../assets/zed-grammars/licenses/**/*", "../licenses/*.txt"], { query: "?raw", import: "default", eager: true });
+  const copies = import.meta.glob<string>(["../assets/zed-icons/LICENSE*", "../assets/codicons/NOTICE.txt", "../theme/assets/**/LICENSE*", "../assets/icon-themes/**/LICENSE*", "../assets/zed-grammars/licenses/**/*", "../licenses/*.txt"], { query: "?raw", import: "default", eager: true });
   commands.set("zed::OpenLicenses", () => openTool(activeContext(), "Licenses", () => {
     const element = document.createElement("pre");
     element.className = "licenses-tab";

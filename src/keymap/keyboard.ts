@@ -1,4 +1,4 @@
-import { BUILTIN } from "./builtin.ts";
+import { BUILTIN, EDITOR_BINDINGS } from "./builtin.ts";
 import { KEYMAP_EDITOR_BINDINGS } from "./edit.ts";
 import { SETTINGS_BINDINGS } from "../settings/model.ts";
 import { EXTENSIONS_BINDINGS } from "../extensions/model.ts";
@@ -8,6 +8,7 @@ import { TAB_BINDINGS } from "../shell/tab-menu.ts";
 import { NAV_BINDINGS } from "../workspace/nav-history.ts";
 import { SIDEBAR_BINDINGS } from "../workspace/folders.ts";
 import { Keymap, strokeOf, type ContextNode } from "./engine.ts";
+import { rememberImeShortcut } from "../editor/ime.ts";
 
 // D-5: Tauri 2.12.5 does not expose WebView2's AreBrowserAcceleratorKeysEnabled (wry has it,
 // tauri/tauri-runtime-wry do not), so browser accelerators are stopped in a capture-phase keydown.
@@ -21,6 +22,7 @@ export const BROWSER_KEYS: ReadonlySet<string> = new Set([
 
 export const keymap = new Keymap();
 keymap.addSections("default", BUILTIN);
+keymap.addSections("default", EDITOR_BINDINGS);
 keymap.addSections("default", KEYMAP_EDITOR_BINDINGS);
 keymap.addSections("default", SETTINGS_BINDINGS);
 keymap.addSections("default", EXTENSIONS_BINDINGS);
@@ -32,7 +34,7 @@ keymap.addSections("default", SIDEBAR_BINDINGS);
 /** Action name -> handler. Its keys are the actions keymap.json may name (K-085). */
 export const commands = new Map<string, () => void>();
 // Actions whose behavior arrives in a later Phase are registered as no-ops; that Phase replaces them with commands.set.
-for (const { bindings } of [...BUILTIN, ...KEYMAP_EDITOR_BINDINGS, ...EXTENSIONS_BINDINGS, ...THEME_SELECTOR_BINDINGS, ...STATUS_BINDINGS, ...NAV_BINDINGS, ...TAB_BINDINGS, ...SIDEBAR_BINDINGS]) for (const action of Object.values(bindings)) if (typeof action === "string") commands.set(action, () => {});
+for (const { bindings } of [...BUILTIN, ...EDITOR_BINDINGS, ...KEYMAP_EDITOR_BINDINGS, ...EXTENSIONS_BINDINGS, ...THEME_SELECTOR_BINDINGS, ...STATUS_BINDINGS, ...NAV_BINDINGS, ...TAB_BINDINGS, ...SIDEBAR_BINDINGS]) for (const action of Object.values(bindings)) if (typeof action === "string") commands.set(action, () => {});
 
 /** An open menu takes over a matched action here (I-520). Return true when it handled the action. */
 export const hooks: { beforeCommand: ((action: string) => boolean) | null; context: (() => ContextNode[] | null) | null } = { beforeCommand: null, context: null };
@@ -84,6 +86,7 @@ export function onKeyDown(e: KeyboardEvent): void {
   if (result.type === "match") {
     const name = typeof result.action === "string" ? result.action : result.action[0];
     if (!hooks.beforeCommand?.(name)) commands.get(name)?.();
+    rememberImeShortcut(e, stroke);
   }
   if (result.type !== "none" || BROWSER_KEYS.has(stroke)) e.preventDefault();
 }

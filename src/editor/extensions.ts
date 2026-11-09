@@ -10,6 +10,7 @@ import {
 } from "@codemirror/view";
 import { cursorDocEnd, cursorDocStart, history, selectDocEnd, selectDocStart, simplifySelection } from "@codemirror/commands";
 import { BUFFER_FONT_FAMILY, EDITOR_TAB_SIZE, EDITOR_UNDO_GROUP_INTERVAL_MS } from "../spec/metrics.ts";
+import { imeShortcutInput } from "./ime.ts";
 
 // Metric variables come from applyMetrics() (spec/metrics.ts); color variables come
 // from the theme JSON (Phase 2, D-8/D-9) and are unset until then.
@@ -63,6 +64,7 @@ const zedEditorTheme = EditorView.theme({
 });
 
 export const editorExtensions = (extension: string) => [
+  imeShortcutInput,
   /^(md|markdown)$/.test(extension) ? EditorView.lineWrapping : [], // I-8: same extensions as Markdown preview
   EditorView.cspNonce.of(document.getElementById("csp-nonce-carrier")?.nonce ?? ""),
   lineNumbers(),
@@ -96,6 +98,19 @@ const editability = (editable: boolean) => [
 ];
 export const editableExtension = (editable: boolean) => readOnly.of(editability(editable));
 export const setEditable = (view: EditorView, editable: boolean) => view.dispatch({ effects: readOnly.reconfigure(editability(editable)) });
+
+/** Preserve CM6 paste filters and multi-selection handling when WebView denies native paste. */
+export async function pasteClipboard(view: EditorView): Promise<void> {
+  if (view.state.readOnly) return;
+  view.focus();
+  if (document.execCommand("paste")) return;
+  const state = view.state;
+  const text = await navigator.clipboard.readText();
+  if (view.state !== state || view.state.readOnly) return;
+  const data = new DataTransfer();
+  data.setData("text/plain", text);
+  view.contentDOM.dispatchEvent(new ClipboardEvent("paste", { clipboardData: data, bubbles: true, cancelable: true }));
+}
 
 /** A locked tab cannot undo; an editable peer may use a locked history keeper. */
 export function runHistory(view: EditorView, keeper: EditorView, run: (view: EditorView) => boolean): void {

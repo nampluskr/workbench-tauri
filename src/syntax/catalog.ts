@@ -1,4 +1,4 @@
-export type LanguageConfig = { id: string; name: string; grammar: string; suffixes: string[]; hidden: boolean };
+export type LanguageConfig = { id: string; name: string; grammar: string; suffixes: string[]; hidden: boolean; commentTokens?: { line?: string; block?: { open: string; close: string } } };
 
 /** Read only the pinned config's string fields and suffix array; no general TOML parser is needed. */
 export function languageConfigs(files: Record<string, string>): LanguageConfig[] {
@@ -8,8 +8,15 @@ export function languageConfigs(files: Record<string, string>): LanguageConfig[]
       const name = text("name"), grammar = text("grammar");
       if (!name || !grammar) return [];
       const suffixes = source.match(/^path_suffixes\s*=\s*\[([^\]]*)\]/m)?.[1] ?? "";
+      const stringValue = '"(?:\\\\.|[^"\\\\])*"';
+      const line = source.match(new RegExp(`^line_comments\\s*=\\s*\\[\\s*(${stringValue})`, "m"))?.[1];
+      const block = source.match(/^block_comment\s*=\s*\{([^\n]*)\}/m)?.[1];
+      const token = (key: string) => block?.match(new RegExp(`\\b${key}\\s*=\\s*(${stringValue})`))?.[1];
+      const open = token("start"), close = token("end");
       return [{ id: path.split("/").at(-2)!, name, grammar: grammar === "jsonc" ? "json" : grammar,
-        suffixes: [...suffixes.matchAll(/"(?:\\.|[^"\\])*"/g)].map(([value]) => JSON.parse(value)), hidden: /^hidden\s*=\s*true$/m.test(source) }];
+        suffixes: [...suffixes.matchAll(/"(?:\\.|[^"\\])*"/g)].map(([value]) => JSON.parse(value)), hidden: /^hidden\s*=\s*true$/m.test(source),
+        commentTokens: { ...(line ? { line: (JSON.parse(line) as string).trimEnd() } : {}),
+          ...(open && close ? { block: { open: JSON.parse(open), close: JSON.parse(close) } } : {}) } }];
     } catch { return []; } // An incomplete local copy leaves this language plain.
   });
 }

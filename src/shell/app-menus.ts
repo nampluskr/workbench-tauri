@@ -4,7 +4,7 @@ export const APP_NAME = "workbench-tauri";
 export const REPOSITORY_URL = "https://github.com/nampluskr/workbench-tauri";
 export const ISSUE_URL = `${REPOSITORY_URL}/issues/new`;
 
-// Only implemented actions survive the pinned Zed menu order (4304dec732).
+// R-17: Edit follows workbench-kit; search actions await @codemirror/search approval.
 export function appMenus(markdownDisabled: () => boolean): Menu[] {
   const markdownItem = (label: string, action: string): MenuItem => ({ label, action, get disabled() { return markdownDisabled(); } });
   return [
@@ -18,10 +18,25 @@ export function appMenus(markdownDisabled: () => boolean): Menu[] {
       "separator",
       { label: "Quit", action: "zed::Quit" },
     ] },
-    { name: "Edit", entries: [
+    { name: "Edit", entries: ([
       { label: "Undo", action: "editor::Undo" },
       { label: "Redo", action: "editor::Redo" },
-    ] },
+      "separator",
+      { label: "Cut", action: "editor::Cut", shortcut: "ctrl-x" },
+      { label: "Copy", action: "editor::Copy", shortcut: "ctrl-c" },
+      { label: "Paste", action: "editor::Paste", shortcut: "ctrl-v" },
+      "separator",
+      { label: "Find", action: "editor::Find", shortcut: "ctrl-f", disabled: true },
+      { label: "Replace", action: "editor::Replace", shortcut: "ctrl-h", disabled: true },
+      "separator",
+      { label: "Toggle Line Comment", action: "editor::ToggleComment" },
+      { label: "Toggle Block Comment", action: "editor::ToggleBlockComment" },
+      "separator",
+      { label: "Select All", action: "editor::SelectAll" },
+      { label: "Add Next Occurrence", action: "editor::AddNextOccurrence", shortcut: "ctrl-d", disabled: true },
+      { label: "Add Cursor Above", action: "editor::AddCursorAbove" },
+      { label: "Add Cursor Below", action: "editor::AddCursorBelow" },
+    ] satisfies MenuEntry[]).map((entry): MenuEntry => entry === "separator" ? entry : { ...entry, shortcutStyle: "vscode" }) },
     { name: "View", entries: [
       { label: "Toggle Left Dock", action: "workspace::ToggleLeftDock" },
       { label: "Toggle Folder Sidebar", action: "multi_workspace::ToggleWorkspaceSidebar" },
