@@ -78,6 +78,43 @@ test("K-15: input editing stays local while modified Workspace/global bindings d
   assert.deepEqual(calls, ["test::local"]);
 });
 
+test("R-19: Ctrl-F reaches Sidebar search only from Sidebar, including its inputs", (t) => {
+  class Element {
+    dataset: Record<string, string> = {};
+    parentElement: Element | null = null;
+    closest() { return null; }
+  }
+  class Input extends Element {}
+  for (const [name, value] of Object.entries({ Element, HTMLInputElement: Input })) {
+    const previous = Object.getOwnPropertyDescriptor(globalThis, name);
+    Object.defineProperty(globalThis, name, { configurable: true, value });
+    t.after(() => { if (previous) Object.defineProperty(globalThis, name, previous); else Reflect.deleteProperty(globalThis, name); });
+  }
+  let calls = 0;
+  const previous = commands.get("sidebar::Search");
+  commands.set("sidebar::Search", () => { calls++; });
+  t.after(() => { if (previous) commands.set("sidebar::Search", previous); else commands.delete("sidebar::Search"); });
+  const press = (target: Element) => onKeyDown({ target, key: "f", code: "KeyF", ctrlKey: true,
+    shiftKey: false, altKey: false, metaKey: false, isComposing: false, keyCode: 0, preventDefault() {} } as unknown as KeyboardEvent);
+  const sidebar = new Element();
+  sidebar.dataset.keymapContext = "Sidebar";
+  const row = new Element(), input = new Input();
+  row.parentElement = sidebar;
+  input.parentElement = sidebar;
+  press(row); press(input);
+  assert.equal(calls, 2);
+  for (const context of ["Editor", "ProjectPanel", "Pane", ""]) {
+    const area = new Element();
+    area.dataset.keymapContext = context;
+    const input = new Input();
+    input.parentElement = area;
+    press(area); press(input);
+  }
+  assert.equal(calls, 2, "editor, tree, tab bar and their inputs never search Sidebar");
+  press(sidebar);
+  assert.equal(calls, 3);
+});
+
 test("I-9: Ctrl-Shift-V dispatches from the Pane and Markdown editor; unmatched browser paste stays blocked", (t) => {
   const calls: string[] = [];
   const previous = commands.get("markdown::OpenPreview");

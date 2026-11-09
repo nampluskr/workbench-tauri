@@ -4,7 +4,7 @@ import { open } from "@tauri-apps/plugin-dialog";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { notify } from "../shell/toast.ts";
 import { SIDEBAR_WIDTH, STATE_SAVE_DEBOUNCE_MS } from "../spec/metrics.ts";
-import { addOrActivate, move, moveCursor as nextCursor, remove, type Folder } from "./folders.ts";
+import { addOrActivate, move, moveCursor as nextCursor, remove, rename, type Folder } from "./folders.ts";
 import { askWarning, closingTabs, disposeContext, newContext, type FolderContext } from "./context.ts";
 import { confirmClose } from "./closing.ts";
 import { folderName, normalizePath } from "./paths.ts";
@@ -19,7 +19,7 @@ const [folders, setFolders] = createSignal<Folder[]>([]);
 const [activeId, setActiveId] = createSignal<string | null>(null);
 const [cursorId, setCursorId] = createSignal<string | null>(null); // keyboard cursor of the sidebar (D-8)
 const [missingIds, setMissingIds] = createSignal<ReadonlySet<string>>(new Set()); // folders whose path is gone (A-16.2)
-const [sidebarWidth, setSidebarWidth] = createSignal(SIDEBAR_WIDTH.default); // no resize handle yet (A-11.12): kept and restored only
+const [sidebarWidth, setSidebarWidth] = createSignal(SIDEBAR_WIDTH.default);
 export { folders, activeId, cursorId, missingIds, sidebarWidth };
 
 export const activeFolder = (): Folder | null => folders().find((f) => f.id === activeId()) ?? null;
@@ -193,15 +193,25 @@ export async function removeFolder(id: string): Promise<void> {
   changed();
 }
 
-/** R-15: one step up or down in the list. */
-export function moveFolder(id: string, dir: 1 | -1): void {
-  const next = move(folders(), id, dir);
+export function renameFolder(id: string, name: string): void {
+  setFolders(rename(folders(), id, name));
+  changed();
+}
+
+export function resizeSidebar(width: number): void {
+  setSidebarWidth(width);
+  changed();
+}
+
+/** R-10: persist the dropped order without changing the active folder or its context. */
+export function moveFolder(id: string, target: string): void {
+  const next = move(folders(), id, target);
   if (next === folders()) return;
   setFolders(next);
   changed();
 }
 
-export const moveCursor = (dir: 1 | -1): void => void setCursorId(nextCursor(folders(), cursorId(), dir));
+export const moveCursor = (dir: 1 | -1, list = folders()): void => void setCursorId(nextCursor(list, cursorId(), dir));
 export const setCursor = (id: string): void => void setCursorId(id);
 
 /** Run `fn` on every folder's context (a rename or move can touch the tabs and trees of several folders). */

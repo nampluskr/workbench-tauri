@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { addOrActivate, displayNames, move, moveCursor, remove, type Folder } from "./folders.ts";
+import { addOrActivate, displayNames, filterFolders, folderLabel, move, moveCursor, remove, rename, type Folder } from "./folders.ts";
 import { folderName, normalizePath, parentName, pathKey, truncateName } from "./paths.ts";
 import { parseState, serializeState, STATE_VERSION } from "./state-file.ts";
 
@@ -49,11 +49,12 @@ test("A-13.5: removing the active folder activates the one below, else above, el
   assert.deepEqual(remove(abc, "b", "b").folders.map((f) => f.id), ["a", "c"]);
 });
 
-test("A-13.6, A-17.3: moving swaps neighbors and stops at the ends; the cursor stops at the ends", () => {
-  assert.deepEqual(move(abc, "b", -1).map((f) => f.id), ["b", "a", "c"]);
-  assert.deepEqual(move(abc, "b", 1).map((f) => f.id), ["a", "c", "b"]);
-  assert.equal(move(abc, "a", -1), abc);
-  assert.equal(move(abc, "c", 1), abc);
+test("R-10, A-17.3: drops reorder across multiple rows; the cursor stops at the ends", () => {
+  assert.deepEqual(move(abc, "c", "a").map((f) => f.id), ["c", "a", "b"]);
+  assert.deepEqual(move(abc, "a", "c").map((f) => f.id), ["b", "c", "a"]);
+  assert.equal(move(abc, "a", "a"), abc);
+  assert.equal(move(abc, "gone", "c"), abc);
+  assert.equal(move(abc, "a", "gone"), abc);
   assert.equal(moveCursor(abc, null, 1), "a");
   assert.equal(moveCursor(abc, null, -1), "c");
   assert.equal(moveCursor(abc, "b", 1), "c");
@@ -95,9 +96,30 @@ test("A-20, A-22.6, A-24.7: unknown keys survive a round trip; a bad active id m
   assert.deepEqual(parseState(null).folders, []);
 });
 
-test("A-22: a file with no windows gets one; the width outside the sidebar limits falls back to the default", () => {
+test("R-11, A-22: state accepts Dock widths; invalid widths fall back to the default", () => {
   const out = JSON.parse(serializeState({}, { folders: abc, activeId: "a", sidebarWidth: 300 }));
   assert.equal(out.version, STATE_VERSION);
   assert.equal(out.windows[0].folders.length, 3);
-  assert.equal(parseState(JSON.stringify({ windows: [{ sidebar: { width: 5000 } }] })).sidebarWidth, 300);
+  for (const width of [6, 240, 900])
+    assert.equal(parseState(JSON.stringify({ windows: [{ sidebar: { width } }] })).sidebarWidth, width);
+  for (const width of [0, -1, 5, null, "240", 1e400])
+    assert.equal(parseState(JSON.stringify({ windows: [{ sidebar: { width } }] })).sidebarWidth, 300);
+});
+
+test("R-10, R-19: display names, order and width round trip; search uses renamed names and clearing restores all", () => {
+  const renamed = rename(abc, "b", " Research ");
+  assert.equal(folderLabel(renamed[1]), "Research");
+  assert.equal(renamed[1].path, abc[1].path);
+  assert.deepEqual(filterFolders(renamed, "sEaR").map((f) => f.id), ["b"]);
+  assert.deepEqual(filterFolders(renamed, "b"), []);
+  assert.equal(filterFolders(renamed, "").length, 3);
+  assert.equal(folderLabel(rename(renamed, "b", "  ")[1]), "b");
+  assert.equal(folderLabel({ ...abc[0], name: 12 } as unknown as Folder), "a");
+  const saved = serializeState({}, { folders: move(renamed, "c", "a"), activeId: "b", sidebarWidth: 900 });
+  const loaded = parseState(saved);
+  assert.deepEqual(loaded.folders.map((f) => f.id), ["c", "a", "b"]);
+  assert.equal(folderLabel(loaded.folders[2]), "Research");
+  assert.equal(loaded.activeId, "b");
+  assert.equal(loaded.sidebarWidth, 900);
+  assert.deepEqual(displayNames(renamed.map((f) => f.path), renamed.map(folderLabel)).map((n) => n.name), ["a", "Research", "c"]);
 });

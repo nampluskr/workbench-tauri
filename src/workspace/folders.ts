@@ -1,11 +1,18 @@
 import { folderName, parentName, pathKey } from "./paths.ts";
 
-/** One registered folder. Keys other than these three belong to a newer app version and are kept as they are (A-20). */
-export type Folder = { id: string; path: string; added_at: string; [extra: string]: unknown };
+/** One registered folder. Unknown keys belong to a newer app version and are kept as they are (A-20). */
+export type Folder = { id: string; path: string; added_at: string; name?: string; [extra: string]: unknown };
+
+export const SIDEBAR_BINDINGS = [{ context: "Sidebar", bindings: { "ctrl-f": "sidebar::Search" } }];
+export const folderLabel = (folder: Folder): string => typeof folder.name === "string" && folder.name.trim() ? folder.name : folderName(folder.path);
+export const filterFolders = (folders: Folder[], query: string): Folder[] => folders.filter((f) => folderLabel(f).toLowerCase().includes(query.toLowerCase()));
+
+export function rename(folders: Folder[], id: string, name: string): Folder[] {
+  return folders.map((f) => f.id === id ? { ...f, name: name.trim() || undefined } : f);
+}
 
 /** A-12.6: a name that two or more folders share gets the name of the folder above it appended. */
-export function displayNames(paths: string[]): { name: string; parent: string }[] {
-  const names = paths.map(folderName);
+export function displayNames(paths: string[], names = paths.map(folderName)): { name: string; parent: string }[] {
   const count = new Map<string, number>();
   for (const n of names) count.set(n.toLowerCase(), (count.get(n.toLowerCase()) ?? 0) + 1);
   return paths.map((p, i) => ({ name: names[i], parent: count.get(names[i].toLowerCase())! > 1 ? parentName(p) : "" }));
@@ -28,13 +35,13 @@ export function remove(folders: Folder[], id: string, activeId: string | null): 
   return { folders: rest, activeId: activeId !== id ? activeId : ((rest[index] ?? rest[index - 1])?.id ?? null) };
 }
 
-/** A-13.6: swap with the neighbor; unchanged at the ends. */
-export function move(folders: Folder[], id: string, dir: 1 | -1): Folder[] {
+/** R-10: drop at the target row's position, as for tabs in the same pane. */
+export function move(folders: Folder[], id: string, target: string): Folder[] {
   const from = folders.findIndex((f) => f.id === id);
-  const to = from + dir;
-  if (from < 0 || to < 0 || to >= folders.length) return folders;
+  const to = folders.findIndex((f) => f.id === target);
+  if (from < 0 || to < 0 || from === to) return folders;
   const next = [...folders];
-  [next[from], next[to]] = [next[to], next[from]];
+  next.splice(to, 0, ...next.splice(from, 1));
   return next;
 }
 

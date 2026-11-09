@@ -1,4 +1,4 @@
-import { SIDEBAR_WIDTH } from "../spec/metrics.ts";
+import { DOCK_MIN_WIDTH, SIDEBAR_WIDTH } from "../spec/metrics.ts";
 import type { Folder } from "./folders.ts";
 
 // state.json (A-22, A-24.7, D-11): only folders, the active folder and the sidebar width are ours. The whole parsed
@@ -40,7 +40,8 @@ export function parseState(json: string | null): Loaded {
     folders,
     // A-22.6: an id that is not in `folders` means the first folder; no folders, none.
     activeId: typeof window.active_folder_id === "string" && ids.has(window.active_folder_id) ? window.active_folder_id : (folders[0]?.id ?? null),
-    sidebarWidth: typeof width === "number" && width >= SIDEBAR_WIDTH.min && width <= SIDEBAR_WIDTH.max ? width : SIDEBAR_WIDTH.default,
+    // I-11: the maximum is the current container width, enforced by the shared Dock CSS rule.
+    sidebarWidth: typeof width === "number" && Number.isFinite(width) && width >= DOCK_MIN_WIDTH ? width : SIDEBAR_WIDTH.default,
     readOnly: typeof value.version === "number" && value.version > STATE_VERSION,
     invalid: false,
   };

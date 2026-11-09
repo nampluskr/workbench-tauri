@@ -6,6 +6,7 @@ import { THEME_SELECTOR_BINDINGS } from "../theme/selector.ts";
 import { STATUS_BINDINGS } from "../shell/status.ts";
 import { TAB_BINDINGS } from "../shell/tab-menu.ts";
 import { NAV_BINDINGS } from "../workspace/nav-history.ts";
+import { SIDEBAR_BINDINGS } from "../workspace/folders.ts";
 import { Keymap, strokeOf, type ContextNode } from "./engine.ts";
 
 // D-5: Tauri 2.12.5 does not expose WebView2's AreBrowserAcceleratorKeysEnabled (wry has it,
@@ -27,10 +28,11 @@ keymap.addSections("default", THEME_SELECTOR_BINDINGS);
 keymap.addSections("default", STATUS_BINDINGS);
 keymap.addSections("default", NAV_BINDINGS);
 keymap.addSections("default", TAB_BINDINGS);
+keymap.addSections("default", SIDEBAR_BINDINGS);
 /** Action name -> handler. Its keys are the actions keymap.json may name (K-085). */
 export const commands = new Map<string, () => void>();
 // Actions whose behavior arrives in a later Phase are registered as no-ops; that Phase replaces them with commands.set.
-for (const { bindings } of [...BUILTIN, ...KEYMAP_EDITOR_BINDINGS, ...EXTENSIONS_BINDINGS, ...THEME_SELECTOR_BINDINGS, ...STATUS_BINDINGS, ...NAV_BINDINGS, ...TAB_BINDINGS]) for (const action of Object.values(bindings)) if (typeof action === "string") commands.set(action, () => {});
+for (const { bindings } of [...BUILTIN, ...KEYMAP_EDITOR_BINDINGS, ...EXTENSIONS_BINDINGS, ...THEME_SELECTOR_BINDINGS, ...STATUS_BINDINGS, ...NAV_BINDINGS, ...TAB_BINDINGS, ...SIDEBAR_BINDINGS]) for (const action of Object.values(bindings)) if (typeof action === "string") commands.set(action, () => {});
 
 /** An open menu takes over a matched action here (I-520). Return true when it handled the action. */
 export const hooks: { beforeCommand: ((action: string) => boolean) | null; context: (() => ContextNode[] | null) | null } = { beforeCommand: null, context: null };
@@ -72,7 +74,8 @@ export function onKeyDown(e: KeyboardEvent): void {
       return;
     }
   }
-  const stack = input ? [WORKSPACE_ROOT] : hooks.context?.() ?? contextStack(e.target);
+  const sidebarSearch = input && stroke === "ctrl-f" && contextStack(e.target).some((node) => node.has("Sidebar"));
+  const stack = input && !sidebarSearch ? [WORKSPACE_ROOT] : hooks.context?.() ?? contextStack(e.target);
   let strokes = [...pending, stroke];
   let result = keymap.dispatch(strokes, stack);
   // A stroke that does not continue the chord starts over on its own.

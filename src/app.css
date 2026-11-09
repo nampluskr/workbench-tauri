@@ -96,11 +96,14 @@ button, input, select, textarea {
 
 /* L-11: [left sidebar] -> [Workspace]. L-12: the sidebar spans the full window height. */
 .sidebar {
+  position: relative;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   width: var(--sidebar-default-width);
+  min-width: var(--dock-min-width); /* core I-11: same bounds as Left Dock (L-31). */
+  max-width: calc(100% - var(--dock-resize-handle-width));
   background: var(--panel-background);
   border-right: var(--window-border-sidebar-right) solid var(--border); /* L-303 */
 }
@@ -147,7 +150,31 @@ button, input, select, textarea {
   height: var(--sidebar-item-separator-width);
   background: var(--border);
 }
-.sidebar-item-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sidebar-item-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sidebar-item { touch-action: none; }
+.sidebar-item:hover .tab-close, .sidebar-item .tab-close:focus-visible { visibility: visible; }
+.sidebar-item.drop-target { border-color: var(--border-focused); }
+/* R-19: no Sidebar search metrics; reuse Extensions X-46 and Sidebar header padding L-34. */
+.sidebar-search {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  height: var(--extensions-search-input-height);
+  margin: var(--sidebar-project-header-padding-right) var(--sidebar-project-header-padding-left);
+  padding: 0 var(--extensions-search-input-padding-right) 0 var(--extensions-search-input-padding-left);
+  gap: var(--extensions-search-input-gap);
+  border: var(--extensions-search-input-border) solid var(--border);
+  border-radius: var(--extensions-search-input-corner-radius);
+  --icon-size: var(--icons-size-small);
+  color: var(--text-muted);
+}
+.sidebar-search input {
+  flex: 1; min-width: 0; width: 100%; border: 0; background: none; color: var(--text); font: inherit;
+  font-size: var(--extensions-search-input-font-size); line-height: var(--extensions-search-input-line-height-multiplier);
+}
+.sidebar-search:focus-within { outline: var(--extensions-search-input-border) solid var(--border-focused); }
+.sidebar-search input:focus { outline: none; }
 .sidebar-item-parent { color: var(--text-muted); } /* A-12.6 */
 .sidebar-item:hover { background: var(--ghost-element-hover); } /* A-12.3 */
 .sidebar-item:active { background: var(--ghost-element-active); } /* A-12.4 */

@@ -6,7 +6,7 @@ import ProjectPanel from "./shell/ProjectPanel.tsx";
 import { PaneArea } from "./shell/Pane.tsx";
 import { resizeHandle } from "./shell/dock.ts";
 import { dockOpen, sidebarOpen, toggleSidebar } from "./shell/panels.ts";
-import { addFolder, editorContext } from "./workspace/store.ts";
+import { addFolder, editorContext, sidebarWidth, resizeSidebar } from "./workspace/store.ts";
 import { activeTabOf } from "./workspace/context.ts";
 import { statusButtons, statusItems } from "./shell/status.ts";
 import { commands } from "./keymap/keyboard.ts";
@@ -17,7 +17,8 @@ export default function App() {
   const status = createMemo(() => statusItems(activeTabOf(editorContext().pane())));
   return (
     <>
-      <aside class="sidebar" hidden={!sidebarOpen()}>
+      <aside class="sidebar" hidden={!sidebarOpen()} data-keymap-context="Sidebar">
+        <div class="dock-resize-handle" ref={(el) => resizeHandle(el, { width: sidebarWidth, setWidth: resizeSidebar })} />
         {/* The header sits in the title bar row, so it drags the window too (L-12). */}
         <div class="sidebar-header" data-tauri-drag-region />
         <FolderList />

@@ -6,6 +6,7 @@ const rem = (px: number) => `${px / REM_SIZE}rem`;
 
 export const PROJECT_PANEL_ITEM_HEIGHT = 26; // project_panel.item.height (L-36); script needs it for the virtual window
 export const PROJECT_PANEL_DEFAULT_WIDTH = 240; // project_panel.default_width (L-32)
+export const DOCK_MIN_WIDTH = 6; // dock.min_width (L-31), also used by Sidebar (core I-11)
 
 // Buffer font size (L-08) and measured gutter padding stay in px; other lengths go through rem().
 const METRICS: Record<string, string> = {
