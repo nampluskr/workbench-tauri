@@ -318,6 +318,23 @@
 - 검증: `/model`로 Sonnet 5.5 ✔·High effort 확인(바꾸지 않고 Esc).
 - 상태: 끝남.
 
+### ORDER-12 메뉴·단축키 글꼴 크기 (2026-11-10)
+
+- 요청: 사용자가 ORDER-11 빌드를 보고 남긴 U-6(core `D:\projects\workbench-core\specs\v0.6\orders\ORDER-12.md`).
+- **K-15 U-6 반영** (2026-11-10, coder, Claude Code Sonnet 5.5 high로 바꾼 뒤 첫 카드)
+  - 무엇을 했나: 모든 오른쪽 클릭 메뉴·≡ 펼친 메뉴의 항목·서브 메뉴 항목·단축키와 Sidebar 검색란 `Ctrl+F` 표시를 툴팁 글꼴 크기 `--tooltip-font-size`(14px)로 했다. 새 값은 없다. 오른쪽 클릭 메뉴와 펼친 메뉴가 같은 `.menu`라 `src/app.css` 한 곳(+ Sidebar 표시 한 줄)을 고쳤다. 메뉴 줄 File~Help는 ORDER-11 U-5대로 `--typography-ui-font-size`(16px)다. Settings 드롭다운도 같은 `.menu`라 함께 14px가 됐다.
+  - 결과: 위와 같다. 쓰지 않게 된 크기 값은 없다.
+  - 검증: typecheck 통과.
+  - 특이사항: 없음
+- C-17 checker [PASS]: typecheck 오류 0, npm test 225 통과, clippy 경고 0, cargo test 21 통과, 코드 검토 지적 없음, V3 8항목 PASS (2026-11-10).
+- **V3(ORDER-12)** (2026-11-10, C-17 판정 [PASS])
+  - 무엇을 했나: debug exe, 임시 APPDATA·WebView 데이터 폴더, One Light. File 메뉴엔 서브 메뉴가 없어 View → Editor Layout과 사용자 메뉴 Panel Layout으로 서브 메뉴를 확인했다.
+  - 결과: 8항목 PASS.
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-12/`(v3.json, tab-context-menu.png, tree-context-menu.png, user-menu-sub.png, file-menu.png, view-editor-layout-sub.png, sidebar-idle.png).
+  - 특이사항: 없음
+- 커밋: 코드 `281de60`.
+- 상태: 끝남.
+
 ## 버전 종료
 
 진행 중.

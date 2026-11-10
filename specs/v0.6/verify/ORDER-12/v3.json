@@ -1,0 +1,102 @@
+{
+  "vars": {
+    "tooltip": "0.875rem",
+    "ui": "16px"
+  },
+  "tooltip": {
+    "box": "14px",
+    "title": "14px",
+    "text": "Search"
+  },
+  "sidebarShortcut": {
+    "text": "Ctrl+F",
+    "size": "14px",
+    "input": "14px"
+  },
+  "tabContext": [
+    {
+      "cls": "menu menu-root",
+      "id": "context-menu",
+      "item": "14px",
+      "label": "Close",
+      "shortcut": "14px",
+      "items": 12
+    }
+  ],
+  "treeContext": [
+    {
+      "cls": "menu menu-root",
+      "id": "context-menu",
+      "item": "14px",
+      "label": "New FileCtrl-N",
+      "shortcut": "14px",
+      "items": 13
+    }
+  ],
+  "sidebarContext": [
+    {
+      "cls": "menu menu-root",
+      "id": "context-menu",
+      "item": "14px",
+      "label": "Rename",
+      "shortcut": null,
+      "items": 1
+    }
+  ],
+  "userMenuSub": [
+    {
+      "cls": "menu menu-root",
+      "id": "context-menu",
+      "item": "14px",
+      "label": "SettingsCtrl-,",
+      "shortcut": "14px",
+      "items": 6
+    },
+    {
+      "cls": "menu menu-child",
+      "id": null,
+      "item": "14px",
+      "label": "✓ Classic",
+      "shortcut": null,
+      "items": 1
+    }
+  ],
+  "fileMenu": {
+    "menuNames": [
+      "File:16px",
+      "Edit:16px",
+      "View:16px",
+      "Go:16px",
+      "Window:16px",
+      "Help:16px"
+    ],
+    "menus": [
+      {
+        "cls": "menu menu-root",
+        "id": null,
+        "item": "14px",
+        "label": "Open Folder...Ctrl-K Ctrl-O",
+        "shortcut": "14px",
+        "items": 5
+      }
+    ]
+  },
+  "viewSub": [
+    {
+      "cls": "menu menu-root",
+      "id": null,
+      "item": "14px",
+      "label": "Toggle Left DockCtrl-B",
+      "shortcut": "14px",
+      "items": 8
+    },
+    {
+      "cls": "menu menu-child",
+      "id": null,
+      "item": "14px",
+      "label": "Split UpCtrl-K Up",
+      "shortcut": "14px",
+      "items": 4
+    }
+  ]
+}
