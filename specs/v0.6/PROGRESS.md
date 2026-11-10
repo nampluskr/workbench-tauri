@@ -371,6 +371,29 @@
 - 커밋: 코드 `64156a7`.
 - 상태: 끝남.
 
+### ORDER-14 Search 탭 입력란 모서리와 결과 항목 여백 (2026-11-10)
+
+- 요청: 사용자가 확인하고 남긴 U-9 Ctrl-Shift-F Search 탭 입력란 왼쪽 위·아래 모서리가 끊겨 보임(사용자 캡처 search-input-corner.png), 같은 카드에 더한 U-10 결과 항목 높이 26px(Left Dock 트리 한 줄)·항목 사이 4px(사용자 선택)(core `D:\projects\workbench-core\specs\v0.6\orders\ORDER-14.md`).
+- **K-18 U-9 반영** (2026-11-10, coder, Claude Code Sonnet 5.5 high)
+  - 무엇을 했나: 원인은 입력란 안 `<input>`의 불투명 사각 배경이 둥근 테두리 왼쪽 모서리를 덮은 것이다. 여백·최소 높이를 바깥 칸(`.project-search-input`)으로 옮기고 input 배경을 투명으로 했다. 편집기 찾기 줄 입력란(`.document-search-field`)과 같은 변수·구조다. `src/search/search.css`만 고쳤다.
+  - 결과: 입력란 왼쪽 모서리가 끊기지 않는다.
+  - 검증: typecheck 통과.
+  - 특이사항: 없음
+- C-20 checker [PASS]: U-9 (2026-11-10).
+- **K-18-R1 U-10 반영** (2026-11-10, coder, Claude Code Sonnet 5.5 high)
+  - 무엇을 했나: 결과 항목 높이에 기존 `--project-panel-item-height`(`project_panel.item.height` 26px)를 쓰고, 위아래 바깥 여백은 새 상수 `search_results.header.margin_y` = 2px로 뒀다(사용자 결정 ORDER-14 U-10, toml에 없어 `src/spec/metrics.ts`에 출처 주석, `spec/` 수정 없음). 좌우 여백 4px·테두리·모서리·글꼴은 그대로다. 쓰지 않게 된 `search_results.header.lines`·`--search-line-height`는 지웠다.
+  - 결과: 결과 항목 높이 26px, 항목 사이 4px.
+  - 검증: typecheck 통과, npm test 227 통과.
+  - 특이사항: 없음
+- C-20-R1 checker [PASS](U-9+U-10, 커밋 직전 전체): typecheck 오류 0, npm test 227 통과, clippy 경고 0, cargo test 22 통과, 코드 검토 지적 없음, V3 PASS (2026-11-10).
+- **V3(ORDER-14)** (2026-11-10, C-20-R1 판정 [PASS])
+  - 무엇을 했나: debug exe, 임시 APPDATA·WebView 데이터 폴더.
+  - 결과: 입력란 높이 32·모서리 6px·왼쪽 테두리 1px·왼쪽 여백 8px(찾기 줄과 같음). 결과 항목 높이 26(트리 한 줄 26)·간격 4·4. 결과 클릭으로 notes.md가 열린다. PASS.
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-14/`(v3.json, search-tab.png, search-input-left-zoom.png, search-input-right-zoom.png, search-results-zoom.png).
+  - 특이사항: 없음
+- 커밋: 코드 `3c8e235`.
+- 상태: 끝남.
+
 ## 버전 종료
 
 진행 중.

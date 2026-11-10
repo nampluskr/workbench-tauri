@@ -1,0 +1,135 @@
+{
+  "findBar": {
+    "l": 448,
+    "t": 116,
+    "r": 1199,
+    "b": 148,
+    "h": 32,
+    "radius": [
+      "6px",
+      "6px",
+      "6px",
+      "6px"
+    ],
+    "borderLeft": "1px solid",
+    "padL": "8px",
+    "bg": "rgb(250, 250, 250)"
+  },
+  "searchTab": {
+    "field": {
+      "l": 448,
+      "t": 71,
+      "r": 1384,
+      "b": 103,
+      "h": 32,
+      "radius": [
+        "6px",
+        "6px",
+        "6px",
+        "6px"
+      ],
+      "borderLeft": "1px solid",
+      "padL": "8px",
+      "bg": "rgb(250, 250, 250)"
+    },
+    "input": {
+      "l": 457,
+      "bg": "rgba(0, 0, 0, 0)",
+      "padL": "0px"
+    },
+    "tab": {
+      "l": 440,
+      "t": 65,
+      "r": 1440,
+      "b": 821,
+      "h": 756,
+      "radius": [
+        "6px",
+        "6px",
+        "6px",
+        "6px"
+      ],
+      "borderLeft": "0px none",
+      "padL": "0px",
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    "container": {
+      "l": 440,
+      "t": 65,
+      "r": 1440,
+      "b": 821,
+      "h": 756,
+      "radius": [
+        "6px",
+        "6px",
+        "6px",
+        "6px"
+      ],
+      "borderLeft": "0px none",
+      "padL": "0px",
+      "bg": "rgb(250, 250, 250)"
+    },
+    "header": {
+      "l": 444,
+      "t": 112,
+      "r": 1436,
+      "b": 138,
+      "h": 26,
+      "radius": [
+        "2px",
+        "2px",
+        "2px",
+        "2px"
+      ],
+      "borderLeft": "1px solid",
+      "padL": "4px",
+      "bg": "rgb(235, 235, 236)"
+    },
+    "items": [
+      {
+        "name": "Readme.md",
+        "t": 112,
+        "b": 138,
+        "h": 26,
+        "l": 444,
+        "r": 1436,
+        "margin": "2px 4px",
+        "radius": "2px",
+        "border": "1px",
+        "font": "16px"
+      },
+      {
+        "name": "notes.md",
+        "t": 142,
+        "b": 168,
+        "h": 26,
+        "l": 444,
+        "r": 1436,
+        "margin": "2px 4px",
+        "radius": "2px",
+        "border": "1px",
+        "font": "16px"
+      },
+      {
+        "name": "readme-old.md",
+        "t": 172,
+        "b": 198,
+        "h": 26,
+        "l": 444,
+        "r": 1436,
+        "margin": "2px 4px",
+        "radius": "2px",
+        "border": "1px",
+        "font": "16px"
+      }
+    ],
+    "gaps": [
+      4,
+      4
+    ],
+    "treeRowH": 26,
+    "opened": [
+      "notes.md"
+    ]
+  }
+}
