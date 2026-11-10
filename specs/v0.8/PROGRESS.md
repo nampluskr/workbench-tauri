@@ -97,3 +97,49 @@
   - 검증: V3. part1의 SVG fill 변경 단계는 스크립트 오류(Ctrl+S 키 표 누락)로 part2에서 다시 쟀다.
   - 특이사항:
     - K-02a·K-02c 되돌리기 때 `Cargo.lock`이 CRLF로 다시 쓰여 `tools/rust-licenses.test.mjs`가 실패해 보였고, tauri-leader가 LF로 되돌렸다(내용 변화 없음).
+
+### Phase 3 — HTML 미리보기
+
+- **W-05 PLAN Phase 3 표** (2026-11-11, 커밋 `f62ed74`)
+  - 무엇을 했나: `PLAN.md`에 "Phase 3 작업 카드" 표(K-03a·K-03b·C-06·C-07·W-05·W-06)를 Phase 2 표 형식으로 더했다.
+  - 결과: 그 밖의 절은 그대로다.
+  - 검증: V0. 명령 실행 없음(보고 `C:\Users\nampl\AppData\Local\Temp\v08-W-05-report.md`).
+  - 특이사항: 없음.
+- **K-03s 보안 설정(M-12·M-13, PLAN 표의 K-03a)** [BLOCKED] → 사용자 직접 적용 (2026-11-11, 커밋 `6d15017`)
+  - 무엇을 했나: tauri-leader의 K-03a 카드 전송이 Claude Code auto mode에 막혀 `[BLOCKED]`가 됐고, leader-core가 처리해 사용자가 tauri-coder pane에서 직접 적용했다. `tauri.conf.json` `csp`·`devCsp` 끝에 `style-src 'self' 'unsafe-inline' asset: http://asset.localhost`, `img-src`에 `data:`(leader-core 결정, ORDER-04 ipynb 그림용 — ORDER-04에서 CSP를 다시 바꾸지 않는다), `app.security.dangerousDisableAssetCspModification: ["style-src"]`.
+  - 결과: `default-src`·`script-src`·`connect-src`·`frame-src`, asset 범위(`**`), capability, Cargo·의존성은 그대로다. `csp`와 `devCsp`는 `connect-src`의 `ws://localhost:1420` 말고 같다. 앞뒤 값 전체는 K-03s 보고와 `C:\Users\nampl\AppData\Local\Temp\v08-C-07-conf-diff.txt`에 있다.
+  - 검증: V0. JSON 파싱만 확인했다(보고 `C:\Users\nampl\AppData\Local\Temp\v08-K-03s-report.md`). 빌드 exe의 실제 헤더는 V3 #1에서 확인했다.
+  - 특이사항: v0.8은 DECISIONS를 쓰지 않으므로 CSP 앞뒤 값과 이유는 `specs/v0.8/reports/ORDER-03.md`(tauri-leader가 씀)와 이 PROGRESS에 둔다. 대기는 약 40분이었다.
+- **K-03b I-1 HTML 미리보기(M-1·M-5·M-7·M-8·M-12·M-13·I-1)** (2026-11-11, coder, 커밋 `f62ed74`)
+  - 무엇을 했나:
+    - `preview-kind.ts`에 `html` 종류(`.html`·`.htm`)를 더했다. 눈 버튼·Ctrl+Shift+V·Ctrl+K V·메뉴·트리 메뉴·Lock Preview는 판별 한 곳을 따라온다. 위치 연계는 없다(M-1).
+    - `markdown-preview.ts`가 html 종류에서 iframe 하나(`sandbox="allow-same-origin"`, `srcdoc`)를 그린다. 고치면 기존 `changed` 디바운스로 srcdoc을 바꾸고 스크롤 위치를 되돌린다.
+    - 새 `src/editor/html.ts` `htmlSrcdoc`: `<script>`·`<base>`·`<iframe>`·`<frame>`·`<frameset>`·`<embed>`·`<object>`·`<applet>`·meta refresh, `on*`·`ping` 속성, stylesheet가 아닌 `<link>`를 지운다. `javascript:`·`data:`·인터넷(`http:`·`https:`·`//host`)·빈 URL은 속성을 지우고, 로컬 경로는 HTML 파일 기준으로 풀어(`localImagePath` 재사용, 폴더 제한 없음 M-8) asset URL로 바꾼다. `<style>`·`style=`의 `@import`는 지우고 `url()`은 같은 규칙으로 바꾼다. 링크·폼 대상(`href`·`action`·`formaction`)은 지운다.
+  - 결과: CSP·capability·Cargo·의존성 변경 없음. `csv.test.ts`·`tabs.test.ts`의 "`.html`은 미리보기 없음" 단언은 `.xhtml`로 바꿨다.
+  - 검증: V1. typecheck 0, test 273/273. 새 테스트 `html.test.ts`(node에 DOM이 없어 URL 분류·CSS·srcset 등 순수 부분만). 보고 `C:\Users\nampl\AppData\Local\Temp\v08-K-03b-report.md`.
+  - 특이사항: C-06 [PASS](아래).
+- **C-06 checker 검토(K-03b)** [PASS] (2026-11-11)
+  - 무엇을 했나: 판별·열기 경로, sandbox 단일 토큰과 srcdoc, 정화 목록과 요청 새는 경로(SVG `<image>`, `<input type=image>`, video·audio, CSS `image-set()`·`@font-face`), 경로 풀기, 마크다운 DOMPurify `style` 금지 불변을 봤다.
+  - 결과: 지적 없음. `color-scheme: dark` 실제 화면은 V3·사용자 확인으로 넘겼다.
+  - 검증: V1. typecheck 0, test 273/273(보고 `C:\Users\nampl\AppData\Local\Temp\v08-C-06-report.md`).
+  - 특이사항: 없음.
+- **K-03c `#id` 링크 지우기(I-1)** (2026-11-11, coder, 커밋 `6d15017`)
+  - 무엇을 했나: V3에서 `<a href="#h">`를 누르면 iframe이 `http://tauri.localhost/#h`(앱 페이지)로 이동하는 결함이 나왔다(`verify/ORDER-03/v3-c6-r1.json`). srcdoc의 `#id`가 앱 URL 기준으로 풀리기 때문이다. 새 순수 함수 `navigates(tag, attr)`로 `<a>`·`<area>`의 `href`·`xlink:href`와 `action`·`formaction`을 `#id`까지 모두 지운다. `<use href="#id">` 같은 비탐색 참조는 남는다.
+  - 결과: `src/editor/html.ts`·`html.test.ts`만 바뀌었다. 기대값을 바꾼 테스트는 없다.
+  - 검증: V1. typecheck 0, test 274/274(보고 `C:\Users\nampl\AppData\Local\Temp\v08-K-03c-report.md`). 다시 재서 해결했다(`v3-c6.json`, frame url `about:srcdoc` 유지).
+  - 특이사항: 없음.
+- **V3 측정과 C-07 판정(ORDER-03)** [PASS] (2026-11-11, tauri-leader 측정, checker 판정)
+  - 무엇을 했나: tauri-leader가 재고 C-07이 보안 diff, K-03c, 완료 기준 #1~#9를 판정했다. 결과는 `specs/v0.8/verify/ORDER-03/`(json 4, PNG 11, `c8-diff-bbox.txt`).
+  - 결과: #1~#9 PASS.
+    - #1 보안: 빌드 exe의 실제 CSP 헤더가 conf와 같고, sandbox는 `allow-same-origin` 하나다.
+    - #2 열기: `.html`·`.htm` 둘 다 눈 버튼·Ctrl+Shift+V·Ctrl+K V·트리 메뉴·Lock Preview.
+    - #3 로컬 자원: 하위·상위 CSS, `<style>`, `style=`, 이미지 4종(하위·상위·한글·공백·URL 인코딩)이 적용된다.
+    - #4 JS 막기: 전역·title·script·`on*` 흔적 0, 콘솔 0건. #5 인터넷: 외부 요청 0건. #6 이동 막기: 상대·외부·앵커 링크와 폼 제출 뒤에도 `about:srcdoc`, meta refresh 0. #7 갱신: 글자·색이 바로 바뀐다.
+    - #8 회귀: settings는 0px 차이, main·menu·about 차이는 트리의 `site` 폴더 펼침뿐이다. 마크다운 위치 연계·`style=` 제거, CSV 줄바꿈, SVG, 이미지는 그대로다. PDF 보기는 측정 스크립트에서 빠져 코드 확인(`view-body.ts`·`frame-src` 안 바뀜)으로 판정했다.
+    - #9 테스트: typecheck 0, test 274/274.
+  - 검증: V3·V1(보고 `C:\Users\nampl\AppData\Local\Temp\v08-C-07-report.md`).
+  - 특이사항(한계·사용자 확인):
+    - 링크된 CSS 파일 안의 상대 `url()`은 풀리지 않는다(`html.ts` `shortcut:`, M-7).
+    - `.html-frame`의 `color-scheme: dark`로 HTML 기본 배경이 흰색이 아니라 어둡다. 맞는지는 사용자가 정한다.
+    - iframe 안으로 키보드 포커스가 들어가면 앱 단축키가 닿지 않는다(탭 밖을 눌러야 돌아온다).
+    - PDF 보기 화면은 Phase 5 사용자 확인 목록에 넣는다.

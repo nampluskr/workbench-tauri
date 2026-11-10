@@ -1,0 +1,112 @@
+{
+  "mode": "c6",
+  "c6_steps": {
+    "before": {
+      "sandbox": "allow-same-origin",
+      "hasSrc": false,
+      "url": "about:srcdoc",
+      "title": "",
+      "h1": "Links"
+    },
+    "hrefs": [
+      "A null",
+      "A null",
+      "A null",
+      "FORM null"
+    ],
+    "rel": {
+      "clicked": true,
+      "frame": {
+        "sandbox": "allow-same-origin",
+        "hasSrc": false,
+        "url": "about:srcdoc",
+        "title": "",
+        "h1": "Links"
+      },
+      "tabs": [
+        [
+          "links.html",
+          "Preview links.html"
+        ]
+      ]
+    },
+    "web": {
+      "clicked": true,
+      "frame": {
+        "sandbox": "allow-same-origin",
+        "hasSrc": false,
+        "url": "about:srcdoc",
+        "title": "",
+        "h1": "Links"
+      },
+      "tabs": [
+        [
+          "links.html",
+          "Preview links.html"
+        ]
+      ]
+    },
+    "anchor": {
+      "clicked": true,
+      "frame": {
+        "sandbox": "allow-same-origin",
+        "hasSrc": false,
+        "url": "about:srcdoc",
+        "title": "",
+        "h1": "Links"
+      },
+      "tabs": [
+        [
+          "links.html",
+          "Preview links.html"
+        ]
+      ]
+    },
+    "sub": {
+      "clicked": true,
+      "frame": {
+        "sandbox": "allow-same-origin",
+        "hasSrc": false,
+        "url": "about:srcdoc",
+        "title": "",
+        "h1": "Links"
+      },
+      "tabs": [
+        [
+          "links.html",
+          "Preview links.html"
+        ]
+      ]
+    },
+    "targets": [
+      "page http://tauri.localhost/"
+    ],
+    "refresh": {
+      "sandbox": "allow-same-origin",
+      "hasSrc": false,
+      "url": "about:srcdoc",
+      "title": "",
+      "h1": "Refresh"
+    },
+    "refreshMeta": 0,
+    "example": []
+  },
+  "c8_screens": {
+    "main": {
+      "differentPixels": 19102,
+      "total": 1226880
+    },
+    "menu": {
+      "differentPixels": 12306,
+      "total": 1226880
+    },
+    "about": {
+      "differentPixels": 19102,
+      "total": 1226880
+    },
+    "settings": {
+      "differentPixels": 0,
+      "total": 675000
+    }
+  }
+}

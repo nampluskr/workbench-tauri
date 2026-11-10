@@ -1,0 +1,223 @@
+{
+  "mode": "full",
+  "c1_csp_header": [
+    "frame-src asset: http://asset.localhost; style-src 'self' 'unsafe-inline' asset: http://asset.localhost; default-src 'self' ipc: http://ipc.localhost; img-src 'self' data: asset: http://asset.localhost; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' ipc: http://ipc.localhost"
+  ],
+  "c2_open": {
+    "page.html_eye": true,
+    "page.html_byEye": {
+      "panes": [
+        [
+          "page.html",
+          "Preview page.html"
+        ]
+      ],
+      "frame": {
+        "sandbox": "allow-same-origin",
+        "hasSrc": false,
+        "url": "about:srcdoc",
+        "title": "",
+        "h1": "Heading"
+      }
+    },
+    "page.html_ctrlShiftV": {
+      "panes": [
+        [
+          "page.html",
+          "Preview page.html"
+        ]
+      ],
+      "frame": {
+        "sandbox": "allow-same-origin",
+        "hasSrc": false,
+        "url": "about:srcdoc",
+        "title": "",
+        "h1": "Heading"
+      }
+    },
+    "page.html_ctrlKV": {
+      "panes": [
+        [
+          "page.html"
+        ],
+        [
+          "Preview page.html"
+        ]
+      ]
+    },
+    "page.html_treeMenu": [
+      "Open Preview"
+    ],
+    "page.html_byTree": {
+      "panes": [
+        [
+          "Preview page.html"
+        ]
+      ]
+    },
+    "page.html_lock": {
+      "pressed": "true",
+      "panes": [
+        [
+          "Preview page.html"
+        ]
+      ]
+    },
+    "page.htm_eye": true,
+    "page.htm_byEye": {
+      "panes": [
+        [
+          "page.htm",
+          "Preview page.htm"
+        ]
+      ],
+      "frame": {
+        "sandbox": "allow-same-origin",
+        "hasSrc": false,
+        "url": "about:srcdoc",
+        "title": "",
+        "h1": "HTM file"
+      }
+    },
+    "page.htm_ctrlShiftV": {
+      "panes": [
+        [
+          "page.htm",
+          "Preview page.htm"
+        ]
+      ],
+      "frame": {
+        "sandbox": "allow-same-origin",
+        "hasSrc": false,
+        "url": "about:srcdoc",
+        "title": "",
+        "h1": "HTM file"
+      }
+    },
+    "page.htm_ctrlKV": {
+      "panes": [
+        [
+          "page.htm"
+        ],
+        [
+          "Preview page.htm"
+        ]
+      ]
+    },
+    "page.htm_treeMenu": [
+      "Open Preview"
+    ],
+    "page.htm_byTree": {
+      "panes": [
+        [
+          "Preview page.htm"
+        ]
+      ]
+    },
+    "page.htm_lock": {
+      "pressed": "true",
+      "panes": [
+        [
+          "Preview page.htm"
+        ]
+      ]
+    }
+  },
+  "c3_local": {
+    "h1": "rgb(10, 20, 30)",
+    "parent": "rgb(40, 50, 60)",
+    "inlineBg": "rgb(70, 80, 90)",
+    "attr": "rgb(100, 110, 120)",
+    "imgs": [
+      {
+        "id": "i1",
+        "natural": 50,
+        "src": "scratchpad\\o03v\\site\\img\\a.png"
+      },
+      {
+        "id": "i2",
+        "natural": 50,
+        "src": "d8b8437c\\scratchpad\\o03v\\c.png"
+      },
+      {
+        "id": "i3",
+        "natural": 50,
+        "src": "scratchpad\\o03v\\site\\한글 그림.png"
+      },
+      {
+        "id": "i4",
+        "natural": 50,
+        "src": "scratchpad\\o03v\\site\\한글 그림.png"
+      }
+    ],
+    "sandbox": "allow-same-origin"
+  },
+  "c4_js": {
+    "frameGlobals": {
+      "evil": null,
+      "onload": null,
+      "onerror": null,
+      "js": null
+    },
+    "parentGlobals": {
+      "evilParent": null
+    },
+    "title": "",
+    "scripts": 0,
+    "onAttrs": [],
+    "jsHref": null,
+    "bodyLen": 229,
+    "bodyLenBeforeClick": 229,
+    "consoleEvil": []
+  },
+  "c5_net": {
+    "example": [],
+    "frame": {
+      "sandbox": "allow-same-origin",
+      "hasSrc": false,
+      "url": "about:srcdoc",
+      "title": "",
+      "h1": "Net"
+    }
+  },
+  "c6_nav": "ERR TypeError: Cannot read properties of null (reading 'getElementById')\n    at <anonymous>:1:132\n    at <anonymous>:1:287",
+  "c7_live": {
+    "before": {
+      "text": "Before",
+      "color": "rgb(255, 0, 0)"
+    },
+    "after": {
+      "text": "After",
+      "color": "rgb(0, 0, 255)"
+    }
+  },
+  "c8_regress": {
+    "mdActive": [
+      "Section 3"
+    ],
+    "mdStyleAttrs": [
+      0
+    ],
+    "csv": "x\ny",
+    "svg": "rgb(255, 0, 0)",
+    "image": 40,
+    "screenDiff": {
+      "main": {
+        "differentPixels": 19102,
+        "total": 1226880
+      },
+      "menu": {
+        "differentPixels": 12306,
+        "total": 1226880
+      },
+      "about": {
+        "differentPixels": 19102,
+        "total": 1226880
+      },
+      "settings": {
+        "differentPixels": 0,
+        "total": 675000
+      }
+    }
+  }
+}
