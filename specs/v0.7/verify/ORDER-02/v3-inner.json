@@ -1,0 +1,39 @@
+{
+  "inner": {
+    "toolbar": [
+      "SPAN color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(92, 120, 226) bg=rgba(0, 0, 0, 0) border=rgb(92, 120, 226)",
+      "[object SVGAnimatedString] color=rgb(92, 120, 226) bg=rgba(0, 0, 0, 0) border=rgb(92, 120, 226)"
+    ],
+    "findBar": [
+      "Find color=rgb(36, 37, 41) bg=rgba(0, 0, 0, 0) border=rgb(36, 37, 41)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)",
+      "[object SVGAnimatedString] color=rgb(88, 88, 90) bg=rgba(0, 0, 0, 0) border=rgb(88, 88, 90)"
+    ]
+  }
+}

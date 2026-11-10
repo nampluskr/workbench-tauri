@@ -6,7 +6,7 @@ import AppMenu, { isContextMenuOpen, openContextMenu } from "../shell/AppMenu.ts
 import { commands } from "../keymap/keyboard.ts";
 import { SETTINGS_DROPDOWN_OFFSET_Y } from "../spec/metrics.ts";
 import { choices } from "./choices.ts";
-import { CATEGORIES, filterSettings, settingMenu, type SettingKey } from "./model.ts";
+import { CATEGORIES, filterSettings, isChoiceKey, settingMenu, type ChoiceKey, type SettingKey } from "./model.ts";
 import { saveSetting, settings } from "./load.ts";
 import "./settings.css";
 
@@ -40,7 +40,7 @@ export default function SettingsWindow() {
           <h1 id={`category-${category}`}>{category}</h1>
           <For each={rows().filter((r) => r.category === category)}>{(row) => <div class="settings-row">
             <div class="settings-copy"><label id={`label-${row.key}`} for={`setting-${row.key}`}>{row.name}</label><p id={`description-${row.key}`}>{row.description}</p></div>
-            <Show when={row.key === "theme" || row.key === "icon_theme"} fallback={
+            <Show when={isChoiceKey(row.key)} fallback={
               <div class="settings-number">
                 <button aria-label={`Decrease ${row.category} Font Size`} disabled={saving()} onClick={() => void save(row.key, Number(settings()[row.key]) - 1)}>−</button>
                 <input id={`setting-${row.key}`} aria-describedby={`description-${row.key}`} type="number" step="any" value={settings()[row.key]} disabled={saving()} onChange={(e) => void save(row.key, e.currentTarget.valueAsNumber)} />
@@ -51,7 +51,7 @@ export default function SettingsWindow() {
                 let items: ReturnType<typeof settingMenu> = [];
                 const open = (button: HTMLButtonElement, last = false) => {
                   if (saving()) return;
-                  items = settingMenu(row.key as "theme" | "icon_theme", String(settings()[row.key]), (value) => void save(row.key, value), choices);
+                  items = settingMenu(row.key as ChoiceKey, String(settings()[row.key]), (value) => void save(row.key, value), choices);
                   const at = button.getBoundingClientRect();
                   openContextMenu({ x: at.right, y: at.bottom + SETTINGS_DROPDOWN_OFFSET_Y }, items, true);
                   commands.get(last ? "menu::SelectLast" : "menu::SelectFirst")?.();

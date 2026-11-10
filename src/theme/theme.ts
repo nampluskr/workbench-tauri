@@ -135,8 +135,9 @@ export function over(top: string, bottom: string): string {
   return formatColor({ r: mix(t.r, b.r), g: mix(t.g, b.g), b: mix(t.b, b.b), a: 255 }).slice(0, 7);
 }
 
-export function themeCss(tokens: Record<Token, string>): string {
-  return `:root { ${TARGET_TOKENS.map((t) => `${cssVarName(t)}: ${tokens[t]};`).join(" ")} }`;
+/** The token variables on `selector`: :root for the UI theme, a tab body for the editor and preview themes (I-3). */
+export function themeCss(tokens: Record<Token, string>, selector = ":root"): string {
+  return `${selector} { ${TARGET_TOKENS.map((t) => `${cssVarName(t)}: ${tokens[t]};`).join(" ")} }`;
 }
 
 // Syntax colors (T-06) are outside the R-7 target tokens: they are only turned into highlight
@@ -145,7 +146,7 @@ type SyntaxStyle = { color?: string | null; font_style?: string | null; font_wei
 
 export const syntaxClass = (key: string) => "cm-syntax-" + key.replace(/\./g, "-");
 
-export function syntaxCss(style: ThemeStyle): string {
+export function syntaxCss(style: ThemeStyle, scope = ""): string {
   const syntax = (style.syntax ?? {}) as Record<string, SyntaxStyle>;
   return Object.entries(syntax)
     .map(([key, s]) => {
@@ -154,7 +155,7 @@ export function syntaxCss(style: ThemeStyle): string {
         s.font_style && `font-style: ${s.font_style};`,
         s.font_weight && `font-weight: ${s.font_weight};`,
       ].filter(Boolean);
-      return `.${syntaxClass(key)} { ${rules.join(" ")} }`;
+      return `${scope ? scope + " " : ""}.${syntaxClass(key)} { ${rules.join(" ")} }`;
     })
     .join("\n");
 }

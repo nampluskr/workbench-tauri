@@ -1,0 +1,658 @@
+{
+  "c5_noSettings_base": {
+    "appearance": "dark",
+    "ui": {
+      "titleBar": "rgb(59, 65, 77)",
+      "sidebar": "rgb(47, 52, 62)",
+      "sidebarText": "rgb(220, 224, 229)",
+      "projectPanel": "rgba(0, 0, 0, 0)",
+      "treeLabel": "rgb(220, 224, 229)",
+      "tabBar": "rgb(47, 52, 62)",
+      "activeTab": "rgb(40, 44, 51)",
+      "activeTabText": "rgb(220, 224, 229)",
+      "statusBar": "rgb(59, 65, 77)",
+      "statusText": "rgb(220, 224, 229)",
+      "pane": "rgb(59, 65, 77)"
+    },
+    "editor": {
+      "bg": "rgb(40, 44, 51)",
+      "text": "rgb(172, 178, 190)",
+      "gutter": "rgb(40, 44, 51)",
+      "lineNumber": "rgb(78, 90, 95)",
+      "toolbar": "rgb(40, 44, 51)",
+      "toolbarText": "rgb(220, 224, 229)",
+      "findBar": "rgba(0, 0, 0, 0)",
+      "findInput": "rgba(0, 0, 0, 0)",
+      "syntax": [
+        "cm-syntax-title rgb(208, 114, 119)",
+        "cm-syntax-text-literal rgb(161, 193, 129)",
+        "cm-syntax-link_text rgb(115, 173, 233)"
+      ],
+      "scrollThumb": "#c8ccd44c"
+    },
+    "preview": {
+      "bg": "rgb(40, 44, 51)",
+      "text": "rgb(220, 224, 229)",
+      "h1": "rgb(220, 224, 229)",
+      "link": "rgb(116, 173, 232)",
+      "inlineCode": "color(srgb 0.67451 0.698039 0.745098 / 0.08)",
+      "pre": "rgb(40, 44, 51)",
+      "syntax": [
+        "cm-syntax-keyword rgb(180, 119, 207)",
+        "cm-syntax-variable rgb(172, 178, 190)",
+        "cm-syntax-punctuation-special rgb(177, 87, 75)"
+      ],
+      "scrollThumb": "#c8ccd44c"
+    }
+  },
+  "c5_noSettings_new": {
+    "appearance": "dark",
+    "ui": {
+      "titleBar": "rgb(59, 65, 77)",
+      "sidebar": "rgb(47, 52, 62)",
+      "sidebarText": "rgb(220, 224, 229)",
+      "projectPanel": "rgba(0, 0, 0, 0)",
+      "treeLabel": "rgb(220, 224, 229)",
+      "tabBar": "rgb(47, 52, 62)",
+      "activeTab": "rgb(40, 44, 51)",
+      "activeTabText": "rgb(220, 224, 229)",
+      "statusBar": "rgb(59, 65, 77)",
+      "statusText": "rgb(220, 224, 229)",
+      "pane": "rgb(59, 65, 77)"
+    },
+    "editor": {
+      "bg": "rgb(40, 44, 51)",
+      "text": "rgb(172, 178, 190)",
+      "gutter": "rgb(40, 44, 51)",
+      "lineNumber": "rgb(78, 90, 95)",
+      "toolbar": "rgb(40, 44, 51)",
+      "toolbarText": "rgb(220, 224, 229)",
+      "findBar": "rgba(0, 0, 0, 0)",
+      "findInput": "rgba(0, 0, 0, 0)",
+      "syntax": [
+        "cm-syntax-title rgb(208, 114, 119)",
+        "cm-syntax-text-literal rgb(161, 193, 129)",
+        "cm-syntax-link_text rgb(115, 173, 233)"
+      ],
+      "scrollThumb": "#c8ccd44c"
+    },
+    "preview": {
+      "bg": "rgb(40, 44, 51)",
+      "text": "rgb(220, 224, 229)",
+      "h1": "rgb(220, 224, 229)",
+      "link": "rgb(116, 173, 232)",
+      "inlineCode": "color(srgb 0.67451 0.698039 0.745098 / 0.08)",
+      "pre": "rgb(40, 44, 51)",
+      "syntax": [
+        "cm-syntax-keyword rgb(180, 119, 207)",
+        "cm-syntax-variable rgb(172, 178, 190)",
+        "cm-syntax-punctuation-special rgb(177, 87, 75)"
+      ],
+      "scrollThumb": "#c8ccd44c"
+    }
+  },
+  "c5_noSettings_equal": true,
+  "c5_v06ThemeOnly_base": {
+    "appearance": "light",
+    "ui": {
+      "titleBar": "rgb(220, 220, 221)",
+      "sidebar": "rgb(235, 235, 236)",
+      "sidebarText": "rgb(36, 37, 41)",
+      "projectPanel": "rgba(0, 0, 0, 0)",
+      "treeLabel": "rgb(36, 37, 41)",
+      "tabBar": "rgb(235, 235, 236)",
+      "activeTab": "rgb(250, 250, 250)",
+      "activeTabText": "rgb(36, 37, 41)",
+      "statusBar": "rgb(220, 220, 221)",
+      "statusText": "rgb(36, 37, 41)",
+      "pane": "rgb(220, 220, 221)"
+    },
+    "editor": {
+      "bg": "rgb(250, 250, 250)",
+      "text": "rgb(36, 37, 41)",
+      "gutter": "rgb(250, 250, 250)",
+      "lineNumber": "rgb(180, 180, 187)",
+      "toolbar": "rgb(250, 250, 250)",
+      "toolbarText": "rgb(36, 37, 41)",
+      "findBar": "rgba(0, 0, 0, 0)",
+      "findInput": "rgba(0, 0, 0, 0)",
+      "syntax": [
+        "cm-syntax-title rgb(211, 96, 79)",
+        "cm-syntax-text-literal rgb(100, 159, 87)",
+        "cm-syntax-link_text rgb(91, 121, 227)"
+      ],
+      "scrollThumb": "#383a414c"
+    },
+    "preview": {
+      "bg": "rgb(250, 250, 250)",
+      "text": "rgb(36, 37, 41)",
+      "h1": "rgb(36, 37, 41)",
+      "link": "rgb(92, 120, 226)",
+      "inlineCode": "color(srgb 0.141176 0.145098 0.160784 / 0.08)",
+      "pre": "rgb(250, 250, 250)",
+      "syntax": [
+        "cm-syntax-keyword rgb(164, 73, 171)",
+        "cm-syntax-variable rgb(36, 37, 41)",
+        "cm-syntax-punctuation-special rgb(185, 43, 70)"
+      ],
+      "scrollThumb": "#383a414c"
+    }
+  },
+  "c5_v06ThemeOnly_new": {
+    "appearance": "light",
+    "ui": {
+      "titleBar": "rgb(220, 220, 221)",
+      "sidebar": "rgb(235, 235, 236)",
+      "sidebarText": "rgb(36, 37, 41)",
+      "projectPanel": "rgba(0, 0, 0, 0)",
+      "treeLabel": "rgb(36, 37, 41)",
+      "tabBar": "rgb(235, 235, 236)",
+      "activeTab": "rgb(250, 250, 250)",
+      "activeTabText": "rgb(36, 37, 41)",
+      "statusBar": "rgb(220, 220, 221)",
+      "statusText": "rgb(36, 37, 41)",
+      "pane": "rgb(220, 220, 221)"
+    },
+    "editor": {
+      "bg": "rgb(250, 250, 250)",
+      "text": "rgb(36, 37, 41)",
+      "gutter": "rgb(250, 250, 250)",
+      "lineNumber": "rgb(180, 180, 187)",
+      "toolbar": "rgb(250, 250, 250)",
+      "toolbarText": "rgb(36, 37, 41)",
+      "findBar": "rgba(0, 0, 0, 0)",
+      "findInput": "rgba(0, 0, 0, 0)",
+      "syntax": [
+        "cm-syntax-title rgb(211, 96, 79)",
+        "cm-syntax-text-literal rgb(100, 159, 87)",
+        "cm-syntax-link_text rgb(91, 121, 227)"
+      ],
+      "scrollThumb": "#383a414c"
+    },
+    "preview": {
+      "bg": "rgb(250, 250, 250)",
+      "text": "rgb(36, 37, 41)",
+      "h1": "rgb(36, 37, 41)",
+      "link": "rgb(92, 120, 226)",
+      "inlineCode": "color(srgb 0.141176 0.145098 0.160784 / 0.08)",
+      "pre": "rgb(250, 250, 250)",
+      "syntax": [
+        "cm-syntax-keyword rgb(164, 73, 171)",
+        "cm-syntax-variable rgb(36, 37, 41)",
+        "cm-syntax-punctuation-special rgb(185, 43, 70)"
+      ],
+      "scrollThumb": "#383a414c"
+    }
+  },
+  "c5_v06ThemeOnly_equal": true,
+  "c1_mixed": {
+    "appearance": "dark",
+    "ui": {
+      "titleBar": "rgb(59, 65, 77)",
+      "sidebar": "rgb(47, 52, 62)",
+      "sidebarText": "rgb(220, 224, 229)",
+      "projectPanel": "rgba(0, 0, 0, 0)",
+      "treeLabel": "rgb(220, 224, 229)",
+      "tabBar": "rgb(47, 52, 62)",
+      "activeTab": "rgb(40, 44, 51)",
+      "activeTabText": "rgb(220, 224, 229)",
+      "statusBar": "rgb(59, 65, 77)",
+      "statusText": "rgb(220, 224, 229)",
+      "pane": "rgb(59, 65, 77)"
+    },
+    "editor": {
+      "bg": "rgb(250, 250, 250)",
+      "text": "rgb(36, 37, 41)",
+      "gutter": "rgb(250, 250, 250)",
+      "lineNumber": "rgb(180, 180, 187)",
+      "toolbar": "rgb(250, 250, 250)",
+      "toolbarText": "rgb(220, 224, 229)",
+      "findBar": "rgba(0, 0, 0, 0)",
+      "findInput": "rgba(0, 0, 0, 0)",
+      "syntax": [
+        "cm-syntax-title rgb(211, 96, 79)",
+        "cm-syntax-text-literal rgb(100, 159, 87)",
+        "cm-syntax-link_text rgb(91, 121, 227)"
+      ],
+      "scrollThumb": "#383a414c"
+    },
+    "preview": {
+      "bg": "rgb(40, 44, 51)",
+      "text": "rgb(220, 224, 229)",
+      "h1": "rgb(220, 224, 229)",
+      "link": "rgb(116, 173, 232)",
+      "inlineCode": "color(srgb 0.67451 0.698039 0.745098 / 0.08)",
+      "pre": "rgb(40, 44, 51)",
+      "syntax": [
+        "cm-syntax-keyword rgb(180, 119, 207)",
+        "cm-syntax-variable rgb(172, 178, 190)",
+        "cm-syntax-punctuation-special rgb(177, 87, 75)"
+      ],
+      "scrollThumb": "#c8ccd44c"
+    }
+  },
+  "c6_c2_settings": {
+    "all": {
+      "nav": [
+        "UI",
+        "Editor",
+        "Preview"
+      ],
+      "rows": [
+        "UI / Theme = One Dark — Specifies the color theme used in the workbench.",
+        "UI / Icon Theme = Zed (Default) — Specifies the file icon theme used in the workbench.",
+        "UI / Font Size = 16 — Controls the font size in pixels used in the UI.",
+        "Editor / Theme = One Light — Specifies the color theme used in the editor.",
+        "Editor / Font Size = 15 — Controls the font size in pixels.",
+        "Preview / Theme = One Dark — Specifies the color theme used in the Markdown preview.",
+        "Preview / Font Size = 16 — Controls the font size in pixels used in the Markdown preview."
+      ]
+    },
+    "search": {
+      "preview": {
+        "nav": [
+          "Preview"
+        ],
+        "rows": [
+          "Preview / Theme = One Dark — Specifies the color theme used in the Markdown preview.",
+          "Preview / Font Size = 16 — Controls the font size in pixels used in the Markdown preview."
+        ]
+      },
+      "editor": {
+        "nav": [
+          "Editor"
+        ],
+        "rows": [
+          "Editor / Theme = One Light — Specifies the color theme used in the editor.",
+          "Editor / Font Size = 15 — Controls the font size in pixels."
+        ]
+      },
+      "theme": {
+        "nav": [
+          "UI",
+          "Editor",
+          "Preview"
+        ],
+        "rows": [
+          "UI / Theme = One Dark — Specifies the color theme used in the workbench.",
+          "UI / Icon Theme = Zed (Default) — Specifies the file icon theme used in the workbench.",
+          "Editor / Theme = One Light — Specifies the color theme used in the editor.",
+          "Preview / Theme = One Dark — Specifies the color theme used in the Markdown preview."
+        ]
+      }
+    },
+    "menuItems": 21,
+    "picked": true,
+    "file": {
+      "theme": "One Dark",
+      "editor_theme": "Gruvbox Dark",
+      "preview_theme": "One Dark"
+    },
+    "afterRows": {
+      "nav": [
+        "UI",
+        "Editor",
+        "Preview"
+      ],
+      "rows": [
+        "UI / Theme = One Dark — Specifies the color theme used in the workbench.",
+        "UI / Icon Theme = Zed (Default) — Specifies the file icon theme used in the workbench.",
+        "UI / Font Size = 16 — Controls the font size in pixels used in the UI.",
+        "Editor / Theme = Gruvbox Dark — Specifies the color theme used in the editor.",
+        "Editor / Font Size = 15 — Controls the font size in pixels.",
+        "Preview / Theme = One Dark — Specifies the color theme used in the Markdown preview.",
+        "Preview / Font Size = 16 — Controls the font size in pixels used in the Markdown preview."
+      ]
+    },
+    "before": {
+      "appearance": "dark",
+      "ui": {
+        "titleBar": "rgb(46, 52, 62)",
+        "sidebar": "rgb(47, 52, 62)",
+        "sidebarText": "rgb(220, 224, 229)",
+        "projectPanel": "rgba(0, 0, 0, 0)",
+        "treeLabel": "rgb(220, 224, 229)",
+        "tabBar": "rgb(47, 52, 62)",
+        "activeTab": "rgb(40, 44, 51)",
+        "activeTabText": "rgb(220, 224, 229)",
+        "statusBar": "rgb(59, 65, 77)",
+        "statusText": "rgb(220, 224, 229)",
+        "pane": "rgb(59, 65, 77)"
+      },
+      "editor": {
+        "bg": "rgb(250, 250, 250)",
+        "text": "rgb(36, 37, 41)",
+        "gutter": "rgb(250, 250, 250)",
+        "lineNumber": "rgb(180, 180, 187)",
+        "toolbar": "rgb(250, 250, 250)",
+        "toolbarText": "rgb(220, 224, 229)",
+        "findBar": "rgba(0, 0, 0, 0)",
+        "findInput": "rgba(0, 0, 0, 0)",
+        "syntax": [
+          "cm-syntax-title rgb(211, 96, 79)",
+          "cm-syntax-text-literal rgb(100, 159, 87)",
+          "cm-syntax-link_text rgb(91, 121, 227)"
+        ],
+        "scrollThumb": "#383a414c"
+      },
+      "preview": {
+        "bg": "rgb(40, 44, 51)",
+        "text": "rgb(220, 224, 229)",
+        "h1": "rgb(220, 224, 229)",
+        "link": "rgb(116, 173, 232)",
+        "inlineCode": "color(srgb 0.67451 0.698039 0.745098 / 0.08)",
+        "pre": "rgb(40, 44, 51)",
+        "syntax": [
+          "cm-syntax-keyword rgb(180, 119, 207)",
+          "cm-syntax-variable rgb(172, 178, 190)",
+          "cm-syntax-punctuation-special rgb(177, 87, 75)"
+        ],
+        "scrollThumb": "#c8ccd44c"
+      }
+    },
+    "after": {
+      "appearance": "dark",
+      "ui": {
+        "titleBar": "rgb(46, 52, 62)",
+        "sidebar": "rgb(47, 52, 62)",
+        "sidebarText": "rgb(220, 224, 229)",
+        "projectPanel": "rgba(0, 0, 0, 0)",
+        "treeLabel": "rgb(220, 224, 229)",
+        "tabBar": "rgb(47, 52, 62)",
+        "activeTab": "rgb(40, 44, 51)",
+        "activeTabText": "rgb(220, 224, 229)",
+        "statusBar": "rgb(59, 65, 77)",
+        "statusText": "rgb(220, 224, 229)",
+        "pane": "rgb(59, 65, 77)"
+      },
+      "editor": {
+        "bg": "rgb(40, 40, 40)",
+        "text": "rgb(235, 219, 178)",
+        "gutter": "rgb(40, 40, 40)",
+        "lineNumber": "rgb(110, 107, 94)",
+        "toolbar": "rgb(40, 40, 40)",
+        "toolbarText": "rgb(220, 224, 229)",
+        "findBar": "rgba(0, 0, 0, 0)",
+        "findInput": "rgba(0, 0, 0, 0)",
+        "syntax": [
+          "cm-syntax-title rgb(184, 187, 37)",
+          "cm-syntax-text-literal rgb(131, 165, 152)",
+          "cm-syntax-link_text rgb(142, 192, 124)"
+        ],
+        "scrollThumb": "#a899844c"
+      },
+      "preview": {
+        "bg": "rgb(40, 44, 51)",
+        "text": "rgb(220, 224, 229)",
+        "h1": "rgb(220, 224, 229)",
+        "link": "rgb(116, 173, 232)",
+        "inlineCode": "color(srgb 0.67451 0.698039 0.745098 / 0.08)",
+        "pre": "rgb(40, 44, 51)",
+        "syntax": [
+          "cm-syntax-keyword rgb(180, 119, 207)",
+          "cm-syntax-variable rgb(172, 178, 190)",
+          "cm-syntax-punctuation-special rgb(177, 87, 75)"
+        ],
+        "scrollThumb": "#c8ccd44c"
+      }
+    },
+    "uiSame": true,
+    "previewSame": true,
+    "editorChanged": true
+  },
+  "c3_restart": {
+    "file": {
+      "theme": "One Dark",
+      "editor_theme": "Gruvbox Dark",
+      "preview_theme": "One Dark"
+    },
+    "colors": {
+      "appearance": "dark",
+      "ui": {
+        "titleBar": "rgb(59, 65, 77)",
+        "sidebar": "rgb(47, 52, 62)",
+        "sidebarText": "rgb(220, 224, 229)",
+        "projectPanel": "rgba(0, 0, 0, 0)",
+        "treeLabel": "rgb(220, 224, 229)",
+        "tabBar": "rgb(47, 52, 62)",
+        "activeTab": "rgb(40, 44, 51)",
+        "activeTabText": "rgb(220, 224, 229)",
+        "statusBar": "rgb(59, 65, 77)",
+        "statusText": "rgb(220, 224, 229)",
+        "pane": "rgb(59, 65, 77)"
+      },
+      "editor": {
+        "bg": "rgb(40, 40, 40)",
+        "text": "rgb(235, 219, 178)",
+        "gutter": "rgb(40, 40, 40)",
+        "lineNumber": "rgb(110, 107, 94)",
+        "toolbar": "rgb(40, 40, 40)",
+        "toolbarText": "rgb(220, 224, 229)",
+        "findBar": "rgba(0, 0, 0, 0)",
+        "findInput": "rgba(0, 0, 0, 0)",
+        "syntax": [
+          "cm-syntax-title rgb(184, 187, 37)",
+          "cm-syntax-text-literal rgb(131, 165, 152)",
+          "cm-syntax-link_text rgb(142, 192, 124)"
+        ],
+        "scrollThumb": "#a899844c"
+      },
+      "preview": {
+        "bg": "rgb(40, 44, 51)",
+        "text": "rgb(220, 224, 229)",
+        "h1": "rgb(220, 224, 229)",
+        "link": "rgb(116, 173, 232)",
+        "inlineCode": "color(srgb 0.67451 0.698039 0.745098 / 0.08)",
+        "pre": "rgb(40, 44, 51)",
+        "syntax": [
+          "cm-syntax-keyword rgb(180, 119, 207)",
+          "cm-syntax-variable rgb(172, 178, 190)",
+          "cm-syntax-punctuation-special rgb(177, 87, 75)"
+        ],
+        "scrollThumb": "#c8ccd44c"
+      }
+    },
+    "sameAsBefore": false
+  },
+  "c4_selector": {
+    "start": {
+      "appearance": "dark",
+      "ui": {
+        "titleBar": "rgb(59, 65, 77)",
+        "sidebar": "rgb(47, 52, 62)",
+        "sidebarText": "rgb(220, 224, 229)",
+        "projectPanel": "rgba(0, 0, 0, 0)",
+        "treeLabel": "rgb(220, 224, 229)",
+        "tabBar": "rgb(47, 52, 62)",
+        "activeTab": "rgb(40, 44, 51)",
+        "activeTabText": "rgb(220, 224, 229)",
+        "statusBar": "rgb(59, 65, 77)",
+        "statusText": "rgb(220, 224, 229)",
+        "pane": "rgb(59, 65, 77)"
+      },
+      "editor": {
+        "bg": "rgb(40, 40, 40)",
+        "text": "rgb(235, 219, 178)",
+        "gutter": "rgb(40, 40, 40)",
+        "lineNumber": "rgb(110, 107, 94)",
+        "toolbar": "rgb(40, 40, 40)",
+        "toolbarText": "rgb(220, 224, 229)",
+        "findBar": "rgba(0, 0, 0, 0)",
+        "findInput": "rgba(0, 0, 0, 0)",
+        "syntax": [
+          "cm-syntax-title rgb(184, 187, 37)",
+          "cm-syntax-text-literal rgb(131, 165, 152)",
+          "cm-syntax-link_text rgb(142, 192, 124)"
+        ],
+        "scrollThumb": "#a899844c"
+      },
+      "preview": {
+        "bg": "rgb(40, 44, 51)",
+        "text": "rgb(220, 224, 229)",
+        "h1": "rgb(220, 224, 229)",
+        "link": "rgb(116, 173, 232)",
+        "inlineCode": "color(srgb 0.67451 0.698039 0.745098 / 0.08)",
+        "pre": "rgb(40, 44, 51)",
+        "syntax": [
+          "cm-syntax-keyword rgb(180, 119, 207)",
+          "cm-syntax-variable rgb(172, 178, 190)",
+          "cm-syntax-punctuation-special rgb(177, 87, 75)"
+        ],
+        "scrollThumb": "#c8ccd44c"
+      }
+    },
+    "previewing": {
+      "appearance": "light",
+      "ui": {
+        "titleBar": "rgb(217, 200, 164)",
+        "sidebar": "rgb(236, 221, 180)",
+        "sidebarText": "rgb(40, 40, 40)",
+        "projectPanel": "rgba(0, 0, 0, 0)",
+        "treeLabel": "rgb(40, 40, 40)",
+        "tabBar": "rgb(236, 221, 180)",
+        "activeTab": "rgb(251, 241, 199)",
+        "activeTabText": "rgb(40, 40, 40)",
+        "statusBar": "rgb(217, 200, 164)",
+        "statusText": "rgb(40, 40, 40)",
+        "pane": "rgb(217, 200, 164)"
+      },
+      "editor": {
+        "bg": "rgb(251, 241, 199)",
+        "text": "rgb(40, 40, 40)",
+        "gutter": "rgb(251, 241, 199)",
+        "lineNumber": "rgb(169, 163, 137)",
+        "toolbar": "rgb(251, 241, 199)",
+        "toolbarText": "rgb(40, 40, 40)",
+        "findBar": null,
+        "findInput": null,
+        "syntax": [
+          "cm-syntax-title rgb(121, 116, 14)",
+          "cm-syntax-text-literal rgb(6, 101, 120)",
+          "cm-syntax-link_text rgb(66, 123, 88)"
+        ],
+        "scrollThumb": "#7c6f644c"
+      },
+      "preview": {
+        "bg": "rgb(251, 241, 199)",
+        "text": "rgb(40, 40, 40)",
+        "h1": "rgb(40, 40, 40)",
+        "link": "rgb(11, 102, 120)",
+        "inlineCode": "color(srgb 0.156863 0.156863 0.156863 / 0.08)",
+        "pre": "rgb(251, 241, 199)",
+        "syntax": [
+          "cm-syntax-keyword rgb(157, 0, 6)",
+          "cm-syntax-variable rgb(40, 40, 40)",
+          "cm-syntax-punctuation-special rgb(65, 61, 58)"
+        ],
+        "scrollThumb": "#7c6f644c"
+      }
+    },
+    "reverted": {
+      "appearance": "dark",
+      "ui": {
+        "titleBar": "rgb(59, 65, 77)",
+        "sidebar": "rgb(47, 52, 62)",
+        "sidebarText": "rgb(220, 224, 229)",
+        "projectPanel": "rgba(0, 0, 0, 0)",
+        "treeLabel": "rgb(220, 224, 229)",
+        "tabBar": "rgb(47, 52, 62)",
+        "activeTab": "rgb(40, 44, 51)",
+        "activeTabText": "rgb(220, 224, 229)",
+        "statusBar": "rgb(59, 65, 77)",
+        "statusText": "rgb(220, 224, 229)",
+        "pane": "rgb(59, 65, 77)"
+      },
+      "editor": {
+        "bg": "rgb(40, 40, 40)",
+        "text": "rgb(235, 219, 178)",
+        "gutter": "rgb(40, 40, 40)",
+        "lineNumber": "rgb(110, 107, 94)",
+        "toolbar": "rgb(40, 40, 40)",
+        "toolbarText": "rgb(220, 224, 229)",
+        "findBar": null,
+        "findInput": null,
+        "syntax": [
+          "cm-syntax-title rgb(184, 187, 37)",
+          "cm-syntax-text-literal rgb(131, 165, 152)",
+          "cm-syntax-link_text rgb(142, 192, 124)"
+        ],
+        "scrollThumb": "#a899844c"
+      },
+      "preview": {
+        "bg": "rgb(40, 44, 51)",
+        "text": "rgb(220, 224, 229)",
+        "h1": "rgb(220, 224, 229)",
+        "link": "rgb(116, 173, 232)",
+        "inlineCode": "color(srgb 0.67451 0.698039 0.745098 / 0.08)",
+        "pre": "rgb(40, 44, 51)",
+        "syntax": [
+          "cm-syntax-keyword rgb(180, 119, 207)",
+          "cm-syntax-variable rgb(172, 178, 190)",
+          "cm-syntax-punctuation-special rgb(177, 87, 75)"
+        ],
+        "scrollThumb": "#c8ccd44c"
+      }
+    },
+    "revertedSame": false,
+    "fileAfterEsc": {
+      "theme": "One Dark",
+      "editor_theme": "Gruvbox Dark",
+      "preview_theme": "One Dark"
+    },
+    "picker": [
+      "One Light"
+    ],
+    "file": {
+      "theme": "One Light",
+      "editor_theme": "One Light",
+      "preview_theme": "One Light"
+    },
+    "picked": {
+      "appearance": "light",
+      "ui": {
+        "titleBar": "rgb(220, 220, 221)",
+        "sidebar": "rgb(235, 235, 236)",
+        "sidebarText": "rgb(36, 37, 41)",
+        "projectPanel": "rgba(0, 0, 0, 0)",
+        "treeLabel": "rgb(36, 37, 41)",
+        "tabBar": "rgb(235, 235, 236)",
+        "activeTab": "rgb(250, 250, 250)",
+        "activeTabText": "rgb(36, 37, 41)",
+        "statusBar": "rgb(220, 220, 221)",
+        "statusText": "rgb(36, 37, 41)",
+        "pane": "rgb(220, 220, 221)"
+      },
+      "editor": {
+        "bg": "rgb(250, 250, 250)",
+        "text": "rgb(36, 37, 41)",
+        "gutter": "rgb(250, 250, 250)",
+        "lineNumber": "rgb(180, 180, 187)",
+        "toolbar": "rgb(250, 250, 250)",
+        "toolbarText": "rgb(36, 37, 41)",
+        "findBar": null,
+        "findInput": null,
+        "syntax": [
+          "cm-syntax-title rgb(211, 96, 79)",
+          "cm-syntax-text-literal rgb(100, 159, 87)",
+          "cm-syntax-link_text rgb(91, 121, 227)"
+        ],
+        "scrollThumb": "#383a414c"
+      },
+      "preview": {
+        "bg": "rgb(250, 250, 250)",
+        "text": "rgb(36, 37, 41)",
+        "h1": "rgb(36, 37, 41)",
+        "link": "rgb(92, 120, 226)",
+        "inlineCode": "color(srgb 0.141176 0.145098 0.160784 / 0.08)",
+        "pre": "rgb(250, 250, 250)",
+        "syntax": [
+          "cm-syntax-keyword rgb(164, 73, 171)",
+          "cm-syntax-variable rgb(36, 37, 41)",
+          "cm-syntax-punctuation-special rgb(185, 43, 70)"
+        ],
+        "scrollThumb": "#383a414c"
+      }
+    }
+  },
+  "c4_equalsSingleOneLight": false
+}

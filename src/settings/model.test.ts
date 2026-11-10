@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { DEFAULTS, filterSettings, parseSettings, settingMenu, updateSetting } from "./model.ts";
+import { DEFAULTS, filterSettings, parseSettings, settingMenu, updateSetting, updateSettings } from "./model.ts";
 const THEMES = { theme: ["One Dark", "Catppuccin Mocha", "One Light"], icon_theme: ["Zed (Default)", "Catppuccin Mocha"] };
 import { stripJsonc } from "../keymap/user.ts";
 
@@ -12,12 +12,25 @@ test("settings defaults, invalid values and supported values", () => {
   assert.equal(parseSettings('{"icon_theme":"Catppuccin Mocha"}', THEMES).icon_theme, "Catppuccin Mocha");
   assert.equal(parseSettings('{"icon_theme":"Missing"}', THEMES).icon_theme, "Zed (Default)");
   assert.equal(parseSettings('{"icon_theme":"Catppuccin Mocha"}', { ...THEMES, icon_theme: [] }).icon_theme, "Zed (Default)");
-  assert.deepEqual(parseSettings('{"theme":"One Light","ui_font_size":18.5,"buffer_font_size":20}', THEMES), { ...DEFAULTS, theme: "One Light", ui_font_size: 18.5, buffer_font_size: 20 });
+  assert.deepEqual(parseSettings('{"theme":"One Light","ui_font_size":18.5,"buffer_font_size":20}', THEMES), { ...DEFAULTS, theme: "One Light", editor_theme: "One Light", preview_theme: "One Light", ui_font_size: 18.5, buffer_font_size: 20 });
   // I-2: a v0.6 file (four keys) reads preview_font_size as 16; a valid value is kept, an invalid one falls back.
   assert.equal(parseSettings('{"theme":"One Light","icon_theme":"Zed (Default)","ui_font_size":16,"buffer_font_size":15}', THEMES).preview_font_size, 16);
   assert.equal(parseSettings('{"preview_font_size":20}', THEMES).preview_font_size, 20);
   assert.equal(parseSettings('{"preview_font_size":"20"}', THEMES).preview_font_size, 16);
   assert.equal(parseSettings(updateSetting('{\n  // keep\n  "theme": "One Light"\n}\n', "preview_font_size", 18, THEMES), THEMES).preview_font_size, 18);
+});
+
+test("I-3: editor and preview themes follow theme until set; one write sets all three", () => {
+  const themes = (text: string) => { const s = parseSettings(text, THEMES); return [s.theme, s.editor_theme, s.preview_theme]; };
+  assert.deepEqual(themes("{}"), ["One Dark", "One Dark", "One Dark"]);
+  assert.deepEqual(themes('{"theme":"One Light"}'), ["One Light", "One Light", "One Light"]); // a v0.6 file
+  assert.deepEqual(themes('{"theme":"One Light","editor_theme":"Catppuccin Mocha"}'), ["One Light", "Catppuccin Mocha", "One Light"]);
+  assert.deepEqual(themes('{"theme":"One Light","editor_theme":"Missing","preview_theme":5}'), ["One Light", "One Light", "One Light"]);
+  assert.deepEqual(themes('{"theme":"Missing","preview_theme":"Catppuccin Mocha"}'), ["One Dark", "One Dark", "Catppuccin Mocha"]);
+  const written = updateSettings('{\n  // keep\n  "theme": "One Dark"\n}', { theme: "One Light", editor_theme: "One Light", preview_theme: "One Light" }, THEMES);
+  assert.ok(written.includes("// keep"));
+  assert.deepEqual(themes(written), ["One Light", "One Light", "One Light"]);
+  assert.throws(() => updateSettings("{}", { editor_theme: "Unlisted" }, THEMES));
 });
 
 test("settings writes preserve unknown keys, comments, duplicate keys and line endings", () => {
@@ -40,11 +53,11 @@ test("settings writes preserve unknown keys, comments, duplicate keys and line e
 
 test("settings search includes the category title, name and description", () => {
   const keys = (query: string) => filterSettings(query).map((r) => r.key);
-  assert.deepEqual(keys("preview"), ["preview_font_size"]);
-  assert.deepEqual(keys("EDITOR"), ["buffer_font_size"]);
+  assert.deepEqual(keys("preview"), ["preview_theme", "preview_font_size"]);
+  assert.deepEqual(keys("EDITOR"), ["editor_theme", "buffer_font_size"]);
   assert.deepEqual(keys("ui"), ["theme", "icon_theme", "ui_font_size"]);
   assert.deepEqual(keys("ui font size"), ["ui_font_size"]);
-  assert.equal(keys("theme").length, 2);
+  assert.equal(keys("theme").length, 4);
   assert.equal(keys("font size").length, 3);
   assert.equal(keys("missing").length, 0);
 });

@@ -2,13 +2,22 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { BASE_THEME, buildRegistry, pickTheme } from "./registry.ts";
-import { over, panelFocusedBorder, parseColor, resolveTokens, themeCss } from "./theme.ts";
+import { over, panelFocusedBorder, parseColor, resolveTokens, syntaxCss, themeCss } from "./theme.ts";
 
 // Every theme JSON under assets/ (committed one/ plus the .gitignore copies when present).
 const assets = new URL("./assets/", import.meta.url);
 const files = Object.fromEntries(readdirSync(assets, { recursive: true, encoding: "utf8" })
   .filter((p) => p.endsWith(".json")).map((p) => [p, readFileSync(new URL(p.replaceAll("\\", "/"), assets), "utf8")]));
 const registry = buildRegistry(files);
+
+test("I-3: the same theme can be scoped to a tab body; unscoped output is unchanged", () => {
+  const tokens = resolveTokens(pickTheme(registry, "One Dark").style);
+  assert.ok(themeCss(tokens).startsWith(":root { --border:"));
+  assert.ok(themeCss(tokens, ".markdown-preview").startsWith(".markdown-preview { --border:"));
+  const style = { syntax: { "string.regex": { color: "#112233" } } };
+  assert.equal(syntaxCss(style), ".cm-syntax-string-regex { color: #112233ff; }");
+  assert.equal(syntaxCss(style, ".cm-editor"), ".cm-editor .cm-syntax-string-regex { color: #112233ff; }");
+});
 
 test("K-46: panel focus uses the theme value or the Zed dark/light default", () => {
   for (const appearance of ["dark", "light"] as const) {

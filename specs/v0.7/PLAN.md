@@ -28,3 +28,13 @@
 | W-01 | v0.7 문서(PLAN·HERDR-SETUP·PROGRESS, `reports/`·`verify/`)와 루트 `AGENTS.md` | v0.7 시작 |
 | K-01 | 앱 버전 0.7.0, Settings 분류, 글꼴 크기 셋, `Ctrl+=` 따로 | v0.7 시작 · I-4 · I-2 · I-1 |
 | C-01 | 검토·V3 | v0.7 시작 · I-4 · I-2 · I-1 |
+
+### Phase 2 작업 카드
+
+| 카드 | 할 일 | core 항목 |
+|---|---|---|
+| W-03 | 루트 `AGENTS.md` 레포 규칙 10·12줄을 v0.7로(ORDER-02 3A) | ORDER-02 3A |
+| K-02 | 테마 셋(UI·편집·미리보기), 새 키 `editor_theme`·`preview_theme`, Settings Theme 행, 선택 창 셋 함께 | I-3 |
+| C-03 | W-03·K-02 검토와 커밋 전 전체 검증 | ORDER-02 3A · I-3 |
+| C-04 | V3 결과 판정 | I-3 |
+| W-04 | ORDER-02 PROGRESS 기록 | I-3 |

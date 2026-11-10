@@ -5,16 +5,22 @@ import { DEFAULT_THEME } from "../theme/registry.ts";
 
 export const SETTINGS_BINDINGS: KeymapSection[] = [{ context: "Workspace", bindings: { "ctrl-,": "zed::OpenSettings" } }];
 
-export const DEFAULTS = { theme: DEFAULT_THEME as string, icon_theme: "Zed (Default)", ui_font_size: 16, buffer_font_size: 15, preview_font_size: 16 };
+// I-3: editor_theme and preview_theme follow theme until set (parseSettings), so the defaults repeat its default.
+export const DEFAULTS = { theme: DEFAULT_THEME as string, icon_theme: "Zed (Default)", editor_theme: DEFAULT_THEME as string, preview_theme: DEFAULT_THEME as string, ui_font_size: 16, buffer_font_size: 15, preview_font_size: 16 };
 export type Settings = typeof DEFAULTS;
 export type SettingKey = keyof Settings;
+export const THEME_KEYS = ["theme", "editor_theme", "preview_theme"] as const;
+export type ChoiceKey = (typeof THEME_KEYS)[number] | "icon_theme";
+export const isChoiceKey = (key: SettingKey): key is ChoiceKey => key === "icon_theme" || (THEME_KEYS as readonly string[]).includes(key);
 // I-4: three categories. Labels follow Zed's settings UI; descriptions follow VS Code's setting descriptions (Zed page_data.rs words them differently).
 export const CATEGORIES = ["UI", "Editor", "Preview"] as const;
 export const ROWS: { key: SettingKey; name: string; description: string; category: (typeof CATEGORIES)[number] }[] = [
   { key: "theme", name: "Theme", description: "Specifies the color theme used in the workbench.", category: "UI" },
   { key: "icon_theme", name: "Icon Theme", description: "Specifies the file icon theme used in the workbench.", category: "UI" },
   { key: "ui_font_size", name: "Font Size", description: "Controls the font size in pixels used in the UI.", category: "UI" },
+  { key: "editor_theme", name: "Theme", description: "Specifies the color theme used in the editor.", category: "Editor" },
   { key: "buffer_font_size", name: "Font Size", description: "Controls the font size in pixels.", category: "Editor" },
+  { key: "preview_theme", name: "Theme", description: "Specifies the color theme used in the Markdown preview.", category: "Preview" },
   { key: "preview_font_size", name: "Font Size", description: "Controls the font size in pixels used in the Markdown preview.", category: "Preview" },
 ];
 
@@ -28,21 +34,30 @@ function object(text: string): Record<string, unknown> {
 export type Choices = { theme: readonly string[]; icon_theme: readonly string[] };
 
 export function validSetting(key: SettingKey, value: unknown, choices: Choices): boolean {
-  if (key === "theme" || key === "icon_theme") return typeof value === "string" && choices[key].includes(value);
+  if (isChoiceKey(key)) return typeof value === "string" && (key === "icon_theme" ? choices.icon_theme : choices.theme).includes(value);
   return typeof value === "number" && Number.isFinite(value) && value > 0;
 }
 
 export function parseSettings(text: string | null, choices: Choices): Settings {
   let raw: Record<string, unknown> = {};
   try { if (text?.trim()) raw = object(text); } catch { /* Invalid files use defaults without rewriting them. */ }
-  return Object.fromEntries(Object.entries(DEFAULTS).map(([key, fallback]) => [key, validSetting(key as SettingKey, raw[key], choices) ? raw[key] : fallback])) as Settings;
+  const out: Record<string, unknown> = {};
+  for (const [key, fallback] of Object.entries(DEFAULTS)) {
+    const own = key === "editor_theme" || key === "preview_theme" ? out.theme : fallback; // theme comes first in DEFAULTS
+    out[key] = validSetting(key as SettingKey, raw[key], choices) ? raw[key] : own;
+  }
+  return out as Settings;
 }
 
 export const filterSettings = (query: string) => ROWS.filter((row) =>
   query.toLowerCase().trim().split(/\s+/).every((term) => `${row.category} ${row.name} ${row.description}`.toLowerCase().includes(term)));
 
-export const settingMenu = (key: "theme" | "icon_theme", current: string, change: (value: string) => void, choices: Choices): MenuItem[] =>
-  choices[key].map((name) => ({ label: name, checked: name === current, run: () => change(name) }));
+export const settingMenu = (key: ChoiceKey, current: string, change: (value: string) => void, choices: Choices): MenuItem[] =>
+  (key === "icon_theme" ? choices.icon_theme : choices.theme).map((name) => ({ label: name, checked: name === current, run: () => change(name) }));
+
+/** Several keys in one write, so the file watcher never reads a half-changed state. */
+export const updateSettings = (text: string | null, values: Partial<Record<SettingKey, string | number>>, choices: Choices): string =>
+  Object.entries(values).reduce<string | null>((acc, [key, value]) => updateSetting(acc, key as SettingKey, value, choices), text) ?? "";
 
 /** Replace top-level value spans only; preserve comments, unknown keys, BOM and whitespace. */
 export function updateSetting(text: string | null, key: SettingKey, value: string | number, choices: Choices): string {

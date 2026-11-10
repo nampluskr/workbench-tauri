@@ -9,7 +9,7 @@ import { setAppliedIconTheme } from "../theme/icons.ts";
 import { notify } from "../shell/toast.ts";
 import { remeasureForFont } from "../editor/extensions.ts";
 import { stepEditorFontSize, type FontTarget } from "../editor/font-size.ts";
-import { DEFAULTS, parseSettings, updateSetting, type SettingKey } from "./model.ts";
+import { DEFAULTS, parseSettings, updateSettings, type SettingKey } from "./model.ts";
 
 export const [settings, setSettings] = createSignal({ ...DEFAULTS });
 let queue = Promise.resolve();
@@ -27,15 +27,15 @@ async function reload(): Promise<void> {
     if (next.buffer_font_size !== settings().buffer_font_size) editorFontSize = null;
     if (next.preview_font_size !== settings().preview_font_size) previewFontSize = null;
     await applyMetrics(next.ui_font_size, next.buffer_font_size, editorFontSize ?? next.buffer_font_size, previewFontSize ?? next.preview_font_size);
-    await showTheme(next.theme);
+    await showTheme(next.theme, next.editor_theme, next.preview_theme);
     setAppliedIconTheme(next.icon_theme);
     setSettings(next);
   } catch (error) { notify([String(error)]); }
 }
 
-/** Apply a theme in memory only (the Select Theme preview) and refresh what depends on its syntax keys. */
-export async function showTheme(name: string): Promise<void> {
-  await applyTheme(name);
+/** Apply themes in memory only (the Select Theme preview; one name for all three) and refresh what depends on the editor theme's syntax keys. */
+export async function showTheme(ui: string, editor = ui, preview = ui): Promise<void> {
+  await applyTheme(ui, editor, preview);
   document.querySelectorAll<HTMLElement>(".cm-editor").forEach((el) => {
     const view = EditorView.findFromDOM(el);
     view?.dispatch({}); // Rebuild visible syntax captures against the new theme's keys.
@@ -67,8 +67,11 @@ export async function watchSettings(): Promise<void> {
   await listen("user-settings-changed", () => void loadSettings());
 }
 
-export async function saveSetting(key: SettingKey, value: string | number): Promise<void> {
+/** Several keys in one write (the theme selector sets all three themes). */
+export async function saveSettings(values: Partial<Record<SettingKey, string | number>>): Promise<void> {
   const expected = await invoke<string | null>("read_user_settings");
-  await invoke("write_user_settings", { expected, json: updateSetting(expected, key, value, choices) });
+  await invoke("write_user_settings", { expected, json: updateSettings(expected, values, choices) });
   await loadSettings();
 }
+
+export const saveSetting = (key: SettingKey, value: string | number) => saveSettings({ [key]: value });

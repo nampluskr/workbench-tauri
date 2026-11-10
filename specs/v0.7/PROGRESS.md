@@ -38,6 +38,38 @@
   - 검증: V3. SendInput이 전경 창 0x0으로 막혀 CDP 합성 입력으로 쟀다.
   - 특이사항: 없음.
 
+### Phase 2 — 테마 셋
+
+- **에이전트 환경** (2026-11-10, tauri-leader)
+  - 무엇을 했나: Phase 시작에 writer·coder·checker의 컨텍스트를 `/clear`로 비웠다(core COMMON 1절).
+  - 결과: 세 에이전트 모두 비운 상태로 카드를 받았다.
+  - 검증: herdr 프롬프트 전송.
+  - 특이사항: Git Bash 경로 변환으로 첫 시도의 `/clear`가 `C:/Program Files/Git/clear`로 바뀌어 보내졌다. `MSYS_NO_PATHCONV=1`을 붙여 다시 보냈다(`HERDR-SETUP.md` 5.4).
+- **W-03 루트 AGENTS.md 레포 규칙 10·12줄(ORDER-02 3A)** (2026-11-10, writer)
+  - 무엇을 했나: 레포 규칙 10줄 "HERDR 구성은 core가 정한다"를 v0.7 구성(v0.6 그대로, core `specs/v0.7/PLAN.md` 운영: `tauri-coder` Claude Code Sonnet 5.5 high, 사용자 2026-11-10)으로, 12줄 "core ITEMS 우선"을 "workbench-core v0.7 ITEMS(I-1~I-13)"로 고쳤다(사용자 승인 2026-11-10).
+  - 결과: 두 줄의 버전·구성 문구만 바뀌었다. 10줄 뒤 문장과 12줄 괄호 근거 "(core v0.6 D-9, 사용자 2026-11-10)", 다른 줄과 아래 절은 그대로다. core PLAN 운영 문장과 일치한다.
+  - 검증: V0. 문서만 바뀌어 명령은 실행하지 않았다. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-W-03-report.md`.
+  - 특이사항: 없음.
+- **K-02 테마 셋 UI·편집·미리보기(I-3)** (2026-11-10, coder)
+  - 무엇을 했나:
+    - 설정: 새 키 `editor_theme`·`preview_theme`를 더했다(`src/settings/model.ts`·`load.ts`). 새 키가 없거나 목록 밖이면 그 파일의 `theme`(그것도 없거나 틀리면 기본)을 쓰고, v0.6 파일(`theme`만)은 셋 모두 `theme`이다. `?theme=`는 세 영역 모두 덮는다.
+    - 범위: UI 테마 변수는 `:root`, 편집 테마는 `.cm-editor, .editor-toolbar`, 미리보기 테마는 `.markdown-preview`에 같은 변수 이름으로 다시 정의한다. 구문 강조 클래스는 `.cm-editor .cm-syntax-*`(편집)와 `.markdown-preview .cm-syntax-*`(미리보기)로 좁혔다(`src/theme/theme.ts`·`apply.ts`, `src/shell/markdown-preview.ts`의 `previewSyntaxKeys`). `data-appearance`는 툴팁·메뉴 그림자 전용이라 UI 테마만 따른다.
+    - 선택 창: `theme_selector::Toggle`의 미리 보기는 셋 모두에 한 이름, 확정은 `saveSettings({theme, editor_theme, preview_theme})` 한 번의 쓰기, 취소·저장 실패는 열 때의 세 값으로 복원한다(`src/theme/commands.ts`·`selector.ts`). 선택 창 UI는 그대로다.
+    - Settings: Editor·Preview 분류에 Theme 행을 더했다(`Settings.tsx`).
+  - 결과: 영역 경계는 이렇게 정했다. 찾기 줄(입력란 포함)과 경로 줄은 편집 테마, 미리보기 빈 영역은 `.markdown-preview` 전체라 미리보기 테마, 편집·미리보기 위에 뜨는 메뉴·툴팁·컨텍스트 메뉴·토스트·선택 창은 body 쪽이라 UI 테마, 탭 없는 Pane·탭 바·분할선·확대 테두리는 UI 테마, 스크롤바는 스크롤 컨테이너의 변수라 `.cm-scroller`는 편집·`.markdown-preview`는 미리보기·나머지는 UI 테마다. Rust는 바꾸지 않았다.
+  - 검증: V1. `npm.cmd run typecheck` 통과, `npm.cmd run test` 통과(C-03 기준 239). 보고 `C:\Users\nampl\AppData\Local\Temp\v07-K-02-report.md`.
+  - 특이사항: 생략한 것 — 아이콘 테마 나누기, 선택 창 새 UI, 미리보기가 열린 채 테마가 바뀔 때 코드 블록 재색칠(기존 동작 그대로, 클래스 CSS만 새 테마로 바뀜).
+- **C-03 checker 검토(W-03·K-02)와 커밋 전 전체 검증** [PASS] (2026-11-10)
+  - 무엇을 했나: W-03 문서와 K-02 코드를 검토하고 전체 검증을 했다.
+  - 결과: 지적 없음. typecheck 오류 0, test 239 통과, clippy 경고 0, cargo test 22 통과.
+  - 검증: 출력 파일 `%TEMP%\v07-C-03-*.txt`로 판정했다. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-C-03-report.md`.
+  - 특이사항: 없음.
+- **V3 측정(ORDER-02)** [PASS] (2026-11-10, tauri-leader)
+  - 무엇을 했나: 화면 차례 안에서 tauri-leader가 쟀다. 처음 상태 비교용으로 커밋 `104ce8a`(테마 하나, ORDER-01 끝)를 scratch에 풀어 따로 빌드했고, 무시 폴더의 테마·아이콘·문법 복사본도 함께 복사했다. 임시 APPDATA·임시 WebView 데이터 폴더, 창 1440×852, 100%, CDP 합성 입력(SendInput은 전경 창 0x0으로 막힘).
+  - 결과: `specs/v0.7/verify/ORDER-02/`(`v3.json`, `v3-inner.json`, PNG 12). C-04 checker 판정 [MEASURED]: ORDER-02 완료 기준 1~6 모두 PASS, 불일치 없음, 측정 불가 없음(측정 조건 1920×1080 100%, 창 1440×852, 보고 `C:\Users\nampl\AppData\Local\Temp\v07-C-04-report.md`). 다시 연 뒤(`c3_restart`)의 차이는 제목 줄 색 하나로, 재기 전 Settings 창이 포커스를 가져 본창 제목 줄이 inactive 색(46,52,62)이었다가 active 색(59,65,77)으로 돌아온 것이다. 선택 창(`c4_selector`)의 차이는 Esc로 찾기 줄이 닫혀 `findBar`·`findInput`이 null인 것뿐이다. `.editor-toolbar` 자신의 `color`는 UI 값을 물려받지만 그 안에 보이는 요소(경로 글자·아이콘·강조)는 모두 편집 테마 색이다(`v3-inner.json`, `c1-editor-toolbar-findbar.png`).
+  - 검증: V3. SendInput이 전경 창 0x0으로 막혀 CDP 합성 입력으로 쟀다. 판정은 C-04(checker)가 측정 파일만 읽어 했다.
+  - 특이사항: 없음.
+
 ## 사용자 요청 작업
 
 없음

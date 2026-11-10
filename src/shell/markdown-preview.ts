@@ -3,7 +3,7 @@ import { blockAt, classifyLink, renderMarkdown, type LinkTarget } from "../edito
 import { MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS } from "../spec/metrics.ts";
 import { languages, loadSyntax } from "../syntax/assets.ts";
 import { codeBlockHighlights } from "../syntax/document.ts";
-import { syntaxKeys } from "../theme/apply.ts";
+import { previewSyntaxKeys } from "../theme/apply.ts";
 import { syntaxClass } from "../theme/theme.ts";
 
 // The body of a Markdown preview tab (R-11, D-10). Rendered with markdown-it, sanitized with DOMPurify (no script, no
@@ -48,7 +48,7 @@ export function createPreview(hooks: PreviewHooks): Preview {
       const name = /(?:^|\s)language-(\S+)/.exec(code.className)?.[1];
       const text = code.textContent ?? "";
       if (!name) continue;
-      const found = await codeBlockHighlights(name, text, languages, loadSyntax, syntaxKeys).catch(() => []);
+      const found = await codeBlockHighlights(name, text, languages, loadSyntax, previewSyntaxKeys).catch(() => []);
       if (id !== generation || !code.isConnected) return; // a newer render replaced these blocks
       let at = 0;
       const nodes: (string | HTMLElement)[] = [];
