@@ -1,6 +1,6 @@
 > 버전: v0.7 · 작성일: 2026-11-10 · 상태: 초안
 >
-> workbench-core v0.7 ITEMS의 I-1~I-21(I-15~I-21 포함)을 어떤 Phase 순서로 반영할지 적는 I-n 대응 문서다. v0.7은 INTENT·DECISIONS·SPEC을 쓰지 않는다(tauri-leader 결정 2026-11-10). 요구·결정·판정 방법은 core `specs/v0.7/ITEMS.md`의 "정한 것"과 "판정 방법"을, Phase 순서와 이유는 core `specs/v0.7/PLAN.md`를, 카드 공통 규칙은 core `specs/v0.7/orders/COMMON.md`를 따른다. 에이전트 운영은 `HERDR-SETUP.md`에, 실제 진행은 `PROGRESS.md`에, core 보고는 `specs/v0.7/reports/`에 있다.
+> workbench-core v0.7 ITEMS의 I-1~I-29(I-15~I-29 포함)을 어떤 Phase 순서로 반영할지 적는 I-n 대응 문서다. v0.7은 INTENT·DECISIONS·SPEC을 쓰지 않는다(tauri-leader 결정 2026-11-10). 요구·결정·판정 방법은 core `specs/v0.7/ITEMS.md`의 "정한 것"과 "판정 방법"을, Phase 순서와 이유는 core `specs/v0.7/PLAN.md`를, 카드 공통 규칙은 core `specs/v0.7/orders/COMMON.md`를 따른다. 에이전트 운영은 `HERDR-SETUP.md`에, 실제 진행은 `PROGRESS.md`에, core 보고는 `specs/v0.7/reports/`에 있다.
 
 # PLAN — workbench-tauri v0.7
 
@@ -22,6 +22,7 @@
 | Phase 5 — 작은 항목과 v0.6 정리 | Phase 5 (ORDER-05) | G-6 | I-11 · I-12 · I-13 · v0.6 정리 · I-9 맞추기 · 0.7.0 빌드 |
 | Phase 6 — Settings 분류별 페이지·Load Defaults | Phase 6 (ORDER-06) | G-7 | I-16 · I-17 |
 | Phase 7 — 안내선 단위·툴팁·Help 이름·`wd` 구분자·Window 메뉴, 0.7.0 다시 빌드 | Phase 7 (ORDER-07) | G-7 | I-15 · I-18 · I-19 · I-20 · I-21 · I-17 고침 · 0.7.0 빌드 |
+| Phase 8 — 앱 아이콘·찾기 VS Code 맞춤·Rust 라이선스·Sidebar·줄 번호 여백·Go 메뉴·About, 0.7.0 다시 빌드 | Phase 8 (ORDER-08) | G-7 | I-22~I-29 · ORDER-05 정리 · 0.7.0 빌드 |
 
 ### Phase 1 작업 카드
 
@@ -90,3 +91,18 @@ core ORDER-04가 I-14(One 테마 안내선 색)를 이 Phase에 넣었다.
 | C-14 | V3 결과 판정 | I-15 · I-17 고침 · I-18 · I-19 · I-20 · I-21 |
 | K-09 | release 0.7.0 다시 빌드와 `docs/BUILD.md` 갱신 | 0.7.0 빌드 |
 | W-09 | ORDER-07 PROGRESS·PLAN 기록 | I-15 · I-17 고침 · I-18 · I-19 · I-20 · I-21 · 0.7.0 빌드 |
+
+### Phase 8 작업 카드
+
+카드 진행 중 core-leader가 ORDER-08에 I-28(Go 메뉴)·I-29(About)를 더해 K-11로 했다.
+
+| 카드 | 할 일 | core 항목 |
+|---|---|---|
+| K-10 | 앱 아이콘 i-window, 선택 안 찾기 줄 단위 범위, Ctrl+F 입력란 규칙, Licenses에 Rust crate, Sidebar 가로 스크롤바, 줄 번호 감춤 여백 | I-22 · I-23 · I-24 · I-25 · I-26 · I-27 |
+| K-11 | Go 메뉴 제거, Help는 About 하나, About 창(기술 정보·주요 목록·Copy·View All Licenses) | I-28 · I-29 |
+| C-15 | K-10·K-11 검토와 커밋 전 전체 검증 | I-22~I-29 |
+| K-12 | release 0.7.0 다시 빌드와 `docs/BUILD.md` 갱신, exe·설치 파일 아이콘 추출 | 0.7.0 빌드 · I-22 |
+| K-12-R1 | `tauri.conf.json`에 설치 파일 아이콘 `bundle.windows.nsis.installerIcon` | I-22 |
+| K-12-R2 | release 0.7.0 다시 빌드와 아이콘 다시 추출 | 0.7.0 빌드 · I-22 |
+| C-16 | V3 결과 판정 | I-22~I-29 · 0.7.0 빌드 |
+| W-10 | ORDER-08 PROGRESS·PLAN 기록 | I-22~I-29 · ORDER-05 정리 · 0.7.0 빌드 |

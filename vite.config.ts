@@ -12,6 +12,7 @@ export default defineConfig({
       ignored: ["**/src-tauri/**"],
     },
   },
+  define: { __BUILD_DATE__: JSON.stringify(new Date().toLocaleDateString("sv")) }, // I-29: the About window's Date
   envPrefix: ["VITE_", "TAURI_ENV_"],
   build: {
     target: "es2022",

@@ -4,7 +4,7 @@ import { EditorSelection, EditorState, Transaction, type TransactionSpec } from 
 import { EditorView, showPanel, type Panel } from "@codemirror/view";
 import { history, undo } from "@codemirror/commands";
 import { SearchQuery, getSearchQuery, search, setSearchQuery, selectSelectionMatches } from "@codemirror/search";
-import { addNextOccurrence, documentSearch, scopedMatchRanges, SEARCH_COMMANDS, skipOccurrence, toggleScope, toggleSearch, wholeWordOn } from "./search.ts";
+import { addNextOccurrence, documentSearch, scopedMatchRanges, SEARCH_COMMANDS, seedSearchString, skipOccurrence, toggleScope, toggleSearch, wholeWordOn } from "./search.ts";
 
 function target(doc: string, locked = false) {
   const view = {
@@ -218,6 +218,54 @@ test("I-11: with find in selection on, only matches inside the selected range ar
   assert.deepEqual(scopedMatchRanges(view.state, [{ from: 0, to: 6 }]), [], "a match cut by the visible range is not marked");
   toggleScope(view as unknown as EditorView);
   assert.deepEqual(scopedMatchRanges(view.state, visible), []);
+});
+
+test("I-23: find in selection over several lines covers whole lines; one line stays as selected; a range ending at column 1 leaves that line out", () => {
+  const doc = "cat one cat\ncat two cat\ncat six cat\ncat end";
+  const scoped = (from: number, to: number) => {
+    const view = {
+      state: EditorState.create({ doc, extensions: [documentSearch], selection: EditorSelection.single(from, to) }),
+      dispatch(tr: TransactionSpec) { view.state = view.state.update(tr).state; },
+    };
+    run("Find", view);
+    view.dispatch({ selection: EditorSelection.single(from, to), effects: setSearchQuery.of(new SearchQuery({ search: "cat", literal: true })) });
+    const toggled = toggleScope(view as unknown as EditorView);
+    return { toggled, found: scopedMatchRanges(view.state, [{ from: 0, to: doc.length }]).map(({ from }) => from) };
+  };
+  // line 2 middle ("two") .. line 3 middle ("six"): the cat before "two" and the one after "six" are inside
+  assert.deepEqual(scoped(16, 28).found, [12, 20, 24, 32]);
+  assert.deepEqual(scoped(14, 18).found, [], "one line, as selected: the cats on that line are outside");
+  assert.deepEqual(scoped(12, 23).found, [12, 20], "one whole line");
+  // from line 2 start to line 4 column 1: line 4 is left out, lines 2-3 count
+  assert.deepEqual(scoped(12, 36).found, [12, 20, 24, 32]);
+  // a cursor, or a range that is empty once its end is pulled back to the line before, makes no scope
+  assert.equal(scoped(5, 5).toggled, false);
+  assert.equal(scoped(11, 12).toggled, false);
+});
+
+test("I-24: Ctrl+F seeds the field with a one-line selection or the word at the cursor, and keeps it for a multi-line selection", () => {
+  const state = (doc: string, from: number, to = from) => EditorState.create({ doc, selection: EditorSelection.single(from, to) });
+  assert.equal(seedSearchString(state("alpha beta\ngamma", 6, 10)), "beta");
+  assert.equal(seedSearchString(state("alpha beta\ngamma", 8)), "beta", "a cursor takes its word");
+  assert.equal(seedSearchString(state("alpha  beta", 6)), null, "a cursor between words");
+  assert.equal(seedSearchString(state("alpha beta\ngamma", 6, 13)), null, "several lines");
+  const view = { // plugin: the bar is already open on the second Ctrl+F
+    state: EditorState.create({ doc: "alpha beta\ngamma", extensions: [documentSearch], selection: EditorSelection.single(6, 10) }),
+    dispatch(tr: TransactionSpec) { view.state = view.state.update(tr).state; },
+    plugin: () => null,
+  };
+  run("Find", view);
+  assert.equal(getSearchQuery(view.state).search, "beta");
+  view.dispatch({ selection: EditorSelection.single(6, 13) });
+  run("Find", view);
+  assert.equal(getSearchQuery(view.state).search, "beta", "a multi-line selection leaves the field as it was, not joined lines");
+  view.dispatch({ selection: EditorSelection.single(0, 5), effects: setSearchQuery.of(new SearchQuery({ search: "a.b", regexp: true })) });
+  run("Find", view);
+  assert.equal(getSearchQuery(view.state).search, "alpha");
+  view.dispatch({ selection: EditorSelection.single(0, 5), effects: setSearchQuery.of(new SearchQuery({ search: "a.b", regexp: true })) });
+  view.dispatch({ selection: EditorSelection.single(11, 16) });
+  run("Replace", view);
+  assert.equal(getSearchQuery(view.state).search, "a.b", "Ctrl+H seeds only an empty field");
 });
 
 test("I-20: whole word treats \"_\" and \"-\" as separators, only in the find bar's toggle", () => {

@@ -13,7 +13,10 @@ export const DOCK_MIN_WIDTH = 6; // dock.min_width (L-31), also used by Sidebar 
 // Buffer font size (L-08) and measured gutter padding stay in px; other lengths go through rem().
 const METRICS: Record<string, string> = {
   "dialog.about.width": rem(440), // P-018
-  "dialog.about.height": rem(300), // P-018
+  "dialog.about.height": rem(300), // P-018 (kept for the record; the About window of core I-29 is as tall as its text, up to max_height)
+  "dialog.about.max_height": rem(560), // core I-29: the attribution list scrolls past this; not in the toml
+  "dialog.about.button_border": "1px", // core I-29: same as the Settings confirm dialog's buttons (--settings-border is scoped to the Settings window)
+  "dialog.about.icon_size": rem(48), // core I-29: app icon in the header; not in the toml
   "dialog.about.padding": rem(16), // P-018
   "dialog.about.gap": rem(16), // P-018
   "extensions.header.padding_top": rem(16), // X-45
@@ -140,6 +143,10 @@ const METRICS: Record<string, string> = {
   // shortcut: gutter padding measured at Lilex 15, remeasure if the buffer font or size changes.
   "editor.gutter.padding_left": "22px", // I-14: Zed measured 2026-11-07, replaces E-003 3ch
   "editor.gutter.padding_right": "29px", // I-14: Zed measured 2026-11-07, replaces E-004 4ch
+  // I-27: with the line numbers hidden the text starts at VS Code's contentLeft = glyph margin (one lane, one line height) + lineDecorationsWidth + folding gutter.
+  // VS Code workbench.desktop.main.js EditorLayoutInfoComputer.computeLayout, defaults glyphMargin true, folding true, showFoldingControls "mouseover" (+16), lineDecorationsWidth 10, lineNumbers off (width 0).
+  "editor.no_line_numbers.line_decorations_width": "10px",
+  "editor.no_line_numbers.folding_width": "16px",
   "editor.line_height.comfortable_multiplier": "1.618", // E-010; the editor body now uses --editor-line-height-multiplier (core v0.7 I-8), the preview code block still this
   "editor.indent_guide.width": "1px", // E-020
   "editor.indent_guide.active_width": "1px", // E-020

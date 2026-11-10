@@ -1,8 +1,6 @@
 import type { Menu, MenuEntry, MenuItem } from "./menu.ts";
 
 export const APP_NAME = "workbench-tauri";
-export const REPOSITORY_URL = "https://github.com/nampluskr/workbench-tauri";
-export const ISSUE_URL = `${REPOSITORY_URL}/issues/new`;
 
 // R-17: Edit follows workbench-kit.
 export function appMenus(markdownDisabled: () => boolean): Menu[] {
@@ -53,19 +51,8 @@ export function appMenus(markdownDisabled: () => boolean): Menu[] {
       markdownItem("Open Markdown Preview", "markdown::OpenPreview"),
       markdownItem("Open Markdown Preview to the Side", "markdown::OpenPreviewToTheSide"),
     ] },
-    { name: "Go", entries: [
-      { label: "Previous Tab", action: "pane::ActivatePreviousItem" },
-      { label: "Next Tab", action: "pane::ActivateNextItem" },
-    ] },
-    { name: "Help", entries: [
-      { label: "View Dependency Licenses", action: "zed::OpenLicenses" },
-      "separator",
-      { label: "File Bug Report...", url: ISSUE_URL },
-      { label: "Request Feature...", url: ISSUE_URL },
-      "separator",
-      { label: "Repository", url: REPOSITORY_URL },
-      { label: "About", action: "zed::About" },
-    ] },
+    // I-28: no Go menu; the tab arrows and the commands stay. I-29: Help is About alone, the Licenses are a button in it.
+    { name: "Help", entries: [{ label: "About", action: "zed::About" }] },
   ];
 }
 

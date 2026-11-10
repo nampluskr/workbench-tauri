@@ -249,6 +249,61 @@
   - 검증: V1(빌드 결과 확인). 빌드 전 `workbench-tauri.exe` 프로세스 없음, 잠금 없음. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-K-09-report.md`.
   - 특이사항: exe zip·`dist/` 크기는 이번에 재지 않아 기존 2026-11-08 기록 표시를 유지했다.
 
+### Phase 8 — 앱 아이콘·찾기 VS Code 맞춤·Rust 라이선스·Sidebar·줄 번호 여백·Go 메뉴·About, 0.7.0 다시 빌드
+
+- **에이전트 환경** (2026-11-10, tauri-leader)
+  - 무엇을 했나: Phase 시작에 writer·coder·checker의 컨텍스트를 `/clear`로 비웠다(core COMMON 1절).
+  - 결과: 세 에이전트 모두 비운 상태로 카드를 받았다.
+  - 검증: herdr 프롬프트 전송.
+  - 특이사항: 없음.
+- **ORDER-05 정리(ORDER-08 3.7)** (2026-11-10, tauri-leader)
+  - 무엇을 했나: 남은 `running-pid11268`을 지웠다(PID 11268은 실행 중이 아니었다). `.agents/checker-settings.json` 허용 목록 추가는 auto mode가 Self-Modification으로 다시 막아 우회하지 않고 core-leader에 [BLOCKED]로 알렸다.
+  - 결과: `running-pid11268` 삭제. 허용 목록은 core-leader 답대로 사용자가 직접 고치고 다시 시도하지 않는다(기준 7은 삭제만).
+  - 검증: 코드 확인(파일 없음).
+  - 특이사항: 없음.
+- **K-10 앱 아이콘(I-22), 선택 안 찾기(I-23), Ctrl+F 입력란(I-24), Rust 라이선스(I-25), Sidebar(I-26), 줄 번호 감춤 여백(I-27)** (2026-11-10, coder)
+  - 무엇을 했나:
+    - I-22: core 아이콘 `i-window.ico`(16·24·32·48·256)와 `i-window-256.png`를 변환 없이 `src-tauri/icons/icon.ico`·`icon.png`로 복사했다. Windows에서 창·작업 표시줄 기본 아이콘은 exe의 `.ico` 리소스라 `icon.ico` 하나로 exe·창·작업 표시줄이 같이 바뀐다.
+    - I-23: 찾기 줄 "선택 안에서" 범위를 VS Code(`FindWidget` 토글, `FindModelBoundToEditorModel.research`)처럼 줄 단위로 넓힌다(`src/editor/search.ts` `lineScope`·`toggleScope`). 여러 줄이면 첫 줄 시작~끝 줄 끝, 끝이 열 1이면 앞 줄 끝으로 당기고, 한 줄 안 선택은 그대로, 비면 켜지 않는다. 문서가 바뀌면 다시 넓힌다.
+    - I-24: Ctrl+F 입력란을 VS Code `getSelectionSearchString(…, "single")` 규칙으로 채운다(`seedSearchString`·`openWith`): 한 줄 선택은 그 글(524288자 미만), 커서만 있으면 커서 아래 단어, 여러 줄이면 입력란 유지, 정규식이 켜져 있으면 이스케이프. Ctrl+H는 입력란이 비어 있을 때만 채운다. 전에는 여러 줄을 개행째 넣어 `<input>`에서 "cat bcat c"처럼 보였다. I-20의 `test`는 `...before`로 보존.
+    - I-25: `tools/rust-licenses.mjs`(새)가 `cargo metadata --filter-platform x86_64-pc-windows-msvc --locked`로 normal 의존만 따라가(build·dev·proc-macro 제외) crate 폴더의 `LICENSE*`·`COPYING*`·`UNLICENSE*`·`NOTICE*` 원문을 같은 글끼리 묶어 `src/licenses/rust-dependencies.txt`(새, 425KB)를 만든다. 기존 `src/licenses/*.txt` raw glob이 Licenses 화면에 그대로 싣는다.
+    - I-26: 원인은 `.sidebar-list`에 `overflow-y: auto`만 있어 `overflow-x`도 `auto`로 계산된 것이다. `overflow-x: hidden`을 더했다(`src/app.css`). 이름 말줄임은 그대로다.
+    - I-27: 줄 번호를 끄면 편집기에 `cm-no-line-numbers` 클래스를 달고 `.cm-line` 왼쪽 여백을 VS Code `computeLayout` 식(줄 높이 + `lineDecorationsWidth` 10 + folding 16)으로 준다(`view-options.ts`, `extensions.ts`, `metrics.ts`의 이름 있는 변수 둘). 들여쓰기 안내선은 글자 시작을 `.cm-line`의 실제 padding으로 읽는다(`indent-guides.ts`). 보임 상태는 그대로다.
+  - 결과: 의존성·`spec/` 변경 없음. 변경 파일은 `src-tauri/icons/icon.ico`·`icon.png`, `src/editor/search.ts`(+`.test.ts`), `tools/rust-licenses.mjs`(+`.test.mjs`), `src/licenses/rust-dependencies.txt`, `src/app.css`, `src/spec/metrics.ts`, `src/editor/extensions.ts`, `src/editor/view-options.ts`, `src/editor/indent-guides.ts`.
+  - 검증: V1. `npm.cmd run typecheck` 통과, `npm.cmd run test` 254/254(새 테스트 I-23·I-24·I-25), `cargo check` 통과(Rust 코드 변경 없음). I-26·I-27은 코드 확인. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-K-10-report.md`.
+  - 특이사항: `alloc-stdlib`·`selectors`·`webview2-com`·`webview2-com-sys`는 패키지에 라이선스 파일이 없어 그 사실과 SPDX 식만 적었다. `Cargo.lock`이 바뀌면 `node tools/rust-licenses.mjs`를 다시 돌린다. 보고에 적은 crate 수 214는 틀린 수다(목록 파일 색인은 192, 아래 V3). I-27 줄 높이가 소수(예 25.5px)여도 반올림하지 않았다(VS Code는 정수).
+- **K-11 Go 메뉴(I-28), About(I-29)** (2026-11-10, coder)
+  - 무엇을 했나:
+    - I-28: Go 메뉴만 지웠다. `pane::ActivatePreviousItem`·`ActivateNextItem` 명령, `Ctrl+PageUp/PageDown`, 탭 영역 ←·→ 버튼은 그대로다. 메뉴 줄은 File·Edit·View·Help.
+    - I-29: Help는 `About` 하나다(View Dependency Licenses·File Bug Report...·Request Feature...·Repository 삭제, 쓰지 않게 된 `REPOSITORY_URL`·`ISSUE_URL`·`MenuItem.url`·`openUrl` 분기도 지움). About는 앱 안 `<dialog>`(`src/shell/About.tsx`, `about.ts` 새): 머리(앱 아이콘 48px, "workbench-tauri", Version), 기술 정보 Version·Date(빌드 날, `vite.config.ts` `__BUILD_DATE__`)·Host(`tauri::VERSION`)·WebView2(`tauri::webview_version()`, Rust 명령 `about_info`)·OS(`navigator.userAgentData` `platformVersion`), 주요 Third-Party 9개(Tauri·Solid·CodeMirror·web-tree-sitter·markdown-it·Catppuccin Icons·Codicons·IBM Plex Sans·Lilex, 값은 `src/licenses` 데이터에서 읽고 글꼴 둘만 하드코딩)와 나머지 개수 줄, 버튼 Copy·View All Licenses·OK(기본 포커스). Copy는 Rust 명령 `write_clipboard_text`(CF_UNICODETEXT, 기존 `read_clipboard_text`와 `open_clipboard` 재시도 공유)로 한다. 아이콘은 `?no-inline` import로 파일로 내보내 CSP `img-src 'self'`를 지킨다.
+  - 결과: 의존성·CSP·capability 변경 없음. 변경 파일은 `src/shell/app-menus.ts`(+`.test.ts`), `src/shell/menu.ts`, `src/shell/AppMenu.tsx`, `src/shell/About.tsx`·`about.ts`(+`.test.ts`, 새), `src/app.css`, `src/spec/metrics.ts`(새 변수 넷), `vite.config.ts`, `src-tauri/src/clipboard.rs`, `src-tauri/src/lib.rs`.
+  - 검증: V1. `npm.cmd run typecheck` 통과, `npm.cmd run test` 256/256, `cargo check` 통과, `cargo clippy -- -D warnings` 경고 없음, `cargo test` 22 통과, `npx vite build` 통과. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-K-11-report.md`.
+  - 특이사항: I-28·I-29는 카드 진행 중 core-leader가 ORDER-08 8절(3.9 I-28, 3.10 I-29)로 더했다(한때 보류했다가 사용자 지시로 진행). 새 변수 `--dialog-about-max-height` 560px·`--dialog-about-icon-size` 48px·`--dialog-about-button-border` 1px는 toml에 없는 값이다. P-018 `dialog.about.height`(300)는 쓰지 않는다(창 높이는 글 높이, 최대 560).
+- **C-15 checker 검토(K-10·K-11)와 커밋 전 전체 검증** [PASS] (2026-11-10)
+  - 무엇을 했나: K-10·K-11 코드와 테스트를 검토하고 전체 검증을 했다.
+  - 결과: 지적 없음. typecheck 오류 0, test 256/256 통과, clippy 경고 0, cargo test 22 통과.
+  - 검증: tauri-leader 출력 파일 `%TEMP%\v07-C-15-*.txt`로 판정했다. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-C-15-report.md`.
+  - 특이사항: 없음.
+- **K-12·K-12-R1·K-12-R2 release 0.7.0 다시 빌드와 설치 파일 아이콘** (2026-11-10, coder)
+  - 무엇을 했나: K-12에서 `npm.cmd run tauri build`로 release를 다시 빌드하고 `docs/BUILD.md`(4장 문장·표, 5장 걸린 시간과 아이콘 주의, 8장 `rust-dependencies.txt` 한 줄)를 고쳤다. 첫 빌드 exe 아이콘이 옛것이어서(Cargo가 `build.rs`를 다시 돌리지 않아 `resource.lib`가 옛것) `src-tauri/build.rs` 수정 시각만 갱신해 다시 빌드했다. 설치 파일 아이콘이 NSIS 기본이라 K-12-R1에서 `tauri.conf.json` `bundle.windows.nsis.installerIcon: "icons/icon.ico"`를 더하고 K-12-R2에서 다시 빌드하고 `docs/BUILD.md`(3장 설치 파일 아이콘 한 문장 포함)를 고쳤다.
+  - 결과: 최종(K-12-R2) 성공, 전체 57.77초. NSIS 설치 파일 `workbench-tauri_0.7.0_x64-setup.exe` 6,066,132 바이트(LastWriteTime 2026-11-10 20:58:14), 앱 exe 16,832,512 바이트, 둘 다 ProductVersion·FileVersion 0.7.0. 아이콘은 `specs/v0.7/verify/ORDER-08/icon-setup-exe.png`·`icon-app-exe.png`·`icon-app-exe-16.png`로 뽑았고 설치 파일·앱 exe 모두 i-window(32px 중앙 픽셀 RGB 72,77,86 = 원본)다.
+  - 검증: V1(빌드 결과 확인). 빌드 전 `workbench-tauri*` 프로세스 0개, 종료한 프로세스 없음, os error 5 없음. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-K-12-report.md`, `v07-K-12-R2-report.md`.
+  - 특이사항: 아이콘만 바꿨을 때는 `build.rs` 수정 시각을 갱신해야 exe 아이콘이 바뀐다(`docs/BUILD.md` 5장). 설치 프로그램 화면의 사이드바·헤더 그림(`sidebarImage`·`headerImage`)은 범위 밖이다. 설치된 앱 바로 가기·제거 항목 아이콘은 설치해 보지 않아 미확인이다.
+- **V3 측정(ORDER-08)** (2026-11-10, tauri-leader)
+  - 무엇을 했나: 화면 차례 안에서 tauri-leader가 쟀다.
+  - 결과: `specs/v0.7/verify/ORDER-08/`(`v3.json`, PNG). C-16 checker 판정 [MEASURED]: 9 PASS, 불일치 0, 측정 불가 0(측정 조건 창 1440×852, 100%, One Dark, Lilex 15px·글자 폭 9px·줄 높이 24px, debug exe(C-15 PASS 코드 + installerIcon 설정), 임시 APPDATA·WebView 폴더, CDP 합성 입력. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-C-16-report.md`).
+    - 기준 1(I-22): 창 아이콘 32×32, 앱 exe·설치 파일·16px 아이콘 모두 i-window.
+    - 기준 2(I-23): 2줄 중간~3줄 중간 선택은 `2/4`(2·3줄 전체가 범위), 한 줄 안 선택은 `0/0`, 2줄 시작~4줄 열 1은 4줄을 빼고 `1/4`.
+    - 기준 3(I-24): 여러 줄 선택 뒤 Ctrl+F는 입력란 `cat` 유지, 한 줄 선택은 `b1 ca`, 단어 안 커서는 `cat`.
+    - 기준 4(I-25): Licenses에 Rust 제목과 `tauri 2.12.5`·`windows 0.62.2`·`webview2-com 0.39.1`.
+    - 기준 5(I-26): 너비 200·320에서 `scrollWidth` = `clientWidth`(199/199, 319/319), `overflowX` hidden, 가로 스크롤바 0.
+    - 기준 6(I-27): 감춤 글자 시작 50px(paddingLeft 50px), `Ctrl+=` 뒤 51.59px(줄 높이 25.59 + 26), 보임 content left 527(ORDER-03과 같음). 들여쓰기 선 상대 위치 [0, 36, 72] 유지, 확대 뒤 [0, 38.4, 76.8].
+    - 기준 8(0.7.0 빌드): 위 K-12-R2 산출물.
+    - 기준 10(I-28): 메뉴 줄 File·Edit·View·Help 넷, 탭 ←·→ 버튼과 `Ctrl+PageUp/PageDown` 동작.
+    - 기준 11(I-29): Help는 About 하나. About 머리(아이콘 48px, workbench-tauri, Version 0.7.0), 기술 정보 다섯(WebView2 157.0.4341.42, OS Windows 11 x64), 주요 9개와 요약 줄, Copy("Copied", 클립보드에 머리 포함)·View All Licenses(About 닫고 Licenses 탭)·OK(기본 포커스).
+  - 검증: V3. 판정은 C-16(checker)이 측정 파일만 읽어 했다.
+  - 특이사항: About의 Rust crate 수 192는 `rust-dependencies.txt` 색인 줄 수와 같고, K-10 보고의 214는 틀린 수였다. 클립보드 덤프의 `?`는 PowerShell 콘솔 코드페이지 변환 때문이다(`—`·`©`).
+
 ## 사용자 요청 작업
 
 없음

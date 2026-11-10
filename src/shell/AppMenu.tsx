@@ -1,20 +1,18 @@
 import { batch, createEffect, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 import { commands, focusStack, hooks, keymap, onKeyDown } from "../keymap/keyboard.ts";
 import { MENU_POPUP_OFFSET, MENU_SHORTCUT_ACTIVATE_DELAY_MS, USER_MENU_POPUP_OFFSET } from "../spec/metrics.ts";
-import { APP_NAME, appMenus, userMenu } from "./app-menus.ts";
+import { appMenus, userMenu } from "./app-menus.ts";
 import { dockOpen, setDockOpen } from "./panels.ts";
 import { dockWidth, resetDockWidth } from "./dock.ts";
 import { isClassicLayout } from "./layout.ts";
 import { activeTabOf, closeTab, openTool } from "../workspace/context.ts";
 import { editorContext as activeContext } from "../workspace/store.ts";
-import { openUrl } from "@tauri-apps/plugin-opener";
-import { notify } from "./toast.ts";
 import { FONT_LICENSES, licenseText } from "./licenses.ts";
 import Icon from "./Icon.tsx";
 import { closeOnFocusOut, cycle, first, hoverMenuItem, last, placeMenu, placeSubmenu, shortcutForEntry, step, type MenuEntry } from "./menu.ts";
 import { tooltip } from "./tooltip.ts";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { getVersion } from "@tauri-apps/api/app";
+import { createAbout } from "./About.tsx";
 
 // The one menu implementation (R-8, R-9): the title bar menu (a button, then a horizontal bar of menu names with the
 // open menu below) and right-click menus (a popup at a point). State is module level because the keymap's menu::*
@@ -122,7 +120,6 @@ function run(index: number, inChild = child() !== null): void {
   if (entry.children) return openChild(index);
   closeMenu(true); // I-309: the original focus is back before the command goes
   if (entry.run) entry.run();
-  else if (entry.url) void openUrl(entry.url).catch((error) => notify([String(error)]));
   else if (entry.action) commands.get(entry.action)?.();
 }
 
@@ -233,17 +230,9 @@ export default function AppMenu(props: { popupOnly?: boolean } = {}) {
   let bar: HTMLDivElement | undefined;
   let popup: HTMLDivElement | undefined;
   let contextPopup: HTMLDivElement | undefined;
-  let about!: HTMLDialogElement;
-  let aboutFocus: HTMLElement | null = null;
-  const [aboutVersion, setAboutVersion] = createSignal("");
-  commands.set("zed::About", () => {
-    void getVersion().then((version) => {
-      aboutFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-      setAboutVersion(version);
-      about.showModal();
-    }).catch((error) => notify([String(error)]));
-  });
   const copies = import.meta.glob<string>(["../assets/zed-icons/LICENSE*", "../assets/codicons/NOTICE.txt", "../theme/assets/**/LICENSE*", "../assets/icon-themes/**/LICENSE*", "../assets/zed-grammars/licenses/**/*", "../licenses/*.txt"], { query: "?raw", import: "default", eager: true });
+  const about = createAbout(copies, () => commands.get("zed::OpenLicenses")?.());
+  commands.set("zed::About", about.open);
   commands.set("zed::OpenLicenses", () => openTool(activeContext(), "Licenses", () => {
     const element = document.createElement("pre");
     element.className = "licenses-tab";
@@ -365,9 +354,7 @@ export default function AppMenu(props: { popupOnly?: boolean } = {}) {
           <Entries list={c().list} keys={c().keys} child />
         </div>
       )}</Show>
-      <dialog class="about-dialog" ref={about} aria-label={`About ${APP_NAME}`} onClose={() => aboutFocus?.focus()}>
-        <h1>{APP_NAME} {aboutVersion()}</h1>
-      </dialog>
+      <about.Dialog />
     </div>
   );
 }

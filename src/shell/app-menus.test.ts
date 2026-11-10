@@ -29,8 +29,7 @@ test("K-13: menu shortcuts match Zed Windows primary keys without changing Close
     "Split Up": "Ctrl-K Up", "Split Down": "Ctrl-K Down", "Split Left": "Ctrl-K Left", "Split Right": "Ctrl-\\",
     "Maximize Pane": "Shift-Escape", "Project Panel": "Ctrl-Shift-E",
     "Open Markdown Preview": "Ctrl-Shift-V", "Open Markdown Preview to the Side": "Ctrl-K V",
-    "Previous Tab": "Ctrl-PageUp", "Next Tab": "Ctrl-PageDown",
-    "View Dependency Licenses": undefined, "File Bug Report...": undefined, "Request Feature...": undefined, Repository: undefined, About: undefined,
+    About: undefined,
   });
   const close = menus[0].entries[4];
   if (close === "separator") assert.fail();
@@ -44,7 +43,7 @@ test("K-13: menu shortcuts match Zed Windows primary keys without changing Close
 test("K-10: menus start with File, end File with Quit and retain the other entries", () => {
   let disabled = false;
   const menus = appMenus(() => disabled);
-  assert.deepEqual(menus.map((m) => m.name), ["File", "Edit", "View", "Go", "Help"]);
+  assert.deepEqual(menus.map((m) => m.name), ["File", "Edit", "View", "Help"]);
   assert.deepEqual(labels(menus[0].entries), ["Open Folder...", "---", "Save", "---", "Close Editor", "Close Window", "---", "Quit"]);
   assert.deepEqual(menus[0].entries.at(-1), { label: "Quit", action: "zed::Quit" });
   assert.deepEqual(labels(menus[1].entries), ["Undo", "Redo", "---", "Cut", "Copy", "Paste", "---", "Find", "Replace", "---", "Toggle Line Comment", "Toggle Block Comment", "---", "Select All", "Add Next Occurrence", "Add Cursor Above", "Add Cursor Below"]);
@@ -60,17 +59,12 @@ test("K-10: menus start with File, end File with Quit and retain the other entri
     assert.equal(item.disabled, true);
     disabled = false;
   }
-  assert.deepEqual(labels(menus[3].entries), ["Previous Tab", "Next Tab"]);
 });
 
-test("K-09: Help sends the repository's issue and repository URLs, without opening a browser", () => {
-  const help = appMenus(() => true).at(-1)!.entries;
-  assert.deepEqual(labels(help), ["View Dependency Licenses", "---", "File Bug Report...", "Request Feature...", "---", "Repository", "About"]);
-  assert.deepEqual(help.flatMap((e) => e !== "separator" && e.url ? [e.url] : []), [
-    "https://github.com/nampluskr/workbench-tauri/issues/new",
-    "https://github.com/nampluskr/workbench-tauri/issues/new",
-    "https://github.com/nampluskr/workbench-tauri",
-  ]);
+test("I-29: Help is About alone; I-28: there is no Go menu", () => {
+  const menus = appMenus(() => true);
+  assert.deepEqual(menus.map((m) => m.name), ["File", "Edit", "View", "Help"]);
+  assert.deepEqual(menus.at(-1)!.entries, [{ label: "About", action: "zed::About" }]);
 });
 
 test("K-10-R1: Settings, Keymap and Classic are active; custom layout is checked and disabled", () => {

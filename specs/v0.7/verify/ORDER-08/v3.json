@@ -1,0 +1,203 @@
+{
+  "c5_sidebar_200": {
+    "scrollWidth": 199,
+    "clientWidth": 199,
+    "overflowX": "hidden",
+    "hBar": 0,
+    "width": 199,
+    "items": [
+      "a",
+      "bb",
+      "ccc"
+    ],
+    "over": []
+  },
+  "c1_window_icon": {
+    "big": "none",
+    "title": "workbench-tauri",
+    "hwnd": 1248470,
+    "small": "32x32"
+  },
+  "c2_scope": {
+    "mid2_mid3": {
+      "selected": "b1 cat b2\ncat c1",
+      "count": "2/4",
+      "lines": [
+        "cat b1 cat b2",
+        "cat c1 cat c2"
+      ]
+    },
+    "one_line": {
+      "selected": "b1 ca",
+      "count": "0/0",
+      "lines": []
+    },
+    "line2_to_line4_col1": {
+      "selected": "cat b1 cat b2\ncat c1 cat c2\n",
+      "count": "1/4",
+      "lines": [
+        "cat b1 cat b2",
+        "cat c1 cat c2"
+      ]
+    }
+  },
+  "c3_seed": {
+    "multi_line": "cat",
+    "one_line": "b1 ca",
+    "cursor_in_word": "cat",
+    "multi_line_again": "cat"
+  },
+  "c6_line_numbers": {
+    "shown": {
+      "editorLeft": 440,
+      "toolbarLeft": 440,
+      "contentLeft": 527,
+      "firstGlyphLeft": 532,
+      "fromEditor": 92,
+      "paddingLeft": "5px",
+      "lineH": 24,
+      "gutter": true,
+      "noLnClass": false,
+      "guides": [
+        0,
+        36,
+        72
+      ],
+      "charW": 9
+    },
+    "hidden": {
+      "editorLeft": 440,
+      "toolbarLeft": 440,
+      "contentLeft": 440,
+      "firstGlyphLeft": 490,
+      "fromEditor": 50,
+      "paddingLeft": "50px",
+      "lineH": 24,
+      "gutter": false,
+      "noLnClass": true,
+      "guides": [
+        0,
+        36,
+        72
+      ],
+      "charW": 9
+    },
+    "hiddenZoom": {
+      "editorLeft": 440,
+      "toolbarLeft": 440,
+      "contentLeft": 440,
+      "firstGlyphLeft": 491.59,
+      "fromEditor": 51.59,
+      "paddingLeft": "51.6px",
+      "lineH": 25.59,
+      "gutter": false,
+      "noLnClass": true,
+      "guides": [
+        0,
+        38.4,
+        76.8
+      ],
+      "charW": 9.60011574074074
+    },
+    "shownAgain": {
+      "editorLeft": 440,
+      "toolbarLeft": 440,
+      "contentLeft": 527,
+      "firstGlyphLeft": 532,
+      "fromEditor": 92,
+      "paddingLeft": "5px",
+      "lineH": 24,
+      "gutter": true,
+      "noLnClass": false,
+      "guides": [
+        0,
+        36,
+        72
+      ],
+      "charW": 9
+    }
+  },
+  "c7_menus_tabs": {
+    "bar": [
+      "File",
+      "Edit",
+      "View",
+      "Help"
+    ],
+    "help": [
+      "About"
+    ],
+    "tabs": {
+      "start": "second.ts",
+      "goBack": "deep.ts",
+      "goForward": "second.ts",
+      "ctrlPageUp": "deep.ts",
+      "ctrlPageDown": "second.ts"
+    }
+  },
+  "c8_about": {
+    "about": {
+      "open": true,
+      "rect": {
+        "w": 440,
+        "h": 480
+      },
+      "title": "workbench-tauri",
+      "info": [
+        "Version: 0.7.0",
+        "Date: 2026-11-10",
+        "Host: Tauri 2.12.5",
+        "WebView2: 157.0.4341.42",
+        "OS: Windows 11 x64"
+      ],
+      "items": [
+        "Tauri 2.12.5 — Apache-2.0 OR MIT — Copyright (c) 2017 - Present Tauri Apps Contributors",
+        "Solid 1.9.18 — MIT — Copyright (c) 2016-2025 Ryan Carniato",
+        "CodeMirror 6.43.15 — MIT — Copyright (C) 2018-2021 by Marijn Haverbeke <marijn@haverbeke.berlin> and others",
+        "web-tree-sitter 0.27.1 — MIT — Copyright (c) 2018 Max Brunsfeld",
+        "markdown-it 15.0.3 — MIT — Copyright (c) 2014 Vitaly Puzrin, Alex Kocharin.",
+        "Catppuccin Icons 1.24.0 — MIT — Copyright (c) 2021 Catppuccin",
+        "Codicons 0.0.46-24 — CC-BY-4.0 — Copyright (c) Microsoft Corporation.",
+        "IBM Plex Sans — OFL-1.1 — Copyright © 2017 IBM Corp. with Reserved Font Name \"Plex\"",
+        "Lilex — OFL-1.1 — Copyright 2019 The Lilex Project Authors",
+        "and 192 Rust crates and 27 JavaScript packages, listed in full in Licenses"
+      ],
+      "buttons": [
+        "Copy",
+        "View All Licenses",
+        "OK"
+      ],
+      "active": "OK",
+      "icon": {
+        "src": "/assets/icon-C4mkWJYV.png",
+        "natural": 256,
+        "shown": 48
+      }
+    },
+    "copiedLabel": "Copied",
+    "clipboard": "workbench-tauri\nVersion: 0.7.0\nDate: 2026-11-10\nHost: Tauri 2.12.5\nWebView2: 157.0.4341.42\nOS: Windows 11 x64\n\nThird-Party Software & Attributions\n- Tauri 2.12.5 ? Apache-2.0 OR MIT ? Copyright (c) 2017 - Present Tauri Apps Contributors\n- Solid 1.9.18 ? MIT ? Copyright (c) 2016-2025 Ryan Carniato\n- CodeMirror 6.43.15 ? MIT ? Copyright (C) 2018-2021 by Marijn Haverbeke <marijn@haverbeke.berlin> and others\n- web-tree-sitter 0.27.1 ? MIT ? Copyright (c) 2018 Max Brunsfeld\n- markdown-it 15.0.3 ? MIT ? Copyright (c) 2014 Vitaly Puzrin, Alex Kocharin.\n- Catppuccin Icons 1.24.0 ? MIT ? Copyright (c) 2021 Catppuccin\n- Codicons 0.0.46-24 ? CC-BY-4.0 ? Copyright (c) Microsoft Corporation.\n- IBM Plex Sans ? OFL-1.1 ? Copyright �� 2017 IBM Corp. with Reserved Font Name \"Plex\"\n- Lilex ? OFL-1.1 ? Copyright 2019 The Lilex Project Authors\n- and 192 Rust crates and 27 JavaScript packages; the full list and license texts are in Licenses\r\n",
+    "clipboardHasHeader": true,
+    "licenses": {
+      "aboutClosed": true,
+      "hasRustHeading": true,
+      "tauri": "tauri 2.12.5",
+      "windows": "windows 0.62.2",
+      "webview2": "webview2-com 0.39.1",
+      "length": 733702
+    }
+  },
+  "clipboardRestored": true,
+  "c5_sidebar_320": {
+    "scrollWidth": 319,
+    "clientWidth": 319,
+    "overflowX": "hidden",
+    "hBar": 0,
+    "width": 319,
+    "items": [
+      "a",
+      "bb",
+      "ccc"
+    ],
+    "over": []
+  }
+}

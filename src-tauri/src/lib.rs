@@ -103,6 +103,12 @@ fn watch_user_files(app: tauri::AppHandle) -> Result<notify::RecommendedWatcher,
     Ok(watcher)
 }
 
+/// I-29: the About window's Host and WebView2 lines. The WebView2 version is empty when the runtime cannot be asked.
+#[tauri::command]
+fn about_info() -> serde_json::Value {
+    serde_json::json!({ "tauri": tauri::VERSION, "webview2": tauri::webview_version().unwrap_or_default() })
+}
+
 #[tauri::command]
 fn caption_set_colors(window: tauri::WebviewWindow, colors: [String; 5]) -> Result<(), String> {
     caption::set_colors(window.hwnd().map_err(|e| e.to_string())?, &colors)
@@ -216,7 +222,7 @@ pub fn run() {
             }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![caption_set_colors, clipboard::read_clipboard_text, read_user_settings, write_user_settings, ensure_user_settings, edit_user_settings, open_settings, read_user_keymap, write_user_keymap, ensure_user_keymap, check_folder, paths_exist, read_state, write_state, files::list_dir, files::read_file, files::create_file, files::create_dir, files::rename_path, files::trash_paths, files::delete_paths, files::confirm, files::confirm_buttons, files::paste_paths, files::duplicate_path, folder_watch::watch_folder, text_io::save_text, name_search::search_names])
+        .invoke_handler(tauri::generate_handler![caption_set_colors, clipboard::read_clipboard_text, clipboard::write_clipboard_text, about_info, read_user_settings, write_user_settings, ensure_user_settings, edit_user_settings, open_settings, read_user_keymap, write_user_keymap, ensure_user_keymap, check_folder, paths_exist, read_state, write_state, files::list_dir, files::read_file, files::create_file, files::create_dir, files::rename_path, files::trash_paths, files::delete_paths, files::confirm, files::confirm_buttons, files::paste_paths, files::duplicate_path, folder_watch::watch_folder, text_io::save_text, name_search::search_names])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

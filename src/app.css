@@ -117,7 +117,8 @@ button, input, select, textarea {
 }
 .sidebar[hidden], .dock-left[hidden] { display: none; }
 /* R-12: one row per folder; the list scrolls when there are many (A-16.7). */
-.sidebar-list { flex: 1; min-height: 0; overflow-y: auto; outline: none; }
+/* I-26: overflow-y:auto alone makes overflow-x compute to auto too, so any sliver of row overflow showed a horizontal bar. Names already clip with an ellipsis (.sidebar-item-name), so the list never scrolls sideways. */
+.sidebar-list { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; outline: none; }
 .sidebar-item {
   position: relative;
   display: flex;
@@ -480,22 +481,33 @@ button, input, select, textarea {
 /* License content uses the existing text and surface tokens without introducing layout measurements. */
 .licenses-tab { height: 100%; margin: 0; overflow: auto; background: var(--editor-background); color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; }
 
+/* core I-29: header, a scrolling body (technical lines, third-party list) and a button row. P-018's width, padding and gap stay; the height follows the text up to --dialog-about-max-height. */
 .about-dialog {
   box-sizing: border-box;
   width: var(--dialog-about-width);
-  height: var(--dialog-about-height);
+  max-height: min(var(--dialog-about-max-height), calc(100% - 2 * var(--dialog-about-padding)));
   padding: var(--dialog-about-padding);
   gap: var(--dialog-about-gap);
   margin: auto;
   border: 0;
   background: var(--editor-background);
   color: var(--text);
-  align-items: center;
-  justify-content: center;
-  text-align: center;
 }
-.about-dialog[open] { display: flex; }
-.about-dialog h1 { margin: 0; font: inherit; }
+.about-dialog[open] { display: flex; flex-direction: column; }
+.about-header { display: flex; align-items: center; gap: var(--dialog-about-gap); }
+.about-icon { width: var(--dialog-about-icon-size); height: var(--dialog-about-icon-size); }
+.about-dialog h1 { margin: 0; font: inherit; font-size: var(--typography-size-large); }
+.about-header p { margin: 0; color: var(--text-muted); }
+.about-body { flex: 1; min-height: 0; overflow-y: auto; user-select: text; }
+.about-info { display: grid; grid-template-columns: max-content 1fr; gap: 0 var(--dialog-about-gap); margin: 0; }
+.about-info dt { color: var(--text-muted); }
+.about-info dd { margin: 0; overflow-wrap: anywhere; }
+.about-body h2 { margin: var(--dialog-about-gap) 0 0; font: inherit; color: var(--text-muted); }
+.about-attributions { margin: 0; padding-left: var(--dialog-about-gap); font-size: var(--typography-size-small); overflow-wrap: anywhere; }
+.about-buttons { display: flex; justify-content: flex-end; gap: var(--buttons-gap); }
+.about-buttons button { height: var(--buttons-height-default); padding-inline: var(--buttons-padding-x-default-compact); color: var(--text); background: var(--element-background, var(--elevated-surface-background)); border: var(--dialog-about-button-border) solid var(--border); font-size: var(--typography-size-default); }
+.about-buttons button:hover { background: var(--ghost-element-hover); }
+.about-buttons button:focus-visible { outline: var(--dialog-about-button-border) solid var(--border-focused); }
 
 /* R-16 project panel states. No spec ID sizes these texts or buttons, so only the structure is here. */
 .project-panel { height: 100%; overflow: auto; outline: none; user-select: none; }

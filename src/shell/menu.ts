@@ -5,7 +5,7 @@ import type { ContextNode, Keymap } from "../keymap/engine.ts";
 // Menu logic shared by the app menu and (Phase 5) the right-click menu: what can be selected, and where a popup goes.
 
 /** An entry runs `run`, or else the command named `action`; `action` is also what the shortcut is looked up for. */
-export type MenuItem = { label: string; action?: string; run?: () => void; disabled?: boolean; checked?: boolean; shortcut?: string; shortcutStyle?: "vscode"; url?: string; children?: MenuEntry[] };
+export type MenuItem = { label: string; action?: string; run?: () => void; disabled?: boolean; checked?: boolean; shortcut?: string; shortcutStyle?: "vscode"; children?: MenuEntry[] };
 export type MenuEntry = MenuItem | "separator";
 export type Menu = { name: string; entries: MenuEntry[] };
 

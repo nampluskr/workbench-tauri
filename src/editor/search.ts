@@ -1,4 +1,4 @@
-import { EditorSelection, EditorState, StateEffect, StateField, type StateCommand } from "@codemirror/state";
+import { EditorSelection, EditorState, StateEffect, StateField, type StateCommand, type Text } from "@codemirror/state";
 import { Decoration, EditorView, ViewPlugin, type Command, type DecorationSet, type Panel, type ViewUpdate } from "@codemirror/view";
 import { simplifySelection } from "@codemirror/commands";
 import {
@@ -16,11 +16,18 @@ const replaceVisible = StateField.define({
 
 // "Find in selection": the range captured when the toggle is switched on. It follows edits and ends with the panel.
 type Scope = { from: number; to: number } | null;
+// I-23: a scope that spans lines covers whole lines, first line's start to last line's end; a range ending at the start of a later line leaves
+// that line out. This is VS Code's findModel.research (re-done on every search, so it also holds after edits); one line stays as selected.
+const lineScope = (doc: Text, from: number, to: number): Scope => {
+  const first = doc.lineAt(from), last = doc.lineAt(to);
+  if (first.number === last.number) return { from, to };
+  return { from: first.from, to: to === last.from ? doc.line(last.number - 1).to : last.to };
+};
 const setScope = StateEffect.define<Scope>();
 const scopeField = StateField.define<Scope>({
   create: () => null,
   update(scope, tr) {
-    if (scope && tr.docChanged) scope = { from: tr.changes.mapPos(scope.from, 1), to: tr.changes.mapPos(scope.to, -1) };
+    if (scope && tr.docChanged) scope = lineScope(tr.newDoc, tr.changes.mapPos(scope.from, 1), tr.changes.mapPos(scope.to, -1));
     for (const effect of tr.effects) if (effect.is(setScope)) scope = effect.value;
     return scope && searchPanelOpen(tr.state) ? scope : null;
   },
@@ -97,14 +104,29 @@ export const skipOccurrence: StateCommand = ({ state, dispatch }) => {
   return false;
 };
 
-const openFind: Command = (view) => {
-  view.dispatch({ effects: showReplace.of(false) });
-  return openSearchPanel(view);
+// I-24: what the Find field gets from the editor selection, as VS Code's getSelectionSearchString with editor.find.seedSearchStringFromSelection
+// "always" (the default): a one-line selection is taken as it is, a cursor takes the word under it, a selection over several lines (or a cursor
+// not on a word) leaves the field alone. VS Code caps the text at 524288 characters.
+const SEED_MAX_LENGTH = 524288;
+export const seedSearchString = (state: EditorState): string | null => {
+  const { from, to, empty } = state.selection.main;
+  if (state.doc.lineAt(from).number !== state.doc.lineAt(to).number) return null;
+  if (!empty) return to - from < SEED_MAX_LENGTH ? state.sliceDoc(from, to) : null;
+  const word = state.wordAt(from);
+  return word ? state.sliceDoc(word.from, word.to) : null;
 };
-const openReplace: Command = (view) => {
-  view.dispatch({ effects: showReplace.of(true) });
-  return openSearchPanel(view);
+// CM seeds the field itself when it opens the bar (any selection up to 100 characters, newlines included), so the field is set again from
+// the rule above. Ctrl+H (startFindReplace) only seeds an empty field; Ctrl+F (start) always does. A regexp field gets the text escaped.
+const openWith = (replace: boolean): Command => (view) => {
+  const before = getSearchQuery(view.state);
+  view.dispatch({ effects: showReplace.of(replace) });
+  const seed = replace && before.search ? null : seedSearchString(view.state);
+  const opened = openSearchPanel(view);
+  const search = seed === null ? before.search : before.regexp ? seed.replace(/[\\{}*+?|^$.[\]()]/g, "\\$&") : seed;
+  if (getSearchQuery(view.state).search !== search) view.dispatch({ effects: setSearchQuery.of(new SearchQuery({ ...before, search })) });
+  return opened;
 };
+const openFind = openWith(false), openReplace = openWith(true);
 export const toggleSearch: Command = (view) => searchPanelOpen(view.state) ? closeSearchPanel(view) : openFind(view);
 
 // I-20: whole word here means a letter-or-digit boundary, so "_" and "-" both separate words ("my_read" matches "read"). CM judges
@@ -133,11 +155,14 @@ const keepWholeWord = EditorState.transactionExtender.of((tr) => {
 });
 
 // Find in selection: with a scope on, the match commands work on the scope's matches; otherwise they are CM's own.
+// Turning it on takes the selection as VS Code's toggle does: one that ends at column 1 of a later line stops at the end of the line before,
+// and what is then empty is no scope.
 export const toggleScope: Command = (view) => {
-  const { from, to, empty } = view.state.selection.main;
+  const { doc, selection: { main } } = view.state;
   const on = !!scopeOf(view.state);
-  if (!on && empty) return false;
-  view.dispatch({ effects: setScope.of(on ? null : { from, to }) });
+  const to = main.to > main.from && main.to === doc.lineAt(main.to).from && doc.lineAt(main.from).number < doc.lineAt(main.to).number ? main.to - 1 : main.to;
+  if (!on && main.from === to) return false;
+  view.dispatch({ effects: setScope.of(on ? null : lineScope(doc, main.from, to)) });
   return true;
 };
 const step = (forward: boolean): Command => (view) => {

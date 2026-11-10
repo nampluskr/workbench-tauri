@@ -13,7 +13,7 @@ let options: ViewOptions = { lineNumbers: DEFAULTS.editor_line_numbers, wordWrap
 const markdown = Facet.define<boolean, boolean>({ combine: (values) => values.some(Boolean) });
 const section = new Compartment();
 const parts = (isMarkdown: boolean, o: ViewOptions): Extension => [
-  o.lineNumbers ? [lineNumbers(), highlightActiveLineGutter()] : [],
+  o.lineNumbers ? [lineNumbers(), highlightActiveLineGutter()] : EditorView.editorAttributes.of({ class: "cm-no-line-numbers" }), // I-27 inset: extensions.ts
   isMarkdown && o.wordWrap ? EditorView.lineWrapping : [], // I-7: code never wraps
   o.indentGuides ? indentGuides : [],
   o.renderWhitespace ? renderWhitespace : [],

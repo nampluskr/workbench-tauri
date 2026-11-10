@@ -70,20 +70,20 @@ npm run tauri build             # release exe + NSIS 설치 파일
 ```
 
 - `beforeBuildCommand`가 `npm run build`(vite)를 먼저 돌리고 `dist/`를 exe 안에 넣는다.
-- 설치 파일은 `src-tauri/tauri.conf.json` `bundle.active=true`, `targets=["nsis"]`(K-59, 커밋 `f1231dc`)라서 함께 나온다. WebView2 설치 방식은 기본값 `downloadBootstrapper`.
+- 설치 파일은 `src-tauri/tauri.conf.json` `bundle.active=true`, `targets=["nsis"]`(K-59, 커밋 `f1231dc`)라서 함께 나온다. 설치 파일 아이콘은 `bundle.windows.nsis.installerIcon`(`icons/icon.ico`)으로 정한다(없으면 NSIS 기본 아이콘). WebView2 설치 방식은 기본값 `downloadBootstrapper`.
 - exe만 필요하면 `npm run tauri build -- --no-bundle`.
 - 디버그 빌드: `npm run tauri build -- --debug --no-bundle`.
 
 ## 4. 결과 파일
 
-2026-11-10 tauri-coder(K-09)의 0.7.0 release 빌드 결과다. ORDER-06·07(Settings 분류 페이지, K-08·K-08-R1)을 넣고 다시 빌드한 것이다. 실행 중인 앱이 exe를 잠그면 빌드가 os error 5로 실패하므로 앱을 닫고 빌드한다.
+2026-11-10 tauri-coder(K-12-R2)의 0.7.0 release 빌드 결과다. ORDER-08(K-10·K-11: 앱 아이콘, 찾기·Licenses·Sidebar·줄 번호 여백, Help·About 정리)까지 넣고 다시 빌드한 것이다. 실행 중인 앱이 exe를 잠그면 빌드가 os error 5로 실패하므로 앱을 닫고 빌드한다.
 
-NSIS 설치 파일과 앱 exe는 이번 0.7.0 다시 빌드 결과(2026-11-10 20:03)이며, exe zip과 프런트엔드 크기는 기존 2026-11-08 기록이다.
+NSIS 설치 파일과 앱 exe는 이번 0.7.0 ORDER-08 다시 빌드 결과(2026-11-10 20:58, 설치 파일 아이콘 `installerIcon` 포함)이며, exe zip과 프런트엔드 크기는 기존 2026-11-08 기록이다.
 
 | 파일 | 경로 | 크기·버전 |
 |---|---|---|
-| NSIS 설치 파일 | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.7.0_x64-setup.exe` | 6,024,784 바이트; ProductVersion·FileVersion `0.7.0` |
-| 앱 exe | `src-tauri\target\release\workbench-tauri.exe` | 16,743,936 바이트; ProductVersion·FileVersion `0.7.0` |
+| NSIS 설치 파일 | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.7.0_x64-setup.exe` | 6,066,132 바이트(수정 시각 2026-11-10 20:58:14); ProductVersion·FileVersion `0.7.0`; 아이콘 i-window |
+| 앱 exe | `src-tauri\target\release\workbench-tauri.exe` | 16,832,512 바이트(수정 시각 2026-11-10 20:58:14); ProductVersion·FileVersion `0.7.0`; 아이콘 i-window |
 | exe zip(Compress-Archive Optimal) | 직접 만듦(레포 밖 `%TEMP%`에서 측정) | 7.66 MiB |
 | 참고: 프런트엔드 `dist/` | exe 안에 압축돼 들어감 | 18.57 MiB(이 중 문법 복사본 11.9 MB) |
 
@@ -91,7 +91,8 @@ NSIS 설치 파일과 앱 exe는 이번 0.7.0 다시 빌드 결과(2026-11-10 20
 
 - 처음부터 release 빌드(`--no-bundle` 상태, 2026-11-08): 전체 200초, 그중 Rust 컴파일 3분 5초.
 - NSIS 켠 빌드(Rust 일부 재컴파일 + NSIS 도구 첫 내려받기): 101.7초, Rust 56.1초.
-- 0.7.0 release 다시 빌드(`npm.cmd run tauri build`, NSIS 켬, ORDER-06·07 포함, 2026-11-10 K-09): 전체 66.4초(vite 6.6초, Rust 47.3초, NSIS 포함).
+- 0.7.0 release 다시 빌드(`npm.cmd run tauri build`, NSIS 켬, ORDER-08 포함, 2026-11-10 K-12): 전체 57.8초(NSIS 포함, `installerIcon` 추가 뒤 K-12-R2). 같은 날 앞선 빌드는 K-12 57.8초(Rust 40.6초), ORDER-06·07(K-09) 66.4초.
+- 아이콘 파일(`src-tauri/icons/icon.ico`)만 바꾸면 Cargo가 빌드 스크립트를 다시 돌리지 않아 exe에 옛 아이콘이 남는다. 이럴 땐 `src-tauri/build.rs`의 수정 시각만 갱신(`(Get-Item src-tauriuild.rs).LastWriteTime = Get-Date`)하고 다시 빌드한다. 내용은 안 바꾼다.
 - 문법 복사본 채우기: 113.7초.
 - 노트북은 PC 사양·회선에 따라 다르다.
 
@@ -120,7 +121,7 @@ NSIS 설치 파일과 앱 exe는 이번 0.7.0 다시 빌드 결과(2026-11-10 20
   - Zed·Catppuccin·macOS Classic 테마, Catppuccin 아이콘 테마
   - tree-sitter 문법 wasm 25개(문법마다 라이선스, `src/assets/zed-grammars/licenses/`와 manifest)
 - 배포 범위: **개인 용도, 다른 사람에게 나눠 주지 않음**(core I-3). 이 범위이므로 GPL 쿼리를 빼거나 외부 배포용 소스 공개 조건을 맞추는 작업은 하지 않는다.
-- 라이선스 본문은 Dependency Licenses 화면에 포함된다: `AppMenu.tsx`의 raw glob(Zed 아이콘·테마·문법·`src/licenses/*.txt`)과 `licenses.ts`의 글꼴 목록을 쓴다. IBM Plex Sans·Lilex 글꼴 본문은 `public/fonts/`에서 `dist/fonts/`로 복사된다. Vite가 번들에 넣는 JS 의존성과 tree-sitter 런타임 본문은 `src/licenses/frontend-dependencies.txt`에 원문으로 두었다(패키지 버전을 바꾸면 이 복사본도 갱신).
+- 라이선스 본문은 Dependency Licenses 화면에 포함된다: `AppMenu.tsx`의 raw glob(Zed 아이콘·테마·문법·`src/licenses/*.txt`)과 `licenses.ts`의 글꼴 목록을 쓴다. IBM Plex Sans·Lilex 글꼴 본문은 `public/fonts/`에서 `dist/fonts/`로 복사된다. Vite가 번들에 넣는 JS 의존성과 tree-sitter 런타임 본문은 `src/licenses/frontend-dependencies.txt`에 원문으로 두었다(패키지 버전을 바꾸면 이 복사본도 갱신). 앱 exe에 들어가는 Rust crate(Windows 대상, build·dev·proc-macro 제외)의 이름·버전·라이선스와 원문은 `src/licenses/rust-dependencies.txt`에 있다(`Cargo.lock`을 바꾸면 `node tools/rust-licenses.mjs`로 다시 만든다).
 - Zed 앱 코드는 복사하지 않았다(레포 규칙).
 
 ## 9. GitHub에 올리지 않는 것

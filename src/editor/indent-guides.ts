@@ -158,7 +158,8 @@ export const indentGuides = [
       const scroll = view.scrollDOM.getBoundingClientRect();
       const baseLeft = scroll.left - view.scrollDOM.scrollLeft * view.scaleX;
       const baseTop = scroll.top - view.scrollDOM.scrollTop * view.scaleY;
-      const margin = parseFloat(getComputedStyle(view.dom).getPropertyValue("--editor-gutter-margin")) || 0; // E-005: .cm-line padding
+      const line = view.contentDOM.querySelector(".cm-line"); // E-005 / I-27: the text starts after the .cm-line padding, which is not the same with and without line numbers
+      const margin = line ? parseFloat(getComputedStyle(line).paddingLeft) || 0 : 0;
       const textLeft = view.contentDOM.getBoundingClientRect().left + margin;
       const step = unit * view.defaultCharacterWidth;
       const mark = ({ level, from, to }: Guide) => {
