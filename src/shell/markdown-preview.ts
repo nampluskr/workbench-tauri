@@ -1,6 +1,7 @@
 import DOMPurify from "dompurify";
 import { csvTable } from "../editor/csv.ts";
 import { blockAt, classifyLink, renderMarkdown, type LinkTarget } from "../editor/markdown.ts";
+import { svgElement } from "../editor/svg.ts";
 import type { PreviewKind } from "../editor/preview-kind.ts";
 import { MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS } from "../spec/metrics.ts";
 import { languages, loadSyntax } from "../syntax/assets.ts";
@@ -28,6 +29,7 @@ function csvNodes(text: string, delimiter: string): HTMLElement[] {
   const parsed = csvTable(text, delimiter);
   if (!parsed) return [];
   const table = document.createElement("table");
+  table.className = "csv-table"; // cell line breaks show as breaks (I-7)
   const line = (parent: HTMLElement, cell: "th" | "td", values: string[]) => {
     const tr = parent.appendChild(document.createElement("tr"));
     for (const value of values) tr.appendChild(document.createElement(cell)).textContent = value;
@@ -58,6 +60,14 @@ export function createPreview(hooks: PreviewHooks): Preview {
   const render = () => {
     const text = hooks.text();
     if (text === null) return;
+    if (hooks.kind === "svg") {
+      // I-6: a file that is not an SVG shows a short note instead of a picture.
+      const svg = svgElement(text);
+      const note = document.createElement("p");
+      note.textContent = "Not a valid SVG";
+      body.replaceChildren(svg ?? note);
+      return;
+    }
     if (hooks.kind !== "markdown") {
       body.replaceChildren(...csvNodes(text, hooks.kind === "tsv" ? "\t" : ","));
       return;

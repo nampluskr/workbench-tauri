@@ -7,9 +7,9 @@
 - **PROGRESS 기록** — 작업을 끝낼 때마다 PROGRESS에 무엇을·결과·검증을 남기고, 계획 밖 작업은 사용자 요청 작업으로 적는다.
 - **Zed 코드 복사 금지** — Zed 앱 코드(GPL-3.0)는 동작 이해에만 참고하고 복사하지 않는다. (출처: `docs/refs/03-tauri/README.md` 1절)
 - **HERDR 문서** — `specs/{version}/HERDR-SETUP.md`(v0.4까지는 `HERDR-DECISIONS.md`도)는 버전마다 따로 두고, 사용자 승인 뒤 `tauri-writer`가 쓴다. `tauri-leader`는 코드·문서를 쓰지 않는다.
-- **HERDR 구성은 core가 정한다** — v0.7 구성은 v0.6 그대로다(core `specs/v0.7/PLAN.md` 운영): `tauri-leader` Claude Code Opus 5.5, `tauri-writer` Claude Code Opus 5.5 medium, `tauri-coder` Claude Code Sonnet 5.5 high, `tauri-checker` agy gemini-3.8-flash-high(사용자 2026-11-10). Codex는 coder에만 쓴다. 배정과 근거는 `specs/{version}/HERDR-SETUP.md`에 적고, 한도가 바뀌어 구성을 바꾸면 다시 승인받는다.
+- **HERDR 구성은 core가 정한다** — v0.8 구성은 v0.7 그대로다(core `specs/v0.8/PLAN.md` 운영): `tauri-leader` Claude Code Opus 5.5, `tauri-writer` Claude Code Opus 5.5 medium, `tauri-coder` Claude Code Sonnet 5.5 high, `tauri-checker` agy gemini-3.8-flash-high(사용자 2026-11-10). Codex는 coder에만 쓴다. 배정과 근거는 `specs/{version}/HERDR-SETUP.md`에 적고, 한도가 바뀌어 구성을 바꾸면 다시 승인받는다.
 - **자기 워크스페이스만 쓴다** — 다른 워크스페이스의 파일은 읽기만 한다 (core v0.5 D-7).
-- **core ITEMS 우선** — workbench-core v0.7 ITEMS(I-1~I-13)가 이 레포 지침(루트 `INTENT.md`·`AGENTS.md`, docs/refs/ 출발 문서 `03-tauri/README.md`·`README.md` 포함)보다 우선한다. 부딪치면 이 레포의 지침을 고친다 (core v0.6 D-9, 사용자 2026-11-10).
+- **core ITEMS 우선** — workbench-core v0.8 ITEMS(I-1~I-10)가 이 레포 지침(루트 `INTENT.md`·`AGENTS.md`, docs/refs/ 출발 문서 `03-tauri/README.md`·`README.md` 포함)보다 우선한다. 부딪치면 이 레포의 지침을 고친다 (core v0.6 D-9, 사용자 2026-11-10).
 - **커밋은 tauri-leader만** — `tauri-leader`가 커밋만 한다(내용은 쓰지 않는다). `tauri-writer`·`tauri-coder`·`tauri-checker`는 커밋하지 않는다. push는 매번 사용자(또는 사용자에게 위임받은 tauri-leader) 승인 뒤에 한다.
 
 ---

@@ -690,6 +690,8 @@ button, input, select, textarea {
   overflow: hidden;
 }
 .markdown-body :is(th, td) { padding: var(--markdown-preview-table-cell-padding-y) var(--markdown-preview-table-cell-padding-x); text-align: left; }
+.markdown-body .csv-table :is(th, td) { white-space: pre-wrap; } /* core v0.8 I-7: a line break inside a cell shows as a break */
+.markdown-body > svg { max-width: 100%; height: auto; } /* core v0.8 I-6: shrink to fit, never enlarge */
 .markdown-body :is(th, td) + :is(th, td) { border-left: var(--markdown-preview-table-cell-border) solid var(--border); }
 .markdown-body tr + tr > *, .markdown-body tbody tr > * { border-top: var(--markdown-preview-table-cell-border) solid var(--border); }
 .markdown-body thead tr { background: var(--title-bar-background); }

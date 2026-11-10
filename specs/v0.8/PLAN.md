@@ -31,3 +31,15 @@
 | W-01 | v0.8 문서(PLAN·HERDR-SETUP·PROGRESS, `reports/`·`verify/`)와 루트 `AGENTS.md`, core 리더 이름 `leader-core` | v0.8 시작 |
 | K-01 | 미리보기 대상 판별 한 곳(`.md`·`.markdown`·`.csv`·`.tsv`), 열기 방식과 화면 이름 일반화, I-10 `eye` 아이콘, I-7 CSV·TSV 표, 앱 버전 0.8.0 | v0.8 시작 · M-2 · M-5 · M-6 · M-7 · I-10 · I-7 |
 | C-01 | 검토·V3 | v0.8 시작 · M-2 · M-5 · M-6 · M-7 · I-10 · I-7 |
+
+### Phase 2 작업 카드
+
+| 카드 | 할 일 | core 항목 |
+|---|---|---|
+| W-03 | 루트 `AGENTS.md` 레포 규칙 절의 v0.7 문장을 v0.8로(버전·범위만), 이 표 | ORDER-01에서 남은 것(AGENTS.md 레포 규칙) |
+| K-02a | asset protocol 켜기 | M-8 |
+| K-02b | 로컬 자원 CSP, I-8 이미지 보기, I-9 PDF 보기, I-3 마크다운 로컬 이미지, I-6 SVG 편집·미리보기, I-7 셀 줄바꿈 | M-8 · I-8 · I-9 · I-3 · I-6 · I-7 |
+| C-03 | 검토 | M-8 · I-8 · I-9 · I-3 · I-6 · I-7 · AGENTS.md 레포 규칙 |
+| C-04 | V3 판정 | M-8 · I-8 · I-9 · I-3 · I-6 · I-7 |
+
+- 실측 3.1(a)(b)(c)(core ORDER-02)는 `tauri-leader`가 한다.
