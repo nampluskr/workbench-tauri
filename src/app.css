@@ -429,7 +429,7 @@ button, input, select, textarea {
   background: none;
   color: var(--text);
   font: inherit;
-  font-size: var(--typography-ui-font-size);
+  font-size: var(--tooltip-font-size); /* user request 2026-11-10 (K-16), overrides ORDER-11 U-5 */
 }
 .menu-name:hover { background: var(--ghost-element-hover); }
 .menu-name.open { background: var(--ghost-element-selected); }
