@@ -76,6 +76,10 @@ export function parseSettings(text: string | null, choices: Choices): Settings {
   return out as Settings;
 }
 
+/** I-17: the default value of every row in a category (for one saveSettings write); other categories and unknown keys are not in it. */
+export const categoryDefaults = (category: (typeof CATEGORIES)[number]): Partial<Record<SettingKey, SettingValue>> =>
+  Object.fromEntries(ROWS.filter((row) => row.category === category).map((row) => [row.key, DEFAULTS[row.key]]));
+
 export const filterSettings = (query: string) => ROWS.filter((row) =>
   query.toLowerCase().trim().split(/\s+/).every((term) => `${row.category} ${row.name} ${row.description}`.toLowerCase().includes(term)));
 

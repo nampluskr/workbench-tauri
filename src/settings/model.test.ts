@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { DEFAULTS, filterSettings, parseSettings, settingMenu, settingNumber, settingStep, updateSetting, updateSettings } from "./model.ts";
+import { DEFAULTS, categoryDefaults, filterSettings, parseSettings, settingMenu, settingNumber, settingStep, updateSetting, updateSettings } from "./model.ts";
 const THEMES = { theme: ["One Dark", "Catppuccin Mocha", "One Light"], icon_theme: ["Zed (Default)", "Catppuccin Mocha"] };
 import { stripJsonc } from "../keymap/user.ts";
 
@@ -138,4 +138,14 @@ test("appending a key looks like an editor wrote it: comma after the last value,
   // Two adds in a row give the same shape as writing both at once.
   assert.equal(updateSetting(add("{}"), "icon_theme", "Zed (Default)", THEMES), '{\n  "theme": "One Light",\n  "icon_theme": "Zed (Default)"\n}');
   for (const text of ["", "// c", "{}", '{\n  "a": 1 // n\n}', "{ }", '{\n  "a": {"b": [1]}\n}']) assert.doesNotThrow(() => parseSettings(add(text), THEMES), text);
+});
+
+test("I-17: Load Defaults for a category writes only that category's keys", () => {
+  const text = '{\n  // keep\n  "unknown": 1,\n  "theme": "One Light",\n  "ui_font_size": 20,\n  "buffer_font_size": 22,\n  "editor_word_wrap": false,\n  "preview_font_size": 24\n}\n';
+  const next = updateSettings(text, categoryDefaults("Editor"), THEMES);
+  assert.ok(next.includes("// keep") && next.includes('"unknown": 1'));
+  const s = parseSettings(next, THEMES);
+  assert.equal(s.buffer_font_size, DEFAULTS.buffer_font_size);
+  assert.equal(s.editor_word_wrap, DEFAULTS.editor_word_wrap);
+  assert.deepEqual([s.theme, s.ui_font_size, s.preview_font_size], ["One Light", 20, 24]);
 });

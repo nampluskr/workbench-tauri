@@ -6,8 +6,8 @@ import AppMenu, { isContextMenuOpen, openContextMenu } from "../shell/AppMenu.ts
 import { commands } from "../keymap/keyboard.ts";
 import { SETTINGS_DROPDOWN_OFFSET_Y } from "../spec/metrics.ts";
 import { choices } from "./choices.ts";
-import { CATEGORIES, filterSettings, isChoiceKey, isToggleKey, settingMenu, settingNumber, settingStep, type ChoiceKey, type SettingKey, type SettingValue } from "./model.ts";
-import { saveSetting, settings } from "./load.ts";
+import { CATEGORIES, categoryDefaults, filterSettings, isChoiceKey, isToggleKey, settingMenu, settingNumber, settingStep, type ChoiceKey, type SettingKey, type SettingValue } from "./model.ts";
+import { saveSettings, settings } from "./load.ts";
 import "./settings.css";
 
 export default function SettingsWindow() {
@@ -17,27 +17,38 @@ export default function SettingsWindow() {
   const [saving, setSaving] = createSignal(false);
   const rows = createMemo(() => filterSettings(query()));
   const [current, setCurrent] = createSignal<(typeof CATEGORIES)[number]>("UI");
-  const save = async (key: SettingKey, value: SettingValue) => {
+  // I-16: with no search the page is the chosen category; a search shows every category's matching rows, grouped by title.
+  const searching = () => query().trim() !== "";
+  const shown = () => searching() ? CATEGORIES.filter((category) => rows().some((r) => r.category === category)) : [current()];
+  // I-17: the category the confirm dialog asks about, and the button to give focus back to.
+  const [restoring, setRestoring] = createSignal<(typeof CATEGORIES)[number]>("UI");
+  let confirm!: HTMLDialogElement;
+  let opener: HTMLElement | undefined;
+  const saveAll = async (values: Partial<Record<SettingKey, SettingValue>>) => {
     if (saving()) return;
     setSaving(true);
-    try { await saveSetting(key, value); setError(""); }
+    try { await saveSettings(values); setError(""); }
     catch (error) { setError(String(error)); }
     finally { setSaving(false); }
   };
+  const save = (key: SettingKey, value: SettingValue) => saveAll({ [key]: value });
   return <div class="settings-window">
     <TitleBar settings />
     <div class="settings-body">
       <nav class="settings-nav" aria-label="Settings categories">
         <div class="settings-search"><Icon name="magnifying_glass" /><input type="search" placeholder="Search settings…" aria-label="Search settings" value={query()} onInput={(e) => setQuery(e.currentTarget.value)} /></div>
-        <For each={CATEGORIES}>{(category) => <Show when={rows().some((r) => r.category === category)}>
-          <button class="settings-category" aria-current={current() === category ? "page" : undefined} onClick={() => { setCurrent(category); document.getElementById(`category-${category}`)?.scrollIntoView(); }}><Icon name="chevron_right" />{category}</button>
-        </Show>}</For>
+        <For each={CATEGORIES}>{(category) =>
+          <button class="settings-category" aria-current={current() === category ? "page" : undefined} onClick={() => { setQuery(""); setCurrent(category); }}><Icon name="chevron_right" />{category}</button>
+        }</For>
       </nav>
       <main class="settings-content">
         <div class="settings-toolbar"><span class="settings-scope" aria-label="Settings scope: User">User</span><button onClick={() => void invoke("edit_user_settings").catch((error) => setError(String(error)))}>Edit in settings.json</button></div>
         <Show when={error()}><p role="alert">{error()}</p></Show>
-        <For each={CATEGORIES}>{(category) => <Show when={rows().some((r) => r.category === category)}>
-          <h1 id={`category-${category}`}>{category}</h1>
+        <For each={shown()}>{(category) => <>
+          <div class="settings-heading">
+            <h1 id={`category-${category}`}>{category}</h1>
+            <Show when={!searching()}><button onClick={(e) => { opener = e.currentTarget; setRestoring(category); confirm.showModal(); }}>Load Defaults</button></Show>
+          </div>
           <For each={rows().filter((r) => r.category === category)}>{(row) => <div class="settings-row">
             <div class="settings-copy"><label id={`label-${row.key}`} for={`setting-${row.key}`}>{row.name}</label><p id={`description-${row.key}`}>{row.description}</p></div>
             <Show when={isChoiceKey(row.key)} fallback={
@@ -67,10 +78,18 @@ export default function SettingsWindow() {
               })()}
             </Show>
           </div>}</For>
-        </Show>}</For>
+        </>}</For>
         <Show when={!rows().length}><p>No settings found.</p></Show>
       </main>
     </div>
+    <dialog class="settings-confirm" ref={confirm} aria-labelledby="confirm-title" aria-describedby="confirm-detail" aria-modal="true" onClose={() => opener?.focus()}>
+      <h2 id="confirm-title">Restore all {restoring()} settings to their defaults?</h2>
+      <p id="confirm-detail">This cannot be undone.</p>
+      <div class="settings-confirm-buttons">
+        <button onClick={() => { confirm.close(); void saveAll(categoryDefaults(restoring())); }}>Load Defaults</button>
+        <button autofocus onClick={() => confirm.close()}>Cancel</button>
+      </div>
+    </dialog>
     <AppMenu popupOnly />
   </div>;
 }

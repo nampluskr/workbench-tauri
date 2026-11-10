@@ -174,6 +174,34 @@
   - 검증: V1. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-K-06-report.md`.
   - 특이사항: exe zip·dist 크기는 재지 않아 `docs/BUILD.md`에 기존 2026-11-08 기록을 유지했다. `workbench-tauri.exe.running-pid11268`은 그대로 두었다.
 
+### Phase 6 — Settings 분류별 페이지·Load Defaults
+
+- **에이전트 환경** (2026-11-10, tauri-leader)
+  - 무엇을 했나: Phase 시작에 writer·coder·checker의 컨텍스트를 `/clear`로 비웠다(core COMMON 1절).
+  - 결과: 세 에이전트 모두 비운 상태로 카드를 받았다.
+  - 검증: herdr 프롬프트 전송.
+  - 특이사항: 없음.
+- **K-07 Settings 분류별 페이지(I-16), 분류마다 Load Defaults(I-17)** (2026-11-10, coder)
+  - 무엇을 했나:
+    - I-16: 검색어가 없으면 고른 분류의 제목과 행만 보인다(`src/settings/Settings.tsx` `shown()` = `[current()]`). 처음 열면 UI. 왼쪽 분류를 누르면 페이지만 바뀌고 스크롤 이동은 없다(스크롤 코드 삭제). 왼쪽 분류 셋은 검색 중에도 항상 보인다. 검색어가 있으면 맞는 행이 있는 분류만 제목으로 묶어 모두 보이고(기존 방식), 검색어를 지우면 고른 분류 페이지로 돌아간다. 검색 중 분류를 누르면 검색어를 지우고 그 분류 페이지로 간다.
+    - I-17: 분류 페이지 제목 오른쪽 끝에 Load Defaults 버튼(`.settings-heading`)을 두고, 검색 결과 화면에는 두지 않았다. 누르면 WebView 안 `<dialog class="settings-confirm">`를 `showModal()`로 연다. 문구는 "Restore all {분류} settings to their defaults?" / "This cannot be undone." / [Load Defaults] [Cancel]. 열리면 Cancel에 포커스, Tab은 창 안에서만 돌고, Escape = 취소, 닫히면 Load Defaults 버튼으로 포커스가 돌아간다. 확인하면 `categoryDefaults(분류)`(`src/settings/model.ts`)를 `saveSettings`로 한 번 쓴다 — 그 분류 키만 기본값이고 주석·알 수 없는 키·다른 분류 키는 그대로다. `window.confirm`·Rust TaskDialog는 쓰지 않았다.
+  - 결과: 의존성·`spec/` 변경 없음, 새 수치·토큰 없음(기존 `--settings-*`·`--buttons-*` 변수 사용). 변경 파일은 `src/settings/`의 `Settings.tsx`·`model.ts`·`model.test.ts`·`settings.css`.
+  - 검증: V1. `npm.cmd run typecheck` 통과, `node --test src/settings/model.test.ts` 9 통과(새 테스트 1: Editor 되돌리기 → Editor 키만 기본값, 다른 분류 값·알 수 없는 키·주석 그대로). 전체 테스트 247. UI 동작은 코드 확인. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-K-07-report.md`.
+  - 특이사항: 메모리 단축키 값(`Ctrl+=` 글꼴 크기, `Ctrl+Alt+L`·`Alt+Z`)은 설정 값이 실제로 바뀔 때만 지워지는 기존 규칙(ORDER-01~05) 그대로다 — 이미 기본값인 키를 되돌리면 임시값이 남는다. 바꾸지 않았다. UI의 Load Defaults는 `theme`만 되돌리고 `editor_theme`·`preview_theme`는 Editor·Preview 분류 소속이라 건드리지 않는다.
+- **C-11 checker 검토(K-07)와 커밋 전 전체 검증** [PASS] (2026-11-10)
+  - 무엇을 했나: K-07 코드와 `categoryDefaults` 테스트를 검토하고 전체 검증을 했다.
+  - 결과: 지적 없음. typecheck 오류 0, test 247/247 통과. Rust 변경이 없어 cargo 검증은 하지 않았다.
+  - 검증: tauri-leader 출력 파일 `%TEMP%\v07-C-11-*.txt`로 판정했다. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-C-11-report.md`.
+  - 특이사항: 검토 중 checker가 `Get-ChildItem` 승인 창에 멈췄다(auto mode가 승인 응답을 막음). tauri-leader가 취소하고 셸 없이 진행시켰다.
+- **V3 측정(ORDER-06)** (2026-11-10, tauri-leader)
+  - 무엇을 했나: 화면 차례 안에서 tauri-leader가 쟀다.
+  - 결과: `specs/v0.7/verify/ORDER-06/`(`v3.json`, PNG 9). C-12 checker 판정 [MEASURED]: ORDER-06 완료 기준 1·2·3 PASS, 불일치 0, 측정 불가 0(측정 조건 1920×1080 100%, Settings 창 900×750, One Dark, debug exe, CDP 합성 입력. 시작 `settings.json`은 주석 1행·`x_unknown: 1`·`buffer_font_size` 20·`editor_line_height` 2.2·`preview_font_size` 22. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-C-12-report.md`).
+    - 기준 1(I-16 분류별 페이지): 처음 열면 UI 제목 하나·행 3, Editor 클릭은 행 7, Preview 클릭은 행 6이고 셋 다 `scrollTop` 0.
+    - 기준 2(I-16 검색): "preview" 검색은 Preview 제목·행 6이고 Load Defaults 없음. 검색어를 지우면 Preview 페이지와 Load Defaults가 돌아온다. "font" 검색은 UI·Editor·Preview 제목 아래 행 4(UI Font Size, Editor Font Size·Line Height, Preview Font Size). 검색 중 Editor 클릭은 검색어 ""·Editor 행 7.
+    - 기준 3(I-17 Load Defaults): 확인 창 제목 "Restore all Editor settings to their defaults?", 설명 "This cannot be undone.", 버튼 [Load Defaults] [Cancel], 포커스 Cancel, 위치 (282, 295) 337×160(창 가운데). Escape·Cancel은 창이 닫히고 파일이 그대로(Escape 뒤 포커스 Load Defaults). 확인하면 Editor 값만 기본값(`buffer_font_size` 15, `editor_line_height` 1.6)이 되고 주석·`x_unknown`·`preview_font_size` 22는 그대로다. 앱을 다시 열어도 같다.
+  - 검증: V3. 판정은 C-12(checker)가 측정 파일만 읽어 했다.
+  - 특이사항: 확인 뒤 파일에 없던 Editor 키 다섯(`editor_theme`·`editor_line_numbers`·`editor_word_wrap`·`editor_indent_guides`·`editor_render_whitespace`)이 기본값으로 새로 쓰였다 — `categoryDefaults`가 분류의 키 전부를 쓰기 때문이고 값은 기본값과 같다.
+
 ## 사용자 요청 작업
 
 없음

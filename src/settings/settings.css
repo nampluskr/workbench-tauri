@@ -70,7 +70,18 @@
 .settings-toolbar { display: flex; align-items: center; justify-content: space-between; }
 .settings-toolbar button { height: var(--buttons-height-default); padding-inline: var(--buttons-padding-x-default-compact); }
 .settings-scope { display: flex; align-items: center; height: var(--buttons-height-default); padding-inline: var(--buttons-padding-x-default-compact); font-size: var(--typography-size-default); background: var(--info-background); color: var(--text-accent); border-radius: var(--settings-control-corner-radius); }
-.settings-content h1 { font: inherit; margin: var(--settings-title-gap) 0 0; }
+.settings-heading { display: flex; align-items: center; justify-content: space-between; margin-top: var(--settings-title-gap); }
+.settings-heading button { height: var(--buttons-height-default); padding-inline: var(--buttons-padding-x-default-compact); }
+.settings-content h1 { font: inherit; margin: 0; }
+/* I-17 confirm: an in-app dialog (no WebView or native one); sizes come from the settings variables above. */
+.settings-confirm { box-sizing: border-box; max-width: calc(100% - 2 * var(--settings-content-padding)); padding: var(--settings-content-padding); border: var(--settings-border) solid var(--border); background: var(--elevated-surface-background); color: var(--text); font-size: var(--typography-size-default); }
+.settings-confirm::backdrop { background: transparent; }
+.settings-confirm h2 { font: inherit; margin: 0; }
+.settings-confirm p { margin: var(--settings-category-gap) 0 0; color: var(--text-muted); }
+.settings-confirm-buttons { display: flex; justify-content: flex-end; gap: var(--settings-category-gap); margin-top: var(--settings-title-gap); }
+.settings-confirm button { height: var(--buttons-height-default); padding-inline: var(--buttons-padding-x-default-compact); color: var(--text); background: var(--element-background, var(--elevated-surface-background)); border: var(--settings-border) solid var(--border); font-size: var(--typography-size-default); }
+.settings-confirm button:hover { background: var(--ghost-element-hover); }
+.settings-confirm button:focus-visible { outline: var(--settings-border) solid var(--border-focused); }
 .settings-content h2 { font: inherit; font-family: var(--buffer-font-family); font-size: var(--typography-size-small); color: var(--text-muted); margin: var(--settings-section-gap) 0 0; padding-bottom: var(--settings-search-margin); border-bottom: var(--settings-border) solid var(--border); }
 .settings-row { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--settings-category-gap); padding-block: var(--settings-row-padding); border-bottom: var(--settings-border) solid var(--border); }
 .settings-copy { min-width: 0; font-size: var(--typography-size-default); line-height: var(--settings-description-pitch); }

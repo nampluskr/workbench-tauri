@@ -1,0 +1,273 @@
+{
+  "c1_pages": {
+    "first": {
+      "current": "UI",
+      "nav": [
+        "UI",
+        "Editor",
+        "Preview"
+      ],
+      "headings": [
+        "UI"
+      ],
+      "loadDefaults": [
+        "Load Defaults"
+      ],
+      "rows": [
+        "UI / Theme",
+        "UI / Icon Theme",
+        "UI / Font Size"
+      ],
+      "scrollTop": 0,
+      "search": ""
+    },
+    "editor": {
+      "current": "Editor",
+      "nav": [
+        "UI",
+        "Editor",
+        "Preview"
+      ],
+      "headings": [
+        "Editor"
+      ],
+      "loadDefaults": [
+        "Load Defaults"
+      ],
+      "rows": [
+        "Editor / Theme",
+        "Editor / Font Size",
+        "Editor / Line Height",
+        "Editor / Line Numbers",
+        "Editor / Word Wrap",
+        "Editor / Indent Guides",
+        "Editor / Render Whitespace"
+      ],
+      "scrollTop": 0,
+      "search": ""
+    },
+    "preview": {
+      "current": "Preview",
+      "nav": [
+        "UI",
+        "Editor",
+        "Preview"
+      ],
+      "headings": [
+        "Preview"
+      ],
+      "loadDefaults": [
+        "Load Defaults"
+      ],
+      "rows": [
+        "Preview / Theme",
+        "Preview / Font Size",
+        "Preview / Paragraph Line Spacing",
+        "Preview / Paragraph Spacing",
+        "Preview / List Line Spacing",
+        "Preview / List Item Spacing"
+      ],
+      "scrollTop": 0,
+      "search": ""
+    }
+  },
+  "c2_search": {
+    "searched": {
+      "current": "Preview",
+      "nav": [
+        "UI",
+        "Editor",
+        "Preview"
+      ],
+      "headings": [
+        "Preview"
+      ],
+      "loadDefaults": [],
+      "rows": [
+        "Preview / Theme",
+        "Preview / Font Size",
+        "Preview / Paragraph Line Spacing",
+        "Preview / Paragraph Spacing",
+        "Preview / List Line Spacing",
+        "Preview / List Item Spacing"
+      ],
+      "scrollTop": 0,
+      "search": "preview"
+    },
+    "cleared": {
+      "current": "Preview",
+      "nav": [
+        "UI",
+        "Editor",
+        "Preview"
+      ],
+      "headings": [
+        "Preview"
+      ],
+      "loadDefaults": [
+        "Load Defaults"
+      ],
+      "rows": [
+        "Preview / Theme",
+        "Preview / Font Size",
+        "Preview / Paragraph Line Spacing",
+        "Preview / Paragraph Spacing",
+        "Preview / List Line Spacing",
+        "Preview / List Item Spacing"
+      ],
+      "scrollTop": 0,
+      "search": ""
+    },
+    "font": {
+      "current": "Preview",
+      "nav": [
+        "UI",
+        "Editor",
+        "Preview"
+      ],
+      "headings": [
+        "UI",
+        "Editor",
+        "Preview"
+      ],
+      "loadDefaults": [],
+      "rows": [
+        "UI / Font Size",
+        "Editor / Font Size",
+        "Editor / Line Height",
+        "Preview / Font Size"
+      ],
+      "scrollTop": 0,
+      "search": "font"
+    },
+    "clickWhileSearching": {
+      "current": "Editor",
+      "nav": [
+        "UI",
+        "Editor",
+        "Preview"
+      ],
+      "headings": [
+        "Editor"
+      ],
+      "loadDefaults": [
+        "Load Defaults"
+      ],
+      "rows": [
+        "Editor / Theme",
+        "Editor / Font Size",
+        "Editor / Line Height",
+        "Editor / Line Numbers",
+        "Editor / Word Wrap",
+        "Editor / Indent Guides",
+        "Editor / Render Whitespace"
+      ],
+      "scrollTop": 0,
+      "search": ""
+    }
+  },
+  "c3_load_defaults": {
+    "before": {
+      "file": "{\n  // user comment\n  \"x_unknown\": 1,\n  \"buffer_font_size\": 20,\n  \"editor_line_height\": 2.2,\n  \"preview_font_size\": 22\n}\n",
+      "editor": {
+        "buffer_font_size": "20",
+        "editor_line_height": "2.2",
+        "preview_font_size": null,
+        "ui_font_size": null
+      },
+      "preview": {
+        "buffer_font_size": null,
+        "editor_line_height": null,
+        "preview_font_size": "22",
+        "ui_font_size": null
+      }
+    },
+    "opened": {
+      "open": true,
+      "title": "Restore all Editor settings to their defaults?",
+      "detail": "This cannot be undone.",
+      "buttons": [
+        "Load Defaults",
+        "Cancel"
+      ],
+      "active": "Cancel",
+      "rect": {
+        "x": 282,
+        "y": 295,
+        "w": 337,
+        "h": 160
+      },
+      "vw": 900,
+      "vh": 750
+    },
+    "afterEsc": {
+      "dialog": {
+        "open": false,
+        "title": "Restore all Editor settings to their defaults?",
+        "detail": "This cannot be undone.",
+        "buttons": [
+          "Load Defaults",
+          "Cancel"
+        ],
+        "active": "Load Defaults",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        },
+        "vw": 900,
+        "vh": 750
+      },
+      "focus": "Load Defaults",
+      "fileSame": true,
+      "editor": {
+        "buffer_font_size": "20",
+        "editor_line_height": "2.2",
+        "preview_font_size": null,
+        "ui_font_size": null
+      }
+    },
+    "afterCancel": {
+      "dialog": false,
+      "fileSame": true,
+      "editor": {
+        "buffer_font_size": "20",
+        "editor_line_height": "2.2",
+        "preview_font_size": null,
+        "ui_font_size": null
+      }
+    },
+    "afterConfirm": {
+      "dialog": false,
+      "file": "{\n  // user comment\n  \"x_unknown\": 1,\n  \"buffer_font_size\": 15,\n  \"editor_line_height\": 1.6,\n  \"preview_font_size\": 22,\n  \"editor_theme\": \"One Dark\",\n  \"editor_line_numbers\": true,\n  \"editor_word_wrap\": true,\n  \"editor_indent_guides\": true,\n  \"editor_render_whitespace\": false\n}\n",
+      "editor": {
+        "buffer_font_size": "15",
+        "editor_line_height": "1.6",
+        "preview_font_size": null,
+        "ui_font_size": null
+      },
+      "preview": {
+        "buffer_font_size": null,
+        "editor_line_height": null,
+        "preview_font_size": "22",
+        "ui_font_size": null
+      }
+    }
+  },
+  "c3_reopen": {
+    "file": "{\n  // user comment\n  \"x_unknown\": 1,\n  \"buffer_font_size\": 15,\n  \"editor_line_height\": 1.6,\n  \"preview_font_size\": 22,\n  \"editor_theme\": \"One Dark\",\n  \"editor_line_numbers\": true,\n  \"editor_word_wrap\": true,\n  \"editor_indent_guides\": true,\n  \"editor_render_whitespace\": false\n}\n",
+    "editor": {
+      "buffer_font_size": "15",
+      "editor_line_height": "1.6",
+      "preview_font_size": null,
+      "ui_font_size": null
+    },
+    "preview": {
+      "buffer_font_size": null,
+      "editor_line_height": null,
+      "preview_font_size": "22",
+      "ui_font_size": null
+    }
+  }
+}
