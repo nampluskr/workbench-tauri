@@ -30,7 +30,7 @@ test("K-11-R1: modified IME Process dispatches the physical shortcut and leaves 
   assert.equal(calls, 1);
 });
 
-test("R-17: editing keys dispatch only in Editor and unavailable search never reaches Sidebar", (t) => {
+test("R-17: editing and search keys dispatch only in Editor", (t) => {
   class Element { dataset: Record<string, string> = {}; parentElement: Element | null = null; closest() { return null; } }
   class Input extends Element {}
   for (const [name, value] of Object.entries({ Element, HTMLInputElement: Input })) {
@@ -39,7 +39,7 @@ test("R-17: editing keys dispatch only in Editor and unavailable search never re
     t.after(() => { if (previous) Object.defineProperty(globalThis, name, previous); else Reflect.deleteProperty(globalThis, name); });
   }
   const calls: string[] = [];
-  for (const action of ["editor::SelectLine", "editor::AddCursorAbove", "sidebar::Search"]) {
+  for (const action of ["editor::SelectLine", "editor::AddCursorAbove", "sidebar::Search", "editor::Find", "editor::Replace", "editor::AddNextOccurrence"]) {
     const previous = commands.get(action);
     commands.set(action, () => { calls.push(action); });
     t.after(() => { if (previous) commands.set(action, previous); else commands.delete(action); });
@@ -58,8 +58,8 @@ test("R-17: editing keys dispatch only in Editor and unavailable search never re
   assert.equal(press(outside, "l"), false);
   assert.equal(press(outside, "ArrowUp", true), false);
   assert.equal(press(editor, "f"), true);
-  for (const key of ["h", "d"]) assert.equal(press(editor, key), false);
-  assert.deepEqual(calls, ["editor::SelectLine", "editor::AddCursorAbove"]);
+  for (const key of ["h", "d"]) assert.equal(press(editor, key), true);
+  assert.deepEqual(calls, ["editor::SelectLine", "editor::AddCursorAbove", "editor::Find", "editor::Replace", "editor::AddNextOccurrence"]);
 });
 
 test("K-15: input editing stays local while modified Workspace/global bindings dispatch", (t) => {
@@ -173,6 +173,50 @@ test("R-19: Ctrl-F reaches Sidebar search only from Sidebar, including its input
   assert.equal(calls, 2, "editor, tree, tab bar and their inputs never search Sidebar");
   press(sidebar);
   assert.equal(calls, 3);
+});
+
+test("K-13: search inputs dispatch panel keys while native input editing remains local", (t) => {
+  class Element { dataset: Record<string, string> = {}; parentElement: Element | null = null; closest() { return null; } }
+  class Input extends Element {}
+  for (const [name, value] of Object.entries({ Element, HTMLInputElement: Input })) {
+    const previous = Object.getOwnPropertyDescriptor(globalThis, name);
+    Object.defineProperty(globalThis, name, { configurable: true, value });
+    t.after(() => { if (previous) Object.defineProperty(globalThis, name, previous); else Reflect.deleteProperty(globalThis, name); });
+  }
+  const calls: string[] = [];
+  const actions = ["Find", "Replace", "FindNext", "FindPrevious", "SearchCaseSensitive", "SearchWholeWord", "SearchRegexp",
+    "SelectSearchMatches", "ReplaceNext", "ReplaceAll", "Cancel", "Undo", "SelectAll", "AddNextOccurrence", "SelectSelectionMatches", "SkipOccurrence"];
+  for (const name of actions) {
+    const action = `editor::${name}`, previous = commands.get(action);
+    commands.set(action, () => { calls.push(name); });
+    t.after(() => { if (previous) commands.set(action, previous); else commands.delete(action); });
+  }
+  const editor = new Element(), panel = new Element(), row = new Element(), input = new Input(), replacement = new Input();
+  editor.dataset.keymapContext = "Editor";
+  panel.dataset.keymapContext = "EditorSearch";
+  row.dataset.keymapContext = "ReplaceInput";
+  panel.parentElement = editor; row.parentElement = panel; input.parentElement = panel; replacement.parentElement = row;
+  const press = (target: Element, key: string, options: Partial<KeyboardEvent> = {}) => {
+    const event = { target, key, code: "", ctrlKey: false, altKey: false, shiftKey: false, metaKey: false,
+      isComposing: false, keyCode: 0, defaultPrevented: false, preventDefault() { this.defaultPrevented = true; }, ...options };
+    onKeyDown(event as unknown as KeyboardEvent);
+    return event.defaultPrevented;
+  };
+  press(input, "Enter"); press(input, "Enter", { shiftKey: true });
+  for (const key of ["c", "w", "r"]) press(input, key, { altKey: true });
+  press(input, "F3"); press(input, "F3", { shiftKey: true });
+  press(input, "Enter", { altKey: true });
+  press(replacement, "Enter"); press(replacement, "Enter", { ctrlKey: true, altKey: true });
+  press(input, "Escape"); press(input, "f", { ctrlKey: true }); press(input, "h", { ctrlKey: true });
+  assert.deepEqual(calls, ["FindNext", "FindPrevious", "SearchCaseSensitive", "SearchWholeWord", "SearchRegexp", "FindNext", "FindPrevious",
+    "SelectSearchMatches", "ReplaceNext", "ReplaceAll", "Cancel", "Find", "Replace"]);
+  calls.length = 0;
+  for (const key of ["a", "c", "x", "v", "z", "y"]) assert.equal(press(input, key, { ctrlKey: true }), false);
+  assert.equal(press(input, "Enter", { isComposing: true }), false);
+  assert.deepEqual(calls, []);
+  press(editor, "d", { ctrlKey: true }); press(editor, "l", { ctrlKey: true, shiftKey: true });
+  press(editor, "k", { ctrlKey: true }); press(editor, "d", { ctrlKey: true });
+  assert.deepEqual(calls, ["AddNextOccurrence", "SelectSelectionMatches", "SkipOccurrence"]);
 });
 
 test("I-9: Ctrl-Shift-V dispatches from the Pane and Markdown editor; unmatched browser paste stays blocked", (t) => {

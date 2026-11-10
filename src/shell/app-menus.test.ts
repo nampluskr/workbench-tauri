@@ -48,7 +48,7 @@ test("K-10: menus start with File, end File with Quit and retain the other entri
   assert.deepEqual(labels(menus[0].entries), ["Open Folder...", "---", "Save", "---", "Close Editor", "Close Window", "---", "Quit"]);
   assert.deepEqual(menus[0].entries.at(-1), { label: "Quit", action: "zed::Quit" });
   assert.deepEqual(labels(menus[1].entries), ["Undo", "Redo", "---", "Cut", "Copy", "Paste", "---", "Find", "Replace", "---", "Toggle Line Comment", "Toggle Block Comment", "---", "Select All", "Add Next Occurrence", "Add Cursor Above", "Add Cursor Below"]);
-  assert.deepEqual(menus[1].entries.flatMap((e) => e !== "separator" && e.disabled ? [e.label] : []), ["Find", "Replace", "Add Next Occurrence"]);
+  assert.deepEqual(menus[1].entries.flatMap((e) => e !== "separator" && e.disabled ? [e.label] : []), []);
   assert.deepEqual(labels(menus[2].entries), ["Toggle Left Dock", "Toggle Folder Sidebar", "Focus Folder Sidebar", "Editor Layout", "Maximize Pane", "---", "Project Panel", "Open Markdown Preview", "Open Markdown Preview to the Side"]);
   const layout = menus[2].entries[3];
   assert.notEqual(layout, "separator");

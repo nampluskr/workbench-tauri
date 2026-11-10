@@ -61,6 +61,18 @@ export function onKeyDown(e: KeyboardEvent): void {
   if (e.target instanceof Element && e.target.closest("[data-keymap-recording]")) { pending = []; return; }
   const stroke = strokeOf(e);
   if (!stroke) return;
+  // Search inputs use the app keymap for panel commands; ordinary text edits stay native.
+  const searchStack = contextStack(e.target);
+  if (searchStack.some((node) => node.has("EditorSearch")) && !e.isComposing && e.keyCode !== 229) {
+    const result = keymap.dispatch([stroke], searchStack);
+    if (result.type === "match" && /^editor::(Find|Replace|FindNext|FindPrevious|SearchCaseSensitive|SearchWholeWord|SearchRegexp|ReplaceNext|ReplaceAll|SelectSearchMatches|Cancel)$/.test(typeof result.action === "string" ? result.action : result.action[0])) {
+      const name = typeof result.action === "string" ? result.action : result.action[0];
+      if (!hooks.beforeCommand?.(name)) commands.get(name)?.();
+      pending = [];
+      e.preventDefault();
+      return;
+    }
+  }
   const input = e.target instanceof HTMLInputElement;
   if (input) {
     // shortcut: inputs dispatch only modified, non-editing Workspace/global keys; extend for unmodified chords after Zed input-context verification.

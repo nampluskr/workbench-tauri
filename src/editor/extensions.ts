@@ -11,6 +11,7 @@ import {
 import { cursorDocEnd, cursorDocStart, history, selectDocEnd, selectDocStart, simplifySelection } from "@codemirror/commands";
 import { BUFFER_FONT_FAMILY, EDITOR_TAB_SIZE, EDITOR_UNDO_GROUP_INTERVAL_MS } from "../spec/metrics.ts";
 import { imeShortcutInput } from "./ime.ts";
+import { documentSearch } from "./search.ts";
 
 // Metric variables come from applyMetrics() (spec/metrics.ts); color variables come
 // from the theme JSON (Phase 2, D-8/D-9) and are unset until then.
@@ -65,6 +66,7 @@ const zedEditorTheme = EditorView.theme({
 
 export const editorExtensions = (extension: string) => [
   imeShortcutInput,
+  documentSearch,
   /^(md|markdown)$/.test(extension) ? EditorView.lineWrapping : [], // I-8: same extensions as Markdown preview
   EditorView.cspNonce.of(document.getElementById("csp-nonce-carrier")?.nonce ?? ""),
   lineNumbers(),

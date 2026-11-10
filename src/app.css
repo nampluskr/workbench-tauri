@@ -582,6 +582,31 @@ button, input, select, textarea {
 /* I-16: relative path in the buffer font, Muted; a long row is cut, not wrapped. */
 .breadcrumbs { flex: 1; min-width: 0; display: flex; align-items: center; gap: var(--statusbar-item-gap); padding-inline: var(--buttons-padding-x-default-compact); /* Zed wraps the row in a ButtonLike: px Base04 (button_like.rs:817-821) */ overflow: hidden; white-space: nowrap; color: var(--text-muted); font-family: var(--buffer-font-family); font-size: var(--typography-size-default); }
 .toolbar-quick-actions { display: flex; gap: var(--toolbar-quick-actions-gap); }
+/* R-17: float the document search over the editor using existing search metrics. */
+.cm-editor > .cm-panels-top {
+  position: absolute; top: 0; right: var(--toolbar-padding-x); left: auto;
+  max-width: 100%; border: var(--editor-search-input-border) solid var(--border);
+  border-radius: var(--editor-search-input-corner-radius);
+  background: var(--toolbar-background); color: var(--text);
+}
+.document-search { padding: var(--toolbar-padding-y) var(--toolbar-padding-x); font-family: var(--ui-font-family); font-size: var(--editor-search-input-font-size); }
+.document-search-row { display: flex; align-items: center; gap: var(--editor-search-input-options-gap); }
+.document-search-row[hidden] { display: none; }
+.document-search input {
+  width: var(--editor-search-bar-modes-min-width); min-width: 0; flex: 1;
+  min-height: var(--editor-search-input-min-height); box-sizing: border-box;
+  padding: 0 var(--editor-search-input-padding-right) 0 var(--editor-search-input-padding-left);
+  border: var(--editor-search-input-border) solid var(--border); border-radius: var(--editor-search-input-corner-radius);
+  background: var(--editor-background); color: var(--text); font: inherit;
+}
+.document-search input:focus-visible { outline: var(--editor-search-input-border) solid var(--border-focused); }
+.document-search button { flex: none; border: 0; padding: 0 var(--buttons-padding-x-default-compact); background: transparent; color: var(--text); font: inherit; cursor: pointer; }
+.document-search button:hover { background: var(--ghost-element-hover); }
+.document-search button[aria-pressed="true"] { background: var(--ghost-element-selected); }
+.document-search button:disabled { color: var(--text-disabled); cursor: default; }
+.document-search-row > span { flex: none; font-size: var(--editor-search-results-count-font-size); min-width: var(--editor-search-results-count-min-width); }
+.cm-editor .cm-searchMatch { background: var(--ghost-element-selected); }
+.cm-editor .cm-searchMatch-selected { background: var(--players-0-selection); }
 /* L-69: the preview tab's icon, Small and Muted as an item's own tab icon (L-67). */
 .tab-icon { flex: none; display: flex; color: var(--icon-muted); --icon-size: var(--icons-size-small); }
 .tab-icon-success { color: var(--success); }

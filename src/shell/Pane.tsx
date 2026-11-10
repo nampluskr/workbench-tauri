@@ -2,6 +2,7 @@ import { createEffect, createMemo, createRenderEffect, createSignal, For, Show }
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { addCursorAbove, addCursorBelow, redo, selectAll, selectLine, toggleBlockComment, toggleComment, undo } from "@codemirror/commands";
 import { pasteClipboard, runHistory } from "../editor/extensions.ts";
+import { SEARCH_COMMANDS, toggleSearch } from "../editor/search.ts";
 import { backtab, tab as indentTab } from "../editor/indent.ts";
 import { commands } from "../keymap/keyboard.ts";
 import { PANE_DROP_TARGET_SIZE_RATIO, PANE_MIN_DRAG, TAB_MAX_TITLE_CHARS, UI_LINE_HEIGHT_RATIO } from "../spec/metrics.ts";
@@ -63,6 +64,13 @@ const withCtx = (fn: (ctx: FolderContext) => void) => () => {
 };
 
 commands.set("workspace::Save", withCtx((ctx) => void saveActive(ctx)));
+for (const [action, run] of SEARCH_COMMANDS) commands.set(action, () => {
+  const view = activeTab()?.file.view;
+  if (view) {
+    if (["editor::AddNextOccurrence", "editor::SelectSelectionMatches", "editor::SkipOccurrence"].includes(action)) view.focus();
+    run(view);
+  }
+});
 for (const [action, run] of [
   ["editor::SelectAll", selectAll], ["editor::SelectLine", selectLine],
   ["editor::AddCursorAbove", addCursorAbove], ["editor::AddCursorBelow", addCursorBelow],
@@ -526,7 +534,10 @@ function PaneView(props: { ctx: FolderContext | null; pane: PaneState | null }) 
                     <Icon name="eye" />
                   </button>
                 </Show>
-                <IconButton name="search" label="Find in Explorer" />
+                <IconButton name="search" label="Find in Explorer" onClick={() => {
+                  const view = tab().file.view;
+                  if (view) toggleSearch(view);
+                }} />
               </div>
             </div>
           </Show>

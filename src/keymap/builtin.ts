@@ -8,6 +8,25 @@ export const EDITOR_BINDINGS: KeymapSection[] = [{ context: "Editor", bindings: 
   "ctrl-alt-down": "editor::AddCursorBelow",
   "ctrl-/": "editor::ToggleComment",
   "shift-alt-a": "editor::ToggleBlockComment",
+  "ctrl-f": "editor::Find",
+  "ctrl-h": "editor::Replace",
+  "f3": "editor::FindNext",
+  "shift-f3": "editor::FindPrevious",
+  "ctrl-d": "editor::AddNextOccurrence",
+  "ctrl-shift-l": "editor::SelectSelectionMatches",
+  "ctrl-k ctrl-d": "editor::SkipOccurrence",
+  "escape": "editor::Cancel",
+} }, { context: "EditorSearch", bindings: {
+  "enter": "editor::FindNext",
+  "shift-enter": "editor::FindPrevious",
+  "alt-c": "editor::SearchCaseSensitive",
+  "alt-w": "editor::SearchWholeWord",
+  "alt-r": "editor::SearchRegexp",
+  "alt-enter": "editor::SelectSearchMatches",
+  "escape": "editor::Cancel",
+} }, { context: "ReplaceInput", bindings: {
+  "enter": "editor::ReplaceNext",
+  "ctrl-alt-enter": "editor::ReplaceAll",
 } }];
 
 // Built-in keymap (D-2), checked for menu actions against Zed Windows 4304dec732 (K-13).

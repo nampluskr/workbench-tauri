@@ -4,7 +4,7 @@ export const APP_NAME = "workbench-tauri";
 export const REPOSITORY_URL = "https://github.com/nampluskr/workbench-tauri";
 export const ISSUE_URL = `${REPOSITORY_URL}/issues/new`;
 
-// R-17: Edit follows workbench-kit; search actions await @codemirror/search approval.
+// R-17: Edit follows workbench-kit.
 export function appMenus(markdownDisabled: () => boolean): Menu[] {
   const markdownItem = (label: string, action: string): MenuItem => ({ label, action, get disabled() { return markdownDisabled(); } });
   return [
@@ -26,14 +26,14 @@ export function appMenus(markdownDisabled: () => boolean): Menu[] {
       { label: "Copy", action: "editor::Copy", shortcut: "ctrl-c" },
       { label: "Paste", action: "editor::Paste", shortcut: "ctrl-v" },
       "separator",
-      { label: "Find", action: "editor::Find", shortcut: "ctrl-f", disabled: true },
-      { label: "Replace", action: "editor::Replace", shortcut: "ctrl-h", disabled: true },
+      { label: "Find", action: "editor::Find", shortcut: "ctrl-f" },
+      { label: "Replace", action: "editor::Replace", shortcut: "ctrl-h" },
       "separator",
       { label: "Toggle Line Comment", action: "editor::ToggleComment" },
       { label: "Toggle Block Comment", action: "editor::ToggleBlockComment" },
       "separator",
       { label: "Select All", action: "editor::SelectAll" },
-      { label: "Add Next Occurrence", action: "editor::AddNextOccurrence", shortcut: "ctrl-d", disabled: true },
+      { label: "Add Next Occurrence", action: "editor::AddNextOccurrence", shortcut: "ctrl-d" },
       { label: "Add Cursor Above", action: "editor::AddCursorAbove" },
       { label: "Add Cursor Below", action: "editor::AddCursorBelow" },
     ] satisfies MenuEntry[]).map((entry): MenuEntry => entry === "separator" ? entry : { ...entry, shortcutStyle: "vscode" }) },
