@@ -1,0 +1,27 @@
+{
+  "vars": {
+    "tooltip": "0.875rem",
+    "ui": "16px"
+  },
+  "menuBar": {
+    "menuNames": [
+      "File:14px",
+      "Edit:14px",
+      "View:14px",
+      "Go:14px",
+      "Window:14px",
+      "Help:14px"
+    ],
+    "menus": [
+      {
+        "cls": "menu menu-root",
+        "id": null,
+        "item": "14px",
+        "label": "Open Folder...Ctrl-K Ctrl-O",
+        "shortcut": "14px",
+        "items": 5
+      }
+    ],
+    "exePid": 26972
+  }
+}

@@ -335,6 +335,23 @@
 - 커밋: 코드 `281de60`.
 - 상태: 끝남.
 
+### 메뉴 줄 글꼴 14px (2026-11-10)
+
+- 요청: 사용자 직접 요청 "메뉴 File | Edit | ... | Help -> 글꼴크기 14px 로 감소"(ORDER-11 U-5의 기본 UI 크기를 덮음).
+- **K-16 메뉴 줄 글꼴 반영** (2026-11-10, coder, Claude Code Sonnet 5.5 high)
+  - 무엇을 했나: `src/app.css` `.menu-name` 글꼴을 `--typography-ui-font-size`에서 `--tooltip-font-size`(14px, ORDER-12에서 메뉴 항목에 쓴 같은 변수)로 바꿨다. 새 값은 없다.
+  - 결과: 메뉴 줄 File~Help가 14px다.
+  - 검증: typecheck 통과.
+  - 특이사항: 없음
+- C-18 checker [PASS]: typecheck 오류 0, npm test 225 통과, clippy 경고 0, cargo test 21 통과, 코드 검토 지적 없음, V3 PASS (2026-11-10).
+- **V3(K-16)** (2026-11-10, C-18 판정 [PASS])
+  - 무엇을 했나: debug exe, 임시 APPDATA·WebView 데이터 폴더. 사용자 테스트 앱(PID 46148)은 건드리지 않았다.
+  - 결과: File~Help 14px, 펼친 메뉴 항목·단축키 14px. PASS.
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/K-16/`(v3.json, menu-bar-file.png).
+  - 특이사항: 없음
+- 커밋: 코드 `46b6962`.
+- 상태: 끝남.
+
 ## 버전 종료
 
 진행 중.
