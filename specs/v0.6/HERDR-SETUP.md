@@ -18,14 +18,15 @@
 |---|---|---|---|---|---|---|
 | `tauri-leader` | 카드 지시, 판정, 커밋, core-leader와 화면 차례 조율. 코드·문서는 쓰지 않는다 | Claude Code | Opus 5.5 | 세션 기본값 | 기존 세션 | 상시 |
 | `tauri-writer` | v0.6 문서(INTENT·DECISIONS·SPEC·PLAN·HERDR-SETUP)와 PROGRESS, 루트 `AGENTS.md` | Claude Code | Opus 5.5 | medium | `claude --model claude-opus-5-5 --effort medium` | 문서 단계와 Phase 끝 |
-| `tauri-coder` | 구현 전부 | Codex | gpt-6.1-sol | medium | `codex -m gpt-6.1-sol -c model_reasoning_effort=medium` | 구현 Phase 동안 |
+| `tauri-coder` | 구현 전부 | Claude Code | Sonnet 5.5 | high | `claude --model sonnet --effort high` | 구현 Phase 동안 |
 | `tauri-checker` | 카드 리뷰(정확성, 카드 검증 수준만큼 빌드·테스트), 화면 검증(V2·V3)과 측정. `src/`는 고치지 않는다 | agy | gemini-3.8-flash-high | - | `agy --model gemini-3.8-flash-high --settings D:\projects\workbench-tauri\.agents\checker-settings.json` | 리뷰·검증 카드가 있을 때 |
 
 - worktree는 두지 않는다.
-- 리뷰 독립성: coder(Codex)와 writer(Claude)의 산출물은 checker(agy)가 검토한다(ORDER-01 3.2).
+- 리뷰 독립성: coder(Claude Sonnet)와 writer(Claude Opus)의 산출물은 checker(agy)가 검토한다(ORDER-01 3.2).
 - 측정자는 직접 고치지 않는다. checker는 불일치 목록을 leader에게 보고한다(루트 `AGENTS.md` 3A.4의 7).
-- Codex는 coder에만 쓴다.
-- Codex 한도가 바닥나면 쿠폰을 직접 쓰지 말고 core-leader에게 `[BLOCKED]`로 알린다(ORDER-01 3.2). 대체 모델(v0.5의 Sonnet 대체)은 두지 않는다. Codex는 여유가 있다(사용자 2026-11-10, core D-9).
+- Codex는 coder에만 쓴다. 지금은 coder를 Claude Code Sonnet 5.5 high로 바꿔 Codex를 쓰지 않는다(아래 변경 기록).
+- Codex 한도가 바닥나면 쿠폰을 직접 쓰지 말고 core-leader에게 `[BLOCKED]`로 알린다(ORDER-01 3.2). 대체 모델(v0.5의 Sonnet 대체)은 두지 않는다. Codex는 여유가 있다(사용자 2026-11-10, core D-9). 지금은 Codex를 쓰지 않는다.
+- coder 모델 변경 기록: 2026-11-11 09:35, 사용자 지시(core-leader 전달 [DECISION])로 `tauri-coder`를 Codex gpt-6.1-sol medium에서 Claude Code Sonnet 5.5 high로 바꿨다(진행 중인 카드 없음, ORDER-11 push 뒤). 방법: Codex `/quit` → 셸 프롬프트 확인 → 같은 pane `wV:p3`에서 `herdr agent start tauri-coder --kind claude --pane wV:p3 -- --model sonnet --effort high`(이름 유지, pane 새로 띄우지 않음) → `/model`로 Sonnet 5.5·High effort 확인(v0.5 HERDR-SETUP 1장과 같음).
 - Phase가 바뀔 때 서브 에이전트의 컨텍스트를 비운다.
 - 검증 수준(V0~V4)과 앱 실행 제한은 루트 `AGENTS.md` 3A를 그대로 쓴다.
 
@@ -38,7 +39,7 @@ herdr session
 └── workspace: wV  workbench-tauri  (D:\projects\workbench-tauri, 브랜치 master, worktree 없음)
     ├── tab: control  wV:t1  pane wV:p1  tauri-leader   (Claude Code Opus 5.5)
     ├── tab: docs     wV:t2  pane wV:p2  tauri-writer   (Claude Code Opus 5.5 medium)
-    ├── tab: impl     wV:t3  pane wV:p3  tauri-coder    (Codex gpt-6.1-sol medium)
+    ├── tab: impl     wV:t3  pane wV:p3  tauri-coder    (Claude Code Sonnet 5.5 high)
     └── tab: check    wV:t4  pane wV:p4  tauri-checker  (agy gemini-3.8-flash-high)
 ```
 

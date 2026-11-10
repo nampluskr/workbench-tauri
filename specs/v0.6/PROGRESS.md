@@ -310,6 +310,14 @@
 - 커밋: 코드 `707edcd`.
 - 상태: 끝남.
 
+### coder 모델 변경 (2026-11-11)
+
+- 요청: 2026-11-11 09:35, 사용자 지시(core-leader 전달 [DECISION]).
+- 무엇을 했나: `tauri-coder`를 Codex gpt-6.1-sol medium에서 Claude Code Sonnet 5.5 high로 바꿨다. 진행 중인 카드가 없는 때(ORDER-11 push 뒤)였다. Codex를 `/quit`로 끝내고 셸 프롬프트(`PS D:\projects\workbench-tauri>`)를 확인한 뒤, 같은 pane `wV:p3`에서 `herdr agent start tauri-coder --kind claude --pane wV:p3 -- --model sonnet --effort high`로 띄웠다(이름 `tauri-coder` 유지, pane을 닫고 새로 띄우지 않음, v0.5 HERDR-SETUP 1장과 같은 방법). `specs/v0.6/HERDR-SETUP.md` 1·2장을 맞췄다.
+- 결과: `tauri-coder`는 Claude Code Sonnet 5.5 high다. 지금은 Codex를 쓰지 않는다.
+- 검증: `/model`로 Sonnet 5.5 ✔·High effort 확인(바꾸지 않고 Esc).
+- 상태: 끝남.
+
 ## 버전 종료
 
 진행 중.
