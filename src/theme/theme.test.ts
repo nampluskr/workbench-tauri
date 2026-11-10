@@ -49,6 +49,9 @@ const VARS: [token: string, cssVar: string][] = [
   ["editor.line_number", "--editor-line-number"],
   ["editor.active_line_number", "--editor-active-line-number"],
   ["editor.active_line.background", "--editor-active-line-background"],
+  ["editor.indent_guide", "--editor-indent-guide"],
+  ["editor.indent_guide_active", "--editor-indent-guide-active"],
+  ["editor.invisible", "--editor-invisible"],
   ["players[0].selection", "--players-0-selection"],
   ["scrollbar.thumb.background", "--scrollbar-thumb-background"],
   ["scrollbar.thumb.hover_background", "--scrollbar-thumb-hover-background"],
@@ -96,7 +99,7 @@ for (const { name, appearance, style } of registry) {
       const derived = token === "pane_group.border" ? style.border
         : token === "panel.overlay_background" ? panel.slice(0, 7)
         : token === "panel.overlay_hover" ? over(hover, panel) : undefined;
-      const expected = pick(style) ?? derived ?? pick(base) ?? (token === "drop_target.border" ? "#d7dadf" : undefined);
+      const expected = pick(style) ?? derived ?? pick(base) ?? (token === "drop_target.border" ? "#d7dadf" : token === "editor.indent_guide" ? "#3b3d45" : token === "editor.indent_guide_active" ? "#1b1d23" : undefined); // T-26.9 / T-26.10
       assert.deepEqual(parseColor(vars.get(cssVar)!), parseColor(expected as string), `${token} -> ${cssVar}`);
     }
   });

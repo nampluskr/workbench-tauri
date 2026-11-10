@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { DEFAULTS, filterSettings, parseSettings, settingMenu, updateSetting, updateSettings } from "./model.ts";
+import { DEFAULTS, filterSettings, parseSettings, settingMenu, settingNumber, settingStep, updateSetting, updateSettings } from "./model.ts";
 const THEMES = { theme: ["One Dark", "Catppuccin Mocha", "One Light"], icon_theme: ["Zed (Default)", "Catppuccin Mocha"] };
 import { stripJsonc } from "../keymap/user.ts";
 
@@ -51,14 +51,36 @@ test("settings writes preserve unknown keys, comments, duplicate keys and line e
   assert.equal(parseSettings(nested, THEMES).theme, "One Light");
 });
 
+test("I-5 ~ I-8, I-10: the five editor view settings read, validate and write", () => {
+  const read = (json: string) => parseSettings(json, THEMES);
+  assert.deepEqual([DEFAULTS.editor_line_height, DEFAULTS.editor_line_numbers, DEFAULTS.editor_word_wrap, DEFAULTS.editor_indent_guides, DEFAULTS.editor_render_whitespace], [1.6, true, true, true, false]);
+  const set = read('{"editor_line_height":2.3,"editor_line_numbers":false,"editor_word_wrap":false,"editor_indent_guides":false,"editor_render_whitespace":true}');
+  assert.deepEqual([set.editor_line_height, set.editor_line_numbers, set.editor_word_wrap, set.editor_indent_guides, set.editor_render_whitespace], [2.3, false, false, false, true]);
+  // I-8: 1.0 to 3.0 in 0.1 steps; anything else in a file is invalid and reads as the default.
+  for (const value of [1, 1.7, 3]) assert.equal(read(`{"editor_line_height":${value}}`).editor_line_height, value);
+  for (const value of [0.9, 3.1, 1.65, 0, -1, '"2"', "true", "null"]) assert.equal(read(`{"editor_line_height":${value}}`).editor_line_height, 1.6, String(value));
+  for (const value of ['"yes"', "1", "null"]) assert.deepEqual(read(`{"editor_line_numbers":${value},"editor_render_whitespace":${value}}`), DEFAULTS, value);
+  // The Settings screen moves a step or typed value to the nearest allowed one, so the file never gets an invalid one.
+  assert.equal(settingNumber("editor_line_height", 1.6 + settingStep("editor_line_height")), 1.7);
+  assert.equal(settingNumber("editor_line_height", 3.5), 3);
+  assert.equal(settingNumber("editor_line_height", 0.2), 1);
+  assert.equal(settingNumber("buffer_font_size", 15.5), 15.5);
+  // A write keeps comments and unknown keys, and reads back.
+  const written = updateSettings('{\n  // keep\n  "x": 1\n}', { editor_line_height: 1.8, editor_word_wrap: false }, THEMES);
+  assert.ok(written.includes("// keep"));
+  assert.deepEqual([read(written).editor_line_height, read(written).editor_word_wrap], [1.8, false]);
+  assert.throws(() => updateSetting("{}", "editor_line_height", 1.65, THEMES));
+  assert.throws(() => updateSetting("{}", "editor_line_numbers", "no", THEMES));
+});
+
 test("settings search includes the category title, name and description", () => {
   const keys = (query: string) => filterSettings(query).map((r) => r.key);
   assert.deepEqual(keys("preview"), ["preview_theme", "preview_font_size"]);
-  assert.deepEqual(keys("EDITOR"), ["editor_theme", "buffer_font_size"]);
-  assert.deepEqual(keys("ui"), ["theme", "icon_theme", "ui_font_size"]);
+  assert.deepEqual(keys("EDITOR"), ["editor_theme", "buffer_font_size", "editor_line_height", "editor_line_numbers", "editor_word_wrap", "editor_indent_guides", "editor_render_whitespace"]);
+  assert.deepEqual(keys("ui"), ["theme", "icon_theme", "ui_font_size", "editor_indent_guides"]); // "guides" holds "ui"
   assert.deepEqual(keys("ui font size"), ["ui_font_size"]);
   assert.equal(keys("theme").length, 4);
-  assert.equal(keys("font size").length, 3);
+  assert.equal(keys("font size").length, 4); // the Line Height description names the font size
   assert.equal(keys("missing").length, 0);
 });
 

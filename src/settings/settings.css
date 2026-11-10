@@ -82,6 +82,7 @@
 .settings-number input { width: var(--settings-content-padding); min-width: 0; text-align: center; font: inherit; background: transparent; color: inherit; border: 0; appearance: textfield; }
 .settings-number input::-webkit-inner-spin-button { appearance: none; }
 .settings-number button { border: 0; background: transparent; width: var(--settings-control-height); padding: 0; }
+.settings-toggle { flex-shrink: 0; margin: 0; accent-color: var(--text-accent); }
 .settings-window button:hover { background: var(--ghost-element-hover); }
-.settings-window button:focus-visible, .settings-number input:focus-visible, .settings-search:focus-within { outline: var(--settings-border) solid var(--border-focused); }
+.settings-window button:focus-visible, .settings-number input:focus-visible, .settings-toggle:focus-visible, .settings-search:focus-within { outline: var(--settings-border) solid var(--border-focused); }
 .settings-window :is(:disabled, [aria-disabled="true"]) { color: var(--text-disabled); }

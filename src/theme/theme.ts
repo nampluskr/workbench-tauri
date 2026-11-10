@@ -36,6 +36,9 @@ export const TARGET_TOKENS = [
   "editor.line_number",
   "editor.active_line_number",
   "editor.active_line.background",
+  "editor.indent_guide", // core v0.7 I-5 / E-020
+  "editor.indent_guide_active", // core v0.7 I-5 / E-020: the block that holds the cursor
+  "editor.invisible", // core v0.7 I-10: the space, tab and line break marks
   "players[0].selection",
   "scrollbar.thumb.background",
   "scrollbar.thumb.hover_background",
@@ -71,6 +74,8 @@ const FALLBACK_FROM: Partial<Record<Token, Token>> = {
 // T-26 values for target tokens no theme has: theme.fallback.* in spec/zed-metrics.toml.
 const FALLBACK_VALUE: Partial<Record<Token, string>> = {
   "drop_target.border": "#d7dadf", // theme.fallback."drop_target.border" (T-26.13)
+  "editor.indent_guide": "#3b3d45", // theme.fallback."editor.indent_guide" (T-26.9); One Dark/One Light have no value
+  "editor.indent_guide_active": "#1b1d23", // theme.fallback."editor.indent_guide_active" (T-26.10)
 };
 
 /** "players[0].selection" -> "--players-0-selection" (PROGRESS W-7 naming rule). */

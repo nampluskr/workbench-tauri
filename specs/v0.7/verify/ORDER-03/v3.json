@@ -1,0 +1,1089 @@
+{
+  "c6_noSettings_o02": {
+    "ts": {
+      "font": 15,
+      "lineH": 24.27,
+      "ratio": 1.618,
+      "firstNumH": 24.27,
+      "gutter": true,
+      "gutterW": 87,
+      "contentLeft": 527,
+      "wrapping": false,
+      "hScroll": true,
+      "lineCount": 12,
+      "numberCount": 13,
+      "guides": [],
+      "ws": {
+        "space": 0,
+        "tab": 0,
+        "brk": 0,
+        "spaceSym": null,
+        "tabSym": null,
+        "brkSym": null,
+        "color": null
+      },
+      "vars": {
+        "guide": "",
+        "guideActive": "",
+        "invisible": ""
+      },
+      "colors": {
+        "bg": "rgb(40, 44, 51)",
+        "text": "rgb(172, 178, 190)"
+      }
+    },
+    "md": {
+      "font": 15,
+      "lineH": 24.27,
+      "ratio": 1.618,
+      "firstNumH": 24.27,
+      "gutter": true,
+      "gutterW": 87,
+      "contentLeft": 527,
+      "wrapping": true,
+      "hScroll": false,
+      "lineCount": 46,
+      "numberCount": 47,
+      "guides": [],
+      "ws": {
+        "space": 0,
+        "tab": 0,
+        "brk": 0,
+        "spaceSym": null,
+        "tabSym": null,
+        "brkSym": null,
+        "color": null
+      },
+      "vars": {
+        "guide": "",
+        "guideActive": "",
+        "invisible": ""
+      },
+      "colors": {
+        "bg": "rgb(40, 44, 51)",
+        "text": "rgb(172, 178, 190)"
+      }
+    }
+  },
+  "c6_noSettings_new": {
+    "ts": {
+      "font": 15,
+      "lineH": 24,
+      "ratio": 1.6,
+      "firstNumH": 24,
+      "gutter": true,
+      "gutterW": 87,
+      "contentLeft": 527,
+      "wrapping": false,
+      "hScroll": true,
+      "lineCount": 12,
+      "numberCount": 13,
+      "guides": [
+        {
+          "left": 77,
+          "top": 72,
+          "h": 72,
+          "w": 1,
+          "active": false,
+          "bg": "rgb(59, 61, 69)"
+        },
+        {
+          "left": 41,
+          "top": 48,
+          "h": 120,
+          "w": 1,
+          "active": false,
+          "bg": "rgb(59, 61, 69)"
+        },
+        {
+          "left": 5,
+          "top": 24,
+          "h": 168,
+          "w": 1,
+          "active": true,
+          "bg": "rgb(27, 29, 35)"
+        }
+      ],
+      "ws": {
+        "space": 0,
+        "tab": 0,
+        "brk": 0,
+        "spaceSym": null,
+        "tabSym": null,
+        "brkSym": null,
+        "color": null
+      },
+      "vars": {
+        "guide": "#3b3d45ff",
+        "guideActive": "#1b1d23ff",
+        "invisible": "#4e5a5fff"
+      },
+      "colors": {
+        "bg": "rgb(40, 44, 51)",
+        "text": "rgb(172, 178, 190)"
+      }
+    },
+    "md": {
+      "font": 15,
+      "lineH": 24,
+      "ratio": 1.6,
+      "firstNumH": 24,
+      "gutter": true,
+      "gutterW": 87,
+      "contentLeft": 527,
+      "wrapping": true,
+      "hScroll": false,
+      "lineCount": 47,
+      "numberCount": 48,
+      "guides": [
+        {
+          "left": 41,
+          "top": 96,
+          "h": 72,
+          "w": 1,
+          "active": false,
+          "bg": "rgb(59, 61, 69)"
+        },
+        {
+          "left": 5,
+          "top": 72,
+          "h": 96,
+          "w": 1,
+          "active": false,
+          "bg": "rgb(59, 61, 69)"
+        }
+      ],
+      "ws": {
+        "space": 0,
+        "tab": 0,
+        "brk": 0,
+        "spaceSym": null,
+        "tabSym": null,
+        "brkSym": null,
+        "color": null
+      },
+      "vars": {
+        "guide": "#3b3d45ff",
+        "guideActive": "#1b1d23ff",
+        "invisible": "#4e5a5fff"
+      },
+      "colors": {
+        "bg": "rgb(40, 44, 51)",
+        "text": "rgb(172, 178, 190)"
+      }
+    }
+  },
+  "c6_noSettings_equalExceptGuidesAndLineHeight": true,
+  "c6_o02File_o02": {
+    "ts": {
+      "font": 15,
+      "lineH": 24.27,
+      "ratio": 1.618,
+      "firstNumH": 24.27,
+      "gutter": true,
+      "gutterW": 87,
+      "contentLeft": 527,
+      "wrapping": false,
+      "hScroll": true,
+      "lineCount": 12,
+      "numberCount": 13,
+      "guides": [],
+      "ws": {
+        "space": 0,
+        "tab": 0,
+        "brk": 0,
+        "spaceSym": null,
+        "tabSym": null,
+        "brkSym": null,
+        "color": null
+      },
+      "vars": {
+        "guide": "",
+        "guideActive": "",
+        "invisible": ""
+      },
+      "colors": {
+        "bg": "rgb(40, 44, 51)",
+        "text": "rgb(172, 178, 190)"
+      }
+    },
+    "md": {
+      "font": 15,
+      "lineH": 24.27,
+      "ratio": 1.618,
+      "firstNumH": 24.27,
+      "gutter": true,
+      "gutterW": 87,
+      "contentLeft": 527,
+      "wrapping": true,
+      "hScroll": false,
+      "lineCount": 46,
+      "numberCount": 47,
+      "guides": [],
+      "ws": {
+        "space": 0,
+        "tab": 0,
+        "brk": 0,
+        "spaceSym": null,
+        "tabSym": null,
+        "brkSym": null,
+        "color": null
+      },
+      "vars": {
+        "guide": "",
+        "guideActive": "",
+        "invisible": ""
+      },
+      "colors": {
+        "bg": "rgb(40, 44, 51)",
+        "text": "rgb(172, 178, 190)"
+      }
+    }
+  },
+  "c6_o02File_new": {
+    "ts": {
+      "font": 15,
+      "lineH": 24,
+      "ratio": 1.6,
+      "firstNumH": 24,
+      "gutter": true,
+      "gutterW": 87,
+      "contentLeft": 527,
+      "wrapping": false,
+      "hScroll": true,
+      "lineCount": 12,
+      "numberCount": 13,
+      "guides": [
+        {
+          "left": 77,
+          "top": 72,
+          "h": 72,
+          "w": 1,
+          "active": false,
+          "bg": "rgb(59, 61, 69)"
+        },
+        {
+          "left": 41,
+          "top": 48,
+          "h": 120,
+          "w": 1,
+          "active": false,
+          "bg": "rgb(59, 61, 69)"
+        },
+        {
+          "left": 5,
+          "top": 24,
+          "h": 168,
+          "w": 1,
+          "active": true,
+          "bg": "rgb(27, 29, 35)"
+        }
+      ],
+      "ws": {
+        "space": 0,
+        "tab": 0,
+        "brk": 0,
+        "spaceSym": null,
+        "tabSym": null,
+        "brkSym": null,
+        "color": null
+      },
+      "vars": {
+        "guide": "#3b3d45ff",
+        "guideActive": "#1b1d23ff",
+        "invisible": "#4e5a5fff"
+      },
+      "colors": {
+        "bg": "rgb(40, 44, 51)",
+        "text": "rgb(172, 178, 190)"
+      }
+    },
+    "md": {
+      "font": 15,
+      "lineH": 24,
+      "ratio": 1.6,
+      "firstNumH": 24,
+      "gutter": true,
+      "gutterW": 87,
+      "contentLeft": 527,
+      "wrapping": true,
+      "hScroll": false,
+      "lineCount": 47,
+      "numberCount": 48,
+      "guides": [
+        {
+          "left": 41,
+          "top": 96,
+          "h": 72,
+          "w": 1,
+          "active": false,
+          "bg": "rgb(59, 61, 69)"
+        },
+        {
+          "left": 5,
+          "top": 72,
+          "h": 96,
+          "w": 1,
+          "active": false,
+          "bg": "rgb(59, 61, 69)"
+        }
+      ],
+      "ws": {
+        "space": 0,
+        "tab": 0,
+        "brk": 0,
+        "spaceSym": null,
+        "tabSym": null,
+        "brkSym": null,
+        "color": null
+      },
+      "vars": {
+        "guide": "#3b3d45ff",
+        "guideActive": "#1b1d23ff",
+        "invisible": "#4e5a5fff"
+      },
+      "colors": {
+        "bg": "rgb(40, 44, 51)",
+        "text": "rgb(172, 178, 190)"
+      }
+    }
+  },
+  "c6_o02File_equalExceptGuidesAndLineHeight": true,
+  "c1_c4_c5_first": {
+    "tsTop": {
+      "font": 15,
+      "lineH": 24,
+      "ratio": 1.6,
+      "firstNumH": 24,
+      "gutter": true,
+      "gutterW": 87,
+      "contentLeft": 527,
+      "wrapping": false,
+      "hScroll": true,
+      "lineCount": 12,
+      "numberCount": 13,
+      "guides": [
+        {
+          "left": 77,
+          "top": 72,
+          "h": 72,
+          "w": 1,
+          "active": false,
+          "bg": "rgb(59, 61, 69)"
+        },
+        {
+          "left": 41,
+          "top": 48,
+          "h": 120,
+          "w": 1,
+          "active": false,
+          "bg": "rgb(59, 61, 69)"
+        },
+        {
+          "left": 5,
+          "top": 24,
+          "h": 168,
+          "w": 1,
+          "active": true,
+          "bg": "rgb(27, 29, 35)"
+        }
+      ],
+      "ws": {
+        "space": 0,
+        "tab": 0,
+        "brk": 0,
+        "spaceSym": null,
+        "tabSym": null,
+        "brkSym": null,
+        "color": null
+      },
+      "vars": {
+        "guide": "#3b3d45ff",
+        "guideActive": "#1b1d23ff",
+        "invisible": "#4e5a5fff"
+      },
+      "colors": {
+        "bg": "rgb(40, 44, 51)",
+        "text": "rgb(172, 178, 190)"
+      }
+    },
+    "tsInner": {
+      "font": 15,
+      "lineH": 24,
+      "ratio": 1.6,
+      "firstNumH": 24,
+      "gutter": true,
+      "gutterW": 87,
+      "contentLeft": 527,
+      "wrapping": false,
+      "hScroll": true,
+      "lineCount": 12,
+      "numberCount": 13,
+      "guides": [
+        {
+          "left": 41,
+          "top": 48,
+          "h": 120,
+          "w": 1,
+          "active": false,
+          "bg": "rgb(59, 61, 69)"
+        },
+        {
+          "left": 5,
+          "top": 24,
+          "h": 168,
+          "w": 1,
+          "active": false,
+          "bg": "rgb(59, 61, 69)"
+        },
+        {
+          "left": 77,
+          "top": 72,
+          "h": 72,
+          "w": 1,
+          "active": true,
+          "bg": "rgb(27, 29, 35)"
+        }
+      ],
+      "ws": {
+        "space": 0,
+        "tab": 0,
+        "brk": 0,
+        "spaceSym": null,
+        "tabSym": null,
+        "brkSym": null,
+        "color": null
+      },
+      "vars": {
+        "guide": "#3b3d45ff",
+        "guideActive": "#1b1d23ff",
+        "invisible": "#4e5a5fff"
+      },
+      "colors": {
+        "bg": "rgb(40, 44, 51)",
+        "text": "rgb(172, 178, 190)"
+      }
+    },
+    "tsMid": {
+      "font": 15,
+      "lineH": 24,
+      "ratio": 1.6,
+      "firstNumH": 24,
+      "gutter": true,
+      "gutterW": 87,
+      "contentLeft": 527,
+      "wrapping": false,
+      "hScroll": true,
+      "lineCount": 12,
+      "numberCount": 13,
+      "guides": [
+        {
+          "left": 41,
+          "top": 48,
+          "h": 120,
+          "w": 1,
+          "active": false,
+          "bg": "rgb(59, 61, 69)"
+        },
+        {
+          "left": 5,
+          "top": 24,
+          "h": 168,
+          "w": 1,
+          "active": false,
+          "bg": "rgb(59, 61, 69)"
+        },
+        {
+          "left": 77,
+          "top": 72,
+          "h": 72,
+          "w": 1,
+          "active": true,
+          "bg": "rgb(27, 29, 35)"
+        }
+      ],
+      "ws": {
+        "space": 0,
+        "tab": 0,
+        "brk": 0,
+        "spaceSym": null,
+        "tabSym": null,
+        "brkSym": null,
+        "color": null
+      },
+      "vars": {
+        "guide": "#3b3d45ff",
+        "guideActive": "#1b1d23ff",
+        "invisible": "#4e5a5fff"
+      },
+      "colors": {
+        "bg": "rgb(40, 44, 51)",
+        "text": "rgb(172, 178, 190)"
+      }
+    },
+    "tsCopyEqualsDoc": true,
+    "md": {
+      "font": 15,
+      "lineH": 24,
+      "ratio": 1.6,
+      "firstNumH": 24,
+      "gutter": true,
+      "gutterW": 87,
+      "contentLeft": 527,
+      "wrapping": true,
+      "hScroll": false,
+      "lineCount": 47,
+      "numberCount": 48,
+      "guides": [
+        {
+          "left": 5,
+          "top": 72,
+          "h": 96,
+          "w": 1,
+          "active": false,
+          "bg": "rgb(59, 61, 69)"
+        },
+        {
+          "left": 41,
+          "top": 96,
+          "h": 72,
+          "w": 1,
+          "active": true,
+          "bg": "rgb(27, 29, 35)"
+        }
+      ],
+      "ws": {
+        "space": 0,
+        "tab": 0,
+        "brk": 0,
+        "spaceSym": null,
+        "tabSym": null,
+        "brkSym": null,
+        "color": null
+      },
+      "vars": {
+        "guide": "#3b3d45ff",
+        "guideActive": "#1b1d23ff",
+        "invisible": "#4e5a5fff"
+      },
+      "colors": {
+        "bg": "rgb(40, 44, 51)",
+        "text": "rgb(172, 178, 190)"
+      }
+    }
+  },
+  "settings_rows": {
+    "rows": [
+      "UI / Theme = One Dark — Specifies the color theme used in the workbench.",
+      "UI / Icon Theme = Zed (Default) — Specifies the file icon theme used in the workbench.",
+      "UI / Font Size = 16 — Controls the font size in pixels used in the UI.",
+      "Editor / Theme = One Dark — Specifies the color theme used in the editor.",
+      "Editor / Font Size = 15 — Controls the font size in pixels.",
+      "Editor / Line Height = 1.6 — Controls the line height as a multiple of the font size.",
+      "Editor / Line Numbers = true — Controls the display of line numbers.",
+      "Editor / Word Wrap = true — Controls whether long lines wrap in Markdown files. Code files never wrap.",
+      "Editor / Indent Guides = true — Controls whether the editor should render indent guides.",
+      "Editor / Render Whitespace = false — Controls whether the editor renders spaces, tabs and line breaks as symbols.",
+      "Preview / Theme = One Dark — Specifies the color theme used in the Markdown preview.",
+      "Preview / Font Size = 16 — Controls the font size in pixels used in the Markdown preview."
+    ],
+    "steps": [
+      [
+        "+",
+        "1.7",
+        "{\n  \"editor_line_height\": 1.7\n}\n"
+      ],
+      [
+        "+ from 2.9",
+        "3",
+        "{\n  \"editor_line_height\": 3\n}\n"
+      ],
+      [
+        "+ at 3.0",
+        "3",
+        "{\n  \"editor_line_height\": 3\n}\n"
+      ],
+      [
+        "- from 1.1",
+        "1",
+        "{\n  \"editor_line_height\": 1\n}\n"
+      ],
+      [
+        "- at 1.0",
+        "1",
+        "{\n  \"editor_line_height\": 1\n}\n"
+      ]
+    ],
+    "afterCheckbox": "{\n  \"editor_line_height\": 1,\n  \"editor_indent_guides\": false\n}\n"
+  },
+  "c4_line_height": {
+    "multipliers": {
+      "1": {
+        "font": 15,
+        "lineH": 15,
+        "ratio": 1,
+        "firstNumH": 15
+      },
+      "3": {
+        "font": 15,
+        "lineH": 45,
+        "ratio": 3,
+        "firstNumH": 45
+      },
+      "1.7": {
+        "font": 15,
+        "lineH": 25.5,
+        "ratio": 1.7,
+        "firstNumH": 25.5
+      },
+      "2.5": {
+        "font": 15,
+        "lineH": 37.5,
+        "ratio": 2.5,
+        "firstNumH": 37.5
+      }
+    },
+    "ctrlPlus2": {
+      "font": 17,
+      "lineH": 34,
+      "ratio": 2,
+      "firstNumH": 34
+    },
+    "sync": {
+      "cursor": "Section 3",
+      "active": []
+    }
+  },
+  "c1_guides_off": {
+    "tsGuides": 0,
+    "mdGuides": 0
+  },
+  "c5_whitespace": {
+    "off0": {
+      "space": 0,
+      "tab": 0,
+      "brk": 0,
+      "spaceSym": null,
+      "tabSym": null,
+      "brkSym": null,
+      "color": null
+    },
+    "on": {
+      "space": 10,
+      "tab": 1,
+      "brk": 3,
+      "spaceSym": "\"·\"",
+      "tabSym": "\"→\"",
+      "brkSym": "↵",
+      "color": "rgb(78, 90, 95)"
+    },
+    "onGuidesStillOff": 1,
+    "copyEqualsDoc": true,
+    "copiedHasSymbols": false,
+    "saved": "\"a b  c\\n\\tindented with tab\\n    four spaces\\nend!\"",
+    "savedEqualsExpected": true,
+    "off1": {
+      "space": 0,
+      "tab": 0,
+      "brk": 0,
+      "spaceSym": null,
+      "tabSym": null,
+      "brkSym": null,
+      "color": null
+    }
+  },
+  "c2_c3_shortcuts": {
+    "start": {
+      "all": [
+        {
+          "shown": true,
+          "gutter": true,
+          "wrap": true,
+          "first": "# Title"
+        }
+      ],
+      "md": {
+        "font": 15,
+        "lineH": 24,
+        "ratio": 1.6,
+        "firstNumH": 24,
+        "gutter": true,
+        "gutterW": 87,
+        "contentLeft": 527,
+        "wrapping": true,
+        "hScroll": false,
+        "lineCount": 47,
+        "numberCount": 48,
+        "guides": [
+          {
+            "left": 41,
+            "top": 96,
+            "h": 72,
+            "w": 1,
+            "active": false,
+            "bg": "rgb(59, 61, 69)"
+          },
+          {
+            "left": 5,
+            "top": 72,
+            "h": 96,
+            "w": 1,
+            "active": false,
+            "bg": "rgb(59, 61, 69)"
+          }
+        ],
+        "ws": {
+          "space": 0,
+          "tab": 0,
+          "brk": 0,
+          "spaceSym": null,
+          "tabSym": null,
+          "brkSym": null,
+          "color": null
+        },
+        "vars": {
+          "guide": "#3b3d45ff",
+          "guideActive": "#1b1d23ff",
+          "invisible": "#4e5a5fff"
+        },
+        "colors": {
+          "bg": "rgb(40, 44, 51)",
+          "text": "rgb(172, 178, 190)"
+        }
+      }
+    },
+    "afterCtrlAltL": {
+      "all": [
+        {
+          "shown": true,
+          "gutter": false,
+          "wrap": true,
+          "first": "# Title"
+        }
+      ],
+      "md": {
+        "font": 15,
+        "lineH": 24,
+        "ratio": 1.6,
+        "firstNumH": null,
+        "gutter": false,
+        "gutterW": 0,
+        "contentLeft": 440,
+        "wrapping": true,
+        "hScroll": false,
+        "lineCount": 47,
+        "numberCount": 0,
+        "guides": [
+          {
+            "left": 128,
+            "top": 96,
+            "h": 72,
+            "w": 1,
+            "active": false,
+            "bg": "rgb(59, 61, 69)"
+          },
+          {
+            "left": 92,
+            "top": 72,
+            "h": 96,
+            "w": 1,
+            "active": false,
+            "bg": "rgb(59, 61, 69)"
+          }
+        ],
+        "ws": {
+          "space": 0,
+          "tab": 0,
+          "brk": 0,
+          "spaceSym": null,
+          "tabSym": null,
+          "brkSym": null,
+          "color": null
+        },
+        "vars": {
+          "guide": "#3b3d45ff",
+          "guideActive": "#1b1d23ff",
+          "invisible": "#4e5a5fff"
+        },
+        "colors": {
+          "bg": "rgb(40, 44, 51)",
+          "text": "rgb(172, 178, 190)"
+        }
+      },
+      "file": null
+    },
+    "syncNoNumbers": [],
+    "afterCtrlAltL2": {
+      "all": [
+        {
+          "shown": true,
+          "gutter": false,
+          "wrap": true,
+          "first": "# Title"
+        }
+      ],
+      "md": {
+        "font": 15,
+        "lineH": 24,
+        "ratio": 1.6,
+        "firstNumH": null,
+        "gutter": false,
+        "gutterW": 0,
+        "contentLeft": 440,
+        "wrapping": true,
+        "hScroll": false,
+        "lineCount": 47,
+        "numberCount": 0,
+        "guides": [
+          {
+            "left": 41,
+            "top": 96,
+            "h": 72,
+            "w": 1,
+            "active": false,
+            "bg": "rgb(59, 61, 69)"
+          },
+          {
+            "left": 5,
+            "top": 72,
+            "h": 96,
+            "w": 1,
+            "active": false,
+            "bg": "rgb(59, 61, 69)"
+          }
+        ],
+        "ws": {
+          "space": 0,
+          "tab": 0,
+          "brk": 0,
+          "spaceSym": null,
+          "tabSym": null,
+          "brkSym": null,
+          "color": null
+        },
+        "vars": {
+          "guide": "#3b3d45ff",
+          "guideActive": "#1b1d23ff",
+          "invisible": "#4e5a5fff"
+        },
+        "colors": {
+          "bg": "rgb(40, 44, 51)",
+          "text": "rgb(172, 178, 190)"
+        }
+      }
+    },
+    "afterAltZ": {
+      "all": [
+        {
+          "shown": true,
+          "gutter": false,
+          "wrap": false,
+          "first": "# Title"
+        }
+      ],
+      "md": {
+        "font": 15,
+        "lineH": 24,
+        "ratio": 1.6,
+        "firstNumH": null,
+        "gutter": false,
+        "gutterW": 0,
+        "contentLeft": 440,
+        "wrapping": false,
+        "hScroll": true,
+        "lineCount": 47,
+        "numberCount": 0,
+        "guides": [
+          {
+            "left": 41,
+            "top": 96,
+            "h": 72,
+            "w": 1,
+            "active": false,
+            "bg": "rgb(59, 61, 69)"
+          },
+          {
+            "left": 5,
+            "top": 72,
+            "h": 96,
+            "w": 1,
+            "active": false,
+            "bg": "rgb(59, 61, 69)"
+          }
+        ],
+        "ws": {
+          "space": 0,
+          "tab": 0,
+          "brk": 0,
+          "spaceSym": null,
+          "tabSym": null,
+          "brkSym": null,
+          "color": null
+        },
+        "vars": {
+          "guide": "#3b3d45ff",
+          "guideActive": "#1b1d23ff",
+          "invisible": "#4e5a5fff"
+        },
+        "colors": {
+          "bg": "rgb(40, 44, 51)",
+          "text": "rgb(172, 178, 190)"
+        }
+      },
+      "file": null
+    },
+    "syncWrapOff": [
+      "Section 5"
+    ],
+    "afterAltZ2": {
+      "md": {
+        "font": 15,
+        "lineH": 24,
+        "ratio": 1.6,
+        "firstNumH": null,
+        "gutter": false,
+        "gutterW": 0,
+        "contentLeft": 440,
+        "wrapping": true,
+        "hScroll": false,
+        "lineCount": 47,
+        "numberCount": 0,
+        "guides": [
+          {
+            "left": 41,
+            "top": 96,
+            "h": 72,
+            "w": 1,
+            "active": false,
+            "bg": "rgb(59, 61, 69)"
+          },
+          {
+            "left": 5,
+            "top": 72,
+            "h": 96,
+            "w": 1,
+            "active": false,
+            "bg": "rgb(59, 61, 69)"
+          }
+        ],
+        "ws": {
+          "space": 0,
+          "tab": 0,
+          "brk": 0,
+          "spaceSym": null,
+          "tabSym": null,
+          "brkSym": null,
+          "color": null
+        },
+        "vars": {
+          "guide": "#3b3d45ff",
+          "guideActive": "#1b1d23ff",
+          "invisible": "#4e5a5fff"
+        },
+        "colors": {
+          "bg": "rgb(40, 44, 51)",
+          "text": "rgb(172, 178, 190)"
+        }
+      }
+    },
+    "syncWrapOn": [
+      "Section 5"
+    ],
+    "ts": {
+      "before": {
+        "wrapping": false,
+        "hScroll": true
+      },
+      "after": {
+        "wrapping": false,
+        "hScroll": true
+      },
+      "mdAfterTsAltZ": []
+    },
+    "beforeRestart": {
+      "all": [
+        {
+          "shown": true,
+          "gutter": true,
+          "wrap": false,
+          "first": "# Title"
+        }
+      ],
+      "file": null
+    }
+  },
+  "c2_c3_restart": {
+    "all": [
+      {
+        "shown": true,
+        "gutter": true,
+        "wrap": true,
+        "first": "# Title"
+      }
+    ],
+    "md": {
+      "font": 15,
+      "lineH": 24,
+      "ratio": 1.6,
+      "firstNumH": 24,
+      "gutter": true,
+      "gutterW": 87,
+      "contentLeft": 527,
+      "wrapping": true,
+      "hScroll": false,
+      "lineCount": 47,
+      "numberCount": 48,
+      "guides": [
+        {
+          "left": 41,
+          "top": 96,
+          "h": 72,
+          "w": 1,
+          "active": false,
+          "bg": "rgb(59, 61, 69)"
+        },
+        {
+          "left": 5,
+          "top": 72,
+          "h": 96,
+          "w": 1,
+          "active": false,
+          "bg": "rgb(59, 61, 69)"
+        }
+      ],
+      "ws": {
+        "space": 0,
+        "tab": 0,
+        "brk": 0,
+        "spaceSym": null,
+        "tabSym": null,
+        "brkSym": null,
+        "color": null
+      },
+      "vars": {
+        "guide": "#3b3d45ff",
+        "guideActive": "#1b1d23ff",
+        "invisible": "#4e5a5fff"
+      },
+      "colors": {
+        "bg": "rgb(40, 44, 51)",
+        "text": "rgb(172, 178, 190)"
+      }
+    },
+    "file": null
+  },
+  "c2_settings_off_start": {
+    "gutter": false,
+    "contentLeft": 440
+  },
+  "c1_guides_off_restart": 0,
+  "c5_whitespace_restart": {
+    "space": 10,
+    "tab": 1,
+    "brk": 3,
+    "spaceSym": "\"·\"",
+    "tabSym": "\"→\"",
+    "brkSym": "↵",
+    "color": "rgb(78, 90, 95)"
+  }
+}

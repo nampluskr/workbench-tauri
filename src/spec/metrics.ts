@@ -140,7 +140,9 @@ const METRICS: Record<string, string> = {
   // shortcut: gutter padding measured at Lilex 15, remeasure if the buffer font or size changes.
   "editor.gutter.padding_left": "22px", // I-14: Zed measured 2026-11-07, replaces E-003 3ch
   "editor.gutter.padding_right": "29px", // I-14: Zed measured 2026-11-07, replaces E-004 4ch
-  "editor.line_height.comfortable_multiplier": "1.618", // E-010
+  "editor.line_height.comfortable_multiplier": "1.618", // E-010; the editor body now uses --editor-line-height-multiplier (core v0.7 I-8), the preview code block still this
+  "editor.indent_guide.width": "1px", // E-020
+  "editor.indent_guide.active_width": "1px", // E-020
   "editor.cursor_width": rem(2), // E-012
   "editor.selection.corner_radius_multiplier": "0.15", // E-015
   "scrollbar.width.editor": rem(15), // E-030
@@ -374,7 +376,7 @@ const UI_FONT_FEATURE_SETTINGS = '"calt" 0'; // I-14: disable UI contextual alte
 
 /** Publish the metrics as CSS variables on :root (constructable sheet, no inline style). */
 let metricsSheet: CSSStyleSheet | undefined;
-export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15, editorFontSize = bufferFontSize, previewFontSize = 16): Promise<void> {
+export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15, editorFontSize = bufferFontSize, previewFontSize = 16, editorLineHeight = 1.6): Promise<void> {
   const bufferSize = `${bufferFontSize}px`;
   const editorSize = `${editorFontSize}px`;
   const vars = Object.entries(METRICS).map(
@@ -388,6 +390,7 @@ export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15, editorF
   const descent = Math.abs(ctx.measureText("0").fontBoundingBoxDescent);
   vars.push(`--editor-gutter-margin: ${descent}px;`);
   vars.push(`--buffer-font-family: ${BUFFER_FONT_FAMILY};`); // L-103: code in the Markdown preview uses the buffer font
+  vars.push(`--editor-line-height-multiplier: ${editorLineHeight};`); // core v0.7 I-8: the Settings editor_line_height
   vars.push(`--ui-font-family: ${UI_FONT_FAMILY};`);
   vars.push(`--font-weight-default: ${FONT_WEIGHT};`);
   vars.push(`--ui-font-feature-settings: ${UI_FONT_FEATURE_SETTINGS};`);

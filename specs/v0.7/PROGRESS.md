@@ -70,6 +70,37 @@
   - 검증: V3. SendInput이 전경 창 0x0으로 막혀 CDP 합성 입력으로 쟀다. 판정은 C-04(checker)가 측정 파일만 읽어 했다.
   - 특이사항: 없음.
 
+### Phase 3 — 편집 보기
+
+- **에이전트 환경** (2026-11-10, tauri-leader)
+  - 무엇을 했나: Phase 시작에 writer·coder·checker의 컨텍스트를 `/clear`로 비웠다(core COMMON 1절).
+  - 결과: 세 에이전트 모두 비운 상태로 카드를 받았다.
+  - 검증: herdr 프롬프트 전송.
+  - 특이사항: 사용자 1차 확인(Phase 1~2)은 사용자가 따로 하고, 이 Phase를 먼저 진행했다(core-leader 2026-11-10).
+- **K-03 편집 보기 설정 다섯과 단축키 둘(I-5·I-6·I-7·I-8·I-10)** (2026-11-10, coder)
+  - 무엇을 했나:
+    - 설정: Settings Editor 분류에 `buffer_font_size` 뒤로 다섯 행을 더했다(`src/settings/model.ts`·`load.ts`·`Settings.tsx`). `editor_line_height` Line Height(기본 1.6), `editor_line_numbers` Line Numbers(켬), `editor_word_wrap` Word Wrap(켬), `editor_indent_guides` Indent Guides(켬), `editor_render_whitespace` Render Whitespace(끔). 설명은 VS Code 설정 설명 방식이다. 켬/끔은 boolean만 유효하고, 쓰기는 `updateSetting`(주석·모르는 키 보존)이다.
+    - I-6·I-7 단축키: `Ctrl+Alt+L`(`editor::ToggleLineNumbers`)은 편집 탭(찾기 줄 포함)에 포커스가 있을 때 열린 편집 탭 전부에, `Alt+Z`(`editor::ToggleSoftWrap`)는 마크다운 편집 탭에 포커스가 있을 때 열린 마크다운 탭 전부에 건다. 둘 다 임시 값이라 저장하지 않고, Settings 값이 바뀌면 버린다. 키맵·`BROWSER_KEYS`·메뉴 가속키와 부딪치는 것은 없다(`src/keymap/builtin.ts`, `src/App.tsx`, 새 파일 `src/editor/view-options.ts`).
+    - I-8: 파일 값이 1.0~3.0·0.1 단위가 아니면 무효라 기본 1.6이다. Settings 화면의 −/+·직접 입력은 가장 가까운 허용 값으로 맞춘 뒤 저장한다(예: 3.5→3.0, 1.65→1.7). 줄 높이는 `font-size × --editor-line-height-multiplier`(`Ctrl+=` 임시 값 포함)다. E-010(1.618)은 미리보기 `pre`가 계속 쓴다.
+    - I-5 들여쓰기 안내선(새 파일 `src/editor/indent-guides.ts`): 선 폭·색은 `docs/refs/01-zed/01-LAYOUT.md` E-020·E-117(폭 1px, 활성 1px, `metrics.ts`의 `editor.indent_guide.width`·`.active_width`), 색 기본값은 `03-THEME-ICONS.md` T-26.9·T-26.10(테마 토큰 `editor.indent_guide`·`editor.indent_guide_active`)이다. 커서 블록 판정은 Zed 소스(커밋 14b7b0e) `crates/editor/src/indent_guides.rs` `find_active_indent_guide_indices`와 `crates/multi_buffer/src/multi_buffer.rs` `enclosing_indent`의 동작만 따랐다(코드 복사 없음). 한 칸은 공백 4칸(`EDITOR_TAB_SIZE`)이고 CM `layer`로 그려 문서 글자에 들어가지 않는다.
+    - I-10 공백 보이기(새 파일 `src/editor/whitespace.ts`): 공백 `·`, 탭 `→`, 줄 끝 `↵`(마지막 줄 제외), 색은 편집 테마 토큰 `editor.invisible`이다. 문서 글자는 그대로라 복사·저장에 들어가지 않고, I-5와 켜고 끔이 따로다.
+    - 다시 재기: 옛 `remeasureEditors`(DOM에서 `.cm-editor` 찾기)는 화면에 안 붙은 탭을 놓쳐 `eachView`(뷰 추적)로 바꿨다. 글꼴·줄간격이 같이 쓴다.
+  - 결과: 처음 상태는 I-5 안내선 켬과 줄간격 1.6 말고는 ORDER-02와 같다. 줄 번호가 꺼지면 거터가 없어지고 줄 앞 여백(E-005)은 그대로다. 새 의존성 없음, Rust 변경 없음. 생략한 것 — CM `highlightWhitespace`(색이 확장 안에 고정이라 `editor.invisible`로 못 칠하고 ↵가 없음), 접힘·RTL 처리, 안내선은 viewport 줄만 계산(활성 블록은 커서 주변을 Zed 한도 25000줄까지 훑음).
+  - 검증: V1. `npm.cmd run typecheck` 통과, `npm.cmd run test` 243 통과. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-K-03-report.md`.
+  - 특이사항: Zed는 커서가 문서 마지막 줄이면 활성 안내선이 없는데 따르지 않았다.
+- **C-05 checker 검토(K-03)와 커밋 전 전체 검증** [PASS] (2026-11-10)
+  - 무엇을 했나: K-03 코드를 검토하고 전체 검증을 했다.
+  - 결과: 지적 없음. typecheck 오류 0, test 243 통과, clippy 경고 0, cargo test 22 통과.
+  - 검증: tauri-leader 출력 파일 `%TEMP%\v07-C-05-*.txt`로 판정했다. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-C-05-report.md`.
+  - 특이사항: 없음.
+- **V3 측정(ORDER-03)** [PASS] (2026-11-10, tauri-leader)
+  - 무엇을 했나: 화면 차례 안에서 tauri-leader가 쟀다. 처음 상태 비교용으로 ORDER-02 빌드 exe를 따로 두었다.
+  - 결과: `specs/v0.7/verify/ORDER-03/`(`v3.json`, `v3-extra.json`, PNG 16). C-06 checker 판정 [MEASURED]: ORDER-03 완료 기준 1~6 모두 PASS, 불일치 없음, 측정 불가 없음(측정 조건 창 1440×852, 100%, One Dark(One Light 비교 포함), K-03 작업 트리 debug exe, 보고 `C:\Users\nampl\AppData\Local\Temp\v07-C-06-report.md`). `v3.json`에서 빠진 값(`afterCtrlAltL2`, 줄 번호 끈 상태 연계 `syncNoNumbers`, 단일 편집기 덤프)은 `v3-extra.json`(`two_editors`, `sync_after_toggles.numbersOff`, `sync_after_toggles.lineHeight24`)으로 판정했다. Settings Editor 분류 행 다섯의 이름·순서·설명과 −/+ 단계(`settings_rows`)도 기준을 채웠다. 사용자 확인 필요: One Light 안내선 색(V4, 아래 미정).
+  - 검증: V3. SendInput 대신 CDP 합성 입력, 임시 APPDATA·WebView 폴더로 쟀다. 판정은 C-06(checker)이 측정 파일만 읽어 했다.
+  - 특이사항: 사용자 테스트 앱 PID 8744는 건드리지 않았다. V3 뒤 8744가 실행 중이 아닌 것을 보고 core-leader에게 [INFO]로 알렸다. tauri가 닫은 것이 아니다 — 자기 자식만 PID로 닫았고, single-instance가 없고, 충돌 로그가 없다.
+- **미정: One 테마의 안내선 색** (2026-11-10)
+  - One 테마 파일에 `editor.indent_guide`·`editor.indent_guide_active` 키가 없어 스펙 fallback(#3b3d45/#1b1d23)이 쓰인다. One Light에서 선이 진하다. 스펙에 라이트 값이 없어 추정하지 않았다 — core·사용자가 정한다.
+
 ## 사용자 요청 작업
 
 없음

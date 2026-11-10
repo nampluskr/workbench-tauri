@@ -6,7 +6,7 @@ import AppMenu, { isContextMenuOpen, openContextMenu } from "../shell/AppMenu.ts
 import { commands } from "../keymap/keyboard.ts";
 import { SETTINGS_DROPDOWN_OFFSET_Y } from "../spec/metrics.ts";
 import { choices } from "./choices.ts";
-import { CATEGORIES, filterSettings, isChoiceKey, settingMenu, type ChoiceKey, type SettingKey } from "./model.ts";
+import { CATEGORIES, filterSettings, isChoiceKey, isToggleKey, settingMenu, settingNumber, settingStep, type ChoiceKey, type SettingKey, type SettingValue } from "./model.ts";
 import { saveSetting, settings } from "./load.ts";
 import "./settings.css";
 
@@ -17,7 +17,7 @@ export default function SettingsWindow() {
   const [saving, setSaving] = createSignal(false);
   const rows = createMemo(() => filterSettings(query()));
   const [current, setCurrent] = createSignal<(typeof CATEGORIES)[number]>("UI");
-  const save = async (key: SettingKey, value: string | number) => {
+  const save = async (key: SettingKey, value: SettingValue) => {
     if (saving()) return;
     setSaving(true);
     try { await saveSetting(key, value); setError(""); }
@@ -41,11 +41,15 @@ export default function SettingsWindow() {
           <For each={rows().filter((r) => r.category === category)}>{(row) => <div class="settings-row">
             <div class="settings-copy"><label id={`label-${row.key}`} for={`setting-${row.key}`}>{row.name}</label><p id={`description-${row.key}`}>{row.description}</p></div>
             <Show when={isChoiceKey(row.key)} fallback={
-              <div class="settings-number">
-                <button aria-label={`Decrease ${row.category} Font Size`} disabled={saving()} onClick={() => void save(row.key, Number(settings()[row.key]) - 1)}>−</button>
-                <input id={`setting-${row.key}`} aria-describedby={`description-${row.key}`} type="number" step="any" value={settings()[row.key]} disabled={saving()} onChange={(e) => void save(row.key, e.currentTarget.valueAsNumber)} />
-                <button aria-label={`Increase ${row.category} Font Size`} disabled={saving()} onClick={() => void save(row.key, Number(settings()[row.key]) + 1)}>+</button>
-              </div>
+              <Show when={isToggleKey(row.key)} fallback={
+                <div class="settings-number">
+                  <button aria-label={`Decrease ${row.category} ${row.name}`} disabled={saving()} onClick={() => void save(row.key, settingNumber(row.key, Number(settings()[row.key]) - settingStep(row.key)))}>−</button>
+                  <input id={`setting-${row.key}`} aria-describedby={`description-${row.key}`} type="number" step="any" value={settings()[row.key] as number} disabled={saving()} onChange={(e) => void save(row.key, settingNumber(row.key, e.currentTarget.valueAsNumber))} />
+                  <button aria-label={`Increase ${row.category} ${row.name}`} disabled={saving()} onClick={() => void save(row.key, settingNumber(row.key, Number(settings()[row.key]) + settingStep(row.key)))}>+</button>
+                </div>
+              }>
+                <input id={`setting-${row.key}`} class="settings-toggle" type="checkbox" aria-describedby={`description-${row.key}`} checked={settings()[row.key] as boolean} disabled={saving()} onChange={(e) => void save(row.key, e.currentTarget.checked)} />
+              </Show>
             }>
               {(() => {
                 let items: ReturnType<typeof settingMenu> = [];

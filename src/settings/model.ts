@@ -6,9 +6,18 @@ import { DEFAULT_THEME } from "../theme/registry.ts";
 export const SETTINGS_BINDINGS: KeymapSection[] = [{ context: "Workspace", bindings: { "ctrl-,": "zed::OpenSettings" } }];
 
 // I-3: editor_theme and preview_theme follow theme until set (parseSettings), so the defaults repeat its default.
-export const DEFAULTS = { theme: DEFAULT_THEME as string, icon_theme: "Zed (Default)", editor_theme: DEFAULT_THEME as string, preview_theme: DEFAULT_THEME as string, ui_font_size: 16, buffer_font_size: 15, preview_font_size: 16 };
+export const DEFAULTS = { theme: DEFAULT_THEME as string, icon_theme: "Zed (Default)", editor_theme: DEFAULT_THEME as string, preview_theme: DEFAULT_THEME as string, ui_font_size: 16, buffer_font_size: 15, preview_font_size: 16,
+  // I-5 ~ I-8, I-10: the editor body's view settings.
+  editor_line_height: 1.6, editor_line_numbers: true, editor_word_wrap: true, editor_indent_guides: true, editor_render_whitespace: false };
 export type Settings = typeof DEFAULTS;
 export type SettingKey = keyof Settings;
+export type SettingValue = string | number | boolean;
+export const isToggleKey = (key: SettingKey): boolean => typeof DEFAULTS[key] === "boolean";
+// core v0.7 I-8: a multiple of the font size, 0.1 steps, 1.0 to 3.0. A file value outside this is invalid (the default); the Settings screen moves a typed value to the nearest one.
+export const nearestLineHeight = (value: number): number => Math.min(3, Math.max(1, Math.round(value * 10) / 10));
+export const settingStep = (key: SettingKey): number => key === "editor_line_height" ? 0.1 : 1;
+/** The number a Settings stepper or input saves: a step away from `current`, or the typed value, kept to the key's own range. */
+export const settingNumber = (key: SettingKey, value: number): number => key === "editor_line_height" ? nearestLineHeight(value) : value;
 export const THEME_KEYS = ["theme", "editor_theme", "preview_theme"] as const;
 export type ChoiceKey = (typeof THEME_KEYS)[number] | "icon_theme";
 export const isChoiceKey = (key: SettingKey): key is ChoiceKey => key === "icon_theme" || (THEME_KEYS as readonly string[]).includes(key);
@@ -20,6 +29,11 @@ export const ROWS: { key: SettingKey; name: string; description: string; categor
   { key: "ui_font_size", name: "Font Size", description: "Controls the font size in pixels used in the UI.", category: "UI" },
   { key: "editor_theme", name: "Theme", description: "Specifies the color theme used in the editor.", category: "Editor" },
   { key: "buffer_font_size", name: "Font Size", description: "Controls the font size in pixels.", category: "Editor" },
+  { key: "editor_line_height", name: "Line Height", description: "Controls the line height as a multiple of the font size.", category: "Editor" },
+  { key: "editor_line_numbers", name: "Line Numbers", description: "Controls the display of line numbers.", category: "Editor" },
+  { key: "editor_word_wrap", name: "Word Wrap", description: "Controls whether long lines wrap in Markdown files. Code files never wrap.", category: "Editor" },
+  { key: "editor_indent_guides", name: "Indent Guides", description: "Controls whether the editor should render indent guides.", category: "Editor" },
+  { key: "editor_render_whitespace", name: "Render Whitespace", description: "Controls whether the editor renders spaces, tabs and line breaks as symbols.", category: "Editor" },
   { key: "preview_theme", name: "Theme", description: "Specifies the color theme used in the Markdown preview.", category: "Preview" },
   { key: "preview_font_size", name: "Font Size", description: "Controls the font size in pixels used in the Markdown preview.", category: "Preview" },
 ];
@@ -35,6 +49,8 @@ export type Choices = { theme: readonly string[]; icon_theme: readonly string[] 
 
 export function validSetting(key: SettingKey, value: unknown, choices: Choices): boolean {
   if (isChoiceKey(key)) return typeof value === "string" && (key === "icon_theme" ? choices.icon_theme : choices.theme).includes(value);
+  if (isToggleKey(key)) return typeof value === "boolean";
+  if (key === "editor_line_height") return typeof value === "number" && value === nearestLineHeight(value);
   return typeof value === "number" && Number.isFinite(value) && value > 0;
 }
 
@@ -56,11 +72,11 @@ export const settingMenu = (key: ChoiceKey, current: string, change: (value: str
   (key === "icon_theme" ? choices.icon_theme : choices.theme).map((name) => ({ label: name, checked: name === current, run: () => change(name) }));
 
 /** Several keys in one write, so the file watcher never reads a half-changed state. */
-export const updateSettings = (text: string | null, values: Partial<Record<SettingKey, string | number>>, choices: Choices): string =>
+export const updateSettings = (text: string | null, values: Partial<Record<SettingKey, SettingValue>>, choices: Choices): string =>
   Object.entries(values).reduce<string | null>((acc, [key, value]) => updateSetting(acc, key as SettingKey, value, choices), text) ?? "";
 
 /** Replace top-level value spans only; preserve comments, unknown keys, BOM and whitespace. */
-export function updateSetting(text: string | null, key: SettingKey, value: string | number, choices: Choices): string {
+export function updateSetting(text: string | null, key: SettingKey, value: SettingValue, choices: Choices): string {
   if (!validSetting(key, value, choices)) throw new Error(`Invalid ${key}.`);
   const original = text ?? "{}\n";
   const newline = original.includes("\r\n") ? "\r\n" : "\n";

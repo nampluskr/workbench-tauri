@@ -16,6 +16,8 @@ export const EDITOR_BINDINGS: KeymapSection[] = [{ context: "Editor", bindings: 
   "f3": "editor::FindNext",
   "shift-f3": "editor::FindPrevious",
   "ctrl-d": "editor::AddNextOccurrence",
+  "ctrl-alt-l": "editor::ToggleLineNumbers", // core v0.7 I-6
+  "alt-z": "editor::ToggleSoftWrap", // core v0.7 I-7 (VS Code editor.action.toggleWordWrap)
   "ctrl-shift-l": "editor::SelectSelectionMatches",
   "ctrl-k ctrl-d": "editor::SkipOccurrence",
   "escape": "editor::Cancel",

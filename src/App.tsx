@@ -10,8 +10,9 @@ import { addFolder, editorContext, sidebarWidth, resizeSidebar, toggleLockPrevie
 import { activeTabOf, lockPreview } from "./workspace/context.ts";
 import { statusButtons, statusItems } from "./shell/status.ts";
 import { commands, focusStack } from "./keymap/keyboard.ts";
-import { adjustFontSize } from "./settings/load.ts";
+import { adjustFontSize, toggleViewOption } from "./settings/load.ts";
 import { fontTarget } from "./editor/font-size.ts";
+import { toggleApplies, type ToggleOption } from "./editor/view-options.ts";
 import { PickerHost } from "./shell/Picker.tsx";
 import { FileFinderHost } from "./shell/FileFinder.tsx";
 
@@ -21,6 +22,10 @@ const zoom = (direction: -1 | 0 | 1) => () => { const target = fontTarget(focusS
 commands.set("zed::IncreaseBufferFontSize", zoom(1));
 commands.set("zed::DecreaseBufferFontSize", zoom(-1));
 commands.set("zed::ResetBufferFontSize", zoom(0));
+// I-6 / I-7: a focused editor flips the option in every open editor (Markdown ones only for wrapping), unsaved.
+const toggle = (option: ToggleOption) => () => { if (toggleApplies(focusStack(), option)) toggleViewOption(option); };
+commands.set("editor::ToggleLineNumbers", toggle("lineNumbers"));
+commands.set("editor::ToggleSoftWrap", toggle("wordWrap"));
 
 // Core D-9 / I-18: icon names follow the pinned Zed sources (K-08 report).
 export default function App() {

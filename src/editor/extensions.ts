@@ -3,9 +3,7 @@ import {
   EditorView,
   drawSelection,
   highlightActiveLine,
-  highlightActiveLineGutter,
   keymap,
-  lineNumbers,
   rectangularSelection,
 } from "@codemirror/view";
 import {
@@ -18,11 +16,12 @@ import { BUFFER_FONT_FAMILY, EDITOR_TAB_SIZE, EDITOR_UNDO_GROUP_INTERVAL_MS } fr
 import { imeShortcutInput } from "./ime.ts";
 import { highlightSelectionMatches } from "@codemirror/search";
 import { documentSearch } from "./search.ts";
+import { viewOptionExtensions } from "./view-options.ts";
 
 // Metric variables come from applyMetrics() (spec/metrics.ts); color variables come
 // from the theme JSON (Phase 2, D-8/D-9) and are unset until then.
 const lineHeight =
-  "calc(var(--editor-buffer-font-size) * var(--editor-line-height-comfortable-multiplier))";
+  "calc(var(--editor-buffer-font-size) * var(--editor-line-height-multiplier))";
 
 const zedEditorTheme = EditorView.theme({
   "&": {
@@ -36,7 +35,7 @@ const zedEditorTheme = EditorView.theme({
   },
   ".cm-scroller": {
     fontFamily: "inherit",
-    lineHeight, // E-010
+    lineHeight, // core v0.7 I-8 (was E-010)
   },
   ".cm-content": { padding: 0 },
   // E-005: margin between gutter and text. It sits inside the line so that the
@@ -130,11 +129,9 @@ export const editorExtensions = (extension: string) => [
   imeShortcutInput,
   documentSearch,
   highlightSelectionMatches({ highlightWordAroundCursor: true }), // U-11: same word / same selected text, painted by .cm-selectionMatch (app.css)
-  /^(md|markdown)$/.test(extension) ? EditorView.lineWrapping : [], // I-8: same extensions as Markdown preview
+  viewOptionExtensions(extension), // core v0.7 I-5 ~ I-7, I-10: line numbers, Markdown wrapping, indent guides, whitespace marks
   EditorView.cspNonce.of(document.getElementById("csp-nonce-carrier")?.nonce ?? ""),
-  lineNumbers(),
   highlightActiveLine(),
-  highlightActiveLineGutter(),
   drawSelection(),
   // Column selection yields one range per line; without this CM6 keeps only the main range.
   EditorState.allowMultipleSelections.of(true),
