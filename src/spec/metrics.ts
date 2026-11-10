@@ -118,7 +118,7 @@ const METRICS: Record<string, string> = {
   "search_results.header.padding_right": rem(8), // toml; header.rs `.pr_2()`
   "search_results.header.gap": rem(6), // toml; header.rs `.gap_1p5()`
   "search_results.header.radius": rem(2), // toml; header.rs `.rounded_sm()`
-  "search_results.header.lines": "2", // toml; editor.rs:302 FILE_HEADER_HEIGHT, in buffer lines
+  "search_results.header.margin_y": rem(2), // user decision (ORDER-14 U-10, user 2026-11-10); not in toml, replaces the 4px header.padding above/below a result
   "editor.search_input.min_height": rem(32), // E-062
   "editor.search_input.padding_left": rem(8), // E-062
   "editor.search_input.padding_right": rem(4), // E-062
