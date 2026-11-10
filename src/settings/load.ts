@@ -7,17 +7,23 @@ import { applyTheme } from "../theme/apply.ts";
 import { choices } from "./choices.ts";
 import { setAppliedIconTheme } from "../theme/icons.ts";
 import { notify } from "../shell/toast.ts";
+import { remeasureForFont } from "../editor/extensions.ts";
+import { stepEditorFontSize } from "../editor/font-size.ts";
 import { DEFAULTS, parseSettings, updateSetting, type SettingKey } from "./model.ts";
 
 export const [settings, setSettings] = createSignal({ ...DEFAULTS });
 let queue = Promise.resolve();
+// U-17: the Ctrl+= size, in memory only (Zed persist = false). null follows the buffer_font_size setting.
+let editorFontSize: number | null = null;
 
 async function reload(): Promise<void> {
   let next = settings();
   try { next = parseSettings(await invoke<string | null>("read_user_settings"), choices); }
   catch (error) { notify([String(error)]); }
   try {
-    await applyMetrics(next.ui_font_size, next.buffer_font_size);
+    // A changed buffer_font_size is the newer choice, so it replaces the temporary size.
+    if (next.buffer_font_size !== settings().buffer_font_size) editorFontSize = null;
+    await applyMetrics(next.ui_font_size, next.buffer_font_size, editorFontSize ?? next.buffer_font_size);
     await showTheme(next.theme);
     setAppliedIconTheme(next.icon_theme);
     setSettings(next);
@@ -31,6 +37,20 @@ export async function showTheme(name: string): Promise<void> {
     const view = EditorView.findFromDOM(el);
     view?.dispatch({}); // Rebuild visible syntax captures against the new theme's keys.
     view?.requestMeasure();
+  });
+}
+
+const remeasureEditors = () => document.querySelectorAll<HTMLElement>(".cm-editor").forEach((el) => { const view = EditorView.findFromDOM(el); if (view) remeasureForFont(view); });
+
+/** U-17: Zed IncreaseBufferFontSize (1), DecreaseBufferFontSize (-1), ResetBufferFontSize (0), all with persist = false. */
+export function adjustEditorFontSize(direction: -1 | 0 | 1): void {
+  queue = queue.then(async () => {
+    const { ui_font_size, buffer_font_size } = settings();
+    editorFontSize = direction === 0 ? null : stepEditorFontSize(editorFontSize ?? buffer_font_size, direction, buffer_font_size);
+    try {
+      await applyMetrics(ui_font_size, buffer_font_size, editorFontSize ?? buffer_font_size);
+      remeasureEditors(); // line height and character width changed; the gutter, find highlights and cursors are redrawn from them
+    } catch (error) { notify([String(error)]); }
   });
 }
 

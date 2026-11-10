@@ -8,7 +8,11 @@ import {
   lineNumbers,
   rectangularSelection,
 } from "@codemirror/view";
-import { cursorDocEnd, cursorDocStart, history, selectDocEnd, selectDocStart, simplifySelection } from "@codemirror/commands";
+import {
+  cursorCharLeft, cursorCharRight, cursorDocEnd, cursorDocStart, cursorGroupLeft, cursorGroupRight, cursorLineBoundaryBackward,
+  cursorLineBoundaryForward, history, selectCharLeft, selectCharRight, selectDocEnd, selectDocStart, selectGroupLeft, selectGroupRight,
+  selectLineBoundaryBackward, selectLineBoundaryForward, simplifySelection,
+} from "@codemirror/commands";
 import { BUFFER_FONT_FAMILY, EDITOR_TAB_SIZE, EDITOR_UNDO_GROUP_INTERVAL_MS } from "../spec/metrics.ts";
 import { imeShortcutInput } from "./ime.ts";
 import { highlightSelectionMatches } from "@codemirror/search";
@@ -17,13 +21,13 @@ import { documentSearch } from "./search.ts";
 // Metric variables come from applyMetrics() (spec/metrics.ts); color variables come
 // from the theme JSON (Phase 2, D-8/D-9) and are unset until then.
 const lineHeight =
-  "calc(var(--typography-buffer-font-size) * var(--editor-line-height-comfortable-multiplier))";
+  "calc(var(--editor-buffer-font-size) * var(--editor-line-height-comfortable-multiplier))";
 
 const zedEditorTheme = EditorView.theme({
   "&": {
     height: "100%",
     fontFamily: BUFFER_FONT_FAMILY,
-    fontSize: "var(--typography-buffer-font-size)",
+    fontSize: "var(--editor-buffer-font-size)",
     fontWeight: "var(--font-weight-default)", // I-14
     fontFeatureSettings: "normal", // I-14: UI calt setting does not apply to the buffer
     color: "var(--editor-foreground)",
@@ -69,6 +73,8 @@ const zedEditorTheme = EditorView.theme({
   },
   // E-012: cursor width (drawSelection draws the cursor as a left border).
   ".cm-cursor": { borderLeftWidth: "var(--editor-cursor-width)" },
+  // U-15: CM draws a 1px dotted outline around a focused editor; Zed shows no focus ring on the editor body.
+  "&.cm-focused": { outline: "none" },
   // E-015: selection color and corner radius = line height * multiplier.
   ".cm-selectionBackground, &.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground":
     {
@@ -77,7 +83,29 @@ const zedEditorTheme = EditorView.theme({
     },
 });
 
+/**
+ * U-14: without these the browser moves the caret natively and CM reads back one range, so several cursors collapse
+ * into one. CM's commands move every range. The editor has no defaultKeymap, so these keys are bound here.
+ */
+export const multiCursorKeys = [
+  { key: "ArrowLeft", run: cursorCharLeft, shift: selectCharLeft },
+  { key: "ArrowRight", run: cursorCharRight, shift: selectCharRight },
+  { key: "Mod-ArrowLeft", run: cursorGroupLeft, shift: selectGroupLeft },
+  { key: "Mod-ArrowRight", run: cursorGroupRight, shift: selectGroupRight },
+  { key: "Home", run: cursorLineBoundaryBackward, shift: selectLineBoundaryBackward },
+  { key: "End", run: cursorLineBoundaryForward, shift: selectLineBoundaryForward },
+];
+
+/**
+ * U-17 (K-20-R2): CM learns the line height by measuring, and only measures the lines again when the content was redrawn or the
+ * theme facet changed. A CSS variable change (Ctrl+=) does neither, so the line-height map and the gutter kept the old size.
+ * Reconfiguring this compartment with a fresh empty theme changes the facet, so CM measures the lines on its next frame.
+ */
+const fontMeasure = new Compartment();
+export const remeasureForFont = (view: EditorView) => view.dispatch({ effects: fontMeasure.reconfigure(EditorView.theme({})) });
+
 export const editorExtensions = (extension: string) => [
+  fontMeasure.of([]),
   imeShortcutInput,
   documentSearch,
   highlightSelectionMatches({ highlightWordAroundCursor: true }), // U-11: same word / same selected text, painted by .cm-selectionMatch (app.css)
@@ -102,6 +130,7 @@ export const editorExtensions = (extension: string) => [
     { key: "Escape", run: simplifySelection }, // K-33: Zed editor::Cancel (selection_collections.rs try_cancel): a selection collapses to its head, several ranges to the main one
     { key: "Mod-Home", run: cursorDocStart, shift: selectDocStart },
     { key: "Mod-End", run: cursorDocEnd, shift: selectDocEnd },
+    ...multiCursorKeys,
   ]),
   zedEditorTheme,
 ];

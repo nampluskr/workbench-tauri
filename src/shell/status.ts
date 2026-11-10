@@ -6,6 +6,12 @@ import type { IconName } from "./Icon.tsx";
 // Zed 4304dec732 default-windows.json, Workspace context; later cards replace the registered no-op handlers.
 export const STATUS_BINDINGS: KeymapSection[] = [{ context: "Workspace", bindings: {
   "ctrl-shift-f": "pane::DeploySearch",
+  // U-17 / I-386~388: Zed binds Zoom In to Ctrl+= and Ctrl+Shift+= (the stroke "ctrl-+", also the numpad +), Ctrl+- (also the numpad -) and Ctrl+0.
+  // The last key of an action is the one a menu shows (I-704).
+  "ctrl-+": "zed::IncreaseBufferFontSize",
+  "ctrl-=": "zed::IncreaseBufferFontSize",
+  "ctrl--": "zed::DecreaseBufferFontSize",
+  "ctrl-0": "zed::ResetBufferFontSize",
 } }];
 
 type StatusButton = { name: IconName; label: string; action: string; toggled?: boolean; dividerAfter?: boolean | "toggle" };

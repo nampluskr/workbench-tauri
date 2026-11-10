@@ -358,6 +358,12 @@ export const MENU_WINDOW_MARGIN = 8; // menu.context.window_margin (I-314, I-501
 export const MENU_SHORTCUT_ACTIVATE_DELAY_MS = 50; // menu.shortcut_activate_delay (I-520)
 export const SETTINGS_DROPDOWN_OFFSET_Y = 2; // L-10 / Zed 4304dec732 components/dropdown.rs offset y=2px.
 
+// U-17 (core confirmed 2026-11-10, ORDER-16 U-17): Ctrl+= / Ctrl+- change the editor font by this step and stay inside this range.
+// core states these as Zed values but the Zed source was not checked here, so they are not in spec/zed-metrics.toml.
+export const EDITOR_FONT_SIZE_STEP = 1; // px
+export const EDITOR_FONT_SIZE_MIN = 6; // px
+export const EDITOR_FONT_SIZE_MAX = 100; // px
+
 // I-14: bundled Zed families; DirectWrite maps Korean to Malgun Gothic on this PC.
 const UI_FONT_FAMILY = '"IBM Plex Sans", "Malgun Gothic", sans-serif';
 export const BUFFER_FONT_FAMILY = '"Lilex", "Malgun Gothic", monospace';
@@ -366,16 +372,17 @@ const UI_FONT_FEATURE_SETTINGS = '"calt" 0'; // I-14: disable UI contextual alte
 
 /** Publish the metrics as CSS variables on :root (constructable sheet, no inline style). */
 let metricsSheet: CSSStyleSheet | undefined;
-export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15): Promise<void> {
+export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15, editorFontSize = bufferFontSize): Promise<void> {
   const bufferSize = `${bufferFontSize}px`;
+  const editorSize = `${editorFontSize}px`;
   const vars = Object.entries(METRICS).map(
     ([id, value]) => `--${id.replace(/[._]/g, "-")}: ${value};`,
   );
 
   // E-005: gutter margin = |descent| of the buffer font. CSS cannot read it.
-  await document.fonts.load(`${FONT_WEIGHT} ${bufferSize} "Lilex"`);
+  await document.fonts.load(`${FONT_WEIGHT} ${editorSize} "Lilex"`);
   const ctx = document.createElement("canvas").getContext("2d")!;
-  ctx.font = `${bufferSize} ${BUFFER_FONT_FAMILY}`;
+  ctx.font = `${editorSize} ${BUFFER_FONT_FAMILY}`; // the gutter margin belongs to the editor text, so it follows the Ctrl+= size
   const descent = Math.abs(ctx.measureText("0").fontBoundingBoxDescent);
   vars.push(`--editor-gutter-margin: ${descent}px;`);
   vars.push(`--buffer-font-family: ${BUFFER_FONT_FAMILY};`); // L-103: code in the Markdown preview uses the buffer font
@@ -383,7 +390,7 @@ export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15): Promis
   vars.push(`--font-weight-default: ${FONT_WEIGHT};`);
   vars.push(`--ui-font-feature-settings: ${UI_FONT_FEATURE_SETTINGS};`);
 
-  vars.push(`--units-rem-size: ${uiFontSize}px; --typography-ui-font-size: ${uiFontSize}px; --typography-buffer-font-size: ${bufferSize};`);
+  vars.push(`--units-rem-size: ${uiFontSize}px; --typography-ui-font-size: ${uiFontSize}px; --typography-buffer-font-size: ${bufferSize}; --editor-buffer-font-size: ${editorSize};`); // U-17: the editor has its own variable; the setting value stays in --typography-buffer-font-size
   metricsSheet ??= new CSSStyleSheet();
   metricsSheet.replaceSync(`:root { font-size: var(--units-rem-size); ${vars.join(" ")} }`);
   if (!document.adoptedStyleSheets.includes(metricsSheet)) document.adoptedStyleSheets = [...document.adoptedStyleSheets, metricsSheet];

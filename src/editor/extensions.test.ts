@@ -119,3 +119,35 @@ test("I-9: read-only is per view, remains focusable, and does not block an edita
   assert.equal(keeper.state.facet(EditorView.editable), true);
   assert.equal(peer.state.readOnly, false);
 });
+
+test("U-14: arrow keys move and extend every cursor, and keep all of them", async () => {
+  const { multiCursorKeys } = await import("./extensions.ts");
+  const { EditorSelection } = await import("@codemirror/state");
+  const { Direction } = await import("@codemirror/view");
+  let state = EditorState.create({ doc: "abcdef\nabcdef\nabcdef", selection: EditorSelection.create([0, 7, 14].map((p) => EditorSelection.cursor(p)), 0),
+    extensions: EditorState.allowMultipleSelections.of(true) });
+  // Only the DOM-measuring part of the view is stubbed: one character along the line.
+  const view = { get state() { return state; }, dispatch: (tr: any) => { state = state.update(tr).state; }, textDirectionAt: () => Direction.LTR,
+    moveByChar: (range: any, forward: boolean) => EditorSelection.cursor(range.head + (forward ? 1 : -1)) } as unknown as EditorView;
+  const key = (name: string, shift = false) => { const b = multiCursorKeys.find((k) => k.key === name)!; return (shift ? b.shift : b.run)(view); };
+  const spans = () => state.selection.ranges.map((r) => `${r.anchor}-${r.head}`);
+  for (let i = 0; i < 3; i++) key("ArrowRight", true);
+  assert.deepEqual(spans(), ["0-3", "7-10", "14-17"]);
+  key("ArrowLeft", true);
+  assert.deepEqual(spans(), ["0-2", "7-9", "14-16"]);
+  key("ArrowRight");
+  assert.deepEqual(spans(), ["2-2", "9-9", "16-16"]);
+});
+
+test("U-17 R2: a font-size change reconfigures the editor, the way CM learns it must measure the lines again", async (t) => {
+  const { editorExtensions, remeasureForFont } = await import("./extensions.ts");
+  const previous = Object.getOwnPropertyDescriptor(globalThis, "document");
+  Object.defineProperty(globalThis, "document", { configurable: true, value: { getElementById: () => null } });
+  t.after(() => { if (previous) Object.defineProperty(globalThis, "document", previous); else Reflect.deleteProperty(globalThis, "document"); });
+  let state = EditorState.create({ doc: "a", extensions: editorExtensions("ts") });
+  const reconfigured: boolean[] = [];
+  const view = { dispatch: (spec: any) => { const tr = state.update(spec); reconfigured.push(tr.reconfigured); state = tr.state; } } as unknown as EditorView;
+  remeasureForFont(view);
+  remeasureForFont(view);
+  assert.deepEqual(reconfigured, [true, true], "every call must change the theme facet, not only the first");
+});

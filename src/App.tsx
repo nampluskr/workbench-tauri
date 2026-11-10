@@ -10,9 +10,13 @@ import { addFolder, editorContext, sidebarWidth, resizeSidebar, toggleLockPrevie
 import { activeTabOf, lockPreview } from "./workspace/context.ts";
 import { statusButtons, statusItems } from "./shell/status.ts";
 import { commands } from "./keymap/keyboard.ts";
+import { adjustEditorFontSize } from "./settings/load.ts";
 import { PickerHost } from "./shell/Picker.tsx";
 
 commands.set("markdown::ToggleLockPreview", toggleLockPreview);
+commands.set("zed::IncreaseBufferFontSize", () => adjustEditorFontSize(1));
+commands.set("zed::DecreaseBufferFontSize", () => adjustEditorFontSize(-1));
+commands.set("zed::ResetBufferFontSize", () => adjustEditorFontSize(0));
 
 // Core D-9 / I-18: icon names follow the pinned Zed sources (K-08 report).
 export default function App() {

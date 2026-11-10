@@ -175,7 +175,6 @@ button, input, select, textarea {
   font-size: var(--extensions-search-input-font-size); line-height: var(--extensions-search-input-line-height-multiplier);
 }
 .sidebar-search input:focus { outline: none; }
-.sidebar-search .menu-shortcut { font-size: var(--tooltip-font-size); } /* ORDER-12 U-6 */
 .sidebar-search:focus-within > .icon { color: var(--text-accent); }
 .sidebar-match { color: var(--text-accent); }
 .sidebar-item-parent { color: var(--text-muted); } /* A-12.6 */
@@ -220,6 +219,8 @@ button, input, select, textarea {
 .group { display: flex; gap: var(--statusbar-item-gap); }
 .status-items { align-items: center; font-size: var(--statusbar-cursor-position-font-size); white-space: nowrap; }
 .status-bar .icon-button[aria-pressed="true"] { color: var(--text-accent); } /* I-19: Zed IconButton Color::Selected. */
+/* U-18: Lock Preview on = accent icon plus a light accent border. border-box keeps the button size; the other toggles stay as they are. */
+.status-bar .icon-button[aria-label="Lock Preview"][aria-pressed="true"] { box-sizing: border-box; border: var(--project-panel-item-border-width) solid var(--border-focused); border-radius: var(--settings-control-corner-radius); }
 .status-divider { flex: none; align-self: center; width: var(--statusbar-left-divider-width); height: var(--statusbar-left-divider-height); background: var(--border); }
 .status-divider.toggle { margin-left: calc(var(--statusbar-toggle-gap) - var(--statusbar-item-gap)); } /* Zed: toggle + divider sit in their own gap_0p5 row. */
 .sidebar-footer .group { gap: var(--sidebar-footer-gap); }

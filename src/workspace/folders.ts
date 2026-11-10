@@ -3,7 +3,6 @@ import { folderName, parentName, pathKey } from "./paths.ts";
 /** One registered folder. Unknown keys belong to a newer app version and are kept as they are (A-20). */
 export type Folder = { id: string; path: string; added_at: string; name?: string; [extra: string]: unknown };
 
-export const SIDEBAR_BINDINGS = [{ context: "Sidebar", bindings: { "ctrl-f": "sidebar::Search" } }];
 export const folderLabel = (folder: Folder): string => typeof folder.name === "string" && folder.name.trim() ? folder.name : folderName(folder.path);
 export const filterFolders = (folders: Folder[], query: string): Folder[] => folders.filter((f) => folderLabel(f).toLowerCase().includes(query.toLowerCase()));
 

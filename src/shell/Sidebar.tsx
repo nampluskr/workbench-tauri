@@ -1,6 +1,5 @@
 import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
-import { commands, keymap } from "../keymap/keyboard.ts";
-import { shortcutFor } from "../keymap/display.ts";
+import { commands } from "../keymap/keyboard.ts";
 import { chain as chainWhen } from "./chain.ts";
 import { displayNames, filterFolders, folderLabel, folderNameParts } from "../workspace/folders.ts";
 import { inputKeyAction } from "../workspace/names.ts";
@@ -51,13 +50,8 @@ export default function FolderList() {
   const [target, setTarget] = createSignal<string | null>(null);
   const visible = createMemo(() => filterFolders(folders(), query()));
   const names = createMemo(() => displayNames(folders().map((f) => f.path), folders().map(folderLabel)));
-  const searchCommand = () => { search.focus(); search.select(); };
-  commands.set("sidebar::Search", searchCommand);
   chain("menu::SelectNext", () => moveCursor(1, visible()));
   chain("menu::SelectPrevious", () => moveCursor(-1, visible()));
-  onCleanup(() => {
-    if (commands.get("sidebar::Search") === searchCommand) commands.delete("sidebar::Search");
-  });
   createEffect(() => {
     cursorId(); query();
     list.querySelector(".cursor")?.scrollIntoView({ block: "nearest" });
@@ -110,7 +104,7 @@ export default function FolderList() {
       <div class="sidebar-search"><Icon name="magnifying_glass" />
         <input ref={search} data-text-input aria-label="Search folders" placeholder="Search" value={query()}
           onInput={(e) => setQuery(e.currentTarget.value)} />
-        <Show when={query()} fallback={<span class="menu-shortcut">{shortcutFor(keymap, "sidebar::Search", [new Set(["Workspace"]), new Set(["Sidebar"])])?.map((chunk) => chunk.replaceAll("-", "+")).join(" ")}</span>}>
+        <Show when={query()}>
           <button class="icon-button" aria-label="Clear folder search" onClick={() => { setQuery(""); search.focus(); }}><Icon name="close" /></button>
         </Show>
       </div>
