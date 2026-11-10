@@ -1,0 +1,254 @@
+{
+  "c0_conf": "see git diff 102c5f0 -- src-tauri/tauri.conf.json (leader, V0)",
+  "c1_open": {
+    "editorFirst": {
+      "panes": [
+        [
+          "nb.ipynb"
+        ]
+      ],
+      "editor": true,
+      "firstLine": "{",
+      "preview": false
+    },
+    "eye": true,
+    "byEye": {
+      "panes": [
+        [
+          "nb.ipynb",
+          "Preview nb.ipynb"
+        ]
+      ],
+      "cells": 9
+    },
+    "ctrlShiftV": {
+      "panes": [
+        [
+          "nb.ipynb",
+          "Preview nb.ipynb"
+        ]
+      ],
+      "cells": 9
+    },
+    "ctrlKV": {
+      "panes": [
+        [
+          "nb.ipynb"
+        ],
+        [
+          "Preview nb.ipynb"
+        ]
+      ]
+    },
+    "treeMenu": [
+      "Open Preview"
+    ],
+    "byTree": {
+      "panes": [
+        [
+          "Preview nb.ipynb"
+        ]
+      ]
+    },
+    "lock": {
+      "pressed": "true",
+      "panes": [
+        [
+          "Preview nb.ipynb"
+        ]
+      ]
+    }
+  },
+  "c2_cells": {
+    "order": [
+      "nb-cell nb-markdown",
+      "nb-cell nb-code",
+      "nb-cell nb-raw",
+      "nb-cell nb-code",
+      "nb-cell nb-code",
+      "nb-cell nb-code",
+      "nb-cell nb-code",
+      "nb-cell nb-code",
+      "nb-cell nb-markdown"
+    ],
+    "counts": [
+      null,
+      "[3]",
+      null,
+      "[4]",
+      "[5]",
+      null,
+      "[7]",
+      "[8]",
+      null
+    ],
+    "mdTitle": "NB Title",
+    "mdTableRows": 2,
+    "mdCodeLang": "language-python",
+    "mdCodeSpans": 8,
+    "mdImg": {
+      "natural": 40,
+      "asset": true
+    },
+    "codeLang": "language-python",
+    "codeSpans": 16,
+    "codeSpanColors": 8,
+    "raw": "RAW *not markdown*",
+    "rawHasEm": false,
+    "live": "Live Before"
+  },
+  "c3_text": {
+    "outs": [
+      {
+        "cls": "nb-output",
+        "text": "hello red stdout\n",
+        "color": "rgb(220, 224, 229)"
+      },
+      {
+        "cls": "nb-output nb-stderr",
+        "text": "warn stderr\n",
+        "color": "rgb(208, 114, 119)"
+      },
+      {
+        "cls": "nb-output",
+        "text": "PLAIN-ONLY",
+        "color": "rgb(220, 224, 229)"
+      }
+    ],
+    "ansiLeft": false,
+    "plainShown": true,
+    "pngTextShown": false,
+    "dfPlainShown": false
+  },
+  "c4_images": {
+    "imgs": [
+      {
+        "natural": 30,
+        "h": 20,
+        "kind": "data:image/png;"
+      },
+      {
+        "natural": 30,
+        "h": 20,
+        "kind": "data:image/jpeg"
+      }
+    ],
+    "svg": {
+      "fill": "rgb(0, 128, 0)",
+      "scripts": 0
+    },
+    "svgGlobal": null
+  },
+  "c5_html": {
+    "df": {
+      "rows": 3,
+      "cells": [
+        "1",
+        "x",
+        "2",
+        "y"
+      ],
+      "cls": "dataframe",
+      "styleEls": 0,
+      "styleAttrs": 0
+    },
+    "evil": {
+      "html": "<a id=\"jsl\">js</a><b id=\"evilb\">bold</b>",
+      "scripts": 0,
+      "iframes": 0,
+      "imgs": [],
+      "onAttrs": [],
+      "jsHref": null
+    },
+    "globals": {
+      "evil": null,
+      "err": null,
+      "click": null,
+      "jsLink": null,
+      "js": null,
+      "svg": null
+    },
+    "console": [],
+    "example": [],
+    "panesAfterClick": [
+      [
+        "nb.ipynb",
+        "Preview nb.ipynb"
+      ]
+    ]
+  },
+  "c6_error_hidden": {
+    "title": "ValueError: bad value",
+    "traceback": "ValueError Traceback (most recent call last)\n----> 1 raise ValueError('bad value')",
+    "color": "rgb(208, 114, 119)",
+    "hidden": [
+      "Output not shown (application/javascript)",
+      "Output not shown (application/vnd.jupyter.widget-view+json)"
+    ]
+  },
+  "c8_invalid": {
+    "broken.ipynb": {
+      "note": "Not a valid notebook",
+      "panes": [
+        [
+          "broken.ipynb",
+          "Preview broken.ipynb"
+        ]
+      ],
+      "editorStill": true
+    },
+    "v3real.ipynb": {
+      "note": "Unsupported notebook format",
+      "panes": [
+        [
+          "v3real.ipynb",
+          "Preview v3real.ipynb"
+        ]
+      ],
+      "editorStill": true
+    },
+    "v3cells.ipynb": {
+      "note": "Unsupported notebook format",
+      "panes": [
+        [
+          "v3cells.ipynb",
+          "Preview v3cells.ipynb"
+        ]
+      ],
+      "editorStill": true
+    },
+    "alive": 2
+  },
+  "c9_live": {
+    "before": "Live Before",
+    "after": "Live After"
+  },
+  "c10_regress": {
+    "mdActive": [
+      "Section 3"
+    ],
+    "mdStyleAttrs": [
+      0
+    ],
+    "csv": "x\ny",
+    "svg": "rgb(255, 0, 0)",
+    "html": {
+      "sandbox": "allow-same-origin",
+      "h1": "rgb(10, 20, 30)",
+      "img": 40
+    },
+    "image": 40,
+    "pdf": {
+      "iframe": {
+        "src": true,
+        "w": 1000,
+        "h": 756
+      },
+      "viewer": [
+        "webview chrome-extension://mhjfbmdgcfjbbpaeojofohoefgiehjai/edge_pdf/index.htm",
+        "iframe http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5",
+        "iframe http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5"
+      ]
+    }
+  }
+}

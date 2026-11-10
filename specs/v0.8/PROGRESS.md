@@ -143,3 +143,54 @@
     - `.html-frame`의 `color-scheme: dark`로 HTML 기본 배경이 흰색이 아니라 어둡다. 맞는지는 사용자가 정한다.
     - iframe 안으로 키보드 포커스가 들어가면 앱 단축키가 닿지 않는다(탭 밖을 눌러야 돌아온다).
     - PDF 보기 화면은 Phase 5 사용자 확인 목록에 넣는다.
+
+### Phase 4 — ipynb 미리보기
+
+- **W-07 PLAN Phase 4 표** (2026-11-11, 커밋 `acbae85`)
+  - 무엇을 했나: `PLAN.md`에 "Phase 4 작업 카드" 표(K-04a·C-08·C-09·W-07·W-08)를 Phase 3 표 형식으로 더했다.
+  - 결과: 그 밖의 절은 그대로다.
+  - 검증: V0. 명령 실행 없음(보고 `C:\Users\nampl\AppData\Local\Temp\v08-W-07-report.md`).
+  - 특이사항: 없음.
+- **K-04a I-2 ipynb 셀 미리보기(I-2·M-1·M-5·M-7·M-11)** (2026-11-11, coder, 커밋 `acbae85`)
+  - 무엇을 했나:
+    - `preview-kind.ts`에 `ipynb` 종류를 더했다. 트리에서 열면 JSON 편집 탭이 열리고(M-11), 눈 버튼·Ctrl+Shift+V·Ctrl+K V·트리 메뉴·Lock Preview는 판별 한 곳을 따라온다(코드 변경 없음).
+    - 새 `src/editor/notebook.ts`는 ipynb JSON을 셀·출력 목록으로 바꾸는 순수 변환이다. `source`는 문자열과 문자열 배열을 같게 다룬다. `cell_type`이 모르는 값이면 건너뛴다.
+    - `markdown-preview.ts`가 셀·출력 DOM을 그린다. 마크다운 셀은 기존 렌더·정화·로컬 이미지 처리를 `markdownTree()`로 뽑아 마크다운 미리보기와 같이 쓴다. 셀 안 줄 번호는 파일 줄이 아니므로 `data-line` 속성을 지워 위치 연계가 없다(M-1). code 셀은 `pre > code.language-<언어>`로 만들어 기존 `colorCodeBlocks`가 색칠한다(언어 `metadata.language_info.name` → `kernelspec.language` → `python`). raw 셀은 글자 그대로다. `[n]`은 `execution_count`가 있을 때 code 블록 위 한 줄에 보인다.
+    - 출력: stream·`text/plain`은 ANSI(CSI)를 지운 글자, `image/png`·`image/jpeg`는 data URI, `image/svg+xml`은 `svgElement`(I-6 정화), `text/html`은 DOMPurify, `error`는 `ename: evalue`와 ANSI를 지운 traceback이다. 한 출력에 여러 MIME이 있으면 그림 > HTML > 글자 순으로 하나만 보인다. 갱신은 기존 `changed`.
+    - 잘못된 파일: 깨진 JSON·`cells` 배열 없음은 "Not a valid notebook", `nbformat`이 4가 아니면 "Unsupported notebook format". `JSON.parse`는 try/catch 안이고 예외가 밖으로 새지 않는다.
+  - coder가 고른 것(카드가 열어 둔 것):
+    - 보일 것이 없는 출력은 `Output not shown (<MIME 전부를 ", "로 이은 것>)` 한 줄이다.
+    - `image/png`·`jpeg`인데 base64가 아니면 data URI를 만들지 않고 `Output not shown (image/png)`로 숨긴다. `<svg>`가 없는 SVG도 같다.
+    - HTML 출력 정화는 DOMPurify 기본에 금지 태그 `script`·`iframe`·`form`·`style`과 `style` 속성을 더했다. `<style>`을 막은 이유: pandas `<style scoped>`가 `style-src 'unsafe-inline'`(ORDER-03) 아래서 앱 전체에 번질 수 있다.
+    - HTML 안의 `<img>`는 `src`가 `data:image/`일 때만 남긴다(그 밖의 src는 요청이 나간다).
+    - 빈 stream·text 출력은 그리지 않는다.
+  - 결과: CSP·capability·Cargo·의존성 변경 없음. `src/app.css`에 `.nb-*` 8줄(새 스펙 수치 없음 — 간격은 `--markdown-preview-code-block-margin-y`, 색은 `--error`·`--text-muted`). `csv.test.ts`의 `.ipynb` 기대를 "미리보기 있음"으로 바꿨다(요구 변경, `a.ipynb.txt`는 없음 쪽에 남김).
+  - 검증: V1. typecheck 0, test 281/281. 새 `notebook.test.ts` 7개(종류, 셀 순서·`source` 문자열/배열·`[n]`, 언어 고르기, ANSI 지우기, MIME 고르기, 정화 정책, 잘못된 파일). node에 DOM이 없어 실제 정화와 DOM 생성은 V3로 넘겼다(보고 `C:\Users\nampl\AppData\Local\Temp\v08-K-04a-report.md`).
+  - 특이사항: C-08 [PASS](아래).
+- **C-08 checker 검토(K-04a)** [PASS] (2026-11-11)
+  - 무엇을 했나: 판별 한 곳과 열기 경로, 셀 셋 렌더, `markdownTree` 추출과 마크다운 미리보기 회귀, 출력 종류별 처리, base64 검사, HTML 정화 설정, `textContent`/`innerHTML` 경로, CSP diff, 잘못된 파일, 인라인 style·하드코딩 수치를 봤다.
+  - 결과: 지적 없음. ANSI 정규식은 CSI만 지우고 OSC(터미널 하이퍼링크 등)는 남지만 모두 `textContent`로 들어가 보안 위험은 없다는 의견을 남겼다.
+  - 검증: V1. typecheck 0, test 281/281(보고 `C:\Users\nampl\AppData\Local\Temp\v08-C-08-report.md`).
+  - 특이사항: 없음.
+- **K-04b nbformat 3 안내 문구(I-2)** (2026-11-11, coder, 커밋 `acbae85`)
+  - 무엇을 했나: tauri-leader가 V3 준비 중 실제 nbformat 3 파일(`cells` 없이 `worksheets`)이 "Not a valid notebook"으로 나오는 것을 찾았다. `parseNotebook` 검사 순서를 바꿨다: 객체 아님 → "Not a valid notebook", `nbformat` 키가 있고 4가 아님 → "Unsupported notebook format"(`cells` 유무 무관), `cells` 배열 없음 → "Not a valid notebook".
+  - 결과: `notebook.ts`·`notebook.test.ts`만 바뀌었다. `{nbformat:3, worksheets:[]}` 기대를 "Unsupported notebook format"으로 바꾸고(요구에 맞춘 것), `{nbformat:4, metadata:{}}` → "Not a valid notebook" 한 줄을 더했다.
+  - 검증: V1. typecheck 0, test 281/281(보고 `C:\Users\nampl\AppData\Local\Temp\v08-K-04b-report.md`).
+  - 특이사항: 검토는 C-09에서 함께 했다.
+- **V3 측정과 C-09 판정(ORDER-04)** [PASS] (2026-11-11, tauri-leader 측정, checker 판정)
+  - 무엇을 했나: tauri-leader가 재고 C-09가 K-04b, 설정 diff, 완료 기준 #1~#11을 판정했다. 결과는 `specs/v0.8/verify/ORDER-04/`(`v3.json`, PNG 7).
+  - 결과: #1~#11 PASS.
+    - #1 열기: 트리에서 JSON 편집 탭이 먼저 열리고, 눈 버튼·Ctrl+Shift+V·Ctrl+K V·트리 "Open Preview"·Lock Preview로 미리보기가 열린다.
+    - #2 셀: 9개 셀이 파일 순서대로, markdown(제목·표·코드 블록·로컬 이미지)·code(python 색칠, `[n]`)·raw. #3 출력 글자: stdout·stderr·`text/plain`, ANSI 잔여 없음.
+    - #4 그림: PNG·JPEG·SVG. `git diff 102c5f0 -- src-tauri/tauri.conf.json`이 비어 있다(CSP 변경 없음). #5 HTML: pandas 표가 표로 보이고, 악성 HTML은 script·iframe·`on*`·전역 흔적·콘솔 모두 0.
+    - #6 오류·숨김: `ValueError: bad value`와 traceback, `Output not shown (application/javascript)`·`(application/vnd.jupyter.widget-view+json)`. #7 MIME 고르기: PNG+글자는 그림만, HTML+글자는 HTML만.
+    - #8 잘못된 파일: 깨진 JSON "Not a valid notebook", nbformat 3(`worksheets`·`cells` 둘 다) "Unsupported notebook format", 편집 탭과 앱은 그대로. #9 갱신: markdown 셀 `source`를 고치면 바로 바뀐다.
+    - #10 회귀: 마크다운 위치 연계, CSV, SVG, HTML, 이미지, PDF 그대로. PDF는 ORDER-03에서 측정 스크립트에서 빠졌던 것을 이번에 쟀다(`c10-pdf.png`).
+    - #11 테스트: typecheck 0, test 281/281.
+  - 검증: V3·V1(보고 `C:\Users\nampl\AppData\Local\Temp\v08-C-09-report.md`).
+  - 특이사항(사용자 확인):
+    - 셀 사이에 구분선이 없다(코드 블록 margin으로만 나뉜다).
+    - `[n]`이 왼쪽 gutter가 아니라 코드 블록 위 한 줄이다.
+    - 오류·stderr 글자색이 `--error`다.
+    - 한 셀의 그림 여러 개가 세로로 나열된다.
+  - 운영: 화면은 deskdock S-01 뒤 `[SCREEN-OK]`를 받아 썼다. 그동안 구현·검토·V3 스크립트를 준비했다.
