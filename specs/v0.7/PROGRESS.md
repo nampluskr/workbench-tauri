@@ -345,3 +345,15 @@
 ## 사용자 요청 작업
 
 없음
+
+## 버전 종료
+
+- 사용자 종료 판단(2026-11-10): 사용자가 5차 확인을 통과시키고 v0.7을 끝냈다(core-leader 전달).
+- 한 것: core ITEMS I-1~I-32(ORDER-01~09)를 모두 판정 충족으로 끝내고 push했다(tauri `193f4cc` ORDER-09 보고까지). 각 결과는 위 Phase 절과 `specs/v0.7/reports/`에 있다.
+- 남은 것:
+  - 정리할 것(사용자): checker 허용 목록 `.agents/checker-settings.json`(auto mode가 Self-Modification으로 막아 사용자가 직접 고친다, ORDER-08).
+  - 알려진 제약:
+    - viewBox 없는 다른 Zed 아이콘(`select_all` 등)은 14px 상자에서 잘릴 수 있다(I-32는 `case_sensitive`·`whole_word`만 고침, ORDER-09).
+    - Licenses 탭은 앱을 다시 열 때 복원되지 않는다(도구 탭은 `state.json`에 저장하지 않음, ORDER-09).
+    - NSIS 설치 화면 그림(`sidebarImage`·`headerImage`)은 기본 그대로다(ORDER-08).
+  - 다음 버전: v0.8은 새 세션에서 core 새 카드로 시작한다. 이 PROGRESS가 v0.8 INTENT의 재료다.
