@@ -21,8 +21,6 @@ export default function App() {
     <>
       <aside class="sidebar" hidden={!sidebarOpen()} data-keymap-context="Sidebar">
         <div class="dock-resize-handle" ref={(el) => resizeHandle(el, { width: sidebarWidth, setWidth: resizeSidebar })} />
-        {/* The header sits in the title bar row, so it drags the window too (L-12). */}
-        <div class="sidebar-header" data-tauri-drag-region />
         <FolderList />
         {/* A-11.8 (sidebar open): toggle on the left, Add Project at the right end. */}
         <div class="sidebar-footer">

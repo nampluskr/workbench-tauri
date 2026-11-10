@@ -1,4 +1,4 @@
-.project-search-tab, .project-search { height: 100%; min-width: 0; outline: none; } /* Zed shows no focus ring on the tab body */
+.project-search-tab, .project-search { height: 100%; min-width: 0; outline: none; border-radius: var(--editor-search-input-corner-radius); overflow: hidden; } /* Zed shows no focus ring on the tab body */
 .project-search { display: flex; flex-direction: column; background: var(--editor-background); color: var(--text); --icon-size: var(--statusbar-icon-size); --search-line-height: calc(var(--typography-buffer-font-size) * var(--editor-line-height-comfortable-multiplier)); }
 .project-search button { color: inherit; background: transparent; border: 0; font: inherit; cursor: pointer; }
 .project-search button:hover:not(:disabled) { background: var(--ghost-element-hover); }
@@ -8,6 +8,7 @@
 .project-search input { flex: 1; min-width: 0; min-height: var(--editor-search-input-min-height); padding-inline: var(--editor-search-input-padding-left) var(--editor-search-input-padding-right); background: var(--editor-background); color: var(--text); border: 0; outline: none; font-size: var(--editor-search-input-font-size); }
 .project-search-results { display: flex; flex-direction: column; overflow-x: hidden; overflow-y: auto; flex: 1; }
 .project-search .search-file-header { display: flex; flex: none; align-items: center; gap: var(--search-results-header-gap); box-sizing: border-box; margin: var(--search-results-header-padding); height: calc(var(--search-line-height) * var(--search-results-header-lines) - 2 * var(--search-results-header-padding)); padding: 0 var(--search-results-header-padding-right) 0 var(--search-results-header-padding-left); border: var(--picker-border-width) solid var(--border); border-radius: var(--search-results-header-radius); background: var(--editor-subheader-background); cursor: pointer; }
+.search-file-header { text-align: left; }
 .search-file-header:hover { background: var(--element-hover); }
 .project-search .search-file-name { padding: 0; font-family: var(--buffer-font-family); font-size: var(--typography-buffer-font-size); }
 .project-search .search-file-name:hover:not(:disabled) { background: transparent; }

@@ -314,12 +314,10 @@ const METRICS: Record<string, string> = {
   "menu.item.padding_x": rem(6), // I-316
   "menu.item.shortcut_min_gap": rem(16), // I-316
   "menu.item.shortcut_chord_gap": rem(4), // L-221
-  "menu.item.font_size": rem(14), // I-317
   "menu.item.line_height": rem(22.652), // I-317
   "menu.separator.height": rem(1), // I-318
   "menu.separator.margin_y": rem(6), // I-318
   "menu.app_menu_button.icon_size": rem(14), // I-321
-  "menu.horizontal.item_font_size": rem(12), // I-321
   "menu.horizontal.item_gap": rem(4), // I-321
 };
 

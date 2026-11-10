@@ -477,11 +477,7 @@ function Breadcrumbs(props: { ctx: FolderContext; tab: Tab }) {
   return <div class="breadcrumbs"><span>{pathCrumb(props.ctx.root, props.tab.path)}</span></div>;
 }
 
-/** I-12: the history buttons are lit while the Pane has somewhere to go (the version read keeps them in step). */
-const canGo = (pane: PaneState | null, mode: "back" | "forward") => {
-  pane?.navVersion();
-  return !!pane && (mode === "back" ? pane.nav.canGoBack : pane.nav.canGoForward);
-};
+const canGo = (pane: PaneState | null) => !!pane && pane.tabs().length > 1;
 
 /** L-15: one Pane = tab bar + active item. tabindex: focus lands here when it has no editor (A-17). */
 function PaneView(props: { ctx: FolderContext | null; pane: PaneState | null }) {
@@ -496,10 +492,10 @@ function PaneView(props: { ctx: FolderContext | null; pane: PaneState | null }) 
     >
       <div class="tab-bar">
         <div class="tab-bar-edge start">
-          <button class="icon-button" aria-label="Go Back" disabled={!canGo(props.pane, "back")} onClick={() => props.ctx && props.pane && goThroughHistory(props.ctx, props.pane, "back")} ref={(el) => tooltip(el, () => ({ title: "Go Back", action: "pane::GoBack" }))}>
+          <button class="icon-button" aria-label="Go Back" disabled={!canGo(props.pane)} onClick={() => props.ctx && props.pane && goThroughHistory(props.ctx, props.pane, "back")} ref={(el) => tooltip(el, () => ({ title: "Go Back", action: "pane::GoBack" }))}>
             <Icon name="arrow_left" />
           </button>
-          <button class="icon-button" aria-label="Go Forward" disabled={!canGo(props.pane, "forward")} onClick={() => props.ctx && props.pane && goThroughHistory(props.ctx, props.pane, "forward")} ref={(el) => tooltip(el, () => ({ title: "Go Forward", action: "pane::GoForward" }))}>
+          <button class="icon-button" aria-label="Go Forward" disabled={!canGo(props.pane)} onClick={() => props.ctx && props.pane && goThroughHistory(props.ctx, props.pane, "forward")} ref={(el) => tooltip(el, () => ({ title: "Go Forward", action: "pane::GoForward" }))}>
             <Icon name="arrow_right" />
           </button>
         </div>

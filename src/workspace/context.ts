@@ -12,7 +12,6 @@ import type { Validation } from "./names.ts";
 import { diffRange, followListing, underOrSame } from "./changes.ts";
 import { confirmClose, saveDoc, saveErrorText, type Ask, type Closing } from "./closing.ts";
 import { Doc, type Editor, type Io, type Status } from "./doc.ts";
-import { NavHistory, navigateHistory } from "./nav-history.ts";
 import { pathKey } from "./paths.ts";
 import { relativePath } from "./ops.ts";
 import { place } from "./drop.ts";
@@ -211,19 +210,13 @@ export type PaneState = {
   active: Accessor<number | null>;
   setActive: Setter<number | null>;
   recent: TabFile[];
-  /** I-12: this Pane's tab selection history; `navVersion` changes with it so the buttons follow. */
-  nav: NavHistory<TabFile>;
-  navVersion: Accessor<number>;
-  /** The file whose tab was active last; leaving it records the tab selection. */
-  shown: TabFile | null;
 };
 
 let nextPane = 1;
 export function newPane(): PaneState {
   const [tabs, setTabs] = createSignal<Tab[]>([]);
   const [active, setActive] = createSignal<number | null>(null);
-  const [navVersion, setNavVersion] = createSignal(0);
-  return { id: nextPane++, tabs, setTabs, active, setActive, recent: [], nav: new NavHistory<TabFile>(() => setNavVersion((n) => n + 1)), navVersion, shown: null };
+  return { id: nextPane++, tabs, setTabs, active, setActive, recent: [] };
 }
 
 export const panesOf = (ctx: FolderContext): PaneState[] => leaves(ctx.tree());
@@ -362,11 +355,6 @@ function promote(ctx: FolderContext, file: TabFile): void {
 
 function setActiveTab(pane: PaneState, index: number | null): void {
   const tab = index === null ? null : pane.tabs()[index];
-  // Record selection changes only; closed tabs leave both stacks.
-  const left = pane.shown && pane.shown !== tab?.file ? pane.tabs().find((t) => t.file === pane.shown) : undefined;
-  if (left && pane.nav.mode === "normal") pane.nav.push(left.file);
-  pane.nav.retain(pane.tabs().map((t) => t.file), tab?.file);
-  pane.shown = tab?.file ?? null;
   pane.setActive(index);
   if (tab) pane.recent = [...pane.recent.filter((f) => f !== tab.file), tab.file];
 }
@@ -660,17 +648,11 @@ export function openTool(ctx: FolderContext, title: string, make: () => { elemen
   focusPane(pane);
 }
 
-/** I-12: select a previously selected tab without changing its cursor or reopening it. */
+/** ORDER-11 U-2: move by tab bar position without changing the document cursor. */
 export function goThroughHistory(ctx: FolderContext, pane: PaneState, mode: "back" | "forward"): void {
-  navigateHistory(pane.nav, mode, {
-    here: () => activeTabOf(pane)?.file,
-    show(file) {
-      const index = pane.tabs().findIndex((t) => t.file === file);
-      if (index < 0) return false;
-      activateTab(ctx, pane, index);
-      return true;
-    },
-  });
+  const index = stepTab(pane.tabs().length, pane.active(), mode === "back" ? -1 : 1);
+  if (index === null) return;
+  activateTab(ctx, pane, index);
   focusPane(pane);
 }
 

@@ -109,6 +109,8 @@ button, input, select, textarea {
 }
 /* Header height = title bar height; the line under it continues the one under the title bar (L-302). */
 .sidebar-header {
+  display: flex;
+  align-items: center;
   flex-shrink: 0;
   height: var(--sidebar-header-height);
   border-bottom: var(--window-border-sidebar-header-bottom) solid var(--border);
@@ -154,18 +156,17 @@ button, input, select, textarea {
 .sidebar-item { touch-action: none; }
 .sidebar-item:hover .tab-close, .sidebar-item .tab-close:focus-visible { visibility: visible; }
 .sidebar-item.drop-target { border-color: var(--border-focused); }
-/* R-19: no Sidebar search metrics; reuse Extensions X-46 and Sidebar header padding L-34. */
+/* ORDER-11 U-3: reuse the title row and existing input padding, leaving its outer margins draggable. */
 .sidebar-search {
   display: flex;
   align-items: center;
-  flex-shrink: 0;
+  flex: 1;
+  min-width: 0;
   box-sizing: border-box;
-  height: var(--extensions-search-input-height);
-  margin: var(--sidebar-project-header-padding-right) var(--sidebar-project-header-padding-left);
+  margin: 0 var(--sidebar-project-header-padding-left);
   padding: 0 var(--extensions-search-input-padding-right) 0 var(--extensions-search-input-padding-left);
   gap: var(--extensions-search-input-gap);
-  border: var(--extensions-search-input-border) solid var(--border);
-  border-radius: var(--extensions-search-input-corner-radius);
+  border: 0;
   --icon-size: var(--icons-size-small);
   color: var(--text-muted);
 }
@@ -173,12 +174,13 @@ button, input, select, textarea {
   flex: 1; min-width: 0; width: 100%; border: 0; background: none; color: var(--text); font: inherit;
   font-size: var(--extensions-search-input-font-size); line-height: var(--extensions-search-input-line-height-multiplier);
 }
-.sidebar-search:focus-within { outline: var(--extensions-search-input-border) solid var(--border-focused); }
 .sidebar-search input:focus { outline: none; }
+.sidebar-search:focus-within > .icon { color: var(--text-accent); }
+.sidebar-match { color: var(--text-accent); }
 .sidebar-item-parent { color: var(--text-muted); } /* A-12.6 */
 .sidebar-item:hover { background: var(--ghost-element-hover); } /* A-12.3 */
 .sidebar-item:active { background: var(--ghost-element-active); } /* A-12.4 */
-.sidebar-item.active { color: var(--text); } /* A-12.2 */
+.sidebar-item.active { color: var(--text); background: var(--ghost-element-selected); } /* ORDER-11 U-4 */
 .sidebar-item.missing, .sidebar-item.missing:hover { color: var(--text-disabled); } /* A-12.7 */
 .sidebar-item.missing .icon { color: var(--icon-disabled); }
 /* A-12.5: the keyboard cursor ring shows while the list has focus. */
@@ -426,7 +428,7 @@ button, input, select, textarea {
   background: none;
   color: var(--text);
   font: inherit;
-  font-size: var(--menu-horizontal-item-font-size);
+  font-size: var(--typography-ui-font-size);
 }
 .menu-name:hover { background: var(--ghost-element-hover); }
 .menu-name.open { background: var(--ghost-element-selected); }
@@ -440,7 +442,7 @@ button, input, select, textarea {
   padding: var(--menu-list-padding-y) 0;
   border: var(--menu-border-width) solid var(--border-variant);
   border-radius: var(--menu-corner-radius);
-  font-size: var(--menu-item-font-size);
+  font-size: var(--typography-ui-font-size);
   outline: none;
 }
 .menu-item {

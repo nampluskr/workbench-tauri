@@ -7,6 +7,24 @@ export const SIDEBAR_BINDINGS = [{ context: "Sidebar", bindings: { "ctrl-f": "si
 export const folderLabel = (folder: Folder): string => typeof folder.name === "string" && folder.name.trim() ? folder.name : folderName(folder.path);
 export const filterFolders = (folders: Folder[], query: string): Folder[] => folders.filter((f) => folderLabel(f).toLowerCase().includes(query.toLowerCase()));
 
+/** ORDER-11 U-1: search only the selected folder, or the first folder when none is selected. */
+export function searchRoots(folders: Folder[], activeId: string | null): string[] {
+  const folder = folders.find((f) => f.id === activeId) ?? folders[0];
+  return folder ? [folder.path] : [];
+}
+
+export function folderNameParts(name: string, query: string): { text: string; match: boolean }[] {
+  if (!query) return [{ text: name, match: false }];
+  const parts = [];
+  const lower = name.toLowerCase(), needle = query.toLowerCase();
+  let from = 0;
+  for (let at; (at = lower.indexOf(needle, from)) >= 0; from = at + query.length) {
+    parts.push({ text: name.slice(from, at), match: false }, { text: name.slice(at, at + query.length), match: true });
+  }
+  parts.push({ text: name.slice(from), match: false });
+  return parts;
+}
+
 export function rename(folders: Folder[], id: string, name: string): Folder[] {
   return folders.map((f) => f.id === id ? { ...f, name: name.trim() || undefined } : f);
 }

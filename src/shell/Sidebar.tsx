@@ -1,7 +1,8 @@
 import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
-import { commands } from "../keymap/keyboard.ts";
+import { commands, keymap } from "../keymap/keyboard.ts";
+import { shortcutFor } from "../keymap/display.ts";
 import { chain as chainWhen } from "./chain.ts";
-import { displayNames, filterFolders, folderLabel } from "../workspace/folders.ts";
+import { displayNames, filterFolders, folderLabel, folderNameParts } from "../workspace/folders.ts";
 import { inputKeyAction } from "../workspace/names.ts";
 import {
   activateFolder, activeId, addFolder, cursorId, folders, missingIds, moveCursor,
@@ -105,10 +106,15 @@ export default function FolderList() {
   }
 
   return <>
-    <label class="sidebar-search"><Icon name="magnifying_glass" />
-      <input ref={search} data-text-input aria-label="Search folders" placeholder="Search" value={query()}
-        onInput={(e) => setQuery(e.currentTarget.value)} />
-    </label>
+    <div class="sidebar-header" data-tauri-drag-region>
+      <div class="sidebar-search"><Icon name="magnifying_glass" />
+        <input ref={search} data-text-input aria-label="Search folders" placeholder="Search" value={query()}
+          onInput={(e) => setQuery(e.currentTarget.value)} />
+        <Show when={query()} fallback={<span class="menu-shortcut">{shortcutFor(keymap, "sidebar::Search", [new Set(["Workspace"]), new Set(["Sidebar"])])?.map((chunk) => chunk.replaceAll("-", "+")).join(" ")}</span>}>
+          <button class="icon-button" aria-label="Clear folder search" onClick={() => { setQuery(""); search.focus(); }}><Icon name="close" /></button>
+        </Show>
+      </div>
+    </div>
     <div class="sidebar-list" ref={list} tabindex="0" role="listbox" aria-label="Folders">
       <For each={visible()}>{(folder) => {
         const name = () => names()[folders().findIndex((f) => f.id === folder.id)];
@@ -124,7 +130,7 @@ export default function FolderList() {
           }}>
           <Icon name="folder" />
           <Show when={editing() === folder.id} fallback={<span class="sidebar-item-name">
-            {name().name}<Show when={name().parent}><span class="sidebar-item-parent"> · {name().parent}</span></Show>
+            <For each={folderNameParts(name().name, query())}>{(part) => <span classList={{ "sidebar-match": part.match }}>{part.text}</span>}</For><Show when={name().parent}><span class="sidebar-item-parent"> · {name().parent}</span></Show>
           </span>}>
             <NameInput name={folderLabel(folder)} cancel={finishRename}
               commit={(value) => { renameFolder(folder.id, value); finishRename(); }} />

@@ -1,11 +1,26 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { addOrActivate, displayNames, filterFolders, folderLabel, move, moveCursor, remove, rename, type Folder } from "./folders.ts";
+import { addOrActivate, displayNames, filterFolders, folderLabel, folderNameParts, searchRoots, move, moveCursor, remove, rename, type Folder } from "./folders.ts";
 import { folderName, normalizePath, parentName, pathKey, truncateName } from "./paths.ts";
 import { parseState, serializeState, STATE_VERSION } from "./state-file.ts";
 
 const folder = (id: string, path: string): Folder => ({ id, path, added_at: "2026-11-06T00:00:00.000Z" });
 const abc = [folder("a", "D:\\a"), folder("b", "D:\\b"), folder("c", "D:\\c")];
+
+test("ORDER-11 U-1: only the selected folder is a search root; no selection uses the first", () => {
+  assert.deepEqual(searchRoots(abc, "b"), ["D:\\b"]);
+  assert.deepEqual(searchRoots(abc, null), ["D:\\a"]);
+  assert.deepEqual(searchRoots(abc, "missing"), ["D:\\a"]);
+  assert.deepEqual(searchRoots([], null), []);
+});
+
+test("ORDER-11 U-4: highlight literal, case-insensitive folder name matches", () => {
+  const parts = folderNameParts("Work-workbench", "work");
+  assert.deepEqual(parts.filter((part) => part.match).map((part) => part.text), ["Work", "work"]);
+  assert.equal(parts.map((part) => part.text).join(""), "Work-workbench");
+  assert.deepEqual(folderNameParts("a.b", "."), [{ text: "a", match: false }, { text: ".", match: true }, { text: "b", match: false }]);
+  assert.deepEqual(folderNameParts("work", ""), [{ text: "work", match: false }]);
+});
 
 test("A-28.7~A-28.13: path normalization and comparison", () => {
   assert.equal(normalizePath("D:\\projects\\"), "D:\\projects");

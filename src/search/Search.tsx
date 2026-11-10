@@ -3,9 +3,10 @@ import { render } from "solid-js/web";
 import { Channel, invoke } from "@tauri-apps/api/core";
 import { commands } from "../keymap/keyboard.ts";
 import { openFile, openTool, reveal, setExpanded } from "../workspace/context.ts";
-import { activateFolder, contextOf, editorContext, flushWorkspaceState, folders } from "../workspace/store.ts";
-import { underOrSame } from "../workspace/changes.ts";
-import { baseName } from "../workspace/paths.ts";
+import { activateFolder, activeId, contextOf, editorContext, flushWorkspaceState, folders } from "../workspace/store.ts";
+import { searchRoots } from "../workspace/folders.ts";
+import { pathCrumb } from "../editor/breadcrumbs.ts";
+import { baseName, pathKey } from "../workspace/paths.ts";
 import { setDockOpen } from "../shell/panels.ts";
 import FileIcon from "../shell/FileIcon.tsx";
 import "./search.css";
@@ -18,6 +19,7 @@ function Search() {
   const [entries, setEntries] = createSignal<SearchEntry[]>([]);
   const [busy, setBusy] = createSignal(false);
   const [message, setMessage] = createSignal("");
+  const [root, setRoot] = createSignal("");
   let generation = 0;
   onCleanup(() => generation++);
   const run = async () => {
@@ -25,6 +27,8 @@ function Search() {
     setEntries([]);
     setMessage("");
     setBusy(true);
+    const roots = searchRoots(folders(), activeId());
+    setRoot(roots[0] ?? "");
     const channel = new Channel<SearchEvent>();
     channel.onmessage = (event) => {
       if (id !== generation) return;
@@ -36,7 +40,7 @@ function Search() {
       }
     };
     try {
-      const options = { roots: folders().map((folder) => folder.path), query: query() };
+      const options = { roots, query: query() };
       await flushWorkspaceState();
       if (id !== generation) return;
       await invoke("search_names", { options, onEvent: channel });
@@ -45,7 +49,7 @@ function Search() {
     }
   };
   const open = (entry: SearchEntry) => {
-    const folder = folders().find((folder) => underOrSame(folder.path, entry.path));
+    const folder = folders().find((folder) => pathKey(folder.path) === pathKey(root()));
     if (!folder) return;
     activateFolder(folder.id);
     const ctx = contextOf(folder);
@@ -66,7 +70,7 @@ function Search() {
       <For each={entries()}>{(entry) => <button class="search-file-header" onClick={() => open(entry)}>
         <FileIcon name={baseName(entry.path)} dir={entry.isDir} />
         <span class="search-file-name">{baseName(entry.path)}</span>
-        <span class="search-file-dir">{entry.path}</span>
+        <span class="search-file-dir">{pathCrumb(root(), entry.path)}</span>
       </button>}</For>
     </div>
   </section>;
