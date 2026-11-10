@@ -126,8 +126,14 @@ const METRICS: Record<string, string> = {
   "editor.search_input.corner_radius": rem(6), // E-062
   "editor.search_input.font_size": rem(14), // E-063
   "editor.search_input.options_gap": rem(4), // E-065
+  "editor.search_input.line_height_multiplier": "1.3", // E-063
   "editor.search_bar.modes_min_width": rem(256), // E-066
+  "editor.search_bar.modes_gap": rem(4), // E-066
+  "editor.search_bar.separator_width": rem(1), // E-066
+  "editor.search_bar.separator_padding_left": rem(8), // E-066
+  "editor.search_bar.separator_margin_left": rem(8), // E-066
   "editor.search_results_count.font_size": rem(12), // E-067
+  "editor.search_results_count.margin_left": rem(8), // E-067
   "editor.search_results_count.min_width": rem(40), // E-067
   // shortcut: gutter padding measured at Lilex 15, remeasure if the buffer font or size changes.
   "editor.gutter.padding_left": "22px", // I-14: Zed measured 2026-11-07, replaces E-003 3ch

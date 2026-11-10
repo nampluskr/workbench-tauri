@@ -13,3 +13,9 @@
 .project-search .search-file-name { padding: 0; font-family: var(--buffer-font-family); font-size: var(--typography-buffer-font-size); }
 .project-search .search-file-name:hover:not(:disabled) { background: transparent; }
 .search-file-dir { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--text-muted); font-family: var(--buffer-font-family); font-size: var(--typography-buffer-font-size); }
+/* U-8: Aa / wd / .* sit inside the input on its right (E-062, E-065); the result count follows it (E-067). */
+.project-search-input { gap: var(--editor-search-input-options-gap); padding-right: var(--editor-search-input-padding-right); }
+.project-search .project-search-input input { padding-inline-end: 0; }
+.project-search-input .icon-button { --button-size: calc(var(--icons-size-small) + 2 * var(--editor-search-input-options-gap)); --icon-size: var(--icons-size-small); color: var(--text-muted); }
+.project-search-input .icon-button[aria-pressed="true"] { color: var(--text-accent); background: var(--ghost-element-selected); }
+.project-search-count { flex: none; margin-left: calc(var(--editor-search-results-count-margin-left) - var(--editor-search-bar-gap)); min-width: var(--editor-search-results-count-min-width); font-size: var(--editor-search-results-count-font-size); color: var(--text-muted); }

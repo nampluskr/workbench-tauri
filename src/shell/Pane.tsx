@@ -2,7 +2,8 @@ import { createEffect, createMemo, createRenderEffect, createSignal, For, Show }
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { addCursorAbove, addCursorBelow, redo, selectAll, selectLine, toggleBlockComment, toggleComment, undo } from "@codemirror/commands";
 import { pasteClipboard, runHistory } from "../editor/extensions.ts";
-import { SEARCH_COMMANDS, toggleSearch } from "../editor/search.ts";
+import type { EditorView } from "@codemirror/view";
+import { SEARCH_COMMANDS, toggleSearch, watchSearchPanel } from "../editor/search.ts";
 import { backtab, tab as indentTab } from "../editor/indent.ts";
 import { commands } from "../keymap/keyboard.ts";
 import { PANE_DROP_TARGET_SIZE_RATIO, PANE_MIN_DRAG, TAB_MAX_TITLE_CHARS, UI_LINE_HEIGHT_RATIO } from "../spec/metrics.ts";
@@ -139,6 +140,9 @@ commands.set("markdown::CloseAndReturnToEditor", withCtx((ctx) => activeTab()?.m
 commands.set("workspace::ToggleZoom", withCtx((ctx) => ctx.setZoomed((z) => (z === ctx.pane() ? null : ctx.pane()))));
 
 // I-706: the end buttons show on the Pane that has focus, or whose menu has it (focus inside a menu keeps the Pane).
+// Views whose find bar is open: the magnifier button of a tab shows "on" meanwhile (Lock Preview style).
+const [searchOpen, setSearchOpen] = createSignal<ReadonlySet<EditorView>>(new Set());
+watchSearchPanel((view, open) => setSearchOpen((old) => { const next = new Set(old); if (open) next.add(view); else next.delete(view); return next; }));
 const [focusedPane, setFocusedPane] = createSignal<number | null>(null);
 window.addEventListener("focusin", (e) => {
   const el = e.target instanceof Element ? e.target : null;
@@ -530,7 +534,7 @@ function PaneView(props: { ctx: FolderContext | null; pane: PaneState | null }) 
                     <Icon name="eye" />
                   </button>
                 </Show>
-                <IconButton name="search" label="Find in Explorer" onClick={() => {
+                <IconButton name="search" label="Find in Explorer" toggled={!!tab().file.view && searchOpen().has(tab().file.view!)} onClick={() => {
                   const view = tab().file.view;
                   if (view) toggleSearch(view);
                 }} />

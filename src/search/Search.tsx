@@ -9,9 +9,12 @@ import { pathCrumb } from "../editor/breadcrumbs.ts";
 import { baseName, pathKey } from "../workspace/paths.ts";
 import { setDockOpen } from "../shell/panels.ts";
 import FileIcon from "../shell/FileIcon.tsx";
+import { IconButton } from "../shell/Icon.tsx";
+import { nameRegExp } from "./name-regexp.ts";
 import "./search.css";
 
 type SearchEntry = { path: string; isDir: boolean };
+const MAX_RESULTS = 5_000; // name_search.rs MAX_FILES; regexp results are cut here in the page
 type SearchEvent = { kind: "entry"; entry: SearchEntry } | { kind: "done" | "limit" } | { kind: "error"; message: string };
 
 function Search() {
@@ -20,6 +23,10 @@ function Search() {
   const [busy, setBusy] = createSignal(false);
   const [message, setMessage] = createSignal("");
   const [root, setRoot] = createSignal("");
+  const [caseSensitive, setCaseSensitive] = createSignal(false);
+  const [wholeWord, setWholeWord] = createSignal(false);
+  const [regexp, setRegexp] = createSignal(false);
+  const [searched, setSearched] = createSignal(false);
   let generation = 0;
   onCleanup(() => generation++);
   const run = async () => {
@@ -27,12 +34,20 @@ function Search() {
     setEntries([]);
     setMessage("");
     setBusy(true);
+    setSearched(true);
+    // Regexp mode: Rust streams every name and the page keeps the matching ones; an invalid pattern just finds nothing.
+    const matcher = regexp() ? nameRegExp(query(), { caseSensitive: caseSensitive(), wholeWord: wholeWord() }) : null;
+    if (regexp() && !matcher) { setBusy(false); return; }
     const roots = searchRoots(folders(), activeId());
     setRoot(roots[0] ?? "");
     const channel = new Channel<SearchEvent>();
     channel.onmessage = (event) => {
       if (id !== generation) return;
-      if (event.kind === "entry") setEntries((old) => [...old, event.entry]);
+      if (event.kind === "entry") {
+        if (matcher && !matcher.test(baseName(event.entry.path))) return;
+        setEntries((old) => [...old, event.entry]);
+        if (matcher && entries().length >= MAX_RESULTS) { generation++; setBusy(false); setMessage("Search result limit reached."); }
+      }
       else {
         setBusy(false);
         if (event.kind === "error") setMessage(event.message);
@@ -40,7 +55,7 @@ function Search() {
       }
     };
     try {
-      const options = { roots, query: query() };
+      const options = { roots, query: query(), caseSensitive: caseSensitive(), wholeWord: wholeWord(), all: !!matcher };
       await flushWorkspaceState();
       if (id !== generation) return;
       await invoke("search_names", { options, onEvent: channel });
@@ -48,6 +63,12 @@ function Search() {
       if (id === generation) { setBusy(false); setMessage(String(error)); }
     }
   };
+  const toggles = [
+    ["case_sensitive", "Match Case (Alt+C)", "KeyC", caseSensitive, setCaseSensitive],
+    ["whole_word", "Match Whole Word (Alt+W)", "KeyW", wholeWord, setWholeWord],
+    ["regex", "Use Regular Expression (Alt+R)", "KeyR", regexp, setRegexp],
+  ] as const;
+  const flip = (setter: (update: (on: boolean) => boolean) => void) => { setter((on) => !on); if (query()) void run(); };
   const open = (entry: SearchEntry) => {
     const folder = folders().find((folder) => pathKey(folder.path) === pathKey(root()));
     if (!folder) return;
@@ -62,8 +83,13 @@ function Search() {
   return <section class="project-search" aria-label="Search" tabindex="-1">
     <div class="project-search-toolbar main">
       <div class="project-search-input"><input data-text-input aria-label="Search" placeholder="Search" value={query()} onInput={(e) => setQuery(e.currentTarget.value)} onKeyDown={(event) => {
-        if (event.key === "Enter" && !event.isComposing) { event.preventDefault(); void run(); }
-      }} /></div>
+        if (event.key === "Enter" && !event.isComposing) { event.preventDefault(); void run(); return; }
+        const toggle = event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.isComposing && toggles.find(([, , code]) => code === event.code);
+        if (toggle) { event.preventDefault(); flip(toggle[4]); }
+      }} />
+        <For each={toggles}>{([icon, label, , on, set]) => <IconButton name={icon} label={label} toggled={on()} onClick={() => flip(set)} />}</For>
+      </div>
+      <Show when={searched()}><span class="project-search-count" aria-live="polite">{entries().length}</span></Show>
     </div>
     <Show when={busy() || message()}><p class="search-message" role="status">{busy() ? "Searching…" : message()}</p></Show>
     <div class="project-search-results">

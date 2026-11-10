@@ -1,3 +1,4 @@
+list-selection.svg from @vscode/codicons 0.0.46-24
 search.svg from @vscode/codicons 0.0.46-24
 markdown.svg from @vscode/codicons 0.0.46-24
 Copyright (c) Microsoft Corporation.

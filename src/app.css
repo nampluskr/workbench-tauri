@@ -585,29 +585,29 @@ button, input, select, textarea {
 /* I-16: relative path in the buffer font, Muted; a long row is cut, not wrapped. */
 .breadcrumbs { flex: 1; min-width: 0; display: flex; align-items: center; gap: var(--statusbar-item-gap); padding-inline: var(--buttons-padding-x-default-compact); /* Zed wraps the row in a ButtonLike: px Base04 (button_like.rs:817-821) */ overflow: hidden; white-space: nowrap; color: var(--text-muted); font-family: var(--buffer-font-family); font-size: var(--typography-size-default); }
 .toolbar-quick-actions { display: flex; gap: var(--toolbar-quick-actions-gap); }
-/* R-17: float the document search over the editor using existing search metrics. */
-.cm-editor > .cm-panels-top {
-  position: absolute; top: 0; right: var(--toolbar-padding-x); left: auto;
-  max-width: 100%; border: var(--editor-search-input-border) solid var(--border);
-  border-radius: var(--editor-search-input-corner-radius);
-  background: var(--toolbar-background); color: var(--text);
-}
-.document-search { padding: var(--toolbar-padding-y) var(--toolbar-padding-x); font-family: var(--ui-font-family); font-size: var(--editor-search-input-font-size); }
-.document-search-row { display: flex; align-items: center; gap: var(--editor-search-input-options-gap); }
+/* U-7: the find bar is a CM top panel: a full-width row under the path row that pushes the document down (E-061~E-067). */
+.cm-editor > .cm-panels-top { border-bottom: var(--toolbar-border-bottom) solid var(--border-variant); background: var(--toolbar-background); color: var(--text); }
+.editor-toolbar .icon-button[aria-pressed="true"] { color: var(--text-accent); } /* the find bar is open (Lock Preview style) */
+.document-search { display: flex; flex-direction: column; gap: var(--editor-search-bar-gap); box-sizing: border-box; padding: var(--toolbar-padding-y) var(--toolbar-padding-x); font-family: var(--ui-font-family); font-size: var(--editor-search-input-font-size); --icon-size: var(--icons-size-small); }
+.document-search-row { display: flex; align-items: center; gap: var(--editor-search-bar-modes-gap); min-width: 0; }
 .document-search-row[hidden] { display: none; }
-.document-search input {
-  width: var(--editor-search-bar-modes-min-width); min-width: 0; flex: 1;
-  min-height: var(--editor-search-input-min-height); box-sizing: border-box;
+.document-search-field {
+  display: flex; align-items: center; gap: var(--editor-search-input-options-gap); flex: 1 1 var(--editor-search-bar-modes-min-width);
+  min-width: 0; max-width: var(--editor-search-input-max-width); min-height: var(--editor-search-input-min-height); box-sizing: border-box;
+  margin-right: calc(var(--editor-search-bar-gap) - var(--editor-search-bar-modes-gap));
   padding: 0 var(--editor-search-input-padding-right) 0 var(--editor-search-input-padding-left);
-  border: var(--editor-search-input-border) solid var(--border); border-radius: var(--editor-search-input-corner-radius);
-  background: var(--editor-background); color: var(--text); font: inherit;
+  border: var(--editor-search-input-border) solid var(--border); border-radius: var(--editor-search-input-corner-radius); background: var(--editor-background);
 }
-.document-search input:focus-visible { outline: var(--editor-search-input-border) solid var(--border-focused); }
-.document-search button { flex: none; border: 0; padding: 0 var(--buttons-padding-x-default-compact); background: transparent; color: var(--text); font: inherit; cursor: pointer; }
-.document-search button:hover { background: var(--ghost-element-hover); }
-.document-search button[aria-pressed="true"] { background: var(--ghost-element-selected); }
+.document-search-field:focus-within { border-color: var(--border-focused); }
+.document-search input { flex: 1; min-width: 0; padding: 0; border: 0; outline: none; background: transparent; color: var(--text); font: inherit; line-height: var(--editor-search-input-line-height-multiplier); }
+.document-search button { display: flex; flex: none; align-items: center; justify-content: center; width: var(--buttons-height-default); height: var(--buttons-height-default); padding: 0; border: 0; background: transparent; color: var(--text-muted); cursor: pointer; }
+.document-search-field button { width: calc(var(--icons-size-small) + 2 * var(--editor-search-input-options-gap)); height: calc(var(--icons-size-small) + 2 * var(--editor-search-input-options-gap)); }
+.document-search button:hover:not(:disabled) { background: var(--ghost-element-hover); }
+.document-search button[aria-pressed="true"] { color: var(--text-accent); background: var(--ghost-element-selected); }
 .document-search button:disabled { color: var(--text-disabled); cursor: default; }
-.document-search-row > span { flex: none; font-size: var(--editor-search-results-count-font-size); min-width: var(--editor-search-results-count-min-width); }
+.document-search-separator { align-self: stretch; margin-left: var(--editor-search-bar-separator-margin-left); padding-left: var(--editor-search-bar-separator-padding-left); border-left: var(--editor-search-bar-separator-width) solid var(--border); }
+.document-search-count { flex: none; margin-left: var(--editor-search-results-count-margin-left); min-width: var(--editor-search-results-count-min-width); font-size: var(--editor-search-results-count-font-size); color: var(--text-muted); }
+.document-search-close { margin-left: auto; }
 .cm-editor .cm-searchMatch { background: var(--ghost-element-selected); }
 .cm-editor .cm-searchMatch-selected { background: var(--players-0-selection); }
 /* L-69: the preview tab's icon, Small and Muted as an item's own tab icon (L-67). */

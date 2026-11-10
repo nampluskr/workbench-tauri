@@ -4,7 +4,7 @@ import { EditorSelection, EditorState, Transaction, type TransactionSpec } from 
 import { EditorView, showPanel, type Panel } from "@codemirror/view";
 import { history, undo } from "@codemirror/commands";
 import { SearchQuery, getSearchQuery, search, setSearchQuery, selectSelectionMatches } from "@codemirror/search";
-import { addNextOccurrence, documentSearch, SEARCH_COMMANDS, skipOccurrence, toggleSearch } from "./search.ts";
+import { addNextOccurrence, documentSearch, SEARCH_COMMANDS, skipOccurrence, toggleScope, toggleSearch } from "./search.ts";
 
 function target(doc: string, locked = false) {
   const view = {
@@ -102,7 +102,9 @@ test("K-13: custom panel edits queries, counts matches, toggles replace and clos
       this.listeners.input();
     }
     contains(node: Node) { return this === node || this.children.some((child) => child.contains(node)); }
-    querySelector() { return this.children.flatMap((row) => row.children).find((node) => node.attrs["main-field"]); }
+    innerHTML = "";
+    all(): Node[] { return [this, ...this.children.flatMap((child) => child.all())]; }
+    querySelector() { return this.all().find((node) => node.attrs["main-field"]); }
   }
   const root = { activeElement: null as Node | null };
   const previous = Object.getOwnPropertyDescriptor(globalThis, "document");
@@ -121,9 +123,11 @@ test("K-13: custom panel edits queries, counts matches, toggles replace and clos
   const factory = view.state.facet(showPanel).find((factory) => factory)!;
   panel = factory(editor);
   panel!.mount!();
-  const [row, replacementRow] = (panel!.dom as unknown as Node).children;
+  const dom = panel!.dom as unknown as Node;
+  const byLabel = (label: string) => dom.all().find((node) => node.attrs["aria-label"] === label)!;
+  const replacementRow = dom.children[1], count = dom.all().find((node) => node.className === "document-search-count")!;
   assert.equal(replacementRow.hidden, true);
-  const find = row.children[1], replace = replacementRow.children[0];
+  const find = byLabel("Find"), replace = byLabel("Replace");
   for (const [index, letter] of [..."foo"].entries()) {
     find.typeText(letter);
     assert.equal(find.value, "foo".slice(0, index + 1));
@@ -141,7 +145,7 @@ test("K-13: custom panel edits queries, counts matches, toggles replace and clos
   view.dispatch({ selection: EditorSelection.cursor(8) });
   find.value = "cat"; find.listeners.input();
   assert.equal(getSearchQuery(view.state).search, "cat");
-  assert.equal(row.children[5].textContent, "1 of 2");
+  assert.equal(count.textContent, "1/2");
   command("FindNext");
   assert.deepEqual([view.state.selection.main.from, view.state.selection.main.to], [12, 15]);
   command("FindPrevious");
@@ -149,10 +153,39 @@ test("K-13: custom panel edits queries, counts matches, toggles replace and clos
   command("Replace");
   assert.equal(replacementRow.hidden, false);
   replace.value = "dog"; replace.listeners.input();
-  replacementRow.children[1].listeners.click();
+  byLabel("Replace (Enter)").listeners.click();
   assert.equal(view.state.doc.toString(), "foo foo dog cat");
-  assert.equal(row.children[5].textContent, "1 of 1");
+  assert.equal(count.textContent, "1/1");
+  byLabel("Toggle Replace (Ctrl+H)").listeners.click();
+  assert.equal(replacementRow.hidden, true);
   assert.equal(toggleSearch(editor), true);
   assert.equal(view.state.facet(showPanel).some(Boolean), false);
   assert.equal(root.activeElement, null);
+});
+
+test("U-7: find in selection counts, steps and replaces only inside the selected range", () => {
+  const view = {
+    state: EditorState.create({ doc: "cat cat cat cat", extensions: [documentSearch, history()], selection: EditorSelection.single(4, 11) }),
+    dispatch(tr: TransactionSpec) { view.state = view.state.update(tr).state; },
+    plugin: () => null,
+  };
+  const editor = view as unknown as EditorView;
+  run("Find", view);
+  view.dispatch({ selection: EditorSelection.single(4, 11), effects: setSearchQuery.of(new SearchQuery({ search: "cat", literal: true, replace: "dog" })) });
+  assert.equal(toggleScope(editor), true);
+  run("FindNext", view);
+  assert.deepEqual(ranges(view), [[4, 7]]);
+  run("FindNext", view);
+  assert.deepEqual(ranges(view), [[8, 11]]);
+  run("FindNext", view); // wraps inside the range, never to 0 or 12
+  assert.deepEqual(ranges(view), [[4, 7]]);
+  run("FindPrevious", view);
+  assert.deepEqual(ranges(view), [[8, 11]]);
+  run("ReplaceAll", view);
+  assert.equal(view.state.doc.toString(), "cat dog dog cat");
+  assert.equal(toggleScope(editor), true); // off again: the whole document counts again
+  view.dispatch({ selection: EditorSelection.single(0) });
+  run("FindNext", view);
+  run("FindNext", view);
+  assert.deepEqual(ranges(view), [[12, 15]]); // outside the old range, now reachable
 });

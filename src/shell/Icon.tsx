@@ -2,20 +2,24 @@
 const svgs = import.meta.glob<string>("../assets/zed-icons/*.svg", { query: "?raw", import: "default", eager: true });
 import searchSvg from "../assets/codicons/search.svg?raw";
 import markdownSvg from "../assets/codicons/markdown.svg?raw";
+import listSelectionSvg from "../assets/codicons/list-selection.svg?raw";
 
 import { tooltip, type Tip } from "./tooltip.ts";
-import { themedSvg } from "./icon-svg.ts";
+import { iconMarkup, themedSvg } from "./icon-svg.ts";
 
 export type IconName =
   | "folder" | "folder_open" | "folder_add" | "file_tree" | "threads_sidebar_left_open" | "threads_sidebar_left_closed"
   | "split" | "plus" | "maximize" | "arrow_left" | "arrow_right" | "menu" | "close" | "pin" | "minimize" | "eye" | "file_doc"
   | "file" | "check" | "chevron_down" | "chevron_right" | "chevron_up" | "chevron_up_down" | "magnifying_glass" | "search" | "pencil" | "github"
-  | "chevron_down_up" | "zed_assistant" | "arrow_circle" | "warning" | "chevron_left" | "expand_up" | "expand_down" | "markdown";
+  | "chevron_down_up" | "zed_assistant" | "arrow_circle" | "warning" | "chevron_left" | "expand_up" | "expand_down" | "markdown"
+  | "case_sensitive" | "whole_word" | "regex" | "replace" | "replace_next" | "replace_all" | "select_all" | "list_selection";
+
+for (const [path, svg] of Object.entries(svgs)) iconMarkup[path.slice(path.lastIndexOf("/") + 1, -4)] = svg;
+Object.assign(iconMarkup, { search: searchSvg, markdown: markdownSvg, list_selection: listSelectionSvg }); // codicons override same-named Zed copies
 
 /** Missing Zed copies leave an empty slot with the existing spec dimensions. */
 export default function Icon(props: { name: IconName }) {
-  const svg = () => props.name === "search" ? searchSvg : props.name === "markdown" ? markdownSvg : svgs[`../assets/zed-icons/${props.name}.svg`];
-  return <span class="icon" aria-hidden="true" innerHTML={themedSvg(svg())} />;
+  return <span class="icon" aria-hidden="true" innerHTML={themedSvg(iconMarkup[props.name])} />;
 }
 
 /**
