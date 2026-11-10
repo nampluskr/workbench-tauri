@@ -1,0 +1,34 @@
+{
+  "u20zed": {
+    "off": {
+      "pressed": "false",
+      "border": "0px none",
+      "w": 22,
+      "h": 22,
+      "icon": "svg",
+      "iconColor": "rgb(88, 88, 90)"
+    },
+    "on": {
+      "pressed": "true",
+      "border": "0px none",
+      "w": 22,
+      "h": 22,
+      "icon": "svg",
+      "iconColor": "rgb(92, 120, 226)"
+    },
+    "onTopColours": [
+      [
+        "104,115,226",
+        797
+      ],
+      [
+        "191,194,223",
+        77
+      ],
+      [
+        "133,141,225",
+        34
+      ]
+    ]
+  }
+}

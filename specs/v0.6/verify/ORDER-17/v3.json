@@ -1,0 +1,180 @@
+{
+  "u19": {
+    "start": [
+      "L1c4",
+      "L2c2",
+      "L3c4"
+    ],
+    "down1": [
+      "L2c2",
+      "L3c4",
+      "L4c2"
+    ],
+    "down2": [
+      "L3c4",
+      "L4c2",
+      "L5c4"
+    ],
+    "upBack": [
+      "L1c4",
+      "L2c2",
+      "L3c4"
+    ],
+    "shiftDown": [
+      "[efgh 1⏎ab] L2c2",
+      "[⏎abcd] L3c4",
+      "[efgh 3⏎ab] L4c2"
+    ],
+    "shiftUp": [
+      "[abcd] L1c0",
+      "[efgh 1⏎ab] L1c4",
+      "[⏎abcd] L2c2"
+    ],
+    "ctrlShiftEnd": [
+      "[efgh 1⏎ab⏎abcdefgh 3⏎ab⏎abcdefgh 5⏎last line here⏎] L7c0"
+    ],
+    "ctrlEnd": [
+      "L7c0"
+    ]
+  },
+  "u20": {
+    "off": {
+      "pressed": "false",
+      "border": "0px none",
+      "w": 22,
+      "h": 22,
+      "icon": "svg",
+      "iconColor": "rgb(88, 88, 90)"
+    },
+    "on": {
+      "pressed": "true",
+      "border": "0px none",
+      "w": 22,
+      "h": 22,
+      "icon": "IMG /assets/markdown-DQV6N1ON.svg",
+      "iconColor": "rgb(92, 120, 226)"
+    },
+    "onTopColours": [
+      [
+        "63,158,181",
+        913
+      ],
+      [
+        "141,189,201",
+        23
+      ],
+      [
+        "161,197,206",
+        16
+      ]
+    ]
+  },
+  "u21": {
+    "base": {
+      "clear": {
+        "cx": 184,
+        "w": 14
+      },
+      "itemX": {
+        "cx": 184,
+        "w": 14
+      },
+      "clearIcon": {
+        "cx": 184,
+        "w": 14,
+        "h": 16
+      },
+      "itemIcon": {
+        "cx": 184,
+        "w": 16,
+        "h": 16
+      }
+    },
+    "wide": {
+      "clear": {
+        "cx": 263,
+        "w": 14
+      },
+      "itemX": {
+        "cx": 263,
+        "w": 14
+      },
+      "clearIcon": {
+        "cx": 263,
+        "w": 14,
+        "h": 16
+      },
+      "itemIcon": {
+        "cx": 263,
+        "w": 16,
+        "h": 16
+      }
+    },
+    "narrow": {
+      "clear": {
+        "cx": 132,
+        "w": 14
+      },
+      "itemX": {
+        "cx": 132,
+        "w": 14
+      },
+      "clearIcon": {
+        "cx": 132,
+        "w": 14,
+        "h": 16
+      },
+      "itemIcon": {
+        "cx": 132,
+        "w": 16,
+        "h": 16
+      }
+    },
+    "finalSidebarWidth": 148
+  },
+  "u22pre": {
+    "labels": [
+      "Remove o17",
+      "Toggle Sidebar",
+      "Add Project",
+      "Open Application Menu",
+      "User menu",
+      "Minimize",
+      "Maximize",
+      "Close",
+      "Go Back",
+      "Go Forward",
+      "Close Tab",
+      "Find in Explorer",
+      "Close Left Dock",
+      "Search",
+      "Lock Preview"
+    ],
+    "tabs": [
+      "main.ts"
+    ]
+  },
+  "u22r": {
+    "labels": [
+      "Remove o17",
+      "Toggle Sidebar",
+      "Add Project",
+      "Open Application Menu",
+      "User menu",
+      "Minimize",
+      "Maximize",
+      "Close",
+      "Go Back",
+      "Go Forward",
+      "Close Tab",
+      "Find in Explorer",
+      "Close Left Dock",
+      "Search",
+      "Lock Preview"
+    ],
+    "tabs": [
+      "main.ts"
+    ]
+  },
+  "u22": "ERR not found [...document.querySelectorAll('button')].find(b=>(b.getAttribute('aria-label')||'').startsWith('New'))"
+}

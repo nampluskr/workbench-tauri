@@ -1,0 +1,235 @@
+{
+  "u19": {
+    "start": [
+      "L1c4",
+      "L2c2",
+      "L3c4"
+    ],
+    "down1": [
+      "L2c2",
+      "L3c4",
+      "L4c2"
+    ],
+    "down2": [
+      "L3c4",
+      "L4c2",
+      "L5c4"
+    ],
+    "upBack": [
+      "L1c4",
+      "L2c2",
+      "L3c4"
+    ],
+    "shiftDown": [
+      "[efgh 1⏎ab] L2c2",
+      "[⏎abcd] L3c4",
+      "[efgh 3⏎ab] L4c2"
+    ],
+    "shiftUp": [
+      "[abcd] L1c0",
+      "[efgh 1⏎ab] L1c4",
+      "[⏎abcd] L2c2"
+    ],
+    "ctrlShiftEnd": [
+      "[efgh 1⏎ab⏎abcdefgh 3⏎ab⏎abcdefgh 5⏎last line here⏎] L7c0"
+    ],
+    "ctrlEnd": [
+      "L7c0"
+    ]
+  },
+  "u22pre": {
+    "labels": [
+      "Remove o17",
+      "Toggle Sidebar",
+      "Add Project",
+      "Open Application Menu",
+      "User menu",
+      "Minimize",
+      "Maximize",
+      "Close",
+      "Go Back",
+      "Go Forward",
+      "Close Tab",
+      "New…",
+      "Split Pane",
+      "Zoom In",
+      "Find in Explorer",
+      "Close Left Dock",
+      "Search",
+      "Lock Preview"
+    ],
+    "tabs": [
+      "main.ts"
+    ]
+  },
+  "u22r": {
+    "plusDisabled": false,
+    "labels": [
+      "Remove o17",
+      "Toggle Sidebar",
+      "Add Project",
+      "Open Application Menu",
+      "User menu",
+      "Minimize",
+      "Maximize",
+      "Close",
+      "Go Back",
+      "Go Forward",
+      "Close Tab",
+      "New…",
+      "Split Pane",
+      "Zoom In",
+      "Find in Explorer",
+      "Close Left Dock",
+      "Search",
+      "Lock Preview"
+    ],
+    "tabs": [
+      "main.ts"
+    ],
+    "menu": [
+      "New FileCtrl-N 14px",
+      "Open FileCtrl-E 14px",
+      "---",
+      "SearchCtrl-Shift-F 14px"
+    ],
+    "newFile": {
+      "input": true,
+      "focus": "tree-input"
+    },
+    "afterNewFileEsc": {
+      "labels": [
+        "Remove o17",
+        "Toggle Sidebar",
+        "Add Project",
+        "Open Application Menu",
+        "User menu",
+        "Minimize",
+        "Maximize",
+        "Close",
+        "Go Back",
+        "Go Forward",
+        "Close Tab",
+        "Find in Explorer",
+        "Close Left Dock",
+        "Search",
+        "Lock Preview"
+      ],
+      "tabs": [
+        "main.ts"
+      ],
+      "panes": 1,
+      "treeRows": [
+        "o17",
+        "o17",
+        "readers",
+        "sub",
+        "main.ts",
+        "notes.md",
+        "other.txt",
+        "readme.md"
+      ]
+    },
+    "openFromMenu": true,
+    "closedByEsc": true,
+    "openFromCtrlE": true,
+    "results": [
+      "readme.md | readme.md",
+      "my_read.txt | sub\\my_read.txt"
+    ],
+    "afterEnter": {
+      "dialogOpen": false,
+      "activeTab": [
+        "my_read.txt"
+      ]
+    },
+    "search": [
+      "Search"
+    ]
+  },
+  "u22": {
+    "plusDisabled": false,
+    "labels": [
+      "Remove o17",
+      "Toggle Sidebar",
+      "Add Project",
+      "Open Application Menu",
+      "User menu",
+      "Minimize",
+      "Maximize",
+      "Close",
+      "Go Back",
+      "Go Forward",
+      "Close Tab",
+      "New…",
+      "Split Pane",
+      "Zoom In",
+      "Find in Explorer",
+      "Close Left Dock",
+      "Search",
+      "Lock Preview"
+    ],
+    "tabs": [
+      "main.ts"
+    ],
+    "menu": [
+      "New FileCtrl-N 14px",
+      "Open FileCtrl-E 14px",
+      "---",
+      "SearchCtrl-Shift-F 14px"
+    ],
+    "newFile": {
+      "input": true,
+      "focus": "tree-input"
+    },
+    "afterNewFileEsc": {
+      "labels": [
+        "Remove o17",
+        "Toggle Sidebar",
+        "Add Project",
+        "Open Application Menu",
+        "User menu",
+        "Minimize",
+        "Maximize",
+        "Close",
+        "Go Back",
+        "Go Forward",
+        "Close Tab",
+        "Find in Explorer",
+        "Close Left Dock",
+        "Search",
+        "Lock Preview"
+      ],
+      "tabs": [
+        "main.ts"
+      ],
+      "panes": 1,
+      "treeRows": [
+        "o17",
+        "o17",
+        "readers",
+        "sub",
+        "main.ts",
+        "notes.md",
+        "other.txt",
+        "readme.md"
+      ]
+    },
+    "openFromMenu": true,
+    "closedByEsc": true,
+    "openFromCtrlE": true,
+    "results": [
+      "readme.md | readme.md",
+      "my_read.txt | sub\\my_read.txt"
+    ],
+    "afterEnter": {
+      "dialogOpen": false,
+      "activeTab": [
+        "my_read.txt"
+      ]
+    },
+    "search": [
+      "Search"
+    ]
+  }
+}

@@ -453,6 +453,32 @@
 - 커밋: 코드 `bf86cdc`.
 - 상태: 끝남(U-18 사용자 확인 남음).
 
+### ORDER-17 여러 커서 위·아래·Lock Preview 아이콘·Sidebar × 정렬·탭 바 + 메뉴 (2026-11-10)
+
+- 요청: 사용자가 확인하고 남긴 U-19 여러 커서 위·아래(VS Code 방식), U-20 Lock Preview 켜짐 모양 다시(그림 lock-preview-now.png·lock-preview-want.png)(core `D:\projects\workbench-core\specs\v0.6\orders\ORDER-17.md`), 같은 카드에 더한 U-21 Sidebar 검색란 ×를 폴더 항목 hover ×와 세로 정렬, U-22 탭 바 + 메뉴 New File/Open File/Search(그림 plus-menu-zed.png).
+- **K-21 U-19~U-22 반영** (2026-11-10, coder, Claude Code Sonnet 5.5 high)
+  - 무엇을 했나:
+    - U-19: CM 키맵(`multiCursorKeys`)에 ↑/↓·Shift+↑/↓·PageUp/Down·Shift+PageUp/Down·Ctrl+Home/End·Ctrl+Shift+Home/End를 더했다. VS Code처럼 여러 커서를 유지하고, Ctrl+Home/End·Ctrl+Shift+Home/End는 하나로 합쳐진다(`selectDocEdge` 직접). 기존 Mod-Home/End를 정리했다.
+    - U-20: U-18 테두리를 지우고, 켜짐에만 아이콘 테마의 .md 아이콘(`FileIcon`, Catppuccin은 M↓ 청록 사각형)을 쓴다. 꺼짐은 codicon 그대로다.
+    - U-21: 폴더 항목 ×를 기준으로 맞췄다(기존 변수).
+    - U-22: + 버튼을 켜고 `openContextMenu` 메뉴를 붙였다. New File = `startNew`(트리 선택이 없으면 폴더 루트), Open File = 새 FileFinder(`file_finder::Toggle`, Ctrl-E Workspace, 파일만). 선택 창 부품·`search_names`·`searchRoots`는 Search와 공유한다(`src/search/names.ts`·`entries.ts`). Search는 Search 탭을 연다.
+  - 결과: 위와 같다.
+  - 검증: C-23에서 함께 확인.
+  - 특이사항: 없음
+- **K-21-R1 U-21 수정** (2026-11-10, coder, Claude Code Sonnet 5.5 high)
+  - 무엇을 했나: leader V3에서 U-21이 4px 어긋났다. `.icon-button` 규칙이 같은 특이도로 뒤에 와 검색란 버튼 폭이 22로 남은 것이다 → 선택자를 올리고 아이콘 상자를 맞췄다.
+  - 결과: 두 ×의 가운데가 같다.
+  - 검증: C-23에서 함께 확인.
+  - 특이사항: coder가 작업 중 `app.css`를 한 번 잘못 덮어써 되돌린 뒤 다시 넣었고, leader가 diff를 확인했다.
+- C-23 checker [PASS](커밋 직전 전체): typecheck 오류 0, npm test 235 통과, clippy 경고 0, cargo test 22 통과, 코드 검토 지적 없음, V3 PASS (2026-11-10).
+- **V3(ORDER-17)** (2026-11-10, C-23 판정 [PASS])
+  - 무엇을 했나: debug exe, 임시 APPDATA·WebView 데이터 폴더, One Light.
+  - 결과: 세 커서 ↓ → 셋 다 아래로, 짧은 줄을 지나면 열이 돌아온다. Shift+↓ → 셋 다 선택, Ctrl+Shift+End·Ctrl+End → 하나로. Lock Preview 켬 (Catppuccin): 청록 M↓ 픽셀 (63,158,181)·테두리 0·22×22. 두 × 가운데 x 184/184, 넓힘 263/263, 좁힘 132/132. + 메뉴 3항목 14px, New File → 이름 입력, Open File → 메뉴·Ctrl+E 모두 열림, read → readme.md·sub\my_read.txt(폴더 제외), Enter로 열림, Search → Search 탭. PASS. U-20은 Zed (Default) 아이콘 테마에서는 책 모양이다(테마마다 그림과 다름).
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-17/`(v3.json — 그 안 u22 줄은 실행 순서 탓에 무효, v3-u19-u22.json, v3-zed-default.json, png).
+  - 특이사항: 미정: U-20 아이콘 테마별 모양(Zed (Default)에서는 책) → 사용자.
+- 커밋: 코드 `4432a6a`.
+- 상태: 끝남(U-20 아이콘 테마별 모양은 사용자 확인 남음).
+
 ## 버전 종료
 
 진행 중.
