@@ -175,6 +175,7 @@ button, input, select, textarea {
   font-size: var(--extensions-search-input-font-size); line-height: var(--extensions-search-input-line-height-multiplier);
 }
 .sidebar-search input:focus { outline: none; }
+.sidebar-search .menu-shortcut { font-size: var(--tooltip-font-size); } /* ORDER-12 U-6 */
 .sidebar-search:focus-within > .icon { color: var(--text-accent); }
 .sidebar-match { color: var(--text-accent); }
 .sidebar-item-parent { color: var(--text-muted); } /* A-12.6 */
@@ -442,7 +443,7 @@ button, input, select, textarea {
   padding: var(--menu-list-padding-y) 0;
   border: var(--menu-border-width) solid var(--border-variant);
   border-radius: var(--menu-corner-radius);
-  font-size: var(--typography-ui-font-size);
+  font-size: var(--tooltip-font-size); /* ORDER-12 U-6: items, sub-menu items and shortcuts use the tooltip size */
   outline: none;
 }
 .menu-item {
