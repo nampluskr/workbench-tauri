@@ -1,0 +1,726 @@
+{
+  "run1_noSettings": {
+    "menuName": null,
+    "sidebarItem": "14px",
+    "status": "12px",
+    "tabTitle": "14px",
+    "treeLabel": "14px",
+    "editor": [
+      "15px"
+    ],
+    "preview": [
+      {
+        "p": "16px",
+        "h1": "28px",
+        "h2": "22.4px",
+        "code": "14px",
+        "padTop": "0px"
+      }
+    ],
+    "dpr": 1,
+    "innerWidth": 1440,
+    "zoom": "1"
+  },
+  "run2_v06Settings": {
+    "menuName": null,
+    "sidebarItem": "14px",
+    "status": "12px",
+    "tabTitle": "14px",
+    "treeLabel": "14px",
+    "editor": [
+      "15px"
+    ],
+    "preview": [
+      {
+        "p": "16px",
+        "h1": "28px",
+        "h2": "22.4px",
+        "code": "14px",
+        "padTop": "0px"
+      }
+    ],
+    "dpr": 1,
+    "innerWidth": 1440,
+    "zoom": "1"
+  },
+  "i4_settings": {
+    "all": {
+      "nav": [
+        "UI",
+        "Editor",
+        "Preview"
+      ],
+      "headings": [
+        "UI",
+        "Editor",
+        "Preview"
+      ],
+      "rows": [
+        "UI / Theme — Specifies the color theme used in the workbench.",
+        "UI / Icon Theme — Specifies the file icon theme used in the workbench.",
+        "UI / Font Size — Controls the font size in pixels used in the UI.",
+        "Editor / Font Size — Controls the font size in pixels.",
+        "Preview / Font Size — Controls the font size in pixels used in the Markdown preview."
+      ],
+      "fontSize": "14px"
+    },
+    "navClick": {
+      "Preview": {
+        "headingTop": 515,
+        "contentTop": 33,
+        "scrollTop": 0,
+        "current": "Preview"
+      },
+      "Editor": {
+        "headingTop": 390,
+        "contentTop": 33,
+        "scrollTop": 0,
+        "current": "Editor"
+      },
+      "UI": {
+        "headingTop": 103,
+        "contentTop": 33,
+        "scrollTop": 0,
+        "current": "UI"
+      }
+    },
+    "search": {
+      "preview": {
+        "nav": [
+          "Preview"
+        ],
+        "headings": [
+          "Preview"
+        ],
+        "rows": [
+          "Preview / Font Size — Controls the font size in pixels used in the Markdown preview."
+        ],
+        "fontSize": "14px"
+      },
+      "editor": {
+        "nav": [
+          "Editor"
+        ],
+        "headings": [
+          "Editor"
+        ],
+        "rows": [
+          "Editor / Font Size — Controls the font size in pixels."
+        ],
+        "fontSize": "14px"
+      },
+      "ui": {
+        "nav": [
+          "UI"
+        ],
+        "headings": [
+          "UI"
+        ],
+        "rows": [
+          "UI / Theme — Specifies the color theme used in the workbench.",
+          "UI / Icon Theme — Specifies the file icon theme used in the workbench.",
+          "UI / Font Size — Controls the font size in pixels used in the UI."
+        ],
+        "fontSize": "14px"
+      },
+      "font size": {
+        "nav": [
+          "UI",
+          "Editor",
+          "Preview"
+        ],
+        "headings": [
+          "UI",
+          "Editor",
+          "Preview"
+        ],
+        "rows": [
+          "UI / Font Size — Controls the font size in pixels used in the UI.",
+          "Editor / Font Size — Controls the font size in pixels.",
+          "Preview / Font Size — Controls the font size in pixels used in the Markdown preview."
+        ],
+        "fontSize": "14px"
+      }
+    }
+  },
+  "i2_preview20": {
+    "sizes": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [
+        "15px"
+      ],
+      "preview": [
+        {
+          "p": "20px",
+          "h1": "35px",
+          "h2": "28px",
+          "code": "17.5px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    },
+    "syncAfterClickSection4": [
+      "Section 4"
+    ]
+  },
+  "i2_ui18": {
+    "ui18": {
+      "menuName": null,
+      "sidebarItem": "15.75px",
+      "status": "13.5px",
+      "tabTitle": "15.75px",
+      "treeLabel": "15.75px",
+      "editor": [
+        "15px"
+      ],
+      "preview": [
+        {
+          "p": "20px",
+          "h1": "35px",
+          "h2": "28px",
+          "code": "17.5px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1",
+      "menu": [
+        "File 15.75px",
+        "Edit 15.75px",
+        "View 15.75px",
+        "Go 15.75px",
+        "Window 15.75px",
+        "Help 15.75px"
+      ]
+    },
+    "back16": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [
+        "15px"
+      ],
+      "preview": [
+        {
+          "p": "20px",
+          "h1": "35px",
+          "h2": "28px",
+          "code": "17.5px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    }
+  },
+  "i1": {
+    "base": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [
+        "15px"
+      ],
+      "preview": [
+        {
+          "p": "20px",
+          "h1": "35px",
+          "h2": "28px",
+          "code": "17.5px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    },
+    "focusPreview": "MarkdownPreview",
+    "previewPlus2": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [
+        "15px"
+      ],
+      "preview": [
+        {
+          "p": "22px",
+          "h1": "38.5px",
+          "h2": "30.8px",
+          "code": "19.25px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    },
+    "focusEditor": "cm-content cm-lineWrapping",
+    "editorMinus1": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [
+        "14px"
+      ],
+      "preview": [
+        {
+          "p": "22px",
+          "h1": "38.5px",
+          "h2": "30.8px",
+          "code": "19.25px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    },
+    "syncAfterClickSection8": [
+      "Section 6"
+    ],
+    "twoPreviews": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [],
+      "preview": [
+        {
+          "p": "22px",
+          "h1": "38.5px",
+          "h2": "30.8px",
+          "code": "19.25px",
+          "padTop": "0px"
+        },
+        {
+          "p": "22px",
+          "h1": "38.5px",
+          "h2": "30.8px",
+          "code": "19.25px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    },
+    "twoPlus1": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [],
+      "preview": [
+        {
+          "p": "23px",
+          "h1": "40.25px",
+          "h2": "32.2px",
+          "code": "20.125px",
+          "padTop": "0px"
+        },
+        {
+          "p": "23px",
+          "h1": "40.25px",
+          "h2": "32.2px",
+          "code": "20.125px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    },
+    "previewReset": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [],
+      "preview": [
+        {
+          "p": "20px",
+          "h1": "35px",
+          "h2": "28px",
+          "code": "17.5px",
+          "padTop": "0px"
+        },
+        {
+          "p": "20px",
+          "h1": "35px",
+          "h2": "28px",
+          "code": "17.5px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    },
+    "beforeSidebar": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [],
+      "preview": [
+        {
+          "p": "21px",
+          "h1": "36.75px",
+          "h2": "29.4px",
+          "code": "18.375px",
+          "padTop": "0px"
+        },
+        {
+          "p": "21px",
+          "h1": "36.75px",
+          "h2": "29.4px",
+          "code": "18.375px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    },
+    "focusSidebar": "Folders",
+    "sidebarKeys": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [],
+      "preview": [
+        {
+          "p": "21px",
+          "h1": "36.75px",
+          "h2": "29.4px",
+          "code": "18.375px",
+          "padTop": "0px"
+        },
+        {
+          "p": "21px",
+          "h1": "36.75px",
+          "h2": "29.4px",
+          "code": "18.375px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    },
+    "focusTree": "ProjectPanel menu not_editing",
+    "treePlus": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [
+        "14px"
+      ],
+      "preview": [
+        {
+          "p": "21px",
+          "h1": "36.75px",
+          "h2": "29.4px",
+          "code": "18.375px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    }
+  },
+  "i1_keys": {
+    "base": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [
+        "15px"
+      ],
+      "preview": [
+        {
+          "p": "20px",
+          "h1": "35px",
+          "h2": "28px",
+          "code": "17.5px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    },
+    "focusPreview": "MarkdownPreview",
+    "previewPlus2": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [
+        "15px"
+      ],
+      "preview": [
+        {
+          "p": "22px",
+          "h1": "38.5px",
+          "h2": "30.8px",
+          "code": "19.25px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    },
+    "focusEditor": "cm-content cm-lineWrapping",
+    "editorMinus1": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [
+        "14px"
+      ],
+      "preview": [
+        {
+          "p": "22px",
+          "h1": "38.5px",
+          "h2": "30.8px",
+          "code": "19.25px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    },
+    "syncAfterClickSection8": [
+      "Section 6"
+    ],
+    "twoPreviews": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [],
+      "preview": [
+        {
+          "p": "22px",
+          "h1": "38.5px",
+          "h2": "30.8px",
+          "code": "19.25px",
+          "padTop": "0px"
+        },
+        {
+          "p": "22px",
+          "h1": "38.5px",
+          "h2": "30.8px",
+          "code": "19.25px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    },
+    "twoPlus1": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [],
+      "preview": [
+        {
+          "p": "23px",
+          "h1": "40.25px",
+          "h2": "32.2px",
+          "code": "20.125px",
+          "padTop": "0px"
+        },
+        {
+          "p": "23px",
+          "h1": "40.25px",
+          "h2": "32.2px",
+          "code": "20.125px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    },
+    "previewReset": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [],
+      "preview": [
+        {
+          "p": "20px",
+          "h1": "35px",
+          "h2": "28px",
+          "code": "17.5px",
+          "padTop": "0px"
+        },
+        {
+          "p": "20px",
+          "h1": "35px",
+          "h2": "28px",
+          "code": "17.5px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    },
+    "beforeSidebar": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [],
+      "preview": [
+        {
+          "p": "21px",
+          "h1": "36.75px",
+          "h2": "29.4px",
+          "code": "18.375px",
+          "padTop": "0px"
+        },
+        {
+          "p": "21px",
+          "h1": "36.75px",
+          "h2": "29.4px",
+          "code": "18.375px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    },
+    "focusSidebar": "Folders",
+    "sidebarKeys": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [],
+      "preview": [
+        {
+          "p": "21px",
+          "h1": "36.75px",
+          "h2": "29.4px",
+          "code": "18.375px",
+          "padTop": "0px"
+        },
+        {
+          "p": "21px",
+          "h1": "36.75px",
+          "h2": "29.4px",
+          "code": "18.375px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    },
+    "focusTree": "ProjectPanel menu not_editing",
+    "treePlus": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [
+        "14px"
+      ],
+      "preview": [
+        {
+          "p": "21px",
+          "h1": "36.75px",
+          "h2": "29.4px",
+          "code": "18.375px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    }
+  },
+  "run3_restart": {
+    "sizes": {
+      "menuName": null,
+      "sidebarItem": "14px",
+      "status": "12px",
+      "tabTitle": "14px",
+      "treeLabel": "14px",
+      "editor": [
+        "15px"
+      ],
+      "preview": [
+        {
+          "p": "20px",
+          "h1": "35px",
+          "h2": "28px",
+          "code": "17.5px",
+          "padTop": "0px"
+        }
+      ],
+      "dpr": 1,
+      "innerWidth": 1440,
+      "zoom": "1"
+    },
+    "menu16": [
+      "File 14px",
+      "Edit 14px",
+      "View 14px",
+      "Go 14px",
+      "Window 14px",
+      "Help 14px"
+    ],
+    "about": [
+      "workbench-tauri 0.7.0"
+    ]
+  }
+}

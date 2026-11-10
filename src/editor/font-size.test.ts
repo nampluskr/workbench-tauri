@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { stepEditorFontSize } from "./font-size.ts";
+import { fontTarget, stepEditorFontSize } from "./font-size.ts";
 import { keymap } from "../keymap/keyboard.ts";
 import { strokeOf } from "../keymap/engine.ts";
 
@@ -10,6 +10,14 @@ test("U-17: one px per step, clamped to 6..100, reset returns the setting", () =
   assert.equal(stepEditorFontSize(6, -1, 15), 6);
   assert.equal(stepEditorFontSize(100, 1, 15), 100);
   assert.equal(stepEditorFontSize(40, 0, 18), 18);
+});
+
+test("I-1: the focused editor or preview is the zoom target, any other focus has none", () => {
+  const stack = (...names: string[]) => [new Set(["Workspace"]), ...names.map((n) => new Set(n.split(" ")))];
+  assert.equal(fontTarget(stack("Pane", "Editor extension=md")), "editor");
+  assert.equal(fontTarget(stack("Pane", "Editor", "EditorSearch")), "editor");
+  assert.equal(fontTarget(stack("Pane", "MarkdownPreview")), "preview");
+  for (const other of [[], ["Sidebar"], ["Pane"], ["ProjectPanel menu not_editing"], ["KeymapEditor"]]) assert.equal(fontTarget(stack(...other)), null);
 });
 
 test("U-17: Ctrl+= / Ctrl+Shift+= / numpad + zoom in, Ctrl+- / numpad - zoom out, Ctrl+0 resets, from every focus", () => {

@@ -6,7 +6,7 @@ import AppMenu, { isContextMenuOpen, openContextMenu } from "../shell/AppMenu.ts
 import { commands } from "../keymap/keyboard.ts";
 import { SETTINGS_DROPDOWN_OFFSET_Y } from "../spec/metrics.ts";
 import { choices } from "./choices.ts";
-import { filterSettings, settingMenu, type SettingKey } from "./model.ts";
+import { CATEGORIES, filterSettings, settingMenu, type SettingKey } from "./model.ts";
 import { saveSetting, settings } from "./load.ts";
 import "./settings.css";
 
@@ -16,6 +16,7 @@ export default function SettingsWindow() {
   const [error, setError] = createSignal("");
   const [saving, setSaving] = createSignal(false);
   const rows = createMemo(() => filterSettings(query()));
+  const [current, setCurrent] = createSignal<(typeof CATEGORIES)[number]>("UI");
   const save = async (key: SettingKey, value: string | number) => {
     if (saving()) return;
     setSaving(true);
@@ -28,21 +29,22 @@ export default function SettingsWindow() {
     <div class="settings-body">
       <nav class="settings-nav" aria-label="Settings categories">
         <div class="settings-search"><Icon name="magnifying_glass" /><input type="search" placeholder="Search settings…" aria-label="Search settings" value={query()} onInput={(e) => setQuery(e.currentTarget.value)} /></div>
-        <Show when={rows().length}><button class="settings-category" aria-current="page" onClick={() => document.getElementById("appearance")?.scrollIntoView()}><Icon name="chevron_right" />Appearance</button></Show>
+        <For each={CATEGORIES}>{(category) => <Show when={rows().some((r) => r.category === category)}>
+          <button class="settings-category" aria-current={current() === category ? "page" : undefined} onClick={() => { setCurrent(category); document.getElementById(`category-${category}`)?.scrollIntoView(); }}><Icon name="chevron_right" />{category}</button>
+        </Show>}</For>
       </nav>
       <main class="settings-content">
         <div class="settings-toolbar"><span class="settings-scope" aria-label="Settings scope: User">User</span><button onClick={() => void invoke("edit_user_settings").catch((error) => setError(String(error)))}>Edit in settings.json</button></div>
-        <h1 id="appearance">Appearance</h1>
         <Show when={error()}><p role="alert">{error()}</p></Show>
-        <For each={["Theme", "Buffer Font", "UI Font"]}>{(section) => <Show when={rows().some((r) => r.section === section)}>
-          <h2>{section}</h2>
-          <For each={rows().filter((r) => r.section === section)}>{(row) => <div class="settings-row">
+        <For each={CATEGORIES}>{(category) => <Show when={rows().some((r) => r.category === category)}>
+          <h1 id={`category-${category}`}>{category}</h1>
+          <For each={rows().filter((r) => r.category === category)}>{(row) => <div class="settings-row">
             <div class="settings-copy"><label id={`label-${row.key}`} for={`setting-${row.key}`}>{row.name}</label><p id={`description-${row.key}`}>{row.description}</p></div>
             <Show when={row.key === "theme" || row.key === "icon_theme"} fallback={
               <div class="settings-number">
-                <button aria-label={`Decrease ${row.section} Font Size`} disabled={saving()} onClick={() => void save(row.key, Number(settings()[row.key]) - 1)}>−</button>
+                <button aria-label={`Decrease ${row.category} Font Size`} disabled={saving()} onClick={() => void save(row.key, Number(settings()[row.key]) - 1)}>−</button>
                 <input id={`setting-${row.key}`} aria-describedby={`description-${row.key}`} type="number" step="any" value={settings()[row.key]} disabled={saving()} onChange={(e) => void save(row.key, e.currentTarget.valueAsNumber)} />
-                <button aria-label={`Increase ${row.section} Font Size`} disabled={saving()} onClick={() => void save(row.key, Number(settings()[row.key]) + 1)}>+</button>
+                <button aria-label={`Increase ${row.category} Font Size`} disabled={saving()} onClick={() => void save(row.key, Number(settings()[row.key]) + 1)}>+</button>
               </div>
             }>
               {(() => {

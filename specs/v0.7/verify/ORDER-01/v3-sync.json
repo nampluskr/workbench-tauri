@@ -1,0 +1,73 @@
+{
+  "noChange": [
+    {
+      "clicked": "## Section 6",
+      "cursorLine": "## Section 6",
+      "active": [
+        "Section 6"
+      ]
+    },
+    {
+      "clicked": "## Section 8",
+      "cursorLine": "## Section 8",
+      "active": [
+        "Section 8"
+      ]
+    }
+  ],
+  "afterPreviewPlus2": [
+    {
+      "clicked": "## Section 5",
+      "cursorLine": "## Section 5",
+      "active": [
+        "Section 5"
+      ]
+    },
+    {
+      "clicked": "## Section 9",
+      "cursorLine": "## Section 9",
+      "active": [
+        "Section 9"
+      ]
+    }
+  ],
+  "afterEditorMinus1": [
+    {
+      "clicked": "## Section 7",
+      "cursorLine": "## Section 7",
+      "active": [
+        "Section 7"
+      ]
+    },
+    {
+      "clicked": "## Section 3",
+      "cursorLine": "## Section 3",
+      "active": [
+        "Section 3"
+      ]
+    },
+    {
+      "clicked": "## Section 10",
+      "cursorLine": "## Section 10",
+      "active": [
+        "Section 10"
+      ]
+    }
+  ],
+  "afterEditorPlus2": [
+    {
+      "clicked": "## Section 4",
+      "cursorLine": "## Section 4",
+      "active": [
+        "Section 4"
+      ]
+    },
+    {
+      "clicked": "## Section 11",
+      "cursorLine": "## Section 11",
+      "active": [
+        "Section 11"
+      ]
+    }
+  ]
+}

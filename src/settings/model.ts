@@ -5,15 +5,17 @@ import { DEFAULT_THEME } from "../theme/registry.ts";
 
 export const SETTINGS_BINDINGS: KeymapSection[] = [{ context: "Workspace", bindings: { "ctrl-,": "zed::OpenSettings" } }];
 
-export const DEFAULTS = { theme: DEFAULT_THEME as string, icon_theme: "Zed (Default)", ui_font_size: 16, buffer_font_size: 15 };
+export const DEFAULTS = { theme: DEFAULT_THEME as string, icon_theme: "Zed (Default)", ui_font_size: 16, buffer_font_size: 15, preview_font_size: 16 };
 export type Settings = typeof DEFAULTS;
 export type SettingKey = keyof Settings;
-// Labels and descriptions: Zed 4304dec732, crates/settings_ui/src/page_data.rs (appearance_page).
-export const ROWS: { key: SettingKey; name: string; description: string; section: string }[] = [
-  { key: "theme", name: "Theme Name", description: "The name of your selected theme.", section: "Theme" },
-  { key: "icon_theme", name: "Icon Theme Name", description: "The name of your selected icon theme.", section: "Theme" },
-  { key: "buffer_font_size", name: "Font Size", description: "Font size for editor text.", section: "Buffer Font" },
-  { key: "ui_font_size", name: "Font Size", description: "Font size for UI elements.", section: "UI Font" },
+// I-4: three categories. Labels follow Zed's settings UI; descriptions follow VS Code's setting descriptions (Zed page_data.rs words them differently).
+export const CATEGORIES = ["UI", "Editor", "Preview"] as const;
+export const ROWS: { key: SettingKey; name: string; description: string; category: (typeof CATEGORIES)[number] }[] = [
+  { key: "theme", name: "Theme", description: "Specifies the color theme used in the workbench.", category: "UI" },
+  { key: "icon_theme", name: "Icon Theme", description: "Specifies the file icon theme used in the workbench.", category: "UI" },
+  { key: "ui_font_size", name: "Font Size", description: "Controls the font size in pixels used in the UI.", category: "UI" },
+  { key: "buffer_font_size", name: "Font Size", description: "Controls the font size in pixels.", category: "Editor" },
+  { key: "preview_font_size", name: "Font Size", description: "Controls the font size in pixels used in the Markdown preview.", category: "Preview" },
 ];
 
 function object(text: string): Record<string, unknown> {
@@ -37,7 +39,7 @@ export function parseSettings(text: string | null, choices: Choices): Settings {
 }
 
 export const filterSettings = (query: string) => ROWS.filter((row) =>
-  query.toLowerCase().trim().split(/\s+/).every((term) => `Appearance ${row.section} ${row.name} ${row.description}`.toLowerCase().includes(term)));
+  query.toLowerCase().trim().split(/\s+/).every((term) => `${row.category} ${row.name} ${row.description}`.toLowerCase().includes(term)));
 
 export const settingMenu = (key: "theme" | "icon_theme", current: string, change: (value: string) => void, choices: Choices): MenuItem[] =>
   choices[key].map((name) => ({ label: name, checked: name === current, run: () => change(name) }));

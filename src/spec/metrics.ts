@@ -3,6 +3,8 @@
 const REM_SIZE = 16; // units.rem_size (L-01)
 /** L-02: px -> rem is px / rem_size. The only place that converts. */
 const rem = (px: number) => `${px / REM_SIZE}rem`;
+/** I-2: the Markdown preview lengths are rem-like units of the preview font size (`preview_font_size`), not of the UI font size. */
+const prem = (px: number) => `calc(${px / REM_SIZE} * var(--typography-preview-font-size))`;
 
 export const PROJECT_PANEL_ITEM_HEIGHT = 26; // project_panel.item.height (L-36); script needs it for the virtual window
 export const PROJECT_PANEL_DEFAULT_WIDTH = 240; // project_panel.default_width (L-32)
@@ -214,46 +216,46 @@ const METRICS: Record<string, string> = {
   "toolbar.border_bottom": rem(1), // E-038
   "toolbar.min_height": rem(32), // E-038
   "toolbar.quick_actions_gap": rem(1), // E-038
-  "markdown_preview.max_width": rem(800), // L-101
-  "markdown_preview.container_padding": rem(16), // L-102
-  "markdown_preview.body.font_size": rem(16), // L-103
+  "markdown_preview.max_width": prem(800), // L-101
+  "markdown_preview.container_padding": prem(16), // L-102
+  "markdown_preview.body.font_size": prem(16), // L-103
   "markdown_preview.body.line_height_multiplier": "1.5", // L-103
-  "markdown_preview.paragraph_gap": rem(16), // L-103
-  "markdown_preview.list_gap": rem(12), // L-103
+  "markdown_preview.paragraph_gap": prem(16), // L-103
+  "markdown_preview.list_gap": prem(12), // L-103
   "markdown_preview.heading.font_weight": "600", // L-104
   "markdown_preview.heading.line_height_multiplier": "1.25", // L-104
-  "markdown_preview.h1.font_size": rem(28), // L-104
-  "markdown_preview.h2.font_size": rem(22.4), // L-104
-  "markdown_preview.h3.font_size": rem(19.2), // L-104
-  "markdown_preview.h4.font_size": rem(16), // L-104
-  "markdown_preview.h5.font_size": rem(14), // L-104
-  "markdown_preview.h6.font_size": rem(13.6), // L-104
-  "markdown_preview.h1.padding_bottom": rem(8), // L-105
-  "markdown_preview.h1.border_bottom": rem(1), // L-105
-  "markdown_preview.h2.padding_bottom": rem(4), // L-105
-  "markdown_preview.h2.border_bottom": rem(1), // L-105
-  "markdown_preview.blockquote.padding_left": rem(16), // L-106
-  "markdown_preview.blockquote.border_left": rem(4), // L-106
-  "markdown_preview.table.border_outer": rem(1.5), // L-107
-  "markdown_preview.table.corner_radius": rem(4), // L-107
-  "markdown_preview.table.cell_padding_x": rem(10), // L-107
-  "markdown_preview.table.cell_padding_y": rem(4), // L-107
-  "markdown_preview.table.cell_border": rem(1), // L-107
+  "markdown_preview.h1.font_size": prem(28), // L-104
+  "markdown_preview.h2.font_size": prem(22.4), // L-104
+  "markdown_preview.h3.font_size": prem(19.2), // L-104
+  "markdown_preview.h4.font_size": prem(16), // L-104
+  "markdown_preview.h5.font_size": prem(14), // L-104
+  "markdown_preview.h6.font_size": prem(13.6), // L-104
+  "markdown_preview.h1.padding_bottom": prem(8), // L-105
+  "markdown_preview.h1.border_bottom": prem(1), // L-105
+  "markdown_preview.h2.padding_bottom": prem(4), // L-105
+  "markdown_preview.h2.border_bottom": prem(1), // L-105
+  "markdown_preview.blockquote.padding_left": prem(16), // L-106
+  "markdown_preview.blockquote.border_left": prem(4), // L-106
+  "markdown_preview.table.border_outer": prem(1.5), // L-107
+  "markdown_preview.table.corner_radius": prem(4), // L-107
+  "markdown_preview.table.cell_padding_x": prem(10), // L-107
+  "markdown_preview.table.cell_padding_y": prem(4), // L-107
+  "markdown_preview.table.cell_border": prem(1), // L-107
   "markdown_preview.table.header_font_weight": "600", // L-107
-  "markdown_preview.link.underline_width": rem(1), // L-108
+  "markdown_preview.link.underline_width": prem(1), // L-108
   "markdown_preview.link.underline_opacity": "0.5", // L-108
-  "markdown_preview.inline_code.font_size": rem(14), // L-109
+  "markdown_preview.inline_code.font_size": prem(14), // L-109
   "markdown_preview.inline_code.background_opacity": "0.08", // L-109
-  "markdown_preview.code_block.padding": rem(12), // L-109
-  "markdown_preview.code_block.margin_y": rem(16), // L-109
-  "markdown_preview.code_block.corner_radius": rem(6), // L-109
+  "markdown_preview.code_block.padding": prem(12), // L-109
+  "markdown_preview.code_block.margin_y": prem(16), // L-109
+  "markdown_preview.code_block.corner_radius": prem(6), // L-109
   // No toml ID yet (K-53): Zed markdown.rs:272-279 border_widths 1px solid border_variant; requested for registration.
-  "markdown_preview.code_block.border": rem(1),
-  "markdown_preview.frontmatter.border": rem(1), // L-111
-  "markdown_preview.frontmatter.corner_radius": rem(4), // L-111
+  "markdown_preview.code_block.border": prem(1),
+  "markdown_preview.frontmatter.border": prem(1), // L-111
+  "markdown_preview.frontmatter.corner_radius": prem(4), // L-111
   "markdown_preview.frontmatter.key_cell_font_weight": "600", // L-111
-  "markdown_preview.frontmatter.value_border_left": rem(1), // L-111
-  "markdown_preview.frontmatter.row_border_top": rem(1), // L-111
+  "markdown_preview.frontmatter.value_border_left": prem(1), // L-111
+  "markdown_preview.frontmatter.row_border_top": prem(1), // L-111
   "tab.start_slot.width": rem(12), // L-25 (modified dot)
   "tab.start_slot.height": rem(12), // L-25
   "tab.end_slot.width": rem(14), // L-25 (close button)
@@ -372,7 +374,7 @@ const UI_FONT_FEATURE_SETTINGS = '"calt" 0'; // I-14: disable UI contextual alte
 
 /** Publish the metrics as CSS variables on :root (constructable sheet, no inline style). */
 let metricsSheet: CSSStyleSheet | undefined;
-export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15, editorFontSize = bufferFontSize): Promise<void> {
+export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15, editorFontSize = bufferFontSize, previewFontSize = 16): Promise<void> {
   const bufferSize = `${bufferFontSize}px`;
   const editorSize = `${editorFontSize}px`;
   const vars = Object.entries(METRICS).map(
@@ -390,7 +392,7 @@ export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15, editorF
   vars.push(`--font-weight-default: ${FONT_WEIGHT};`);
   vars.push(`--ui-font-feature-settings: ${UI_FONT_FEATURE_SETTINGS};`);
 
-  vars.push(`--units-rem-size: ${uiFontSize}px; --typography-ui-font-size: ${uiFontSize}px; --typography-buffer-font-size: ${bufferSize}; --editor-buffer-font-size: ${editorSize};`); // U-17: the editor has its own variable; the setting value stays in --typography-buffer-font-size
+  vars.push(`--units-rem-size: ${uiFontSize}px; --typography-ui-font-size: ${uiFontSize}px; --typography-buffer-font-size: ${bufferSize}; --editor-buffer-font-size: ${editorSize}; --typography-preview-font-size: ${previewFontSize}px;`); // U-17: the editor has its own variable; the setting value stays in --typography-buffer-font-size
   metricsSheet ??= new CSSStyleSheet();
   metricsSheet.replaceSync(`:root { font-size: var(--units-rem-size); ${vars.join(" ")} }`);
   if (!document.adoptedStyleSheets.includes(metricsSheet)) document.adoptedStyleSheets = [...document.adoptedStyleSheets, metricsSheet];

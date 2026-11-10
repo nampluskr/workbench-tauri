@@ -9,15 +9,18 @@ import { dockOpen, sidebarOpen, toggleSidebar } from "./shell/panels.ts";
 import { addFolder, editorContext, sidebarWidth, resizeSidebar, toggleLockPreview } from "./workspace/store.ts";
 import { activeTabOf, lockPreview } from "./workspace/context.ts";
 import { statusButtons, statusItems } from "./shell/status.ts";
-import { commands } from "./keymap/keyboard.ts";
-import { adjustEditorFontSize } from "./settings/load.ts";
+import { commands, focusStack } from "./keymap/keyboard.ts";
+import { adjustFontSize } from "./settings/load.ts";
+import { fontTarget } from "./editor/font-size.ts";
 import { PickerHost } from "./shell/Picker.tsx";
 import { FileFinderHost } from "./shell/FileFinder.tsx";
 
 commands.set("markdown::ToggleLockPreview", toggleLockPreview);
-commands.set("zed::IncreaseBufferFontSize", () => adjustEditorFontSize(1));
-commands.set("zed::DecreaseBufferFontSize", () => adjustEditorFontSize(-1));
-commands.set("zed::ResetBufferFontSize", () => adjustEditorFontSize(0));
+// I-1: one action each; the focused editor or preview is the target, anything else does nothing.
+const zoom = (direction: -1 | 0 | 1) => () => { const target = fontTarget(focusStack()); if (target) adjustFontSize(target, direction); };
+commands.set("zed::IncreaseBufferFontSize", zoom(1));
+commands.set("zed::DecreaseBufferFontSize", zoom(-1));
+commands.set("zed::ResetBufferFontSize", zoom(0));
 
 // Core D-9 / I-18: icon names follow the pinned Zed sources (K-08 report).
 export default function App() {

@@ -13,6 +13,11 @@ test("settings defaults, invalid values and supported values", () => {
   assert.equal(parseSettings('{"icon_theme":"Missing"}', THEMES).icon_theme, "Zed (Default)");
   assert.equal(parseSettings('{"icon_theme":"Catppuccin Mocha"}', { ...THEMES, icon_theme: [] }).icon_theme, "Zed (Default)");
   assert.deepEqual(parseSettings('{"theme":"One Light","ui_font_size":18.5,"buffer_font_size":20}', THEMES), { ...DEFAULTS, theme: "One Light", ui_font_size: 18.5, buffer_font_size: 20 });
+  // I-2: a v0.6 file (four keys) reads preview_font_size as 16; a valid value is kept, an invalid one falls back.
+  assert.equal(parseSettings('{"theme":"One Light","icon_theme":"Zed (Default)","ui_font_size":16,"buffer_font_size":15}', THEMES).preview_font_size, 16);
+  assert.equal(parseSettings('{"preview_font_size":20}', THEMES).preview_font_size, 20);
+  assert.equal(parseSettings('{"preview_font_size":"20"}', THEMES).preview_font_size, 16);
+  assert.equal(parseSettings(updateSetting('{\n  // keep\n  "theme": "One Light"\n}\n', "preview_font_size", 18, THEMES), THEMES).preview_font_size, 18);
 });
 
 test("settings writes preserve unknown keys, comments, duplicate keys and line endings", () => {
@@ -33,13 +38,15 @@ test("settings writes preserve unknown keys, comments, duplicate keys and line e
   assert.equal(parseSettings(nested, THEMES).theme, "One Light");
 });
 
-test("settings search includes page and section titles like Zed's search index", () => {
-  assert.deepEqual(filterSettings("editor TEXT").map((r) => r.key), ["buffer_font_size"]);
-  assert.equal(filterSettings("theme").length, 2);
-  assert.equal(filterSettings("missing").length, 0);
-  assert.deepEqual(filterSettings("BUFFER").map((r) => r.key), ["buffer_font_size"]);
-  assert.deepEqual(filterSettings("buffer text").map((r) => r.key), ["buffer_font_size"]);
-  assert.equal(filterSettings("appearance").length, 4);
+test("settings search includes the category title, name and description", () => {
+  const keys = (query: string) => filterSettings(query).map((r) => r.key);
+  assert.deepEqual(keys("preview"), ["preview_font_size"]);
+  assert.deepEqual(keys("EDITOR"), ["buffer_font_size"]);
+  assert.deepEqual(keys("ui"), ["theme", "icon_theme", "ui_font_size"]);
+  assert.deepEqual(keys("ui font size"), ["ui_font_size"]);
+  assert.equal(keys("theme").length, 2);
+  assert.equal(keys("font size").length, 3);
+  assert.equal(keys("missing").length, 0);
 });
 
 test("settings dropdown menus keep supported choices, selection and the saved value", () => {
