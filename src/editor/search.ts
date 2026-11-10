@@ -106,11 +106,31 @@ const openReplace: Command = (view) => {
   return openSearchPanel(view);
 };
 export const toggleSearch: Command = (view) => searchPanelOpen(view.state) ? closeSearchPanel(view) : openFind(view);
+
+// I-20: whole word here means a letter-or-digit boundary, so "_" and "-" both separate words ("my_read" matches "read"). CM judges
+// whole words with its own categorizer, where "_" is a word character and nothing can change that, so the toggle is kept as this
+// test on the query and CM's own wholeWord stays off. Ctrl+D and the other occurrence commands keep CM's rule.
+const isWordChar = (c: string | undefined) => !!c && /[\p{L}\p{N}]/u.test(c);
+export const wholeWordTest = (match: string, state: EditorState, from: number, to: number): boolean => {
+  if (!match) return true;
+  const before = Array.from(state.sliceDoc(Math.max(0, from - 2), from)).pop(), after = Array.from(state.sliceDoc(to, to + 2))[0];
+  return (!isWordChar(before) || !isWordChar(Array.from(match)[0])) && (!isWordChar(after) || !isWordChar(Array.from(match).pop()));
+};
+export const wholeWordOn = (query: SearchQuery) => query.test === wholeWordTest;
 const toggleOption = (option: "caseSensitive" | "wholeWord" | "regexp"): Command => (view) => {
   const query = getSearchQuery(view.state);
-  view.dispatch({ effects: setSearchQuery.of(new SearchQuery({ ...query, [option]: !query[option] })) });
+  const next = option === "wholeWord" ? { test: wholeWordOn(query) ? undefined : wholeWordTest } : { [option]: !query[option] };
+  view.dispatch({ effects: setSearchQuery.of(new SearchQuery({ ...query, ...next })), userEvent: option === "wholeWord" ? WHOLE_WORD_EVENT : undefined });
   return true;
 };
+// CM builds a new query when the find bar opens or is refocused over a selection (defaultQuery): it copies the old wholeWord flag but not
+// the test, so the toggle would silently turn off. Every setSearchQuery that drops it, except our own toggle, gets it back.
+const WHOLE_WORD_EVENT = "search.wholeword";
+const keepWholeWord = EditorState.transactionExtender.of((tr) => {
+  if (tr.isUserEvent(WHOLE_WORD_EVENT) || !wholeWordOn(getSearchQuery(tr.startState))) return null;
+  const set = tr.effects.find((effect) => effect.is(setSearchQuery));
+  return set && !wholeWordOn(set.value) ? { effects: setSearchQuery.of(new SearchQuery({ ...set.value, test: wholeWordTest })) } : null;
+});
 
 // Find in selection: with a scope on, the match commands work on the scope's matches; otherwise they are CM's own.
 export const toggleScope: Command = (view) => {
@@ -238,7 +258,7 @@ function createPanel(view: EditorView): Panel {
     find.value = query.search;
     replacement.value = query.replace;
     find.setAttribute("aria-invalid", String(!!query.search && !query.valid));
-    for (const [element, option] of options) element.setAttribute("aria-pressed", String(query[option]));
+    for (const [element, option] of options) element.setAttribute("aria-pressed", String(option === "wholeWord" ? wholeWordOn(query) : query[option]));
     toggleReplace.setAttribute("aria-pressed", String(view.state.field(replaceVisible)));
     inSelection.setAttribute("aria-pressed", String(!!scope));
     replaceRow.hidden = !view.state.field(replaceVisible);
@@ -261,6 +281,6 @@ function createPanel(view: EditorView): Panel {
   };
 }
 
-export const documentSearch = [replaceVisible, scopeField, scopedHighlight,
+export const documentSearch = [keepWholeWord, replaceVisible, scopeField, scopedHighlight,
   EditorView.editorAttributes.compute([scopeField], (state) => ({ class: scopeOf(state) ? "cm-find-in-selection" : "" })),
   search({ top: true, literal: true, createPanel })];

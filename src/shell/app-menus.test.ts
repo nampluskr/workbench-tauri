@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { APP_NAME, appMenus, userMenu } from "./app-menus.ts";
+import { appMenus, userMenu } from "./app-menus.ts";
 import { isClassicLayout } from "./layout.ts";
 import { PROJECT_PANEL_DEFAULT_WIDTH } from "../spec/metrics.ts";
 import { first, shortcutForEntry, type MenuEntry } from "./menu.ts";
@@ -29,8 +29,8 @@ test("K-13: menu shortcuts match Zed Windows primary keys without changing Close
     "Split Up": "Ctrl-K Up", "Split Down": "Ctrl-K Down", "Split Left": "Ctrl-K Left", "Split Right": "Ctrl-\\",
     "Maximize Pane": "Shift-Escape", "Project Panel": "Ctrl-Shift-E",
     "Open Markdown Preview": "Ctrl-Shift-V", "Open Markdown Preview to the Side": "Ctrl-K V",
-    "Previous Tab": "Ctrl-PageUp", "Next Tab": "Ctrl-PageDown", Minimize: undefined, Zoom: undefined,
-    "View Dependency Licenses": undefined, "File Bug Report...": undefined, "Request Feature...": undefined, [`${APP_NAME} Repository`]: undefined, [`About ${APP_NAME}`]: undefined,
+    "Previous Tab": "Ctrl-PageUp", "Next Tab": "Ctrl-PageDown",
+    "View Dependency Licenses": undefined, "File Bug Report...": undefined, "Request Feature...": undefined, Repository: undefined, About: undefined,
   });
   const close = menus[0].entries[4];
   if (close === "separator") assert.fail();
@@ -44,7 +44,7 @@ test("K-13: menu shortcuts match Zed Windows primary keys without changing Close
 test("K-10: menus start with File, end File with Quit and retain the other entries", () => {
   let disabled = false;
   const menus = appMenus(() => disabled);
-  assert.deepEqual(menus.map((m) => m.name), ["File", "Edit", "View", "Go", "Window", "Help"]);
+  assert.deepEqual(menus.map((m) => m.name), ["File", "Edit", "View", "Go", "Help"]);
   assert.deepEqual(labels(menus[0].entries), ["Open Folder...", "---", "Save", "---", "Close Editor", "Close Window", "---", "Quit"]);
   assert.deepEqual(menus[0].entries.at(-1), { label: "Quit", action: "zed::Quit" });
   assert.deepEqual(labels(menus[1].entries), ["Undo", "Redo", "---", "Cut", "Copy", "Paste", "---", "Find", "Replace", "---", "Toggle Line Comment", "Toggle Block Comment", "---", "Select All", "Add Next Occurrence", "Add Cursor Above", "Add Cursor Below"]);
@@ -61,12 +61,11 @@ test("K-10: menus start with File, end File with Quit and retain the other entri
     disabled = false;
   }
   assert.deepEqual(labels(menus[3].entries), ["Previous Tab", "Next Tab"]);
-  assert.deepEqual(labels(menus[4].entries), ["Minimize", "Zoom"]);
 });
 
 test("K-09: Help sends the repository's issue and repository URLs, without opening a browser", () => {
   const help = appMenus(() => true).at(-1)!.entries;
-  assert.deepEqual(labels(help), ["View Dependency Licenses", "---", "File Bug Report...", "Request Feature...", "---", `${APP_NAME} Repository`, `About ${APP_NAME}`]);
+  assert.deepEqual(labels(help), ["View Dependency Licenses", "---", "File Bug Report...", "Request Feature...", "---", "Repository", "About"]);
   assert.deepEqual(help.flatMap((e) => e !== "separator" && e.url ? [e.url] : []), [
     "https://github.com/nampluskr/workbench-tauri/issues/new",
     "https://github.com/nampluskr/workbench-tauri/issues/new",

@@ -1,6 +1,6 @@
 > 버전: v0.7 · 작성일: 2026-11-10 · 상태: 초안
 >
-> workbench-core v0.7 ITEMS의 I-1~I-14와 I-16·I-17을 어떤 Phase 순서로 반영할지 적는 I-n 대응 문서다. v0.7은 INTENT·DECISIONS·SPEC을 쓰지 않는다(tauri-leader 결정 2026-11-10). 요구·결정·판정 방법은 core `specs/v0.7/ITEMS.md`의 "정한 것"과 "판정 방법"을, Phase 순서와 이유는 core `specs/v0.7/PLAN.md`를, 카드 공통 규칙은 core `specs/v0.7/orders/COMMON.md`를 따른다. 에이전트 운영은 `HERDR-SETUP.md`에, 실제 진행은 `PROGRESS.md`에, core 보고는 `specs/v0.7/reports/`에 있다.
+> workbench-core v0.7 ITEMS의 I-1~I-21(I-15~I-21 포함)을 어떤 Phase 순서로 반영할지 적는 I-n 대응 문서다. v0.7은 INTENT·DECISIONS·SPEC을 쓰지 않는다(tauri-leader 결정 2026-11-10). 요구·결정·판정 방법은 core `specs/v0.7/ITEMS.md`의 "정한 것"과 "판정 방법"을, Phase 순서와 이유는 core `specs/v0.7/PLAN.md`를, 카드 공통 규칙은 core `specs/v0.7/orders/COMMON.md`를 따른다. 에이전트 운영은 `HERDR-SETUP.md`에, 실제 진행은 `PROGRESS.md`에, core 보고는 `specs/v0.7/reports/`에 있다.
 
 # PLAN — workbench-tauri v0.7
 
@@ -21,6 +21,7 @@
 | Phase 4 — 미리보기 줄간격 | Phase 4 (ORDER-04) | G-5 | I-9 · I-14 |
 | Phase 5 — 작은 항목과 v0.6 정리 | Phase 5 (ORDER-05) | G-6 | I-11 · I-12 · I-13 · v0.6 정리 · I-9 맞추기 · 0.7.0 빌드 |
 | Phase 6 — Settings 분류별 페이지·Load Defaults | Phase 6 (ORDER-06) | G-7 | I-16 · I-17 |
+| Phase 7 — 안내선 단위·툴팁·Help 이름·`wd` 구분자·Window 메뉴, 0.7.0 다시 빌드 | Phase 7 (ORDER-07) | G-7 | I-15 · I-18 · I-19 · I-20 · I-21 · I-17 고침 · 0.7.0 빌드 |
 
 ### Phase 1 작업 카드
 
@@ -78,3 +79,14 @@ core ORDER-04가 I-14(One 테마 안내선 색)를 이 Phase에 넣었다.
 | C-11 | K-07 검토와 커밋 전 전체 검증 | I-16 · I-17 |
 | C-12 | V3 결과 판정 | I-16 · I-17 |
 | W-08 | ORDER-06 PROGRESS·PLAN 기록 | I-16 · I-17 |
+
+### Phase 7 작업 카드
+
+| 카드 | 할 일 | core 항목 |
+|---|---|---|
+| K-08 | 들여쓰기 안내선 단위 감지, 찾기 줄 위 툴팁, Help 항목 이름, `wd` 구분자에 `_`·`-`, Window 메뉴 제거 | I-15 · I-18 · I-19 · I-20 · I-21 |
+| K-08-R1 | Load Defaults가 분류 키를 파일에서 지우기, K-08 검토 지적(Rust 테스트 넷 목록, 편집 탭 `SearchQuery` 생성 지점 전수 확인과 `defaultQuery` 빠짐 수정) | I-17 고침 · I-20 |
+| C-13 | K-08·K-08-R1 검토와 커밋 전 전체 검증 | I-15 · I-17 고침 · I-18 · I-19 · I-20 · I-21 |
+| C-14 | V3 결과 판정 | I-15 · I-17 고침 · I-18 · I-19 · I-20 · I-21 |
+| K-09 | release 0.7.0 다시 빌드와 `docs/BUILD.md` 갱신 | 0.7.0 빌드 |
+| W-09 | ORDER-07 PROGRESS·PLAN 기록 | I-15 · I-17 고침 · I-18 · I-19 · I-20 · I-21 · 0.7.0 빌드 |

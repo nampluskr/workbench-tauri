@@ -202,6 +202,53 @@
   - 검증: V3. 판정은 C-12(checker)가 측정 파일만 읽어 했다.
   - 특이사항: 확인 뒤 파일에 없던 Editor 키 다섯(`editor_theme`·`editor_line_numbers`·`editor_word_wrap`·`editor_indent_guides`·`editor_render_whitespace`)이 기본값으로 새로 쓰였다 — `categoryDefaults`가 분류의 키 전부를 쓰기 때문이고 값은 기본값과 같다.
 
+### Phase 7 — 안내선 단위·툴팁·Help 이름·`wd` 구분자·Window 메뉴, 0.7.0 다시 빌드
+
+- **에이전트 환경** (2026-11-10, tauri-leader)
+  - 무엇을 했나: Phase 시작에 writer·coder·checker의 컨텍스트를 `/clear`로 비웠다(core COMMON 1절).
+  - 결과: 세 에이전트 모두 비운 상태로 카드를 받았다.
+  - 검증: herdr 프롬프트 전송.
+  - 특이사항: 없음.
+- **K-08 안내선 단위(I-15), 툴팁(I-18), Help 이름(I-19), `wd` 구분자(I-20), Window 메뉴(I-21)** (2026-11-10, coder)
+  - 무엇을 했나:
+    - I-15: 들여쓰기 안내선 단위를 문서에서 감지한다(`src/editor/indent-guides.ts` `guessIndentUnit`, 기존 `depths`·`activeBlock`·`guideRuns`·`lineDepth`에 `unit` 인자를 더함). 규칙은 VS Code `guessIndentation`(이 PC VS Code 번들 `workbench.desktop.main.js`, 공개 소스 `src/vs/editor/common/model/indentationGuesser.ts`)을 읽고 따랐고 코드는 베끼지 않았다: 앞 10000줄, 빈 줄 건너뜀, 앞 줄과 접두사 관계인 줄의 공백 차이 1~8을 세어 후보 [2,4,6,8,3,5,7] 중 최다(동수면 앞 후보), 4가 뽑혀도 2가 4의 2/3 이상이면 2, 탭 시작 줄이 공백 2칸 이상 줄보다 많거나 같으면 탭 파일 → 4, 센 게 없으면 4. VS Code와 다른 점: 탭·공백이 섞인 차이는 세지 않고 건너뛴다, "looks like alignment" 거름은 생략했다(`shortcut:` 주석). 탭 키 칸 수(4)와 탭 정지 폭은 그대로다. 문서 상태를 만들 때(파일을 열 때)와 문서가 바뀔 때마다 다시 감지한다(`StateField`).
+    - I-18: 원인은 CodeMirror 찾기 줄(`.cm-panels`) 기본 `z-index` 300이 툴팁 `.tooltip`의 `z-index` 3보다 높아, 경로 줄 오른쪽 아이콘 툴팁이 찾기 줄 아래로 들어간 것이다. `.tooltip`을 `z-index` 1000으로 바꿨다(`src/app.css`).
+    - I-19: Help 항목을 "Repository"·"About"으로 바꿨다(동작 그대로, `src/shell/app-menus.ts`).
+    - I-20: Search 탭은 `src-tauri/src/name_search.rs` `is_word`에서 `_`를 뺐다(글자·숫자만 단어 문자). 편집 탭 찾기 줄의 원래 동작은 CM `charCategorizer` 기준이라 `_`는 단어 문자, `-`는 구분자였다 — `read to-read my_read reader`에서 `wd` `read`는 둘(`read`, `to-read`). CM wholeWord는 단어 문자를 뺄 수 없어 찾기 줄 `wd` 토글을 쿼리 `test` 훅 `wholeWordTest`(글자·숫자 경계)로 바꾸고, 켜짐 표시는 `wholeWordOn(query)`로 한다(`src/editor/search.ts`). `Ctrl+D`·`Ctrl+Shift+L`·skip·커서 단어 강조·단어 이동·두 번 눌러 선택은 그대로다.
+    - I-21: Window 메뉴(Minimize·Zoom)를 지웠다. 타이틀 바 버튼은 `TitleBar.tsx`가 `appWindow`를 직접 불러 그대로다. `zed::Minimize`·`zed::Zoom` 명령 등록은 사용자 keymap에서 쓸 수 있어 남겼다.
+  - 결과: 의존성·`spec/` 변경 없음. 변경 파일은 `src/editor/indent-guides.ts`(+`.test.ts`), `src/app.css`, `src/shell/app-menus.ts`(+`.test.ts`), `src/editor/search.ts`(+`.test.ts`), `src-tauri/src/name_search.rs`.
+  - 검증: V1. `npm.cmd run typecheck` 통과, `node --test` indent-guides·search·app-menus 17 통과, `cargo check`·`cargo clippy -- -D warnings` 경고 없음, `cargo test name_search` 3 통과. I-18은 코드 확인(원인을 CM 소스에서 확정). 보고 `C:\Users\nampl\AppData\Local\Temp\v07-K-08-report.md`.
+  - 특이사항: 문서가 바뀔 때마다 감지하므로 빈 파일에 처음 들여쓰기를 치는 동안 단위가 바뀔 수 있다. 큰 파일 입력이 느려지면 열 때만 감지로 바꾼다. 메뉴(z 3)도 같은 이유로 찾기 줄에 가릴 수 있으나 카드 범위 밖이라 고치지 않았다.
+- **K-08-R1 Load Defaults 키 지우기(ORDER-07 3.5A)와 K-08 검토 지적** (2026-11-10, coder)
+  - 무엇을 했나:
+    - ORDER-07 3.5A(ORDER-06 미정 1의 사용자 답): Load Defaults가 그 분류 키를 기본값으로 쓰지 않고 파일에서 지운다. `src/settings/model.ts`에서 `categoryDefaults`를 지우고 `categoryKeys`·`removeSettings`를 더했고, `src/settings/load.ts` `resetSettings`가 읽기 → `removeSettings` → `expected`로 한 번 쓰기 → 다시 읽기를 한다(`Settings.tsx`가 `resetSettings(categoryKeys(분류))`를 부름). 최상위 멤버만 지우고, BOM·CRLF·다른 키·알 수 없는 키·주석은 그대로 두며, 지운 키 바로 위 줄 주석은 남긴다(구역 제목일 수 있어서). 깨진 파일은 거부한다.
+    - ORDER-06 미정 2(단축키 임시 값): 사용자 답대로 지금 규칙 그대로 두었다.
+    - 검토 지적: `name_search.rs` 테스트에 `read.md`·`to-read`·`my_read.txt`·`reader.md` 넷에서 `wd` `read` → 앞의 셋, 끄면 넷 단언을 더했다. 편집 탭 `SearchQuery` 생성 지점을 전수 확인했고 빠진 곳 하나를 고쳤다 — CM 안쪽 `defaultQuery`가 선택 글이 있는 채로 찾기 줄을 열 때 새 쿼리를 만들면서 `test`를 잃어 `wd`가 꺼졌다. `keepWholeWord`(`EditorState.transactionExtender`)가 되돌리고, `wd` 토글 자신은 `userEvent: "search.wholeword"`로 걸러 끄기는 그대로 된다.
+  - 결과: 의존성 변경 없음. 변경 파일은 `src/settings/model.ts`(+`.test.ts`), `src/settings/load.ts`, `src/settings/Settings.tsx`, `src-tauri/src/name_search.rs`, `src/editor/search.ts`(+`.test.ts`).
+  - 검증: V1. `npm.cmd run typecheck` 통과, `node --test` search·indent-guides·settings model·app-menus 28 통과, `cargo check`·`cargo clippy -- -D warnings` 경고 없음, `cargo test name_search` 통과. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-K-08-R1-report.md`.
+  - 특이사항: 중복 키는 하나씩 반복해서 지운다(드문 경우라 단순하게).
+- **C-13 checker 검토(K-08·K-08-R1)와 커밋 전 전체 검증** [PASS] (2026-11-10)
+  - 무엇을 했나: K-08·K-08-R1 코드와 테스트를 검토하고 전체 검증을 했다.
+  - 결과: 지적 없음. typecheck 오류 0, test 251/251 통과, clippy 경고 0, cargo test 22 통과.
+  - 검증: tauri-leader 출력 파일 `%TEMP%\v07-C-13-*.txt`로 판정했다. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-C-13-report.md`.
+  - 특이사항: 없음.
+- **V3 측정(ORDER-07)** (2026-11-10, tauri-leader)
+  - 무엇을 했나: 화면 차례 안에서 tauri-leader가 쟀다.
+  - 결과: `specs/v0.7/verify/ORDER-07/`(`v3.json`, PNG 15). C-14 checker 판정 [MEASURED]: ORDER-07 완료 기준 1·2·3·4·5·5A PASS, 불일치 0, 측정 불가 0(측정 조건 창 1440×852, 100%, One Dark, 버퍼 글자 폭 9px, debug exe, 임시 APPDATA·WebView 폴더, CDP 합성 입력. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-C-14-report.md`).
+    - 기준 1(I-15): 2칸 YAML은 선 간격 18px(2칸), 4칸 TS는 36px(4칸)이다(글자 폭 9). 활성 선은 하나이고 빈 줄 이어짐과 테마 변수는 그대로다.
+    - 기준 2(I-18): 찾기 줄이 열려도 Preview Markdown·Find 툴팁의 글과 위치가 닫혔을 때와 같고, 툴팁 z 1000 > 찾기 줄 z 300이라 겹치는 부분까지 보인다.
+    - 기준 3(I-19): Help 항목 "Repository"·"About", About 창 "workbench-tauri 0.7.0"(Escape로 닫힘).
+    - 기준 4(I-20): Search 탭 `wd` 켬은 `my_read.txt`·`read.md`·`to-read` 셋, 끔은 넷. 편집 탭 `read to-read my_read reader`에서 `wd` 켬 `1/3`, 선택 위에서 찾기 줄을 다시 열어도 `1/3`·`wd` 켜짐 유지, 끔 `1/4`.
+    - 기준 5(I-21): 메뉴 줄 File·Edit·View·Go·Help. 최대화 1920×1032, 원래대로 1440×852, 최소화 동작.
+    - 기준 5A(I-17 고침): Editor Load Defaults 뒤 화면 값은 기본값(15·1.6·줄바꿈 켬)이고 Preview 22는 그대로다. 파일은 `{ // user comment, "x_unknown": 1, "preview_font_size": 22 }`로 Editor 키만 지워졌다.
+  - 검증: V3. 판정은 C-14(checker)가 측정 파일만 읽어 했다.
+  - 특이사항: Repository는 외부 브라우저를 열어 누르지 않았다(URL과 핸들러는 코드·테스트 그대로).
+- **K-09 release 0.7.0 다시 빌드** (2026-11-10, coder)
+  - 무엇을 했나: `npm.cmd run tauri build`로 release를 다시 빌드하고 `docs/BUILD.md`(4장 표 위 두 문장, NSIS 설치 파일·앱 exe 행, 5장 0.7.0 걸린 시간)를 고쳤다.
+  - 결과: 성공, 전체 66.4초(vite 6.57초, Rust release 47.25초, NSIS 포함). NSIS 설치 파일 `workbench-tauri_0.7.0_x64-setup.exe` 6,024,784 바이트(LastWriteTime 2026-11-10 20:03:16), 앱 exe 16,743,936 바이트, 둘 다 ProductVersion·FileVersion 0.7.0. 경고는 기존 그대로(web-tree-sitter direct eval, 큰 chunk).
+  - 검증: V1(빌드 결과 확인). 빌드 전 `workbench-tauri.exe` 프로세스 없음, 잠금 없음. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-K-09-report.md`.
+  - 특이사항: exe zip·`dist/` 크기는 이번에 재지 않아 기존 2026-11-08 기록 표시를 유지했다.
+
 ## 사용자 요청 작업
 
 없음

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { DEFAULTS, categoryDefaults, filterSettings, parseSettings, settingMenu, settingNumber, settingStep, updateSetting, updateSettings } from "./model.ts";
+import { DEFAULTS, categoryKeys, filterSettings, parseSettings, removeSettings, settingMenu, type SettingKey, settingNumber, settingStep, updateSetting, updateSettings } from "./model.ts";
 const THEMES = { theme: ["One Dark", "Catppuccin Mocha", "One Light"], icon_theme: ["Zed (Default)", "Catppuccin Mocha"] };
 import { stripJsonc } from "../keymap/user.ts";
 
@@ -140,12 +140,40 @@ test("appending a key looks like an editor wrote it: comma after the last value,
   for (const text of ["", "// c", "{}", '{\n  "a": 1 // n\n}', "{ }", '{\n  "a": {"b": [1]}\n}']) assert.doesNotThrow(() => parseSettings(add(text), THEMES), text);
 });
 
-test("I-17: Load Defaults for a category writes only that category's keys", () => {
-  const text = '{\n  // keep\n  "unknown": 1,\n  "theme": "One Light",\n  "ui_font_size": 20,\n  "buffer_font_size": 22,\n  "editor_word_wrap": false,\n  "preview_font_size": 24\n}\n';
-  const next = updateSettings(text, categoryDefaults("Editor"), THEMES);
-  assert.ok(next.includes("// keep") && next.includes('"unknown": 1'));
+
+test("I-17: Load Defaults deletes the category's keys and keeps everything else", () => {
+  const text = '﻿{\r\n  // keep\r\n  "unknown": 1,\r\n  "theme": "One Light",\r\n  "ui_font_size": 20,\r\n  // about the size\r\n  "buffer_font_size": 22, // note\r\n  "editor_word_wrap": false,\r\n  "preview_font_size": 24\r\n}\r\n';
+  const keys = categoryKeys("Editor");
+  const next = removeSettings(text, keys);
+  assert.ok(keys.includes("buffer_font_size") && keys.includes("editor_word_wrap") && !keys.includes("preview_font_size"));
+  assert.ok(!next.includes("buffer_font_size") && !next.includes("editor_word_wrap") && !next.includes("// note"));
+  assert.ok(next.startsWith("﻿{\r\n") && next.includes("// keep") && next.includes("// about the size") && next.includes('"unknown": 1'));
+  assert.equal(next.replace(/\r\n/g, "").includes("\n"), false); // line endings stay CRLF
   const s = parseSettings(next, THEMES);
   assert.equal(s.buffer_font_size, DEFAULTS.buffer_font_size);
   assert.equal(s.editor_word_wrap, DEFAULTS.editor_word_wrap);
   assert.deepEqual([s.theme, s.ui_font_size, s.preview_font_size], ["One Light", 20, 24]);
+  assert.equal(removeSettings(next, keys), next); // nothing left to delete
+});
+
+test("I-17: deleting keys leaves valid JSONC for a first, last, only, inline and trailing-comma member", () => {
+  const del = (text: string | null, ...keys: SettingKey[]) => removeSettings(text, keys);
+  assert.equal(del('{\n  "a": 1,\n  "ui_font_size": 20\n}', "ui_font_size"), '{\n  "a": 1\n}'); // last: the comma before it goes
+  assert.equal(del('{\n  "a": 1, // c\n  "ui_font_size": 20\n}', "ui_font_size"), '{\n  "a": 1 // c\n}');
+  assert.equal(del('{\n  "ui_font_size": 20,\n  "a": 1\n}', "ui_font_size"), '{\n  "a": 1\n}'); // first
+  assert.equal(del('{\n  "a": 1,\n  "ui_font_size": 20,\n}', "ui_font_size"), '{\n  "a": 1,\n}'); // trailing comma stays
+  assert.equal(del('{\n  "ui_font_size": 20\n}\n', "ui_font_size"), "{\n}\n"); // only
+  assert.equal(del('{ "a": 1, "ui_font_size": 20 }', "ui_font_size"), '{ "a": 1 }');
+  assert.equal(del('{ "ui_font_size": 20, "a": 1 }', "ui_font_size"), '{ "a": 1 }');
+  assert.equal(del('{"a":{"ui_font_size":1},"ui_font_size":20}', "ui_font_size"), '{"a":{"ui_font_size":1}}'); // nested keys stay
+  const all = Object.keys(DEFAULTS) as SettingKey[];
+  const full = JSON.stringify(Object.fromEntries(Object.entries(DEFAULTS).map(([k, v]) => [k, k === "theme" || k === "editor_theme" || k === "preview_theme" ? "One Dark" : v])), null, 2);
+  for (const text of [full, "// c\n" + full, full.replace(/,\n/g, ",\n// x\n"), full.replace(/\n\s*/g, " ")]) {
+    const out = del(text, ...all);
+    assert.doesNotThrow(() => parseSettings(out, THEMES), out);
+    assert.equal(out.replace(/\/\/ [cx]\n/g, "").replace(/\s/g, ""), "{}");
+  }
+  assert.equal(del(null), "");
+  assert.equal(del("// only a comment\n", "theme"), "// only a comment\n");
+  assert.throws(() => del("broken", "theme"));
 });

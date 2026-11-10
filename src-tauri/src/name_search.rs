@@ -59,7 +59,8 @@ fn safe_path(path: &Path, roots: &[PathBuf]) -> Result<PathBuf, String> {
     Ok(canonical)
 }
 
-fn is_word(c: char) -> bool { c.is_alphanumeric() || c == '_' }
+/// I-20: only letters and digits are word characters, so both `_` and `-` separate words.
+fn is_word(c: char) -> bool { c.is_alphanumeric() }
 
 /// `query` is already lowercased unless the filter is case sensitive. Substring match; whole word needs a non-word char (or an edge) on both sides.
 fn name_matches(name: &str, query: &str, filter: Filter) -> bool {
@@ -133,10 +134,15 @@ mod tests {
         let off = Filter::default();
         assert_eq!(hits("read", off), names); // default: case-insensitive substring
         assert_eq!(hits("read", Filter { case_sensitive: true, ..off }), ["readme-old.md", "my_read.txt", "read.md", "to-read"]);
-        // Word characters include "_", so "my_read" is not a boundary; "Readme" / "readme" are longer words.
-        assert_eq!(hits("read", Filter { whole_word: true, ..off }), ["read.md", "to-read"]);
+        // "_" and "-" separate words, so "my_read" and "to-read" match; "Readme" / "readme" are longer words.
+        assert_eq!(hits("read", Filter { whole_word: true, ..off }), ["my_read.txt", "read.md", "to-read"]);
         assert_eq!(hits("Read", Filter { whole_word: true, case_sensitive: true, ..off }), Vec::<&str>::new());
         assert!(hits("(", Filter { all: true, ..off }).len() == names.len()); // regexp mode: the page filters
+        // I-20: "_" and "-" both separate words; "reader" does not.
+        let four = ["read.md", "to-read", "my_read.txt", "reader.md"];
+        let among = |filter: Filter| four.iter().copied().filter(|name| name_matches(name, "read", filter)).collect::<Vec<_>>();
+        assert_eq!(among(Filter { whole_word: true, ..off }), ["read.md", "to-read", "my_read.txt"]);
+        assert_eq!(among(off), four);
     }
 
     #[test]

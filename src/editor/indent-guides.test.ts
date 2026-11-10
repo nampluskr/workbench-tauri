@@ -1,12 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { activeBlock, depths, guideRuns, lineDepth, type Lines } from "./indent-guides.ts";
+import { activeBlock, depths, guessIndentUnit, guideRuns, lineDepth, type Lines } from "./indent-guides.ts";
 import { toggleApplies } from "./view-options.ts";
 
 const lines = (text: string): Lines => { const rows = text.split("\n"); return { count: rows.length, at: (n) => rows[n - 1] }; };
 
 test("I-5: depth by 4 columns, blank lines continue the block, guides are runs of lines deeper than their level", () => {
-  assert.deepEqual(["", "  ", "a", "  a", "    a", "\ta", "\t    a", " \t a", "        a"].map(lineDepth), [null, null, 0, 0, 1, 1, 2, 1, 2]);
+  assert.deepEqual(["", "  ", "a", "  a", "    a", "\ta", "\t    a", " \t a", "        a"].map((text) => lineDepth(text)), [null, null, 0, 0, 1, 1, 2, 1, 2]);
   // Three levels of TS with a blank line inside the deepest block and one between two blocks.
   const ts = lines("function f() {\n    if (x) {\n        run();\n\n        done();\n    }\n\n    return 1;\n}");
   const d = depths(ts, 1, ts.count);
@@ -42,4 +42,15 @@ test("I-6 / I-7: line numbers toggle in any focused editor, wrapping only in a M
   assert.equal(toggleApplies(stack("Pane", "Editor"), "wordWrap"), false);
   for (const editor of ["Editor extension=md", "Editor extension=ts", "Editor"]) assert.equal(toggleApplies(stack("Pane", editor), "lineNumbers"), true);
   for (const other of [[], ["Sidebar"], ["Pane"], ["MarkdownPreview"], ["KeymapEditor"]]) for (const option of ["lineNumbers", "wordWrap"] as const) assert.equal(toggleApplies(stack(...other), option), false);
+});
+
+test("I-15: the indent unit is guessed like VS Code: 2 or 4 spaces, tabs and unclear files keep 4", () => {
+  const unit = (text: string) => guessIndentUnit(lines(text));
+  assert.equal(unit("a:\n  b:\n    c:\n      d: 1\n    e: 2\n  f: 3\ng: 4"), 2); // three steps of 2
+  assert.equal(unit("function f() {\n    if (x) {\n        run();\n    }\n}"), 4);
+  assert.equal(unit("a\n  b\n    c\n      d\n        e\n    f"), 2); // 2 counted often enough to beat 4
+  assert.equal(unit("a\n\tb\n\t\tc\n\td"), 4); // tab file
+  assert.equal(unit("one\ntwo\n"), 4); // nothing to count
+  assert.deepEqual(depths(lines("a:\n  b:\n    c: 1"), 1, 3, 2), [0, 1, 2]);
+  assert.deepEqual(guideRuns(depths(lines("a:\n  b:\n    c: 1"), 1, 3, 2), 1), [{ level: 1, from: 3, to: 3 }, { level: 0, from: 2, to: 3 }]);
 });

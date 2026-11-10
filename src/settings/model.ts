@@ -76,9 +76,8 @@ export function parseSettings(text: string | null, choices: Choices): Settings {
   return out as Settings;
 }
 
-/** I-17: the default value of every row in a category (for one saveSettings write); other categories and unknown keys are not in it. */
-export const categoryDefaults = (category: (typeof CATEGORIES)[number]): Partial<Record<SettingKey, SettingValue>> =>
-  Object.fromEntries(ROWS.filter((row) => row.category === category).map((row) => [row.key, DEFAULTS[row.key]]));
+/** I-17: the keys of every row in a category, which Load Defaults deletes; other categories and unknown keys are not in it. */
+export const categoryKeys = (category: (typeof CATEGORIES)[number]): SettingKey[] => ROWS.filter((row) => row.category === category).map((row) => row.key);
 
 export const filterSettings = (query: string) => ROWS.filter((row) =>
   query.toLowerCase().trim().split(/\s+/).every((term) => `${row.category} ${row.name} ${row.description}`.toLowerCase().includes(term)));
@@ -89,6 +88,59 @@ export const settingMenu = (key: ChoiceKey, current: string, change: (value: str
 /** Several keys in one write, so the file watcher never reads a half-changed state. */
 export const updateSettings = (text: string | null, values: Partial<Record<SettingKey, SettingValue>>, choices: Choices): string =>
   Object.entries(values).reduce<string | null>((acc, [key, value]) => updateSetting(acc, key as SettingKey, value, choices), text) ?? "";
+
+const TOKEN = /"(?:\\.|[^"\\])*"|\/\*[\s\S]*?\*\/|\/\/[^\r\n]*|[{}\[\],:]|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|true|false|null/g;
+
+/**
+ * I-17: delete the top-level members named in `keys` (the default is then used, as in VS Code). Everything else stays: other keys,
+ * every comment (a comment line above a deleted key stays too; only a "// note" on the deleted member's own line goes with it),
+ * BOM and line endings. A member alone on its lines takes those lines; a deleted last member takes the comma before it; a trailing
+ * comma stays as it was. A malformed file throws.
+ */
+export function removeSettings(text: string | null, keys: readonly SettingKey[]): string {
+  let result = text ?? "";
+  if (stripJsonc(result).replace(/^\uFEFF/, "").trim() === "") return result;
+  object(result);
+  for (const key of keys) for (let next = removeOne(result, key); next !== result; next = removeOne(result, key)) result = next;
+  object(result);
+  return result;
+}
+
+/** Remove the last top-level member named `key`, or return the text unchanged. */
+function removeOne(text: string, key: string): string {
+  const tokens = [...text.matchAll(TOKEN)].filter((token) => !token[0].startsWith("//") && !token[0].startsWith("/*"));
+  let depth = 0;
+  let hit: { start: number; end: number; comma?: number; before: RegExpMatchArray } | undefined;
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+    if (depth === 1 && token[0].startsWith('"') && tokens[i + 1]?.[0] === ":") {
+      let j = i + 2;
+      for (let nested = 0; j < tokens.length; j++) {
+        const t = tokens[j][0];
+        if (nested === 0 && (t === "," || t === "}")) break;
+        if (t === "{" || t === "[") nested++;
+        else if (t === "}" || t === "]") nested--;
+      }
+      if (JSON.parse(token[0]) === key) hit = { start: token.index!, end: tokens[j - 1].index! + tokens[j - 1][0].length, comma: tokens[j][0] === "," ? tokens[j].index! : undefined, before: tokens[i - 1] };
+      i = j - 1;
+    } else if (token[0] === "{") depth++;
+    else if (token[0] === "}") depth--;
+  }
+  if (!hit) return text;
+  const { start, end, comma, before } = hit;
+  const stop = comma === undefined ? end : comma + 1;
+  const lineStart = text.lastIndexOf("\n", start - 1) + 1;
+  const eol = text.indexOf("\n", stop) < 0 ? text.length : text.indexOf("\n", stop);
+  const ownLines = !text.slice(lineStart, start).trim() && /^[ \t]*(\/\/[^\r\n]*)?\r?$/.test(text.slice(stop, eol));
+  let cut: [number, number];
+  if (ownLines) cut = [lineStart, Math.min(eol + 1, text.length)];
+  else if (comma !== undefined) { let e = stop; while (text[e] === " " || text[e] === "\t") e++; cut = [start, e]; }
+  else cut = [before[0] === "," ? before.index! : start, end];
+  const result = text.slice(0, cut[0]) + text.slice(cut[1]);
+  // The last member on its own lines is gone: the comma that ended the member before it goes too.
+  if (ownLines && comma === undefined && before[0] === ",") return result.slice(0, before.index!) + result.slice(before.index! + 1);
+  return result;
+}
 
 /** Replace top-level value spans only; preserve comments, unknown keys, BOM and whitespace. */
 export function updateSetting(text: string | null, key: SettingKey, value: SettingValue, choices: Choices): string {
@@ -101,7 +153,7 @@ export function updateSetting(text: string | null, key: SettingKey, value: Setti
     return original + (original && !/\n$/.test(original) ? newline : "") + `{${newline}  ${entry}${newline}}${newline}`;
   }
   object(original); // Refuse to overwrite malformed files.
-  const allTokens = [...original.matchAll(/"(?:\\.|[^"\\])*"|\/\*[\s\S]*?\*\/|\/\/[^\r\n]*|[{}\[\],:]|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|true|false|null/g)];
+  const allTokens = [...original.matchAll(TOKEN)];
   const tokens = allTokens
     .filter((token) => !token[0].startsWith("//") && !token[0].startsWith("/*") && token[0] !== "\uFEFF");
   const spans: { start: number; end: number }[] = [];

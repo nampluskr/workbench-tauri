@@ -1,0 +1,263 @@
+{
+  "c1_guides": {
+    "charWidth": 9,
+    "two": {
+      "lefts": [
+        5,
+        23,
+        41
+      ],
+      "guides": [
+        {
+          "left": 23,
+          "top": 48,
+          "h": 120,
+          "w": 1,
+          "active": false,
+          "bg": "rgba(254, 254, 243, 0.106)"
+        },
+        {
+          "left": 5,
+          "top": 24,
+          "h": 168,
+          "w": 1,
+          "active": false,
+          "bg": "rgba(254, 254, 243, 0.106)"
+        },
+        {
+          "left": 41,
+          "top": 72,
+          "h": 72,
+          "w": 1,
+          "active": true,
+          "bg": "rgba(255, 250, 237, 0.176)"
+        }
+      ],
+      "vars": {
+        "guide": "#fefef31b",
+        "guideActive": "#fffaed2d",
+        "invisible": "#4e5a5fff"
+      }
+    },
+    "four": {
+      "lefts": [
+        5,
+        41,
+        77
+      ],
+      "guides": [
+        {
+          "left": 41,
+          "top": 48,
+          "h": 120,
+          "w": 1,
+          "active": false,
+          "bg": "rgba(254, 254, 243, 0.106)"
+        },
+        {
+          "left": 5,
+          "top": 24,
+          "h": 168,
+          "w": 1,
+          "active": false,
+          "bg": "rgba(254, 254, 243, 0.106)"
+        },
+        {
+          "left": 77,
+          "top": 72,
+          "h": 72,
+          "w": 1,
+          "active": true,
+          "bg": "rgba(255, 250, 237, 0.176)"
+        }
+      ],
+      "charWidth": 9,
+      "vars": {
+        "guide": "#fefef31b",
+        "guideActive": "#fffaed2d",
+        "invisible": "#4e5a5fff"
+      }
+    }
+  },
+  "c2_tooltips": {
+    "preview_closed": {
+      "text": "Preview Markdown\nCtrl-Shift-V\nAlt-Click to open in a split",
+      "rect": {
+        "x": 1162,
+        "y": 88,
+        "w": 235,
+        "h": 53
+      },
+      "z": "1000",
+      "panel": null,
+      "overlapsPanel": false
+    },
+    "find_closed": {
+      "text": "Find",
+      "rect": {
+        "x": 1367,
+        "y": 88,
+        "w": 53,
+        "h": 38
+      },
+      "z": "1000",
+      "panel": null,
+      "overlapsPanel": false
+    },
+    "preview_open": {
+      "text": "Preview Markdown\nCtrl-Shift-V\nAlt-Click to open in a split",
+      "rect": {
+        "x": 1162,
+        "y": 88,
+        "w": 235,
+        "h": 53
+      },
+      "z": "1000",
+      "panel": {
+        "y": 110,
+        "h": 45,
+        "z": "300"
+      },
+      "overlapsPanel": true
+    },
+    "find_open": {
+      "text": "Find",
+      "rect": {
+        "x": 1367,
+        "y": 88,
+        "w": 53,
+        "h": 38
+      },
+      "z": "1000",
+      "panel": {
+        "y": 110,
+        "h": 45,
+        "z": "300"
+      },
+      "overlapsPanel": true
+    }
+  },
+  "c4_editor_find": {
+    "offFirst": "1/4",
+    "on": {
+      "count": "1/3",
+      "pressed": "true"
+    },
+    "reopened": {
+      "count": "1/3",
+      "pressed": "true",
+      "value": "read"
+    },
+    "off": {
+      "count": "1/4",
+      "pressed": "false"
+    }
+  },
+  "c4_search_tab": {
+    "on": {
+      "names": [
+        "my_read.txt",
+        "read.md",
+        "to-read"
+      ],
+      "pressed": "true"
+    },
+    "off": {
+      "names": [
+        "my_read.txt",
+        "read.md",
+        "reader.md",
+        "to-read"
+      ],
+      "pressed": "false"
+    }
+  },
+  "c3_c5_menus": {
+    "bar": [
+      "File",
+      "Edit",
+      "View",
+      "Go",
+      "Help"
+    ],
+    "help": [
+      "View Dependency Licenses",
+      "File Bug Report...",
+      "Request Feature...",
+      "Repository",
+      "About"
+    ],
+    "about": [
+      "workbench-tauri 0.7.0"
+    ],
+    "aboutClosed": true
+  },
+  "c5a_load_defaults": {
+    "before": {
+      "font": "20",
+      "line": "2.2",
+      "wrap": false
+    },
+    "after": {
+      "font": "15",
+      "line": "1.6",
+      "wrap": true,
+      "preview": "22"
+    },
+    "file": "{\n  // user comment\n  \"x_unknown\": 1,\n  \"preview_font_size\": 22\n}\n",
+    "mainEditorFont": null
+  },
+  "c5_title_buttons": {
+    "start": {
+      "labels": [
+        "Minimize",
+        "Maximize",
+        "Close"
+      ],
+      "size": {
+        "w": 1440,
+        "h": 852,
+        "x": 240,
+        "y": 90,
+        "vis": "visible"
+      }
+    },
+    "max": {
+      "labels": [
+        "Minimize",
+        "Restore",
+        "Close"
+      ],
+      "size": {
+        "w": 1920,
+        "h": 1032,
+        "x": 0,
+        "y": 0,
+        "vis": "visible"
+      }
+    },
+    "restored": {
+      "labels": [
+        "Minimize",
+        "Maximize",
+        "Close"
+      ],
+      "size": {
+        "w": 1440,
+        "h": 852,
+        "x": 240,
+        "y": 90,
+        "vis": "visible"
+      }
+    },
+    "minimized": {
+      "size": {
+        "w": 1440,
+        "h": 852,
+        "x": -31992,
+        "y": -31999,
+        "vis": "visible"
+      }
+    }
+  }
+}

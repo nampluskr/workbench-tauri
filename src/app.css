@@ -385,7 +385,7 @@ button, input, select, textarea {
    left/top come from an adopted sheet (src/shell/tooltip.ts). */
 .tooltip {
   position: fixed;
-  z-index: 3;
+  z-index: 1000; /* I-18: above CodeMirror's find bar (.cm-panels z-index 300), which otherwise hid the path-row tooltips */
   width: max-content;
   padding: var(--tooltip-transparent-margin-top) 0 0 var(--tooltip-transparent-margin-left);
   pointer-events: none;

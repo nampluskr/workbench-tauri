@@ -4,7 +4,7 @@ import { EditorSelection, EditorState, Transaction, type TransactionSpec } from 
 import { EditorView, showPanel, type Panel } from "@codemirror/view";
 import { history, undo } from "@codemirror/commands";
 import { SearchQuery, getSearchQuery, search, setSearchQuery, selectSelectionMatches } from "@codemirror/search";
-import { addNextOccurrence, documentSearch, scopedMatchRanges, SEARCH_COMMANDS, skipOccurrence, toggleScope, toggleSearch } from "./search.ts";
+import { addNextOccurrence, documentSearch, scopedMatchRanges, SEARCH_COMMANDS, skipOccurrence, toggleScope, toggleSearch, wholeWordOn } from "./search.ts";
 
 function target(doc: string, locked = false) {
   const view = {
@@ -218,4 +218,31 @@ test("I-11: with find in selection on, only matches inside the selected range ar
   assert.deepEqual(scopedMatchRanges(view.state, [{ from: 0, to: 6 }]), [], "a match cut by the visible range is not marked");
   toggleScope(view as unknown as EditorView);
   assert.deepEqual(scopedMatchRanges(view.state, visible), []);
+});
+
+test("I-20: whole word treats \"_\" and \"-\" as separators, only in the find bar's toggle", () => {
+  const view = target("read to-read my_read reader read2");
+  view.dispatch({ effects: setSearchQuery.of(new SearchQuery({ search: "read", literal: true })) });
+  const found = () => Array.from({ [Symbol.iterator]: () => getSearchQuery(view.state).getCursor(view.state) }).map(({ from }) => from);
+  run("SearchWholeWord", view);
+  assert.deepEqual(found(), [0, 8, 16]);
+  assert.equal(wholeWordOn(getSearchQuery(view.state)), true);
+  run("SearchRegexp", view); // the test stays on when another option is toggled
+  assert.deepEqual(found(), [0, 8, 16]);
+  run("SearchWholeWord", view);
+  assert.equal(wholeWordOn(getSearchQuery(view.state)), false);
+  assert.equal(found().length, 5);
+});
+
+test("I-20: the whole-word toggle survives a query CM rebuilds from a selection, and only our toggle turns it off", () => {
+  const view = { state: EditorState.create({ doc: "read to-read my_read reader", extensions: [documentSearch] }),
+    dispatch(tr: TransactionSpec) { view.state = view.state.update(tr).state; } };
+  const found = () => Array.from({ [Symbol.iterator]: () => getSearchQuery(view.state).getCursor(view.state) }).length;
+  run("SearchWholeWord", view as unknown as ReturnType<typeof target>);
+  view.dispatch({ effects: setSearchQuery.of(new SearchQuery({ search: "read", literal: true })) }); // what CM's defaultQuery makes on reopening
+  assert.equal(wholeWordOn(getSearchQuery(view.state)), true);
+  assert.equal(found(), 3);
+  run("SearchWholeWord", view as unknown as ReturnType<typeof target>);
+  assert.equal(wholeWordOn(getSearchQuery(view.state)), false);
+  assert.equal(found(), 4);
 });

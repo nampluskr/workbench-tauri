@@ -10,7 +10,7 @@ import { notify } from "../shell/toast.ts";
 import { remeasureForFont } from "../editor/extensions.ts";
 import { eachView, setViewOptions, type ToggleOption } from "../editor/view-options.ts";
 import { stepEditorFontSize, type FontTarget } from "../editor/font-size.ts";
-import { DEFAULTS, parseSettings, updateSettings, type SettingKey, type SettingValue, type Settings } from "./model.ts";
+import { DEFAULTS, parseSettings, removeSettings, updateSettings, type SettingKey, type SettingValue, type Settings } from "./model.ts";
 
 export const [settings, setSettings] = createSignal({ ...DEFAULTS });
 let queue = Promise.resolve();
@@ -90,6 +90,13 @@ export async function watchSettings(): Promise<void> {
 export async function saveSettings(values: Partial<Record<SettingKey, SettingValue>>): Promise<void> {
   const expected = await invoke<string | null>("read_user_settings");
   await invoke("write_user_settings", { expected, json: updateSettings(expected, values, choices) });
+  await loadSettings();
+}
+
+/** I-17 Load Defaults: delete the keys from the file in one write (the same read, edit, write with `expected` as saveSettings). */
+export async function resetSettings(keys: readonly SettingKey[]): Promise<void> {
+  const expected = await invoke<string | null>("read_user_settings");
+  await invoke("write_user_settings", { expected, json: removeSettings(expected, keys) });
   await loadSettings();
 }
 

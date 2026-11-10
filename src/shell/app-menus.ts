@@ -57,18 +57,14 @@ export function appMenus(markdownDisabled: () => boolean): Menu[] {
       { label: "Previous Tab", action: "pane::ActivatePreviousItem" },
       { label: "Next Tab", action: "pane::ActivateNextItem" },
     ] },
-    { name: "Window", entries: [
-      { label: "Minimize", action: "zed::Minimize" },
-      { label: "Zoom", action: "zed::Zoom" },
-    ] },
     { name: "Help", entries: [
       { label: "View Dependency Licenses", action: "zed::OpenLicenses" },
       "separator",
       { label: "File Bug Report...", url: ISSUE_URL },
       { label: "Request Feature...", url: ISSUE_URL },
       "separator",
-      { label: `${APP_NAME} Repository`, url: REPOSITORY_URL },
-      { label: `About ${APP_NAME}`, action: "zed::About" },
+      { label: "Repository", url: REPOSITORY_URL },
+      { label: "About", action: "zed::About" },
     ] },
   ];
 }

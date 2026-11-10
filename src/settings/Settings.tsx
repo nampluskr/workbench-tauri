@@ -6,8 +6,8 @@ import AppMenu, { isContextMenuOpen, openContextMenu } from "../shell/AppMenu.ts
 import { commands } from "../keymap/keyboard.ts";
 import { SETTINGS_DROPDOWN_OFFSET_Y } from "../spec/metrics.ts";
 import { choices } from "./choices.ts";
-import { CATEGORIES, categoryDefaults, filterSettings, isChoiceKey, isToggleKey, settingMenu, settingNumber, settingStep, type ChoiceKey, type SettingKey, type SettingValue } from "./model.ts";
-import { saveSettings, settings } from "./load.ts";
+import { CATEGORIES, categoryKeys, filterSettings, isChoiceKey, isToggleKey, settingMenu, settingNumber, settingStep, type ChoiceKey, type SettingKey, type SettingValue } from "./model.ts";
+import { resetSettings, saveSettings, settings } from "./load.ts";
 import "./settings.css";
 
 export default function SettingsWindow() {
@@ -24,14 +24,14 @@ export default function SettingsWindow() {
   const [restoring, setRestoring] = createSignal<(typeof CATEGORIES)[number]>("UI");
   let confirm!: HTMLDialogElement;
   let opener: HTMLElement | undefined;
-  const saveAll = async (values: Partial<Record<SettingKey, SettingValue>>) => {
+  const writeFile = async (write: () => Promise<void>) => {
     if (saving()) return;
     setSaving(true);
-    try { await saveSettings(values); setError(""); }
+    try { await write(); setError(""); }
     catch (error) { setError(String(error)); }
     finally { setSaving(false); }
   };
-  const save = (key: SettingKey, value: SettingValue) => saveAll({ [key]: value });
+  const save = (key: SettingKey, value: SettingValue) => writeFile(() => saveSettings({ [key]: value }));
   return <div class="settings-window">
     <TitleBar settings />
     <div class="settings-body">
@@ -86,7 +86,7 @@ export default function SettingsWindow() {
       <h2 id="confirm-title">Restore all {restoring()} settings to their defaults?</h2>
       <p id="confirm-detail">This cannot be undone.</p>
       <div class="settings-confirm-buttons">
-        <button onClick={() => { confirm.close(); void saveAll(categoryDefaults(restoring())); }}>Load Defaults</button>
+        <button onClick={() => { confirm.close(); void writeFile(() => resetSettings(categoryKeys(restoring()))); }}>Load Defaults</button>
         <button autofocus onClick={() => confirm.close()}>Cancel</button>
       </div>
     </dialog>
