@@ -76,14 +76,14 @@ npm run tauri build             # release exe + NSIS 설치 파일
 
 ## 4. 결과 파일
 
-2026-11-10 tauri-coder(K-12-R2)의 0.7.0 release 빌드 결과다. ORDER-08(K-10·K-11: 앱 아이콘, 찾기·Licenses·Sidebar·줄 번호 여백, Help·About 정리)까지 넣고 다시 빌드한 것이다. 실행 중인 앱이 exe를 잠그면 빌드가 os error 5로 실패하므로 앱을 닫고 빌드한다.
+2026-11-10 tauri-coder(K-16)의 0.7.0 release 빌드 결과다. ORDER-09(K-13·K-15: Licenses 읽기 전용 편집 탭, 찾기 토글 아이콘 잘림 고침)까지 넣고 다시 빌드한 것이다. 실행 중인 앱이 exe를 잠그면 빌드가 os error 5로 실패하므로 앱을 닫고 빌드한다.
 
-NSIS 설치 파일과 앱 exe는 이번 0.7.0 ORDER-08 다시 빌드 결과(2026-11-10 20:58, 설치 파일 아이콘 `installerIcon` 포함)이며, exe zip과 프런트엔드 크기는 기존 2026-11-08 기록이다.
+NSIS 설치 파일과 앱 exe는 이번 0.7.0 ORDER-09 다시 빌드 결과(2026-11-10 22:36, 설치 파일 아이콘 `installerIcon` 포함)이며, exe zip과 프런트엔드 크기는 기존 2026-11-08 기록이다.
 
 | 파일 | 경로 | 크기·버전 |
 |---|---|---|
-| NSIS 설치 파일 | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.7.0_x64-setup.exe` | 6,066,132 바이트(수정 시각 2026-11-10 20:58:14); ProductVersion·FileVersion `0.7.0`; 아이콘 i-window |
-| 앱 exe | `src-tauri\target\release\workbench-tauri.exe` | 16,832,512 바이트(수정 시각 2026-11-10 20:58:14); ProductVersion·FileVersion `0.7.0`; 아이콘 i-window |
+| NSIS 설치 파일 | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.7.0_x64-setup.exe` | 6,065,494 바이트(수정 시각 2026-11-10 22:36:00); ProductVersion·FileVersion `0.7.0`; 아이콘 i-window |
+| 앱 exe | `src-tauri\target\release\workbench-tauri.exe` | 16,832,512 바이트(수정 시각 2026-11-10 22:36:01); ProductVersion·FileVersion `0.7.0`; 아이콘 i-window |
 | exe zip(Compress-Archive Optimal) | 직접 만듦(레포 밖 `%TEMP%`에서 측정) | 7.66 MiB |
 | 참고: 프런트엔드 `dist/` | exe 안에 압축돼 들어감 | 18.57 MiB(이 중 문법 복사본 11.9 MB) |
 
@@ -91,7 +91,7 @@ NSIS 설치 파일과 앱 exe는 이번 0.7.0 ORDER-08 다시 빌드 결과(2026
 
 - 처음부터 release 빌드(`--no-bundle` 상태, 2026-11-08): 전체 200초, 그중 Rust 컴파일 3분 5초.
 - NSIS 켠 빌드(Rust 일부 재컴파일 + NSIS 도구 첫 내려받기): 101.7초, Rust 56.1초.
-- 0.7.0 release 다시 빌드(`npm.cmd run tauri build`, NSIS 켬, ORDER-08 포함, 2026-11-10 K-12): 전체 57.8초(NSIS 포함, `installerIcon` 추가 뒤 K-12-R2). 같은 날 앞선 빌드는 K-12 57.8초(Rust 40.6초), ORDER-06·07(K-09) 66.4초.
+- 0.7.0 release 다시 빌드(`npm.cmd run tauri build`, NSIS 켬, ORDER-09 포함, 2026-11-10 K-16): 전체 67.7초(Rust 47.8초, vite 6.9초, NSIS 포함). 같은 날 앞선 빌드는 ORDER-08 K-12-R2 57.8초, K-12 57.8초(Rust 40.6초), ORDER-06·07(K-09) 66.4초.
 - 아이콘 파일(`src-tauri/icons/icon.ico`)만 바꾸면 Cargo가 빌드 스크립트를 다시 돌리지 않아 exe에 옛 아이콘이 남는다. 이럴 땐 `src-tauri/build.rs`의 수정 시각만 갱신(`(Get-Item src-tauriuild.rs).LastWriteTime = Get-Date`)하고 다시 빌드한다. 내용은 안 바꾼다.
 - 문법 복사본 채우기: 113.7초.
 - 노트북은 PC 사양·회선에 따라 다르다.

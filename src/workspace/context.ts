@@ -626,8 +626,11 @@ export function activateTab(ctx: FolderContext, pane: PaneState, index: number):
   reveal(ctx, pane.tabs()[index].path);
 }
 
-/** Non-file tabs reuse Pane activation and closing without reading their title as a path. */
-export function openTool(ctx: FolderContext, title: string, make: () => { element: HTMLElement; dispose: () => void; title?: Accessor<string>; icon?: IconName; iconSuccess?: boolean; toolPosition?: Accessor<string> }): void {
+/**
+ * Non-file tabs reuse Pane activation and closing without reading their title as a path. The body is an `element`, or an
+ * editor `view` (a read-only text such as Licenses, I-30): the Pane shows its DOM, the settings and keys reach it as in a file tab.
+ */
+export function openTool(ctx: FolderContext, title: string, make: () => { element?: HTMLElement; view?: EditorView; dispose: () => void; title?: Accessor<string>; icon?: IconName; iconSuccess?: boolean; toolPosition?: Accessor<string> }): void {
   for (const pane of panesOf(ctx)) {
     const index = pane.tabs().findIndex((t) => t.tool && t.path === title);
     if (index >= 0) { activateTab(ctx, pane, index); focusPane(pane); return; }
@@ -636,6 +639,7 @@ export function openTool(ctx: FolderContext, title: string, make: () => { elemen
   const body = make();
   const file = newFile(ctx, title);
   file.element = body.element;
+  file.view = body.view ?? null; // release() destroys it with the tab, as it does a file's view
   file.title = body.title;
   file.icon = body.icon;
   file.iconSuccess = body.iconSuccess;

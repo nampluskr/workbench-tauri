@@ -7,3 +7,18 @@ export async function licenseText(sources: Record<string, () => Promise<string>>
     catch { return `${name}\n\nLicense copy unavailable.`; }
   }))).join("\n\n");
 }
+
+/** The Licenses text parts, in order: the bundled copies, the zed-icons notices that may be missing, then the font notices fetched at run time. */
+export function licenseSources(copies: Record<string, string>): Record<string, () => Promise<string>> {
+  const sources: Record<string, () => Promise<string>> = Object.fromEntries(Object.entries(copies).map(([name, text]) => [name, async () => text]));
+  for (const name of ["LICENSES", "LICENSE-GPL", "LICENSE-APACHE"]) {
+    const path = `../assets/zed-icons/${name}`;
+    sources[path] ??= async () => { throw new Error("Missing copy"); };
+  }
+  for (const path of FONT_LICENSES) sources[path] = async () => {
+    const response = await fetch(path);
+    if (!response.ok) throw new Error("Missing copy");
+    return response.text();
+  };
+  return sources;
+}

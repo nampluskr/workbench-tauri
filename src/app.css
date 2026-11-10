@@ -479,7 +479,6 @@ button, input, select, textarea {
   --icon-size: var(--titlebar-user-menu-button-icon-size);
 }
 /* License content uses the existing text and surface tokens without introducing layout measurements. */
-.licenses-tab { height: 100%; margin: 0; overflow: auto; background: var(--editor-background); color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; }
 
 /* core I-29: header, a scrolling body (technical lines, third-party list) and a button row. P-018's width, padding and gap stay; the height follows the text up to --dialog-about-max-height. */
 .about-dialog {

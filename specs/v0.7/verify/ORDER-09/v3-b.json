@@ -1,0 +1,658 @@
+{
+  "c6_long_dark": {
+    "editorPreview": {
+      "handle": {
+        "x": 939.5,
+        "y": 33,
+        "w": 1,
+        "h": 788,
+        "bg": "rgb(70, 75, 87)"
+      },
+      "dockBorder": {
+        "x": 439,
+        "color": "rgb(70, 75, 87)",
+        "width": "1px"
+      },
+      "tops": [
+        "48:handle",
+        "90:handle",
+        "200:handle",
+        "400:handle",
+        "600:handle",
+        "800:handle"
+      ],
+      "scrollers": [
+        {
+          "cls": "cm-scroller",
+          "left": 440,
+          "right": 939.5,
+          "clientW": 485,
+          "offsetW": 500,
+          "scrollbarW": 15,
+          "scrollH": true
+        },
+        {
+          "cls": "markdown-preview",
+          "left": 940.5,
+          "right": 1440,
+          "clientW": 485,
+          "offsetW": 500,
+          "scrollbarW": 15,
+          "scrollH": true
+        }
+      ],
+      "pixels": [
+        {
+          "y": 48,
+          "left": "48,52,62",
+          "line": "71,75,87",
+          "right": "48,52,62",
+          "dockLine": "71,75,87"
+        },
+        {
+          "y": 90,
+          "left": "41,44,51",
+          "line": "71,75,87",
+          "right": "41,44,51",
+          "dockLine": "71,75,87"
+        },
+        {
+          "y": 200,
+          "left": "41,44,51",
+          "line": "71,75,87",
+          "right": "41,44,51",
+          "dockLine": "71,75,87"
+        },
+        {
+          "y": 400,
+          "left": "41,44,51",
+          "line": "71,75,87",
+          "right": "41,44,51",
+          "dockLine": "71,75,87"
+        },
+        {
+          "y": 600,
+          "left": "41,44,51",
+          "line": "71,75,87",
+          "right": "41,44,51",
+          "dockLine": "71,75,87"
+        },
+        {
+          "y": 800,
+          "left": "41,44,51",
+          "line": "71,75,87",
+          "right": "41,44,51",
+          "dockLine": "71,75,87"
+        }
+      ]
+    },
+    "previewPreview": {
+      "handle": {
+        "x": 939.5,
+        "y": 33,
+        "w": 1,
+        "h": 788,
+        "bg": "rgb(70, 75, 87)"
+      },
+      "dockBorder": {
+        "x": 439,
+        "color": "rgb(70, 75, 87)",
+        "width": "1px"
+      },
+      "tops": [
+        "48:handle",
+        "90:handle",
+        "200:handle",
+        "400:handle",
+        "600:handle",
+        "800:handle"
+      ],
+      "scrollers": [
+        {
+          "cls": "markdown-preview",
+          "left": 440,
+          "right": 939.5,
+          "clientW": 485,
+          "offsetW": 500,
+          "scrollbarW": 15,
+          "scrollH": true
+        },
+        {
+          "cls": "markdown-preview",
+          "left": 940.5,
+          "right": 1440,
+          "clientW": 485,
+          "offsetW": 500,
+          "scrollbarW": 15,
+          "scrollH": true
+        }
+      ],
+      "pixels": [
+        {
+          "y": 48,
+          "left": "48,52,62",
+          "line": "71,75,87",
+          "right": "48,52,62",
+          "dockLine": "71,75,87"
+        },
+        {
+          "y": 90,
+          "left": "41,44,51",
+          "line": "71,75,87",
+          "right": "41,44,51",
+          "dockLine": "71,75,87"
+        },
+        {
+          "y": 200,
+          "left": "41,44,51",
+          "line": "71,75,87",
+          "right": "41,44,51",
+          "dockLine": "71,75,87"
+        },
+        {
+          "y": 400,
+          "left": "41,44,51",
+          "line": "71,75,87",
+          "right": "41,44,51",
+          "dockLine": "71,75,87"
+        },
+        {
+          "y": 600,
+          "left": "41,44,51",
+          "line": "71,75,87",
+          "right": "41,44,51",
+          "dockLine": "71,75,87"
+        },
+        {
+          "y": 800,
+          "left": "41,44,51",
+          "line": "71,75,87",
+          "right": "41,44,51",
+          "dockLine": "71,75,87"
+        }
+      ]
+    },
+    "drag": {
+      "before": 939.5,
+      "after": 879.5
+    }
+  },
+  "c6_long_light": {
+    "editorPreview": {
+      "handle": {
+        "x": 939.5,
+        "y": 33,
+        "w": 1,
+        "h": 788,
+        "bg": "rgb(201, 201, 202)"
+      },
+      "dockBorder": {
+        "x": 439,
+        "color": "rgb(201, 201, 202)",
+        "width": "1px"
+      },
+      "tops": [
+        "48:handle",
+        "90:handle",
+        "200:handle",
+        "400:handle",
+        "600:handle",
+        "800:handle"
+      ],
+      "scrollers": [
+        {
+          "cls": "cm-scroller",
+          "left": 440,
+          "right": 939.5,
+          "clientW": 485,
+          "offsetW": 500,
+          "scrollbarW": 15,
+          "scrollH": true
+        },
+        {
+          "cls": "markdown-preview",
+          "left": 940.5,
+          "right": 1440,
+          "clientW": 485,
+          "offsetW": 500,
+          "scrollbarW": 15,
+          "scrollH": true
+        }
+      ],
+      "pixels": [
+        {
+          "y": 48,
+          "left": "235,235,236",
+          "line": "201,201,202",
+          "right": "235,235,236",
+          "dockLine": "201,201,202"
+        },
+        {
+          "y": 90,
+          "left": "250,250,250",
+          "line": "201,201,202",
+          "right": "250,250,250",
+          "dockLine": "201,201,202"
+        },
+        {
+          "y": 200,
+          "left": "250,250,250",
+          "line": "201,201,202",
+          "right": "250,250,250",
+          "dockLine": "201,201,202"
+        },
+        {
+          "y": 400,
+          "left": "250,250,250",
+          "line": "201,201,202",
+          "right": "250,250,250",
+          "dockLine": "201,201,202"
+        },
+        {
+          "y": 600,
+          "left": "250,250,250",
+          "line": "201,201,202",
+          "right": "250,250,250",
+          "dockLine": "201,201,202"
+        },
+        {
+          "y": 800,
+          "left": "250,250,250",
+          "line": "201,201,202",
+          "right": "250,250,250",
+          "dockLine": "201,201,202"
+        }
+      ]
+    },
+    "previewPreview": {
+      "handle": {
+        "x": 939.5,
+        "y": 33,
+        "w": 1,
+        "h": 788,
+        "bg": "rgb(201, 201, 202)"
+      },
+      "dockBorder": {
+        "x": 439,
+        "color": "rgb(201, 201, 202)",
+        "width": "1px"
+      },
+      "tops": [
+        "48:handle",
+        "90:handle",
+        "200:handle",
+        "400:handle",
+        "600:handle",
+        "800:handle"
+      ],
+      "scrollers": [
+        {
+          "cls": "markdown-preview",
+          "left": 440,
+          "right": 939.5,
+          "clientW": 485,
+          "offsetW": 500,
+          "scrollbarW": 15,
+          "scrollH": true
+        },
+        {
+          "cls": "markdown-preview",
+          "left": 940.5,
+          "right": 1440,
+          "clientW": 485,
+          "offsetW": 500,
+          "scrollbarW": 15,
+          "scrollH": true
+        }
+      ],
+      "pixels": [
+        {
+          "y": 48,
+          "left": "235,235,236",
+          "line": "201,201,202",
+          "right": "235,235,236",
+          "dockLine": "201,201,202"
+        },
+        {
+          "y": 90,
+          "left": "250,250,250",
+          "line": "201,201,202",
+          "right": "250,250,250",
+          "dockLine": "201,201,202"
+        },
+        {
+          "y": 200,
+          "left": "250,250,250",
+          "line": "201,201,202",
+          "right": "250,250,250",
+          "dockLine": "201,201,202"
+        },
+        {
+          "y": 400,
+          "left": "250,250,250",
+          "line": "201,201,202",
+          "right": "250,250,250",
+          "dockLine": "201,201,202"
+        },
+        {
+          "y": 600,
+          "left": "250,250,250",
+          "line": "201,201,202",
+          "right": "250,250,250",
+          "dockLine": "201,201,202"
+        },
+        {
+          "y": 800,
+          "left": "250,250,250",
+          "line": "201,201,202",
+          "right": "250,250,250",
+          "dockLine": "201,201,202"
+        }
+      ]
+    },
+    "drag": {
+      "before": 939.5,
+      "after": 879.5
+    }
+  },
+  "c7_icons_ui16": {
+    "find": [
+      {
+        "label": "Match Case (Alt+C)",
+        "viewBox": "0 0 16 16",
+        "svg": {
+          "x": 1124,
+          "y": 125,
+          "w": 14,
+          "h": 14
+        },
+        "button": {
+          "x": 1120,
+          "w": 22,
+          "h": 22
+        },
+        "bbox": {
+          "x": 2,
+          "y": 4,
+          "w": 12.149998664855957,
+          "h": 8.510000228881836
+        },
+        "drawRight": null,
+        "inSvgBox": false,
+        "inButton": false
+      },
+      {
+        "label": "Match Whole Word (Alt+W)",
+        "viewBox": "0 0 16 16",
+        "svg": {
+          "x": 1150,
+          "y": 125,
+          "w": 14,
+          "h": 14
+        },
+        "button": {
+          "x": 1146,
+          "w": 22,
+          "h": 22
+        },
+        "bbox": {
+          "x": 1.1469999551773071,
+          "y": 2.319999933242798,
+          "w": 13.032999992370605,
+          "h": 10.680000305175781
+        },
+        "drawRight": null,
+        "inSvgBox": false,
+        "inButton": false
+      },
+      {
+        "label": "Use Regular Expression (Alt+R)",
+        "viewBox": "0 0 16 16",
+        "svg": {
+          "x": 1176,
+          "y": 125,
+          "w": 14,
+          "h": 14
+        },
+        "button": {
+          "x": 1172,
+          "w": 22,
+          "h": 22
+        },
+        "bbox": {
+          "x": 3.4284701347351074,
+          "y": 2.8571200370788574,
+          "w": 9.714330673217773,
+          "h": 10.857179641723633
+        },
+        "drawRight": null,
+        "inSvgBox": false,
+        "inButton": false
+      }
+    ],
+    "search": [
+      {
+        "label": "Match Case (Alt+C)",
+        "viewBox": "0 0 16 16",
+        "svg": {
+          "x": 1357,
+          "y": 80,
+          "w": 14,
+          "h": 14
+        },
+        "button": {
+          "x": 1353,
+          "w": 22,
+          "h": 22
+        },
+        "bbox": {
+          "x": 2,
+          "y": 4,
+          "w": 12.149998664855957,
+          "h": 8.510000228881836
+        },
+        "drawRight": null,
+        "inSvgBox": false,
+        "inButton": false
+      },
+      {
+        "label": "Match Whole Word (Alt+W)",
+        "viewBox": "0 0 16 16",
+        "svg": {
+          "x": 1383,
+          "y": 80,
+          "w": 14,
+          "h": 14
+        },
+        "button": {
+          "x": 1379,
+          "w": 22,
+          "h": 22
+        },
+        "bbox": {
+          "x": 1.1469999551773071,
+          "y": 2.319999933242798,
+          "w": 13.032999992370605,
+          "h": 10.680000305175781
+        },
+        "drawRight": null,
+        "inSvgBox": false,
+        "inButton": false
+      },
+      {
+        "label": "Use Regular Expression (Alt+R)",
+        "viewBox": "0 0 16 16",
+        "svg": {
+          "x": 1409,
+          "y": 80,
+          "w": 14,
+          "h": 14
+        },
+        "button": {
+          "x": 1405,
+          "w": 22,
+          "h": 22
+        },
+        "bbox": {
+          "x": 3.4284701347351074,
+          "y": 2.8571200370788574,
+          "w": 9.714330673217773,
+          "h": 10.857179641723633
+        },
+        "drawRight": null,
+        "inSvgBox": false,
+        "inButton": false
+      }
+    ]
+  },
+  "c7_icons_ui18": {
+    "find": [
+      {
+        "label": "Match Case (Alt+C)",
+        "viewBox": "0 0 16 16",
+        "svg": {
+          "x": 1084.75,
+          "y": 136.5,
+          "w": 15.75,
+          "h": 15.75
+        },
+        "button": {
+          "x": 1080.25,
+          "w": 24.75,
+          "h": 24.75
+        },
+        "bbox": {
+          "x": 2,
+          "y": 4,
+          "w": 12.149998664855957,
+          "h": 8.510000228881836
+        },
+        "drawRight": null,
+        "inSvgBox": false,
+        "inButton": false
+      },
+      {
+        "label": "Match Whole Word (Alt+W)",
+        "viewBox": "0 0 16 16",
+        "svg": {
+          "x": 1114,
+          "y": 136.5,
+          "w": 15.75,
+          "h": 15.75
+        },
+        "button": {
+          "x": 1109.5,
+          "w": 24.75,
+          "h": 24.75
+        },
+        "bbox": {
+          "x": 1.1469999551773071,
+          "y": 2.319999933242798,
+          "w": 13.032999992370605,
+          "h": 10.680000305175781
+        },
+        "drawRight": null,
+        "inSvgBox": false,
+        "inButton": false
+      },
+      {
+        "label": "Use Regular Expression (Alt+R)",
+        "viewBox": "0 0 16 16",
+        "svg": {
+          "x": 1143.25,
+          "y": 136.5,
+          "w": 15.75,
+          "h": 15.75
+        },
+        "button": {
+          "x": 1138.75,
+          "w": 24.75,
+          "h": 24.75
+        },
+        "bbox": {
+          "x": 3.4284701347351074,
+          "y": 2.8571200370788574,
+          "w": 9.714330673217773,
+          "h": 10.857179641723633
+        },
+        "drawRight": null,
+        "inSvgBox": false,
+        "inButton": false
+      }
+    ],
+    "search": [
+      {
+        "label": "Match Case (Alt+C)",
+        "viewBox": "0 0 16 16",
+        "svg": {
+          "x": 1346.75,
+          "y": 85.88,
+          "w": 15.75,
+          "h": 15.75
+        },
+        "button": {
+          "x": 1342.25,
+          "w": 24.75,
+          "h": 24.75
+        },
+        "bbox": {
+          "x": 2,
+          "y": 4,
+          "w": 12.149998664855957,
+          "h": 8.510000228881836
+        },
+        "drawRight": null,
+        "inSvgBox": false,
+        "inButton": false
+      },
+      {
+        "label": "Match Whole Word (Alt+W)",
+        "viewBox": "0 0 16 16",
+        "svg": {
+          "x": 1376,
+          "y": 85.88,
+          "w": 15.75,
+          "h": 15.75
+        },
+        "button": {
+          "x": 1371.5,
+          "w": 24.75,
+          "h": 24.75
+        },
+        "bbox": {
+          "x": 1.1469999551773071,
+          "y": 2.319999933242798,
+          "w": 13.032999992370605,
+          "h": 10.680000305175781
+        },
+        "drawRight": null,
+        "inSvgBox": false,
+        "inButton": false
+      },
+      {
+        "label": "Use Regular Expression (Alt+R)",
+        "viewBox": "0 0 16 16",
+        "svg": {
+          "x": 1405.25,
+          "y": 85.88,
+          "w": 15.75,
+          "h": 15.75
+        },
+        "button": {
+          "x": 1400.75,
+          "w": 24.75,
+          "h": 24.75
+        },
+        "bbox": {
+          "x": 3.4284701347351074,
+          "y": 2.8571200370788574,
+          "w": 9.714330673217773,
+          "h": 10.857179641723633
+        },
+        "drawRight": null,
+        "inSvgBox": false,
+        "inButton": false
+      }
+    ]
+  }
+}

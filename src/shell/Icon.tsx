@@ -6,7 +6,7 @@ import markdownBoxSvg from "../assets/catppuccin-icons/markdown.svg?raw";
 import listSelectionSvg from "../assets/codicons/list-selection.svg?raw";
 
 import { tooltip, type Tip } from "./tooltip.ts";
-import { iconMarkup, themedSvg } from "./icon-svg.ts";
+import { iconMarkup, scalable, themedSvg } from "./icon-svg.ts";
 
 export type IconName =
   | "folder" | "folder_open" | "folder_add" | "file_tree" | "threads_sidebar_left_open" | "threads_sidebar_left_closed"
@@ -16,6 +16,8 @@ export type IconName =
   | "case_sensitive" | "whole_word" | "regex" | "replace" | "replace_next" | "replace_all" | "select_all" | "list_selection";
 
 for (const [path, svg] of Object.entries(svgs)) iconMarkup[path.slice(path.lastIndexOf("/") + 1, -4)] = svg;
+// I-32: only the two find toggles that were cut; the other viewBox-less copies keep the look the earlier V3 runs measured.
+for (const name of ["case_sensitive", "whole_word"]) iconMarkup[name] = scalable(iconMarkup[name]) ?? "";
 Object.assign(iconMarkup, { search: searchSvg, markdown: markdownSvg, markdown_box: markdownBoxSvg, list_selection: listSelectionSvg }); // codicons override same-named Zed copies
 
 /** Missing Zed copies leave an empty slot with the existing spec dimensions. */

@@ -1,6 +1,6 @@
 > 버전: v0.7 · 작성일: 2026-11-10 · 상태: 초안
 >
-> workbench-core v0.7 ITEMS의 I-1~I-29(I-15~I-29 포함)을 어떤 Phase 순서로 반영할지 적는 I-n 대응 문서다. v0.7은 INTENT·DECISIONS·SPEC을 쓰지 않는다(tauri-leader 결정 2026-11-10). 요구·결정·판정 방법은 core `specs/v0.7/ITEMS.md`의 "정한 것"과 "판정 방법"을, Phase 순서와 이유는 core `specs/v0.7/PLAN.md`를, 카드 공통 규칙은 core `specs/v0.7/orders/COMMON.md`를 따른다. 에이전트 운영은 `HERDR-SETUP.md`에, 실제 진행은 `PROGRESS.md`에, core 보고는 `specs/v0.7/reports/`에 있다.
+> workbench-core v0.7 ITEMS의 I-1~I-32(I-15~I-32 포함)을 어떤 Phase 순서로 반영할지 적는 I-n 대응 문서다. v0.7은 INTENT·DECISIONS·SPEC을 쓰지 않는다(tauri-leader 결정 2026-11-10). 요구·결정·판정 방법은 core `specs/v0.7/ITEMS.md`의 "정한 것"과 "판정 방법"을, Phase 순서와 이유는 core `specs/v0.7/PLAN.md`를, 카드 공통 규칙은 core `specs/v0.7/orders/COMMON.md`를 따른다. 에이전트 운영은 `HERDR-SETUP.md`에, 실제 진행은 `PROGRESS.md`에, core 보고는 `specs/v0.7/reports/`에 있다.
 
 # PLAN — workbench-tauri v0.7
 
@@ -23,6 +23,7 @@
 | Phase 6 — Settings 분류별 페이지·Load Defaults | Phase 6 (ORDER-06) | G-7 | I-16 · I-17 |
 | Phase 7 — 안내선 단위·툴팁·Help 이름·`wd` 구분자·Window 메뉴, 0.7.0 다시 빌드 | Phase 7 (ORDER-07) | G-7 | I-15 · I-18 · I-19 · I-20 · I-21 · I-17 고침 · 0.7.0 빌드 |
 | Phase 8 — 앱 아이콘·찾기 VS Code 맞춤·Rust 라이선스·Sidebar·줄 번호 여백·Go 메뉴·About, 0.7.0 다시 빌드 | Phase 8 (ORDER-08) | G-7 | I-22~I-29 · ORDER-05 정리 · 0.7.0 빌드 |
+| Phase 9 — Licenses 읽기 전용 편집 탭·pane 경계선·찾기 토글 아이콘, 0.7.0 다시 빌드 | Phase 9 (ORDER-09) | G-7 | I-30 · I-31 · I-32 · 0.7.0 빌드 |
 
 ### Phase 1 작업 카드
 
@@ -106,3 +107,18 @@ core ORDER-04가 I-14(One 테마 안내선 색)를 이 Phase에 넣었다.
 | K-12-R2 | release 0.7.0 다시 빌드와 아이콘 다시 추출 | 0.7.0 빌드 · I-22 |
 | C-16 | V3 결과 판정 | I-22~I-29 · 0.7.0 빌드 |
 | W-10 | ORDER-08 PROGRESS·PLAN 기록 | I-22~I-29 · ORDER-05 정리 · 0.7.0 빌드 |
+
+### Phase 9 작업 카드
+
+카드 진행 중 core-leader가 ORDER-09에 I-31(8절)·I-32(9절)를 더했다.
+
+| 카드 | 할 일 | core 항목 |
+|---|---|---|
+| K-13 | Licenses를 CodeMirror 읽기 전용 편집 탭으로 | I-30 |
+| K-14 | 좌우 pane 경계선이 없는 원인 찾기(코드 변경 없음, [BLOCKED]) | I-31 |
+| K-15 | 찾기 토글 아이콘 `Aa`·`wd` 잘림 고침, pane 경계선 색 임시안 | I-31 · I-32 |
+| K-15-R1 | pane 경계선 임시안(`color-mix`) 되돌림 | I-31 |
+| C-17 | K-13 검토와 V3 결과 판정 | I-30 · I-31 |
+| C-18 | K-15 검토와 V3 결과 판정 | I-31 · I-32 |
+| K-16 | release 0.7.0 다시 빌드와 `docs/BUILD.md` 갱신 | 0.7.0 빌드 |
+| W-11 | ORDER-09 PROGRESS·PLAN 기록 | I-30 · I-31 · I-32 · 0.7.0 빌드 |

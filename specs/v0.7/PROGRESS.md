@@ -304,6 +304,44 @@
   - 검증: V3. 판정은 C-16(checker)이 측정 파일만 읽어 했다.
   - 특이사항: About의 Rust crate 수 192는 `rust-dependencies.txt` 색인 줄 수와 같고, K-10 보고의 214는 틀린 수였다. 클립보드 덤프의 `?`는 PowerShell 콘솔 코드페이지 변환 때문이다(`—`·`©`).
 
+### Phase 9 — Licenses 읽기 전용 편집 탭·pane 경계선·찾기 토글 아이콘, 0.7.0 다시 빌드
+
+- **K-13 Licenses 읽기 전용 편집 탭(I-30)** (2026-11-10, coder)
+  - 무엇을 했나: `zed::OpenLicenses`가 `<pre>` 대신 편집 탭과 같은 CodeMirror view를 `createFileView(…, "Licenses", false, …)`(`editableExtension(false)`, Make Tab Read-Only와 같은 수단)로 연다. `openTool`이 `element` 대신 `view`도 받는다. 글 조각 목록은 `licenseSources`로 `licenses.ts`에 옮겼다(내용·순서 그대로). 검은 테두리 원인은 `<pre class="licenses-tab">`의 브라우저 기본 포커스 윤곽선이었고, `.licenses-tab` CSS를 지웠다.
+  - 결과: 의존성 변경 없음. 변경 파일은 `src/shell/AppMenu.tsx`, `src/workspace/context.ts`, `src/shell/licenses.ts`(+`.test.ts`, 새), `src/app.css`. 탭 종류는 `tool` 그대로라 고침 표시·저장 확인 없음, 줄바꿈 안 함, 구문 강조 없음, 상태 복원 없음.
+  - 검증: V1. `npm.cmd run typecheck` 통과, 관련 테스트 13개 통과. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-K-13-report.md`.
+  - 특이사항: 없음.
+- **K-14 좌우 pane 경계선 원인(I-31)** [BLOCKED] (2026-11-10, coder)
+  - 무엇을 했나: 좌우·위아래 핸들(`.split-handle.h`·`.v`)의 CSS·토큰과 지난 V3 캡처를 읽었다.
+  - 결과: 좌우·위아래가 같은 규칙·같은 토큰(`--pane-group-border`, 1px)이고 지난 캡처에도 좌우 선이 있어 코드 원인을 찾지 못했다. 코드 변경 없음.
+  - 검증: 코드·캡처 읽기만. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-K-14-report.md`.
+  - 특이사항: 아래 V3에서 선이 이미 있음을 확인했다.
+- **K-15·K-15-R1 찾기 토글 아이콘(I-32), pane 경계선 색(I-31)** (2026-11-10, coder)
+  - 무엇을 했나: I-32 원인은 Zed 복사본 `case_sensitive.svg`·`whole_word.svg`에 `viewBox`가 없어 14px 상자에서 그림이 16 단위 그대로 잘린 것이다. `scalable()`(`icon-svg.ts`)이 viewBox를 붙이고 `Icon.tsx`가 두 아이콘에만 적용한다(Search 탭·찾기 줄 둘 다). I-31은 더 진한 기존 토큰이 없어 임시로 `color-mix` 35%를 넣었다가 K-15-R1에서 되돌렸다.
+  - 결과: 변경 파일은 `src/shell/icon-svg.ts`(+`.test.ts`), `src/shell/Icon.tsx`. `src/app.css` `.split-handle`은 원래 `var(--pane-group-border)`로 돌아갔다.
+  - 검증: V1. `npm.cmd run typecheck` 통과, `node --test src/shell/icon-svg.test.ts src/theme/theme.test.ts` 28개 통과. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-K-15-report.md`.
+  - 특이사항: viewBox 없는 다른 Zed 아이콘(`select_all` 등)은 건드리지 않았다.
+- **C-17·C-18 checker 검토(K-13·K-15)** [PASS] (2026-11-10)
+  - 무엇을 했나: K-13·K-15 코드와 테스트를 검토하고 V3 결과를 판정했다.
+  - 결과: 지적 없음. typecheck 오류 0, test 258/258(C-17)·259/259(C-18).
+  - 검증: tauri-leader 출력 파일 `%TEMP%\v07-C-17-*.txt`·`v07-C-18-*.txt`로 판정했다. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-C-17-report.md`, `v07-C-18-report.md`.
+  - 특이사항: 없음.
+- **K-16 release 0.7.0 다시 빌드** (2026-11-10, coder)
+  - 무엇을 했나: `npm.cmd run tauri build`로 release를 다시 빌드하고 `docs/BUILD.md`(4장 문장·표, 5장 걸린 시간)를 고쳤다.
+  - 결과: 성공, 전체 67.7초. NSIS 설치 파일 `workbench-tauri_0.7.0_x64-setup.exe` 6,065,494 바이트(LastWriteTime 2026-11-10 22:36:00), 앱 exe 16,832,512 바이트, 둘 다 ProductVersion·FileVersion 0.7.0.
+  - 검증: V1(빌드 결과 확인). 종료한 프로세스 없음. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-K-16-report.md`.
+  - 특이사항: 아이콘이 바뀌지 않아 `build.rs` 수정 시각 갱신은 하지 않았다.
+- **V3 측정(ORDER-09)** (2026-11-10, tauri-leader)
+  - 무엇을 했나: 화면 차례 안에서 tauri-leader가 쟀다.
+  - 결과: `specs/v0.7/verify/ORDER-09/`(`v3.json`, `v3-b.json`, PNG). C-17·C-18 판정 기준 1·2·3·5·6·7 PASS.
+    - 기준 1(I-30): Licenses 탭 글꼴·크기·줄 높이·배경·글자색·gutter가 편집 탭과 같고 outline none(검은 테두리 없음).
+    - 기준 2(I-30): 입력·Enter·Backspace·Ctrl+X·Ctrl+Z·Ctrl+V·메뉴 Paste 뒤 글 길이 그대로, 선택·복사 됨, Ctrl+F `MIT` `1/1313`, Replace 막힘, `Ctrl+=` 16px·`Ctrl+0` 15px.
+    - 기준 3(I-30): 닫을 때 확인창 없음, 일반 탭은 편집 가능.
+    - 기준 6(I-31, 10절 고침): 긴 문서 좌우 분할(편집+미리보기, 미리보기 둘)에서 선이 y=48~800 전체에 보이고 색이 Sidebar 영역 구분선(`--border`)과 같다(One Dark 71,75,87 / One Light 201,201,202), 1px, 끌기 됨.
+    - 기준 7(I-32): Search 탭·찾기 줄의 `Aa`·`wd`·`.*` 그림이 UI 글꼴 16·18 모두 svg 상자·버튼 안에 든다(오른쪽 여유 1.6~2.8px).
+  - 검증: V3. 판정은 C-17·C-18(checker)이 측정 파일만 읽어 했다.
+  - 특이사항: I-31은 V3에서 좌우 선이 이미 1px로 있고 위아래·영역 구분선(Sidebar)과 같은 색이었다(`verify/ORDER-09/v3.json`, `v3-b.json`). core에 [BLOCKED]를 두 번 올렸다(전제가 다름 → 사용자 "더 진하게" → 기존 토큰 중 더 진한 것이 없어 임시 `color-mix` 35% → 사용자 "영역 구분선과 같게"). `color-mix`는 되돌렸고 코드 변경 없이 기준 6을 채웠다. 긴 문서에서도 스크롤바(15px)는 pane 안쪽이라 선을 덮지 않는다. I-32 원인은 Zed `case_sensitive`·`whole_word` SVG에 viewBox가 없어 14px 상자에서 잘린 것이고 `scalable()`로 viewBox를 붙였다. 빌드는 설치 파일 6,065,494 바이트 2026-11-10 22:36:00, 0.7.0, 67.7초.
+
 ## 사용자 요청 작업
 
 없음

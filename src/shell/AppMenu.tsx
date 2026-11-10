@@ -7,7 +7,9 @@ import { dockWidth, resetDockWidth } from "./dock.ts";
 import { isClassicLayout } from "./layout.ts";
 import { activeTabOf, closeTab, openTool } from "../workspace/context.ts";
 import { editorContext as activeContext } from "../workspace/store.ts";
-import { FONT_LICENSES, licenseText } from "./licenses.ts";
+import { licenseSources, licenseText } from "./licenses.ts";
+import { createFileView } from "../editor/file-view.ts";
+import { cursorPosition } from "../editor/position.ts";
 import Icon from "./Icon.tsx";
 import { closeOnFocusOut, cycle, first, hoverMenuItem, last, placeMenu, placeSubmenu, shortcutForEntry, step, type MenuEntry } from "./menu.ts";
 import { tooltip } from "./tooltip.ts";
@@ -233,24 +235,16 @@ export default function AppMenu(props: { popupOnly?: boolean } = {}) {
   const copies = import.meta.glob<string>(["../assets/zed-icons/LICENSE*", "../assets/codicons/NOTICE.txt", "../theme/assets/**/LICENSE*", "../assets/icon-themes/**/LICENSE*", "../assets/zed-grammars/licenses/**/*", "../licenses/*.txt"], { query: "?raw", import: "default", eager: true });
   const about = createAbout(copies, () => commands.get("zed::OpenLicenses")?.());
   commands.set("zed::About", about.open);
+  // I-30: the Licenses text opens as a read-only editor tab (the view of a file tab, so fonts, theme, line numbers, guides, zoom
+  // and Ctrl+F follow the editor settings). A tool tab is never saved, never asks on close and is not kept in state.json.
   commands.set("zed::OpenLicenses", () => openTool(activeContext(), "Licenses", () => {
-    const element = document.createElement("pre");
-    element.className = "licenses-tab";
-    element.tabIndex = -1;
-    element.setAttribute("aria-label", "Dependency Licenses");
-    element.textContent = "Loading licenses…";
-    const sources: Record<string, () => Promise<string>> = Object.fromEntries(Object.entries(copies).map(([name, text]) => [name, async () => text]));
-    for (const name of ["LICENSES", "LICENSE-GPL", "LICENSE-APACHE"]) {
-      const path = `../assets/zed-icons/${name}`;
-      sources[path] ??= async () => { throw new Error("Missing copy"); };
-    }
-    for (const path of FONT_LICENSES) sources[path] = async () => {
-      const response = await fetch(path);
-      if (!response.ok) throw new Error("Missing copy");
-      return response.text();
-    };
-    void licenseText(sources).then((text) => { element.textContent = text; });
-    return { element, dispose: () => {} };
+    const [position, setPosition] = createSignal("1:1");
+    const view = createFileView("Loading licenses…", "Licenses", false, {
+      changed: () => {}, edited: () => {}, peers: () => [], keeper: () => view, cursor: (_line, state) => setPosition(cursorPosition(state)),
+    });
+    // A program edit: readOnly stops only the person's input.
+    void licenseText(licenseSources(copies)).then((text) => view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: text } }));
+    return { view, dispose: () => {}, toolPosition: position };
   }));
   // Position goes through an adopted sheet, not an inline style (AGENTS 5).
   const sheet = new CSSStyleSheet();

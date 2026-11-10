@@ -1,0 +1,235 @@
+{
+  "c6_split_dark": {
+    "side": [
+      {
+        "cls": "split-handle h",
+        "rect": {
+          "x": 939.5,
+          "y": 33,
+          "w": 1,
+          "h": 788
+        },
+        "bg": "rgb(70, 75, 87)",
+        "zIndex": "auto",
+        "opacity": "1",
+        "visibility": "visible",
+        "topAtCenter": "handle",
+        "before": {
+          "cls": "cm-content cm-lineWrapping",
+          "bg": "rgba(0, 0, 0, 0)"
+        },
+        "after": {
+          "cls": "markdown-preview",
+          "bg": "rgb(40, 44, 51)"
+        },
+        "varBorder": "#464b57ff"
+      }
+    ],
+    "both": [
+      {
+        "cls": "split-handle v",
+        "rect": {
+          "x": 440,
+          "y": 426.5,
+          "w": 499.5,
+          "h": 1
+        },
+        "bg": "rgb(70, 75, 87)",
+        "zIndex": "auto",
+        "opacity": "1",
+        "visibility": "visible",
+        "topAtCenter": "handle",
+        "before": {
+          "cls": "cm-content cm-lineWrapping",
+          "bg": "rgba(0, 0, 0, 0)"
+        },
+        "after": {
+          "cls": "tab-bar-drop",
+          "bg": "rgba(0, 0, 0, 0)"
+        },
+        "varBorder": "#464b57ff"
+      },
+      {
+        "cls": "split-handle h",
+        "rect": {
+          "x": 939.5,
+          "y": 33,
+          "w": 1,
+          "h": 788
+        },
+        "bg": "rgb(70, 75, 87)",
+        "zIndex": "auto",
+        "opacity": "1",
+        "visibility": "visible",
+        "topAtCenter": "handle",
+        "before": {
+          "cls": "split-handle v",
+          "bg": "rgb(70, 75, 87)"
+        },
+        "after": {
+          "cls": "markdown-preview",
+          "bg": "rgb(40, 44, 51)"
+        },
+        "varBorder": "#464b57ff"
+      }
+    ],
+    "drag": {
+      "before": 939.5,
+      "after": 859.5
+    }
+  },
+  "c6_split_light": {
+    "side": [
+      {
+        "cls": "split-handle h",
+        "rect": {
+          "x": 939.5,
+          "y": 33,
+          "w": 1,
+          "h": 788
+        },
+        "bg": "rgb(201, 201, 202)",
+        "zIndex": "auto",
+        "opacity": "1",
+        "visibility": "visible",
+        "topAtCenter": "handle",
+        "before": {
+          "cls": "cm-content cm-lineWrapping",
+          "bg": "rgba(0, 0, 0, 0)"
+        },
+        "after": {
+          "cls": "markdown-preview",
+          "bg": "rgb(250, 250, 250)"
+        },
+        "varBorder": "#c9c9caff"
+      }
+    ],
+    "both": [
+      {
+        "cls": "split-handle v",
+        "rect": {
+          "x": 440,
+          "y": 426.5,
+          "w": 499.5,
+          "h": 1
+        },
+        "bg": "rgb(201, 201, 202)",
+        "zIndex": "auto",
+        "opacity": "1",
+        "visibility": "visible",
+        "topAtCenter": "handle",
+        "before": {
+          "cls": "cm-content cm-lineWrapping",
+          "bg": "rgba(0, 0, 0, 0)"
+        },
+        "after": {
+          "cls": "tab-bar-drop",
+          "bg": "rgba(0, 0, 0, 0)"
+        },
+        "varBorder": "#c9c9caff"
+      },
+      {
+        "cls": "split-handle h",
+        "rect": {
+          "x": 939.5,
+          "y": 33,
+          "w": 1,
+          "h": 788
+        },
+        "bg": "rgb(201, 201, 202)",
+        "zIndex": "auto",
+        "opacity": "1",
+        "visibility": "visible",
+        "topAtCenter": "handle",
+        "before": {
+          "cls": "split-handle v",
+          "bg": "rgb(201, 201, 202)"
+        },
+        "after": {
+          "cls": "markdown-preview",
+          "bg": "rgb(250, 250, 250)"
+        },
+        "varBorder": "#c9c9caff"
+      }
+    ],
+    "drag": {
+      "before": 939.5,
+      "after": 859.5
+    }
+  },
+  "c1_c2_licenses": {
+    "plain": {
+      "font": "Lilex, \"Malgun Gothic\", monospace",
+      "size": "15px",
+      "lineHeight": 24,
+      "bg": "rgb(40, 44, 51)",
+      "color": "rgb(172, 178, 190)",
+      "gutter": true,
+      "outline": "none 3px",
+      "border": "0px none",
+      "parentOutline": "none"
+    },
+    "lic": {
+      "font": "Lilex, \"Malgun Gothic\", monospace",
+      "size": "15px",
+      "lineHeight": 24,
+      "bg": "rgb(40, 44, 51)",
+      "color": "rgb(172, 178, 190)",
+      "gutter": true,
+      "outline": "none 3px",
+      "border": "0px none",
+      "parentOutline": "none"
+    },
+    "tabTitle": [
+      "plain.txt",
+      "Licenses"
+    ],
+    "len0": 733301,
+    "firstLine": "../assets/codicons/NOTICE.txt",
+    "len1": 733301,
+    "unchanged": true,
+    "dirty": [
+      "tab edge-r active edge-l tab-indicator"
+    ],
+    "copied": "../assets/codicons/NOTICE.txt",
+    "copiedEqualsFirstLine": true,
+    "count": "1/1313",
+    "replaceDisabled": [
+      "Toggle Replace (Ctrl+H):null",
+      "Replace (Enter):true",
+      "Replace All (Ctrl+Alt+Enter):true"
+    ],
+    "zoomed": {
+      "font": "Lilex, \"Malgun Gothic\", monospace",
+      "size": "16px",
+      "lineHeight": 25.59,
+      "bg": "rgb(40, 44, 51)",
+      "color": "rgb(172, 178, 190)",
+      "gutter": true,
+      "outline": "none 3px",
+      "border": "0px none",
+      "parentOutline": "none"
+    },
+    "reset": {
+      "font": "Lilex, \"Malgun Gothic\", monospace",
+      "size": "15px",
+      "lineHeight": 24,
+      "bg": "rgb(40, 44, 51)",
+      "color": "rgb(172, 178, 190)",
+      "gutter": true,
+      "outline": "none 3px",
+      "border": "0px none",
+      "parentOutline": "none"
+    },
+    "tabsBefore": 2,
+    "after": {
+      "tabs": 1,
+      "titles": [
+        "plain.txt"
+      ],
+      "dialog": []
+    },
+    "plainEditable": true
+  },
+  "clipboardRestored": true
+}
