@@ -7,11 +7,11 @@ const open = (tabs: TabInfo[], active: number | null, path: string, preview: boo
 const names = (tabs: TabInfo[]) => tabs.map((t) => `${t.path}${t.preview ? "*" : ""}`);
 
 test("R-18: locking opens only previews of files that have one; opening the source retains the preview and reuses its editor", () => {
-  for (const path of ["C:\\notes.md", "C:\\notes.MARKDOWN", "C:\\t.tsv", "C:\\t.csv"]) {
+  for (const path of ["C:\\notes.md", "C:\\notes.MARKDOWN", "C:\\t.tsv", "C:\\t.csv", "C:\\p.html"]) {
     assert.equal(opensPreview(path, true), true);
     assert.equal(opensPreview(path, false), false);
   }
-  for (const path of ["C:\\a.py", "C:\\a.html", "C:\\a.md.txt"])
+  for (const path of ["C:\\a.py", "C:\\a.xhtml", "C:\\a.md.txt"])
     assert.equal(opensPreview(path, true), false);
   const preview = { ...tab("a.md", false), markdown: true };
   const source = open([preview], 0, "a.md", false);

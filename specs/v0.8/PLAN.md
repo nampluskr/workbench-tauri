@@ -43,3 +43,15 @@
 | C-04 | V3 판정 | M-8 · I-8 · I-9 · I-3 · I-6 · I-7 |
 
 - 실측 3.1(a)(b)(c)(core ORDER-02)는 `tauri-leader`가 한다.
+
+### Phase 3 작업 카드
+
+| 카드 | 할 일 | core 항목 |
+|---|---|---|
+| K-03a | 보안 설정: csp·devCsp `style-src`, `dangerousDisableAssetCspModification` | M-12 · M-13 |
+| K-03b | I-1 HTML 미리보기(`.html`·`.htm`, sandbox `allow-same-origin`) | I-1 · M-1 · M-5 · M-7 · M-8 · M-12 · M-13 |
+| C-06 | 검토 | M-12 · M-13 · I-1 |
+| C-07 | V3 판정 | I-1 |
+| W-05 · W-06 | 문서 | ORDER-03 |
+
+- K-03a는 auto mode에 막혀 `leader-core`가 처리한다.

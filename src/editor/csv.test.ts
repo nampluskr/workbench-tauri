@@ -24,8 +24,8 @@ test("I-7: only the first 1,000 data rows are kept, and the note counts data row
 });
 
 test("M-5: one check names the previewable files; a user binding of OpenPreview reaches .csv", () => {
-  for (const path of ["C:\\a.md", "C:\\a.MARKDOWN", "C:\\a.csv", "C:\\a.TSV", "C:\\a.svg"]) assert.equal(hasPreview(path), true);
-  for (const path of ["C:\\a.txt", "C:\\a.json", "C:\\a.html", "C:\\a.ipynb","C:\\a.md.txt", "C:\\csv", "C:\\a.csv\\b"]) assert.equal(hasPreview(path), false);
+  for (const path of ["C:\\a.md", "C:\\a.MARKDOWN", "C:\\a.csv", "C:\\a.TSV", "C:\\a.svg", "C:\\a.html", "C:\\a.HTM"]) assert.equal(hasPreview(path), true);
+  for (const path of ["C:\\a.txt", "C:\\a.json", "C:\\a.xhtml", "C:\\a.ipynb","C:\\a.md.txt", "C:\\csv", "C:\\a.csv\\b"]) assert.equal(hasPreview(path), false);
   assert.equal(previewKind("C:\\a.Tsv"), "tsv");
   const keys = new Keymap();
   keys.addSections("default", BUILTIN);

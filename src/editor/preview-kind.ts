@@ -1,9 +1,9 @@
 // core v0.8 M-5: the one place that says which files have a preview. Later cards add kinds here, once they can draw them.
-export type PreviewKind = "markdown" | "csv" | "tsv" | "svg";
+export type PreviewKind = "markdown" | "csv" | "tsv" | "svg" | "html";
 /** core v0.8 I-8 / I-9: files that are only looked at: no editor tab, no source, no preview toggle; a tab of their own opens them. */
 export type ViewKind = "image" | "pdf";
 
-const KINDS = new Map<string, PreviewKind>([["md", "markdown"], ["markdown", "markdown"], ["csv", "csv"], ["tsv", "tsv"], ["svg", "svg"]]);
+const KINDS = new Map<string, PreviewKind>([["md", "markdown"], ["markdown", "markdown"], ["csv", "csv"], ["tsv", "tsv"], ["svg", "svg"], ["html", "html"], ["htm", "html"]]);
 const VIEW_KINDS = new Map<string, ViewKind>([["png", "image"], ["jpg", "image"], ["jpeg", "image"], ["gif", "image"], ["webp", "image"], ["ico", "image"], ["pdf", "pdf"]]);
 
 /** Extensions with a preview, lower case, for keymap contexts. */

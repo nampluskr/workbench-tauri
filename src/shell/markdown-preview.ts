@@ -2,6 +2,7 @@ import { convertFileSrc } from "@tauri-apps/api/core";
 import DOMPurify from "dompurify";
 import { csvTable } from "../editor/csv.ts";
 import { blockAt, classifyLink, localImagePath, renderMarkdown, type LinkTarget } from "../editor/markdown.ts";
+import { htmlSrcdoc } from "../editor/html.ts";
 import { svgElement } from "../editor/svg.ts";
 import type { PreviewKind } from "../editor/preview-kind.ts";
 import { MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS } from "../spec/metrics.ts";
@@ -54,6 +55,14 @@ export function createPreview(hooks: PreviewHooks): Preview {
   const body = document.createElement("div");
   body.className = "markdown-body";
   element.append(body);
+  // I-1: an HTML file is one sandboxed frame (allow-same-origin only: no script, form, popup or navigation, M-12) filling the tab.
+  const frame = document.createElement("iframe");
+  if (hooks.kind === "html") {
+    element.classList.add("html-preview");
+    frame.className = "html-frame";
+    frame.setAttribute("sandbox", "allow-same-origin");
+    body.append(frame);
+  }
   let timer = 0;
   let lastLine = -1;
   let generation = 0;
@@ -61,6 +70,13 @@ export function createPreview(hooks: PreviewHooks): Preview {
   const render = () => {
     const text = hooks.text();
     if (text === null) return;
+    if (hooks.kind === "html") {
+      // The new document starts at the top: put the scroll back once it has loaded.
+      const top = frame.contentWindow?.scrollY ?? 0;
+      frame.addEventListener("load", () => frame.contentWindow?.scrollTo(0, top), { once: true });
+      frame.srcdoc = htmlSrcdoc(text, hooks.sourcePath(), convertFileSrc);
+      return;
+    }
     if (hooks.kind === "svg") {
       // I-6: a file that is not an SVG shows a short note instead of a picture.
       const svg = svgElement(text);
