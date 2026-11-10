@@ -1,3 +1,4 @@
+import { hasPreview } from "../editor/preview-kind.ts";
 import type { KeymapSection } from "../keymap/engine.ts";
 import type { CloseMode, TabInfo } from "../workspace/tabs.ts";
 import type { MenuEntry, MenuItem } from "./menu.ts";
@@ -41,7 +42,7 @@ export function tabMenu(tabs: MenuTab[], index: number): MenuEntry[] {
       [item("Copy Path", "workspace::CopyPath"), { ...item("Copy Relative Path", "workspace::CopyRelativePath"), shortcut: "" }],
       [item("Reveal in File Explorer", "editor::RevealInFileManager"), item("Reveal In Project Panel", "pane::RevealInProjectPanel")],
     );
-    if (/\.(md|markdown)$/i.test(tab.path)) groups.push([item("Open Markdown Preview", "markdown::OpenPreview")]);
+    if (hasPreview(tab.path)) groups.push([item("Open Preview", "markdown::OpenPreview")]);
   }
   return groups.flatMap((group, i): MenuEntry[] => i ? ["separator", ...group] : group);
 }

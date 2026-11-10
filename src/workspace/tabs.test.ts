@@ -1,18 +1,18 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { closeTargets, activeAfterClose, openTab, opensMarkdownPreview, pinnedCount, stepTab, tabEdges, togglePin, type TabInfo } from "./tabs.ts";
+import { closeTargets, activeAfterClose, openTab, opensPreview, pinnedCount, stepTab, tabEdges, togglePin, type TabInfo } from "./tabs.ts";
 
 const tab = (path: string, preview: boolean): TabInfo => ({ path, preview });
 const open = (tabs: TabInfo[], active: number | null, path: string, preview: boolean) => openTab(tabs, active, path, preview, 1, () => tab(path, preview));
 const names = (tabs: TabInfo[]) => tabs.map((t) => `${t.path}${t.preview ? "*" : ""}`);
 
-test("R-18: locking opens only Markdown previews; opening the source retains the preview and reuses its editor", () => {
-  for (const path of ["C:\\notes.md", "C:\\notes.MARKDOWN"]) {
-    assert.equal(opensMarkdownPreview(path, true), true);
-    assert.equal(opensMarkdownPreview(path, false), false);
+test("R-18: locking opens only previews of files that have one; opening the source retains the preview and reuses its editor", () => {
+  for (const path of ["C:\\notes.md", "C:\\notes.MARKDOWN", "C:\\t.tsv", "C:\\t.csv"]) {
+    assert.equal(opensPreview(path, true), true);
+    assert.equal(opensPreview(path, false), false);
   }
   for (const path of ["C:\\a.py", "C:\\a.html", "C:\\a.md.txt"])
-    assert.equal(opensMarkdownPreview(path, true), false);
+    assert.equal(opensPreview(path, true), false);
   const preview = { ...tab("a.md", false), markdown: true };
   const source = open([preview], 0, "a.md", false);
   assert.equal(source.tabs.length, 2);

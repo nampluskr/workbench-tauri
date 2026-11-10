@@ -1,4 +1,5 @@
 import MarkdownIt from "markdown-it";
+import { previewKind } from "./preview-kind.ts";
 
 // Markdown preview rendering (R-11, D-10): markdown-it with HTML pass-through off. Every block carries the source lines it
 // came from (data-line, data-line-end: 0-based start, end exclusive) for I-083 / I-084. Table alignment is a class, not
@@ -87,5 +88,5 @@ export function classifyLink(href: string, sourcePath: string, alt: boolean): Li
     } else parts.push(piece);
   }
   const path = parts.join("\\");
-  return { kind: !alt && /\.(md|markdown)$/i.test(path) ? "preview" : "open", path };
+  return { kind: !alt && previewKind(path) === "markdown" ? "preview" : "open", path };
 }

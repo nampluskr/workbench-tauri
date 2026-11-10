@@ -3,8 +3,8 @@ import type { Menu, MenuEntry, MenuItem } from "./menu.ts";
 export const APP_NAME = "workbench-tauri";
 
 // R-17: Edit follows workbench-kit.
-export function appMenus(markdownDisabled: () => boolean): Menu[] {
-  const markdownItem = (label: string, action: string): MenuItem => ({ label, action, get disabled() { return markdownDisabled(); } });
+export function appMenus(previewDisabled: () => boolean): Menu[] {
+  const previewItem = (label: string, action: string): MenuItem => ({ label, action, get disabled() { return previewDisabled(); } });
   return [
     { name: "File", entries: [
       { label: "Open Folder...", action: "workspace::Open" },
@@ -48,8 +48,8 @@ export function appMenus(markdownDisabled: () => boolean): Menu[] {
       { label: "Maximize Pane", action: "workspace::ToggleZoom" },
       "separator",
       { label: "Project Panel", action: "project_panel::ToggleFocus" },
-      markdownItem("Open Markdown Preview", "markdown::OpenPreview"),
-      markdownItem("Open Markdown Preview to the Side", "markdown::OpenPreviewToTheSide"),
+      previewItem("Open Preview", "markdown::OpenPreview"),
+      previewItem("Open Preview to the Side", "markdown::OpenPreviewToTheSide"),
     ] },
     // I-28: no Go menu; the tab arrows and the commands stay. I-29: Help is About alone, the Licenses are a button in it.
     { name: "Help", entries: [{ label: "About", action: "zed::About" }] },

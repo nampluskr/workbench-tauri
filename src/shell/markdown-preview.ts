@@ -1,5 +1,7 @@
 import DOMPurify from "dompurify";
+import { csvTable } from "../editor/csv.ts";
 import { blockAt, classifyLink, renderMarkdown, type LinkTarget } from "../editor/markdown.ts";
+import type { PreviewKind } from "../editor/preview-kind.ts";
 import { MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS } from "../spec/metrics.ts";
 import { languages, loadSyntax } from "../syntax/assets.ts";
 import { codeBlockHighlights } from "../syntax/document.ts";
@@ -12,6 +14,7 @@ import { syntaxClass } from "../theme/theme.ts";
 // approval, if documents with images must show them.
 
 export type PreviewHooks = {
+  kind: PreviewKind;
   text: () => string | null; // the source document now, null while it is not read yet
   sourcePath: () => string;
   /** I-084: a click on a block moves the source selection to its first line (0-based). */
@@ -19,6 +22,24 @@ export type PreviewHooks = {
   /** I-085 */
   link: (target: LinkTarget) => void;
 };
+
+/** I-7: the table of a CSV / TSV text, built with the DOM and textContent only (a cell is never read as HTML). Styled as a Markdown table. */
+function csvNodes(text: string, delimiter: string): HTMLElement[] {
+  const parsed = csvTable(text, delimiter);
+  if (!parsed) return [];
+  const table = document.createElement("table");
+  const line = (parent: HTMLElement, cell: "th" | "td", values: string[]) => {
+    const tr = parent.appendChild(document.createElement("tr"));
+    for (const value of values) tr.appendChild(document.createElement(cell)).textContent = value;
+  };
+  line(table.createTHead(), "th", parsed.header);
+  const body = table.createTBody();
+  for (const row of parsed.rows) line(body, "td", row);
+  if (!parsed.note) return [table];
+  const note = document.createElement("p");
+  note.textContent = parsed.note;
+  return [table, note];
+}
 
 export type Preview = { element: HTMLElement; changed: () => void; cursor: (line: number) => void; dispose: () => void };
 
@@ -37,6 +58,10 @@ export function createPreview(hooks: PreviewHooks): Preview {
   const render = () => {
     const text = hooks.text();
     if (text === null) return;
+    if (hooks.kind !== "markdown") {
+      body.replaceChildren(...csvNodes(text, hooks.kind === "tsv" ? "\t" : ","));
+      return;
+    }
     body.innerHTML = DOMPurify.sanitize(renderMarkdown(text), { FORBID_ATTR: ["style"], ALLOW_DATA_ATTR: true });
     if (lastLine >= 0) highlight(lastLine, false);
     void colorCodeBlocks(++generation);

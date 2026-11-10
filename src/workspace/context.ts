@@ -18,8 +18,9 @@ import { place } from "./drop.ts";
 import { inDirection, leaves, remove, split, type Dir, type Node } from "./split.ts";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import type { LinkTarget } from "../editor/markdown.ts";
+import { previewKind } from "../editor/preview-kind.ts";
 import { createPreview, type Preview } from "../shell/markdown-preview.ts";
-import { activeAfterClose, closeTargets, type CloseMode, openTab, opensMarkdownPreview, stepTab, togglePin, type TabInfo } from "./tabs.ts";
+import { activeAfterClose, closeTargets, type CloseMode, openTab, opensPreview, stepTab, togglePin, type TabInfo } from "./tabs.ts";
 import { buildRows, collapseAll, joinPath, none, only, sortChildren, type Child, type Row, type Selection } from "./tree.ts";
 
 // The work context of one folder (A-15, R-13): what its tree has expanded, selected and read, and its tabs. It stays in
@@ -460,10 +461,12 @@ export async function closeTabGroup(ctx: FolderContext, pane: PaneState, file: T
 }
 
 /**
- * R-11: open the Markdown preview of `path` (I-077), in `from`'s Pane, or with `side` in its right neighbour or a new
+ * R-11: open the preview of `path` (I-077; a file with no preview kind is ignored), in `from`'s Pane, or with `side` in its right neighbour or a new
  * Pane split to the right (I-078; focus then stays where it was). One already there is activated (I-079).
  */
 export function openPreview(ctx: FolderContext, from: PaneState, path: string, side: boolean, focus = true): void {
+  const kind = previewKind(path);
+  if (!kind) return;
   let pane = from;
   if (side) {
     pane = paneInDirection(ctx, from, "right") ?? newPane();
@@ -476,6 +479,7 @@ export function openPreview(ctx: FolderContext, from: PaneState, path: string, s
     if (!source) void holder.doc.read();
     const [position, setPosition] = createSignal("1:1");
     const preview = createPreview({
+      kind,
       text: () => liveView(holder.doc)?.state.doc.toString() ?? null,
       sourcePath: () => holder.doc.path,
       line: (line) => {
@@ -587,7 +591,7 @@ export function reveal(ctx: FolderContext, path: string): void {
  * `focusEditor`). A file already shown in another Pane gets a second view of the same Doc (D-8).
  */
 export function openFile(ctx: FolderContext, path: string, preview: boolean, focusEditor: boolean, location?: FileLocation): void {
-  if (opensMarkdownPreview(path, lockPreview())) {
+  if (opensPreview(path, lockPreview())) {
     const existing = panesOf(ctx).find((p) => p.tabs().some((t) => t.path === path && !t.markdown && !t.tool));
     if (existing) activatePane(ctx, existing);
     else {

@@ -1,3 +1,4 @@
+import { PREVIEW_EXTENSIONS } from "../editor/preview-kind.ts";
 import type { KeymapSection } from "./engine.ts";
 
 // R-17: document editing follows VS Code; keep the pinned Zed baseline separate.
@@ -158,7 +159,7 @@ export const BUILTIN: KeymapSection[] = [
     },
   },
   {
-    context: "Editor && extension == md", // I-044 (the file view adds `extension=…` to its context)
+    context: `Editor && (${PREVIEW_EXTENSIONS.map((e) => `extension == ${e}`).join(" || ")})`, // I-044 (the file view adds `extension=…` to its context); v0.8 M-5: every previewable file
     bindings: {
       "ctrl-shift-v": "markdown::OpenPreview",
       "ctrl-k v": "markdown::OpenPreviewToTheSide",

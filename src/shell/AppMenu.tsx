@@ -9,6 +9,7 @@ import { activeTabOf, closeTab, openTool } from "../workspace/context.ts";
 import { editorContext as activeContext } from "../workspace/store.ts";
 import { licenseSources, licenseText } from "./licenses.ts";
 import { createFileView } from "../editor/file-view.ts";
+import { hasPreview } from "../editor/preview-kind.ts";
 import { cursorPosition } from "../editor/position.ts";
 import Icon from "./Icon.tsx";
 import { closeOnFocusOut, cycle, first, hoverMenuItem, last, placeMenu, placeSubmenu, shortcutForEntry, step, type MenuEntry } from "./menu.ts";
@@ -25,7 +26,7 @@ type Keys = (string[] | undefined)[];
 const MENUS = appMenus(() => {
   const ctx = activeContext();
   const tab = ctx && activeTabOf(ctx.pane());
-  return !tab || !!tab.markdown || !/\.(md|markdown)$/i.test(tab.path);
+  return !tab || !!tab.markdown || !hasPreview(tab.path);
 });
 
 const [open, setOpen] = createSignal<number | null>(null); // title bar menu: index in MENUS

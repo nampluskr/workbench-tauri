@@ -14,13 +14,12 @@ import {
 import { collapseEverything, expandAll, openPreview, select, setSubtree, type FolderContext } from "../workspace/context.ts";
 import { activeId, addFolder, removeFolder } from "../workspace/store.ts";
 import { isDirPath, only, rowIndex } from "../workspace/tree.ts";
+import { hasPreview } from "../editor/preview-kind.ts";
 import { openContextMenu } from "./AppMenu.tsx";
 import type { MenuEntry, MenuItem } from "./menu.ts";
 
 // The project panel's right-click menu (R-23, 02-INTERACTION 11.2, I-530~I-557, I-660~I-662). A separator sits between
 // groups that both have entries. Shortcuts are looked up through `action` for the focus the panel has when it opens.
-
-const isMarkdown = (path: string) => /\.(md|markdown)$/i.test(path);
 
 /** The groups of entries for `target` (the selected item; the root for the empty area). */
 function groups(ctx: FolderContext, target: string): MenuItem[][] {
@@ -38,7 +37,7 @@ function groups(ctx: FolderContext, target: string): MenuItem[][] {
     item("Reveal in File Explorer", () => revealInExplorer(ctx), "project_panel::RevealInFileManager"),
     item("Open in Default App", () => openInDefaultApp(ctx), "project_panel::OpenWithSystem"),
   ];
-  if (!isDir && isMarkdown(target)) open.push(item("Open Markdown Preview", () => openPreview(ctx, ctx.pane(), target, false))); // D-10
+  if (!isDir && hasPreview(target)) open.push(item("Open Preview", () => openPreview(ctx, ctx.pane(), target, false))); // D-10
 
   const fold: MenuItem[] = [];
   if (isDir && folded) fold.push(item("Unfold Directory", () => {

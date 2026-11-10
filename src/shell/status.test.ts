@@ -12,13 +12,13 @@ test("I-22 / I-19: status buttons retain Zed's order, state, labels and tooltip 
     const buttons = statusButtons(sidebar, dock, locked);
     assert.deepEqual(buttons.flatMap((button) => [button.name, ...(button.dividerAfter ? ["divider"] : [])]), [
       ...(!sidebar ? ["threads_sidebar_left_closed", "divider"] : []),
-      "file_tree", "divider", "magnifying_glass", "markdown",
+      "file_tree", "divider", "magnifying_glass", "eye",
     ]);
     assert.deepEqual(buttons.map((button) => [button.name, button.label, button.toggled]), [
       ...(!sidebar ? [["threads_sidebar_left_closed", "Open Folder Sidebar", undefined]] : []),
       ["file_tree", dock ? "Close Left Dock" : "Project Panel", dock],
       ["magnifying_glass", "Search", undefined],
-      ["markdown", "Lock Preview", locked],
+      ["eye", "Lock Preview", locked],
     ]);
     assert.deepEqual(buttons.map((button) => shortcutFor(keymap, button.action, stack)?.join(" ")), [
       ...(!sidebar ? ["Ctrl-Alt-J"] : []), dock ? "Ctrl-B" : "Ctrl-Shift-E", "Ctrl-Shift-F", undefined,
@@ -43,6 +43,7 @@ test("I-5: active editor and preview status follows each tab; tools, loading edi
   assert.deepEqual(statusItems({ ...tab, tool: true, file: { ...tab.file, toolPosition: () => "45:35 (8 characters)" } }), { position: "45:35 (8 characters)", filetype: "" });
   assert.equal(statusItems({ ...tab, file: { ...tab.file, position: undefined } }), undefined);
   const preview = { ...tab, markdown: true, file: { ...tab.file, position: () => "8:1" } };
-  assert.deepEqual(statusItems(preview), { position: "8:1", filetype: "Markdown" });
+  assert.deepEqual(statusItems(preview), { position: "8:1", filetype: "Python" }); // the preview tab shows its file's own kind
+  assert.equal(statusItems({ ...preview, path: "C:\\project\\a.csv" })?.filetype, "Plain Text"); // no CSV kind exists; a CSV preview shows what its editor tab shows
   assert.deepEqual(statusItems(tab), { position: "5:28 (5 characters)", filetype: "Python" });
 });

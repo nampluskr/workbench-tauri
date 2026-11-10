@@ -16,8 +16,10 @@ test("R-1: built-in keymap equals the PROGRESS expected table (key, context, act
     const [, , keys, , , context, action] = line.split("|").map((c) => c.trim().replace(/`/g, ""));
     expected.add(row(keys.replace(/ 키$/, "").replaceAll("+", "-"), context === "없음" ? "" : context, action));
   }
+  // v0.8 M-5: the preview keys match every previewable extension, not only md; the pinned v0.4 table (a past version, read only) names md.
+  const previewContext = /^Editor && \(extension == md \|\|[^)]*\)$/;
   const actual = new Set(BUILTIN.flatMap(({ context, bindings }) =>
-    Object.entries(bindings).map(([keys, action]) => row(keys, context ?? "", String(action)))));
+    Object.entries(bindings).map(([keys, action]) => row(keys, previewContext.test(context ?? "") ? "Editor && extension == md" : context ?? "", String(action)))));
   assert.ok(expected.size > 50, "table not found in PROGRESS");
   assert.deepEqual([...actual].sort(), [...expected].sort());
 });

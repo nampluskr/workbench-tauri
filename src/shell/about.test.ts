@@ -29,9 +29,9 @@ test("I-29: the About list takes versions, licenses and copyright lines from the
 test("I-29: the Copy text holds the header, the technical lines and the main list; Windows 11 is told from the platform version", () => {
   const counts = licenseCounts(files);
   assert.ok(counts.rust > 100 && counts.javascript > 10);
-  const text = aboutText({ name: "workbench-tauri", version: "0.7.0", date: "2026-11-10", host: "Tauri 2.12.5", webview2: "130.0.2849.80", os: "Windows 11 x64" }, attributions(files), counts);
+  const text = aboutText({ name: "workbench-tauri", version: "0.8.0", date: "2026-11-10", host: "Tauri 2.12.5", webview2: "130.0.2849.80", os: "Windows 11 x64" }, attributions(files), counts);
   const lines = text.split("\n");
-  assert.deepEqual(lines.slice(0, 8), ["workbench-tauri", "Version: 0.7.0", "Date: 2026-11-10", "Host: Tauri 2.12.5", "WebView2: 130.0.2849.80", "OS: Windows 11 x64", "", "Third-Party Software & Attributions"]);
+  assert.deepEqual(lines.slice(0, 8), ["workbench-tauri", "Version: 0.8.0", "Date: 2026-11-10", "Host: Tauri 2.12.5", "WebView2: 130.0.2849.80", "OS: Windows 11 x64", "", "Third-Party Software & Attributions"]);
   assert.ok(lines.includes("- Tauri 2.12.5 — Apache-2.0 OR MIT — Copyright (c) 2017 - Present Tauri Apps Contributors"));
   assert.ok(lines.includes("- Lilex — OFL-1.1 — Copyright 2019 The Lilex Project Authors"));
   assert.match(lines.at(-1)!, new RegExp(`^- and ${counts.rust} Rust crates and ${counts.javascript} JavaScript packages`));

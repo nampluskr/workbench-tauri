@@ -47,6 +47,7 @@ import { chain } from "./chain.ts";
 import { setDockOpen } from "./panels.ts";
 import { startNew } from "../workspace/actions.ts";
 import { pathCrumb } from "../editor/breadcrumbs.ts";
+import { hasPreview } from "../editor/preview-kind.ts";
 import { editorContext } from "../workspace/store.ts";
 import { isOpen as menuOpen, openContextMenu } from "./AppMenu.tsx";
 import Icon, { IconButton } from "./Icon.tsx";
@@ -127,13 +128,12 @@ for (const dir of ["up", "down", "left", "right"] as const) {
     focusPane(next);
   }));
 }
-// R-11: I-044 (the keys match only in a Markdown editor), I-045 / I-086 (in a preview).
-const isMarkdown = (path: string) => /\.(md|markdown)$/i.test(path);
+// R-11: I-044 (the keys match only in an editor of a file with a preview), I-045 / I-086 (in a preview).
 for (const [action, side] of [["markdown::OpenPreview", false], ["markdown::OpenPreviewToTheSide", true]] as const) {
   commands.set(action, withCtx((ctx) => {
     const tab = activeTab();
     if (tab?.markdown && !side) closePreviewToSource(ctx, tab.file);
-    else if (tab && !tab.tool && !tab.markdown && isMarkdown(tab.path)) openPreview(ctx, ctx.pane(), tab.path, side);
+    else if (tab && !tab.tool && !tab.markdown && hasPreview(tab.path)) openPreview(ctx, ctx.pane(), tab.path, side);
   }));
 }
 commands.set("markdown::CloseAndReturnToEditor", withCtx((ctx) => activeTab()?.markdown && openPreviewSource(ctx, activeTab()!.file)));
@@ -528,7 +528,7 @@ function PaneView(props: { ctx: FolderContext | null; pane: PaneState | null }) 
           </div>
         </Show>
       </div>
-      {/* E-038 / E-039 / I-12: the toolbar of a file editor tab: the path row on the left, on a Markdown file the preview button on the right.
+      {/* E-038 / E-039 / I-12: the toolbar of a file editor tab: the path row on the left, on a file with a preview the preview button on the right.
           A preview tab or a tool tab has no toolbar (Zed: those items have no toolbar items). */}
       <Show when={props.ctx && props.pane && activeTabOf(props.pane)}>
         {(tab) => (
@@ -536,12 +536,12 @@ function PaneView(props: { ctx: FolderContext | null; pane: PaneState | null }) 
             <div class="editor-toolbar">
               <Breadcrumbs ctx={props.ctx!} tab={tab()} />
               <div class="toolbar-quick-actions">
-                <Show when={isMarkdown(tab().path)}>
+                <Show when={hasPreview(tab().path)}>
                   <button
                     class="icon-button"
-                    aria-label="Preview Markdown"
+                    aria-label="Open Preview"
                     onClick={(e) => openPreview(props.ctx!, props.pane!, tab().path, e.altKey)} // Alt: in a split (I-078)
-                    ref={(el) => tooltip(el, () => ({ title: "Preview Markdown", action: "markdown::OpenPreview", meta: "Alt-Click to open in a split" }))}
+                    ref={(el) => tooltip(el, () => ({ title: "Open Preview", action: "markdown::OpenPreview", meta: "Alt-Click to open in a split" }))}
                   >
                     <Icon name="eye" />
                   </button>
