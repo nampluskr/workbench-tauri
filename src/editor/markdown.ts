@@ -71,6 +71,31 @@ export function blockAt(blocks: { start: number; end: number }[], line: number):
 
 export type LinkTarget = { kind: "preview" | "open"; path: string } | { kind: "external"; url: string } | { kind: "anchor"; id: string };
 
+/** `raw` (decoded, no query) as an absolute Windows path: taken as it is when absolute, else relative to the source file's folder. */
+function resolveLocal(raw: string, sourcePath: string): string {
+  const parts = /^[a-z]:[\\/]/i.test(raw) ? [] : sourcePath.split("\\").slice(0, -1); // absolute Windows path, else relative
+  for (const piece of raw.split(/[\\/]/)) {
+    if (piece === "" || piece === ".") continue;
+    if (piece === "..") {
+      if (parts.length > 1) parts.pop();
+    } else parts.push(piece);
+  }
+  return parts.join("\\");
+}
+
+/**
+ * core v0.8 I-3: the local file a preview image points at (relative to the Markdown file, or absolute; M-8: anywhere), or
+ * null for a URL of any scheme (http, https, data, file...) or a malformed escape: those images are not shown.
+ */
+export function localImagePath(src: string, sourcePath: string): string | null {
+  if ((/^[a-z][a-z0-9+.-]*:/i.test(src) && !/^[a-z]:[\\/]/i.test(src)) || src.startsWith("//")) return null;
+  try {
+    return resolveLocal(decodeURIComponent(src.replace(/[?#].*$/, "")), sourcePath);
+  } catch {
+    return null;
+  }
+}
+
 /**
  * I-085: what a preview link does. A URL with `://` (or mailto:) opens outside. A local Markdown file opens in a preview,
  * relative to the source file's folder; with Alt that is skipped and the file opens as an editor tab. Other local files
@@ -79,14 +104,6 @@ export type LinkTarget = { kind: "preview" | "open"; path: string } | { kind: "e
 export function classifyLink(href: string, sourcePath: string, alt: boolean): LinkTarget {
   if (href.includes("://") || /^mailto:/i.test(href)) return { kind: "external", url: href };
   if (href.startsWith("#")) return { kind: "anchor", id: decodeURIComponent(href.slice(1)) };
-  const raw = decodeURIComponent(href.replace(/[?#].*$/, ""));
-  const parts = /^[a-z]:[\\/]/i.test(raw) ? [] : sourcePath.split("\\").slice(0, -1); // absolute Windows path, else relative
-  for (const piece of raw.split(/[\\/]/)) {
-    if (piece === "" || piece === ".") continue;
-    if (piece === "..") {
-      if (parts.length > 1) parts.pop();
-    } else parts.push(piece);
-  }
-  const path = parts.join("\\");
+  const path = resolveLocal(decodeURIComponent(href.replace(/[?#].*$/, "")), sourcePath);
   return { kind: !alt && previewKind(path) === "markdown" ? "preview" : "open", path };
 }

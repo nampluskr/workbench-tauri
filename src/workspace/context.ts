@@ -18,8 +18,9 @@ import { place } from "./drop.ts";
 import { inDirection, leaves, remove, split, type Dir, type Node } from "./split.ts";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import type { LinkTarget } from "../editor/markdown.ts";
-import { previewKind } from "../editor/preview-kind.ts";
+import { previewKind, viewKind, type ViewKind } from "../editor/preview-kind.ts";
 import { createPreview, type Preview } from "../shell/markdown-preview.ts";
+import { viewBody } from "../shell/view-body.ts";
 import { activeAfterClose, closeTargets, type CloseMode, openTab, opensPreview, stepTab, togglePin, type TabInfo } from "./tabs.ts";
 import { buildRows, collapseAll, joinPath, none, only, sortChildren, type Child, type Row, type Selection } from "./tree.ts";
 
@@ -591,6 +592,8 @@ export function reveal(ctx: FolderContext, path: string): void {
  * `focusEditor`). A file already shown in another Pane gets a second view of the same Doc (D-8).
  */
 export function openFile(ctx: FolderContext, path: string, preview: boolean, focusEditor: boolean, location?: FileLocation): void {
+  const kind = viewKind(path);
+  if (kind) return openView(ctx, path, kind, preview, focusEditor); // I-8 / I-9: before anything reads the file as text
   if (opensPreview(path, lockPreview())) {
     const existing = panesOf(ctx).find((p) => p.tabs().some((t) => t.path === path && !t.markdown && !t.tool));
     if (existing) activatePane(ctx, existing);
@@ -621,6 +624,37 @@ function openSource(ctx: FolderContext, path: string, preview: boolean, focusEdi
   if (focusEditor) tab.file.view?.focus();
   if (opened.created && !shown) void tab.file.doc.read();
   reveal(ctx, path);
+}
+
+/**
+ * core v0.8 I-8 / I-9: an image or PDF has no editor and no source. It is a tab of the tool kind (no save, no toolbar, no
+ * editor keys, closes without asking) whose path is the file's, so the tree follows it and a click makes it a temporary tab.
+ * shortcut: the picture is not redrawn when the file changes on disk (the watcher skips tool tabs); reopen the tab to see it.
+ */
+function openView(ctx: FolderContext, path: string, kind: ViewKind, preview: boolean, focusEditor: boolean): void {
+  for (const other of panesOf(ctx)) {
+    const at = other.tabs().findIndex((t) => t.tool && t.path === path);
+    if (at < 0) continue;
+    if (!preview) keepTab(ctx, other.tabs()[at].file);
+    activateTab(ctx, other, at);
+    if (focusEditor) focusPane(other);
+    return;
+  }
+  const pane = ctx.pane();
+  const make = (): Tab => {
+    const file = newFile(ctx, path);
+    file.element = viewBody(path, kind);
+    file.dispose = () => { file.doc.closed = true; filesOf.delete(file.doc); };
+    return { path, preview, pinned: false, tool: true, file, focus: false };
+  };
+  const opened = openTab(pane.tabs(), pane.active(), path, preview, PANE_MAX_PREVIEW_TABS, make, (t) => t.file.doc.dirty);
+  if (opened.replaced) {
+    release(opened.replaced.file);
+    pane.recent = pane.recent.filter((f) => f !== opened.replaced!.file);
+  }
+  pane.setTabs(opened.tabs);
+  activateTab(ctx, pane, opened.active);
+  if (focusEditor) focusPane(pane);
 }
 
 /** A click on a tab makes it and its Pane the active ones (a preview tab stays one, I-063); the tree follows (R-24). */

@@ -733,5 +733,9 @@ button, input, select, textarea {
 .markdown-body .fm-key { background: var(--panel-background); font-weight: var(--markdown-preview-frontmatter-key-cell-font-weight); }
 .markdown-body .fm-value { border-left: var(--markdown-preview-frontmatter-value-border-left) solid var(--border); }
 .markdown-body .fm-key:nth-child(n + 3), .markdown-body .fm-value:nth-child(n + 3) { border-top: var(--markdown-preview-frontmatter-row-border-top) solid var(--border); }
-/* shortcut: images are blocked by CSP img-src (S-9); hidden rather than a broken-image box. */
-.markdown-body img { display: none; }
+.markdown-body img { max-width: 100%; height: auto; } /* core v0.8 I-3: shrink to fit, never enlarge */
+/* core v0.8 I-8 / I-9: the view-only tab of an image or a PDF. */
+.pane-item > .view-body { position: absolute; inset: 0; }
+.view-body { box-sizing: border-box; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--editor-background); outline: none; }
+.view-body img { max-width: 100%; max-height: 100%; object-fit: contain; } /* shrink to fit, never enlarge */
+.view-body iframe { width: 100%; height: 100%; border: 0; }

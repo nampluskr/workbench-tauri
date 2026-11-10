@@ -1,6 +1,7 @@
+import { convertFileSrc } from "@tauri-apps/api/core";
 import DOMPurify from "dompurify";
 import { csvTable } from "../editor/csv.ts";
-import { blockAt, classifyLink, renderMarkdown, type LinkTarget } from "../editor/markdown.ts";
+import { blockAt, classifyLink, localImagePath, renderMarkdown, type LinkTarget } from "../editor/markdown.ts";
 import { svgElement } from "../editor/svg.ts";
 import type { PreviewKind } from "../editor/preview-kind.ts";
 import { MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS } from "../spec/metrics.ts";
@@ -11,8 +12,8 @@ import { syntaxClass } from "../theme/theme.ts";
 
 // The body of a Markdown preview tab (R-11, D-10). Rendered with markdown-it, sanitized with DOMPurify (no script, no
 // event attributes, no style attribute; data-line attributes stay), then put in the tab's element.
-// shortcut: images stay invisible: CSP img-src only allows the app and extension schemes (S-9). Widen it, with
-// approval, if documents with images must show them.
+// I-3: images are rewritten while the sanitized tree is still inert: a local file (relative to the Markdown file, or absolute)
+// goes through the asset protocol; an image of any URL scheme is removed, so no request and no broken-image box.
 
 export type PreviewHooks = {
   kind: PreviewKind;
@@ -72,7 +73,13 @@ export function createPreview(hooks: PreviewHooks): Preview {
       body.replaceChildren(...csvNodes(text, hooks.kind === "tsv" ? "\t" : ","));
       return;
     }
-    body.innerHTML = DOMPurify.sanitize(renderMarkdown(text), { FORBID_ATTR: ["style"], ALLOW_DATA_ATTR: true });
+    const tree = DOMPurify.sanitize(renderMarkdown(text), { FORBID_ATTR: ["style"], ALLOW_DATA_ATTR: true, RETURN_DOM_FRAGMENT: true });
+    for (const image of tree.querySelectorAll("img")) {
+      const path = localImagePath(image.getAttribute("src") ?? "", hooks.sourcePath());
+      if (path) image.setAttribute("src", convertFileSrc(path));
+      else image.remove();
+    }
+    body.replaceChildren(tree);
     if (lastLine >= 0) highlight(lastLine, false);
     void colorCodeBlocks(++generation);
   };

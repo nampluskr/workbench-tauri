@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { blockAt, classifyLink, frontmatterOf, frontmatterRows, renderMarkdown } from "./markdown.ts";
+import { blockAt, classifyLink, frontmatterOf, frontmatterRows, localImagePath, renderMarkdown } from "./markdown.ts";
 
 test("L-110: frontmatter is a table only when every line is `key: value` without a leading space", () => {
   assert.deepEqual(frontmatterRows(["title: Hello", "tags: a, b"]), [["title", "Hello"], ["tags", "a, b"]]);
@@ -98,4 +98,16 @@ test("I-085: external URLs, local Markdown into a preview (relative to the sourc
   assert.deepEqual(classifyLink("b.md", src, true), { kind: "open", path: "C:\\w\\docs\\b.md" });
   assert.deepEqual(classifyLink("img/x.png", src, false), { kind: "open", path: "C:\\w\\docs\\img\\x.png" });
   assert.deepEqual(classifyLink("#intro", src, false), { kind: "anchor", id: "intro" });
+});
+
+test("I-3: a preview image resolves to a local file next to the Markdown file; a URL of any scheme gives none", () => {
+  const src = "C:\\w\\docs\\a.md";
+  assert.equal(localImagePath("img/a.png", src), "C:\\w\\docs\\img\\a.png");
+  assert.equal(localImagePath("./a.png", src), "C:\\w\\docs\\a.png");
+  assert.equal(localImagePath("../b.png", src), "C:\\w\\b.png");
+  assert.equal(localImagePath("../../../../b.png", src), "C:\\b.png"); // never above the drive
+  assert.equal(localImagePath("my%20pics/%ED%95%9C%EA%B8%80.png?raw=1#x", src), "C:\\w\\docs\\my pics\\한글.png");
+  assert.equal(localImagePath("D:\\pics\\c.png", src), "D:\\pics\\c.png");
+  assert.equal(localImagePath("D:/pics/c.png", src), "D:\\pics\\c.png");
+  for (const url of ["http://a.com/x.png", "https://a.com/x.png", "data:image/png;base64,AAAA", "file:///C:/x.png", "//a.com/x.png", "%E0%A4%A.png"]) assert.equal(localImagePath(url, src), null);
 });
