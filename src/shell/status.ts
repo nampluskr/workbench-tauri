@@ -15,14 +15,14 @@ export const STATUS_BINDINGS: KeymapSection[] = [{ context: "Workspace", binding
   "ctrl-0": "zed::ResetBufferFontSize",
 } }];
 
-type StatusButton = { name: IconName; label: string; action: string; toggled?: boolean; toggledFile?: string; dividerAfter?: boolean | "toggle" };
+type StatusButton = { name: IconName; label: string; action: string; toggled?: boolean; toggledName?: IconName; dividerAfter?: boolean | "toggle" };
 
 export function statusButtons(sidebarOpen: boolean, dockOpen: boolean, lockPreview: boolean): StatusButton[] {
   return [
     ...(!sidebarOpen ? [{ name: "threads_sidebar_left_closed" as const, label: "Open Folder Sidebar", action: "multi_workspace::ToggleWorkspaceSidebar", dividerAfter: "toggle" as const }] : []),
     { name: "file_tree", label: dockOpen ? "Close Left Dock" : "Project Panel", action: dockOpen ? "workspace::ToggleLeftDock" : "project_panel::ToggleFocus", toggled: dockOpen, dividerAfter: true },
     { name: "magnifying_glass", label: "Search", action: "pane::DeploySearch" },
-    { name: "markdown", label: "Lock Preview", action: "markdown::ToggleLockPreview", toggled: lockPreview, toggledFile: "preview.md" },
+    { name: "markdown", label: "Lock Preview", action: "markdown::ToggleLockPreview", toggled: lockPreview, toggledName: "markdown_box" },
   ];
 }
 
