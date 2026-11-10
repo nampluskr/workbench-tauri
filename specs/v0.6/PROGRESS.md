@@ -479,6 +479,27 @@
 - 커밋: 코드 `4432a6a`.
 - 상태: 끝남(U-20 아이콘 테마별 모양은 사용자 확인 남음).
 
+### Lock Preview 켜짐 색 (2026-11-10)
+
+- 요청: 사용자 직접 요청(캡처 포함). "활성화 시 녹색 계열이 아니라 Left Dock 활성화 시 색깔(파란 계열)로 일치, 비활성 시에는 기존 모양 유지"(ORDER-17 U-20 위에 더함).
+- **K-22 Lock Preview 켜짐 아이콘·색** (2026-11-10, coder, Claude Code Sonnet 5.5 high)
+  - 무엇을 했나:
+    - 켜짐 아이콘을 아이콘 테마의 `<img>` 대신 고정 인라인 SVG `markdown_box`로 바꿨다. 원본은 Catppuccin Icons 1.24.0 `icons/latte/markdown.svg`(MIT)이고, 수정 없이 `src/assets/catppuccin-icons/`에 복사했다. 색은 `themedSvg`로 currentColor다.
+    - 색은 기존 `.status-bar .icon-button[aria-pressed=true]` = `--text-accent`다(Left Dock 켜짐과 같은 규칙). 아이콘 테마와 관계없이 모양이 고정되어, ORDER-17에서 미정이던 Zed (Default) 책 모양 문제도 풀렸다.
+    - 라이선스 `src/licenses/catppuccin-icons-1.24.0-MIT.txt`를 더했다(라이선스 화면에 실림). Zed 아이콘에는 같은 모양이 없어 쓰지 않았다.
+    - `toggledFile`·`FileIcon` 사용을 지웠다. 꺼짐은 codicon 그대로다.
+  - 결과: 위와 같다.
+  - 검증: C-24에서 함께 확인.
+  - 특이사항: 없음
+- C-24 checker [PASS](커밋 직전 전체): typecheck 오류 0, npm test 235 통과, clippy 경고 0, cargo test 22 통과, 코드 검토 지적 없음, V3 PASS (2026-11-10).
+- **V3(K-22)** (2026-11-10, C-24 판정 [PASS])
+  - 무엇을 했나: debug exe, 임시 APPDATA·WebView 데이터 폴더, One Light, 아이콘 테마 Catppuccin Latte와 Zed (Default) 둘 다.
+  - 결과: 켜진 Left Dock 버튼 색 rgb(92,120,226) = Lock 켬 svg·도형 stroke rgb(92,120,226), 테두리 0, 22×22, 두 테마 같음. 끔 rgb(88,88,90) 그대로. 라이선스 화면에 catppuccin 항목이 있다. PASS.
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/K-22/`(v3.json, v3-zed-default.json, png).
+  - 특이사항: 없음
+- 커밋: 코드 `a99f220`.
+- 상태: 끝남.
+
 ## 버전 종료
 
 진행 중.

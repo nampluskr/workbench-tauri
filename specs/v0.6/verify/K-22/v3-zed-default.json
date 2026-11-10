@@ -1,0 +1,48 @@
+{
+  "dock": {
+    "label": "Close Left Dock",
+    "pressed": "true",
+    "color": "rgb(92, 120, 226)",
+    "svgStroke": "none",
+    "svgColor": "rgb(92, 120, 226)"
+  },
+  "lock": {
+    "off": {
+      "pressed": "false",
+      "border": "0px none",
+      "w": 22,
+      "h": 22,
+      "icon": "svg",
+      "iconColor": "rgb(88, 88, 90)"
+    },
+    "on": {
+      "pressed": "true",
+      "border": "0px none",
+      "w": 22,
+      "h": 22,
+      "icon": "svg",
+      "iconColor": "rgb(92, 120, 226)"
+    },
+    "onTopColours": [
+      [
+        "104,115,226",
+        913
+      ],
+      [
+        "162,167,224",
+        23
+      ],
+      [
+        "176,180,223",
+        16
+      ]
+    ]
+  },
+  "lockOnSvg": {
+    "svg": true,
+    "img": false,
+    "svgColor": "rgb(92, 120, 226)",
+    "shapeStroke": "rgb(92, 120, 226)",
+    "shapeFill": "none"
+  }
+}
