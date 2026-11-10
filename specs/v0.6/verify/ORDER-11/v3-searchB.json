@@ -1,0 +1,12 @@
+{
+  "searchB": {
+    "activeBefore": "workbench-a",
+    "activeNow": "other-b",
+    "tabs": [
+      "Search"
+    ],
+    "results": [
+      "work-b.txt | work-b.txt"
+    ]
+  }
+}

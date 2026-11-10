@@ -1,0 +1,141 @@
+{
+  "sidebarIdle": {
+    "search": {
+      "l": 8,
+      "t": 6,
+      "r": 191,
+      "b": 26
+    },
+    "header": {
+      "l": 0,
+      "t": 0,
+      "r": 199,
+      "b": 33
+    },
+    "titleBar": {
+      "l": 200,
+      "t": 0,
+      "r": 1440,
+      "b": 32
+    },
+    "sidebar": {
+      "l": 0,
+      "t": 0,
+      "r": 200,
+      "b": 852
+    },
+    "firstItem": {
+      "l": 0,
+      "t": 33,
+      "r": 199,
+      "b": 64
+    },
+    "border": [
+      "0px",
+      "none",
+      "none"
+    ],
+    "shortcut": "Ctrl+F",
+    "clearBtn": false,
+    "headerDrag": true,
+    "titleDrag": true,
+    "items": [
+      "workbench-a",
+      "other-b"
+    ]
+  },
+  "sidebarType": {
+    "value": "work",
+    "items": [
+      "workbench-a"
+    ],
+    "matches": [
+      "work:rgb(92, 120, 226)"
+    ],
+    "accent": "#5c78e2ff",
+    "nameColor": "rgb(36, 37, 41)",
+    "shortcut": null,
+    "clearBtn": true,
+    "afterClear": {
+      "value": "",
+      "items": [
+        "workbench-a",
+        "other-b"
+      ],
+      "focus": "Search folders",
+      "shortcut": "Ctrl+F"
+    }
+  },
+  "tabsNav": {
+    "order": [
+      "x.ts",
+      "y.ts",
+      "z.ts"
+    ],
+    "start": [
+      "y.ts"
+    ],
+    "back1": [
+      "x.ts"
+    ],
+    "back2": [
+      "z.ts"
+    ],
+    "forward": [
+      "x.ts"
+    ],
+    "buttonBack": [
+      "z.ts"
+    ],
+    "buttonForward": [
+      "x.ts"
+    ]
+  },
+  "selectionKept": {
+    "clickedB": "other-b",
+    "active": "workbench-a",
+    "bg": "rgb(202, 202, 202)",
+    "token": "#cacacaff",
+    "focusInEditor": true
+  },
+  "searchA": {
+    "results": [
+      "work-deep.ts | sub\\work-deep.ts",
+      "work-a.txt | work-a.txt"
+    ],
+    "style": {
+      "tabRadius": [
+        "6px",
+        "6px",
+        "6px",
+        "6px"
+      ],
+      "searchRadius": [
+        "6px",
+        "6px"
+      ],
+      "radiusVar": "0.375rem",
+      "headerAlign": "left",
+      "headerJustify": "normal",
+      "header": {
+        "l": 444,
+        "t": 118,
+        "r": 1436,
+        "b": 159
+      },
+      "results": {
+        "l": 440,
+        "t": 114,
+        "r": 1440,
+        "b": 821
+      }
+    }
+  },
+  "searchB": "ERR not found [...document.querySelectorAll('[role=tab]')].find(t=>t.textContent.trim()==='Search')",
+  "menuFont": {
+    "menuName": "16px",
+    "menuItem": "16px",
+    "uiVar": "16px",
+    "body": "16px"
+  }
+}

@@ -288,6 +288,28 @@
 - 검증: 커밋 `fa7f648`.
 - 상태: 끝남.
 
+### ORDER-11 사용자 확인 반영 (2026-11-10)
+
+- 요청: 사용자가 core `USER-TEST.md`로 확인하고 남긴 U-1~U-5(core `D:\projects\workbench-core\specs\v0.6\orders\ORDER-11.md`).
+- **K-14 U-1~U-5 반영** (2026-11-10, coder)
+  - 무엇을 했나:
+    - U-1 Search 탭: 결과 경로를 검색 범위 폴더 기준 상대 경로로 왼쪽 정렬했다. 범위는 Sidebar 선택 폴더 하나다(선택 없음·잘못된 선택 → 첫 폴더, 폴더 없음 → 빈 범위). Rust의 범위 밖 거부는 그대로다. 네 모서리는 `--editor-search-input-corner-radius`(6px)를 재사용했다.
+    - U-2 뒤로·앞으로: 탭 바 위치 기준으로 왼쪽·오른쪽 탭으로 가고, 끝에서는 반대쪽 끝으로 돈다. 기존 `stepTab`을 재사용했다. NavHistory 스택·최대 길이 등 기록 코드를 지웠고 `nav-history.ts`에는 NAV_BINDINGS만 남겼다. 키맵·Go 메뉴 action 이름은 그대로다. I-12의 "연 순서" 판정 대신 이 동작으로 판정한다(카드).
+    - U-3 Sidebar 검색란: Sidebar 헤더(타이틀 바 줄, 높이 L-12)로 옮기고 본문 검색 줄을 지웠다. 테두리 없음. 빈 값이면 `Ctrl+F`(기존 단축키 표시 재사용), 값이 있으면 x를 보이고 누르면 비우고 목록 복원·입력란 포커스. 헤더 `data-tauri-drag-region`은 유지했다(입력란 밖 끌기·두 번 눌러 최대화는 코드 확인).
+    - U-4: 선택 폴더의 `--ghost-element-selected` 배경을 포커스와 무관하게 유지하고, 검색어 일치 글자를 `--text-accent`로 했다. 목록은 폴더 한 단계 그대로다.
+    - U-5: ≡ 메뉴 줄 이름·항목 글꼴을 `--typography-ui-font-size`로 하고, 쓰지 않게 된 metrics `menu.item.font_size`·`menu.horizontal.item_font_size`를 지웠다.
+  - 결과: 위와 같다.
+  - 검증: typecheck, 관련 테스트 38 통과(범위 걸러내기, 위치 이동·끝 돌기, 일치 글자 나누기).
+  - 특이사항: 없음
+- C-16 checker [PASS]: typecheck 오류 0, npm test 225 통과, clippy 경고 0, cargo test 21 통과, 코드 검토 지적 없음, V3 U-1~U-5 PASS (2026-11-10). cargo test 첫 실행에서 `folder_watch::tests::missing_root_is_watched_after_creation_and_recreation`이 5초 시간 초과로 1건 실패했고 바로 다시 실행해 통과했다(이번 변경과 무관한 시간 의존 테스트).
+- **V3(ORDER-11)** (2026-11-10, leader 측정·C-16 판정 [PASS])
+  - 무엇을 했나: debug exe, 임시 APPDATA·WebView 데이터 폴더, One Light, 폴더 workbench-a·other-b.
+  - 결과: U-1~U-5 PASS.
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-11/`(v3.json, v3-searchB.json, sidebar-idle.png, sidebar-typed.png, sidebar-selected-editor-focus.png, search-tab-a.png, search-tab-b.png, menu-file.png). v3.json의 searchB 줄은 leader 스크립트 오류로 무효이고 v3-searchB.json이 대신한다.
+  - 특이사항: 없음
+- 커밋: 코드 `707edcd`.
+- 상태: 끝남.
+
 ## 버전 종료
 
 진행 중.
