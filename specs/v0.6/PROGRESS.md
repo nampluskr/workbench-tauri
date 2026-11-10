@@ -221,7 +221,7 @@
   - 결과: 다시 재니 주석만 토글, Ctrl+Z 한 번에 복원, 한글 입력 정상.
   - 검증: typecheck, 관련 node 테스트(R1 16, R2 19), V3 재측정.
   - 특이사항: 300ms를 넘기거나 다른 글자로 오는 IME 입력은 막지 않는다.
-- **검색 모듈 BLOCKED(사용자 승인 대기)**
+- **검색 모듈 BLOCKED(사용자 승인 대기)** — ORDER-09-R1에서 풀림
   - `@codemirror/search@6.7.2`(MIT, unpacked 137,655바이트, 하위 의존성은 이미 있는 crelt·view·state뿐)가 필요하다. core-leader: 더하지도 직접 구현(TS 약 400~600줄)도 하지 않는다.
   - 승인되면 할 것: 패키지 추가, 찾기·바꾸기 창(오른쪽 위), F3/Shift+F3·Enter/Shift+Enter, Alt+C/W/R, 하나/모두 바꾸기(Ctrl+Alt+Enter, 모두 바꾸기 한 번 취소), Alt+Enter, Ctrl+D·Ctrl+Shift+L·Ctrl+K Ctrl+D, Edit 메뉴 세 항목·찾기 아이콘 활성, I-19 편집 영역 Ctrl+F 확인, workbench-kit 비교 캡처.
 - **메뉴 Paste 미정**
@@ -233,6 +233,31 @@
   - 결과: Edit 메뉴가 기대 2와 같다. 찾기 아이콘 자리는 코드 파일 1410–1432(경로 줄 끝), 마크다운은 눈(1387–1409) 오른쪽. Ctrl+L 줄+줄바꿈, Esc 커서 하나, Ctrl+Alt+Down 커서 셋, Ctrl+A 전체, Alt+클릭 커서 둘, Shift+Alt+A 블록 주석(Ctrl+Z 복원), Ctrl+/ `# `(IME 고친 뒤), 키보드 복사·붙여넣기, 메뉴 Undo/Redo. 편집 영역 Ctrl+F는 아무것도 열리지 않고 Sidebar로도 가지 않는다. Licenses에 codicons가 있다.
   - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-09/`.
   - 특이사항: workbench-kit은 띄우지 않고 소스·VS Code 기본 동작으로 비교했다. 메뉴 Copy 시험이 시스템 클립보드를 덮어썼다.
+
+#### ORDER-09-R1 — 찾기·바꾸기
+
+- **K-13 찾기·바꾸기(R-17, 사용자가 @codemirror/search 추가 승인 2026-11-10)** (2026-11-10, coder)
+  - 무엇을 했나:
+    - `@codemirror/search` 6.7.2(MIT)를 더했다. `package.json` 1줄, lock은 그 패키지 블록만, 새 하위 의존성 없음. 라이선스는 `src/licenses/frontend-dependencies.txt`에 더했다.
+    - 편집 영역 오른쪽 위 찾기·바꾸기 창(`src/editor/search.ts` 새 파일, 커스텀 패널): Toggle Replace·찾기 입력·Aa/ab/.*·일치 수·이전·다음·닫기, 바꾸기 줄 입력·Replace·All.
+    - 단축키: Ctrl+F/H, F3/Shift+F3, 창 안 Enter/Shift+Enter·Alt+C/W/R·Alt+Enter, 바꾸기 줄 Enter/Ctrl+Alt+Enter, Ctrl+D, Ctrl+Shift+L, Ctrl+K Ctrl+D, Esc.
+    - Edit 메뉴 Find·Replace·Add Next Occurrence를 활성으로 했다. 경로 줄 찾기 아이콘이 그 탭의 찾기 창을 열고 닫는다. Sidebar Ctrl+F는 그대로다.
+    - 수치는 spec E-062/E-063/E-065/E-066/E-067과 기존 toolbar·button 변수를 쓴다. 툴팁 문구·메뉴 Paste는 그대로다.
+  - 결과: 위와 같다.
+  - 검증: C-15에서 함께 확인.
+  - 특이사항: 없음
+- **K-13-R1 찾기 입력란 글자 덮어쓰기** (2026-11-10, coder)
+  - 무엇을 했나: leader V3에서 찾기 입력란에 "foo"를 치면 "o"가 됐다. @codemirror/search의 findNext가 입력란 전체를 선택해서다. 입력 중 자동 탐색 앞뒤로 입력란 선택 범위를 보관·복원했다.
+  - 결과: 입력한 글자가 그대로 남는다.
+  - 검증: 이 실패를 잡는 테스트를 더했다.
+  - 특이사항: 없음
+- C-15 checker [PASS]: 커밋 직전 1회 typecheck 오류 0, npm test 227 통과, clippy -D warnings 경고 0, cargo test 21 통과, 코드 검토 지적 없음, V3 판정 15항목 PASS (2026-11-10)
+- **V3(ORDER-09-R1)** (2026-11-10, leader 측정·C-15 판정 [PASS])
+  - 무엇을 했나: debug exe, 임시 APPDATA·임시 WebView 데이터 폴더, One Light. 시스템 클립보드는 건드리지 않았다.
+  - 결과: 15항목 PASS.
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-09-R1/`(v3.json, v3-2.json, find-panel.png, find-panel-md.png, replace-panel.png, icon-open.png, ctrl-d.png). v3.json의 ctrlD·menu.addNext 줄은 leader 스크립트 커서 위치 잘못으로 무효이고 v3-2.json이 대신한다.
+  - 특이사항: workbench-kit은 띄워 비교하지 않았다(사용자 데이터에 쓸 위험, 소스·VS Code 기본 동작으로 비교). 한글 IME 입력·작은 Pane에서 창 압축은 V3로 재지 않았다.
+- 커밋: 코드 `bf05328`.
 
 ### Phase 10 — 상태 바 미리보기 버튼
 

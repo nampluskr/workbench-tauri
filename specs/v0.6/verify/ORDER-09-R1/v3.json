@@ -1,0 +1,226 @@
+{
+  "ctrlF": {
+    "panel": {
+      "open": true,
+      "focus": "Find",
+      "find": "foo",
+      "replace": "",
+      "count": "5 of 6",
+      "pressed": [
+        "Match Case (Alt+C)=false",
+        "Match Whole Word (Alt+W)=false",
+        "Use Regular Expression (Alt+R)=false"
+      ],
+      "replaceRowHidden": true,
+      "order": [
+        "Toggle Replace",
+        "input:Find",
+        "Match Case (Alt+C)",
+        "Match Whole Word (Alt+W)",
+        "Use Regular Expression (Alt+R)",
+        "count",
+        "Previous Match (Shift+F3)",
+        "Next Match (F3)",
+        "Close (Escape)"
+      ],
+      "panelRect": {
+        "l": 950,
+        "t": 111,
+        "r": 1431,
+        "b": 155
+      },
+      "editorRect": {
+        "l": 440,
+        "t": 110,
+        "r": 1440,
+        "b": 821
+      }
+    },
+    "state": {
+      "doc": "const foo = 1;\nlet Foo = foo + foobar;\nfoo(foo);\n",
+      "ranges": [
+        "foo"
+      ],
+      "main": 0
+    }
+  },
+  "enterNext": {
+    "afterEnter": "6 of 6",
+    "afterShiftEnter": "5 of 6",
+    "afterF3": "6 of 6",
+    "afterShiftF3": "5 of 6"
+  },
+  "options": {
+    "altC": [
+      [
+        "Match Case (Alt+C)=true",
+        "Match Whole Word (Alt+W)=false",
+        "Use Regular Expression (Alt+R)=false"
+      ],
+      "4 of 5"
+    ],
+    "altW": [
+      [
+        "Match Case (Alt+C)=false",
+        "Match Whole Word (Alt+W)=true",
+        "Use Regular Expression (Alt+R)=false"
+      ],
+      "4 of 5"
+    ],
+    "altR": [
+      [
+        "Match Case (Alt+C)=false",
+        "Match Whole Word (Alt+W)=false",
+        "Use Regular Expression (Alt+R)=false"
+      ],
+      "5 of 6"
+    ],
+    "back": [
+      "Match Case (Alt+C)=false",
+      "Match Whole Word (Alt+W)=false",
+      "Use Regular Expression (Alt+R)=false"
+    ]
+  },
+  "altEnter": {
+    "panelOpen": false,
+    "focusInEditor": true,
+    "ranges": [
+      "foo",
+      "Foo",
+      "foo",
+      "foo",
+      "foo",
+      "foo"
+    ]
+  },
+  "ctrlH": {
+    "open": true,
+    "focus": "Find",
+    "find": "foo",
+    "replace": "",
+    "count": "0 of 6",
+    "pressed": [
+      "Match Case (Alt+C)=false",
+      "Match Whole Word (Alt+W)=false",
+      "Use Regular Expression (Alt+R)=false"
+    ],
+    "replaceRowHidden": false,
+    "order": [
+      "Toggle Replace",
+      "input:Find",
+      "Match Case (Alt+C)",
+      "Match Whole Word (Alt+W)",
+      "Use Regular Expression (Alt+R)",
+      "count",
+      "Previous Match (Shift+F3)",
+      "Next Match (F3)",
+      "Close (Escape)"
+    ],
+    "panelRect": {
+      "l": 950,
+      "t": 111,
+      "r": 1431,
+      "b": 187
+    },
+    "editorRect": {
+      "l": 440,
+      "t": 110,
+      "r": 1440,
+      "b": 821
+    }
+  },
+  "replace": {
+    "afterReplaceOne": "const foo = 1;\nlet Foo = foo + foobar;\nfoo(foo);\n",
+    "afterReplaceAll": "const bar = 1;\nlet bar = bar + barbar;\nbar(bar);\n",
+    "panelOpenAfterEsc": false,
+    "afterOneUndo": "const foo = 1;\nlet Foo = foo + foobar;\nfoo(foo);\n",
+    "afterSecondUndo": "const foo = 1;\nlet Foo = foo + foobar;\nfoo(foo);\n",
+    "restoredToOriginal": true
+  },
+  "ctrlD": {
+    "ctrlD1": [
+      "@10"
+    ],
+    "ctrlD2": [
+      "@10"
+    ],
+    "ctrlKctrlD": {
+      "doc": "const foo = 1;\nlet Foo = foo + foobar;\nfoo(foo);\n",
+      "ranges": [
+        "@10"
+      ],
+      "main": 0
+    },
+    "ctrlShiftL": [
+      "@10"
+    ]
+  },
+  "menu": {
+    "items": [
+      "FindCtrl+F",
+      "ReplaceCtrl+H",
+      "Add Next OccurrenceCtrl+D"
+    ],
+    "find": {
+      "open": true,
+      "focus": "Find",
+      "replaceRowHidden": true
+    },
+    "replace": {
+      "open": true,
+      "replaceRowHidden": false
+    },
+    "addNext1": [
+      "@10"
+    ],
+    "addNext2": [
+      "@10"
+    ]
+  },
+  "icon": {
+    "disabled": false,
+    "afterFirstClick": true,
+    "afterSecondClick": false
+  },
+  "markdown": {
+    "open": true,
+    "focus": "Find",
+    "find": "foo",
+    "replace": "",
+    "count": "1 of 2",
+    "pressed": [
+      "Match Case (Alt+C)=false",
+      "Match Whole Word (Alt+W)=false",
+      "Use Regular Expression (Alt+R)=false"
+    ],
+    "replaceRowHidden": true,
+    "order": [
+      "Toggle Replace",
+      "input:Find",
+      "Match Case (Alt+C)",
+      "Match Whole Word (Alt+W)",
+      "Use Regular Expression (Alt+R)",
+      "count",
+      "Previous Match (Shift+F3)",
+      "Next Match (F3)",
+      "Close (Escape)"
+    ],
+    "panelRect": {
+      "l": 950,
+      "t": 111,
+      "r": 1431,
+      "b": 155
+    },
+    "editorRect": {
+      "l": 440,
+      "t": 110,
+      "r": 1440,
+      "b": 821
+    }
+  },
+  "sidebarCtrlF": {
+    "focus": "project-panel",
+    "inSidebar": true,
+    "editorPanelOpen": false
+  }
+}

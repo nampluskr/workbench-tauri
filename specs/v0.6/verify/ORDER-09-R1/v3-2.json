@@ -1,0 +1,70 @@
+{
+  "ctrlD": {
+    "first": {
+      "doc": "const foo = 1;\nlet Foo = foo + foobar;\nfoo(foo);\n",
+      "ranges": [
+        "foo"
+      ],
+      "main": 0
+    },
+    "second": {
+      "doc": "const foo = 1;\nlet Foo = foo + foobar;\nfoo(foo);\n",
+      "ranges": [
+        "foo",
+        "foo"
+      ],
+      "main": 1
+    },
+    "third": {
+      "doc": "const foo = 1;\nlet Foo = foo + foobar;\nfoo(foo);\n",
+      "ranges": [
+        "foo",
+        "foo",
+        "foo"
+      ],
+      "main": 2
+    },
+    "ctrlKctrlD": {
+      "doc": "const foo = 1;\nlet Foo = foo + foobar;\nfoo(foo);\n",
+      "ranges": [
+        "foo",
+        "foo",
+        "foo"
+      ],
+      "main": 2
+    },
+    "ctrlShiftL": {
+      "doc": "const foo = 1;\nlet Foo = foo + foobar;\nfoo(foo);\n",
+      "ranges": [
+        "foo",
+        "foo",
+        "foo",
+        "foo",
+        "foo"
+      ],
+      "main": 0
+    }
+  },
+  "menuAddNext": {
+    "first": {
+      "doc": "const foo = 1;\nlet Foo = foo + foobar;\nfoo(foo);\n",
+      "ranges": [
+        "foo"
+      ],
+      "main": 0
+    },
+    "second": {
+      "doc": "const foo = 1;\nlet Foo = foo + foobar;\nfoo(foo);\n",
+      "ranges": [
+        "foo",
+        "foo"
+      ],
+      "main": 1
+    }
+  },
+  "replaceOne": {
+    "afterEnter": "const bar = 1;\nlet Foo = foo + foobar;\nfoo(foo);\n",
+    "countAfter": "1 of 5",
+    "afterUndo": "const foo = 1;\nlet Foo = foo + foobar;\nfoo(foo);\n"
+  }
+}
