@@ -4,6 +4,8 @@ import searchSvg from "../assets/codicons/search.svg?raw";
 import markdownSvg from "../assets/codicons/markdown.svg?raw";
 import listSelectionSvg from "../assets/codicons/list-selection.svg?raw";
 
+import { Show } from "solid-js";
+import FileIcon from "./FileIcon.tsx";
 import { tooltip, type Tip } from "./tooltip.ts";
 import { iconMarkup, themedSvg } from "./icon-svg.ts";
 
@@ -26,7 +28,7 @@ export default function Icon(props: { name: IconName }) {
  * Icon button: disabled until it gets an `onClick` (the tab bar end buttons stay that way, R-10). It has its
  * tooltip either way (8.1): the label with the shortcut of `action`, or the given rows.
  */
-export function IconButton(props: { name: IconName; label: string; action?: string; tips?: Tip[]; toggled?: boolean; onClick?: () => void }) {
+export function IconButton(props: { name: IconName; label: string; action?: string; tips?: Tip[]; toggled?: boolean; toggledFile?: string; onClick?: () => void }) {
   return (
     <button
       class="icon-button"
@@ -36,7 +38,10 @@ export function IconButton(props: { name: IconName; label: string; action?: stri
       onClick={() => props.onClick?.()}
       ref={(el) => tooltip(el, () => props.tips ?? { title: props.label, action: props.action })}
     >
-      <Icon name={props.name} />
+      {/* U-20: while toggled, the file icon the applied icon theme gives `toggledFile` (the Left Dock's icon for it) replaces the button icon. */}
+      <Show when={props.toggled && props.toggledFile} fallback={<Icon name={props.name} />}>
+        <FileIcon name={props.toggledFile!} dir={false} />
+      </Show>
     </button>
   );
 }

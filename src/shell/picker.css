@@ -76,3 +76,7 @@
 }
 .picker-footer button:hover { background: var(--ghost-element-hover); }
 .picker-footer button:active { background: var(--ghost-element-active); }
+/* U-22: Open File rows = file icon + name + path under the folder; the path is muted and gives way first. */
+.picker-file { display: flex; align-items: center; gap: var(--picker-item-gap); min-width: 0; --icon-size: var(--icons-size-small); }
+.picker-file-name { flex: none; }
+.picker-file-dir { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--text-muted); }

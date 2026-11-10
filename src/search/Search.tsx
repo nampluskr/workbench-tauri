@@ -1,21 +1,19 @@
 import { createSignal, For, onCleanup, Show } from "solid-js";
 import { render } from "solid-js/web";
-import { Channel, invoke } from "@tauri-apps/api/core";
 import { commands } from "../keymap/keyboard.ts";
-import { openFile, openTool, reveal, setExpanded } from "../workspace/context.ts";
-import { activateFolder, activeId, contextOf, editorContext, flushWorkspaceState, folders } from "../workspace/store.ts";
+import { openTool } from "../workspace/context.ts";
+import { activeId, editorContext, folders } from "../workspace/store.ts";
 import { searchRoots } from "../workspace/folders.ts";
 import { pathCrumb } from "../editor/breadcrumbs.ts";
-import { baseName, pathKey } from "../workspace/paths.ts";
-import { setDockOpen } from "../shell/panels.ts";
+import { baseName } from "../workspace/paths.ts";
 import FileIcon from "../shell/FileIcon.tsx";
 import { IconButton } from "../shell/Icon.tsx";
 import { nameRegExp } from "./name-regexp.ts";
+import type { SearchEntry, SearchEvent } from "./entries.ts";
+import { openEntry, searchNames } from "./names.ts";
 import "./search.css";
 
-type SearchEntry = { path: string; isDir: boolean };
 const MAX_RESULTS = 5_000; // name_search.rs MAX_FILES; regexp results are cut here in the page
-type SearchEvent = { kind: "entry"; entry: SearchEntry } | { kind: "done" | "limit" } | { kind: "error"; message: string };
 
 function Search() {
   const [query, setQuery] = createSignal("");
@@ -40,8 +38,7 @@ function Search() {
     if (regexp() && !matcher) { setBusy(false); return; }
     const roots = searchRoots(folders(), activeId());
     setRoot(roots[0] ?? "");
-    const channel = new Channel<SearchEvent>();
-    channel.onmessage = (event) => {
+    const onEvent = (event: SearchEvent) => {
       if (id !== generation) return;
       if (event.kind === "entry") {
         if (matcher && !matcher.test(baseName(event.entry.path))) return;
@@ -56,9 +53,7 @@ function Search() {
     };
     try {
       const options = { roots, query: query(), caseSensitive: caseSensitive(), wholeWord: wholeWord(), all: !!matcher };
-      await flushWorkspaceState();
-      if (id !== generation) return;
-      await invoke("search_names", { options, onEvent: channel });
+      await searchNames(options, onEvent, () => id !== generation);
     } catch (error) {
       if (id === generation) { setBusy(false); setMessage(String(error)); }
     }
@@ -69,17 +64,6 @@ function Search() {
     ["regex", "Use Regular Expression (Alt+R)", "KeyR", regexp, setRegexp],
   ] as const;
   const flip = (setter: (update: (on: boolean) => boolean) => void) => { setter((on) => !on); if (query()) void run(); };
-  const open = (entry: SearchEntry) => {
-    const folder = folders().find((folder) => pathKey(folder.path) === pathKey(root()));
-    if (!folder) return;
-    activateFolder(folder.id);
-    const ctx = contextOf(folder);
-    if (entry.isDir) {
-      setDockOpen(true);
-      setExpanded(ctx, ctx.root, true);
-      reveal(ctx, entry.path);
-    } else openFile(ctx, entry.path, false, true);
-  };
   return <section class="project-search" aria-label="Search" tabindex="-1">
     <div class="project-search-toolbar main">
       <div class="project-search-input"><input data-text-input aria-label="Search" placeholder="Search" value={query()} onInput={(e) => setQuery(e.currentTarget.value)} onKeyDown={(event) => {
@@ -93,7 +77,7 @@ function Search() {
     </div>
     <Show when={busy() || message()}><p class="search-message" role="status">{busy() ? "Searching…" : message()}</p></Show>
     <div class="project-search-results">
-      <For each={entries()}>{(entry) => <button class="search-file-header" onClick={() => open(entry)}>
+      <For each={entries()}>{(entry) => <button class="search-file-header" onClick={() => openEntry(root(), entry)}>
         <FileIcon name={baseName(entry.path)} dir={entry.isDir} />
         <span class="search-file-name">{baseName(entry.path)}</span>
         <span class="search-file-dir">{pathCrumb(root(), entry.path)}</span>

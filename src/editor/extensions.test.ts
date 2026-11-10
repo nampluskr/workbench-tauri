@@ -151,3 +151,43 @@ test("U-17 R2: a font-size change reconfigures the editor, the way CM learns it 
   remeasureForFont(view);
   assert.deepEqual(reconfigured, [true, true], "every call must change the theme facet, not only the first");
 });
+
+test("U-19: Up / Down / Page / Ctrl+Home keys move and extend every cursor and keep the wanted column", async () => {
+  const { multiCursorKeys } = await import("./extensions.ts");
+  const { EditorSelection } = await import("@codemirror/state");
+  // "abcdef" lines with a short one in the middle; cursors in column 4 of lines 1, 3 and 5.
+  const doc = "abcdef\nab\nabcdef\nab\nabcdef\nabcdef";
+  const at = (line: number, col: number) => doc.split("\n").slice(0, line - 1).join("\n").length + (line > 1 ? 1 : 0) + col;
+  let state = EditorState.create({ doc, selection: EditorSelection.create([1, 3, 5].map((l) => EditorSelection.cursor(at(l, 4))), 0),
+    extensions: EditorState.allowMultipleSelections.of(true) });
+  // Only the DOM-measuring parts of the view are stubbed: moving a number of lines (a page is 2 lines), keeping the goal column.
+  const view = { get state() { return state; }, dispatch: (tr: any) => { state = state.update(tr).state; }, defaultLineHeight: 10,
+    scrollDOM: { clientHeight: 5, scrollHeight: 5 }, dom: { ownerDocument: { defaultView: { innerHeight: 25 } } },
+    moveToLineBoundary: (range: any, forward: boolean) => { const l = state.doc.lineAt(range.head); return EditorSelection.cursor(forward ? l.to : l.from); },
+    moveVertically: (range: any, forward: boolean, distance?: number) => {
+      const l = state.doc.lineAt(range.head), col = range.goalColumn ?? range.head - l.from;
+      const to = Math.max(1, Math.min(state.doc.lines, l.number + (forward ? 1 : -1) * (distance ? Math.round(distance / 10) : 1)));
+      if (to === l.number) return range;
+      const t = state.doc.line(to);
+      return EditorSelection.cursor(t.from + Math.min(col, t.length), -1, undefined, col);
+    } } as unknown as EditorView;
+  const key = (name: string, shift = false) => { const b = multiCursorKeys.find((k) => k.key === name)!; return (shift ? b.shift : b.run)(view); };
+  const spans = () => state.selection.ranges.map((r) => `${r.anchor}-${r.head}`);
+  key("ArrowDown");
+  assert.deepEqual(spans(), [`${at(2, 2)}-${at(2, 2)}`, `${at(4, 2)}-${at(4, 2)}`, `${at(6, 4)}-${at(6, 4)}`]); // the short lines clamp to column 2, the long last line keeps 4
+  assert.equal(state.selection.ranges.length, 3);
+  key("ArrowUp");
+  assert.deepEqual(spans(), [1, 3, 5].map((l) => `${at(l, 4)}-${at(l, 4)}`)); // the wanted column 4 returns
+  key("ArrowDown", true);
+  assert.deepEqual(spans(), [`${at(1, 4)}-${at(2, 2)}`, `${at(3, 4)}-${at(4, 2)}`, `${at(5, 4)}-${at(6, 4)}`]);
+  key("ArrowUp", true);
+  assert.deepEqual(spans(), [1, 3, 5].map((l) => `${at(l, 4)}-${at(l, 4)}`));
+  key("PageDown");
+  assert.deepEqual(spans(), [3, 5, 6].map((l) => `${at(l, 4)}-${at(l, 4)}`)); // two lines each; the last one clamps to the last line
+  key("PageDown", true);
+  key("Mod-Home", true);
+  assert.equal(state.selection.ranges.length, 1);
+  assert.equal(state.selection.main.from, 0);
+  key("Mod-End");
+  assert.deepEqual(spans(), [`${doc.length}-${doc.length}`]);
+});

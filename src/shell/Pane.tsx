@@ -45,6 +45,7 @@ import { relativePath } from "../workspace/ops.ts";
 import { CLOSE_ACTIONS, tabMenu } from "./tab-menu.ts";
 import { chain } from "./chain.ts";
 import { setDockOpen } from "./panels.ts";
+import { startNew } from "../workspace/actions.ts";
 import { pathCrumb } from "../editor/breadcrumbs.ts";
 import { editorContext } from "../workspace/store.ts";
 import { isOpen as menuOpen, openContextMenu } from "./AppMenu.tsx";
@@ -437,6 +438,17 @@ function PaneBody(props: { pane: PaneState | null }) {
 }
 
 /** I-706 / I-707: the split popup (Split Right, Left, Up, Down), anchored at its top right. */
+/** U-22 (Zed's New… menu, without the entries the app has no feature for). New File is the project panel's: it starts in the selected folder, or the folder's root when nothing is selected. */
+function openNewMenu(ctx: FolderContext, button: HTMLElement) {
+  const r = button.getBoundingClientRect();
+  openContextMenu({ x: r.right, y: r.bottom }, [
+    { label: "New File", shortcut: "ctrl-n", run: () => { setDockOpen(true); startNew(ctx, false); } }, // the key is the project panel's, so the keymap lookup of this menu would not find it
+    { label: "Open File", action: "file_finder::Toggle" },
+    "separator",
+    { label: "Search", action: "pane::DeploySearch" },
+  ], true);
+}
+
 function SplitButton(props: { ctx: FolderContext; pane: PaneState }) {
   // An editor can be split (clone); a Markdown preview cannot, so it moves when there are two tabs or more.
   const mode = () => activeTabOf(props.pane)?.tool ? null : splitMode(!!activeTabOf(props.pane), !activeTabOf(props.pane)?.markdown, props.pane.tabs().length);
@@ -508,7 +520,7 @@ function PaneView(props: { ctx: FolderContext | null; pane: PaneState | null }) 
         </Show>
         <Show when={props.ctx && props.pane && focusedPane() === props.pane.id}>
           <div class="tab-bar-edge end">
-            <button class="icon-button" aria-label="New…" disabled ref={(el) => tooltip(el, () => (menuOpen() ? null : { title: "New…" }))}>
+            <button class="icon-button" aria-label="New…" onClick={(e) => openNewMenu(props.ctx!, e.currentTarget)} ref={(el) => tooltip(el, () => (menuOpen() ? null : { title: "New…" }))}>
               <Icon name="plus" />
             </button>
             <SplitButton ctx={props.ctx!} pane={props.pane!} />

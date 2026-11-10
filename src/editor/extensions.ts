@@ -1,4 +1,4 @@
-import { Compartment, EditorState } from "@codemirror/state";
+import { Compartment, EditorSelection, EditorState, type StateCommand } from "@codemirror/state";
 import {
   EditorView,
   drawSelection,
@@ -10,8 +10,9 @@ import {
 } from "@codemirror/view";
 import {
   cursorCharLeft, cursorCharRight, cursorDocEnd, cursorDocStart, cursorGroupLeft, cursorGroupRight, cursorLineBoundaryBackward,
-  cursorLineBoundaryForward, history, selectCharLeft, selectCharRight, selectDocEnd, selectDocStart, selectGroupLeft, selectGroupRight,
-  selectLineBoundaryBackward, selectLineBoundaryForward, simplifySelection,
+  cursorLineBoundaryForward, history, selectCharLeft, selectCharRight, selectGroupLeft, selectGroupRight,
+  cursorLineDown, cursorLineUp, cursorPageDown, cursorPageUp, selectLineBoundaryBackward, selectLineBoundaryForward, selectLineDown,
+  selectLineUp, selectPageDown, selectPageUp, simplifySelection,
 } from "@codemirror/commands";
 import { BUFFER_FONT_FAMILY, EDITOR_TAB_SIZE, EDITOR_UNDO_GROUP_INTERVAL_MS } from "../spec/metrics.ts";
 import { imeShortcutInput } from "./ime.ts";
@@ -84,6 +85,17 @@ const zedEditorTheme = EditorView.theme({
 });
 
 /**
+ * U-19 (VS Code): every range extends to the document start / end, then CM merges the overlapping ones into one selection.
+ * CM's own selectDocStart / selectDocEnd extend the main range only and drop the others.
+ */
+const selectDocEdge = (end: boolean): StateCommand => ({ state, dispatch }) => {
+  const head = end ? state.doc.length : 0;
+  dispatch(state.update({ selection: EditorSelection.create(state.selection.ranges.map((r) => EditorSelection.range(r.anchor, head)), state.selection.mainIndex),
+    scrollIntoView: true, userEvent: "select" }));
+  return true;
+};
+
+/**
  * U-14: without these the browser moves the caret natively and CM reads back one range, so several cursors collapse
  * into one. CM's commands move every range. The editor has no defaultKeymap, so these keys are bound here.
  */
@@ -94,6 +106,15 @@ export const multiCursorKeys = [
   { key: "Mod-ArrowRight", run: cursorGroupRight, shift: selectGroupRight },
   { key: "Home", run: cursorLineBoundaryBackward, shift: selectLineBoundaryBackward },
   { key: "End", run: cursorLineBoundaryForward, shift: selectLineBoundaryForward },
+  // U-19: Up / Down move every cursor a line and keep each one's wanted column (CM's goal column); a selection collapses to its edge.
+  { key: "ArrowUp", run: cursorLineUp, shift: selectLineUp },
+  { key: "ArrowDown", run: cursorLineDown, shift: selectLineDown },
+  { key: "PageUp", run: cursorPageUp, shift: selectPageUp },
+  { key: "PageDown", run: cursorPageDown, shift: selectPageDown },
+  // I-051 / I-053: the browser's own Ctrl+Home / End stops where the drawn lines end (CM6 draws only those in view). Like
+  // the other cursor keys (I-048 ~ I-055) they are the editor's, not the app keymap's. All cursors land on one spot and merge.
+  { key: "Mod-Home", run: cursorDocStart, shift: selectDocEdge(false) },
+  { key: "Mod-End", run: cursorDocEnd, shift: selectDocEdge(true) },
 ];
 
 /**
@@ -124,12 +145,8 @@ export const editorExtensions = (extension: string) => [
   rectangularSelection({ eventFilter: (e) => e.button === 0 && e.ctrlKey && e.shiftKey }),
   EditorState.tabSize.of(EDITOR_TAB_SIZE), // E-055
   history({ newGroupDelay: EDITOR_UNDO_GROUP_INTERVAL_MS }), // E-059c; the keys are the app keymap's editor::Undo / Redo
-  // I-051 / I-053: the browser's own Ctrl+Home / End stops where the drawn lines end (CM6 draws only those in view). Like
-  // the other cursor keys (I-048 ~ I-055) they are the editor's, not the app keymap's.
   keymap.of([
     { key: "Escape", run: simplifySelection }, // K-33: Zed editor::Cancel (selection_collections.rs try_cancel): a selection collapses to its head, several ranges to the main one
-    { key: "Mod-Home", run: cursorDocStart, shift: selectDocStart },
-    { key: "Mod-End", run: cursorDocEnd, shift: selectDocEnd },
     ...multiCursorKeys,
   ]),
   zedEditorTheme,

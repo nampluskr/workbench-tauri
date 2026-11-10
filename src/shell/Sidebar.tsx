@@ -105,7 +105,7 @@ export default function FolderList() {
         <input ref={search} data-text-input aria-label="Search folders" placeholder="Search" value={query()}
           onInput={(e) => setQuery(e.currentTarget.value)} />
         <Show when={query()}>
-          <button class="icon-button" aria-label="Clear folder search" onClick={() => { setQuery(""); search.focus(); }}><Icon name="close" /></button>
+          <button class="icon-button sidebar-search-clear" aria-label="Clear folder search" onClick={() => { setQuery(""); search.focus(); }}><Icon name="close" /></button>
         </Show>
       </div>
     </div>

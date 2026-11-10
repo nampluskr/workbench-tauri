@@ -12,6 +12,7 @@ import { statusButtons, statusItems } from "./shell/status.ts";
 import { commands } from "./keymap/keyboard.ts";
 import { adjustEditorFontSize } from "./settings/load.ts";
 import { PickerHost } from "./shell/Picker.tsx";
+import { FileFinderHost } from "./shell/FileFinder.tsx";
 
 commands.set("markdown::ToggleLockPreview", toggleLockPreview);
 commands.set("zed::IncreaseBufferFontSize", () => adjustEditorFontSize(1));
@@ -72,6 +73,7 @@ export default function App() {
         </footer>
       </div>
       <PickerHost />
+      <FileFinderHost />
     </>
   );
 }

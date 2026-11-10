@@ -175,6 +175,14 @@ button, input, select, textarea {
   font-size: var(--extensions-search-input-font-size); line-height: var(--extensions-search-input-line-height-multiplier);
 }
 .sidebar-search input:focus { outline: none; }
+/* U-21: same slot and right edge as the folder row's hover x (.tab-close in .sidebar-item sits border-right + padding-right from the row edge). The row is the reference; the negative margin cancels the search margin and right padding. */
+.sidebar-search .sidebar-search-clear { /* two classes: the later .icon-button rule would otherwise keep its 22px width */
+  width: var(--tab-end-slot-width); height: var(--tab-end-slot-height);
+  margin-right: calc(var(--sidebar-item-border-right-width) + var(--sidebar-project-header-padding-right) - var(--sidebar-project-header-padding-left) - var(--extensions-search-input-padding-right));
+}
+/* The row's x icon is a .sidebar-item .icon: a 16px slot (centered in the 14px button) around an svg of --icon-size. Same here. */
+.sidebar-search .sidebar-search-clear .icon { width: var(--sidebar-item-icon-slot-size); height: var(--sidebar-item-icon-slot-size); }
+.sidebar-search .sidebar-search-clear .icon svg { width: var(--icon-size); height: var(--icon-size); }
 .sidebar-search:focus-within > .icon { color: var(--text-accent); }
 .sidebar-match { color: var(--text-accent); }
 .sidebar-item-parent { color: var(--text-muted); } /* A-12.6 */
@@ -219,8 +227,6 @@ button, input, select, textarea {
 .group { display: flex; gap: var(--statusbar-item-gap); }
 .status-items { align-items: center; font-size: var(--statusbar-cursor-position-font-size); white-space: nowrap; }
 .status-bar .icon-button[aria-pressed="true"] { color: var(--text-accent); } /* I-19: Zed IconButton Color::Selected. */
-/* U-18: Lock Preview on = accent icon plus a light accent border. border-box keeps the button size; the other toggles stay as they are. */
-.status-bar .icon-button[aria-label="Lock Preview"][aria-pressed="true"] { box-sizing: border-box; border: var(--project-panel-item-border-width) solid var(--border-focused); border-radius: var(--settings-control-corner-radius); }
 .status-divider { flex: none; align-self: center; width: var(--statusbar-left-divider-width); height: var(--statusbar-left-divider-height); background: var(--border); }
 .status-divider.toggle { margin-left: calc(var(--statusbar-toggle-gap) - var(--statusbar-item-gap)); } /* Zed: toggle + divider sit in their own gap_0p5 row. */
 .sidebar-footer .group { gap: var(--sidebar-footer-gap); }
