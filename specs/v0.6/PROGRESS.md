@@ -352,6 +352,25 @@
 - 커밋: 코드 `46b6962`.
 - 상태: 끝남.
 
+### ORDER-13 찾기·바꾸기 줄과 Search 탭 옵션 (2026-11-10)
+
+- 요청: 사용자가 확인하고 남긴 U-7 찾기·바꾸기 줄, U-8 Search 탭 옵션(core `D:\projects\workbench-core\specs\v0.6\orders\ORDER-13.md`).
+- **K-17 U-7·U-8 반영** (2026-11-10, coder, Claude Code Sonnet 5.5 high)
+  - 무엇을 했나:
+    - U-7 찾기·바꾸기: ORDER-09-R1의 편집 영역 오른쪽 위 겹침 창을 없애고, 경로 줄 바로 아래 편집 영역 너비의 줄(CM 상단 패널)로 바꿨다. 겹침 CSS는 지웠고 문서가 아래로 밀린다. 구성은 찾기 입력란(안 오른쪽 Aa·wd·.*) → 바꾸기 줄 켜기 → 일치 모두 선택 → 선택 안에서 찾기 → 구분선 → < > → n/m(문구 "1 of 2" → "1/2") → ×다. 바꾸기 줄은 아래 줄(입력란·하나 바꾸기·모두 바꾸기)이다. 선택 안에서 찾기는 새로 만들었다. 켤 때의 선택 범위를 저장하고, 개수·이동·모두 선택·바꾸기가 그 범위 안만 다룬다(@codemirror/search 범위 안). 돋보기는 찾기 줄이 열린 동안 aria-pressed·강조색이다(Lock Preview 방식). 아이콘은 Zed 아이콘(case_sensitive·whole_word·regex·replace·select_all·chevron_left/right·close·replace_next·replace_all)이고, codicon `list-selection` 하나를 복사했다(@vscode/codicons 0.0.46-24, NOTICE 한 줄). 수치는 spec E-061~E-067·`search_input.max_width`를 metrics 상수·CSS 변수로 뒀다. 단축키·일치 강조·K-13-R1 수정·툴팁·메뉴 Paste는 그대로다.
+    - U-8 Search 탭: 입력란 안에 Aa·wd·.*(같은 부품), 오른쪽에 결과 수를 두고 Alt+C/W/R로 토글한다. 이름에만 적용하고 기본은 대소문자 무시 부분 일치다. 대소문자·단어 경계는 Rust `name_search.rs`, 정규식은 프런트엔드 JS RegExp(`src/search/name-regexp.ts`)다. Rust regex 크레이트는 다시 더하지 않았고, Rust는 all 모드로 이름을 흘려 보낸다. 잘못된 정규식은 결과 0이고 오류를 내지 않는다. 범위 밖·링크 거부와 상한은 그대로다.
+  - 결과: 위와 같다.
+  - 검증: typecheck, npm test 227 통과, cargo test name_search 3 통과, clippy 경고 0.
+  - 특이사항(한계): 선택 안에서 찾기에서 범위 밖 일치의 강조는 문서 전체에 남는다. 범위를 고르고 먼저 토글한 뒤 입력해야 한다. 정규식 모드는 Rust가 이름을 최대 100,000개(MAX_SCAN)까지 흘려 보내고 화면은 일치 5,000개에서 멈춘다. 정규식+wd는 ASCII `\w` 경계다. 좁은 폭 줄바꿈(narrow_threshold)은 하지 않는다.
+- C-19 checker [PASS]: typecheck 오류 0, npm test 227 통과, clippy 경고 0, cargo test 22 통과, 코드 검토 지적 없음, V3 U-7 14항목·U-8 7항목 PASS (2026-11-10). checker가 허용 목록 밖 명령(Get-ChildItem)으로 허가 창에서 한 번 멈춰, leader가 거절하고 파일 목록을 건넸다.
+- **V3(ORDER-13)** (2026-11-10, C-19 판정 [PASS])
+  - 무엇을 했나: debug exe, 임시 APPDATA·WebView 데이터 폴더, One Light.
+  - 결과: 찾기 줄은 경로 줄 바로 아래(y 110), 편집 영역 너비(440–1440)이고, 문서 첫 줄이 110 → 155로 밀린다(닫으면 110). 선택 안에서 찾기는 1·2줄 범위에서 3(끄면 4). U-8은 read 3·Aa 2·wd 0(my_read의 _는 단어 문자)·^read 2·[ 0. U-7 14항목·U-8 7항목 PASS.
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-13/`(v3.json, code-find-bar.png, code-replace-row.png, md-find-bar.png, md-find-bar-preview-sync.png, search-tab-options.png).
+  - 특이사항: 없음
+- 커밋: 코드 `64156a7`.
+- 상태: 끝남.
+
 ## 버전 종료
 
 진행 중.

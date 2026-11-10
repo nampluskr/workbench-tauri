@@ -1,0 +1,320 @@
+{
+  "before": {
+    "mag": {
+      "pressed": "false",
+      "color": "rgb(88, 88, 90)",
+      "iconColor": "rgb(88, 88, 90)"
+    },
+    "firstLineTop": 110
+  },
+  "ctrlF": {
+    "bar": {
+      "open": true,
+      "order": [
+        "input:Find",
+        "Match Case (Alt+C)",
+        "Match Whole Word (Alt+W)",
+        "Use Regular Expression (Alt+R)",
+        "Toggle Replace (Ctrl+H)",
+        "Select All Matches (Alt+Enter)",
+        "Find in Selection",
+        "|",
+        "Previous Match (Shift+F3)",
+        "Next Match (F3)",
+        "count:1/4",
+        "Close (Escape)"
+      ],
+      "pressed": [
+        "Match Case (Alt+C)=false",
+        "Match Whole Word (Alt+W)=false",
+        "Use Regular Expression (Alt+R)=false",
+        "Toggle Replace (Ctrl+H)=false",
+        "Find in Selection=false"
+      ],
+      "replaceHidden": true,
+      "count": "1/4",
+      "find": "foo",
+      "bar": {
+        "l": 440,
+        "t": 110,
+        "r": 1440,
+        "b": 154
+      },
+      "editor": {
+        "l": 440,
+        "r": 1440
+      },
+      "toolbarBottom": 110,
+      "firstLineTop": 155
+    },
+    "mag": {
+      "pressed": "true",
+      "color": "rgb(92, 120, 226)",
+      "iconColor": "rgb(92, 120, 226)"
+    }
+  },
+  "toggles": {
+    "Match Case (Alt+C)": {
+      "pressed": [
+        "Match Case (Alt+C)=true",
+        "Match Whole Word (Alt+W)=false",
+        "Use Regular Expression (Alt+R)=false",
+        "Toggle Replace (Ctrl+H)=false",
+        "Find in Selection=false"
+      ],
+      "count": "1/4"
+    },
+    "Match Whole Word (Alt+W)": {
+      "pressed": [
+        "Match Case (Alt+C)=false",
+        "Match Whole Word (Alt+W)=true",
+        "Use Regular Expression (Alt+R)=false",
+        "Toggle Replace (Ctrl+H)=false",
+        "Find in Selection=false"
+      ],
+      "count": "1/4"
+    },
+    "Use Regular Expression (Alt+R)": {
+      "pressed": [
+        "Match Case (Alt+C)=false",
+        "Match Whole Word (Alt+W)=false",
+        "Use Regular Expression (Alt+R)=true",
+        "Toggle Replace (Ctrl+H)=false",
+        "Find in Selection=false"
+      ],
+      "count": "1/4"
+    },
+    "back": [
+      "Match Case (Alt+C)=false",
+      "Match Whole Word (Alt+W)=false",
+      "Use Regular Expression (Alt+R)=false",
+      "Toggle Replace (Ctrl+H)=false",
+      "Find in Selection=false"
+    ]
+  },
+  "prevNext": {
+    "start": "1/4",
+    "afterNext": "2/4",
+    "afterPrev": "1/4"
+  },
+  "replaceRow": {
+    "opened": {
+      "hidden": false,
+      "bar": {
+        "l": 440,
+        "t": 110,
+        "r": 1440,
+        "b": 194
+      },
+      "pressed": [
+        "Match Case (Alt+C)=false",
+        "Match Whole Word (Alt+W)=false",
+        "Use Regular Expression (Alt+R)=false",
+        "Toggle Replace (Ctrl+H)=true",
+        "Find in Selection=false"
+      ]
+    },
+    "closed": {
+      "hidden": true
+    }
+  },
+  "selectAll": {
+    "ranges": [
+      "foo",
+      "foo",
+      "foo",
+      "foo"
+    ],
+    "barOpen": false,
+    "mag": {
+      "pressed": "false",
+      "color": "rgb(88, 88, 90)",
+      "iconColor": "rgb(88, 88, 90)"
+    }
+  },
+  "findInSelection": {
+    "selection": [
+      "const foo = 1;\nfoo(foo);\n"
+    ],
+    "pressedAfterToggle": [
+      "Match Case (Alt+C)=false",
+      "Match Whole Word (Alt+W)=false",
+      "Use Regular Expression (Alt+R)=false",
+      "Toggle Replace (Ctrl+H)=false",
+      "Find in Selection=true"
+    ],
+    "countInSelection": "1/3",
+    "countAfterOff": "1/4"
+  },
+  "closeBtn": {
+    "bar": false,
+    "mag": {
+      "pressed": "false",
+      "color": "rgb(88, 88, 90)",
+      "iconColor": "rgb(88, 88, 90)"
+    },
+    "firstLineTop": 110
+  },
+  "magToggle": {
+    "open": {
+      "bar": true,
+      "mag": {
+        "pressed": "true",
+        "color": "rgb(92, 120, 226)",
+        "iconColor": "rgb(92, 120, 226)"
+      }
+    },
+    "closedByClick": {
+      "bar": false,
+      "mag": {
+        "pressed": "false",
+        "color": "rgb(88, 88, 90)",
+        "iconColor": "rgb(88, 88, 90)"
+      }
+    },
+    "afterEsc": {
+      "bar": false,
+      "mag": {
+        "pressed": "false",
+        "color": "rgb(88, 88, 90)",
+        "iconColor": "rgb(88, 88, 90)"
+      }
+    }
+  },
+  "keysStill": {
+    "ctrlH_replaceHidden": false,
+    "afterEnter": "2/4",
+    "afterF3": "3/4",
+    "altC": [
+      "Match Case (Alt+C)=true",
+      "Match Whole Word (Alt+W)=false",
+      "Use Regular Expression (Alt+R)=false",
+      "Toggle Replace (Ctrl+H)=false",
+      "Find in Selection=false"
+    ],
+    "closedByEsc": true
+  },
+  "markdown": {
+    "firstLineBefore": 110,
+    "bar": {
+      "open": true,
+      "order": [
+        "input:Find",
+        "Match Case (Alt+C)",
+        "Match Whole Word (Alt+W)",
+        "Use Regular Expression (Alt+R)",
+        "Toggle Replace (Ctrl+H)",
+        "Select All Matches (Alt+Enter)",
+        "Find in Selection",
+        "|",
+        "Previous Match (Shift+F3)",
+        "Next Match (F3)",
+        "count:4/20",
+        "Close (Escape)"
+      ],
+      "pressed": [
+        "Match Case (Alt+C)=false",
+        "Match Whole Word (Alt+W)=false",
+        "Use Regular Expression (Alt+R)=false",
+        "Toggle Replace (Ctrl+H)=false",
+        "Find in Selection=false"
+      ],
+      "replaceHidden": true,
+      "count": "4/20",
+      "find": "Section",
+      "bar": {
+        "l": 440,
+        "t": 110,
+        "r": 1440,
+        "b": 154
+      },
+      "editor": {
+        "l": 440,
+        "r": 1440
+      },
+      "toolbarBottom": 110,
+      "firstLineTop": 155
+    },
+    "mag": {
+      "pressed": "true",
+      "color": "rgb(92, 120, 226)",
+      "iconColor": "rgb(92, 120, 226)"
+    }
+  },
+  "previewSync": {
+    "barOpen": true,
+    "activeBlock": [
+      "Section 5"
+    ]
+  },
+  "searchTab": {
+    "read": {
+      "count": "3",
+      "names": [
+        "Readme.md",
+        "my_read.txt",
+        "readme-old.md"
+      ],
+      "pressed": [
+        "Match Case (Alt+C)=false",
+        "Match Whole Word (Alt+W)=false",
+        "Use Regular Expression (Alt+R)=false"
+      ]
+    },
+    "matchCase": {
+      "count": "2",
+      "names": [
+        "my_read.txt",
+        "readme-old.md"
+      ],
+      "pressed": [
+        "Match Case (Alt+C)=true",
+        "Match Whole Word (Alt+W)=false",
+        "Use Regular Expression (Alt+R)=false"
+      ]
+    },
+    "wholeWord": {
+      "count": "0",
+      "names": [],
+      "pressed": [
+        "Match Case (Alt+C)=false",
+        "Match Whole Word (Alt+W)=true",
+        "Use Regular Expression (Alt+R)=false"
+      ]
+    },
+    "regexCaret": {
+      "count": "2",
+      "names": [
+        "Readme.md",
+        "readme-old.md"
+      ],
+      "pressed": [
+        "Match Case (Alt+C)=false",
+        "Match Whole Word (Alt+W)=false",
+        "Use Regular Expression (Alt+R)=true"
+      ]
+    },
+    "invalidRegex": {
+      "count": "0",
+      "names": [],
+      "pressed": [
+        "Match Case (Alt+C)=false",
+        "Match Whole Word (Alt+W)=false",
+        "Use Regular Expression (Alt+R)=true"
+      ]
+    },
+    "altC": {
+      "count": "2",
+      "names": [
+        "my_read.txt",
+        "readme-old.md"
+      ],
+      "pressed": [
+        "Match Case (Alt+C)=true",
+        "Match Whole Word (Alt+W)=false",
+        "Use Regular Expression (Alt+R)=false"
+      ]
+    },
+    "focus": "Search"
+  }
+}
