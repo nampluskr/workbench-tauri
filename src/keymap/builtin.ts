@@ -4,6 +4,9 @@ import type { KeymapSection } from "./engine.ts";
 export const EDITOR_BINDINGS: KeymapSection[] = [{ context: "Editor", bindings: {
   "ctrl-a": "editor::SelectAll",
   "ctrl-l": "editor::SelectLine",
+  // U-13: VS Code's second pair; the menu shows the last key of an action (I-704), so Ctrl+Alt stays the displayed one.
+  "ctrl-shift-up": "editor::AddCursorAbove",
+  "ctrl-shift-down": "editor::AddCursorBelow",
   "ctrl-alt-up": "editor::AddCursorAbove",
   "ctrl-alt-down": "editor::AddCursorBelow",
   "ctrl-/": "editor::ToggleComment",

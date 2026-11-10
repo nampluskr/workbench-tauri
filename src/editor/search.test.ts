@@ -189,3 +189,17 @@ test("U-7: find in selection counts, steps and replaces only inside the selected
   run("FindNext", view);
   assert.deepEqual(ranges(view), [[12, 15]]); // outside the old range, now reachable
 });
+
+test("U-13: Ctrl+Shift+L with only a cursor selects every whole-word match of the cursor word, Korean too", () => {
+  const view = target("foo foobar foo");
+  view.dispatch({ selection: EditorSelection.cursor(1) });
+  assert.equal(run("SelectSelectionMatches", view), true);
+  assert.deepEqual(ranges(view), [[0, 3], [11, 14]]);
+  const korean = target("않는다 그리고 않는다 않는다");
+  korean.dispatch({ selection: EditorSelection.cursor(1) });
+  run("SelectSelectionMatches", korean);
+  assert.equal(korean.state.selection.ranges.length, 3);
+  const gap = target("foo  foo");
+  gap.dispatch({ selection: EditorSelection.cursor(4) });
+  assert.equal(run("SelectSelectionMatches", gap), false);
+});

@@ -39,6 +39,19 @@ export const addNextOccurrence: StateCommand = ({ state, dispatch }) => selectNe
   dispatch(index < 0 ? tr : state.update({ selection: EditorSelection.create(tr.state.selection.ranges, index), effects: tr.effects }));
 } });
 
+// U-13: CM's command needs a selection; VS Code also takes the cursor's word, matched as a whole word.
+export const selectAllOccurrences: StateCommand = ({ state, dispatch }) => {
+  const { main, ranges } = state.selection;
+  if (ranges.length > 1 || !main.empty) return selectSelectionMatches({ state, dispatch });
+  const word = state.wordAt(main.head);
+  if (!word) return false;
+  const query = new SearchQuery({ search: state.sliceDoc(word.from, word.to), literal: true, caseSensitive: true, wholeWord: true });
+  const found = Array.from({ [Symbol.iterator]: () => query.getCursor(state) }, ({ from, to }: { from: number; to: number }) => EditorSelection.range(from, to));
+  if (found.length > 1000) return false;
+  dispatch(state.update({ selection: EditorSelection.create(found, found.findIndex((r) => r.from === word.from)), userEvent: "select.search.matches" }));
+  return true;
+};
+
 export const skipOccurrence: StateCommand = ({ state, dispatch }) => {
   const { main, ranges, mainIndex } = state.selection;
   if (main.empty) return addNextOccurrence({ state, dispatch });
@@ -119,7 +132,7 @@ const selectAndClose: Command = (view) => { const result = selectAllMatches(view
 export const SEARCH_COMMANDS: ReadonlyArray<readonly [string, Command]> = [
   ["editor::Find", openFind], ["editor::Replace", openReplace],
   ["editor::FindNext", findNextMatch], ["editor::FindPrevious", findPreviousMatch],
-  ["editor::AddNextOccurrence", addNextOccurrence], ["editor::SelectSelectionMatches", selectSelectionMatches],
+  ["editor::AddNextOccurrence", addNextOccurrence], ["editor::SelectSelectionMatches", selectAllOccurrences],
   ["editor::SkipOccurrence", skipOccurrence],
   ["editor::SearchCaseSensitive", toggleOption("caseSensitive")],
   ["editor::SearchWholeWord", toggleOption("wholeWord")], ["editor::SearchRegexp", toggleOption("regexp")],

@@ -11,6 +11,7 @@ import {
 import { cursorDocEnd, cursorDocStart, history, selectDocEnd, selectDocStart, simplifySelection } from "@codemirror/commands";
 import { BUFFER_FONT_FAMILY, EDITOR_TAB_SIZE, EDITOR_UNDO_GROUP_INTERVAL_MS } from "../spec/metrics.ts";
 import { imeShortcutInput } from "./ime.ts";
+import { highlightSelectionMatches } from "@codemirror/search";
 import { documentSearch } from "./search.ts";
 
 // Metric variables come from applyMetrics() (spec/metrics.ts); color variables come
@@ -49,7 +50,19 @@ const zedEditorTheme = EditorView.theme({
       "0 var(--editor-gutter-padding-right) 0 var(--editor-gutter-padding-left)",
   },
   // E-011: gutter element + line together span the full editor width.
-  ".cm-activeLine": { backgroundColor: "var(--editor-active-line-background)" },
+  // U-12 (K-19-R1): the selection layer is drawn behind the lines, so a background on the line itself would cover it and
+  // make a selection on the active line paler than a find match (a mark inside the line). Paint the active line from a
+  // pseudo-element that sits below every CM layer instead; same rectangle as before.
+  // transparent: without it CM's own light-theme active-line color paints the line again (K-19-R2).
+  ".cm-activeLine": { position: "relative", backgroundColor: "transparent" },
+  ".cm-activeLine::before": {
+    content: "\"\"",
+    position: "absolute",
+    inset: 0,
+    zIndex: -100,
+    pointerEvents: "none",
+    backgroundColor: "var(--editor-active-line-background)",
+  },
   ".cm-activeLineGutter": {
     backgroundColor: "var(--editor-active-line-background)",
     color: "var(--editor-active-line-number)",
@@ -67,6 +80,7 @@ const zedEditorTheme = EditorView.theme({
 export const editorExtensions = (extension: string) => [
   imeShortcutInput,
   documentSearch,
+  highlightSelectionMatches({ highlightWordAroundCursor: true }), // U-11: same word / same selected text, painted by .cm-selectionMatch (app.css)
   /^(md|markdown)$/.test(extension) ? EditorView.lineWrapping : [], // I-8: same extensions as Markdown preview
   EditorView.cspNonce.of(document.getElementById("csp-nonce-carrier")?.nonce ?? ""),
   lineNumbers(),

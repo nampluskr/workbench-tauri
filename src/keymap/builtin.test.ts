@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { BUILTIN } from "./builtin.ts";
+import { BUILTIN, EDITOR_BINDINGS } from "./builtin.ts";
 import { Keymap, parseKeys } from "./engine.ts";
 
 // R-1: the built-in keymap must equal the expected table pinned in the current version's PROGRESS (Phase 2), row for row.
@@ -37,4 +37,18 @@ test("R-3: Delete and Backspace resolve by the deeper focus context", () => {
   assert.deepEqual(keymap.dispatch(["down"], panel), { type: "match", action: "menu::SelectNext" });
   assert.deepEqual(keymap.dispatch(["right"], panel), { type: "match", action: "project_panel::ExpandSelectedEntry" });
   assert.deepEqual(keymap.dispatch(["space"], panel), { type: "match", action: "project_panel::Open" });
+});
+
+// U-13: Ctrl+Shift+Up/Down add a cursor only in the Editor; elsewhere the key stays unbound.
+test("U-13: Ctrl+Shift+Up/Down add cursors in the Editor context only", () => {
+  
+  const keymap = new Keymap();
+  keymap.addSections("default", BUILTIN);
+  keymap.addSections("default", EDITOR_BINDINGS);
+  const workspace = new Set(["Workspace"]);
+  const editor = [workspace, new Set(["Editor"])], panel = [workspace, new Set(["ProjectPanel", "menu", "not_editing"])];
+  assert.deepEqual(keymap.dispatch(["ctrl-shift-up"], editor), { type: "match", action: "editor::AddCursorAbove" });
+  assert.deepEqual(keymap.dispatch(["ctrl-shift-down"], editor), { type: "match", action: "editor::AddCursorBelow" });
+  assert.deepEqual(keymap.dispatch(["ctrl-alt-up"], editor), { type: "match", action: "editor::AddCursorAbove" });
+  assert.deepEqual(keymap.dispatch(["ctrl-shift-up"], panel), { type: "none" });
 });

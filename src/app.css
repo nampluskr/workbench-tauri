@@ -608,8 +608,11 @@ button, input, select, textarea {
 .document-search-separator { align-self: stretch; margin-left: var(--editor-search-bar-separator-margin-left); padding-left: var(--editor-search-bar-separator-padding-left); border-left: var(--editor-search-bar-separator-width) solid var(--border); }
 .document-search-count { flex: none; margin-left: var(--editor-search-results-count-margin-left); min-width: var(--editor-search-results-count-min-width); font-size: var(--editor-search-results-count-font-size); color: var(--text-muted); }
 .document-search-close { margin-left: auto; }
+/* U-11: other occurrences of the cursor word / selection, the same light color as find's other matches; the find rules below win when both apply. */
+.cm-editor .cm-selectionMatch { background: var(--ghost-element-selected); }
 .cm-editor .cm-searchMatch { background: var(--ghost-element-selected); }
-.cm-editor .cm-searchMatch-selected { background: var(--players-0-selection); }
+/* U-12: a current match is by definition a range of the editor selection, which the selection layer already paints in --players-0-selection; painting it again here would double the alpha. */
+.cm-editor .cm-searchMatch-selected { background: transparent; }
 /* L-69: the preview tab's icon, Small and Muted as an item's own tab icon (L-67). */
 .tab-icon { flex: none; display: flex; color: var(--icon-muted); --icon-size: var(--icons-size-small); }
 .tab-icon-success { color: var(--success); }
