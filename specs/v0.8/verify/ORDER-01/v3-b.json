@@ -1,0 +1,156 @@
+{
+  "c4_plain.txt": {
+    "eye": null,
+    "viewMenu": [
+      {
+        "t": "Open PreviewCtrl-Shift-V",
+        "disabled": true
+      },
+      {
+        "t": "Open Preview to the SideCtrl-K V",
+        "disabled": true
+      }
+    ],
+    "tabMenu": [],
+    "treeMenu": [],
+    "previewTabsAfterCtrlShiftV": 0
+  },
+  "c4_a.json": {
+    "eye": null,
+    "viewMenu": [
+      {
+        "t": "Open PreviewCtrl-Shift-V",
+        "disabled": true
+      },
+      {
+        "t": "Open Preview to the SideCtrl-K V",
+        "disabled": true
+      }
+    ],
+    "tabMenu": [],
+    "treeMenu": [],
+    "previewTabsAfterCtrlShiftV": 0
+  },
+  "c4_x.html": {
+    "eye": null,
+    "viewMenu": [
+      {
+        "t": "Open PreviewCtrl-Shift-V",
+        "disabled": true
+      },
+      {
+        "t": "Open Preview to the SideCtrl-K V",
+        "disabled": true
+      }
+    ],
+    "tabMenu": [],
+    "treeMenu": [],
+    "previewTabsAfterCtrlShiftV": 0
+  },
+  "c4_n.ipynb": {
+    "eye": null,
+    "viewMenu": [
+      {
+        "t": "Open PreviewCtrl-Shift-V",
+        "disabled": true
+      },
+      {
+        "t": "Open Preview to the SideCtrl-K V",
+        "disabled": true
+      }
+    ],
+    "tabMenu": [],
+    "treeMenu": [],
+    "previewTabsAfterCtrlShiftV": 0
+  },
+  "c4_s.svg": {
+    "eye": null,
+    "viewMenu": [
+      {
+        "t": "Open PreviewCtrl-Shift-V",
+        "disabled": true
+      },
+      {
+        "t": "Open Preview to the SideCtrl-K V",
+        "disabled": true
+      }
+    ],
+    "tabMenu": [],
+    "treeMenu": [],
+    "previewTabsAfterCtrlShiftV": 0
+  },
+  "c5_md": {
+    "eye": {
+      "visible": true
+    },
+    "tip": "Open Preview",
+    "tabMenu": [
+      "Open PreviewCtrl-Shift-V"
+    ],
+    "treeMenu": [
+      "Open Preview"
+    ],
+    "viewMenu": [
+      {
+        "t": "Open PreviewCtrl-Shift-V",
+        "disabled": false
+      },
+      {
+        "t": "Open Preview to the SideCtrl-K V",
+        "disabled": false
+      }
+    ],
+    "single": {
+      "panes": [
+        [
+          {
+            "title": "note.md",
+            "cls": "tab edge-b"
+          },
+          {
+            "title": "Preview note.md",
+            "cls": "tab edge-r active edge-l"
+          }
+        ]
+      ],
+      "previews": 1
+    },
+    "back": {
+      "panes": [
+        [
+          {
+            "title": "note.md",
+            "cls": "tab active edge-r"
+          },
+          {
+            "title": "Preview note.md",
+            "cls": "tab edge-r edge-b"
+          }
+        ]
+      ],
+      "editor": true
+    },
+    "side": [
+      [
+        {
+          "title": "note.md",
+          "cls": "tab active edge-r"
+        },
+        {
+          "title": "Preview note.md",
+          "cls": "tab edge-r edge-b"
+        }
+      ],
+      [
+        {
+          "title": "Preview note.md",
+          "cls": "tab active edge-r"
+        }
+      ]
+    ],
+    "line15": "## Section 4",
+    "activeBlock": [
+      "Section 4"
+    ]
+  }
+}

@@ -1,0 +1,899 @@
+{
+  "c2_eye": {
+    "eye": {
+      "visible": true
+    },
+    "panes": [
+      [
+        {
+          "title": "data.csv",
+          "cls": "tab edge-b"
+        },
+        {
+          "title": "Preview data.csv",
+          "cls": "tab edge-r active edge-l"
+        }
+      ]
+    ],
+    "previews": [
+      {
+        "tables": 1,
+        "th": [
+          "name",
+          "note",
+          "qty"
+        ],
+        "bodyRows": 3,
+        "cells": [
+          [
+            "Kim, A",
+            "line1\nline2",
+            "3"
+          ],
+          [
+            "Lee",
+            "say \"hi\"",
+            ""
+          ],
+          [
+            "<b>x</b>",
+            "",
+            "7"
+          ]
+        ],
+        "boldInCells": 0,
+        "note": [],
+        "text": "namenoteqtyKim, Aline1\nline23Leesay \"hi\"<b>x</b>7"
+      }
+    ]
+  },
+  "c2_ctrl_shift_v": {
+    "panes": [
+      [
+        {
+          "title": "data.csv",
+          "cls": "tab edge-b"
+        },
+        {
+          "title": "Preview data.csv",
+          "cls": "tab edge-r active edge-l"
+        }
+      ]
+    ],
+    "previews": [
+      {
+        "tables": 1,
+        "th": [
+          "name",
+          "note",
+          "qty"
+        ],
+        "bodyRows": 3,
+        "cells": [
+          [
+            "Kim, A",
+            "line1\nline2",
+            "3"
+          ],
+          [
+            "Lee",
+            "say \"hi\"",
+            ""
+          ],
+          [
+            "<b>x</b>",
+            "",
+            "7"
+          ]
+        ],
+        "boldInCells": 0,
+        "note": [],
+        "text": "namenoteqtyKim, Aline1\nline23Leesay \"hi\"<b>x</b>7"
+      }
+    ]
+  },
+  "c2_tree_menu": {
+    "items": [
+      "New FileCtrl-N",
+      "New FolderAlt-N",
+      "Reveal in File ExplorerCtrl-Alt-R",
+      "Open in Default AppCtrl-Shift-Enter",
+      "Open Preview",
+      "CutCtrl-X",
+      "CopyCtrl-C",
+      "Duplicate",
+      "PasteCtrl-V",
+      "Copy PathAlt-Shift-C",
+      "Copy Relative PathCtrl-K Ctrl-Shift-C",
+      "RenameF2",
+      "TrashDelete",
+      "DeleteCtrl-Delete"
+    ],
+    "panes": [
+      [
+        {
+          "title": "Preview data.csv",
+          "cls": "tab active edge-r"
+        }
+      ]
+    ],
+    "previews": [
+      {
+        "tables": 1,
+        "th": [
+          "name",
+          "note",
+          "qty"
+        ],
+        "bodyRows": 3,
+        "cells": [
+          [
+            "Kim, A",
+            "line1\nline2",
+            "3"
+          ],
+          [
+            "Lee",
+            "say \"hi\"",
+            ""
+          ],
+          [
+            "<b>x</b>",
+            "",
+            "7"
+          ]
+        ],
+        "boldInCells": 0,
+        "note": [],
+        "text": "namenoteqtyKim, Aline1\nline23Leesay \"hi\"<b>x</b>7"
+      }
+    ]
+  },
+  "c2_tab_menu": {
+    "items": [
+      "Close",
+      "Close OthersCtrl-Alt-Shift-T",
+      "Close LeftCtrl-K E",
+      "Close RightCtrl-K T",
+      "Close CleanCtrl-K U",
+      "Close AllCtrl-K W",
+      "Make Tab Read-Only",
+      "Pin TabCtrl-K Shift-Enter",
+      "Copy PathCtrl-K P",
+      "Copy Relative Path",
+      "Reveal in File ExplorerCtrl-K R",
+      "Reveal In Project PanelCtrl-Shift-E",
+      "Open PreviewCtrl-Shift-V"
+    ]
+  },
+  "c2_view_menu": {
+    "items": [
+      {
+        "t": "Open PreviewCtrl-Shift-V",
+        "disabled": false
+      },
+      {
+        "t": "Open Preview to the SideCtrl-K V",
+        "disabled": false
+      }
+    ],
+    "panes": [
+      [
+        {
+          "title": "data.csv",
+          "cls": "tab edge-b"
+        },
+        {
+          "title": "Preview data.csv",
+          "cls": "tab edge-r active edge-l"
+        }
+      ]
+    ],
+    "previews": [
+      {
+        "tables": 1,
+        "th": [
+          "name",
+          "note",
+          "qty"
+        ],
+        "bodyRows": 3,
+        "cells": [
+          [
+            "Kim, A",
+            "line1\nline2",
+            "3"
+          ],
+          [
+            "Lee",
+            "say \"hi\"",
+            ""
+          ],
+          [
+            "<b>x</b>",
+            "",
+            "7"
+          ]
+        ],
+        "boldInCells": 0,
+        "note": [],
+        "text": "namenoteqtyKim, Aline1\nline23Leesay \"hi\"<b>x</b>7"
+      }
+    ]
+  },
+  "c2_ctrl_k_v": {
+    "panes": [
+      [
+        {
+          "title": "data.csv",
+          "cls": "tab active edge-r"
+        }
+      ],
+      [
+        {
+          "title": "Preview data.csv",
+          "cls": "tab active edge-r"
+        }
+      ]
+    ],
+    "previews": [
+      {
+        "tables": 1,
+        "th": [
+          "name",
+          "note",
+          "qty"
+        ],
+        "bodyRows": 3,
+        "cells": [
+          [
+            "Kim, A",
+            "line1\nline2",
+            "3"
+          ],
+          [
+            "Lee",
+            "say \"hi\"",
+            ""
+          ],
+          [
+            "<b>x</b>",
+            "",
+            "7"
+          ]
+        ],
+        "boldInCells": 0,
+        "note": [],
+        "text": "namenoteqtyKim, Aline1\nline23Leesay \"hi\"<b>x</b>7"
+      }
+    ]
+  },
+  "c11_live": {
+    "previews": [
+      {
+        "tables": 1,
+        "th": [
+          "name",
+          "note",
+          "qty"
+        ],
+        "bodyRows": 3,
+        "cells": [
+          [
+            "Kim, A",
+            "line1\nline2",
+            "3"
+          ],
+          [
+            "Park",
+            "say \"hi\"",
+            ""
+          ],
+          [
+            "<b>x</b>",
+            "",
+            "7"
+          ]
+        ],
+        "boldInCells": 0,
+        "note": [],
+        "text": "namenoteqtyKim, Aline1\nline23Parksay \"hi\"<b>x</b>7"
+      }
+    ]
+  },
+  "c2_view_to_side": {
+    "panes": [
+      [
+        {
+          "title": "data.csv",
+          "cls": "tab active edge-r"
+        }
+      ],
+      [
+        {
+          "title": "Preview data.csv",
+          "cls": "tab active edge-r"
+        }
+      ]
+    ],
+    "previews": [
+      {
+        "tables": 1,
+        "th": [
+          "name",
+          "note",
+          "qty"
+        ],
+        "bodyRows": 3,
+        "cells": [
+          [
+            "Kim, A",
+            "line1\nline2",
+            "3"
+          ],
+          [
+            "Park",
+            "say \"hi\"",
+            ""
+          ],
+          [
+            "<b>x</b>",
+            "",
+            "7"
+          ]
+        ],
+        "boldInCells": 0,
+        "note": [],
+        "text": "namenoteqtyKim, Aline1\nline23Parksay \"hi\"<b>x</b>7"
+      }
+    ]
+  },
+  "c7_status": {
+    "csvEdit": [
+      "1:1",
+      "Plain Text"
+    ],
+    "csvPreview": [
+      "1:1",
+      "Plain Text"
+    ],
+    "mdPreview": [
+      "1:1",
+      "Markdown"
+    ]
+  },
+  "c10_big": {
+    "previews": [
+      {
+        "tables": 1,
+        "th": [
+          "id",
+          "value"
+        ],
+        "bodyRows": 1000,
+        "boldInCells": 0,
+        "note": [
+          "Showing first 1,000 of 1,001 rows"
+        ],
+        "text": "idvalue1v12v23v34v45v56v67v78v89v910v1011v1112v1213v1314v1415v1516v1617v1718v181"
+      },
+      {
+        "tables": 1,
+        "th": [
+          "name",
+          "note",
+          "qty"
+        ],
+        "bodyRows": 3,
+        "boldInCells": 0,
+        "note": [],
+        "text": "namenoteqtyKim, Aline1\nline23Parksay \"hi\"<b>x</b>7"
+      }
+    ],
+    "style": {
+      "th": {
+        "tag": "TH",
+        "weight": "600",
+        "bg": "rgba(0, 0, 0, 0)",
+        "font": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+        "size": "16px"
+      },
+      "td": {
+        "tag": "TD",
+        "weight": "400",
+        "bg": "rgba(0, 0, 0, 0)",
+        "font": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+        "size": "16px"
+      },
+      "lastRow": "1000v1000"
+    }
+  },
+  "c8_lock": {
+    "off": {
+      "pressed": "false",
+      "color": "rgb(169, 175, 188)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "iconColor": "rgb(169, 175, 188)",
+      "svg": "\n<path d=\"M2.0375 8.2088C1.9875 8.07409 1.9875 7.92592 2.0375 7.79122C2.5245 6.6"
+    },
+    "on": {
+      "pressed": "true",
+      "color": "rgb(116, 173, 232)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "iconColor": "rgb(116, 173, 232)",
+      "svg": "\n<path d=\"M2.0375 8.2088C1.9875 8.07409 1.9875 7.92592 2.0375 7.79122C2.5245 6.6"
+    },
+    "eyeIcon": "\n<path d=\"M2.0375 8.2088C1.9875 8.07409 1.9875 7.92592 2.0375 7.79122C2.5245 6.6",
+    "sameAsEditorEye": true
+  },
+  "c3_lock_tsv": {
+    "on": {
+      "panes": [
+        [
+          {
+            "title": "data.csv",
+            "cls": "tab edge-b"
+          },
+          {
+            "title": "Preview t.tsv",
+            "cls": "tab edge-r active edge-l"
+          },
+          {
+            "title": "Preview data.csv",
+            "cls": "tab edge-b edge-r"
+          },
+          {
+            "title": "note.md",
+            "cls": "tab edge-b edge-r"
+          },
+          {
+            "title": "Preview note.md",
+            "cls": "tab edge-b edge-r"
+          },
+          {
+            "title": "big.csv",
+            "cls": "tab edge-b edge-r"
+          },
+          {
+            "title": "Preview big.csv",
+            "cls": "tab edge-r edge-b"
+          }
+        ],
+        [
+          {
+            "title": "Preview data.csv",
+            "cls": "tab active edge-r"
+          }
+        ]
+      ],
+      "previews": [
+        {
+          "tables": 1,
+          "th": [
+            "a",
+            "b",
+            "c"
+          ],
+          "bodyRows": 1,
+          "cells": [
+            [
+              "1",
+              "2,3",
+              "4"
+            ]
+          ],
+          "boldInCells": 0,
+          "note": [],
+          "text": "abc12,34"
+        },
+        {
+          "tables": 1,
+          "th": [
+            "name",
+            "note",
+            "qty"
+          ],
+          "bodyRows": 3,
+          "cells": [
+            [
+              "Kim, A",
+              "line1\nline2",
+              "3"
+            ],
+            [
+              "Park",
+              "say \"hi\"",
+              ""
+            ],
+            [
+              "<b>x</b>",
+              "",
+              "7"
+            ]
+          ],
+          "boldInCells": 0,
+          "note": [],
+          "text": "namenoteqtyKim, Aline1\nline23Parksay \"hi\"<b>x</b>7"
+        }
+      ]
+    },
+    "off": {
+      "pressed": "false",
+      "panes": [
+        [
+          {
+            "title": "data.csv",
+            "cls": "tab edge-b"
+          },
+          {
+            "title": "Preview t.tsv",
+            "cls": "tab edge-l edge-b"
+          },
+          {
+            "title": "t.tsv",
+            "cls": "tab active edge-l edge-r"
+          },
+          {
+            "title": "Preview data.csv",
+            "cls": "tab edge-b edge-r"
+          },
+          {
+            "title": "note.md",
+            "cls": "tab edge-b edge-r"
+          },
+          {
+            "title": "Preview note.md",
+            "cls": "tab edge-b edge-r"
+          },
+          {
+            "title": "big.csv",
+            "cls": "tab edge-b edge-r"
+          },
+          {
+            "title": "Preview big.csv",
+            "cls": "tab edge-r edge-b"
+          }
+        ],
+        [
+          {
+            "title": "Preview data.csv",
+            "cls": "tab active edge-r"
+          }
+        ]
+      ],
+      "previews": [
+        {
+          "tables": 1,
+          "th": [
+            "name",
+            "note",
+            "qty"
+          ],
+          "bodyRows": 3,
+          "cells": [
+            [
+              "Kim, A",
+              "line1\nline2",
+              "3"
+            ],
+            [
+              "Park",
+              "say \"hi\"",
+              ""
+            ],
+            [
+              "<b>x</b>",
+              "",
+              "7"
+            ]
+          ],
+          "boldInCells": 0,
+          "note": [],
+          "text": "namenoteqtyKim, Aline1\nline23Parksay \"hi\"<b>x</b>7"
+        }
+      ],
+      "editor": true
+    }
+  },
+  "c4_plain.txt": {
+    "eye": null,
+    "viewMenu": [
+      {
+        "t": "Open PreviewCtrl-Shift-V",
+        "disabled": true
+      },
+      {
+        "t": "Open Preview to the SideCtrl-K V",
+        "disabled": true
+      }
+    ],
+    "tabMenu": [],
+    "treeMenu": [],
+    "ctrlShiftVPreviews": 1
+  },
+  "c4_a.json": {
+    "eye": null,
+    "viewMenu": [
+      {
+        "t": "Open PreviewCtrl-Shift-V",
+        "disabled": true
+      },
+      {
+        "t": "Open Preview to the SideCtrl-K V",
+        "disabled": true
+      }
+    ],
+    "tabMenu": [],
+    "treeMenu": [],
+    "ctrlShiftVPreviews": 1
+  },
+  "c4_x.html": {
+    "eye": null,
+    "viewMenu": [
+      {
+        "t": "Open PreviewCtrl-Shift-V",
+        "disabled": true
+      },
+      {
+        "t": "Open Preview to the SideCtrl-K V",
+        "disabled": true
+      }
+    ],
+    "tabMenu": [],
+    "treeMenu": [],
+    "ctrlShiftVPreviews": 1
+  },
+  "c4_n.ipynb": {
+    "eye": null,
+    "viewMenu": [
+      {
+        "t": "Open PreviewCtrl-Shift-V",
+        "disabled": true
+      },
+      {
+        "t": "Open Preview to the SideCtrl-K V",
+        "disabled": true
+      }
+    ],
+    "tabMenu": [],
+    "treeMenu": [],
+    "ctrlShiftVPreviews": 1
+  },
+  "c4_s.svg": {
+    "eye": null,
+    "viewMenu": [
+      {
+        "t": "Open PreviewCtrl-Shift-V",
+        "disabled": true
+      },
+      {
+        "t": "Open Preview to the SideCtrl-K V",
+        "disabled": true
+      }
+    ],
+    "tabMenu": [],
+    "treeMenu": [],
+    "ctrlShiftVPreviews": 1
+  },
+  "c5_md": {
+    "eye": {
+      "visible": true
+    },
+    "tip": "Open Preview",
+    "tabMenu": [],
+    "treeMenu": [
+      "Open Preview"
+    ],
+    "viewMenu": [
+      {
+        "t": "Open PreviewCtrl-Shift-V",
+        "disabled": false
+      },
+      {
+        "t": "Open Preview to the SideCtrl-K V",
+        "disabled": false
+      }
+    ],
+    "single": {
+      "panes": [
+        [
+          {
+            "title": "data.csv",
+            "cls": "tab edge-b"
+          },
+          {
+            "title": "Preview t.tsv",
+            "cls": "tab edge-l edge-b"
+          },
+          {
+            "title": "t.tsv",
+            "cls": "tab edge-l edge-b"
+          },
+          {
+            "title": "plain.txt",
+            "cls": "tab edge-l edge-b"
+          },
+          {
+            "title": "a.json",
+            "cls": "tab edge-l edge-b"
+          },
+          {
+            "title": "x.html",
+            "cls": "tab edge-l edge-b"
+          },
+          {
+            "title": "n.ipynb",
+            "cls": "tab edge-l edge-b"
+          },
+          {
+            "title": "s.svg",
+            "cls": "tab edge-l edge-b"
+          },
+          {
+            "title": "Preview data.csv",
+            "cls": "tab edge-b edge-l"
+          },
+          {
+            "title": "note.md",
+            "cls": "tab edge-l edge-b"
+          },
+          {
+            "title": "Preview note.md",
+            "cls": "tab edge-r active edge-l"
+          },
+          {
+            "title": "big.csv",
+            "cls": "tab edge-b edge-r"
+          },
+          {
+            "title": "Preview big.csv",
+            "cls": "tab edge-r edge-b"
+          }
+        ],
+        [
+          {
+            "title": "Preview data.csv",
+            "cls": "tab active edge-r"
+          }
+        ]
+      ],
+      "previews": 2
+    },
+    "back": {
+      "panes": [
+        [
+          {
+            "title": "data.csv",
+            "cls": "tab edge-b"
+          },
+          {
+            "title": "Preview t.tsv",
+            "cls": "tab edge-l edge-b"
+          },
+          {
+            "title": "t.tsv",
+            "cls": "tab edge-l edge-b"
+          },
+          {
+            "title": "plain.txt",
+            "cls": "tab edge-l edge-b"
+          },
+          {
+            "title": "a.json",
+            "cls": "tab edge-l edge-b"
+          },
+          {
+            "title": "x.html",
+            "cls": "tab edge-l edge-b"
+          },
+          {
+            "title": "n.ipynb",
+            "cls": "tab edge-l edge-b"
+          },
+          {
+            "title": "s.svg",
+            "cls": "tab edge-l edge-b"
+          },
+          {
+            "title": "Preview data.csv",
+            "cls": "tab edge-b edge-l"
+          },
+          {
+            "title": "note.md",
+            "cls": "tab edge-l active edge-r"
+          },
+          {
+            "title": "Preview note.md",
+            "cls": "tab edge-r edge-b"
+          },
+          {
+            "title": "big.csv",
+            "cls": "tab edge-b edge-r"
+          },
+          {
+            "title": "Preview big.csv",
+            "cls": "tab edge-r edge-b"
+          }
+        ],
+        [
+          {
+            "title": "Preview data.csv",
+            "cls": "tab active edge-r"
+          }
+        ]
+      ],
+      "editor": true
+    },
+    "side": [
+      [
+        {
+          "title": "data.csv",
+          "cls": "tab edge-b"
+        },
+        {
+          "title": "Preview t.tsv",
+          "cls": "tab edge-l edge-b"
+        },
+        {
+          "title": "t.tsv",
+          "cls": "tab edge-l edge-b"
+        },
+        {
+          "title": "plain.txt",
+          "cls": "tab edge-l edge-b"
+        },
+        {
+          "title": "a.json",
+          "cls": "tab edge-l edge-b"
+        },
+        {
+          "title": "x.html",
+          "cls": "tab edge-l edge-b"
+        },
+        {
+          "title": "n.ipynb",
+          "cls": "tab edge-l edge-b"
+        },
+        {
+          "title": "s.svg",
+          "cls": "tab edge-l edge-b"
+        },
+        {
+          "title": "Preview data.csv",
+          "cls": "tab edge-b edge-l"
+        },
+        {
+          "title": "note.md",
+          "cls": "tab edge-l active edge-r"
+        },
+        {
+          "title": "Preview note.md",
+          "cls": "tab edge-r edge-b"
+        },
+        {
+          "title": "big.csv",
+          "cls": "tab edge-b edge-r"
+        },
+        {
+          "title": "Preview big.csv",
+          "cls": "tab edge-r edge-b"
+        }
+      ],
+      [
+        {
+          "title": "Preview data.csv",
+          "cls": "tab edge-b"
+        },
+        {
+          "title": "Preview note.md",
+          "cls": "tab edge-r active edge-l"
+        }
+      ]
+    ],
+    "line15": "## Section 4",
+    "activeBlock": [
+      "Section 4"
+    ]
+  },
+  "c13_about": "workbench-tauriVersion 0.8.0Version0.8.0Date2026-11-10HostTauri 2.12.5WebView2157.0.4341.42OSWindows 11 x64Third-Party Software & AttributionsTauri 2.12.5 — Apa"
+}
