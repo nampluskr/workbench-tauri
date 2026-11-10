@@ -1,0 +1,195 @@
+{
+  "tokens": {
+    "ghostSelected": "#cacacaff",
+    "players0Selection": "#5c78e23d"
+  },
+  "u11code": {
+    "cursorInFoo": [
+      {
+        "t": "foo",
+        "bg": "rgb(202, 202, 202)"
+      },
+      {
+        "t": "foo",
+        "bg": "rgb(202, 202, 202)"
+      },
+      {
+        "t": "foo",
+        "bg": "rgb(202, 202, 202)"
+      }
+    ],
+    "cursorOnSpace": [],
+    "cursorInFoobar": [
+      {
+        "t": "foobar",
+        "bg": "rgb(202, 202, 202)"
+      }
+    ]
+  },
+  "u11selection": [
+    {
+      "t": "con",
+      "bg": "rgb(202, 202, 202)"
+    },
+    {
+      "t": "con",
+      "bg": "rgb(202, 202, 202)"
+    }
+  ],
+  "u11withFind": {
+    "searchMatch": [
+      {
+        "t": "foo",
+        "bg": "rgb(202, 202, 202)"
+      },
+      {
+        "t": "foo",
+        "bg": "rgb(202, 202, 202)"
+      },
+      {
+        "t": "foo",
+        "bg": "rgb(202, 202, 202)"
+      },
+      {
+        "t": "foo",
+        "bg": "rgb(202, 202, 202)"
+      }
+    ],
+    "selectionMatch": [
+      {
+        "t": "foo",
+        "bg": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "t": "foo",
+        "bg": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "t": "foo",
+        "bg": "rgba(0, 0, 0, 0)"
+      }
+    ]
+  },
+  "u12": {
+    "findCurrent": {
+      "computed": "rgba(0, 0, 0, 0)",
+      "px": {
+        "at": {
+          "x": 555,
+          "y": 167
+        },
+        "rgba": [
+          207,
+          209,
+          237
+        ]
+      }
+    },
+    "dblclick": {
+      "computed": "rgba(92, 120, 226, 0.24)",
+      "px": {
+        "at": {
+          "x": 555,
+          "y": 195
+        },
+        "rgba": [
+          207,
+          209,
+          237
+        ]
+      },
+      "sel": [
+        "const"
+      ]
+    },
+    "drag": {
+      "px": {
+        "at": {
+          "x": 573,
+          "y": 219
+        },
+        "rgba": [
+          207,
+          209,
+          237
+        ]
+      },
+      "sel": [
+        "const z ="
+      ]
+    },
+    "multiCursor": {
+      "px": {
+        "at": {
+          "x": 600,
+          "y": 122
+        },
+        "rgba": [
+          207,
+          209,
+          237
+        ]
+      },
+      "sel": [
+        "foo",
+        "foo"
+      ]
+    }
+  },
+  "u13": {
+    "ctrlD1": [
+      "foo"
+    ],
+    "ctrlD2": [
+      "foo",
+      "foo"
+    ],
+    "ctrlShiftL_cursorOnly": [
+      "foo",
+      "foo",
+      "foo"
+    ],
+    "ctrlShiftDown2": [
+      "@2 col2",
+      "@17 col2",
+      "@39 col2"
+    ],
+    "ctrlShiftUp": [
+      "@47 col2",
+      "@60 col2"
+    ],
+    "ctrlAltDown": [
+      "@2 col2",
+      "@17 col2"
+    ],
+    "treeCtrlShiftDown": {
+      "focusBefore": "project-panel",
+      "focusAfter": "project-panel",
+      "cursorsInEditor": 1
+    }
+  },
+  "markdown": {
+    "korean": [
+      {
+        "t": "않는다",
+        "bg": "rgb(202, 202, 202)"
+      },
+      {
+        "t": "않는다",
+        "bg": "rgb(202, 202, 202)"
+      },
+      {
+        "t": "않는다",
+        "bg": "rgb(202, 202, 202)"
+      }
+    ],
+    "ctrlShiftL": [
+      "않는다",
+      "않는다",
+      "않는다"
+    ],
+    "previewActiveBlock": [
+      "Section 4"
+    ]
+  }
+}

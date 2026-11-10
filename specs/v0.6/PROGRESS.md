@@ -394,6 +394,33 @@
 - 커밋: 코드 `3c8e235`.
 - 상태: 끝남.
 
+### ORDER-15 같은 단어 강조·선택 색·여러 선택 단축키 (2026-11-10)
+
+- 요청: 사용자가 확인하고 남긴 U-11 커서 단어·선택 글자와 같은 곳을 옅게 강조(VS Code, 참고 그림 word-highlight-ref.png), U-12 마우스·키보드·여러 커서 선택 색을 찾기 줄 현재 일치 색과 같게, U-13 Ctrl+D·Ctrl+Shift+L·Ctrl+Shift+Up/Down(core `D:\projects\workbench-core\specs\v0.6\orders\ORDER-15.md`).
+- **K-19 U-11~U-13 반영** (2026-11-10, coder, Claude Code Sonnet 5.5 high)
+  - 무엇을 했나:
+    - U-11: @codemirror/search `highlightSelectionMatches({highlightWordAroundCursor: true})`를 켰다. 강조 색은 찾기 다른 일치와 같은 토큰 `--ghost-element-selected`이고, 찾기 줄이 열리면 찾기 강조가 우선한다.
+    - U-13: Ctrl+Shift+L이 커서만 있을 때 커서 단어(단어 경계)를 전부 선택하도록 고쳤다. Ctrl+Shift+Up/Down을 Editor 컨텍스트에 `editor::AddCursorAbove`/`AddCursorBelow`로 더했다. 빠지는 것은 브라우저 기본 선택 확장뿐이고 다른 컨텍스트는 그대로다. Ctrl+Alt+Up/Down은 그대로이고, Edit 메뉴 표시는 Ctrl+Alt를 유지한다(VS Code Windows 메뉴 표시).
+  - 결과: 위와 같다. 새 색은 없다.
+  - 검증: C-21에서 함께 확인.
+  - 특이사항: 없음
+- **K-19-R1~R3 U-12 반영** (2026-11-10, coder, Claude Code Sonnet 5.5 high)
+  - 무엇을 했나: 선택 색의 계산값은 이미 같았지만(`--players-0-selection`) leader V3 픽셀이 달라 세 번 고쳤다.
+    - K-19-R1: 반투명 활성 줄 배경이 글자 뒤 선택 레이어를 덮었다 → 활성 줄 배경을 `.cm-activeLine::before`(z -100)로 옮겼다.
+    - K-19-R2: 그때 줄 자체 배경이 비어 CM 기본 파란 활성 줄이 드러난 회귀 → `.cm-activeLine` background를 transparent로 했다.
+    - K-19-R3: 찾기 현재 일치는 편집기 선택과 같은 범위라 선택 위에 같은 색이 한 겹 더 쌓였다 → `.cm-searchMatch-selected`를 투명으로 했다.
+  - 결과: 선택 색이 찾기 현재 일치 색과 같다.
+  - 검증: C-21에서 함께 확인.
+  - 특이사항: 없음
+- C-21 checker [PASS](커밋 직전 전체): typecheck 오류 0, npm test 229 통과, clippy 경고 0, cargo test 22 통과(첫 실행 타이머 지연 1건 뒤 재실행 통과), 코드 검토 지적 없음, V3 PASS (2026-11-10). checker가 허용 목록 밖 명령(`node -e`)으로 허가 창에서 한 번 멈춰, leader가 거절했다.
+- **V3(ORDER-15)** (2026-11-10, C-21 판정 [PASS])
+  - 무엇을 했나: debug exe, 임시 APPDATA·WebView 데이터 폴더, One Light.
+  - 결과: 커서 foo → 단어 foo 3개 강조(foobar 제외), 공백 → 0, 한글 '않는다' 3개, 찾기 줄을 열면 찾기 강조가 우선한다. 활성 줄 위 찾기 현재 일치 = 두 번 눌러 선택 = 끌어 선택 = 여러 커서 선택 = (207,209,237)이고, 활성 줄 (239,239,240)은 그대로다. Ctrl+D 1→2, Ctrl+Shift+L(커서만) 3, Ctrl+Shift+Down 두 번 → 커서 3개 같은 열, 트리에서는 그대로다. 미리보기 연계는 그대로다. PASS.
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-15/`(v3.json 최종 전체 — 그 안 u12 줄은 글자 위 표본이라 판정에 쓰지 않음, v3-u12.json 최종 U-12 픽셀, png).
+  - 특이사항: 없음
+- 커밋: 코드 `f5fa2ba`.
+- 상태: 끝남.
+
 ## 버전 종료
 
 진행 중.
