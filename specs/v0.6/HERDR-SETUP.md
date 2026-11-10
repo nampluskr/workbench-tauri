@@ -26,7 +26,7 @@
 - 측정자는 직접 고치지 않는다. checker는 불일치 목록을 leader에게 보고한다(루트 `AGENTS.md` 3A.4의 7).
 - Codex는 coder에만 쓴다. 지금은 coder를 Claude Code Sonnet 5.5 high로 바꿔 Codex를 쓰지 않는다(아래 변경 기록).
 - Codex 한도가 바닥나면 쿠폰을 직접 쓰지 말고 core-leader에게 `[BLOCKED]`로 알린다(ORDER-01 3.2). 대체 모델(v0.5의 Sonnet 대체)은 두지 않는다. Codex는 여유가 있다(사용자 2026-11-10, core D-9). 지금은 Codex를 쓰지 않는다.
-- coder 모델 변경 기록: 2026-11-11 09:35, 사용자 지시(core-leader 전달 [DECISION])로 `tauri-coder`를 Codex gpt-6.1-sol medium에서 Claude Code Sonnet 5.5 high로 바꿨다(진행 중인 카드 없음, ORDER-11 push 뒤). 방법: Codex `/quit` → 셸 프롬프트 확인 → 같은 pane `wV:p3`에서 `herdr agent start tauri-coder --kind claude --pane wV:p3 -- --model sonnet --effort high`(이름 유지, pane 새로 띄우지 않음) → `/model`로 Sonnet 5.5·High effort 확인(v0.5 HERDR-SETUP 1장과 같음).
+- coder 모델 변경 기록: 2026-11-10 09:35, 사용자 지시(core-leader 전달 [DECISION])로 `tauri-coder`를 Codex gpt-6.1-sol medium에서 Claude Code Sonnet 5.5 high로 바꿨다(진행 중인 카드 없음, ORDER-11 push 뒤). 방법: Codex `/quit` → 셸 프롬프트 확인 → 같은 pane `wV:p3`에서 `herdr agent start tauri-coder --kind claude --pane wV:p3 -- --model sonnet --effort high`(이름 유지, pane 새로 띄우지 않음) → `/model`로 Sonnet 5.5·High effort 확인(v0.5 HERDR-SETUP 1장과 같음).
 - Phase가 바뀔 때 서브 에이전트의 컨텍스트를 비운다.
 - 검증 수준(V0~V4)과 앱 실행 제한은 루트 `AGENTS.md` 3A를 그대로 쓴다.
 
