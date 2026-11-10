@@ -502,4 +502,30 @@
 
 ## 버전 종료
 
-진행 중.
+- 사용자 종료 판단(2026-11-10): v0.6을 종료하고 v0.7은 새 세션에서 시작한다(core-leader 전달). 사용자 말: "지금까지 사용자 요청사항이 잘 구현 된 것 같습니다"(core PROGRESS 버전 종료 절).
+- 한 것: core ITEMS I-1~I-20(ORDER-02~10, 09-R1)과 사용자 확인 뒤 요청(ORDER-11~17, K-16, K-22)을 모두 판정 충족으로 끝내고 push했다(tauri `eb1b87d`까지). 각 결과는 위 Phase·사용자 요청 작업 절과 `specs/v0.6/reports/`에 있다.
+- 남은 것: core `D:\projects\workbench-core\specs\v0.6\PROGRESS.md` "버전 종료" 절을 함께 본다. tauri 쪽은 아래와 같다.
+  - 사용자 결정 대기:
+    - 찾기 아이콘 툴팁 "Find in Explorer" 문구(ORDER-09).
+    - 메뉴 Edit → Paste의 WebView 클립보드 권한 창: 그대로 / `tauri-plugin-clipboard-manager` / 메뉴 Paste 끄기(ORDER-09).
+    - Search 탭 `wd`에서 `_`를 단어 문자로 볼지(지금은 봄, ORDER-13).
+    - 선택 안에서 찾기 때 범위 밖 일치 강조를 숨길지(ORDER-13).
+    - core ITEMS I-12(뒤로·앞으로)·I-19(Sidebar `Ctrl+F`)의 판정 문구와 바뀐 동작(ORDER-11 U-2, ORDER-16 U-16)이 다르다. v0.6 ITEMS는 고치지 않는다.
+  - 사용자 확인(V4): core `specs/v0.6/USER-TEST.md`에서 체크하지 않은 줄(한국어 상태 `Ctrl+/`, 찾기 입력란 한글 입력, workbench-kit과 찾기 줄 모양 비교, 커서 하나일 때 `Home`이 들여쓰기 끝으로 먼저 가는 것 등). Zed 비교 캡처(ORDER-05·07: 탭 메뉴, 탐색 기록, 트리 고정 줄)는 사용자 Zed를 쓰지 않아 남아 있다.
+  - 정리할 것(사용자):
+    - checker 허용 목록 `.agents/checker-settings.json`에 `git grep`·`git diff`·`Test-Path`가 없다(checker가 `Get-ChildItem`·`node -e` 등 허용 밖 명령으로 허가 창에서 여러 번 멈췄고, leader가 거절하고 파일을 건넸다).
+    - 루트 `INTENT.md` 문구 확인(ORDER-01-R1).
+    - `src-tauri/target/release/workbench-tauri.exe.running-pid11268` 지우기(ORDER-03).
+    - 사용자 Zed 최근 작업 영역에 남은 임시 폴더 'o5' 기록(ORDER-05), WebView 클립보드 권한 창이 한 번 뜬 프로필 확인(ORDER-05).
+    - 루트 `AGENTS.md` "HERDR 구성" 줄이 coder를 Codex로 적고 있다(2026-11-10부터 Claude Code Sonnet 5.5 high, HERDR-SETUP에는 반영함).
+  - 알려진 제약:
+    - Open File 결과는 앞 100개까지이고, 입력이 120ms 멈춘 뒤 찾는다(ORDER-17).
+    - 탭 바 "+" 등 오른쪽 버튼은 탭 영역(Pane)에 포커스가 있을 때만 보인다.
+    - 선택 안에서 찾기는 범위 선택 → 토글 → 입력 순서다(ORDER-13).
+    - 정규식 이름 검색은 Rust가 이름을 최대 100,000개까지 흘려 보내고 일치 5,000개에서 멈춘다. 정규식+`wd`는 ASCII `\w` 경계다(ORDER-13).
+    - 색·픽셀 측정은 One Light에서만 했다(ORDER-15 등). 나눈 Pane 편집기 둘의 글꼴 크기는 따로 재지 않았다(ORDER-16).
+    - `Ctrl+Shift+Up/Down`을 편집기에 묶어 브라우저 기본 선택 넓히기가 빠졌다(ORDER-15). 커서 하나일 때 `Home`도 들여쓰기 끝으로 먼저 간다(ORDER-16).
+    - 시간 의존 Rust 테스트 `folder_watch::tests::missing_root_is_watched_after_creation_and_recreation`이 가끔 첫 실행에서 5초 지연으로 실패하고, 다시 실행하면 통과한다(ORDER-11·15).
+    - 글꼴 크기 일시 변경은 설정 `buffer_font_size`가 바뀌면 버린다(ORDER-16, core-leader 수락).
+  - 운영: coder는 2026-11-10부터 Claude Code Sonnet 5.5 high다(HERDR-SETUP 1장). V3는 임시 APPDATA·임시 WebView 데이터 폴더를 쓰고, 시스템 클립보드와 사용자 테스트 앱은 건드리지 않는다.
+  - 다음 버전: v0.7은 새 세션에서 시작하며 core `specs/v0.7/ITEMS.md`(첫 요청 I-1: 편집·미리보기 글꼴 크기 따로)를 따른다. 이 PROGRESS가 v0.7 INTENT의 재료다.
