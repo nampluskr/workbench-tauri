@@ -1,0 +1,192 @@
+{
+  "u14": {
+    "start": [
+      "@0",
+      "@11",
+      "@22"
+    ],
+    "shiftRight3": [
+      "abc",
+      "ghi",
+      "mno"
+    ],
+    "shiftLeft1": [
+      "ab",
+      "gh",
+      "mn"
+    ],
+    "right": [
+      "@2",
+      "@13",
+      "@24"
+    ],
+    "shiftEnd": [
+      "cdef one",
+      "ijkl two",
+      "opqr six"
+    ],
+    "ctrlShiftRightWord": [
+      "abcdef",
+      "ghijkl",
+      "mnopqr"
+    ],
+    "ctrlShiftDownThenShiftRight2": [
+      "ab",
+      "gh",
+      "mn"
+    ]
+  },
+  "u15": {
+    "focused": true,
+    "outlineStyle": "none",
+    "outlineWidth": "3px"
+  },
+  "u16": {
+    "shortcut": false,
+    "clearShown": true,
+    "sidebarCtrlF": {
+      "focusBefore": "sidebar-list",
+      "focusAfter": "Folders",
+      "findBarOpen": false
+    },
+    "editorCtrlF": {
+      "findBarOpen": true
+    }
+  },
+  "u17": {
+    "base": {
+      "ui": {
+        "menuName": null,
+        "sidebarItem": "14px",
+        "status": "12px",
+        "tabTitle": "14px",
+        "treeLabel": "14px",
+        "dpr": 1,
+        "innerWidth": 1440,
+        "visualScale": 1,
+        "zoom": "1"
+      },
+      "ed": [
+        {
+          "font": "15px",
+          "lineH": 24.3,
+          "gutterLineH": 24.3
+        }
+      ],
+      "searchName": null
+    },
+    "up2": {
+      "ui": {
+        "menuName": null,
+        "sidebarItem": "14px",
+        "status": "12px",
+        "tabTitle": "14px",
+        "treeLabel": "14px",
+        "dpr": 1,
+        "innerWidth": 1440,
+        "visualScale": 1,
+        "zoom": "1"
+      },
+      "ed": [
+        {
+          "font": "17px",
+          "lineH": 27.5,
+          "gutterLineH": 27.5
+        }
+      ]
+    },
+    "down1": {
+      "ed": [
+        {
+          "font": "16px",
+          "lineH": 25.9,
+          "gutterLineH": 25.9
+        }
+      ]
+    },
+    "reset": {
+      "ui": {
+        "menuName": null,
+        "sidebarItem": "14px",
+        "status": "12px",
+        "tabTitle": "14px",
+        "treeLabel": "14px",
+        "dpr": 1,
+        "innerWidth": 1440,
+        "visualScale": 1,
+        "zoom": "1"
+      },
+      "ed": [
+        {
+          "font": "15px",
+          "lineH": 24.3,
+          "gutterLineH": 24.3
+        }
+      ]
+    },
+    "numpadAdd": "16px",
+    "numpadSubtract": "15px",
+    "ctrlShiftEq": "16px"
+  },
+  "u17markdownSplit": {
+    "previewFontBefore": "16px",
+    "after": {
+      "ed": [
+        {
+          "font": "17px",
+          "lineH": 27.5,
+          "gutterLineH": 27.5
+        }
+      ],
+      "previewFont": "16px"
+    },
+    "previewActiveBlock": [
+      "Section 4"
+    ],
+    "allEditorFonts": [
+      "17px"
+    ]
+  },
+  "u18": {
+    "tokens": {
+      "textAccent": "#5c78e2ff",
+      "borderFocused": "#7d82e8ff"
+    },
+    "off": {
+      "pressed": "false",
+      "color": "rgb(88, 88, 90)",
+      "iconColor": "rgb(88, 88, 90)",
+      "borderColor": "rgb(88, 88, 90)",
+      "borderWidth": "0px",
+      "borderStyle": "none",
+      "radius": "0px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "w": 22,
+      "h": 22
+    },
+    "on": {
+      "pressed": "true",
+      "color": "rgb(92, 120, 226)",
+      "iconColor": "rgb(92, 120, 226)",
+      "borderColor": "rgb(125, 130, 232)",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "radius": "4px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "w": 22,
+      "h": 22
+    },
+    "offAgain": {
+      "pressed": "false",
+      "color": "rgb(88, 88, 90)",
+      "iconColor": "rgb(88, 88, 90)",
+      "borderColor": "rgb(88, 88, 90)",
+      "borderWidth": "0px",
+      "borderStyle": "none",
+      "radius": "0px",
+      "bg": "rgb(223, 223, 224)",
+      "w": 22,
+      "h": 22
+    }
+  }
+}

@@ -421,6 +421,38 @@
 - 커밋: 코드 `f5fa2ba`.
 - 상태: 끝남.
 
+### ORDER-16 여러 커서 좌우·점선 테두리·Sidebar Ctrl+F·편집 글꼴 크기·Lock Preview 표시 (2026-11-10)
+
+- 요청: 사용자가 확인하고 남긴 U-14~U-16(core `D:\projects\workbench-core\specs\v0.6\orders\ORDER-16.md`), 같은 카드에 더한 U-17 편집 영역 글꼴만 Ctrl+=/Ctrl+-/Ctrl+0, U-18 Lock Preview 켜짐: 강조색 아이콘 + 옅은 강조색 둥근 테두리(그림 lock-preview-on.png).
+- **K-20 U-14~U-16 반영** (2026-11-10, coder, Claude Code Sonnet 5.5 high)
+  - 무엇을 했나:
+    - U-14: 원인은 편집기에 CM defaultKeymap이 없고 앱 키맵에도 없어 브라우저가 네이티브로 캐럿을 옮겨 커서가 하나로 줄어든 것이다. CM 키맵에 @codemirror/commands 좌우·Home/End·Ctrl+좌우(이동/선택)를 더했다. 위/아래 화살표는 범위 밖이라 그대로다. 단일 커서 Home도 이제 들여쓰기 끝으로 먼저 간다.
+    - U-15: 원인은 CM 기본 테마 `.cm-editor.cm-focused` outline 1px dotted다 → outline none으로 했다(다른 탭 본문은 이미 none).
+    - U-16: `SIDEBAR_BINDINGS`·`sidebar::Search` 명령·Ctrl+F 표시·`.sidebar-search .menu-shortcut`을 지웠다. Sidebar에서 Ctrl+F는 `BROWSER_KEYS`로 아무 일도 하지 않는다.
+  - 결과: 위와 같다.
+  - 검증: C-22에서 함께 확인.
+  - 특이사항: U-17은 값 근거가 없어 [BLOCKED] → core 확정(1px·최소 6·최대 100·저장 안 함·Ctrl+0 = 설정 `buffer_font_size`·브라우저 배율 초기화 막기·편집 글꼴 변수 따로 승인).
+- **K-20-R1 U-17·U-18 반영** (2026-11-10, coder, Claude Code Sonnet 5.5 high)
+  - 무엇을 했나:
+    - U-17: `src/editor/font-size.ts`, `--editor-buffer-font-size`(편집기만, Search 탭·미리보기는 그대로). Workspace 전역(`STATUS_BINDINGS`)에 `zed::IncreaseBufferFontSize`/`DecreaseBufferFontSize`/`ResetBufferFontSize`, Ctrl+=·Ctrl+Shift+=·숫자 패드 +, Ctrl+-·숫자 패드 -, Ctrl+0(숫자 패드 0 NumLock). `BROWSER_KEYS`에 ctrl-0을 더했다. 설정 `buffer_font_size`가 바뀌면 일시 값을 버린다(coder 결정).
+    - U-18: 켜짐에만 테두리 `--border-focused` 1px·모서리 `--settings-control-corner-radius` 4px, 아이콘 `--text-accent`. 크기는 그대로다.
+  - 결과: 위와 같다.
+  - 검증: C-22에서 함께 확인.
+  - 특이사항: 없음
+- **K-20-R2 U-17 수정** (2026-11-10, coder, Claude Code Sonnet 5.5 high)
+  - 무엇을 했나: leader V3에서 이미 열린 편집기의 줄 번호가 옛 줄 높이에 남는 버그(17px인데 줄 번호 24.3)를 찾았다 → 빈 Compartment를 새 빈 테마로 재설정해 CM이 줄 높이를 다시 재게 했다(공개 API).
+  - 결과: 줄 번호 높이가 글꼴 크기를 따른다.
+  - 검증: C-22에서 함께 확인.
+  - 특이사항: 없음
+- C-22 checker [PASS](커밋 직전 전체): typecheck 오류 0, npm test 233 통과, clippy 경고 0, cargo test 22 통과, 코드 검토 지적 없음, V3 PASS (2026-11-10).
+- **V3(ORDER-16)** (2026-11-10, C-22 판정 [PASS])
+  - 무엇을 했나: debug exe, 임시 APPDATA·WebView 데이터 폴더, One Light.
+  - 결과: 세 커서 Shift+→×3 → abc/ghi/mno, Shift+← → ab/gh/mn, → → 커서 셋. 점선 없음. Sidebar Ctrl+F 표시·동작 없음, 편집 Ctrl+F는 찾기 줄. 15 → 17px(줄 27.5·줄 번호 27.5) → 16 → 15, UI 글꼴·dpr·zoom 불변, 미리보기 16px 불변, 미리보기 연계 그대로. Lock Preview 켬: 아이콘 rgb(92,120,226)·테두리 1px rgb(125,130,232)·4px·22×22 불변. PASS.
+  - 검증: V3. 결과 파일 `specs/v0.6/verify/ORDER-16/`(v3.json, png).
+  - 특이사항: 사용자 확인 남음: U-18 테두리 `--border-focused`가 '옅은' 정도인지.
+- 커밋: 코드 `bf86cdc`.
+- 상태: 끝남(U-18 사용자 확인 남음).
+
 ## 버전 종료
 
 진행 중.
