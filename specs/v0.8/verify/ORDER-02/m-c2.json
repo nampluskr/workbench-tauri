@@ -1,0 +1,110 @@
+{
+  "urls": {
+    "pdfUrl": "http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5Cclaude%5C0b8282fad92e4259%5C8585a506-21e4-4d53-b907-02e1d8b8437c%5Cscratchpad%5Co02ac%5Ctwo%20pages%20%ED%95%9C%EA%B8%80.pdf",
+    "pngUrl": "http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5Cclaude%5C0b8282fad92e4259%5C8585a506-21e4-4d53-b907-02e1d8b8437c%5Cscratchpad%5Co02ac%5Csub%20dir%5Cblue%20%EA%B7%B8%EB%A6%BC.png",
+    "cssUrl": "http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5Cclaude%5C0b8282fad92e4259%5C8585a506-21e4-4d53-b907-02e1d8b8437c%5Cscratchpad%5Co02ac%5Cstyle.css"
+  },
+  "loaded": {
+    "mainImgComplete": true,
+    "mainImgNatural": 40
+  },
+  "c": {
+    "rects": [
+      {
+        "id": "sbx-none",
+        "x": 8,
+        "y": 8,
+        "w": 350,
+        "h": 836
+      },
+      {
+        "id": "sbx-same-origin",
+        "x": 366,
+        "y": 8,
+        "w": 350,
+        "h": 836
+      },
+      {
+        "id": "no-sandbox",
+        "x": 724,
+        "y": 8,
+        "w": 350,
+        "h": 836
+      },
+      {
+        "id": "main-img",
+        "x": 1082,
+        "y": 8,
+        "w": 350,
+        "h": 836
+      }
+    ],
+    "pixels": [
+      {
+        "id": "sbx-none",
+        "imageArea": [
+          160,
+          197,
+          178
+        ],
+        "bodyArea": [
+          255,
+          255,
+          255
+        ]
+      },
+      {
+        "id": "sbx-same-origin",
+        "imageArea": [
+          58,
+          0,
+          255
+        ],
+        "bodyArea": [
+          255,
+          255,
+          255
+        ]
+      },
+      {
+        "id": "no-sandbox",
+        "imageArea": [
+          58,
+          0,
+          255
+        ],
+        "bodyArea": [
+          255,
+          255,
+          255
+        ]
+      },
+      {
+        "id": "main-img",
+        "imageArea": [
+          58,
+          0,
+          255
+        ],
+        "bodyArea": [
+          58,
+          0,
+          255
+        ]
+      }
+    ],
+    "requests": [
+      "http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5Cclaude%5C0b8282fad92e4259%5C8585a506-21e4-4d53-b907-02e1d8b8437c%5Cscratchpad%5Co02ac%5Csub%20dir%5Cblue%20%EA%B7%B8%EB%A6%BC.png",
+      "http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5Cclaude%5C0b8282fad92e4259%5C8585a506-21e4-4d53-b907-02e1d8b8437c%5Cscratchpad%5Co02ac%5Csub%20dir%5Cblue%20%EA%B7%B8%EB%A6%BC.png",
+      "http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5Cclaude%5C0b8282fad92e4259%5C8585a506-21e4-4d53-b907-02e1d8b8437c%5Cscratchpad%5Co02ac%5Csub%20dir%5Cblue%20%EA%B7%B8%EB%A6%BC.png",
+      "http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5Cclaude%5C0b8282fad92e4259%5C8585a506-21e4-4d53-b907-02e1d8b8437c%5Cscratchpad%5Co02ac%5Cstyle.css",
+      "FAILED  csp",
+      "http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5Cclaude%5C0b8282fad92e4259%5C8585a506-21e4-4d53-b907-02e1d8b8437c%5Cscratchpad%5Co02ac%5Cstyle.css",
+      "FAILED  csp"
+    ],
+    "violations": [
+      "Loading the stylesheet 'http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5Cclaude%5C0b8282fad92e4259%5C8585a506-21e4-4d53-b907-02e1d8b8437c%5Cscratchpad%5Co02ac%5Cstyle.css' violates the following Content Security Policy directive: \"style-s",
+      "Loading the stylesheet 'http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5Cclaude%5C0b8282fad92e4259%5C8585a506-21e4-4d53-b907-02e1d8b8437c%5Cscratchpad%5Co02ac%5Cstyle.css' violates the following Content Security Policy directive: \"style-s"
+    ]
+  }
+}

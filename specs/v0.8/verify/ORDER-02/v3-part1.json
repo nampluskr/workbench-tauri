@@ -1,0 +1,137 @@
+{
+  "c7_svg_eye": {
+    "eye": {
+      "visible": true
+    },
+    "panes": [
+      [
+        {
+          "title": "pic.svg",
+          "cls": "tab edge-b"
+        },
+        {
+          "title": "Preview pic.svg",
+          "cls": "tab edge-r active edge-l"
+        }
+      ]
+    ],
+    "svg": {
+      "w": 120,
+      "h": 80,
+      "previewW": 1000,
+      "fill": "rgb(255, 0, 0)",
+      "scripts": 0,
+      "onAttrs": [],
+      "hrefs": [],
+      "images": 0
+    }
+  },
+  "c7_svg_ctrl_shift_v_fill": "ERR undefined is not iterable (cannot read property Symbol(Symbol.iterator))",
+  "c7_svg_single_ctrl_shift_v": {
+    "panes": [
+      [
+        {
+          "title": "pic.svg",
+          "cls": "tab edge-b"
+        },
+        {
+          "title": "Preview pic.svg",
+          "cls": "tab edge-r active edge-l"
+        }
+      ],
+      [
+        {
+          "title": "Preview pic.svg",
+          "cls": "tab active edge-r"
+        }
+      ]
+    ],
+    "svg": {
+      "w": 120,
+      "h": 80,
+      "previewW": 500,
+      "fill": "rgb(255, 0, 0)",
+      "scripts": 0,
+      "onAttrs": [],
+      "hrefs": [],
+      "images": 0
+    }
+  },
+  "c7_svg_evil": {
+    "info": {
+      "w": 100,
+      "h": 100,
+      "previewW": 1000,
+      "fill": "rgb(0, 0, 255)",
+      "scripts": 0,
+      "onAttrs": [],
+      "hrefs": [],
+      "images": 2
+    },
+    "traces": {
+      "onload": null,
+      "script": null,
+      "click": null,
+      "js": null
+    },
+    "externalRequests": []
+  },
+  "c7_svg_big": {
+    "w": 800,
+    "h": 200,
+    "previewW": 1000,
+    "fill": "rgb(0, 128, 0)",
+    "scripts": 0,
+    "onAttrs": [],
+    "hrefs": [],
+    "images": 0
+  },
+  "c10_cells": {
+    "text": "line1\nline2",
+    "whiteSpace": "pre-wrap",
+    "height": 57,
+    "lineHeight": "24px"
+  },
+  "c8_md_link": {
+    "line": "## Section 4",
+    "active": [
+      "Section 4"
+    ],
+    "panes": [
+      []
+    ]
+  },
+  "c8_tsv": {
+    "panes": [
+      [
+        {
+          "title": "t.tsv",
+          "cls": "tab edge-b"
+        },
+        {
+          "title": "Preview t.tsv",
+          "cls": "tab edge-r active edge-l"
+        }
+      ]
+    ],
+    "previews": [
+      {
+        "tables": 1,
+        "th": [
+          "a",
+          "b"
+        ],
+        "bodyRows": 1,
+        "cells": [
+          [
+            "1",
+            "2"
+          ]
+        ],
+        "boldInCells": 0,
+        "note": [],
+        "text": "ab12"
+      }
+    ]
+  }
+}

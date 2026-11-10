@@ -1,0 +1,88 @@
+{
+  "urls": {
+    "pdfUrl": "http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5Cclaude%5C0b8282fad92e4259%5C8585a506-21e4-4d53-b907-02e1d8b8437c%5Cscratchpad%5Co02ac%5Ctwo%20pages%20%ED%95%9C%EA%B8%80.pdf",
+    "pngUrl": "http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5Cclaude%5C0b8282fad92e4259%5C8585a506-21e4-4d53-b907-02e1d8b8437c%5Cscratchpad%5Co02ac%5Csub%20dir%5Cblue%20%EA%B7%B8%EB%A6%BC.png",
+    "cssUrl": "http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5Cclaude%5C0b8282fad92e4259%5C8585a506-21e4-4d53-b907-02e1d8b8437c%5Cscratchpad%5Co02ac%5Cstyle.css"
+  },
+  "a": {
+    "frames": [
+      {
+        "url": "http://tauri.localhost/",
+        "mime": "text/html"
+      }
+    ],
+    "targets": [
+      {
+        "type": "webview",
+        "url": "chrome-extension://mhjfbmdgcfjbbpaeojofohoefgiehjai/edge_pdf/index.html"
+      },
+      {
+        "type": "iframe",
+        "url": "http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5Cclaude%5C0b8282fad92e4259%5C8585a506-21e4-4d53-b9"
+      },
+      {
+        "type": "page",
+        "url": "http://tauri.localhost/"
+      },
+      {
+        "type": "iframe",
+        "url": "http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5Cclaude%5C0b8282fad92e4259%5C8585a506-21e4-4d53-b9"
+      }
+    ],
+    "requests": [
+      "http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5Cclaude%5C0b8282fad92e4259%5C8585a506-21e4-4d53-b907-02e1d8b8437c%5Cscratchpad%5Co02ac%5Ctwo%20pages%20%ED%95%9C%EA%B8%80.pdf"
+    ],
+    "violations": [
+      "Loading plugin data from 'http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLocal%5CTemp%5Cclaude%5C0b8282fad92e4259%5C8585a506-21e4-4d53-b907-02e1d8b8437c%5Cscratchpad%5Co02ac%5Ctwo%20pages%20%ED%95%9C%EA%B8%80.pdf' violates the following Content Securi"
+    ],
+    "fetchHead": "ERR Failed to fetch"
+  },
+  "c": {
+    "rects": [
+      {
+        "id": "sbx",
+        "x": 8,
+        "y": 8,
+        "w": 708,
+        "h": 836
+      },
+      {
+        "id": "sbx-img-only",
+        "x": 724,
+        "y": 8,
+        "w": 708,
+        "h": 836
+      }
+    ],
+    "pixels": [
+      {
+        "id": "sbx",
+        "imageArea": [
+          160,
+          197,
+          178
+        ],
+        "bodyArea": [
+          255,
+          255,
+          255
+        ]
+      },
+      {
+        "id": "sbx-img-only",
+        "imageArea": [
+          160,
+          197,
+          178
+        ],
+        "bodyArea": [
+          255,
+          255,
+          255
+        ]
+      }
+    ],
+    "requests": [],
+    "violations": []
+  }
+}

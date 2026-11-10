@@ -1,0 +1,614 @@
+{
+  "webpIsWebp": true,
+  "c3_off_small.png": {
+    "panes": [
+      [
+        {
+          "title": "small.png",
+          "italic": false,
+          "active": true
+        }
+      ]
+    ],
+    "editorVisible": false,
+    "eye": false,
+    "status": [],
+    "img": {
+      "natural": [
+        40,
+        40
+      ],
+      "shown": [
+        40,
+        40
+      ],
+      "objectFit": "contain",
+      "complete": true
+    },
+    "iframe": null,
+    "host": [
+      1000,
+      756
+    ],
+    "garbage": false
+  },
+  "c3_off_photo.jpg": {
+    "panes": [
+      [
+        {
+          "title": "photo.jpg",
+          "italic": false,
+          "active": true
+        }
+      ]
+    ],
+    "editorVisible": false,
+    "eye": false,
+    "status": [],
+    "img": {
+      "natural": [
+        64,
+        48
+      ],
+      "shown": [
+        64,
+        48
+      ],
+      "objectFit": "contain",
+      "complete": true
+    },
+    "iframe": null,
+    "host": [
+      1000,
+      756
+    ],
+    "garbage": false
+  },
+  "c3_off_photo2.jpeg": {
+    "panes": [
+      [
+        {
+          "title": "photo2.jpeg",
+          "italic": false,
+          "active": true
+        }
+      ]
+    ],
+    "editorVisible": false,
+    "eye": false,
+    "status": [],
+    "img": {
+      "natural": [
+        64,
+        48
+      ],
+      "shown": [
+        64,
+        48
+      ],
+      "objectFit": "contain",
+      "complete": true
+    },
+    "iframe": null,
+    "host": [
+      1000,
+      756
+    ],
+    "garbage": false
+  },
+  "c3_off_dot.gif": {
+    "panes": [
+      [
+        {
+          "title": "dot.gif",
+          "italic": false,
+          "active": true
+        }
+      ]
+    ],
+    "editorVisible": false,
+    "eye": false,
+    "status": [],
+    "img": {
+      "natural": [
+        1,
+        1
+      ],
+      "shown": [
+        1,
+        1
+      ],
+      "objectFit": "contain",
+      "complete": true
+    },
+    "iframe": null,
+    "host": [
+      1000,
+      756
+    ],
+    "garbage": false
+  },
+  "c3_off_pic.webp": {
+    "panes": [
+      [
+        {
+          "title": "pic.webp",
+          "italic": false,
+          "active": true
+        }
+      ]
+    ],
+    "editorVisible": false,
+    "eye": false,
+    "status": [],
+    "img": {
+      "natural": [
+        64,
+        48
+      ],
+      "shown": [
+        64,
+        48
+      ],
+      "objectFit": "contain",
+      "complete": true
+    },
+    "iframe": null,
+    "host": [
+      1000,
+      756
+    ],
+    "garbage": false
+  },
+  "c3_off_icon.ico": {
+    "panes": [
+      [
+        {
+          "title": "icon.ico",
+          "italic": false,
+          "active": true
+        }
+      ]
+    ],
+    "editorVisible": false,
+    "eye": false,
+    "status": [],
+    "img": {
+      "natural": [
+        32,
+        32
+      ],
+      "shown": [
+        32,
+        32
+      ],
+      "objectFit": "contain",
+      "complete": true
+    },
+    "iframe": null,
+    "host": [
+      1000,
+      756
+    ],
+    "garbage": false
+  },
+  "c3_off_two pages 한글.pdf": {
+    "panes": [
+      [
+        {
+          "title": "two pages 한글.pdf",
+          "italic": false,
+          "active": true
+        }
+      ]
+    ],
+    "editorVisible": false,
+    "eye": false,
+    "status": [],
+    "img": null,
+    "iframe": {
+      "src": "http://asset.localhost/C%3A%5CUsers%5Cna",
+      "rect": [
+        1000,
+        756
+      ]
+    },
+    "host": [
+      1000,
+      756
+    ],
+    "garbage": false
+  },
+  "c3_on_small.png": {
+    "panes": [
+      [
+        {
+          "title": "small.png",
+          "italic": false,
+          "active": true
+        }
+      ]
+    ],
+    "editorVisible": false,
+    "eye": false,
+    "status": [],
+    "img": {
+      "natural": [
+        40,
+        40
+      ],
+      "shown": [
+        40,
+        40
+      ],
+      "objectFit": "contain",
+      "complete": true
+    },
+    "iframe": null,
+    "host": [
+      1000,
+      756
+    ],
+    "garbage": false
+  },
+  "c3_on_photo.jpg": {
+    "panes": [
+      [
+        {
+          "title": "photo.jpg",
+          "italic": false,
+          "active": true
+        }
+      ]
+    ],
+    "editorVisible": false,
+    "eye": false,
+    "status": [],
+    "img": {
+      "natural": [
+        64,
+        48
+      ],
+      "shown": [
+        64,
+        48
+      ],
+      "objectFit": "contain",
+      "complete": true
+    },
+    "iframe": null,
+    "host": [
+      1000,
+      756
+    ],
+    "garbage": false
+  },
+  "c3_on_photo2.jpeg": {
+    "panes": [
+      [
+        {
+          "title": "photo2.jpeg",
+          "italic": false,
+          "active": true
+        }
+      ]
+    ],
+    "editorVisible": false,
+    "eye": false,
+    "status": [],
+    "img": {
+      "natural": [
+        64,
+        48
+      ],
+      "shown": [
+        64,
+        48
+      ],
+      "objectFit": "contain",
+      "complete": true
+    },
+    "iframe": null,
+    "host": [
+      1000,
+      756
+    ],
+    "garbage": false
+  },
+  "c3_on_dot.gif": {
+    "panes": [
+      [
+        {
+          "title": "dot.gif",
+          "italic": false,
+          "active": true
+        }
+      ]
+    ],
+    "editorVisible": false,
+    "eye": false,
+    "status": [],
+    "img": {
+      "natural": [
+        1,
+        1
+      ],
+      "shown": [
+        1,
+        1
+      ],
+      "objectFit": "contain",
+      "complete": true
+    },
+    "iframe": null,
+    "host": [
+      1000,
+      756
+    ],
+    "garbage": false
+  },
+  "c3_on_pic.webp": {
+    "panes": [
+      [
+        {
+          "title": "pic.webp",
+          "italic": false,
+          "active": true
+        }
+      ]
+    ],
+    "editorVisible": false,
+    "eye": false,
+    "status": [],
+    "img": {
+      "natural": [
+        64,
+        48
+      ],
+      "shown": [
+        64,
+        48
+      ],
+      "objectFit": "contain",
+      "complete": true
+    },
+    "iframe": null,
+    "host": [
+      1000,
+      756
+    ],
+    "garbage": false
+  },
+  "c3_on_icon.ico": {
+    "panes": [
+      [
+        {
+          "title": "icon.ico",
+          "italic": false,
+          "active": true
+        }
+      ]
+    ],
+    "editorVisible": false,
+    "eye": false,
+    "status": [],
+    "img": {
+      "natural": [
+        32,
+        32
+      ],
+      "shown": [
+        32,
+        32
+      ],
+      "objectFit": "contain",
+      "complete": true
+    },
+    "iframe": null,
+    "host": [
+      1000,
+      756
+    ],
+    "garbage": false
+  },
+  "c3_on_two pages 한글.pdf": {
+    "panes": [
+      [
+        {
+          "title": "two pages 한글.pdf",
+          "italic": false,
+          "active": true
+        }
+      ]
+    ],
+    "editorVisible": false,
+    "eye": false,
+    "status": [],
+    "img": null,
+    "iframe": {
+      "src": "http://asset.localhost/C%3A%5CUsers%5Cna",
+      "rect": [
+        1000,
+        756
+      ]
+    },
+    "host": [
+      1000,
+      756
+    ],
+    "garbage": false
+  },
+  "lockPressedOn": "true",
+  "c4_big": {
+    "editorVisible": false,
+    "eye": false,
+    "status": [],
+    "img": {
+      "natural": [
+        3000,
+        2000
+      ],
+      "shown": [
+        1000,
+        667
+      ],
+      "objectFit": "contain",
+      "complete": true
+    },
+    "iframe": null,
+    "host": [
+      1000,
+      756
+    ],
+    "garbage": false
+  },
+  "c4_tab_menu": [
+    "Close",
+    "Close OthersCtrl-Alt-Shift-T",
+    "Close LeftCtrl-K E",
+    "Close RightCtrl-K T",
+    "Close CleanCtrl-K U",
+    "Close AllCtrl-K W",
+    "Pin TabCtrl-K Shift-Enter"
+  ],
+  "c4_keys": {
+    "before": [
+      [
+        {
+          "title": "big.png",
+          "italic": false,
+          "active": true
+        }
+      ]
+    ],
+    "afterS": [
+      [
+        {
+          "title": "big.png",
+          "italic": false,
+          "active": true
+        }
+      ]
+    ],
+    "dialogAfterS": false,
+    "afterV": [
+      [
+        {
+          "title": "big.png",
+          "italic": false,
+          "active": true
+        }
+      ]
+    ]
+  },
+  "c4_click_once_twice": {
+    "once": [
+      [
+        {
+          "title": "small.png",
+          "italic": true,
+          "active": true
+        }
+      ]
+    ],
+    "replaced": [
+      [
+        {
+          "title": "dot.gif",
+          "italic": true,
+          "active": true
+        }
+      ]
+    ],
+    "twice": [
+      [
+        {
+          "title": "dot.gif",
+          "italic": false,
+          "active": true
+        }
+      ]
+    ]
+  },
+  "c4_small_not_upscaled": {
+    "editorVisible": false,
+    "eye": false,
+    "status": [],
+    "img": {
+      "natural": [
+        40,
+        40
+      ],
+      "shown": [
+        40,
+        40
+      ],
+      "objectFit": "contain",
+      "complete": true
+    },
+    "iframe": null,
+    "host": [
+      1000,
+      756
+    ],
+    "garbage": false
+  },
+  "c5_pdf": {
+    "editorVisible": false,
+    "eye": false,
+    "status": [],
+    "img": null,
+    "iframe": {
+      "src": "http://asset.localhost/C%3A%5CUsers%5Cna",
+      "rect": [
+        1000,
+        756
+      ]
+    },
+    "host": [
+      1000,
+      756
+    ],
+    "garbage": false,
+    "targets": [
+      "webview chrome-extension://mhjfbmdgcfjbbpaeojofohoefgiehjai/edge_pdf",
+      "iframe http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLoca",
+      "page http://tauri.localhost/",
+      "iframe http://asset.localhost/C%3A%5CUsers%5Cnampl%5CAppData%5CLoca"
+    ]
+  },
+  "c6_md_images": {
+    "imgs": [
+      {
+        "alt": "a",
+        "natural": 60,
+        "complete": true,
+        "src": "1d8b8437c\\scratchpad\\o02v\\docs\\img\\a.png"
+      },
+      {
+        "alt": "b",
+        "natural": 60,
+        "complete": true,
+        "src": "-b907-02e1d8b8437c\\scratchpad\\o02v\\b.png"
+      },
+      {
+        "alt": "k",
+        "natural": 60,
+        "complete": true,
+        "src": "b8437c\\scratchpad\\o02v\\docs\\한글 그림 이름.png"
+      },
+      {
+        "alt": "k2",
+        "natural": 60,
+        "complete": true,
+        "src": "b8437c\\scratchpad\\o02v\\docs\\한글 그림 이름.png"
+      }
+    ],
+    "text": "Images sub: parent: korean space: korean raw: web: Section 2 body ",
+    "externalRequests": []
+  },
+  "c7_fill": {
+    "before": "rgb(255, 0, 0)",
+    "after": "rgb(0, 255, 0)"
+  }
+}
