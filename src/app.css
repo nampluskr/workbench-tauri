@@ -738,6 +738,13 @@ button, input, select, textarea {
 .markdown-body .fm-value { border-left: var(--markdown-preview-frontmatter-value-border-left) solid var(--border); }
 .markdown-body .fm-key:nth-child(n + 3), .markdown-body .fm-value:nth-child(n + 3) { border-top: var(--markdown-preview-frontmatter-row-border-top) solid var(--border); }
 .markdown-body img { max-width: 100%; height: auto; } /* core v0.8 I-3: shrink to fit, never enlarge */
+/* core v0.8 I-2: ipynb cells reuse the Markdown preview's code block (pre) and table rules; only what they lack is here. */
+.markdown-body .nb-count { color: var(--text-muted); font-family: var(--buffer-font-family); }
+.markdown-body div.nb-output { margin: var(--markdown-preview-code-block-margin-y) 0; overflow-x: auto; }
+.markdown-body :is(.nb-stderr, .nb-error) { color: var(--error); }
+.markdown-body .nb-error-title { font-family: var(--buffer-font-family); }
+.markdown-body :is(pre.nb-output, .nb-traceback, .nb-raw) { white-space: pre-wrap; overflow-wrap: anywhere; }
+.markdown-body .nb-hidden { color: var(--text-muted); margin: var(--markdown-preview-code-block-margin-y) 0; }
 /* core v0.8 I-8 / I-9: the view-only tab of an image or a PDF. */
 .pane-item > .view-body { position: absolute; inset: 0; }
 .view-body { box-sizing: border-box; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--editor-background); outline: none; }

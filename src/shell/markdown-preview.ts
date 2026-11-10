@@ -3,6 +3,7 @@ import DOMPurify from "dompurify";
 import { csvTable } from "../editor/csv.ts";
 import { blockAt, classifyLink, localImagePath, renderMarkdown, type LinkTarget } from "../editor/markdown.ts";
 import { htmlSrcdoc } from "../editor/html.ts";
+import { NOTEBOOK_HTML_FORBID_ATTR, NOTEBOOK_HTML_FORBID_TAGS, parseNotebook, type NotebookOutput } from "../editor/notebook.ts";
 import { svgElement } from "../editor/svg.ts";
 import type { PreviewKind } from "../editor/preview-kind.ts";
 import { MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS } from "../spec/metrics.ts";
@@ -45,6 +46,89 @@ function csvNodes(text: string, delimiter: string): HTMLElement[] {
   return [table, note];
 }
 
+/** Markdown text as a sanitized tree: images are local files through the asset protocol (I-3), any other image is removed. */
+function markdownTree(text: string, sourcePath: string): DocumentFragment {
+  const tree = DOMPurify.sanitize(renderMarkdown(text), { FORBID_ATTR: ["style"], ALLOW_DATA_ATTR: true, RETURN_DOM_FRAGMENT: true });
+  for (const image of tree.querySelectorAll("img")) {
+    const path = localImagePath(image.getAttribute("src") ?? "", sourcePath);
+    if (path) image.setAttribute("src", convertFileSrc(path));
+    else image.remove();
+  }
+  return tree;
+}
+
+const makeNode = (tag: string, className: string, text?: string): HTMLElement => {
+  const el = document.createElement(tag);
+  el.className = className;
+  if (text !== undefined) el.textContent = text;
+  return el;
+};
+
+/** I-2: one output as DOM. Text is textContent; SVG and HTML are sanitized; a picture is a data: <img> (CSP allows data:). */
+function outputNode(output: NotebookOutput): HTMLElement | null {
+  switch (output.kind) {
+    case "text": {
+      const pre = makeNode("pre", output.stderr ? "nb-output nb-stderr" : "nb-output", output.text);
+      return output.text ? pre : null;
+    }
+    case "image": {
+      const wrap = makeNode("div", "nb-output");
+      const img = wrap.appendChild(document.createElement("img"));
+      img.src = output.src;
+      return wrap;
+    }
+    case "svg": {
+      const svg = svgElement(output.text);
+      if (!svg) return outputNode({ kind: "hidden", mime: "image/svg+xml" });
+      const wrap = makeNode("div", "nb-output");
+      wrap.append(svg);
+      return wrap;
+    }
+    case "html": {
+      const wrap = makeNode("div", "nb-output nb-html");
+      const tree = DOMPurify.sanitize(output.html, { FORBID_TAGS: NOTEBOOK_HTML_FORBID_TAGS, FORBID_ATTR: NOTEBOOK_HTML_FORBID_ATTR, RETURN_DOM_FRAGMENT: true });
+      // Only a picture inside the output itself is kept: any other src is a request.
+      for (const image of tree.querySelectorAll("img")) if (!/^data:image\//i.test(image.getAttribute("src") ?? "")) image.remove();
+      wrap.append(tree);
+      return wrap;
+    }
+    case "error": {
+      const wrap = makeNode("div", "nb-output nb-error");
+      wrap.append(makeNode("div", "nb-error-title", output.title));
+      if (output.traceback) wrap.append(makeNode("pre", "nb-traceback", output.traceback));
+      return wrap;
+    }
+    case "hidden":
+      return makeNode("p", "nb-hidden", `Output not shown (${output.mime})`);
+  }
+}
+
+/** I-2: the notebook's cells in file order, or one line saying why it is not shown. */
+function notebookNodes(text: string, sourcePath: string): HTMLElement[] {
+  const notebook = parseNotebook(text);
+  if (!notebook.ok) return [makeNode("p", "nb-note", notebook.message)];
+  return notebook.cells.map((cell) => {
+    const box = makeNode("div", `nb-cell nb-${cell.type}`);
+    if (cell.type === "markdown") {
+      const tree = markdownTree(cell.source, sourcePath);
+      // A cell's line numbers are not the file's (M-1: no position link), so a click on a block must not move the editor.
+      for (const block of tree.querySelectorAll("[data-line]")) { block.removeAttribute("data-line"); block.removeAttribute("data-line-end"); }
+      box.append(tree);
+    } else if (cell.type === "raw") {
+      box.append(makeNode("pre", "nb-raw", cell.source));
+    } else {
+      if (cell.count !== null) box.append(makeNode("div", "nb-count", `[${cell.count}]`));
+      const pre = box.appendChild(document.createElement("pre"));
+      pre.append(makeNode("code", `language-${notebook.language.replace(/\s+/g, "")}`, cell.source));
+      for (const output of cell.outputs) {
+        const node = outputNode(output);
+        if (node) box.append(node);
+      }
+    }
+    return box;
+  });
+}
+
 export type Preview = { element: HTMLElement; changed: () => void; cursor: (line: number) => void; dispose: () => void };
 
 export function createPreview(hooks: PreviewHooks): Preview {
@@ -85,17 +169,16 @@ export function createPreview(hooks: PreviewHooks): Preview {
       body.replaceChildren(svg ?? note);
       return;
     }
+    if (hooks.kind === "ipynb") {
+      body.replaceChildren(...notebookNodes(text, hooks.sourcePath()));
+      void colorCodeBlocks(++generation);
+      return;
+    }
     if (hooks.kind !== "markdown") {
       body.replaceChildren(...csvNodes(text, hooks.kind === "tsv" ? "\t" : ","));
       return;
     }
-    const tree = DOMPurify.sanitize(renderMarkdown(text), { FORBID_ATTR: ["style"], ALLOW_DATA_ATTR: true, RETURN_DOM_FRAGMENT: true });
-    for (const image of tree.querySelectorAll("img")) {
-      const path = localImagePath(image.getAttribute("src") ?? "", hooks.sourcePath());
-      if (path) image.setAttribute("src", convertFileSrc(path));
-      else image.remove();
-    }
-    body.replaceChildren(tree);
+    body.replaceChildren(markdownTree(text, hooks.sourcePath()));
     if (lastLine >= 0) highlight(lastLine, false);
     void colorCodeBlocks(++generation);
   };
