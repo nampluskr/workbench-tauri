@@ -641,8 +641,12 @@ button, input, select, textarea {
   line-height: var(--markdown-preview-body-line-height-multiplier);
 }
 .markdown-body > :first-child { margin-top: 0; }
-.markdown-body :is(p, ul, ol, blockquote, table, .frontmatter) { margin: 0 0 var(--markdown-preview-paragraph-gap); } /* L-103 */
-.markdown-body li + li { margin-top: var(--markdown-preview-list-gap); } /* L-103 list gap, read as the gap between items */
+.markdown-body :is(ul, ol, blockquote, table, .frontmatter) { margin: 0 0 var(--markdown-preview-paragraph-gap); } /* L-103 */
+/* core v0.7 I-9: px settings. A line is the font size plus the gap, so a bigger preview font never overlaps lines; a paragraph inside a list item follows the list line gap. */
+.markdown-body p { margin: 0 0 var(--preview-paragraph-gap); line-height: calc(1em + var(--preview-paragraph-line-gap)); }
+.markdown-body li { line-height: calc(1em + var(--preview-list-line-gap)); }
+.markdown-body li p { line-height: inherit; }
+.markdown-body li + li { margin-top: var(--preview-list-gap); }
 .markdown-body :is(h1, h2, h3, h4, h5, h6) {
   margin: 0; /* L-104 top 24 / bottom 12 are estimates in the source: not applied */
   font-weight: var(--markdown-preview-heading-font-weight);

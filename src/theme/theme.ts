@@ -78,6 +78,14 @@ const FALLBACK_VALUE: Partial<Record<Token, string>> = {
   "editor.indent_guide_active": "#1b1d23", // theme.fallback."editor.indent_guide_active" (T-26.10)
 };
 
+// core v0.7 I-14: One Dark / One Light have no indent guide colors, and Zed paints them from default_colors.rs (4304dec :130 / :284):
+// neutral() = Sand, light_alpha step 5 / 6 and dark_alpha step 4 / 6. The T-26.9 / T-26.10 values above are Zed's offline fallback theme, which a loaded One theme never shows.
+// Only these two names get them; every other theme keeps its own value or T-26.9 / T-26.10.
+const ONE_GUIDES: Record<string, Partial<Record<Token, string>>> = {
+  "One Dark": { "editor.indent_guide": "#fefef31b", "editor.indent_guide_active": "#fffaed2d" },
+  "One Light": { "editor.indent_guide": "#1f180021", "editor.indent_guide_active": "#19130029" },
+};
+
 /** "players[0].selection" -> "--players-0-selection" (PROGRESS W-7 naming rule). */
 export function cssVarName(token: string): string {
   return "--" + token.replace(/[._[\]]/g, "-").replace(/-+/g, "-").replace(/-$/, "");
@@ -114,9 +122,9 @@ function rawValue(style: ThemeStyle, token: Token): string | undefined {
 
 /**
  * Token -> canonical color for the target tokens: JSON value, T-26 derivation from the same theme,
- * the `base` theme's value (the One theme of the same appearance), then the fixed T-26 value.
+ * the `base` theme's value (the One theme of the same appearance), the One guide colors for `name` (I-14), then the fixed T-26 value.
  */
-export function resolveTokens(style: ThemeStyle, base?: ThemeStyle): Record<Token, string> {
+export function resolveTokens(style: ThemeStyle, base?: ThemeStyle, name?: string): Record<Token, string> {
   const out = {} as Record<Token, string>;
   for (const token of TARGET_TOKENS) {
     if (token === "panel.overlay_background" || token === "panel.overlay_hover") {
@@ -126,7 +134,7 @@ export function resolveTokens(style: ThemeStyle, base?: ThemeStyle): Record<Toke
       continue;
     }
     const from = FALLBACK_FROM[token];
-    const value = rawValue(style, token) ?? (from && rawValue(style, from)) ?? (base && rawValue(base, token)) ?? FALLBACK_VALUE[token];
+    const value = rawValue(style, token) ?? (from && rawValue(style, from)) ?? (base && rawValue(base, token)) ?? (name ? ONE_GUIDES[name]?.[token] : undefined) ?? FALLBACK_VALUE[token];
     if (value === undefined) throw new Error(`theme has no value for ${token}`);
     out[token] = formatColor(parseColor(value));
   }

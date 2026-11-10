@@ -1,0 +1,511 @@
+{
+  "c3_noSettings_o03": {
+    "pFont": 16,
+    "pLineHeight": "24px",
+    "pLines": 10,
+    "pPitch": 24,
+    "pInnerGap": 8,
+    "paragraphGap": 16,
+    "liLineHeight": "24px",
+    "liLines": 7,
+    "liPitch": 24,
+    "liInnerGap": 8,
+    "listGap": 12,
+    "subGap": 12,
+    "h2ListAbove": 16,
+    "ulAbove": 0,
+    "bqAbove": 16,
+    "preAbove": 16,
+    "tableAbove": 16,
+    "h2AfterAbove": 16,
+    "afterPre": 16,
+    "h2LineHeight": "28px",
+    "bqLineHeight": "24px",
+    "preFont": 16
+  },
+  "c3_noSettings_new": {
+    "pFont": 16,
+    "pLineHeight": "24px",
+    "pLines": 10,
+    "pPitch": 24,
+    "pInnerGap": 8,
+    "paragraphGap": 16,
+    "liLineHeight": "24px",
+    "liLines": 7,
+    "liPitch": 24,
+    "liInnerGap": 8,
+    "listGap": 12,
+    "subGap": 12,
+    "h2ListAbove": 16,
+    "ulAbove": 0,
+    "bqAbove": 16,
+    "preAbove": 16,
+    "tableAbove": 16,
+    "h2AfterAbove": 16,
+    "afterPre": 16,
+    "h2LineHeight": "28px",
+    "bqLineHeight": "24px",
+    "preFont": 16
+  },
+  "c3_noSettings_equal": true,
+  "c3_o03File_o03": {
+    "pFont": 16,
+    "pLineHeight": "24px",
+    "pLines": 10,
+    "pPitch": 24,
+    "pInnerGap": 8,
+    "paragraphGap": 16,
+    "liLineHeight": "24px",
+    "liLines": 7,
+    "liPitch": 24,
+    "liInnerGap": 8,
+    "listGap": 12,
+    "subGap": 12,
+    "h2ListAbove": 16,
+    "ulAbove": 0,
+    "bqAbove": 16,
+    "preAbove": 16,
+    "tableAbove": 16,
+    "h2AfterAbove": 16,
+    "afterPre": 16,
+    "h2LineHeight": "28px",
+    "bqLineHeight": "24px",
+    "preFont": 16
+  },
+  "c3_o03File_new": {
+    "pFont": 16,
+    "pLineHeight": "24px",
+    "pLines": 10,
+    "pPitch": 24,
+    "pInnerGap": 8,
+    "paragraphGap": 16,
+    "liLineHeight": "24px",
+    "liLines": 7,
+    "liPitch": 24,
+    "liInnerGap": 8,
+    "listGap": 12,
+    "subGap": 12,
+    "h2ListAbove": 16,
+    "ulAbove": 0,
+    "bqAbove": 16,
+    "preAbove": 16,
+    "tableAbove": 16,
+    "h2AfterAbove": 16,
+    "afterPre": 16,
+    "h2LineHeight": "28px",
+    "bqLineHeight": "24px",
+    "preFont": 16
+  },
+  "c3_o03File_equal": true,
+  "c1_c5_one_at_a_time": {
+    "base": {
+      "pFont": 16,
+      "pLineHeight": "24px",
+      "pLines": 10,
+      "pPitch": 24,
+      "pInnerGap": 8,
+      "paragraphGap": 16,
+      "liLineHeight": "24px",
+      "liLines": 7,
+      "liPitch": 24,
+      "liInnerGap": 8,
+      "listGap": 12,
+      "subGap": 12,
+      "h2ListAbove": 16,
+      "ulAbove": 0,
+      "bqAbove": 16,
+      "preAbove": 16,
+      "tableAbove": 16,
+      "h2AfterAbove": 16,
+      "afterPre": 16,
+      "h2LineHeight": "28px",
+      "bqLineHeight": "24px",
+      "preFont": 16
+    },
+    "preview_paragraph_line_gap=18": {
+      "pFont": 16,
+      "pLineHeight": "34px",
+      "pLines": 10,
+      "pPitch": 34,
+      "pInnerGap": 18,
+      "paragraphGap": 16,
+      "liLineHeight": "24px",
+      "liLines": 7,
+      "liPitch": 24,
+      "liInnerGap": 8,
+      "listGap": 12,
+      "subGap": 12,
+      "h2ListAbove": 16,
+      "ulAbove": 0,
+      "bqAbove": 16,
+      "preAbove": 16,
+      "tableAbove": 16,
+      "h2AfterAbove": 16,
+      "afterPre": 16,
+      "h2LineHeight": "28px",
+      "bqLineHeight": "24px",
+      "preFont": 16
+    },
+    "preview_paragraph_gap=26": {
+      "pFont": 16,
+      "pLineHeight": "24px",
+      "pLines": 10,
+      "pPitch": 24,
+      "pInnerGap": 8,
+      "paragraphGap": 26,
+      "liLineHeight": "24px",
+      "liLines": 7,
+      "liPitch": 24,
+      "liInnerGap": 8,
+      "listGap": 12,
+      "subGap": 12,
+      "h2ListAbove": 26,
+      "ulAbove": 0,
+      "bqAbove": 16,
+      "preAbove": 26,
+      "tableAbove": 16,
+      "h2AfterAbove": 16,
+      "afterPre": 16,
+      "h2LineHeight": "28px",
+      "bqLineHeight": "24px",
+      "preFont": 16
+    },
+    "preview_list_line_gap=18": {
+      "pFont": 16,
+      "pLineHeight": "24px",
+      "pLines": 10,
+      "pPitch": 24,
+      "pInnerGap": 8,
+      "paragraphGap": 16,
+      "liLineHeight": "34px",
+      "liLines": 7,
+      "liPitch": 34,
+      "liInnerGap": 18,
+      "listGap": 12,
+      "subGap": 12,
+      "h2ListAbove": 16,
+      "ulAbove": 0,
+      "bqAbove": 16,
+      "preAbove": 16,
+      "tableAbove": 16,
+      "h2AfterAbove": 16,
+      "afterPre": 16,
+      "h2LineHeight": "28px",
+      "bqLineHeight": "24px",
+      "preFont": 16
+    },
+    "preview_list_gap=20": {
+      "pFont": 16,
+      "pLineHeight": "24px",
+      "pLines": 10,
+      "pPitch": 24,
+      "pInnerGap": 8,
+      "paragraphGap": 16,
+      "liLineHeight": "24px",
+      "liLines": 7,
+      "liPitch": 24,
+      "liInnerGap": 8,
+      "listGap": 20,
+      "subGap": 20,
+      "h2ListAbove": 16,
+      "ulAbove": 0,
+      "bqAbove": 16,
+      "preAbove": 16,
+      "tableAbove": 16,
+      "h2AfterAbove": 16,
+      "afterPre": 16,
+      "h2LineHeight": "28px",
+      "bqLineHeight": "24px",
+      "preFont": 16
+    },
+    "back": {
+      "pFont": 16,
+      "pLineHeight": "24px",
+      "pLines": 10,
+      "pPitch": 24,
+      "pInnerGap": 8,
+      "paragraphGap": 16,
+      "liLineHeight": "24px",
+      "liLines": 7,
+      "liPitch": 24,
+      "liInnerGap": 8,
+      "listGap": 12,
+      "subGap": 12,
+      "h2ListAbove": 16,
+      "ulAbove": 0,
+      "bqAbove": 16,
+      "preAbove": 16,
+      "tableAbove": 16,
+      "h2AfterAbove": 16,
+      "afterPre": 16,
+      "h2LineHeight": "28px",
+      "bqLineHeight": "24px",
+      "preFont": 16
+    },
+    "rows": [
+      "Preview / Theme = One Dark — Specifies the color theme used in the Markdown preview.",
+      "Preview / Font Size = 16 — Controls the font size in pixels used in the Markdown preview.",
+      "Preview / Paragraph Line Spacing = 8 — Controls the space in pixels between wrapped lines of a paragraph.",
+      "Preview / Paragraph Spacing = 16 — Controls the space in pixels between paragraphs.",
+      "Preview / List Line Spacing = 8 — Controls the space in pixels between wrapped lines of a list item.",
+      "Preview / List Item Spacing = 12 — Controls the space in pixels between list items."
+    ],
+    "steps": [
+      [
+        "+ from 47",
+        "{\n  \"preview_list_gap\": 48\n}\n"
+      ],
+      [
+        "+ at 48",
+        "{\n  \"preview_list_gap\": 48\n}\n"
+      ],
+      [
+        "- from 1",
+        "{\n  \"preview_paragraph_line_gap\": 0\n}\n"
+      ],
+      [
+        "- at 0",
+        "{\n  \"preview_paragraph_line_gap\": 0\n}\n"
+      ]
+    ]
+  },
+  "c2_font_growth": {
+    "base": {
+      "pFont": 16,
+      "pLineHeight": "24px",
+      "pLines": 10,
+      "pPitch": 24,
+      "pInnerGap": 8,
+      "paragraphGap": 16,
+      "liLineHeight": "24px",
+      "liLines": 7,
+      "liPitch": 24,
+      "liInnerGap": 8,
+      "listGap": 12,
+      "subGap": 12,
+      "h2ListAbove": 16,
+      "ulAbove": 0,
+      "bqAbove": 16,
+      "preAbove": 16,
+      "tableAbove": 16,
+      "h2AfterAbove": 16,
+      "afterPre": 16,
+      "h2LineHeight": "28px",
+      "bqLineHeight": "24px",
+      "preFont": 16
+    },
+    "ctrlPlus4": {
+      "pFont": 20,
+      "pLineHeight": "28px",
+      "pLines": 15,
+      "pPitch": 28,
+      "pInnerGap": 8,
+      "paragraphGap": 16,
+      "liLineHeight": "28px",
+      "liLines": 9,
+      "liPitch": 28,
+      "liInnerGap": 8,
+      "listGap": 12,
+      "subGap": 12,
+      "h2ListAbove": 16,
+      "ulAbove": 0,
+      "bqAbove": 20,
+      "preAbove": 20,
+      "tableAbove": 20,
+      "h2AfterAbove": 20,
+      "afterPre": 20,
+      "h2LineHeight": "35px",
+      "bqLineHeight": "30px",
+      "preFont": 20
+    },
+    "setting28": {
+      "pFont": 28,
+      "pLineHeight": "36px",
+      "pLines": 18,
+      "pPitch": 36,
+      "pInnerGap": 8,
+      "paragraphGap": 16,
+      "liLineHeight": "36px",
+      "liLines": 13,
+      "liPitch": 36,
+      "liInnerGap": 8,
+      "listGap": 12,
+      "subGap": 12,
+      "h2ListAbove": 16,
+      "ulAbove": 0,
+      "bqAbove": 28,
+      "preAbove": 28,
+      "tableAbove": 28,
+      "h2AfterAbove": 28,
+      "afterPre": 28,
+      "h2LineHeight": "49px",
+      "bqLineHeight": "42px",
+      "preFont": 28
+    }
+  },
+  "c4_sync": [
+    {
+      "clicked": "## After",
+      "active": [
+        "After"
+      ]
+    },
+    {
+      "clicked": "## Section 3",
+      "active": [
+        "Section 3"
+      ]
+    },
+    {
+      "clicked": "## Section 7",
+      "active": [
+        "Section 7"
+      ]
+    },
+    {
+      "clicked": "## List",
+      "active": [
+        "List"
+      ]
+    }
+  ],
+  "c6_oneDark_o03": {
+    "bg": "rgb(40, 44, 51)",
+    "text": "rgb(172, 178, 190)",
+    "vars": {
+      "guide": "#3b3d45ff",
+      "guideActive": "#1b1d23ff",
+      "invisible": "#4e5a5fff"
+    },
+    "guides": [
+      {
+        "active": false,
+        "bg": "rgb(59, 61, 69)"
+      },
+      {
+        "active": false,
+        "bg": "rgb(59, 61, 69)"
+      },
+      {
+        "active": true,
+        "bg": "rgb(27, 29, 35)"
+      }
+    ]
+  },
+  "c6_oneDark_new": {
+    "bg": "rgb(40, 44, 51)",
+    "text": "rgb(172, 178, 190)",
+    "vars": {
+      "guide": "#fefef31b",
+      "guideActive": "#fffaed2d",
+      "invisible": "#4e5a5fff"
+    },
+    "guides": [
+      {
+        "active": false,
+        "bg": "rgba(254, 254, 243, 0.106)"
+      },
+      {
+        "active": false,
+        "bg": "rgba(254, 254, 243, 0.106)"
+      },
+      {
+        "active": true,
+        "bg": "rgba(255, 250, 237, 0.176)"
+      }
+    ]
+  },
+  "c6_oneLight_o03": {
+    "bg": "rgb(250, 250, 250)",
+    "text": "rgb(36, 37, 41)",
+    "vars": {
+      "guide": "#3b3d45ff",
+      "guideActive": "#1b1d23ff",
+      "invisible": "#b4b4bbff"
+    },
+    "guides": [
+      {
+        "active": false,
+        "bg": "rgb(59, 61, 69)"
+      },
+      {
+        "active": false,
+        "bg": "rgb(59, 61, 69)"
+      },
+      {
+        "active": true,
+        "bg": "rgb(27, 29, 35)"
+      }
+    ]
+  },
+  "c6_oneLight_new": {
+    "bg": "rgb(250, 250, 250)",
+    "text": "rgb(36, 37, 41)",
+    "vars": {
+      "guide": "#1f180021",
+      "guideActive": "#19130029",
+      "invisible": "#b4b4bbff"
+    },
+    "guides": [
+      {
+        "active": false,
+        "bg": "rgba(31, 24, 0, 0.13)"
+      },
+      {
+        "active": false,
+        "bg": "rgba(31, 24, 0, 0.13)"
+      },
+      {
+        "active": true,
+        "bg": "rgba(25, 19, 0, 0.16)"
+      }
+    ]
+  },
+  "c6_catppuccin_o03": {
+    "bg": "rgb(30, 30, 46)",
+    "text": "rgb(205, 214, 244)",
+    "vars": {
+      "guide": "#31324499",
+      "guideActive": "#585b70ff",
+      "invisible": "#9399b266"
+    },
+    "guides": [
+      {
+        "active": false,
+        "bg": "rgba(49, 50, 68, 0.6)"
+      },
+      {
+        "active": false,
+        "bg": "rgba(49, 50, 68, 0.6)"
+      },
+      {
+        "active": true,
+        "bg": "rgb(88, 91, 112)"
+      }
+    ]
+  },
+  "c6_catppuccin_new": {
+    "bg": "rgb(30, 30, 46)",
+    "text": "rgb(205, 214, 244)",
+    "vars": {
+      "guide": "#31324499",
+      "guideActive": "#585b70ff",
+      "invisible": "#9399b266"
+    },
+    "guides": [
+      {
+        "active": false,
+        "bg": "rgba(49, 50, 68, 0.6)"
+      },
+      {
+        "active": false,
+        "bg": "rgba(49, 50, 68, 0.6)"
+      },
+      {
+        "active": true,
+        "bg": "rgb(88, 91, 112)"
+      }
+    ]
+  },
+  "c6_catppuccin_same": true
+}

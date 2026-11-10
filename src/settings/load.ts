@@ -2,7 +2,7 @@ import { createSignal } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { EditorView } from "@codemirror/view";
-import { applyMetrics } from "../spec/metrics.ts";
+import { applyMetrics, type PreviewGaps } from "../spec/metrics.ts";
 import { applyTheme } from "../theme/apply.ts";
 import { choices } from "./choices.ts";
 import { setAppliedIconTheme } from "../theme/icons.ts";
@@ -21,6 +21,8 @@ let previewFontSize: number | null = null;
 // I-6 / I-7: the Ctrl+Alt+L and Alt+Z values, in memory only like the sizes above. null follows the editor_line_numbers / editor_word_wrap setting.
 const temporary: Record<ToggleOption, boolean | null> = { lineNumbers: null, wordWrap: null };
 
+const previewGaps = (s: Settings): PreviewGaps => ({ paragraphLine: s.preview_paragraph_line_gap, paragraph: s.preview_paragraph_gap, listLine: s.preview_list_line_gap, list: s.preview_list_gap });
+
 async function reload(): Promise<void> {
   let next = settings();
   try { next = parseSettings(await invoke<string | null>("read_user_settings"), choices); }
@@ -31,7 +33,7 @@ async function reload(): Promise<void> {
     if (next.preview_font_size !== settings().preview_font_size) previewFontSize = null;
     if (next.editor_line_numbers !== settings().editor_line_numbers) temporary.lineNumbers = null;
     if (next.editor_word_wrap !== settings().editor_word_wrap) temporary.wordWrap = null;
-    await applyMetrics(next.ui_font_size, next.buffer_font_size, editorFontSize ?? next.buffer_font_size, previewFontSize ?? next.preview_font_size, next.editor_line_height);
+    await applyMetrics(next.ui_font_size, next.buffer_font_size, editorFontSize ?? next.buffer_font_size, previewFontSize ?? next.preview_font_size, next.editor_line_height, previewGaps(next));
     if (next.editor_line_height !== settings().editor_line_height) remeasureEditors(); // I-8: the line height map and the gutter are measured, not read from the variable
     showViewOptions(next);
     await showTheme(next.theme, next.editor_theme, next.preview_theme);
@@ -69,7 +71,7 @@ export function adjustFontSize(target: FontTarget, direction: -1 | 0 | 1): void 
     if (target === "editor") editorFontSize = direction === 0 ? null : stepEditorFontSize(editorFontSize ?? buffer_font_size, direction, buffer_font_size);
     else previewFontSize = direction === 0 ? null : stepEditorFontSize(previewFontSize ?? preview_font_size, direction, preview_font_size);
     try {
-      await applyMetrics(ui_font_size, buffer_font_size, editorFontSize ?? buffer_font_size, previewFontSize ?? preview_font_size, settings().editor_line_height);
+      await applyMetrics(ui_font_size, buffer_font_size, editorFontSize ?? buffer_font_size, previewFontSize ?? preview_font_size, settings().editor_line_height, previewGaps(settings()));
       if (target === "editor") remeasureEditors(); // line height and character width changed; the gutter, find highlights and cursors are redrawn from them
     } catch (error) { notify([String(error)]); }
   });

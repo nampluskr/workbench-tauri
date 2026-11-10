@@ -15,8 +15,8 @@ const EDITOR_BODY = ".cm-editor, .editor-toolbar";
 const PREVIEW_BODY = ".markdown-preview";
 
 function resolve(name?: string) {
-  const { style, appearance } = pickTheme(registry, name);
-  return { style, appearance, tokens: resolveTokens(style, pickTheme(registry, BASE_THEME[appearance]).style) };
+  const theme = pickTheme(registry, name);
+  return { style: theme.style, appearance: theme.appearance, tokens: resolveTokens(theme.style, pickTheme(registry, BASE_THEME[theme.appearance]).style, theme.name) };
 }
 
 /**

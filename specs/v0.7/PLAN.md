@@ -18,7 +18,7 @@
 | Phase 1 — v0.7 시작, Settings 분류와 글꼴 크기 셋 | Phase 1 (ORDER-01) | G-3 · G-1 | v0.7 시작 · I-4 · I-2 · I-1 |
 | Phase 2 — 테마 셋 | Phase 2 (ORDER-02) | G-2 | I-3 |
 | Phase 3 — 편집 보기 | Phase 3 (ORDER-03) | G-4 | I-5 · I-6 · I-7 · I-8 · I-10 |
-| Phase 4 — 미리보기 줄간격 | Phase 4 (ORDER-04) | G-5 | I-9 |
+| Phase 4 — 미리보기 줄간격 | Phase 4 (ORDER-04) | G-5 | I-9 · I-14 |
 | Phase 5 — 작은 항목과 v0.6 정리 | Phase 5 (ORDER-05) | G-6 | I-11 · I-12 · I-13 · v0.6 정리 |
 
 ### Phase 1 작업 카드
@@ -47,3 +47,14 @@
 | C-05 | K-03 검토와 커밋 전 전체 검증 | I-5 · I-6 · I-7 · I-8 · I-10 |
 | C-06 | V3 결과 판정 | I-5 · I-6 · I-7 · I-8 · I-10 |
 | W-05 | ORDER-03 PROGRESS·PLAN 기록 | I-5 · I-6 · I-7 · I-8 · I-10 |
+
+### Phase 4 작업 카드
+
+core ORDER-04가 I-14(One 테마 안내선 색)를 이 Phase에 넣었다.
+
+| 카드 | 할 일 | core 항목 |
+|---|---|---|
+| K-04 | 미리보기 줄간격 설정 넷(px 고정), One Dark·One Light 안내선 색 | I-9 · I-14 |
+| C-07 | K-04 검토와 커밋 전 전체 검증 | I-9 · I-14 |
+| C-08 | V3 결과 판정 | I-9 · I-14 |
+| W-06 | ORDER-04 PROGRESS·PLAN 기록 | I-9 · I-14 |

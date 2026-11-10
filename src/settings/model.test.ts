@@ -73,9 +73,26 @@ test("I-5 ~ I-8, I-10: the five editor view settings read, validate and write", 
   assert.throws(() => updateSetting("{}", "editor_line_numbers", "no", THEMES));
 });
 
+test("I-9: the four preview gaps are whole pixels 0 to 48; a file value outside that reads as the default", () => {
+  const keys = ["preview_paragraph_line_gap", "preview_paragraph_gap", "preview_list_line_gap", "preview_list_gap"] as const;
+  const read = (json: string) => parseSettings(json, THEMES);
+  assert.deepEqual(keys.map((k) => DEFAULTS[k]), [8, 16, 8, 12]);
+  for (const key of keys) {
+    for (const value of [0, 1, 48]) assert.equal(read(`{"${key}":${value}}`)[key], value);
+    for (const value of [-1, 49, 8.5, "\"8\"", "null"]) assert.equal(read(`{"${key}":${value}}`)[key], DEFAULTS[key], `${key} ${value}`);
+  }
+  // The Settings screen moves a step or typed value to the nearest allowed whole pixel.
+  assert.equal(settingNumber("preview_list_gap", 12 + settingStep("preview_list_gap")), 13);
+  assert.equal(settingNumber("preview_list_gap", 60), 48);
+  assert.equal(settingNumber("preview_list_gap", -3), 0);
+  assert.equal(settingNumber("preview_list_gap", 8.6), 9);
+  assert.equal(read(updateSetting("{}", "preview_paragraph_gap", 20, THEMES)).preview_paragraph_gap, 20);
+  assert.throws(() => updateSetting("{}", "preview_paragraph_gap", 49, THEMES));
+});
+
 test("settings search includes the category title, name and description", () => {
   const keys = (query: string) => filterSettings(query).map((r) => r.key);
-  assert.deepEqual(keys("preview"), ["preview_theme", "preview_font_size"]);
+  assert.deepEqual(keys("preview"), ["preview_theme", "preview_font_size", "preview_paragraph_line_gap", "preview_paragraph_gap", "preview_list_line_gap", "preview_list_gap"]);
   assert.deepEqual(keys("EDITOR"), ["editor_theme", "buffer_font_size", "editor_line_height", "editor_line_numbers", "editor_word_wrap", "editor_indent_guides", "editor_render_whitespace"]);
   assert.deepEqual(keys("ui"), ["theme", "icon_theme", "ui_font_size", "editor_indent_guides"]); // "guides" holds "ui"
   assert.deepEqual(keys("ui font size"), ["ui_font_size"]);

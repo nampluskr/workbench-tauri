@@ -376,7 +376,10 @@ const UI_FONT_FEATURE_SETTINGS = '"calt" 0'; // I-14: disable UI contextual alte
 
 /** Publish the metrics as CSS variables on :root (constructable sheet, no inline style). */
 let metricsSheet: CSSStyleSheet | undefined;
-export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15, editorFontSize = bufferFontSize, previewFontSize = 16, editorLineHeight = 1.6): Promise<void> {
+/** core v0.7 I-9: the four preview gaps in px, not scaled by the preview font size. L-103 paragraph_gap (below) still spaces the non-paragraph blocks. */
+export type PreviewGaps = { paragraphLine: number; paragraph: number; listLine: number; list: number };
+export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15, editorFontSize = bufferFontSize, previewFontSize = 16, editorLineHeight = 1.6,
+  gaps: PreviewGaps = { paragraphLine: 8, paragraph: 16, listLine: 8, list: 12 }): Promise<void> {
   const bufferSize = `${bufferFontSize}px`;
   const editorSize = `${editorFontSize}px`;
   const vars = Object.entries(METRICS).map(
@@ -391,6 +394,7 @@ export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15, editorF
   vars.push(`--editor-gutter-margin: ${descent}px;`);
   vars.push(`--buffer-font-family: ${BUFFER_FONT_FAMILY};`); // L-103: code in the Markdown preview uses the buffer font
   vars.push(`--editor-line-height-multiplier: ${editorLineHeight};`); // core v0.7 I-8: the Settings editor_line_height
+  vars.push(`--preview-paragraph-line-gap: ${gaps.paragraphLine}px; --preview-paragraph-gap: ${gaps.paragraph}px; --preview-list-line-gap: ${gaps.listLine}px; --preview-list-gap: ${gaps.list}px;`);
   vars.push(`--ui-font-family: ${UI_FONT_FAMILY};`);
   vars.push(`--font-weight-default: ${FONT_WEIGHT};`);
   vars.push(`--ui-font-feature-settings: ${UI_FONT_FEATURE_SETTINGS};`);

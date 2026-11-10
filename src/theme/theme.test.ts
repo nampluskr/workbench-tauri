@@ -88,10 +88,11 @@ test("parseColor: #RRGGBB has alpha 255, #RRGGBBAA keeps it, anything else is re
 for (const { name, appearance, style } of registry) {
   test(`${name}: the target tokens equal the JSON value, the T-26 value or the One base value`, () => {
     const base = pickTheme(registry, BASE_THEME[appearance]).style;
-    const css = themeCss(resolveTokens(style, base));
+    const css = themeCss(resolveTokens(style, base, name));
     const vars = new Map([...css.matchAll(/(--[\w-]+): (#[0-9a-f]{8});/g)].map((m) => [m[1], m[2]]));
     assert.equal(vars.size, VARS.length);
     for (const [token, cssVar] of VARS) {
+      if (token.startsWith("editor.indent_guide") && /^One (Dark|Light)$/.test(name)) continue; // I-14, the next test
       const pick = (s: typeof style) => (token === "players[0].selection" ? (s.players?.[0] as any)?.selection : s[token]);
       // T-26.3 / T-26.4: derived from another token of the same theme; T-26.13: a fixed value; else the base theme.
       const panel = (style["panel.background"] ?? base["panel.background"]) as string;
@@ -113,4 +114,15 @@ test("T-26.1/2: sticky defaults are opaque and theme overrides win", () => {
   assert.equal(resolved["panel.overlay_hover"], "#808080ff");
   assert.equal(resolveTokens({ ...style, "panel.overlay_background": "#123456", "panel.overlay_hover": "#abcdef" }, base)["panel.overlay_background"], "#123456ff");
   assert.equal(resolveTokens({ ...style, "panel.overlay_hover": "#abcdef" }, base)["panel.overlay_hover"], "#abcdefff");
+});
+
+test("I-14: One Dark and One Light get Zed's default guide colors; other themes keep T-26.9 / T-26.10 or their own value", () => {
+  const guides = (name: string) => { const t = resolveTokens(pickTheme(registry, name).style, pickTheme(registry, BASE_THEME[pickTheme(registry, name).appearance]).style, name); return [t["editor.indent_guide"], t["editor.indent_guide_active"]]; };
+  assert.deepEqual(guides("One Dark"), ["#fefef31b", "#fffaed2d"]);
+  assert.deepEqual(guides("One Light"), ["#1f180021", "#19130029"]);
+  // a theme file without the keys (not named One) and one with them
+  const one = pickTheme(registry, "One Dark").style;
+  assert.deepEqual([resolveTokens(one, one)["editor.indent_guide"], resolveTokens(one, one)["editor.indent_guide_active"]], ["#3b3d45ff", "#1b1d23ff"]);
+  const own = { ...one, "editor.indent_guide": "#112233", "editor.indent_guide_active": "#445566" };
+  assert.deepEqual([resolveTokens(own, one, "One Dark")["editor.indent_guide"], resolveTokens(own, one, "One Dark")["editor.indent_guide_active"]], ["#112233ff", "#445566ff"]);
 });

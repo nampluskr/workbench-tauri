@@ -101,6 +101,36 @@
 - **미정: One 테마의 안내선 색** (2026-11-10)
   - One 테마 파일에 `editor.indent_guide`·`editor.indent_guide_active` 키가 없어 스펙 fallback(#3b3d45/#1b1d23)이 쓰인다. One Light에서 선이 진하다. 스펙에 라이트 값이 없어 추정하지 않았다 — core·사용자가 정한다.
 
+### Phase 4 — 미리보기 줄간격
+
+- **에이전트 환경** (2026-11-10, tauri-leader)
+  - 무엇을 했나: Phase 시작에 writer·coder·checker의 컨텍스트를 `/clear`로 비웠다(core COMMON 1절).
+  - 결과: 세 에이전트 모두 비운 상태로 카드를 받았다.
+  - 검증: herdr 프롬프트 전송.
+  - 특이사항: core ORDER-04가 I-14(One 테마 안내선 색)를 이 Phase에 넣었다. Phase 3의 "미정: One 테마의 안내선 색"은 I-14로 풀었다.
+- **K-04 미리보기 줄간격 넷(I-9)과 One 테마 안내선 색(I-14)** (2026-11-10, coder)
+  - 무엇을 했나:
+    - I-9 설정: Settings Preview 분류에 `preview_font_size` 뒤로 네 행을 더했다(`src/settings/model.ts`·`load.ts`). `preview_paragraph_line_gap` Paragraph Line Spacing(기본 8), `preview_paragraph_gap` Paragraph Spacing(16), `preview_list_line_gap` List Line Spacing(8), `preview_list_gap` List Item Spacing(12). 정수 0~48만 유효하고, 파일 값이 범위 밖·소수·문자열·null이면 기본값이다. Settings −/+·직접 입력은 가장 가까운 정수로 맞춘다(60→48, −3→0, 8.6→9). 저장은 `updateSetting`이다.
+    - I-9 화면(`src/spec/metrics.ts`·`src/app.css`): 넷은 `applyMetrics`가 `:root`에 내는 px 고정 CSS 변수라 `Ctrl+=`·글꼴 크기와 무관하다. `p`·`li`의 줄 높이는 `calc(1em + 틈)`(글꼴 + 틈)이라 글꼴을 키워도 겹치지 않고, 16px·기본값이면 24px로 이전 1.5배와 같다. 문단 사이는 `p`의 아래 여백, 목록 항목 사이는 `li + li`(중첩 하위 항목 포함)다. 설정 파일이 바뀌면 열린 미리보기에 바로 걸린다.
+    - 목록 블록(`ul`/`ol`) 앞뒤 간격은 지금 값(`markdown_preview.paragraph_gap`, 16) 그대로다. 쓰는 곳이 없어진 `markdown_preview.list_gap` 메트릭은 삭제했다.
+    - 느슨한 목록(항목 안 `p`): 줄 높이는 `li p { line-height: inherit }`로 목록 내부 줄간격을 따르고, 항목 사이 세로 간격은 지금처럼 (문단 외부 + 목록 외부)다.
+    - I-14: One Dark·One Light의 `editor.indent_guide`·`editor.indent_guide_active`를 Zed 기본값으로 바꿨다. One Dark `#fefef31b`/`#fffaed2d`, One Light `#1f180021`/`#19130029`. 출처는 Zed 소스(로컬 클론 커밋 4304dec) `crates/theme/src/default_colors.rs`이고 값만 읽었다(코드 복사 없음). 예전 값 #3b3d45/#1b1d23은 `fallback_themes.rs`(오프라인 fallback 테마) 값이었다. `src/theme/theme.ts`의 `ONE_GUIDES`가 테마 이름("One Dark"·"One Light")으로만 걸리고(`resolveTokens` 셋째 인자 `name`, `apply.ts`가 `theme.name` 전달), 테마 파일에 값이 있는 테마(Catppuccin)와 그 밖의 테마는 그대로다. 테마 JSON 복사본은 고치지 않았다.
+  - 결과: 대비(배경 위 합성) — One Dark 안내선 1.39, 활성 1.73으로 활성이 더 뚜렷하다(이전 활성 1.20은 배경보다 어두워 묻혔다). One Light 안내선 1.30, 활성 1.41로 본문 글자보다 옅고 두 선이 구분된다. 제목·인용·표·코드 블록·frontmatter의 간격·줄 높이는 바뀌지 않았다. 새 의존성 없음, Rust 변경 없음.
+  - 검증: V1. `npm.cmd run typecheck` 통과, 관련 테스트(`model.test.ts`·`theme.test.ts`·`metrics.test.ts`) 35 통과. 편집↔미리보기 연계는 `src/shell/markdown-preview.ts`가 `[data-line]` 블록 DOM만 쓰는 것을 코드로 확인했다. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-K-04-report.md`.
+  - 특이사항: ORDER-03 보고의 Zed 소스 커밋 14b7b0e는 이 PC에 없어 I-14 값은 4304dec로 읽었다. 목록 항목 안의 표·인용도 `li`의 줄 높이(길이값)를 물려받는다 — 기본값에서는 24px로 같고, 인용·표 글꼴이 항목과 다를 때만 차이가 난다.
+- **C-07 checker 검토(K-04)와 커밋 전 전체 검증** [PASS] (2026-11-10)
+  - 무엇을 했나: K-04 코드를 검토하고 전체 검증을 했다.
+  - 결과: 지적 없음. typecheck 오류 0, test 245 통과, clippy 경고 0, cargo test 22 통과.
+  - 검증: tauri-leader 출력 파일 `%TEMP%\v07-C-07-*.txt`로 판정했다. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-C-07-report.md`.
+  - 특이사항: 없음.
+- **V3 측정(ORDER-04)** [PASS] (2026-11-10, tauri-leader)
+  - 무엇을 했나: 화면 차례 안에서 tauri-leader가 쟀다. 처음 상태 비교용으로 ORDER-03 빌드 exe를 따로 두었다.
+  - 결과: `specs/v0.7/verify/ORDER-04/`(`v3.json`, PNG 14). C-08 checker 판정 [MEASURED]: ORDER-04 완료 기준 1~6 모두 PASS, 불일치 없음, 측정 불가 없음(측정 조건 1920×1080 100%, 창 1440×852, One Dark(I-14는 테마별), 글꼴 16px·`Ctrl+=` 20px·설정 28px, K-04 debug exe와 ORDER-03 exe 비교, 보고 `C:\Users\nampl\AppData\Local\Temp\v07-C-08-report.md`).
+    - I-9: 넷을 하나씩 바꾸면 그 간격만 바뀌고 나머지 셋은 그대로이며, 되돌리면 8/16/8/12다. Settings −/+는 48·0에서 멈춘다. 글꼴 20px·28px에서도 줄 높이는 글꼴 + 8px이고 바깥 간격은 16/12 그대로다. 새 프로필과 ORDER-03 설정 파일 모두 ORDER-03 exe와 값이 같다. 미리보기 블록 클릭 위치 연계 4건이 맞다. `preview_list_gap` 20이면 하위 항목 사이도 20px이고 제목·코드 블록 간격은 16px 그대로다.
+    - I-14: One Dark 활성 1.96:1 > 안내선 1.50:1(배경 대비 채널 차 107 > 65). One Light 안내선 1.30:1·활성 1.41:1로 본문 글자(14.69:1)보다 옅고 서로 구분된다. Catppuccin은 토큰·화면 색 모두 ORDER-03과 같다.
+  - 검증: V3. 판정은 C-08(checker)이 측정 파일만 읽어 했다.
+  - 특이사항: `preview_paragraph_gap` 26에서 문단 뒤 제목·코드 블록 앞 간격도 26px이 된 것은 직전 요소가 `p`이고 그 아래 여백이 문단 외부 값이라서이며, 정상으로 판정했다. 글꼴을 키울 때 인용 뒤 코드 블록 앞 간격이 20·28px로 커지는 것은 인용 아래 여백이 글꼴 비례(`prem()`)라서다. K-04 보고의 One Dark 명암비(1.39·1.73)와 C-08 측정(1.50·1.96)은 합성 RGB가 같고 명암비 계산만 다르다 — tauri-leader가 WCAG 식으로 다시 계산했다: One Dark 합성 안내선 (63,66,71) 1.39:1, 활성 (78,80,84) 1.73:1, One Light 안내선 (222,221,218) 1.30:1, 활성 (214,213,210) 1.41:1, 글자 14.67:1. K-04 값이 맞고 C-08의 One Dark 명암비(1.50·1.96)는 계산 오류다. 결론(활성 선이 더 또렷함, PASS)은 같다.
+
 ## 사용자 요청 작업
 
 없음
