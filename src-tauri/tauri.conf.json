@@ -24,8 +24,9 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self' ipc: http://ipc.localhost; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' ipc: http://ipc.localhost; img-src 'self' asset: http://asset.localhost; frame-src asset: http://asset.localhost",
-      "devCsp": "default-src 'self' ipc: http://ipc.localhost; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' ipc: http://ipc.localhost ws://localhost:1420; img-src 'self' asset: http://asset.localhost; frame-src asset: http://asset.localhost",
+      "csp": "default-src 'self' ipc: http://ipc.localhost; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' ipc: http://ipc.localhost; img-src 'self' data: asset: http://asset.localhost; frame-src asset: http://asset.localhost; style-src 'self' 'unsafe-inline' asset: http://asset.localhost",
+      "devCsp": "default-src 'self' ipc: http://ipc.localhost; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' ipc: http://ipc.localhost ws://localhost:1420; img-src 'self' data: asset: http://asset.localhost; frame-src asset: http://asset.localhost; style-src 'self' 'unsafe-inline' asset: http://asset.localhost",
+      "dangerousDisableAssetCspModification": ["style-src"],
       "assetProtocol": { "enable": true, "scope": ["**"] }
     }
   },

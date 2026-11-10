@@ -41,7 +41,12 @@ export function rewriteSrcset(value: string, sourcePath: string, convert: Conver
 
 const DROP_TAGS = "script, base, iframe, frame, frameset, embed, object, applet";
 const URL_ATTRS = new Set(["src", "href", "xlink:href", "poster", "data", "background", "action", "formaction"]);
-const NO_NAVIGATION = new Set(["a", "area"]); // a link never leaves the preview: only `#id` stays
+/**
+ * An attribute that makes the preview navigate (a link, a form target): dropped whole, `#id` too, because in a srcdoc frame
+ * `#id` resolves against the app's own URL and loads the app page into the preview. `#id` references that do not navigate
+ * (`<use href="#id">`) are kept by resourceUrl.
+ */
+export const navigates = (tag: string, attr: string): boolean => (attr === "href" || attr === "xlink:href") && (tag === "a" || tag === "area") || attr === "action" || attr === "formaction";
 
 /** The inert document for `srcdoc`: HTML `text` of the file at `sourcePath`, parsed and rewritten (the DOMParser tree is never in the page). */
 export function htmlSrcdoc(text: string, sourcePath: string, convert: Convert): string {
@@ -63,9 +68,7 @@ export function htmlSrcdoc(text: string, sourcePath: string, convert: Convert): 
         if (set) el.setAttribute(name, set);
         else el.removeAttribute(name);
       } else if (URL_ATTRS.has(n)) {
-        const to = NO_NAVIGATION.has(el.localName) || n === "action" || n === "formaction"
-          ? (clean(value).startsWith("#") ? clean(value) : null)
-          : resourceUrl(value, sourcePath, convert);
+        const to = navigates(el.localName, n) ? null : resourceUrl(value, sourcePath, convert);
         if (to) el.setAttribute(name, to);
         else el.removeAttribute(name);
       }
