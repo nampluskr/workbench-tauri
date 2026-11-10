@@ -1,5 +1,5 @@
 import { EditorSelection, EditorState, StateEffect, StateField, type StateCommand } from "@codemirror/state";
-import { EditorView, type Command, type Panel } from "@codemirror/view";
+import { Decoration, EditorView, ViewPlugin, type Command, type DecorationSet, type Panel, type ViewUpdate } from "@codemirror/view";
 import { simplifySelection } from "@codemirror/commands";
 import {
   SearchQuery, closeSearchPanel, findNext, findPrevious, getSearchQuery, openSearchPanel,
@@ -32,6 +32,33 @@ const matchesOf = (state: EditorState): Match[] => {
   if (!query.valid) return [];
   return Array.from({ [Symbol.iterator]: () => (scope ? query.getCursor(state, scope.from, scope.to) : query.getCursor(state)) as Iterator<Match> });
 };
+
+// I-11: with a scope on, only the matches inside it are highlighted, as VS Code does (findModel.research sets its highlights from the
+// scope's matches). CM's own marks (.cm-searchMatch) are hidden by CSS while the editor has .cm-find-in-selection; these marks replace them.
+export const scopedMatchRanges = (state: EditorState, visible: readonly { from: number; to: number }[]): { from: number; to: number }[] => {
+  const query = getSearchQuery(state), scope = scopeOf(state);
+  if (!scope || !query.valid) return [];
+  const found: { from: number; to: number }[] = [];
+  for (const range of visible) {
+    const from = Math.max(range.from, scope.from), to = Math.min(range.to, scope.to);
+    if (from < to) for (const m of { [Symbol.iterator]: () => query.getCursor(state, from, to) as Iterator<Match> }) if (m.to > m.from) found.push({ from: m.from, to: m.to });
+  }
+  return found;
+};
+const scopedHighlight = ViewPlugin.fromClass(class {
+  decorations: DecorationSet;
+  constructor(view: EditorView) { this.decorations = this.build(view); }
+  update(u: ViewUpdate) {
+    if (u.docChanged || u.viewportChanged || u.selectionSet || u.state.field(scopeField, false) !== u.startState.field(scopeField, false)
+      || u.transactions.some((tr) => tr.effects.some((effect) => effect.is(setSearchQuery)))) this.decorations = this.build(u.view);
+  }
+  build({ state, visibleRanges }: EditorView) {
+    return Decoration.set(scopedMatchRanges(state, visibleRanges).map(({ from, to }) => {
+      const selected = state.selection.ranges.some((range) => range.from === from && range.to === to);
+      return Decoration.mark({ class: selected ? "cm-scopedMatch cm-scopedMatch-selected" : "cm-scopedMatch" }).range(from, to);
+    }));
+  }
+}, { decorations: (plugin) => plugin.decorations });
 
 // CM6 keeps the old main range; VS Code's skip command needs the most recently added one.
 export const addNextOccurrence: StateCommand = ({ state, dispatch }) => selectNextOccurrence({ state, dispatch(tr) {
@@ -234,4 +261,6 @@ function createPanel(view: EditorView): Panel {
   };
 }
 
-export const documentSearch = [replaceVisible, scopeField, search({ top: true, literal: true, createPanel })];
+export const documentSearch = [replaceVisible, scopeField, scopedHighlight,
+  EditorView.editorAttributes.compute([scopeField], (state) => ({ class: scopeOf(state) ? "cm-find-in-selection" : "" })),
+  search({ top: true, literal: true, createPanel })];

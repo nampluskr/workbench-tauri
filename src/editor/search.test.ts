@@ -4,7 +4,7 @@ import { EditorSelection, EditorState, Transaction, type TransactionSpec } from 
 import { EditorView, showPanel, type Panel } from "@codemirror/view";
 import { history, undo } from "@codemirror/commands";
 import { SearchQuery, getSearchQuery, search, setSearchQuery, selectSelectionMatches } from "@codemirror/search";
-import { addNextOccurrence, documentSearch, SEARCH_COMMANDS, skipOccurrence, toggleScope, toggleSearch } from "./search.ts";
+import { addNextOccurrence, documentSearch, scopedMatchRanges, SEARCH_COMMANDS, skipOccurrence, toggleScope, toggleSearch } from "./search.ts";
 
 function target(doc: string, locked = false) {
   const view = {
@@ -202,4 +202,20 @@ test("U-13: Ctrl+Shift+L with only a cursor selects every whole-word match of th
   const gap = target("foo  foo");
   gap.dispatch({ selection: EditorSelection.cursor(4) });
   assert.equal(run("SelectSelectionMatches", gap), false);
+});
+
+test("I-11: with find in selection on, only matches inside the selected range are highlighted; off, there is no scoped highlight", () => {
+  const view = {
+    state: EditorState.create({ doc: "cat cat cat cat", extensions: [documentSearch], selection: EditorSelection.single(4, 11) }),
+    dispatch(tr: TransactionSpec) { view.state = view.state.update(tr).state; },
+  };
+  run("Find", view);
+  view.dispatch({ selection: EditorSelection.single(4, 11), effects: setSearchQuery.of(new SearchQuery({ search: "cat", literal: true })) });
+  const visible = [{ from: 0, to: 15 }];
+  assert.deepEqual(scopedMatchRanges(view.state, visible), [], "no scope: CM's own marks do the work");
+  toggleScope(view as unknown as EditorView);
+  assert.deepEqual(scopedMatchRanges(view.state, visible), [{ from: 4, to: 7 }, { from: 8, to: 11 }]);
+  assert.deepEqual(scopedMatchRanges(view.state, [{ from: 0, to: 6 }]), [], "a match cut by the visible range is not marked");
+  toggleScope(view as unknown as EditorView);
+  assert.deepEqual(scopedMatchRanges(view.state, visible), []);
 });

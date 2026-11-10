@@ -546,7 +546,7 @@ function PaneView(props: { ctx: FolderContext | null; pane: PaneState | null }) 
                     <Icon name="eye" />
                   </button>
                 </Show>
-                <IconButton name="search" label="Find in Explorer" toggled={!!tab().file.view && searchOpen().has(tab().file.view!)} onClick={() => {
+                <IconButton name="search" label="Find" toggled={!!tab().file.view && searchOpen().has(tab().file.view!)} onClick={() => {
                   const view = tab().file.view;
                   if (view) toggleSearch(view);
                 }} />

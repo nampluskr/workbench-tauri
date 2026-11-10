@@ -1,0 +1,91 @@
+{
+  "c1_find_in_selection": {
+    "d0": {
+      "tag": "selected",
+      "active": "cm-content",
+      "sel": [
+        [
+          6,
+          17
+        ]
+      ]
+    },
+    "d1": {
+      "tag": "ctrl+f",
+      "active": "Find",
+      "sel": [
+        [
+          6,
+          17
+        ]
+      ],
+      "pressed": "false",
+      "value": "cat bcat c",
+      "count": "1/1"
+    },
+    "d2": {
+      "tag": "toggled",
+      "active": "Find in Selection",
+      "sel": [
+        [
+          6,
+          17
+        ]
+      ],
+      "pressed": "true",
+      "value": "cat bcat c",
+      "count": "1/1"
+    },
+    "d3": {
+      "tag": "input clicked",
+      "active": "Find",
+      "sel": [
+        [
+          6,
+          17
+        ]
+      ],
+      "pressed": "true",
+      "value": "cat bcat c",
+      "count": "1/1"
+    },
+    "d4": {
+      "tag": "typed",
+      "active": "Find",
+      "sel": [
+        [
+          6,
+          9
+        ]
+      ],
+      "pressed": "true",
+      "value": "cat",
+      "count": "1/2"
+    },
+    "on": {
+      "count": "1/2",
+      "inSelectionClass": true,
+      "searchMatch": 5,
+      "searchMatchVisible": 0,
+      "scoped": 2,
+      "scopedVisible": 1,
+      "highlightedLines": [
+        "cat c"
+      ]
+    },
+    "off": {
+      "count": "2/5",
+      "inSelectionClass": false,
+      "searchMatch": 5,
+      "searchMatchVisible": 4,
+      "scoped": 0,
+      "scopedVisible": 0,
+      "highlightedLines": [
+        "cat a",
+        "cat c",
+        "cat d",
+        "cat e"
+      ]
+    }
+  }
+}

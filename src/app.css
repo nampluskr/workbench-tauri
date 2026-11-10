@@ -620,6 +620,10 @@ button, input, select, textarea {
 .cm-editor .cm-searchMatch { background: var(--ghost-element-selected); }
 /* U-12: a current match is by definition a range of the editor selection, which the selection layer already paints in --players-0-selection; painting it again here would double the alpha. */
 .cm-editor .cm-searchMatch-selected { background: transparent; }
+/* I-11: with "find in selection" on, CM's marks (every match) give way to the marks of the matches inside the selected range (search.ts). */
+.cm-editor.cm-find-in-selection .cm-searchMatch { background: transparent; }
+.cm-editor .cm-scopedMatch { background: var(--ghost-element-selected); }
+.cm-editor .cm-scopedMatch-selected { background: transparent; }
 /* L-69: the preview tab's icon, Small and Muted as an item's own tab icon (L-67). */
 .tab-icon { flex: none; display: flex; color: var(--icon-muted); --icon-size: var(--icons-size-small); }
 .tab-icon-success { color: var(--success); }
@@ -643,7 +647,9 @@ button, input, select, textarea {
 .markdown-body > :first-child { margin-top: 0; }
 .markdown-body :is(ul, ol, blockquote, table, .frontmatter) { margin: 0 0 var(--markdown-preview-paragraph-gap); } /* L-103 */
 /* core v0.7 I-9: px settings. A line is the font size plus the gap, so a bigger preview font never overlaps lines; a paragraph inside a list item follows the list line gap. */
-.markdown-body p { margin: 0 0 var(--preview-paragraph-gap); line-height: calc(1em + var(--preview-paragraph-line-gap)); }
+.markdown-body p { margin: 0 0 var(--markdown-preview-paragraph-gap); line-height: calc(1em + var(--preview-paragraph-line-gap)); }
+/* The px paragraph gap is the space between two paragraphs, and below a loose list item's paragraph; a paragraph before any other block keeps L-103's proportional gap. */
+.markdown-body p:has(+ p), .markdown-body li p { margin-bottom: var(--preview-paragraph-gap); }
 .markdown-body li { line-height: calc(1em + var(--preview-list-line-gap)); }
 .markdown-body li p { line-height: inherit; }
 .markdown-body li + li { margin-top: var(--preview-list-gap); }

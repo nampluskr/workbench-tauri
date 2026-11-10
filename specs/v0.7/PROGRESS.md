@@ -131,6 +131,49 @@
   - 검증: V3. 판정은 C-08(checker)이 측정 파일만 읽어 했다.
   - 특이사항: `preview_paragraph_gap` 26에서 문단 뒤 제목·코드 블록 앞 간격도 26px이 된 것은 직전 요소가 `p`이고 그 아래 여백이 문단 외부 값이라서이며, 정상으로 판정했다. 글꼴을 키울 때 인용 뒤 코드 블록 앞 간격이 20·28px로 커지는 것은 인용 아래 여백이 글꼴 비례(`prem()`)라서다. K-04 보고의 One Dark 명암비(1.39·1.73)와 C-08 측정(1.50·1.96)은 합성 RGB가 같고 명암비 계산만 다르다 — tauri-leader가 WCAG 식으로 다시 계산했다: One Dark 합성 안내선 (63,66,71) 1.39:1, 활성 (78,80,84) 1.73:1, One Light 안내선 (222,221,218) 1.30:1, 활성 (214,213,210) 1.41:1, 글자 14.67:1. K-04 값이 맞고 C-08의 One Dark 명암비(1.50·1.96)는 계산 오류다. 결론(활성 선이 더 또렷함, PASS)은 같다.
 
+### Phase 5 — 작은 항목과 v0.6 정리
+
+- **에이전트 환경** (2026-11-10, tauri-leader)
+  - 무엇을 했나: Phase 시작에 writer·coder·checker의 컨텍스트를 `/clear`로 비웠다(core COMMON 1절).
+  - 결과: 세 에이전트 모두 비운 상태로 카드를 받았다.
+  - 검증: herdr 프롬프트 전송.
+  - 특이사항: 없음.
+- **K-05 선택 안 찾기 강조(I-11), 툴팁(I-12), 메뉴 Paste(I-13), I-9 맞추기** (2026-11-10, coder)
+  - 무엇을 했나:
+    - I-11: "선택 안에서 찾기"가 켜지면 범위 안 일치만 `.cm-scopedMatch`로 칠하고, 에디터에 `.cm-find-in-selection`이 붙어 CM의 전체 일치 `.cm-searchMatch`는 투명이 된다(`src/editor/search.ts` `scopedMatchRanges`, `src/app.css`). 끄거나 찾기 줄을 닫으면 문서 전체 일치를 다시 칠한다. 카운트·다음·이전·바꾸기·모두 선택은 그대로다. 근거는 이 PC의 VS Code 1.117.0 번들에서 확인한 찾기 모델 동작(공개 소스 `microsoft/vscode` `findModel.ts` `research()`가 범위 안 일치만 구하고 `findDecorations.ts` `set()`이 그것만 강조)이다.
+    - I-12: 편집 탭 경로 줄 돋보기 툴팁을 "Find in Explorer"에서 "Find"로 바꿨다(`src/shell/Pane.tsx`).
+    - I-13: 원인은 메뉴 Paste가 `document.execCommand("paste")` 실패 뒤 `navigator.clipboard.readText()`로 넘어가고, 이 WebView 클립보드 읽기 API가 권한 창을 띄우는 것이었다. Rust 명령 `read_clipboard_text`(새 파일 `src-tauri/src/clipboard.rs`)가 CF_UNICODETEXT를 읽고, 프런트 `pasteClipboard`가 포커스된 입력란이면 선택을 대체하고 아니면 CM에 `paste` 이벤트를 보내 `Ctrl+V`와 같은 처리를 탄다. 이미 직접 의존인 `windows` crate에 feature 셋(`Win32_System_DataExchange`·`Win32_System_Memory`·`Win32_System_Ole`)만 더했다.
+    - I-9 맞추기: `.markdown-body p`의 아래 여백을 비례 값 `--markdown-preview-paragraph-gap`(L-103)으로 돌리고, 문단 사이(`p:has(+ p)`)와 목록 항목 안 문단(`li p`)만 문단 외부 값 `--preview-paragraph-gap`(px)을 쓴다.
+  - 결과: 새 crate·npm 없음, `Cargo.lock` 변화 없음, Licenses 변경 없음, capability 변경 없음(앱 자체 `#[tauri::command]`). I-9는 기본값에서 두 값이 같은 16이라 화면이 ORDER-04와 같고, 문단 뒤 제목·코드 블록·표·인용·목록 앞 간격은 다시 비례 값이다.
+  - 검증: V1. `npm.cmd run typecheck` 통과, `npm.cmd run test` 246 통과, `cargo check`·`cargo clippy -- -D warnings`·`cargo test` 22 통과. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-K-05-report.md`.
+  - 특이사항: VS Code는 여러 줄 범위를 줄 단위(시작 열 1 ~ 끝 줄 끝)로 넓히는데 따르지 않고 선택 그대로를 범위로 두었다 — 차이로 남는다.
+- **v0.6 정리 두 가지** [BLOCKED] (2026-11-10)
+  - 무엇을 했나: `.agents/checker-settings.json` 허용 목록 추가(coder)와 `src-tauri/target/release/workbench-tauri.exe.running-pid11268` 삭제(leader)를 시도했다.
+  - 결과: 허용 목록 추가는 auto mode가 Self-Modification으로, 파일 삭제는 Irreversible Local Destruction으로 막았다(PID 11268은 실행 중 아님). 둘 다 우회하지 않았고 파일은 그대로다. 더하려던 허용 목록 줄(명령 전체 일치 방식): `command(git status -s)`, `command(git grep)`, `command(Test-Path)`, `command(Get-ChildItem)`, `command(Get-ChildItem -Path "D:\projects\workbench-tauri\specs\v0.7\verify\ORDER-02")`.
+  - 검증: 없음(변경 없음).
+  - 특이사항: 사용자가 파일을 고치거나 규칙을 허용해야 한다.
+- **C-09 checker 검토(K-05)와 커밋 전 전체 검증** [PASS] (2026-11-10)
+  - 무엇을 했나: K-05 코드를 검토하고 전체 검증을 했다.
+  - 결과: 지적 없음. typecheck 오류 0, test 246 통과, clippy 경고 0, cargo test 22 통과.
+  - 검증: tauri-leader 출력 파일 `%TEMP%\v07-C-09-*.txt`로 판정했다. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-C-09-report.md`.
+  - 특이사항: 없음.
+- **V3 측정(ORDER-05)** (2026-11-10, tauri-leader)
+  - 무엇을 했나: 화면 차례 안에서 tauri-leader가 쟀다. 처음 상태 비교용으로 ORDER-04 빌드를 따로 두었다. I-13은 사용자 클립보드 글을 저장했다가 측정 뒤 되돌렸다.
+  - 결과: `specs/v0.7/verify/ORDER-05/`(`v3.json`, `v3-find.json`, PNG 8). C-10 checker 판정 [MEASURED]: ORDER-05 완료 기준 1·2·3·3A·5 PASS, 4 BLOCKED(측정 조건 1920×1080 100%, 창 1440×852, One Dark, I-13은 임시 APPDATA·독립 WebView 데이터 폴더, 보고 `C:\Users\nampl\AppData\Local\Temp\v07-C-10-report.md`).
+    - I-11(`v3-find.json`으로 판정): 켬이면 카운트 1/2, `.cm-find-in-selection` 붙음, 전체 일치 `.cm-searchMatch` 보이는 것 0, 범위 안 강조 2(범위 안 일치 1 + 현재 일치 선택 색 1). 끔이면 카운트 2/5, 클래스 빠짐, 강조 5(일치 4 + 현재 일치 1).
+    - I-12: 돋보기 hover 툴팁 "Find".
+    - I-13: 메뉴 Paste로 `menuDoc`에 "한국어 첫 줄\n둘째 줄 English"가 들어갔고, `Ctrl+V`에 해당하는 `after`−`before` 삽입 글과 같다. 찾기 입력란에는 줄바꿈이 한 칸으로 바뀌어 "한국어 첫 줄 둘째 줄 English"가 들어갔다. 클립보드는 되돌렸다(`clipboardRestored: true`).
+    - I-9 맞추기: 기본값에서 ORDER-04 빌드와 미리보기 간격 12항목이 같다(`c3a_default_equal: true`). 문단 외부 26px이면 문단 사이(`P>P`)만 26px이고 문단 뒤 `H2`·`PRE`·`BLOCKQUOTE`·`UL`·`TABLE` 앞은 16px이다.
+    - 0.7.0 빌드: K-06 결과(설치 파일·앱 exe 크기, ProductVersion·FileVersion 0.7.0)와 `docs/BUILD.md` 4장 갱신을 확인했다.
+    - v0.6 정리: 위 [BLOCKED] 두 가지 그대로다(`running-pid11268` 파일 남아 있음).
+  - 검증: V3. 판정은 C-10(checker)이 측정 파일만 읽어 했다.
+  - 특이사항: `v3.json`의 I-13 비교 플래그(`menuInsertedEqualsClip` 등)가 false인 것은 PowerShell 출력 코드 페이지 때문에 `clip` 문자열이 깨진 측정 문제이고, `menuDoc`·`after`를 직접 비교해 일치로 판정했다. 권한 창이 없는 것은 CDP 캡처에 네이티브 창이 찍히지 않아 화면으로 확인하지 못한 측정 한계다(삽입은 바로 끝났다).
+- **K-06 release 0.7.0 빌드** (2026-11-10, coder)
+  - 무엇을 했나: 빌드 전 workbench-tauri 프로세스가 없는 것을 확인하고 `npm.cmd run tauri build`로 release 빌드를 했다. `docs/BUILD.md` 4장(표 두 행·표 위 문장)과 5장(한 줄)을 갱신했다.
+  - 결과: 빌드 62.3초(vite 6.0초, Rust 44.2초). `workbench-tauri_0.7.0_x64-setup.exe` 6,020,919 바이트, 앱 exe 16,742,912 바이트, 둘 다 ProductVersion·FileVersion 0.7.0. 기존 경고(chunk 크기, web-tree-sitter direct eval)만 있고 Rust 경고 없음.
+  - 검증: V1. 보고 `C:\Users\nampl\AppData\Local\Temp\v07-K-06-report.md`.
+  - 특이사항: exe zip·dist 크기는 재지 않아 `docs/BUILD.md`에 기존 2026-11-08 기록을 유지했다. `workbench-tauri.exe.running-pid11268`은 그대로 두었다.
+
 ## 사용자 요청 작업
 
 없음

@@ -1,0 +1,83 @@
+{
+  "c3a_default_o04": [
+    "H1>P 0",
+    "P>P 16",
+    "P>H2 16",
+    "H2>P 0",
+    "P>PRE 16",
+    "PRE>P 16",
+    "P>BLOCKQUOTE 16",
+    "BLOCKQUOTE>P 16",
+    "P>UL 16",
+    "UL>P 16",
+    "P>TABLE 16",
+    "TABLE>P 16"
+  ],
+  "c3a_default_new": [
+    "H1>P 0",
+    "P>P 16",
+    "P>H2 16",
+    "H2>P 0",
+    "P>PRE 16",
+    "PRE>P 16",
+    "P>BLOCKQUOTE 16",
+    "BLOCKQUOTE>P 16",
+    "P>UL 16",
+    "UL>P 16",
+    "P>TABLE 16",
+    "TABLE>P 16"
+  ],
+  "c3a_default_equal": true,
+  "c3a_gap26": [
+    "H1>P 0",
+    "P>P 26",
+    "P>H2 16",
+    "H2>P 0",
+    "P>PRE 16",
+    "PRE>P 16",
+    "P>BLOCKQUOTE 16",
+    "BLOCKQUOTE>P 16",
+    "P>UL 16",
+    "UL>P 16",
+    "P>TABLE 16",
+    "TABLE>P 16"
+  ],
+  "c1_find_in_selection": {
+    "on": {
+      "count": "0/0",
+      "inSelectionClass": true,
+      "searchMatch": 0,
+      "searchMatchVisible": 0,
+      "scoped": 0,
+      "scopedVisible": 0,
+      "highlightedLines": []
+    },
+    "off": {
+      "count": "0/0",
+      "inSelectionClass": false,
+      "searchMatch": 0,
+      "searchMatchVisible": 0,
+      "scoped": 0,
+      "scopedVisible": 0,
+      "highlightedLines": []
+    }
+  },
+  "c2_tooltip": {
+    "tip": [
+      "Find"
+    ],
+    "label": "Find"
+  },
+  "c3_menu_paste": {
+    "clip": "�ѱ��� ù ��\n��° �� English",
+    "menuDoc": "line one한국어 첫 줄\n둘째 줄 English\nline two\n",
+    "elapsedMs": 3080,
+    "menuInsertedEqualsClip": false,
+    "before": "line one한국어 첫 줄\n둘째 줄 English\nline two\n",
+    "after": "line one한국어 첫 줄\n둘째 줄 English\nline two한국어 첫 줄\n둘째 줄 English\n",
+    "nativeInserted": false,
+    "nativeEqualsMenu": false,
+    "findValue": "한국어 첫 줄 둘째 줄 English"
+  },
+  "clipboardRestored": true
+}

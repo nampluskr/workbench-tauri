@@ -5,17 +5,16 @@ import { EditorView } from "@codemirror/view";
 import { selectAll, selectLine, toggleBlockComment, toggleComment } from "@codemirror/commands";
 import { languageConfigs } from "../syntax/catalog.ts";
 
-test("R-17: menu paste uses CM6 events, skips changed/locked views and surfaces clipboard denial", async (t) => {
-  let native = false, reads = 0, events = 0;
-  let read = async () => "pasted";
+test("I-13: menu paste reads through the reader, fills a focused text field, else sends CM6 a paste event; stale or locked views are skipped", async (t) => {
+  let active: unknown = null, events = 0;
   class DataTransfer { text = ""; setData(type: string, text: string) { assert.equal(type, "text/plain"); this.text = text; } }
   class ClipboardEvent {
     type: string;
     options: { clipboardData: DataTransfer; bubbles: boolean; cancelable: boolean };
     constructor(type: string, options: ClipboardEvent["options"]) { this.type = type; this.options = options; }
   }
-  for (const [name, value] of Object.entries({ document: { execCommand: () => native },
-    navigator: { clipboard: { readText: () => { reads++; return read(); } } }, DataTransfer, ClipboardEvent })) {
+  class Event { type: string; constructor(type: string) { this.type = type; } }
+  for (const [name, value] of Object.entries({ document: { get activeElement() { return active; } }, DataTransfer, ClipboardEvent, Event })) {
     const previous = Object.getOwnPropertyDescriptor(globalThis, name);
     Object.defineProperty(globalThis, name, { configurable: true, value });
     t.after(() => { if (previous) Object.defineProperty(globalThis, name, previous); else Reflect.deleteProperty(globalThis, name); });
@@ -23,25 +22,31 @@ test("R-17: menu paste uses CM6 events, skips changed/locked views and surfaces 
   const { pasteClipboard } = await import("./extensions.ts");
   const view = { state: EditorState.create(), focus() {}, contentDOM: { dispatchEvent(event: ClipboardEvent) {
     assert.equal(event.type, "paste");
-    assert.deepEqual(event.options, { clipboardData: Object.assign(new DataTransfer(), { text: "pasted" }), bubbles: true, cancelable: true });
+    assert.deepEqual(event.options, { clipboardData: Object.assign(new DataTransfer(), { text: "한글\n둘째" }), bubbles: true, cancelable: true });
     events++; return false;
   } } };
-  const paste = () => pasteClipboard(view as unknown as EditorView);
+  const paste = (read = async () => "한글\n둘째") => pasteClipboard(view as unknown as EditorView, read);
   await paste();
   assert.equal(events, 1);
-  native = true;
-  await paste();
-  assert.equal(reads, 1);
-  native = false;
-  read = async () => { view.state = EditorState.create(); return "pasted"; };
-  await paste();
+  await paste(async () => { view.state = EditorState.create(); return "한글\n둘째"; });
   assert.equal(events, 1, "stale clipboard reads cannot replace a newer selection/document");
   view.state = EditorState.create({ extensions: EditorState.readOnly.of(true) });
   await paste();
-  assert.equal(reads, 2);
+  assert.equal(events, 1, "a locked editor takes no paste");
+  // A focused text field takes the text in place of its selection and hears an input event; line breaks become spaces.
+  const input = { value: "abcd", readOnly: false, selectionStart: 1, selectionEnd: 3, heard: [] as string[],
+    setRangeText(text: string, start: number, end: number) { this.value = this.value.slice(0, start) + text + this.value.slice(end); },
+    dispatchEvent(event: Event) { this.heard.push(event.type); return true; } };
+  active = input;
+  await paste();
+  assert.equal(input.value, "a한글 둘째d");
+  assert.deepEqual(input.heard, ["input"]);
+  assert.equal(events, 1, "the editor is not pasted into while a field has focus");
+  input.readOnly = true;
   view.state = EditorState.create();
-  read = async () => { throw new Error("denied"); };
-  await assert.rejects(paste(), /denied/);
+  await paste();
+  assert.equal(events, 2, "a read-only field falls back to the editor");
+  await assert.rejects(paste(async () => { throw new Error("denied"); }), /denied/);
 });
 
 test("R-17: pinned comment tokens drive CM6 commands, selection and read-only protection", () => {

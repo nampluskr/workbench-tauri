@@ -76,14 +76,14 @@ npm run tauri build             # release exe + NSIS 설치 파일
 
 ## 4. 결과 파일
 
-2026-11-10 leader의 release 빌드 결과다. 실행 중인 앱이 exe를 잠그면 빌드가 os error 5로 실패하므로 앱을 닫고 빌드한다.
+2026-11-10 tauri-coder(K-06)의 0.7.0 release 빌드 결과다. 실행 중인 앱이 exe를 잠그면 빌드가 os error 5로 실패하므로 앱을 닫고 빌드한다.
 
-NSIS 설치 파일과 앱 exe는 이번 결과이며, exe zip과 프런트엔드 크기는 기존 2026-11-08 기록이다.
+NSIS 설치 파일과 앱 exe는 이번 0.7.0 결과이며, exe zip과 프런트엔드 크기는 기존 2026-11-08 기록이다.
 
 | 파일 | 경로 | 크기·버전 |
 |---|---|---|
-| NSIS 설치 파일 | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.6.0_x64-setup.exe` | 5,999,959 바이트; ProductVersion·FileVersion `0.6.0` |
-| 앱 exe | `src-tauri\target\release\workbench-tauri.exe` | 16,720,384 바이트; ProductVersion·FileVersion `0.6.0` |
+| NSIS 설치 파일 | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.7.0_x64-setup.exe` | 6,020,919 바이트; ProductVersion·FileVersion `0.7.0` |
+| 앱 exe | `src-tauri\target\release\workbench-tauri.exe` | 16,742,912 바이트; ProductVersion·FileVersion `0.7.0` |
 | exe zip(Compress-Archive Optimal) | 직접 만듦(레포 밖 `%TEMP%`에서 측정) | 7.66 MiB |
 | 참고: 프런트엔드 `dist/` | exe 안에 압축돼 들어감 | 18.57 MiB(이 중 문법 복사본 11.9 MB) |
 
@@ -91,6 +91,7 @@ NSIS 설치 파일과 앱 exe는 이번 결과이며, exe zip과 프런트엔드
 
 - 처음부터 release 빌드(`--no-bundle` 상태, 2026-11-08): 전체 200초, 그중 Rust 컴파일 3분 5초.
 - NSIS 켠 빌드(Rust 일부 재컴파일 + NSIS 도구 첫 내려받기): 101.7초, Rust 56.1초.
+- 0.7.0 release 빌드(`npm.cmd run tauri build`, NSIS 켬, 2026-11-10): 전체 62.3초(vite 6.0초, Rust 44.2초, NSIS 포함).
 - 문법 복사본 채우기: 113.7초.
 - 노트북은 PC 사양·회선에 따라 다르다.
 

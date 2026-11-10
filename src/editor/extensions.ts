@@ -12,6 +12,7 @@ import {
   cursorLineDown, cursorLineUp, cursorPageDown, cursorPageUp, selectLineBoundaryBackward, selectLineBoundaryForward, selectLineDown,
   selectLineUp, selectPageDown, selectPageUp, simplifySelection,
 } from "@codemirror/commands";
+import { invoke } from "@tauri-apps/api/core";
 import { BUFFER_FONT_FAMILY, EDITOR_TAB_SIZE, EDITOR_UNDO_GROUP_INTERVAL_MS } from "../spec/metrics.ts";
 import { imeShortcutInput } from "./ime.ts";
 import { highlightSelectionMatches } from "@codemirror/search";
@@ -158,13 +159,29 @@ const editability = (editable: boolean) => [
 export const editableExtension = (editable: boolean) => readOnly.of(editability(editable));
 export const setEditable = (view: EditorView, editable: boolean) => view.dispatch({ effects: readOnly.reconfigure(editability(editable)) });
 
-/** Preserve CM6 paste filters and multi-selection handling when WebView denies native paste. */
-export async function pasteClipboard(view: EditorView): Promise<void> {
-  if (view.state.readOnly) return;
-  view.focus();
-  if (document.execCommand("paste")) return;
+/** A focused text field (the find box, a dialog input) that menu Paste fills: selection-capable, so not a checkbox, and not read-only. */
+type TextField = Pick<HTMLInputElement, "readOnly" | "selectionStart" | "selectionEnd" | "setRangeText" | "dispatchEvent">;
+const textField = (element: unknown): TextField | null => {
+  const field = element as Partial<TextField> | null;
+  return field && "setRangeText" in field && field.selectionStart != null && !field.readOnly ? (field as TextField) : null;
+};
+
+/**
+ * I-13: menu Paste does what Ctrl+V does, without WebView2's clipboard permission prompt (the text comes from the
+ * `read_clipboard_text` command, not `navigator.clipboard`). A focused text field gets the text in place of its selection;
+ * otherwise CM6 receives a paste event, so its paste filters and multi-selection handling are the keyboard's.
+ */
+export async function pasteClipboard(view: EditorView, read: () => Promise<string> = () => invoke<string>("read_clipboard_text")): Promise<void> {
+  const field = textField(document.activeElement);
+  if (!field && view.state.readOnly) return;
   const state = view.state;
-  const text = await navigator.clipboard.readText();
+  const text = await read();
+  if (field) {
+    field.setRangeText(text.replace(/\r\n?|\n/g, " "), field.selectionStart!, field.selectionEnd!, "end"); // a single-line input takes no line breaks
+    field.dispatchEvent(new Event("input", { bubbles: true }));
+    return;
+  }
+  view.focus();
   if (view.state !== state || view.state.readOnly) return;
   const data = new DataTransfer();
   data.setData("text/plain", text);
