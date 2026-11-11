@@ -9,7 +9,7 @@ import type { PreviewKind } from "../editor/preview-kind.ts";
 import { MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS } from "../spec/metrics.ts";
 import { languages, loadSyntax } from "../syntax/assets.ts";
 import { codeBlockHighlights } from "../syntax/document.ts";
-import { previewSyntaxKeys } from "../theme/apply.ts";
+import { onPreviewThemeChange, previewAppearance, previewColors, previewSyntaxKeys } from "../theme/apply.ts";
 import { syntaxClass } from "../theme/theme.ts";
 import { drawMath, drawMermaid } from "./rich-blocks.ts";
 
@@ -159,7 +159,7 @@ export function createPreview(hooks: PreviewHooks): Preview {
       // The new document starts at the top: put the scroll back once it has loaded.
       const top = frame.contentWindow?.scrollY ?? 0;
       frame.addEventListener("load", () => frame.contentWindow?.scrollTo(0, top), { once: true });
-      frame.srcdoc = htmlSrcdoc(text, hooks.sourcePath(), convertFileSrc);
+      frame.srcdoc = htmlSrcdoc(text, hooks.sourcePath(), convertFileSrc, { ...previewColors, appearance: previewAppearance });
       return;
     }
     if (hooks.kind === "svg") {
@@ -249,7 +249,9 @@ export function createPreview(hooks: PreviewHooks): Preview {
   });
 
   render();
-  return {
+  // I-11: the frame does not inherit CSS variables, so a changed Preview theme re-renders it (the same debounced path as an edit).
+  const stopTheme = hooks.kind === "html" ? onPreviewThemeChange(() => preview.changed()) : () => {};
+  const preview: Preview = {
     element,
     // I-082: a change re-renders after the parse debounce; one already waiting is not scheduled again.
     changed: () => {
@@ -260,6 +262,7 @@ export function createPreview(hooks: PreviewHooks): Preview {
       }, MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS);
     },
     cursor: (line) => highlight(line, true),
-    dispose: () => { clearTimeout(timer); generation++; },
+    dispose: () => { stopTheme(); clearTimeout(timer); generation++; },
   };
+  return preview;
 }

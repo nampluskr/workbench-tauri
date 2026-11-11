@@ -76,3 +76,16 @@
 | C-11 | V3 판정(release exe) | I-4 · I-5 · Licenses 갱신 · 회귀 |
 | W-09 | PLAN(이 표) | ORDER-05 |
 | W-10 | `docs/BUILD.md`·PROGRESS | 0.8.0 빌드·`docs/BUILD.md` · ORDER-05 |
+
+### Phase 6 작업 카드
+
+- 사용자 확인(Phase 5 뒤) 다음에 더한 Phase다(core ORDER-06).
+
+| 카드 | 할 일 | core 항목 |
+|---|---|---|
+| K-06a | I-11 HTML 미리보기 배경·글자·링크 색을 Preview 테마에 맞춤(0 특이성 기본 스타일, `color-scheme`이 Preview 테마를 따름, CSP·sandbox 그대로) | I-11 · M-1 · M-7 · M-13 |
+| K-06b | 0.8.0 release 다시 빌드(설치 파일) | 0.8.0 빌드 |
+| C-12 | 검토 | I-11 |
+| C-13 | V3 판정(release exe) | I-11 · 회귀 |
+| W-12 | PLAN(이 표) | ORDER-06 |
+| W-13 | `docs/BUILD.md`·PROGRESS | 0.8.0 빌드·`docs/BUILD.md` · ORDER-06 |

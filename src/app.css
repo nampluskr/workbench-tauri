@@ -655,10 +655,11 @@ button, input, select, textarea {
   font-size: var(--markdown-preview-body-font-size); /* L-103 */
   line-height: var(--markdown-preview-body-line-height-multiplier);
 }
-/* core v0.8 I-1: an HTML preview is a sandboxed frame filling the tab. color-scheme dark differs from the page's light default, so the frame gets an opaque canvas instead of showing a dark-theme editor background behind dark text. */
+/* core v0.8 I-1: an HTML preview is a sandboxed frame filling the tab. I-11: its text colour, link colour and color-scheme are weakest-priority defaults inside the srcdoc (editor/html.ts defaultStyle), from the Preview theme. */
 .markdown-preview.html-preview { padding: 0; overflow: hidden; }
 .html-preview .markdown-body { max-width: none; height: 100%; margin: 0; }
-.html-frame { display: block; width: 100%; height: 100%; border: 0; color-scheme: dark; }
+/* The default background is the frame element's (a page `body { background }` then reaches the transparent canvas); the element's color-scheme equals the srcdoc root's, else Chromium paints an opaque canvas. */
+.html-frame { display: block; width: 100%; height: 100%; border: 0; background: var(--editor-background); color-scheme: var(--preview-color-scheme); }
 .markdown-body > :first-child { margin-top: 0; }
 .markdown-body :is(ul, ol, blockquote, table, .frontmatter) { margin: 0 0 var(--markdown-preview-paragraph-gap); } /* L-103 */
 /* core v0.7 I-9: px settings. A line is the font size plus the gap, so a bigger preview font never overlaps lines; a paragraph inside a list item follows the list line gap. */

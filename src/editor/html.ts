@@ -48,8 +48,29 @@ const URL_ATTRS = new Set(["src", "href", "xlink:href", "poster", "data", "backg
  */
 export const navigates = (tag: string, attr: string): boolean => (attr === "href" || attr === "xlink:href") && (tag === "a" || tag === "area") || attr === "action" || attr === "formaction";
 
+/** The applied Preview theme as the HTML preview needs it: the same tokens as the Markdown preview (text, L-108 link colour). */
+export type PreviewLook = { appearance: "light" | "dark"; text: string; accent: string };
+
+/**
+ * core v0.8 I-11: page defaults from the Preview theme. Every selector is `:where()` (specificity 0), so any rule, `<link>`,
+ * `<style>` or `style=` of the page wins (M-7); only the page's own absence of a value shows these. The background is not here:
+ * it is the iframe element's (`.html-frame` in app.css), so a page `body { background }` still reaches the canvas. The
+ * `color-scheme` must equal the element's (`--preview-color-scheme`), or Chromium paints an opaque canvas over that background.
+ */
+export function defaultStyle({ appearance, text, accent }: PreviewLook): string {
+  return `:where(:root){color-scheme:${appearance}}:where(html){color:${text}}:where(a){color:${accent}}`;
+}
+
+/** `serialized` (an `outerHTML` of a parsed document) with `css` as the first child of `<head>`, ahead of every page style. */
+export function withDefaultStyle(serialized: string, css: string): string {
+  const style = `<style>${css}</style>`;
+  // The serializer writes attribute values in double quotes only, so a `>` inside one cannot end the tag early here.
+  const head = /^<html(?:"[^"]*"|[^>"])*>\s*<head(?:"[^"]*"|[^>"])*>/i.exec(serialized);
+  return head ? head[0] + style + serialized.slice(head[0].length) : style + serialized;
+}
+
 /** The inert document for `srcdoc`: HTML `text` of the file at `sourcePath`, parsed and rewritten (the DOMParser tree is never in the page). */
-export function htmlSrcdoc(text: string, sourcePath: string, convert: Convert): string {
+export function htmlSrcdoc(text: string, sourcePath: string, convert: Convert, look: PreviewLook): string {
   const doc = new DOMParser().parseFromString(text, "text/html");
   for (const el of doc.querySelectorAll(DROP_TAGS)) el.remove();
   for (const el of doc.querySelectorAll('meta[http-equiv="refresh" i]')) el.remove();
@@ -74,5 +95,5 @@ export function htmlSrcdoc(text: string, sourcePath: string, convert: Convert): 
       }
     }
   }
-  return (doc.doctype ? "<!DOCTYPE html>" : "") + doc.documentElement.outerHTML;
+  return (doc.doctype ? "<!DOCTYPE html>" : "") + withDefaultStyle(doc.documentElement.outerHTML, defaultStyle(look));
 }

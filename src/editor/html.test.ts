@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { navigates, resourceUrl, rewriteCss, rewriteSrcset } from "./html.ts";
+import { defaultStyle, navigates, resourceUrl, rewriteCss, rewriteSrcset, withDefaultStyle } from "./html.ts";
 import { renderMarkdown } from "./markdown.ts";
 import { hasPreview, previewKind } from "./preview-kind.ts";
 
@@ -46,6 +46,19 @@ test("css: url() is pointed at asset URLs, @import and internet urls go", () => 
 test("srcset keeps local candidates with their descriptors", () => {
   assert.equal(rewriteSrcset("a.png 1x, https://x.test/b.png 2x, c.png 3x", SOURCE, convert), "asset:C:\\site\\pages\\a.png 1x, asset:C:\\site\\pages\\c.png 3x");
   assert.equal(rewriteSrcset("https://x.test/b.png 2x", SOURCE, convert), "");
+});
+
+// I-11: page defaults must lose to every page rule (specificity 0) and come before every page style.
+test("I-11: default style is specificity 0, carries the theme values, and sits first in <head>", () => {
+  const css = defaultStyle({ appearance: "light", text: "#383a42ff", accent: "#5c78e2ff" });
+  assert.ok(css.includes("color-scheme:light") && css.includes("#383a42ff") && css.includes("#5c78e2ff"));
+  assert.ok(!css.includes("background")); // the background is the iframe element's, so a page body background reaches the canvas
+  for (const selector of css.split("{").slice(0, -1).flatMap((part) => part.split("}").slice(-1))) assert.match(selector, /^:where\(.*\)$/, selector);
+  const page = '<html lang="en" data-x="<head>"><head><meta charset="utf-8"><style>body{color:red}</style></head><body>x</body></html>';
+  const out = withDefaultStyle(page, css);
+  assert.ok(out.indexOf(`<head><style>${css}</style><meta`) > 0);
+  assert.ok(out.indexOf(css) < out.indexOf("body{color:red}"));
+  assert.ok(out.startsWith('<html lang="en" data-x="<head>"><head><style>'));
 });
 
 // The Markdown preview keeps its rule (no style attribute): raw HTML is escaped, table alignment is a class.
