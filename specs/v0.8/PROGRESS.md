@@ -265,3 +265,48 @@
   - 특이사항: 없음.
 
 이 Phase로 v0.8 카드(ORDER-01~05)가 모두 끝났다.
+
+### Phase 6 — HTML 미리보기 색을 Preview 테마에 맞춤, 0.8.0 release 다시 빌드
+
+- 사용자 확인(Phase 5 뒤) 다음에 더한 Phase다(core ORDER-06).
+- **W-12 PLAN Phase 6 표** (2026-11-11, 커밋 `2866205`)
+  - 무엇을 했나: `PLAN.md`에 "Phase 6 작업 카드" 표(K-06a·K-06b·C-12·C-13·W-12·W-13)를 Phase 5 표 형식으로 더하고, 사용자 확인 뒤 더한 Phase라는 한 줄을 붙였다.
+  - 결과: 그 밖의 절은 그대로다.
+  - 검증: V0. 명령 실행 없음(보고 `C:\Users\nampl\AppData\Local\Temp\v08-W-12-report.md`).
+  - 특이사항: 없음.
+- **K-06a I-11 HTML 미리보기 기본 색(I-11·M-1·M-7·M-13)** (2026-11-11, coder, 커밋 `2866205`)
+  - 무엇을 했나:
+    - srcdoc 직렬화 결과의 `<head>` 맨 앞에 0 특이성 `<style>` 하나를 넣는다: `:where(:root){color-scheme}`·`:where(html){color}`·`:where(a){color}`(K-06a 때는 `:where(html)`에 배경도 있었고 K-06b에서 뺐다). 페이지의 `<style>`·`<link>`·`style=`보다 앞이고 특이성이 0이라 페이지 CSS가 언제나 이긴다.
+    - 값은 마크다운 미리보기와 같은 Preview 테마 토큰 `text`·`text.accent`이고, `color-scheme`은 `previewAppearance`다. `src/theme/apply.ts`의 `previewColors`로 내보낸다.
+    - `applyTheme`가 Preview의 밝음·어두움·글자·링크색이 바뀔 때만 `onPreviewThemeChange` 구독자를 부르고, HTML 미리보기만 구독해 `changed()`(기존 디바운스 그리기 경로, 스크롤 복원)를 부른다. 닫을 때 구독을 푼다.
+    - `src/app.css` `.html-frame`의 `color-scheme: dark` 고정을 지웠다.
+  - 결과: CSP·capability·Cargo·의존성·sandbox·정화 규칙 변경 없음.
+  - 검증: V1. typecheck 0, test 287/287(새 테스트 1개: 선택자 전부 `:where()`·값 반영, `<head>` 첫 자식·페이지 `<style>`보다 앞, 속성값 안 `<head>` 오인 없음). 보고 `C:\Users\nampl\AppData\Local\Temp\v08-K-06a-report.md`.
+  - 특이사항: coder가 한계를 짚었다 — `:where(html)`에 배경이 있으면 `body`에만 배경을 준 페이지에서 body 배경이 캔버스로 퍼지지 않아 상자 밖에 Preview 배경이 보인다.
+- **K-06b 기본 배경을 iframe 요소로 + 0.8.0 release 다시 빌드** (2026-11-11, coder, 커밋 `2866205`)
+  - 무엇을 했나: K-06a의 한계를 보고 tauri-leader가 정한 대로, 기본 배경을 문서가 아니라 iframe 요소에 준다: `.html-frame { background: var(--editor-background); color-scheme: var(--preview-color-scheme) }`. `--preview-color-scheme`은 Preview 테마 시트가 `.markdown-preview`에 건다(마크다운 미리보기 자체의 `color-scheme`은 그대로). 문서 쪽 `<style>`에서는 배경을 빼 문서는 투명하다. 그 뒤 release(NSIS)를 다시 빌드했다.
+  - 결과: 설치 파일 7,463,747 B(10:00:05, ProductVersion 0.8.0), exe 18,290,176 B. ORDER-05 빌드보다 설치 파일 +4,725 B, 0.7.0보다 +1,398,253 B(+23.05%). 빌드 1분 17.5초(vite 7.73초, cargo release 52.76초 + NSIS). 새 경고 없음. `tauri.conf.json` diff 없음.
+  - 검증: V1 + 빌드. typecheck 0, test 287/287(배경이 없음을 확인하는 단언 추가). 보고 `C:\Users\nampl\AppData\Local\Temp\v08-K-06b-report.md`.
+  - 특이사항: 없음.
+- **C-12 checker 검토(K-06a·K-06b)** [PASS] (2026-11-11)
+  - 무엇을 했나: 0 특이성과 삽입 위치, 값 출처(토큰)와 CSS 주입 경로(색은 `#rrggbbaa`, appearance는 `light`·`dark`뿐), `color-scheme` 양쪽 일치, 구독·해제와 다시 그리기, 보안 설정·정화 규칙, 인라인 style·수치를 봤다.
+  - 결과: 지적 없음.
+  - 검증: V1. typecheck 0, test 287/287, `src-tauri/` diff 0(보고 `C:\Users\nampl\AppData\Local\Temp\v08-C-12-report.md`).
+  - 특이사항: 없음.
+- **V3 측정(ORDER-06, release exe)** (2026-11-11, tauri-leader 측정)
+  - 무엇을 했나: K-06b release exe로 완료 기준 #1~#5를 쟀다. 결과는 `specs/v0.8/verify/ORDER-06/`(`v3.json`, PNG 6).
+  - 결과:
+    - #1 스타일 없는 HTML: One Dark·One Light 모두 배경·글자·링크 계산값이 마크다운 미리보기와 같다(One Dark 배경 rgb(40,44,51)·글자 rgb(220,224,229)·링크 rgb(116,173,232), One Light 배경 rgb(250,250,250)·글자 rgb(36,37,41)·링크 rgb(92,120,226)). 문서 `html`·`body` 배경은 투명.
+    - #2 페이지 CSS가 이김: 링크 CSS·`<style>`·`style=` 셋 다 배경 rgb(1,2,3)·글자 rgb(4,5,6)·링크 rgb(7,8,9). body만 배경을 줘도 프레임 전체(모서리 픽셀)가 rgb(1,2,3)이다.
+    - #3 테마 바꾸기: 연 채로 One Dark ↔ One Light를 바꾸면 0.5초 안에 시트가 바뀌고 미리보기가 다시 그려진다. `color-scheme`도 따라간다.
+    - #4 보안: sandbox `allow-same-origin` 하나, ORDER-03 막기 사례 그대로.
+    - #5 회귀: 마크다운(위치 연계)·ipynb·SVG·CSV·이미지·PDF·수식·Mermaid 그대로.
+  - 검증: V3. typecheck 0, test 287/287, CSP 변경 없음.
+  - 특이사항: 측정 스크립트 버그(설정 파일 경로의 역슬래시가 빠져 테마가 안 바뀜)로 V3를 한 번 다시 돌렸다 — 앱 결함 아님.
+  - 사용자 확인: 테마를 바꾼 직후 배경은 즉시, 글자색은 디바운스 뒤 바뀌어 잠깐 어색한 조합이 보일 수 있다.
+- **C-13 V3 판정(ORDER-06)** [PASS] (2026-11-11, checker) — #1~#7 PASS, 근거 키가 실제 `v3.json`과 일치.
+- **W-13 BUILD.md 다시 빌드 값 + 이 PROGRESS** (2026-11-11)
+  - 무엇을 했나: `docs/BUILD.md` 머리·4절(ORDER-06 빌드 값, ORDER-05 빌드는 비교 한 줄, 0.7.0 대비 표)·5절(빌드 시간)을 고쳤다. 머리 기준 커밋은 "ORDER-06 코드 커밋(leader가 채움)". 이 Phase 6 절을 썼다.
+  - 결과: 그 밖은 그대로다.
+  - 검증: V0. 명령 실행 없음(보고 `C:\Users\nampl\AppData\Local\Temp\v08-W-13-report.md`).
+  - 특이사항: 없음.

@@ -1,9 +1,9 @@
 # BUILD — workbench-tauri 빌드·배포
 
 - 작성일: 2026-11-11
-- 기준 커밋: `fbaac1e`(ORDER-05 코드)
+- 기준 커밋: `2866205`(ORDER-06 코드)
 
-배포본(release exe·NSIS 설치 파일)을 만드는 과정이다. 2026-11-11 0.8.0 release 빌드에 성공했다. 도구·기존 측정은 각 절의 날짜를 따른다.
+배포본(release exe·NSIS 설치 파일)을 만드는 과정이다. 2026-11-11 0.8.0 release 빌드에 성공했고, 같은 날 ORDER-06(I-11)으로 다시 빌드했다. 도구·기존 측정은 각 절의 날짜를 따른다.
 
 ## 0. 노트북에서 처음부터
 
@@ -76,22 +76,23 @@ npm run tauri build             # release exe + NSIS 설치 파일
 
 ## 4. 결과 파일
 
-2026-11-11 tauri-coder(K-05d)의 0.8.0 release 최종 빌드 결과다(ORDER-05: 수식·Mermaid, Licenses 갱신, Mermaid 링크 노드 위치 고침 포함). 실행 중인 앱이 exe를 잠그면 빌드가 os error 5로 실패하므로 앱을 닫고 빌드한다.
+2026-11-11 tauri-coder(K-06b)의 0.8.0 release 다시 빌드 결과다(ORDER-06: I-11 HTML 미리보기 색을 Preview 테마에 맞춤). 앱 버전은 0.8.0 그대로다. 실행 중인 앱이 exe를 잠그면 빌드가 os error 5로 실패하므로 앱을 닫고 빌드한다.
 
 | 파일 | 경로 | 크기·버전 |
 |---|---|---|
-| NSIS 설치 파일 | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.8.0_x64-setup.exe` | 7,459,022 바이트(수정 시각 2026-11-11 09:00:48); ProductVersion·FileVersion `0.8.0` |
-| 앱 exe | `src-tauri\target\release\workbench-tauri.exe` | 18,289,664 바이트(수정 시각 2026-11-11 09:00:48); ProductVersion·FileVersion `0.8.0` |
-| 참고: 프런트엔드 `dist/` | exe 안에 압축돼 들어감 | 25,253,939 바이트(24.08 MiB), 파일 4,965개, JS 청크 190개(`dist/assets/*.js`) — 앞 빌드(K-05c, 08:53) 기준 |
+| NSIS 설치 파일 | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.8.0_x64-setup.exe` | 7,463,747 바이트(수정 시각 2026-11-11 10:00:05); ProductVersion `0.8.0` |
+| 앱 exe | `src-tauri\target\release\workbench-tauri.exe` | 18,290,176 바이트(수정 시각 2026-11-11 10:00:05); ProductVersion `0.8.0` |
+| 참고: 프런트엔드 `dist/` | exe 안에 압축돼 들어감 | 25,253,939 바이트(24.08 MiB), 파일 4,965개, JS 청크 190개(`dist/assets/*.js`) — ORDER-05 빌드(K-05c, 08:53) 기준, 이번에 다시 재지 않음 |
 
 - 버전은 `(Get-Item …).VersionInfo`로 읽었다. 설치 파일·exe 아이콘은 이번에 바꾸지 않았고, exe zip은 이번에 만들지 않았다.
+- 비교: ORDER-05 최종 빌드(K-05d, 09:00:48)는 설치 파일 7,459,022 B·exe 18,289,664 B(FileVersion도 `0.8.0`)였다. 이번 빌드는 설치 파일 +4,725 B, exe +512 B.
 
 ### 0.7.0 대비
 
-| 파일 | 0.7.0 (2026-11-10 22:36, K-16) | 0.8.0 | 증가 |
+| 파일 | 0.7.0 (2026-11-10 22:36, K-16) | 0.8.0 (ORDER-06 빌드) | 증가 |
 |---|---|---|---|
-| NSIS 설치 파일 | 6,065,494 B | 7,459,022 B | +1,393,528 B (+22.97%) |
-| 앱 exe | 16,832,512 B | 18,289,664 B | +1,457,152 B (+8.66%) |
+| NSIS 설치 파일 | 6,065,494 B | 7,463,747 B | +1,398,253 B (+23.05%) |
+| 앱 exe | 16,832,512 B | 18,290,176 B | +1,457,664 B (+8.66%) |
 
 - 이유: `dist/`에 KaTeX 청크(258.9 kB)와 Mermaid 쪽 청크(약 5.2 MB, 비압축)가 더해지고 `index`가 Licenses 텍스트만큼(+107.5 kB) 커져, 압축돼 exe에 들어간 것이다. 두 라이브러리는 처음 쓸 때만 불러와 앱 시작에는 읽히지 않는다.
 - 0.7.0 참고 값(2026-11-08 기록): exe zip(Compress-Archive Optimal) 7.66 MiB, `dist/` 18.57 MiB(이 중 문법 복사본 11.9 MB).
@@ -100,7 +101,8 @@ npm run tauri build             # release exe + NSIS 설치 파일
 
 - 처음부터 release 빌드(`--no-bundle` 상태, 2026-11-08): 전체 200초, 그중 Rust 컴파일 3분 5초.
 - NSIS 켠 빌드(Rust 일부 재컴파일 + NSIS 도구 첫 내려받기): 101.7초, Rust 56.1초.
-- 0.8.0 release 최종 빌드(`npm.cmd run tauri build`, NSIS 켬, 2026-11-11 K-05d): 전체 70초(Rust 48.97초, vite 8.26초).
+- 0.8.0 release 다시 빌드(`npm.cmd run tauri build`, NSIS 켬, 2026-11-11 K-06b, ORDER-06): 전체 1분 17.5초(cargo release 52.76초, vite 7.73초, NSIS 포함). 새 경고 없음.
+- 0.8.0 ORDER-05 최종 빌드(NSIS 켬, 2026-11-11 K-05d): 전체 70초(Rust 48.97초, vite 8.26초).
 - 참고: 그 앞 0.8.0 빌드(K-05c)는 전체 119.9초(Rust 96초, vite 8.74초)였다. 이때 Rust는 `workbench-tauri` 크레이트만 다시 컴파일했다(의존 크레이트 캐시).
 - 0.7.0 release 다시 빌드(`npm.cmd run tauri build`, NSIS 켬, ORDER-09 포함, 2026-11-10 K-16): 전체 67.7초(Rust 47.8초, vite 6.9초, NSIS 포함). 같은 날 앞선 빌드는 ORDER-08 K-12-R2 57.8초, K-12 57.8초(Rust 40.6초), ORDER-06·07(K-09) 66.4초.
 - 아이콘 파일(`src-tauri/icons/icon.ico`)만 바꾸면 Cargo가 빌드 스크립트를 다시 돌리지 않아 exe에 옛 아이콘이 남는다. 이럴 땐 `src-tauri/build.rs`의 수정 시각만 갱신(`(Get-Item src-tauriuild.rs).LastWriteTime = Get-Date`)하고 다시 빌드한다. 내용은 안 바꾼다.
