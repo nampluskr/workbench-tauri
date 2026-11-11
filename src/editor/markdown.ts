@@ -1,11 +1,12 @@
 import MarkdownIt from "markdown-it";
+import { mathPlugin } from "./math.ts";
 import { previewKind } from "./preview-kind.ts";
 
 // Markdown preview rendering (R-11, D-10): markdown-it with HTML pass-through off. Every block carries the source lines it
 // came from (data-line, data-line-end: 0-based start, end exclusive) for I-083 / I-084. Table alignment is a class, not
 // a style attribute. The caller sanitizes the result with DOMPurify before it goes into the page.
 
-const md = new MarkdownIt({ html: false, linkify: false, typographer: false });
+const md = new MarkdownIt({ html: false, linkify: false, typographer: false }).use(mathPlugin); // I-4: `$…$` split here, drawn by the preview
 md.core.ruler.push("source_lines_and_align", (state) => {
   for (const token of state.tokens) {
     if (token.map && token.nesting !== -1) {

@@ -11,6 +11,7 @@ import { languages, loadSyntax } from "../syntax/assets.ts";
 import { codeBlockHighlights } from "../syntax/document.ts";
 import { previewSyntaxKeys } from "../theme/apply.ts";
 import { syntaxClass } from "../theme/theme.ts";
+import { drawMath, drawMermaid } from "./rich-blocks.ts";
 
 // The body of a Markdown preview tab (R-11, D-10). Rendered with markdown-it, sanitized with DOMPurify (no script, no
 // event attributes, no style attribute; data-line attributes stay), then put in the tab's element.
@@ -171,7 +172,15 @@ export function createPreview(hooks: PreviewHooks): Preview {
     }
     if (hooks.kind === "ipynb") {
       body.replaceChildren(...notebookNodes(text, hooks.sourcePath()));
-      void colorCodeBlocks(++generation);
+      afterRender();
+      return;
+    }
+    if (hooks.kind === "mermaid") {
+      // I-5: the whole file is one diagram, drawn like a ```mermaid block (no source lines: no position link, M-1).
+      const pre = makeNode("pre", "");
+      pre.append(makeNode("code", "language-mermaid", text));
+      body.replaceChildren(...(text.trim() ? [pre] : []));
+      afterRender();
       return;
     }
     if (hooks.kind !== "markdown") {
@@ -180,12 +189,21 @@ export function createPreview(hooks: PreviewHooks): Preview {
     }
     body.replaceChildren(markdownTree(text, hooks.sourcePath()));
     if (lastLine >= 0) highlight(lastLine, false);
-    void colorCodeBlocks(++generation);
+    afterRender();
   };
+
+  /** Code colours (K-53), formulas (I-4) and diagrams (I-5) are put on the fresh tree; a newer render makes older ones stop. */
+  function afterRender(): void {
+    const id = ++generation;
+    const current = () => id === generation;
+    void colorCodeBlocks(id);
+    void drawMath(body, current);
+    void drawMermaid(body, current);
+  }
 
   /** K-53: fenced code blocks get the editor's syntax colours after the render (class only, built with the DOM, not HTML). */
   async function colorCodeBlocks(id: number): Promise<void> {
-    for (const code of body.querySelectorAll<HTMLElement>("pre > code[class*='language-']")) {
+    for (const code of body.querySelectorAll<HTMLElement>("pre > code[class*='language-']:not(.language-mermaid)")) { // a mermaid block becomes a diagram
       const name = /(?:^|\s)language-(\S+)/.exec(code.className)?.[1];
       const text = code.textContent ?? "";
       if (!name) continue;

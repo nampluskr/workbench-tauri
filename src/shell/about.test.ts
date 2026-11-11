@@ -15,10 +15,11 @@ const files = {
 
 test("I-29: the About list takes versions, licenses and copyright lines from the Licenses data", () => {
   const list = Object.fromEntries(attributions(files).map((entry) => [entry.name, entry]));
-  assert.deepEqual(Object.keys(list), ["Tauri", "Solid", "CodeMirror", "web-tree-sitter", "markdown-it", "Catppuccin Icons", "Codicons", "IBM Plex Sans", "Lilex"]);
+  assert.deepEqual(Object.keys(list), ["Tauri", "Solid", "CodeMirror", "web-tree-sitter", "markdown-it", "KaTeX", "Mermaid", "Catppuccin Icons", "Codicons", "IBM Plex Sans", "Lilex"]);
   assert.deepEqual(list.Tauri, { name: "Tauri", version: "2.12.5", license: "Apache-2.0 OR MIT", copyright: "Copyright (c) 2017 - Present Tauri Apps Contributors" });
   assert.deepEqual(list.Solid, { name: "Solid", version: "1.9.18", license: "MIT", copyright: "Copyright (c) 2016-2025 Ryan Carniato" });
   assert.equal(list.CodeMirror.version, "6.43.15");
+  assert.deepEqual([list.KaTeX.version, list.KaTeX.license, list.Mermaid.version, list.Mermaid.license], ["0.18.11", "MIT", "12.2.0", "MIT"]);
   assert.equal(list["web-tree-sitter"].copyright, "Copyright (c) 2018 Max Brunsfeld");
   assert.deepEqual(list.Codicons, { name: "Codicons", version: "0.0.46-24", license: "CC-BY-4.0", copyright: "Copyright (c) Microsoft Corporation." });
   assert.equal(list["Catppuccin Icons"].copyright, "Copyright (c) 2021 Catppuccin");

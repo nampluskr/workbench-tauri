@@ -54,7 +54,7 @@ const FONTS: Attribution[] = [
   { name: "Lilex", version: "", license: "OFL-1.1", copyright: "Copyright 2019 The Lilex Project Authors" },
 ];
 
-/** The libraries the running app is built from: the framework, the editor, the syntax and Markdown engines, the bundled icons and the fonts. */
+/** The libraries the running app is built from: the framework, the editor, the syntax, Markdown, formula and diagram engines, the bundled icons and the fonts. */
 export function attributions(files: Record<string, string>): Attribution[] {
   const frontend = file(files, "frontend-dependencies.txt") ?? "", rust = file(files, "rust-dependencies.txt") ?? "";
   return [
@@ -63,6 +63,8 @@ export function attributions(files: Record<string, string>): Attribution[] {
     npmPackage(frontend, "@codemirror/view", "CodeMirror"),
     npmPackage(frontend, "web-tree-sitter", "web-tree-sitter"),
     npmPackage(frontend, "markdown-it", "markdown-it"),
+    npmPackage(frontend, "katex", "KaTeX"),
+    npmPackage(frontend, "mermaid", "Mermaid"),
     noticeFile(files, "catppuccin-icons", "Catppuccin Icons"),
     noticeFile(files, "codicons", "Codicons", file(files, "/codicons/NOTICE.txt")),
     ...FONTS,

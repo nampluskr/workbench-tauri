@@ -745,6 +745,13 @@ button, input, select, textarea {
 .markdown-body .nb-error-title { font-family: var(--buffer-font-family); }
 .markdown-body :is(pre.nb-output, .nb-traceback, .nb-raw) { white-space: pre-wrap; overflow-wrap: anywhere; }
 .markdown-body .nb-hidden { color: var(--text-muted); margin: var(--markdown-preview-code-block-margin-y) 0; }
+/* core v0.8 I-4 / I-5: formulas (MathML, drawn by the WebView) and diagrams (Mermaid svg). The source text shows until they are drawn. */
+.markdown-body .math-display { display: block; margin: var(--markdown-preview-code-block-margin-y) 0; text-align: center; white-space: pre-wrap; overflow-x: auto; }
+.markdown-body :is(.math-inline, .math-display) math { white-space: normal; }
+.markdown-body .math-error { color: var(--error); }
+.markdown-body .mermaid-diagram { margin: var(--markdown-preview-code-block-margin-y) 0; text-align: center; overflow-x: auto; }
+.markdown-body .mermaid-diagram svg { max-width: 100%; height: auto; }
+.markdown-body .mermaid-error { margin: 0 0 var(--markdown-preview-paragraph-gap); color: var(--error); }
 /* core v0.8 I-8 / I-9: the view-only tab of an image or a PDF. */
 .pane-item > .view-body { position: absolute; inset: 0; }
 .view-body { box-sizing: border-box; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--editor-background); outline: none; }

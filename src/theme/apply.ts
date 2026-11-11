@@ -8,6 +8,8 @@ const sheet = new CSSStyleSheet();
 export let syntaxKeys: ReadonlySet<string> = new Set();
 /** The same for the applied preview theme (code blocks of a Markdown preview). */
 export let previewSyntaxKeys: ReadonlySet<string> = new Set();
+/** Light or dark, for the applied preview theme (Mermaid picks its colours by it). */
+export let previewAppearance: "light" | "dark" = "dark";
 
 // I-3: the UI theme is :root; the editor and preview themes redefine the same variables on their tab bodies, so
 // everything inside inherits them. The editor body is the CM view (find bar, gutter, scrollbar) and its path row.
@@ -28,6 +30,7 @@ export async function applyTheme(ui?: string, editor = ui, preview = ui): Promis
   const [u, e, p] = [ui, editor, preview].map((name) => resolve(forced ?? name));
   syntaxKeys = new Set(Object.keys(e.style.syntax ?? {}));
   previewSyntaxKeys = new Set(Object.keys(p.style.syntax ?? {}));
+  previewAppearance = p.appearance;
   document.documentElement.dataset.appearance = u.appearance; // the tooltip shadow alpha differs by light/dark (L-212)
   const elementBackground = u.style["element.background"];
   const keymapColors = typeof elementBackground === "string" ? `:root { --element-background: ${formatColor(parseColor(elementBackground))}; }` : "";

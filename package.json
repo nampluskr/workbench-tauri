@@ -18,7 +18,9 @@
     "@tauri-apps/plugin-dialog": "2.8.4",
     "@tauri-apps/plugin-opener": "2.7.2",
     "dompurify": "3.4.17",
+    "katex": "0.18.11",
     "markdown-it": "15.0.3",
+    "mermaid": "12.2.0",
     "solid-js": "1.9.18",
     "web-tree-sitter": "0.27.1"
   },

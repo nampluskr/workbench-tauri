@@ -64,3 +64,15 @@
 | C-08 | 검토 | I-2 |
 | C-09 | V3 판정 | I-2 |
 | W-07 · W-08 | 문서 | ORDER-04 |
+
+### Phase 5 작업 카드
+
+| 카드 | 할 일 | core 항목 |
+|---|---|---|
+| K-05a | I-4 수식(KaTeX)·I-5 Mermaid(마크다운 미리보기·ipynb 마크다운 셀, `.mmd`·`.mermaid` 미리보기, `katex`·`mermaid` 의존성은 ORDER-05가 미리 허락, 처음 쓸 때 불러옴, CSP 변경 없음이 목표) | I-4 · I-5 · M-1 · M-3 · M-5 · M-7 |
+| K-05b | Licenses 갱신(KaTeX·Mermaid와 앱에 묶이는 의존 패키지) | Licenses 갱신 |
+| K-05c | 0.8.0 release 빌드(설치 파일) | 0.8.0 빌드 |
+| C-10 | 검토 | I-4 · I-5 · Licenses 갱신 |
+| C-11 | V3 판정(release exe) | I-4 · I-5 · Licenses 갱신 · 회귀 |
+| W-09 | PLAN(이 표) | ORDER-05 |
+| W-10 | `docs/BUILD.md`·PROGRESS | 0.8.0 빌드·`docs/BUILD.md` · ORDER-05 |
