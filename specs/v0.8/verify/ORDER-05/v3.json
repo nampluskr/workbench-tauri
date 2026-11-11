@@ -1,0 +1,321 @@
+{
+  "exe": "D:/projects/workbench-tauri/src-tauri/target/release/workbench-tauri.exe",
+  "c7_lazy_plain": {
+    "before": [],
+    "afterPlain": [],
+    "netAfterPlain": [],
+    "h1": "Plain"
+  },
+  "c1_c2_c3_math": {
+    "loadedAfterMath": [
+      "katex-a6gDtQ-e.js"
+    ],
+    "inline": [
+      {
+        "math": true,
+        "mfrac": 0,
+        "text": "E=mc2E=mc^2"
+      },
+      {
+        "math": true,
+        "mfrac": 1,
+        "text": "ab\\frac{a}{b}"
+      },
+      {
+        "math": false,
+        "mfrac": 0,
+        "text": "$\\frac{$ Unexpected end of input in a ma"
+      },
+      {
+        "math": true,
+        "mfrac": 0,
+        "text": "yy"
+      },
+      {
+        "math": true,
+        "mfrac": 0,
+        "text": "\\href\\href{https://example.com}{x}"
+      }
+    ],
+    "display": [
+      {
+        "math": true,
+        "msubsup": 1,
+        "mtable": 0,
+        "h": 42
+      },
+      {
+        "math": true,
+        "msubsup": 0,
+        "mtable": 1,
+        "h": 41
+      }
+    ],
+    "M1": {
+      "math": 1,
+      "mathEls": 1,
+      "err": null,
+      "links": 0,
+      "text": "M1: inline E=mc2E=mc^2 end"
+    },
+    "M3": {
+      "math": 1,
+      "mathEls": 1,
+      "err": null,
+      "links": 0,
+      "text": "M3: fraction ab\\frac{a}{b} end"
+    },
+    "N1": {
+      "math": 0,
+      "mathEls": 0,
+      "err": null,
+      "links": 0,
+      "text": "N1: code $x$ end"
+    },
+    "N2": {
+      "math": 0,
+      "mathEls": 0,
+      "err": null,
+      "links": 0,
+      "text": "N2: $x$ in fence"
+    },
+    "N3": {
+      "math": 0,
+      "mathEls": 0,
+      "err": null,
+      "links": 0,
+      "text": "N3: $5 escaped"
+    },
+    "N4": {
+      "math": 0,
+      "mathEls": 0,
+      "err": null,
+      "links": 0,
+      "text": "N4: $5 and $6 money"
+    },
+    "N5": {
+      "math": 0,
+      "mathEls": 0,
+      "err": null,
+      "links": 0,
+      "text": "N5: $ x $ spaced"
+    },
+    "BAD": {
+      "math": 1,
+      "mathEls": 2,
+      "err": "$\\frac{$ Unexpected end of input in a macro argument, expected '}' at end of input: \\frac{",
+      "links": 0,
+      "text": "BAD: $\\frac{$ Unexpected end of input in a macro argument, expected '}' at end of input: \\"
+    },
+    "HREF": {
+      "math": 1,
+      "mathEls": 1,
+      "err": null,
+      "links": 0,
+      "text": "HREF: \\href\\href{https://example.com}{x} end"
+    },
+    "TAIL": {
+      "strong": "rendered"
+    },
+    "badColor": "rgb(208, 114, 119)",
+    "mathFont": "math",
+    "afterHrefClick": {
+      "panes": [
+        [
+          "math.md",
+          "Preview math.md"
+        ]
+      ],
+      "targets": [
+        "page http://tauri.localhost/"
+      ]
+    },
+    "example": [],
+    "console": []
+  },
+  "c4_mermaid_block": {
+    "diagrams": [
+      {
+        "svg": true,
+        "nodes": 2,
+        "labels": [
+          "A",
+          "B"
+        ],
+        "w": 168
+      }
+    ],
+    "errors": [
+      "Parse error on line 3:"
+    ],
+    "rawLeft": [
+      "graph TD; A-->"
+    ],
+    "after": "bold",
+    "strayBody": [],
+    "loaded": [
+      "katex-a6gDtQ-e.js",
+      "mermaid.core-DxUdQdLq.js",
+      "flowDiagram-IUGLLWBU-Vq4Q3jPJ.js",
+      "elk-QONTBCTQ-5D5ajeQs.js"
+    ],
+    "console": [],
+    "netExternal": [],
+    "nb": {
+      "math": 1,
+      "diagram": true,
+      "labels": [
+        "P",
+        "Q"
+      ]
+    }
+  },
+  "c5_mermaid_file": {
+    "flow.mmd": {
+      "editorFirst": [
+        [
+          "flow.mmd"
+        ]
+      ],
+      "eye": true,
+      "byEye": {
+        "panes": [
+          [
+            "flow.mmd",
+            "Preview flow.mmd"
+          ]
+        ],
+        "labels": [
+          "A",
+          "B"
+        ],
+        "dataLine": 0
+      },
+      "ctrlShiftV": {
+        "panes": [
+          [
+            "flow.mmd",
+            "Preview flow.mmd"
+          ]
+        ],
+        "labels": [
+          "A",
+          "B"
+        ]
+      }
+    },
+    "flow2.mermaid": {
+      "editorFirst": [
+        [
+          "flow2.mermaid"
+        ]
+      ],
+      "eye": true,
+      "byEye": {
+        "panes": [
+          [
+            "flow2.mermaid",
+            "Preview flow2.mermaid"
+          ]
+        ],
+        "labels": [
+          "X",
+          "Y"
+        ],
+        "dataLine": 0
+      },
+      "ctrlShiftV": {
+        "panes": [
+          [
+            "flow2.mermaid",
+            "Preview flow2.mermaid"
+          ]
+        ],
+        "labels": [
+          "X",
+          "Y"
+        ]
+      }
+    },
+    "live": {
+      "before": [
+        "A",
+        "B"
+      ],
+      "after": [
+        "A",
+        "Z"
+      ]
+    }
+  },
+  "c6_mermaid_click_theme": {
+    "panesBefore": [
+      [
+        "click.mmd",
+        "Preview click.mmd"
+      ]
+    ],
+    "links": 0,
+    "clickable": 2,
+    "darkFill": "rgb(31, 32, 32)",
+    "svgTheme": "fill:#ccc",
+    "after": {
+      "panes": [
+        [
+          "click.mmd",
+          "Preview click.mmd"
+        ]
+      ],
+      "targets": [
+        "page http://tauri.localhost/"
+      ],
+      "example": [],
+      "callbackErr": []
+    },
+    "lightFill": "rgb(236, 236, 255)",
+    "lightBodyBg": "rgb(250, 250, 250)"
+  },
+  "c8_licenses": {
+    "aboutKatex": false,
+    "aboutMermaid": false,
+    "aboutLines": null,
+    "panes": [
+      [
+        "Licenses"
+      ]
+    ],
+    "katex": "node_modules/katex@0.18.11",
+    "mermaid": "node_modules/mermaid@12.2.0",
+    "length": 840728
+  },
+  "c10_regress": {
+    "mdActive": [
+      "Section 3"
+    ],
+    "mdStyleAttrs": [
+      0
+    ],
+    "csv": "x\ny",
+    "svg": "rgb(255, 0, 0)",
+    "html": {
+      "sandbox": "allow-same-origin",
+      "h1": "rgb(10, 20, 30)",
+      "img": 40
+    },
+    "ipynb": {
+      "cells": 2,
+      "count": "[1]",
+      "out": "one\n"
+    },
+    "image": 40,
+    "pdf": {
+      "iframe": {
+        "src": true,
+        "w": 1000,
+        "h": 756
+      },
+      "viewer": 1
+    },
+    "version": "workbench-tauri"
+  }
+}

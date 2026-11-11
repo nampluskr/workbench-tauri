@@ -1,0 +1,49 @@
+{
+  "exe": "D:/projects/workbench-tauri/src-tauri/target/release/workbench-tauri.exe",
+  "c6_mermaid_click_theme": {
+    "nodeBoxes": [
+      {
+        "t": "A",
+        "x": 864,
+        "y": 105,
+        "w": 152,
+        "h": 48
+      },
+      {
+        "t": "B",
+        "x": 864,
+        "y": 193,
+        "w": 152,
+        "h": 48
+      }
+    ],
+    "aHref": [
+      "data-look,transform"
+    ],
+    "panesBefore": [
+      [
+        "click.mmd",
+        "Preview click.mmd"
+      ]
+    ],
+    "links": 1,
+    "clickable": 2,
+    "darkFill": "rgb(31, 32, 32)",
+    "svgTheme": "fill:#ccc",
+    "after": {
+      "panes": [
+        [
+          "click.mmd",
+          "Preview click.mmd"
+        ]
+      ],
+      "targets": [
+        "page http://tauri.localhost/"
+      ],
+      "example": [],
+      "callbackErr": []
+    },
+    "lightFill": "rgb(236, 236, 255)",
+    "lightBodyBg": "rgb(250, 250, 250)"
+  }
+}

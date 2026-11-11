@@ -1,9 +1,9 @@
 # BUILD — workbench-tauri 빌드·배포
 
-- 작성일: 2026-11-10
-- 기준 커밋: `45aed5e`
+- 작성일: 2026-11-11
+- 기준 커밋: `fbaac1e`(ORDER-05 코드)
 
-배포본(release exe·NSIS 설치 파일)을 만드는 과정이다. 2026-11-10 release 빌드에 성공했다. 도구·기존 측정은 각 절의 날짜를 따른다.
+배포본(release exe·NSIS 설치 파일)을 만드는 과정이다. 2026-11-11 0.8.0 release 빌드에 성공했다. 도구·기존 측정은 각 절의 날짜를 따른다.
 
 ## 0. 노트북에서 처음부터
 
@@ -35,7 +35,7 @@
 | curl.exe, tar.exe | curl 8.21.0, bsdtar 3.8.9 | Windows 10 1803+ 기본 포함. 따로 설치 안 함 |
 | tree-sitter CLI 0.27.1, wasi-sdk 34, binaryen 132 | — | 설치 안 함. `fetch-zed-grammars.ps1`이 SHA256을 검사해 임시 폴더에 받아 쓴다(`src/assets/zed-grammars/manifest.json` `toolchain`) |
 | NSIS 3.13 | — | 설치 안 함. 첫 `tauri build` 때 Tauri가 `nsis_tauri_utils`와 함께 받는다(인터넷 필요) |
-| npm 패키지(@tauri-apps/cli 2.12.4 등) | — | `npm ci`가 `package-lock.json`대로 설치(vite 8.3.5, typescript 7.0.2 포함) |
+| npm 패키지(@tauri-apps/cli 2.12.4 등) | — | `npm ci`가 `package-lock.json`대로 설치(vite 8.3.5, typescript 7.0.2, 0.8.0에서 더한 `katex` 0.18.11·`mermaid` 12.2.0 포함). 새로 설치할 도구는 없음 |
 | Tauri | crate `tauri` =2.12.5, `tauri-build` =2.7.4, `@tauri-apps/api` 2.12.4 | 설치 안 함. 버전은 `Cargo.toml`·`package.json`에 고정 |
 
 - 설치 확인 명령: `git --version`, `pwsh -v`, `node -v`, `npm -v`, `rustc -V`, `cargo -V`
@@ -76,21 +76,32 @@ npm run tauri build             # release exe + NSIS 설치 파일
 
 ## 4. 결과 파일
 
-2026-11-10 tauri-coder(K-16)의 0.7.0 release 빌드 결과다. ORDER-09(K-13·K-15: Licenses 읽기 전용 편집 탭, 찾기 토글 아이콘 잘림 고침)까지 넣고 다시 빌드한 것이다. 실행 중인 앱이 exe를 잠그면 빌드가 os error 5로 실패하므로 앱을 닫고 빌드한다.
-
-NSIS 설치 파일과 앱 exe는 이번 0.7.0 ORDER-09 다시 빌드 결과(2026-11-10 22:36, 설치 파일 아이콘 `installerIcon` 포함)이며, exe zip과 프런트엔드 크기는 기존 2026-11-08 기록이다.
+2026-11-11 tauri-coder(K-05d)의 0.8.0 release 최종 빌드 결과다(ORDER-05: 수식·Mermaid, Licenses 갱신, Mermaid 링크 노드 위치 고침 포함). 실행 중인 앱이 exe를 잠그면 빌드가 os error 5로 실패하므로 앱을 닫고 빌드한다.
 
 | 파일 | 경로 | 크기·버전 |
 |---|---|---|
-| NSIS 설치 파일 | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.7.0_x64-setup.exe` | 6,065,494 바이트(수정 시각 2026-11-10 22:36:00); ProductVersion·FileVersion `0.7.0`; 아이콘 i-window |
-| 앱 exe | `src-tauri\target\release\workbench-tauri.exe` | 16,832,512 바이트(수정 시각 2026-11-10 22:36:01); ProductVersion·FileVersion `0.7.0`; 아이콘 i-window |
-| exe zip(Compress-Archive Optimal) | 직접 만듦(레포 밖 `%TEMP%`에서 측정) | 7.66 MiB |
-| 참고: 프런트엔드 `dist/` | exe 안에 압축돼 들어감 | 18.57 MiB(이 중 문법 복사본 11.9 MB) |
+| NSIS 설치 파일 | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.8.0_x64-setup.exe` | 7,459,022 바이트(수정 시각 2026-11-11 09:00:48); ProductVersion·FileVersion `0.8.0` |
+| 앱 exe | `src-tauri\target\release\workbench-tauri.exe` | 18,289,664 바이트(수정 시각 2026-11-11 09:00:48); ProductVersion·FileVersion `0.8.0` |
+| 참고: 프런트엔드 `dist/` | exe 안에 압축돼 들어감 | 25,253,939 바이트(24.08 MiB), 파일 4,965개, JS 청크 190개(`dist/assets/*.js`) — 앞 빌드(K-05c, 08:53) 기준 |
+
+- 버전은 `(Get-Item …).VersionInfo`로 읽었다. 설치 파일·exe 아이콘은 이번에 바꾸지 않았고, exe zip은 이번에 만들지 않았다.
+
+### 0.7.0 대비
+
+| 파일 | 0.7.0 (2026-11-10 22:36, K-16) | 0.8.0 | 증가 |
+|---|---|---|---|
+| NSIS 설치 파일 | 6,065,494 B | 7,459,022 B | +1,393,528 B (+22.97%) |
+| 앱 exe | 16,832,512 B | 18,289,664 B | +1,457,152 B (+8.66%) |
+
+- 이유: `dist/`에 KaTeX 청크(258.9 kB)와 Mermaid 쪽 청크(약 5.2 MB, 비압축)가 더해지고 `index`가 Licenses 텍스트만큼(+107.5 kB) 커져, 압축돼 exe에 들어간 것이다. 두 라이브러리는 처음 쓸 때만 불러와 앱 시작에는 읽히지 않는다.
+- 0.7.0 참고 값(2026-11-08 기록): exe zip(Compress-Archive Optimal) 7.66 MiB, `dist/` 18.57 MiB(이 중 문법 복사본 11.9 MB).
 
 ## 5. 걸린 시간(이 PC)
 
 - 처음부터 release 빌드(`--no-bundle` 상태, 2026-11-08): 전체 200초, 그중 Rust 컴파일 3분 5초.
 - NSIS 켠 빌드(Rust 일부 재컴파일 + NSIS 도구 첫 내려받기): 101.7초, Rust 56.1초.
+- 0.8.0 release 최종 빌드(`npm.cmd run tauri build`, NSIS 켬, 2026-11-11 K-05d): 전체 70초(Rust 48.97초, vite 8.26초).
+- 참고: 그 앞 0.8.0 빌드(K-05c)는 전체 119.9초(Rust 96초, vite 8.74초)였다. 이때 Rust는 `workbench-tauri` 크레이트만 다시 컴파일했다(의존 크레이트 캐시).
 - 0.7.0 release 다시 빌드(`npm.cmd run tauri build`, NSIS 켬, ORDER-09 포함, 2026-11-10 K-16): 전체 67.7초(Rust 47.8초, vite 6.9초, NSIS 포함). 같은 날 앞선 빌드는 ORDER-08 K-12-R2 57.8초, K-12 57.8초(Rust 40.6초), ORDER-06·07(K-09) 66.4초.
 - 아이콘 파일(`src-tauri/icons/icon.ico`)만 바꾸면 Cargo가 빌드 스크립트를 다시 돌리지 않아 exe에 옛 아이콘이 남는다. 이럴 땐 `src-tauri/build.rs`의 수정 시각만 갱신(`(Get-Item src-tauriuild.rs).LastWriteTime = Get-Date`)하고 다시 빌드한다. 내용은 안 바꾼다.
 - 문법 복사본 채우기: 113.7초.
@@ -110,7 +121,8 @@ NSIS 설치 파일과 앱 exe는 이번 0.7.0 ORDER-09 다시 빌드 결과(2026
 - 콘솔 창: release 빌드는 뜨지 않는다(`src-tauri/src/main.rs`의 `windows_subsystem = "windows"`). 그래서 release exe의 `eprintln!` 로그는 보이지 않는다. 디버그 빌드는 콘솔 창이 뜬다.
 - Windows x64만.
 - 앱 버전은 `src-tauri/tauri.conf.json`의 `version` 한 곳에서만 정한다. 버전을 끝낼 때마다 그 번호로 올린다(v0.8이면 `0.8.0`). Tauri가 이 값을 설치 파일 이름과 exe·설치 파일의 제품/파일 버전에 쓴다. private npm 패키지에는 `version`이 없고, Cargo 패키지는 생략 기본값을 쓴다. Help 메뉴의 "About workbench-tauri"가 `tauri.conf.json` 버전을 보인다.
-- 빌드 경고(기존 그대로): Vite 500 kB 넘는 chunk(index JS 3,863.55 kB), web-tree-sitter direct eval. Rust 경고 없음.
+- 빌드 경고(기존과 같은 종류, 0.8.0): Vite 500 kB 넘는 chunk(`index` 4,557.41 kB, 0.7.0은 3,863.55 kB; Mermaid 쪽 `elk` 1,462.86 kB·`chunk-NGNAAXSQ` 629.04 kB 등은 지연 로딩), web-tree-sitter direct eval. Rust 경고 없음.
+- `cargo test`: `folder_watch::tests::missing_root_is_watched_after_creation_and_recreation`가 0.8.0 빌드 확인(K-05c)에서 1회 실패했다(`expected filesystem event: Timeout`). 코드 변경 없이 다시 돌리면 통과(3회 모두)해서 간헐 실패로 본다. 원인은 조사하지 않았다.
 - 빌드 PC 네트워크: 첫 빌드의 NSIS 내려받기, fetch 스크립트 모두 인터넷이 필요하다. 샌드박스(예: Codex)에서는 네트워크가 막혀 실패한다(os error 10013).
 
 ## 8. 라이선스 주의
@@ -121,7 +133,7 @@ NSIS 설치 파일과 앱 exe는 이번 0.7.0 ORDER-09 다시 빌드 결과(2026
   - Zed·Catppuccin·macOS Classic 테마, Catppuccin 아이콘 테마
   - tree-sitter 문법 wasm 25개(문법마다 라이선스, `src/assets/zed-grammars/licenses/`와 manifest)
 - 배포 범위: **개인 용도, 다른 사람에게 나눠 주지 않음**(core I-3). 이 범위이므로 GPL 쿼리를 빼거나 외부 배포용 소스 공개 조건을 맞추는 작업은 하지 않는다.
-- 라이선스 본문은 Dependency Licenses 화면에 포함된다: `AppMenu.tsx`의 raw glob(Zed 아이콘·테마·문법·`src/licenses/*.txt`)과 `licenses.ts`의 글꼴 목록을 쓴다. IBM Plex Sans·Lilex 글꼴 본문은 `public/fonts/`에서 `dist/fonts/`로 복사된다. Vite가 번들에 넣는 JS 의존성과 tree-sitter 런타임 본문은 `src/licenses/frontend-dependencies.txt`에 원문으로 두었다(패키지 버전을 바꾸면 이 복사본도 갱신). 앱 exe에 들어가는 Rust crate(Windows 대상, build·dev·proc-macro 제외)의 이름·버전·라이선스와 원문은 `src/licenses/rust-dependencies.txt`에 있다(`Cargo.lock`을 바꾸면 `node tools/rust-licenses.mjs`로 다시 만든다).
+- 라이선스 본문은 Dependency Licenses 화면에 포함된다: `AppMenu.tsx`의 raw glob(Zed 아이콘·테마·문법·`src/licenses/*.txt`)과 `licenses.ts`의 글꼴 목록을 쓴다. IBM Plex Sans·Lilex 글꼴 본문은 `public/fonts/`에서 `dist/fonts/`로 복사된다. Vite가 번들에 넣는 JS 의존성과 tree-sitter 런타임 본문은 `src/licenses/frontend-dependencies.txt`에 원문으로 두었다(패키지 버전을 바꾸면 이 복사본도 갱신). 0.8.0에서 KaTeX·Mermaid와 번들에 묶이는 하위 패키지까지 45개를 더했다(K-05b). 기준은 `vite build --sourcemap`의 소스 목록에 나오는 패키지이고, 라이선스 종류는 MIT·ISC·Apache-2.0·BSD-3-Clause·EPL-2.0(`elkjs`)이다. 앱 exe에 들어가는 Rust crate(Windows 대상, build·dev·proc-macro 제외)의 이름·버전·라이선스와 원문은 `src/licenses/rust-dependencies.txt`에 있다(`Cargo.lock`을 바꾸면 `node tools/rust-licenses.mjs`로 다시 만든다).
 - Zed 앱 코드는 복사하지 않았다(레포 규칙).
 
 ## 9. GitHub에 올리지 않는 것

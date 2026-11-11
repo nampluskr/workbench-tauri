@@ -194,3 +194,74 @@
     - 오류·stderr 글자색이 `--error`다.
     - 한 셀의 그림 여러 개가 세로로 나열된다.
   - 운영: 화면은 deskdock S-01 뒤 `[SCREEN-OK]`를 받아 썼다. 그동안 구현·검토·V3 스크립트를 준비했다.
+
+### Phase 5 — 수식·Mermaid, Licenses, 0.8.0 release 빌드
+
+- **W-09 PLAN Phase 5 표** (2026-11-11, 커밋 `fbaac1e`)
+  - 무엇을 했나: `PLAN.md`에 "Phase 5 작업 카드" 표(K-05a·K-05b·K-05c·C-10·C-11·W-09·W-10)를 Phase 4 표 형식으로 더했다.
+  - 결과: 그 밖의 절은 그대로다.
+  - 검증: V0. 명령 실행 없음(보고 `C:\Users\nampl\AppData\Local\Temp\v08-W-09-report.md`).
+  - 특이사항: 없음.
+- **K-05a I-4 수식·I-5 Mermaid(I-4·I-5·M-1·M-3·M-5·M-7)** (2026-11-11, coder, 커밋 `fbaac1e`)
+  - 무엇을 했나:
+    - 의존성 `katex` 0.18.11·`mermaid` 12.2.0을 고정 버전으로 더했다(ORDER-05가 미리 허락). KaTeX를 0.19가 아니라 0.18.11로 고른 것은 mermaid 12.2.0이 `katex ^0.18`을 요구해 두 벌 번들을 피하려는 것이다.
+    - 수식: 새 `src/editor/math.ts`에 markdown-it 규칙 2개(`math_inline`을 `escape` 앞에, `math_block`을 `fence` 앞에)를 플러그인 패키지 없이 넣었다. 코드 스팬·코드 블록·`\$`는 markdown-it이 먼저 가져가고, 여는 `$` 뒤·닫는 `$` 앞 공백, 닫는 `$` 뒤 숫자는 수식이 아니다. 블록은 `data-line`을 지킨다.
+    - 수식 출력은 KaTeX MathML(`output: "mathml"`)이다. WebView2가 MathML을 직접 그리므로 KaTeX 글꼴·CSS를 번들에 넣지 않는다(0개). `trust: false`로 `\href`·`\url`·`\includegraphics`·`\html*`를 막고, 잘못된 수식은 원문을 남기고 `math-error` 메시지 한 줄을 붙인다.
+    - KaTeX 출력은 DOMPurify를 거치지 않는다. KaTeX가 모든 글자를 escape하고 속성을 만드는 명령은 `trust: false`에서 꺼지며, DOMPurify 기본 설정은 `<semantics>`·`<annotation>`을 지워 TeX 원문이 화면에 흘러나오기 때문이다(C-10이 KaTeX 소스로 확인).
+    - Mermaid: `securityLevel: "strict"`·`suppressErrorRendering: true`, 테마는 미리보기 테마가 어두우면 `dark`, 아니면 `default`. 문법 오류면 원문 코드 블록 + 오류 한 줄. 세대 번호로 늦게 끝난 렌더가 새 내용을 덮지 않게 하고, 성공한 SVG를 `테마 + 원문`으로 32개까지 캐시해 다시 그릴 때 깜빡임을 줄였다.
+    - `preview-kind.ts`에 `mermaid` 종류(`.mmd`·`.mermaid`)를 더해 열기·눈 버튼·`Ctrl+Shift+V`가 마크다운과 같이 따라온다. 위치 연계는 없다(M-1).
+    - 지연 로딩: `rich-blocks.ts` 안에서만 `import("katex")`·`import("mermaid")`를 하고, 수식·Mermaid가 없으면 import 전에 돌아간다(M-3).
+  - 결과: CSP·capability·Cargo 변경 없음. KaTeX 청크 258.91 kB, Mermaid 쪽 청크 약 5.2 MB(비압축)가 따로 나뉜다.
+  - 검증: V1. typecheck 0, test 286/286(새 `math.test.ts` 5개: 구분·오인 막기·오류·보안·확장자), `npm run build` 성공(보고 `C:\Users\nampl\AppData\Local\Temp\v08-K-05a-report.md`).
+  - 특이사항: node에 DOM이 없어 실제 DOM 교체·캐시·링크 처리는 V3로 넘겼다.
+- **C-10 checker 검토(K-05a)** [PASS] (2026-11-11)
+  - 무엇을 했나: 의존성과 버전 선택, 수식 구분 규칙과 순서, KaTeX 출력 정화 판단, Mermaid 내부 정화(`strict`에서 `serializeSvg`가 DOMPurify), 지연 로딩, `.mmd`·`.mermaid`, CSP, 인라인 style·수치를 봤다.
+  - 결과: 지적 없음.
+  - 검증: V1. typecheck 0, test 286/286(보고 `C:\Users\nampl\AppData\Local\Temp\v08-C-10-report.md`).
+  - 특이사항: `src/app.css`의 `0.85em` 하드코딩을 놓쳤다(K-05c에서 tauri-leader가 찾아 고침).
+- **K-05b Licenses 갱신** (2026-11-11, coder, 커밋 `fbaac1e`)
+  - 무엇을 했나: `src/licenses/frontend-dependencies.txt`에 KaTeX·Mermaid와 번들에 묶이는 하위 패키지 45개(최상위 40 + 두 버전으로 묶인 중첩 5, LICENSE 섹션 46개)의 원문을 기존 형식으로 더했다. 기준은 `vite build --sourcemap`(레포 밖 임시 폴더)의 소스 목록이다. 라이선스는 MIT 대부분, ISC(`d3-*`), Apache-2.0(`chevrotain` 계열), BSD-3-Clause(`d3-sankey` 중첩), EPL-2.0(`elkjs`).
+  - 결과: 기존 섹션은 그대로이고 새 섹션을 경로 순서로 끼워 넣었다(95,428 B → 202,962 B). About 주요 라이브러리 목록에 `KaTeX 0.18.11 — MIT`·`Mermaid 12.2.0 — MIT` 두 줄, `about.test.ts`에 두 항목 확인을 더했다.
+  - 검증: V1. typecheck 0, test 286/286(보고 `C:\Users\nampl\AppData\Local\Temp\v08-K-05b-report.md`).
+  - 특이사항: 기존 목록 중 지금 번들 sourcemap에 안 나오는 패키지(`argparse`·`@codemirror/language` 등)는 이번 범위가 아니라 그대로 두었다.
+- **K-05c 수치 하드코딩 고침 + 0.8.0 release 빌드** (2026-11-11, coder, 커밋 `fbaac1e`)
+  - 무엇을 했나: tauri-leader가 C-10 뒤에 찾은 `src/app.css` `.math-error-note { font-size: 0.85em; }`를 지웠다(대체 수치를 지어내지 않음). 그 뒤 release 빌드(NSIS)를 했다.
+  - 결과: 설치 파일 7,458,370 B, 앱 exe 18,289,664 B(ProductVersion·FileVersion 0.8.0), 빌드 119.9초.
+  - 검증: V1 + 빌드. typecheck 0, test 286/286, clippy 0. `cargo test`는 첫 실행에서 `folder_watch::tests::missing_root_is_watched_after_creation_and_recreation` 1건이 `Timeout`으로 실패했고, 코드 변경 없이 3번 다시 돌려 모두 22/22 통과했다(간헐 실패로 봄, 원인 조사 안 함). 보고 `C:\Users\nampl\AppData\Local\Temp\v08-K-05c-report.md`.
+  - 특이사항: 간헐 실패는 `docs/BUILD.md` 7절에 적었다.
+- **V3 측정 중 결함 → K-05d Mermaid 링크 노드 위치** (2026-11-11, tauri-leader 측정, coder, 커밋 `fbaac1e`)
+  - 무엇을 했나: release exe V3에서 `click B "https://…"`가 든 다이어그램의 링크 노드 B가 (0,0)에 그려지는 것을 찾았다. 원인은 Mermaid가 링크 노드를 `<a>`로 감싸고 위치 `transform`을 그 `<a>`에 거는데, K-05a가 `<a>`를 풀어 없애면서 `transform`도 잃은 것이다. K-05d는 `<a>`를 그대로 두고 `href`·`xlink:href`·`target`만 지운다. 그 뒤 release를 다시 빌드했다.
+  - 결과: `rich-blocks.ts` 한 줄 교체. 다시 빌드한 설치 파일 7,459,022 B(K-05c보다 +652 B), exe 18,289,664 B(같음), 빌드 70초.
+  - 검증: V1 + 빌드. typecheck 0, test 286/286(보고 `C:\Users\nampl\AppData\Local\Temp\v08-K-05d-report.md`). c6만 다시 재서 B가 제자리(A y105, B y193)이고, 누르면 아무 일 없고 `example.com` 요청 0임을 확인했다(`specs/v0.8/verify/ORDER-05/v3-c6.json`).
+  - 특이사항: 링크 노드를 눌러도 편집기 줄 이동도 하지 않는다(링크 노드만).
+- **V3 측정과 C-11 판정(ORDER-05)** [PASS] (2026-11-11, tauri-leader 측정, checker 판정)
+  - 무엇을 했나: tauri-leader가 release exe로 재고 C-11이 K-05b·K-05c·K-05d와 완료 기준 #1~#11을 판정했다. 결과는 `specs/v0.8/verify/ORDER-05/`(`v3.json`, `v3-c6.json`, PNG 10).
+  - 결과: #1~#11 PASS.
+    - #1~#3 수식: 마크다운과 ipynb 마크다운 셀에서 인라인·블록·분수·행렬이 MathML로 그려진다. 오인 사례는 글자 그대로, `$\frac{$`는 원문 + 오류, `\href`는 링크가 안 되고 요청 0.
+    - #4~#6 Mermaid: 블록·ipynb 셀·`.mmd` 파일이 그려지고 고치면 바뀐다. 문법 오류는 원문 + 오류 한 줄. 링크·콜백 클릭 무반응·요청 0, One Dark에서 `dark`, 밝은 미리보기 테마에서 `default` 색.
+    - #7 지연 로딩: 수식·Mermaid 없는 마크다운에서 KaTeX·Mermaid 청크 0개.
+    - #8 Licenses: View All Licenses에 KaTeX·Mermaid가 있고, About 두 줄은 캡처(`c8-about.png`)로 확인했다.
+    - #9 빌드: 0.8.0 설치 파일 7,459,022 B(0.7.0 대비 +22.97%), `docs/BUILD.md` 기록(W-10·W-11).
+    - #10 회귀: 마크다운 위치 연계·CSV·SVG·HTML·ipynb·이미지·PDF 그대로(release exe).
+    - #11 테스트: typecheck 0, test 286/286, cargo test 22/22, clippy 0.
+  - 검증: V3·V1(보고 `C:\Users\nampl\AppData\Local\Temp\v08-C-11-report.md`). CSP 변경 없음.
+  - 특이사항:
+    - 첫 flowchart를 그릴 때 `elk` 청크(1.46 MB)도 불러온다(지연 로딩 범위 안).
+    - C-11 보고의 근거 JSON 키 이름 일부가 실제 `v3.json`과 다르다. 판정은 tauri-leader가 실제 값으로 다시 확인했다.
+    - 측정 스크립트가 About 창 글자를 못 읽어 About 두 줄은 캡처로 확인했다.
+  - 사용자 확인:
+    - 수식 글리프(MathML, Windows Cambria Math) 모양·크기.
+    - Mermaid 다이어그램 색(밝은·어두운 테마).
+    - 첫 Mermaid 로드 시간.
+- **W-10 `docs/BUILD.md` 0.8.0** (2026-11-11)
+  - 무엇을 했나: 1절 npm 패키지(`katex`·`mermaid`), 4절 0.8.0 결과 파일과 0.7.0 대비 증가량, 5절 빌드 시간, 7절 경고·`cargo test` 간헐 실패, 8절 라이선스를 갱신했다.
+  - 결과: 기존 절 구성 그대로. 값은 K-05c 빌드 기준이었다(W-11에서 최종 빌드로 고침).
+  - 검증: V0. 명령 실행 없음(보고 `C:\Users\nampl\AppData\Local\Temp\v08-W-10-report.md`).
+  - 특이사항: 없음.
+- **W-11 BUILD.md 최종 값 + 이 PROGRESS** (2026-11-11)
+  - 무엇을 했나: `docs/BUILD.md` 4·5절을 K-05d 뒤 최종 빌드 값(설치 파일 7,459,022 B, +1,393,528 B +22.97%, 빌드 70초)으로 고치고 K-05c 빌드는 참고 한 줄로 남겼다. `dist/` 값은 K-05c 기준이라고 적었다. 머리 기준 커밋은 "ORDER-05 코드 커밋(leader가 채움)". 이 Phase 5 절을 썼다.
+  - 결과: 그 밖은 그대로다.
+  - 검증: V0. 명령 실행 없음(보고 `C:\Users\nampl\AppData\Local\Temp\v08-W-11-report.md`).
+  - 특이사항: 없음.
+
+이 Phase로 v0.8 카드(ORDER-01~05)가 모두 끝났다.
