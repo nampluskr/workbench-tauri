@@ -3,6 +3,10 @@
     "allow": [
       "command(git diff)",
       "command(git log)",
+      "command(git status -s)",
+      "command(git grep)",
+      "command(Test-Path)",
+      "command(Get-ChildItem)",
       "command(git status)",
       "command(git show)",
       "command(git diff --stat)",
