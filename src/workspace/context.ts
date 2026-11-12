@@ -14,7 +14,7 @@ import { confirmClose, saveDoc, saveErrorText, type Ask, type Closing } from "./
 import { Doc, type Editor, type Io, type Status } from "./doc.ts";
 import { pathKey } from "./paths.ts";
 import { relativePath } from "./ops.ts";
-import { place } from "./drop.ts";
+import { entryIndex, place } from "./drop.ts";
 import { inDirection, leaves, remove, split, type Dir, type Node } from "./split.ts";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import type { LinkTarget } from "../editor/markdown.ts";
@@ -806,12 +806,13 @@ export function dropEntry(ctx: FolderContext, path: string, to: PaneState, where
     target = newPane();
     ctx.setTree(split(ctx.tree(), to, where.dir, target));
   }
+  const existed = target.tabs().some((t) => t.path === path);
   activatePane(ctx, target);
   openFile(ctx, path, false, true);
   const tabs = target.tabs(), at = target.active();
   if ((where.kind !== "tab" && where.kind !== "end") || at === null || tabs[at]?.path !== path) return;
   const rest = tabs.filter((_, i) => i !== at);
-  const placed = place(rest, where.kind === "end" ? rest.length : where.index - (where.index > at ? 1 : 0), tabs[at]);
+  const placed = place(rest, where.kind === "end" ? rest.length : entryIndex(where.index, at, existed), tabs[at]);
   target.setTabs(placed.tabs);
   activateTab(ctx, target, placed.index);
 }

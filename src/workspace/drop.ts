@@ -44,3 +44,9 @@ export function place<T extends TabInfo>(tabs: T[], index: number, tab: T): { ta
   const pinned = at < pins ? true : at > pins ? false : !!tab.pinned;
   return { tabs: [...tabs.slice(0, at), { ...tab, pinned, preview: false }, ...tabs.slice(at)], index: at };
 }
+
+/**
+ * core I-3: the index for a tree file dropped on tab `index`, its tab now at `at` after opening. A tab the Pane already had
+ * leaves its place first; a new tab is not in the list it is put back into, so it goes right before tab `index` (I-715).
+ */
+export const entryIndex = (index: number, at: number, existed: boolean): number => (existed && index > at ? index - 1 : index);

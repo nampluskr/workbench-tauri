@@ -146,16 +146,23 @@ export default function ProjectTree(props: { ctx: FolderContext }) {
     const row = place && !place.segment ? rows()[rowIndex(rows(), place.dir)] : undefined;
     if (row?.isDir && row.path === place!.dir && !row.expanded) expandTimer = setTimeout(() => setExpanded(ctx, row.path, true), PROJECT_PANEL_DRAG_EXPAND_DELAY_MS);
   };
-  let scrollTimer = 0;
-  /** Zed: near the top or bottom of the list it scrolls, faster closer to the edge. */
-  const edgeScroll = (y: number) => {
+  let scrollTimer = 0, scrollStep = 0;
+  /**
+   * Zed: near the top or bottom of the list it scrolls, faster closer to the edge. The timer is made again only when the
+   * speed changes (a pointer moving faster than a tick would otherwise never let one come), and each tick calls `aim` so
+   * the drop place follows the rows that pass under a still pointer.
+   */
+  const edgeScroll = (y: number, aim: () => void) => {
+    const r = scroller.getBoundingClientRect(), s = PROJECT_PANEL_DRAG_SCROLL;
+    const at = (y - r.top) / r.height;
+    const step = r.height <= 0 || y < r.top || y > r.bottom ? 0
+      : at <= s.near ? -s.fast : at <= s.far ? -s.slow : at >= 1 - s.near ? s.fast : at >= 1 - s.far ? s.slow : 0;
+    if (step === scrollStep) return;
     clearInterval(scrollTimer);
-    const r = scroller.getBoundingClientRect();
-    if (r.height <= 0 || y < r.top || y > r.bottom) return;
-    const at = (y - r.top) / r.height, s = PROJECT_PANEL_DRAG_SCROLL;
-    const step = at <= s.near ? -s.fast : at <= s.far ? -s.slow : at >= 1 - s.near ? s.fast : at >= 1 - s.far ? s.slow : 0;
-    if (step) scrollTimer = setInterval(() => { scroller.scrollTop += step; onScroll(); }, s.tickMs);
+    scrollStep = step;
+    if (step) scrollTimer = setInterval(() => { scroller.scrollTop += step; onScroll(); aim(); }, s.tickMs);
   };
+  let dragEnded = false; // the click that may follow a drag's release is not a row click
 
   /** Press on a row; the drag starts once the pointer leaves that row, so a press that stays on it is still a click. */
   const startDrag = (e: PointerEvent, row: Row) => {
@@ -165,39 +172,52 @@ export default function ProjectTree(props: { ctx: FolderContext }) {
     const id = e.pointerId;
     let items: string[] | null = null;
     let tree: Place | null = null, pane: ReturnType<typeof entryDropTarget> = null;
+    let x = e.clientX, y = e.clientY; // the last point, also used by the edge scroll ticks
+    /** The drop place under the last point: in the tree, or a Pane place (R-10). */
+    const aim = () => {
+      tree = placeAt(x, y);
+      holdOver(tree);
+      setDropOn(tree && dropJobs(items!, tree.dir, false, ctx.root).length > 0 ? tree : null); // Zed: no mark where a move does nothing
+      pane = tree ? entryDropTarget(ctx, null) : entryDropTarget(ctx, { x, y });
+    };
     const move = (m: PointerEvent) => {
       if (m.pointerId !== id) return;
+      [x, y] = [m.clientX, m.clientY];
       if (!items) {
-        if (m.clientX >= box.left && m.clientX < box.right && m.clientY >= box.top && m.clientY < box.bottom) return;
+        if (x >= box.left && x < box.right && y >= box.top && y < box.bottom) return;
         items = dragItems(ctx.root, ctx.selection().marked, pressed);
         if (items.length === 0) return finish(false, false);
-        scroller.setPointerCapture(id); // keeps the drag when rows are redrawn, and the release is no row click
+        scroller.setPointerCapture(id); // keeps the drag when rows are redrawn
         scroller.addEventListener("lostpointercapture", lost);
         window.addEventListener("keydown", escape, true);
       }
-      tree = placeAt(m.clientX, m.clientY);
-      holdOver(tree);
-      setDropOn(tree && dropJobs(items, tree.dir, false, ctx.root).length > 0 ? tree : null); // Zed: no mark where a move does nothing
-      pane = tree ? entryDropTarget(ctx, null) : entryDropTarget(ctx, { x: m.clientX, y: m.clientY });
-      edgeScroll(m.clientY);
+      aim();
+      edgeScroll(y, aim);
     };
     const finish = (drop: boolean, copy: boolean) => {
       window.removeEventListener("pointermove", move, true);
       window.removeEventListener("pointerup", up, true);
+      window.removeEventListener("pointercancel", lost, true);
+      window.removeEventListener("blur", lost);
       window.removeEventListener("keydown", escape, true);
       scroller.removeEventListener("lostpointercapture", lost);
       clearTimeout(expandTimer);
       clearInterval(scrollTimer);
+      scrollStep = 0;
       held = null;
       setDropOn(null);
       entryDropTarget(ctx, null);
       if (scroller.hasPointerCapture(id)) scroller.releasePointerCapture(id);
-      if (!drop || !items) return;
+      if (!items) return; // never started: a press that stayed on its row is a click
+      dragEnded = true;
+      setTimeout(() => (dragEnded = false));
+      if (!drop) return;
       if (tree) void dropItems(ctx, items, tree.dir, copy); // Zed drops on a row even where it shows no mark (a Ctrl copy)
       else if (pane && !isDirPath(rows(), pressed)) dropEntry(ctx, pressed, pane.pane, pane.where); // Zed: a folder opens nothing
     };
     const up = (u: PointerEvent) => u.pointerId === id && finish(true, u.ctrlKey);
-    const lost = () => finish(false, false);
+    // A cancelled pointer, a lost capture or the window losing focus (a release outside it never comes) ends the press.
+    const lost = (c: Event) => (!(c instanceof PointerEvent) || c.pointerId === id) && finish(false, false);
     const escape = (k: KeyboardEvent) => {
       if (k.key !== "Escape") return;
       k.preventDefault();
@@ -206,6 +226,8 @@ export default function ProjectTree(props: { ctx: FolderContext }) {
     };
     window.addEventListener("pointermove", move, true);
     window.addEventListener("pointerup", up, true);
+    window.addEventListener("pointercancel", lost, true);
+    window.addEventListener("blur", lost);
   };
 
   // Files from Explorer: Tauri gives their paths and the point (physical pixels) of the window's webview.
@@ -224,6 +246,7 @@ export default function ProjectTree(props: { ctx: FolderContext }) {
     const pinned = stickyIndex !== undefined;
     const isEditing = () => !pinned && editing(row);
     const click = (e: MouseEvent, path: string) => {
+      if (dragEnded) return;
       if (!pinned) return pressRow(ctx, rows(), row, path, mods(e), e.detail);
       if (ctx.edit()) return;
       ctx.setSelection(only(row.path));

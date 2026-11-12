@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { bodyDrop, dropSide, lineSide, place } from "./drop.ts";
+import { bodyDrop, dropSide, entryIndex, lineSide, place } from "./drop.ts";
 
 test("I-712 / I-713: edges within min(w, h) * ratio split toward the nearest edge; the boundary and inside are the center", () => {
   // 1000 x 500 body: d = 100
@@ -41,4 +41,14 @@ test("I-719 / I-720 / I-717: the new place decides pinning; at the pin area's en
   assert.deepEqual(names(place(tabs, 2, t("x")).tabs), ["p1^", "p2^", "x", "a", "b"]);
   assert.deepEqual(names(place([], 0, t("x", true)).tabs), ["x^"]); // first place of a Pane without pins (I-720)
   assert.equal(place(tabs, 9, t("x", false, true)).tabs[4].preview, false); // past the end: the end; preview ends
+});
+
+test("I-3: a tree file dropped on a tab goes before that tab, new or already open in the Pane", () => {
+  // [A, B, C, D], B active: a new X opens after B (at 2); dropped on D (3) it is [A, B, C, X, D].
+  const rest = ["A", "B", "C", "D"].map((path) => ({ path, preview: false, pinned: false }));
+  const x = { path: "X", preview: false, pinned: false };
+  assert.deepEqual(place(rest, entryIndex(3, 2, false), x).tabs.map((t) => t.path), ["A", "B", "C", "X", "D"]);
+  // C already open (at 2), dropped on D (3): [A, B, D] without it, so before D is index 2.
+  assert.equal(entryIndex(3, 2, true), 2);
+  assert.equal(entryIndex(0, 2, true), 0);
 });
