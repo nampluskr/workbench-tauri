@@ -788,6 +788,8 @@ button, input, select, textarea {
   margin: calc(-1 * var(--markdown-preview-container-padding)) calc(-1 * var(--markdown-preview-container-padding)) var(--markdown-preview-container-padding);
   border-bottom: var(--toolbar-border-bottom) solid var(--border-variant); background: var(--toolbar-background); color: var(--text);
 }
+/* While the bar is open, scrolling an element to the top (Outline, nearest) stops under it: the bar's height, as the .document-search rules make it. */
+.markdown-preview:has(> .preview-search) { scroll-padding-top: calc(2 * var(--toolbar-padding-y) + max(var(--editor-search-input-min-height), var(--buttons-height-default)) + var(--toolbar-border-bottom)); }
 /* As the editor's marks: other matches light, the current one in the selection colour. */
 ::highlight(preview-find) { background-color: var(--ghost-element-selected); }
 ::highlight(preview-find-current) { background-color: var(--players-0-selection); }

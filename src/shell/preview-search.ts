@@ -94,7 +94,8 @@ export function createPreviewSearch(element: HTMLElement, body: HTMLElement): Pr
   button(row, "close", "Close (Escape)", () => close()).className = "document-search-close";
   dom.append(row);
 
-  const isOpen = () => dom.isConnected;
+  // Not isConnected: a preview tab that is not shown is out of the document, and its bar is still open (a re-render there must count again).
+  const isOpen = () => dom.parentNode === element;
   const clear = () => { painted = repaint(others, current, painted, [], -1); };
   /** Marks, count and toggles from `ranges` and `index`. */
   const paint = (scroll: boolean) => {
