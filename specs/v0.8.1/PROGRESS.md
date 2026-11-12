@@ -364,3 +364,102 @@
   - 결과: 문서만 바뀌었다.
   - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-05-R1-report.md`).
   - 특이사항: 없음.
+
+### Phase 5 — 코드 글꼴·크기, 코드 블록 음영, 머리 줄, Licenses
+
+- **K-05 I-10·I-11·I-12 (ORDER-05)** (2026-11-13, coder, 커밋 `4572b27`)
+  - 무엇을 했나: `src/app.css`, `src/editor/extensions.ts`, `src/settings/load.ts`·`model.ts`·`model.test.ts`, `src/shell/about.ts`·`about.test.ts`·`app-menus.test.ts`·`licenses.ts`·`markdown-preview.ts`, `src/spec/metrics.ts`를 고치고 `public/fonts/{jetbrains-mono,hack,ubuntu-mono,d2coding}/`를 새로 두었다. Settings 드롭다운·숫자 입력, `updateSettings` 저장 방식(주석·모르는 키 보존), `applyMetrics`의 descent 측정·`remeasureForFont`, `.icon-button`·tooltip·notify, Rust `write_clipboard_text`(About Copy와 같은 경로), `FONT_LICENSES`·`FONTS`, 테마 토큰 `--panel-background`를 재사용했다.
+  - 결과:
+    - 글꼴:
+
+      | 글꼴 | 출처 | 버전 | 라이선스 | 넣은 벌 | 형식 |
+      |---|---|---|---|---|---|
+      | JetBrains Mono | GitHub JetBrains/JetBrainsMono release v2.304 (`fonts/webfonts/`) | 2.304 | OFL-1.1(`OFL.txt`) | Regular·Italic·Bold·BoldItalic | woff2(배포본) |
+      | Hack | GitHub source-foundry/Hack release v3.003 webfonts(전체판) | 3.003 | MIT + Bitstream Vera License(`LICENSE.md`) | Regular·Italic·Bold·BoldItalic | woff2(배포본) |
+      | Ubuntu Mono | assets.ubuntu.com ubuntu-font-family-0.83 | 묶음 0.83(name table 0.80) | Ubuntu Font Licence 1.0(`LICENCE.txt`) | R·RI·B·BI | TTF(원본) |
+      | D2Coding | GitHub naver/d2codingfont release VER1.3.2 | 1.3.2(Build 20180524) | OFL-1.1(`OFL.txt`, zip에 없어 저장소에서) | Regular만 | TTF(원본) |
+
+      - 빌드 크기 `dist/fonts/`: jetbrains-mono 385,167 / hack 442,860 / ubuntu-mono 828,245 / d2coding 4,190,355 B.
+      - D2Coding Regular만: 한 벌이 4.0 MB(한글 26,188 글리프)라 Bold(4.2 MB)를 더하면 두 배가 된다. 굵게·기울임은 브라우저 합성이고, 배포본에 Italic은 원래 없다.
+      - Ubuntu Mono·D2Coding을 TTF 그대로 둔 이유: Ubuntu Mono는 공식 배포가 TTF뿐이고 UFL의 수정본 조건에 형식 변환이 드는지 불분명하다. D2Coding은 OFL Reserved Font Name이라 변환본이 이름을 쓸 수 없는 수정본이 될 수 있다(woff2였다면 1.49 MB).
+    - 설정 키: `buffer_font_family`(Settings > Editor "Font Family"), `preview_code_font_family`("Code Font Family"), `preview_code_font_size`("Code Font Size", 50~150 정수 %, 기본 85). 목록 = JetBrains Mono(기본)·Hack·Ubuntu Mono·D2Coding·Lilex. 목록 밖 이름·잘못된 값은 기본값.
+    - 코드 크기 = 미리보기 글자 크기(Ctrl+= 임시 크기 포함) × % / 100. 16px·85% = 13.6px. 모든 미리보기 `pre`·`.nb-count`·`.nb-error-title`에 적용, 인라인 코드 크기는 L-109 그대로.
+    - 글꼴 적용: 에디터 `--editor-font-family`, 미리보기 코드 `--preview-code-font-family`(값 `"<글꼴>", "Malgun Gothic", monospace`). `--buffer-font-family`는 Lilex 그대로(브레드크럼·검색 결과 이름·경로·Settings 절 제목). 글꼴을 `document.fonts.load`로 기다린 뒤 잰다.
+    - 음영(I-11): 배경 `panel.background`, 테두리 없음. 번들 테마 21개 모두 `panel.background` ≠ `editor.background`. 지난 1px `border.variant` 테두리와 `markdown_preview.code_block.border`는 지웠다.
+    - 머리 줄(I-12): 언어(펜스 info 첫 낱말, ipynb는 노트북 언어) + 복사 버튼. 언어 없는 블록은 언어 칸을 비운다. 복사는 `code`의 원문을 쓰고, 아이콘이 `copy` → `check`로 바뀌었다가 2초 뒤 돌아온다(`CODE_BLOCK_COPIED_MS` 2000, tauri 값). mermaid·수식·ipynb 출력·raw 셀·앞머리에는 머리 줄이 없다.
+    - capability·CSP·의존성 변경 없음.
+  - 검증: V1. `npm.cmd run typecheck` 오류 0, `npm.cmd run test` 303/303, `npm.cmd run build` 성공. 앱은 실행하지 않았다(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-05-report.md`).
+  - 특이사항:
+    - `editor.gutter.padding_left/right`(I-14)는 Lilex 15px에서 잰 고정 px라 다른 글꼴에서는 Zed와 다를 수 있다(기존 shortcut 주석).
+    - 머리 줄 높이·글자 크기는 스펙 ID 없는 tauri 선택(L-07·L-05 재사용)이다.
+- **checker 한도로 대리 검토** (2026-11-13, leader-core 결정)
+  - 무엇을 했나: checker 한도가 이어져 C-09·C-10을 Claude Code 서브 에이전트(새 컨텍스트)에 맡겼다.
+  - 결과: herdr 구성은 바꾸지 않았다.
+  - 검증: 없음(결정).
+  - 특이사항: 대리 검토자는 coder와 같은 모델 계열이라 독립성이 낮다.
+- **C-09 대리 검토(K-05)** [REWORK] (2026-11-13, Claude Code 서브 에이전트)
+  - 무엇을 했나: `4572b27`을 검토했다. `npm.cmd run typecheck` 오류 0, `npm.cmd run test` 303/303. 의존성·CSP·capability 변경 없음을 diff로 확인했다. 앱은 띄우지 않았다.
+  - 결과: 꼭 고칠 것 하나, 권고 넷.
+    - M-1: `.markdown-body .code-block`과 `.markdown-body > :first-child`의 명시도가 같아, 문서 첫 블록이 코드 블록이면 위 여백 16px이 생긴다(커밋 전 0px).
+    - R-1: ipynb 글자 출력·traceback·raw 셀·앞머리 `pre`도 코드 셀과 같은 음영을 받는다(회귀는 아님).
+    - R-2: 끌어 선택해 복사하면 머리 줄 언어 이름이 섞인다.
+    - R-3: Ubuntu Mono에 `copyright.txt`가 없다.
+    - R-4: `applyMetrics` 기본 인자가 DEFAULTS를 따로 적는다.
+  - 검증: V1 검토(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-09-report.md`).
+  - 특이사항: 검토하지 않은 것 — 화면 결과(V3 대상), 글꼴 바이너리 해시 대조(이름·크기만 확인).
+- **K-05-R1 C-09 M-1·R-2·R-3** (2026-11-13, coder, 커밋 `7d28b4b`)
+  - 무엇을 했나: `src/app.css`, `src/shell/licenses.ts`·`app-menus.test.ts`를 고치고 `public/fonts/ubuntu-mono/copyright.txt`를 더했다.
+  - 결과:
+    - M-1: 선택자를 `.markdown-body :where(.code-block)`로 바꿔 `.markdown-body > :first-child { margin-top: 0 }`이 이긴다. 첫 블록이 아닐 때 여백·음영·모서리는 그대로다.
+    - R-2: `.code-block-header`에 `user-select: none`.
+    - R-3: 공식 묶음의 `copyright.txt`(155 B, 원본과 `cmp` 같음)를 두고 Licenses의 `LICENCE.txt` 바로 뒤에 넣었다.
+  - 검증: V1. `npm.cmd run typecheck` 오류 0, 관련 테스트(`licenses`·`app-menus`·`about`) 9/9. 앱은 실행하지 않았다(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-05-R1-report.md`).
+  - 특이사항: R-1·R-4는 카드대로 하지 않았다.
+- **V3 측정** (2026-11-13, tauri-leader)
+  - 무엇을 했나: `7d28b4b` debug exe를 띄워 쟀다(`specs/v0.8.1/verify/ORDER-05/` `v3.json`·`v3-b.json`·`v3-c.json`, PNG, `themes/`, `measure.mjs`·`measure-b.mjs`·`measure-c.mjs`). 전체 검증 `npm.cmd run typecheck` 오류 0, `npm.cmd run test` 303/303.
+  - 결과: 판정은 C-10에서 한다. 측정값:
+    - 기본값: JetBrains Mono, 코드 블록 13.6px(본문 16px의 85%).
+    - 다섯 글꼴(편집기·미리보기)이 바로 반영된다. 미리보기 20px → 코드 17px, 120% 설정도 반영된다.
+    - 인라인 코드는 글꼴만 따른다(14px 그대로).
+    - ipynb 셀·출력·오류·`[3]`이 코드 글꼴이고, 셀 머리 줄은 python.
+    - 브레드크럼·검색 결과 이름·경로는 Lilex.
+    - 한글 주석: JetBrains Mono에서는 Malgun Gothic 7글리프, D2Coding에서는 D2Coding.
+    - 글꼴 요청은 tauri.localhost만(외부 0).
+    - 긴 줄 끝 클릭 → 1:91(Ubuntu Mono·JetBrains Mono).
+    - 잘못된 값 → 기본값, 앱 정상.
+    - 테마 21개 모두 코드 블록 배경 ≠ 페이지 배경.
+    - 머리 줄: python/빈 글자, mermaid·수식에는 없음, 높이 22·글자 12px.
+    - 복사(마우스·Enter): 클립보드 = 원문(탭·한글·끝 줄바꿈).
+    - Outline 클릭 → 제목 위끝(코드 블록 40개 문서).
+    - CSV·HTML·SVG 미리보기 정상, 에디터 Ctrl+= 15→16px.
+    - About 목록에 글꼴 넷, Licenses 탭에 라이선스 넷 + Ubuntu `copyright.txt`.
+    - R1 뒤: 첫 코드 블록 margin 0, 머리 줄 user-select none.
+    - 글꼴 빌드 크기 5,846,782 B(`dist/fonts` 넷).
+  - 검증: V3.
+  - 특이사항: 라이선스 탭은 가상 스크롤이라 스크롤하며 표지를 찾았다.
+- **C-10 대리 R1 검토·V3 판정** [1부 PASS, 2부 PASS] (2026-11-13, Claude Code 서브 에이전트)
+  - 무엇을 했나: `7d28b4b`의 R1 변경을 검토하고 `verify/ORDER-05/`의 V3 결과를 판정했다. `npm.cmd run typecheck` 오류 0, `npm.cmd run test` 303/303. 측정 스크립트를 읽고 JSON 키가 무엇을 재는지 대조했다. 앱은 띄우지 않았다.
+  - 결과:
+    - 1부 R1 검토 PASS. 새 결함 없음.
+      - M-1: `:where(.code-block)`로 명시도를 낮춰 first-child margin 0(`v3-c.json` 첫 블록 0px, 둘째 16px).
+      - R-2: 머리 줄 `user-select: none`.
+      - R-3: `copyright.txt`를 두고 Licenses의 `LICENCE.txt` 뒤에 넣었다.
+    - 2부 V3 #1~#13 PASS, 불일치 0.
+  - 검증: V1 검토·V3 판정(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-10-report.md`).
+  - 특이사항: 근거가 약한 것 —
+    - #3 글꼴·크기 변경은 `settings.json`을 직접 써서 바꿨다. Settings 화면 조작은 V1 테스트로만 확인했다.
+    - #4 Settings 절 제목 Lilex는 코드 확인이다.
+    - #6 Network 기록이 앱 시작 뒤에 켜져 처음 받은 글꼴은 기록에 없다. `@font-face` src가 모두 앱 내부 경로라는 코드 확인으로 보충했다.
+    - #7 잘못된 값은 실행 중 다시 읽기로 넣었다(시작 경로는 재지 않음).
+    - #9 Mermaid 문법 오류일 때 머리 줄 없음은 코드 확인이다.
+    - #11 위치 연계는 미리보기 → 편집기 방향만 쟀다. 수식은 캡처로 판정했다.
+  - V4 사용자 확인(Phase 7 뒤): 테마 21개 음영 대비·구문 색 가독성, ipynb 출력 음영.
+- **W-06 ORDER-05 PROGRESS·PLAN 기록** (2026-11-13, writer)
+  - 무엇을 했나: 위 Phase 5 항목을 K-05·C-09·K-05-R1 보고 파일·V3 결과·leader-core 결정과 카드에서 옮겨 적고, `PLAN.md`에 Phase 5 작업 카드 표를 더했다.
+  - 결과: 문서만 바뀌었다.
+  - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-06-report.md`).
+  - 특이사항:
+    - R-1(ipynb 출력에도 음영)은 사용자 확인(Phase 7 뒤).
+    - R-4는 하지 않았다.
+    - About 목록의 Ubuntu Mono 저작권 줄은 2011(글꼴 name table), `copyright.txt`는 2010,2011이다. 바꾸지 않았다.
+    - D2Coding(4 MB)을 처음 고르면 읽는 동안 에디터 글꼴 변경이 잠깐 늦다.

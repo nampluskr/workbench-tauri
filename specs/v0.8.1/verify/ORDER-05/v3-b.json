@@ -1,0 +1,74 @@
+{
+  "c3_editor_fonts": {
+    "JetBrains Mono": {
+      "family": "\"JetBrains Mono\", \"Malgun Gothic\", monospace",
+      "size": "15px",
+      "lineHeight": "24px"
+    },
+    "Hack": {
+      "family": "Hack, \"Malgun Gothic\", monospace",
+      "size": "15px",
+      "lineHeight": "24px"
+    },
+    "Ubuntu Mono": {
+      "family": "\"Ubuntu Mono\", \"Malgun Gothic\", monospace",
+      "size": "15px",
+      "lineHeight": "24px"
+    },
+    "D2Coding": {
+      "family": "D2Coding, \"Malgun Gothic\", monospace",
+      "size": "15px",
+      "lineHeight": "24px"
+    },
+    "Lilex": {
+      "family": "Lilex, \"Malgun Gothic\", monospace",
+      "size": "15px",
+      "lineHeight": "24px"
+    }
+  },
+  "c11_ctrl_plus": {
+    "before": "15px",
+    "after": "16px",
+    "family": "\"JetBrains Mono\", \"Malgun Gothic\", monospace"
+  },
+  "c11_outline_scroll": {
+    "Part 25": {
+      "top": 0,
+      "scrollTop": 4190,
+      "headers": 40
+    },
+    "Part 10": {
+      "top": 0,
+      "scrollTop": 1686,
+      "headers": 40
+    }
+  },
+  "c11_other_previews": {
+    "data.csv": {
+      "table": true,
+      "iframe": false,
+      "img": false,
+      "headers": 0
+    },
+    "page.html": {
+      "table": false,
+      "iframe": true,
+      "img": false,
+      "headers": 0
+    },
+    "pic.svg": {
+      "table": false,
+      "iframe": false,
+      "img": true,
+      "headers": 0
+    }
+  },
+  "c12_licenses_text": {
+    "tab": "Licenses",
+    "length": 1976,
+    "jetbrains": [],
+    "hack": [],
+    "ubuntu": [],
+    "d2coding": []
+  }
+}

@@ -70,3 +70,13 @@
 | C-08 | R1 검토·V3 판정 — 대리 검토(Claude Code 서브 에이전트, 새 컨텍스트) | I-4 |
 | K-04-R2 | C-08 R1-1(dock·Outline 너비 변수에 잘린 실제 폭을 씀 — 한쪽을 한계 너머로 끌어도 다른 쪽이 줄지 않음) | I-4 |
 | W-05 | PROGRESS(ORDER-04 기록)·PLAN(이 표) | ORDER-04 |
+
+### Phase 5 작업 카드
+
+| 카드 | 할 일 | core 항목 |
+|---|---|---|
+| K-05 | I-10 코드 글꼴(JetBrains Mono 기본·Hack·Ubuntu Mono·D2Coding·Lilex)과 미리보기 코드 크기 %(기본 85), I-11 코드 블록 음영(`panel.background`), I-12 머리 줄(언어·복사), Licenses에 글꼴 넷 | I-10 · I-11 · I-12 |
+| C-09 | 검토 — 대리 검토(Claude Code 서브 에이전트, 새 컨텍스트), REWORK | I-10 · I-11 · I-12 |
+| K-05-R1 | C-09 M-1(첫 코드 블록 위 여백 0 복원)·R-2(머리 줄 선택 안 됨)·R-3(Ubuntu Mono `copyright.txt`) | I-10 · I-12 |
+| C-10 | R1 검토·V3 판정 — 대리 검토(Claude Code 서브 에이전트, 새 컨텍스트) | I-10 · I-11 · I-12 |
+| W-06 | PROGRESS(ORDER-05 기록)·PLAN(이 표) | ORDER-05 |

@@ -1,0 +1,344 @@
+{
+  "window": {
+    "w": 1440,
+    "h": 852,
+    "dpr": 1
+  },
+  "c2_defaults_editor": {
+    "editor": "\"JetBrains Mono\", \"Malgun Gothic\", monospace"
+  },
+  "c2_defaults": {
+    "editor": null,
+    "pre": "\"JetBrains Mono\", \"Malgun Gothic\", monospace",
+    "preSize": "13.6px",
+    "body": "16px",
+    "inline": "\"JetBrains Mono\", \"Malgun Gothic\", monospace",
+    "inlineSize": "14px",
+    "var": "13.6px"
+  },
+  "c4_scope": {
+    "breadcrumb": null,
+    "breadcrumbEditor": "Lilex, \"Malgun Gothic\", monospace",
+    "searchName": "Lilex, \"Malgun Gothic\", monospace",
+    "searchDir": "Lilex, \"Malgun Gothic\", monospace"
+  },
+  "c4_ipynb": {
+    "cell": "\"JetBrains Mono\", \"Malgun Gothic\", monospace",
+    "cellSize": "13.6px",
+    "output": "\"JetBrains Mono\", \"Malgun Gothic\", monospace",
+    "errorTitle": "\"JetBrains Mono\", \"Malgun Gothic\", monospace",
+    "traceback": "\"JetBrains Mono\", \"Malgun Gothic\", monospace",
+    "count": "\"JetBrains Mono\", \"Malgun Gothic\", monospace",
+    "countText": "[3]",
+    "header": true,
+    "headerLang": "python",
+    "outputHeaders": 0
+  },
+  "c9_headers": {
+    "blocks": [
+      {
+        "lang": "python",
+        "copy": true,
+        "aria": "Copy Code",
+        "first": "def greet(name)"
+      },
+      {
+        "lang": "",
+        "copy": true,
+        "aria": "Copy Code",
+        "first": "plain fence\n"
+      },
+      {
+        "lang": "",
+        "copy": true,
+        "aria": "Copy Code",
+        "first": "indented block\n"
+      }
+    ],
+    "mermaid": {
+      "svg": true,
+      "header": false
+    },
+    "math": {
+      "rendered": true,
+      "header": false
+    },
+    "headerBox": {
+      "h": 22,
+      "font": "12px",
+      "color": "rgb(169, 175, 188)"
+    }
+  },
+  "c10_copy": {
+    "expected": "def greet(name):\n\t# 한글 주석입니다\n\treturn f\"hi {name}\"\n",
+    "clip": "def greet(name):\n\t# 한글 주석입니다\n\treturn f\"hi {name}\"\n",
+    "equal": true,
+    "afterIcon": "Copied",
+    "backIcon": "Copy Code",
+    "keyboardEqual": true,
+    "clipKeyStart": "def greet(na"
+  },
+  "c8_shading": {
+    "One Dark": {
+      "block": "rgb(47, 52, 62)",
+      "page": "rgb(40, 44, 51)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "One Light": {
+      "block": "rgb(235, 235, 236)",
+      "page": "rgb(250, 250, 250)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "Catppuccin Latte": {
+      "block": "rgb(230, 233, 239)",
+      "page": "rgb(239, 241, 245)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "Catppuccin Frappé": {
+      "block": "rgb(41, 44, 60)",
+      "page": "rgb(48, 52, 70)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "Catppuccin Macchiato": {
+      "block": "rgb(30, 32, 48)",
+      "page": "rgb(36, 39, 58)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "Catppuccin Mocha": {
+      "block": "rgb(24, 24, 37)",
+      "page": "rgb(30, 30, 46)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "Catppuccin Latte - No Italics": {
+      "block": "rgb(230, 233, 239)",
+      "page": "rgb(239, 241, 245)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "Catppuccin Frappé - No Italics": {
+      "block": "rgb(41, 44, 60)",
+      "page": "rgb(48, 52, 70)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "Catppuccin Macchiato - No Italics": {
+      "block": "rgb(30, 32, 48)",
+      "page": "rgb(36, 39, 58)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "Catppuccin Mocha - No Italics": {
+      "block": "rgb(24, 24, 37)",
+      "page": "rgb(30, 30, 46)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "macOS Classic Light": {
+      "block": "rgb(249, 249, 249)",
+      "page": "rgb(255, 255, 255)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "macOS Classic Dark": {
+      "block": "rgb(30, 29, 30)",
+      "page": "rgb(19, 19, 19)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "Ayu Dark": {
+      "block": "rgb(31, 33, 39)",
+      "page": "rgb(13, 16, 22)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "Ayu Light": {
+      "block": "rgb(236, 236, 237)",
+      "page": "rgb(252, 252, 252)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "Ayu Mirage": {
+      "block": "rgb(53, 57, 68)",
+      "page": "rgb(36, 40, 53)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "Gruvbox Dark": {
+      "block": "rgb(58, 55, 53)",
+      "page": "rgb(40, 40, 40)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "Gruvbox Dark Hard": {
+      "block": "rgb(57, 54, 52)",
+      "page": "rgb(29, 32, 33)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "Gruvbox Dark Soft": {
+      "block": "rgb(59, 55, 53)",
+      "page": "rgb(50, 48, 47)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "Gruvbox Light": {
+      "block": "rgb(236, 221, 180)",
+      "page": "rgb(251, 241, 199)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "Gruvbox Light Hard": {
+      "block": "rgb(236, 221, 181)",
+      "page": "rgb(249, 245, 215)",
+      "body": "rgba(0, 0, 0, 0)"
+    },
+    "Gruvbox Light Soft": {
+      "block": "rgb(236, 220, 179)",
+      "page": "rgb(242, 229, 188)",
+      "body": "rgba(0, 0, 0, 0)"
+    }
+  },
+  "c3_fonts": {
+    "JetBrains Mono": {
+      "editor": null,
+      "pre": "\"JetBrains Mono\", \"Malgun Gothic\", monospace",
+      "preSize": "13.6px",
+      "body": "16px",
+      "inline": "\"JetBrains Mono\", \"Malgun Gothic\", monospace",
+      "inlineSize": "14px",
+      "var": "13.6px",
+      "previewKorean": [
+        "Malgun Gothic:7",
+        "JetBrains Mono:3"
+      ]
+    },
+    "Hack": {
+      "editor": null,
+      "pre": "Hack, \"Malgun Gothic\", monospace",
+      "preSize": "13.6px",
+      "body": "16px",
+      "inline": "Hack, \"Malgun Gothic\", monospace",
+      "inlineSize": "14px",
+      "var": "13.6px",
+      "previewKorean": [
+        "Hack:3",
+        "Malgun Gothic:7"
+      ]
+    },
+    "Ubuntu Mono": {
+      "editor": null,
+      "pre": "\"Ubuntu Mono\", \"Malgun Gothic\", monospace",
+      "preSize": "13.6px",
+      "body": "16px",
+      "inline": "\"Ubuntu Mono\", \"Malgun Gothic\", monospace",
+      "inlineSize": "14px",
+      "var": "13.6px",
+      "previewKorean": [
+        "Malgun Gothic:7",
+        "Ubuntu Mono:3"
+      ]
+    },
+    "D2Coding": {
+      "editor": null,
+      "pre": "D2Coding, \"Malgun Gothic\", monospace",
+      "preSize": "13.6px",
+      "body": "16px",
+      "inline": "D2Coding, \"Malgun Gothic\", monospace",
+      "inlineSize": "14px",
+      "var": "13.6px",
+      "previewKorean": [
+        "D2Coding:10"
+      ]
+    },
+    "Lilex": {
+      "editor": null,
+      "pre": "Lilex, \"Malgun Gothic\", monospace",
+      "preSize": "13.6px",
+      "body": "16px",
+      "inline": "Lilex, \"Malgun Gothic\", monospace",
+      "inlineSize": "14px",
+      "var": "13.6px",
+      "previewKorean": [
+        "Lilex:3",
+        "Malgun Gothic:7"
+      ]
+    },
+    "previewSize20": {
+      "editor": null,
+      "pre": "\"JetBrains Mono\", \"Malgun Gothic\", monospace",
+      "preSize": "17px",
+      "body": "20px",
+      "inline": "\"JetBrains Mono\", \"Malgun Gothic\", monospace",
+      "inlineSize": "17.5px",
+      "var": "17px"
+    },
+    "code120": {
+      "editor": null,
+      "pre": "\"JetBrains Mono\", \"Malgun Gothic\", monospace",
+      "preSize": "19.2px",
+      "body": "16px",
+      "inline": "\"JetBrains Mono\", \"Malgun Gothic\", monospace",
+      "inlineSize": "14px",
+      "var": "19.2px"
+    }
+  },
+  "c5_korean_editor": {
+    "JetBrains Mono": [
+      "Malgun Gothic:7",
+      "JetBrains Mono:3"
+    ],
+    "D2Coding": [
+      "D2Coding:10"
+    ]
+  },
+  "c6_long_line": {
+    "Ubuntu Mono": {
+      "x": 1197,
+      "y": 122,
+      "len": 90,
+      "status": "1:91",
+      "gutter": "3px",
+      "lineHeight": "24px"
+    },
+    "JetBrains Mono": {
+      "x": 1340,
+      "y": 122,
+      "len": 90,
+      "status": "1:91",
+      "gutter": "5px",
+      "lineHeight": "24px"
+    },
+    "fontRequests": [
+      "tauri.localhost .../Lilex-Regular.woff2",
+      "tauri.localhost .../IBMPlexSans-Italic.woff2",
+      "tauri.localhost .../IBMPlexSans-SemiBold.woff2",
+      "tauri.localhost .../JetBrainsMono-Italic.woff2",
+      "tauri.localhost .../hack-regular.woff2",
+      "tauri.localhost .../UbuntuMono-R.ttf",
+      "tauri.localhost .../D2Coding-Ver1.3.2-20180524.ttf"
+    ],
+    "externalRequests": []
+  },
+  "c7_bad_values": {
+    "editor": null,
+    "pre": "\"JetBrains Mono\", \"Malgun Gothic\", monospace",
+    "preSize": "13.6px",
+    "body": "16px",
+    "inline": "\"JetBrains Mono\", \"Malgun Gothic\", monospace",
+    "inlineSize": "14px",
+    "var": "13.6px",
+    "alive": 2
+  },
+  "c11_regress": {
+    "syntaxSpans": 13,
+    "outlineHeading": {
+      "top": 565,
+      "scrollTop": 0,
+      "canScroll": false
+    },
+    "blockActive": true,
+    "editorLine": "```python"
+  },
+  "c12_licenses": {
+    "aboutList": [
+      "JetBrains Mono 2.304 — OFL-1.1 — Copyright 2020 The JetBrains Mono Project Authors",
+      "Hack 3.003 — MIT AND Bitstream-Vera — Copyright 2018 Source Foundry Authors; Copyright 2003 Bitstream, Inc.",
+      "Ubuntu Mono 0.83 — Ubuntu Font Licence 1.0 — Copyright 2011 Canonical Ltd.",
+      "D2Coding 1.3.2 — OFL-1.1 — Copyright (c) 2015, NAVER Corporation"
+    ],
+    "licensesHas": {
+      "jetbrains": false,
+      "hack": false,
+      "ubuntu": false,
+      "d2coding": false
+    },
+    "licensesLen": 2102
+  }
+}

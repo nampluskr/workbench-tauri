@@ -1,0 +1,23 @@
+{
+  "m1_first_block": {
+    "first": "0px",
+    "second": "16px",
+    "firstTopFromBody": 0,
+    "headerUserSelect": "none"
+  },
+  "c12_licenses_scan": {
+    "tab": "Licenses",
+    "scrollHeight": 385728,
+    "found": {
+      "/fonts/jetbrains-mono/OFL.txt": 4,
+      "/fonts/hack/LICENSE.md": 4,
+      "/fonts/ubuntu-mono/LICENCE.txt": 4,
+      "/fonts/ubuntu-mono/copyright.txt": 4,
+      "/fonts/d2coding/OFL.txt": 4,
+      "JetBrains Mono Project Authors": 4,
+      "Bitstream Vera": 6,
+      "UBUNTU FONT LICENCE": 3,
+      "NAVER Corporation": 4
+    }
+  }
+}
