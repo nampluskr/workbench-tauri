@@ -1,0 +1,31 @@
+{
+  "before": {
+    "open": true,
+    "count": "1/6",
+    "focused": true,
+    "hl": 5,
+    "cur": 1,
+    "scrollTop": 0
+  },
+  "after": {
+    "open": true,
+    "count": "1/8",
+    "focused": false,
+    "hl": 7,
+    "cur": 1,
+    "scrollTop": 0
+  },
+  "previewApples": 8,
+  "copyBarClosed": "def fruit():\n    return 'banana'",
+  "outlineWithBar": {
+    "target": "변하지 않는 원칙"
+  },
+  "outlineWithBar2": {
+    "barBottom": 110,
+    "headingTop": 289,
+    "scrollTop": 229,
+    "below": true,
+    "gap": 179
+  },
+  "fatal": "Error: pane run done\n    at file:///C:/Users/nampl/AppData/Local/Temp/claude/0b8282fad92e4259/2dcc8c40-f3c7-4825-9532-571c138ca732/scratchpad/o6f.mjs:68:11"
+}

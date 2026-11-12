@@ -463,3 +463,100 @@
     - R-4는 하지 않았다.
     - About 목록의 Ubuntu Mono 저작권 줄은 2011(글꼴 name table), `copyright.txt`는 2010,2011이다. 바꾸지 않았다.
     - D2Coding(4 MB)을 처음 고르면 읽는 동안 에디터 글꼴 변경이 잠깐 늦다.
+
+### Phase 6 — 미리보기 제목·목록 간격, 미리보기 찾기
+
+- **Zed 실측 I-8** (2026-11-13, tauri-leader)
+  - 무엇을 했나: Zed 1.27.0(c84af5b)에서 시험 파일 `spacing.md`와 `INTENT.md` 사본을 미리보기로 열어 캡처했다(`specs/v0.8.1/verify/ORDER-06/` `zed-spacing-1/2/3.png`·`zed-intent.png`, 창 조작 `zed-window.ps1`, 잉크 줄 분석 `rows.mjs`). 설정 그대로, 테마 One Light, ui_font_size 16, 창 1440×852(클라이언트 1424×836). 같은 글자 줄끼리 잉크 위끝 간 거리로 비교했다.
+  - 결과: Zed 값(px) — H1·H2 가로선→문단 19, H3~H6→문단 19/20/19/19, 문단→H2~H6 32/32/31/30/30, H1/H2 글자→가로선 10/6, 붙은 항목 26, 감싼 줄 22, 중첩 21/26/31, 번호 26, 느슨한 항목 42, 문단→첫 항목 38, 문단→문단 38, 목록 끝→다음 문단 33~35, 느슨한 목록 끝→문단 50. 가로선 H1·H2 1px. tauri 고치기 전 값은 `tauri-before.json`·`tauri-before-spacing-*.png`.
+  - 검증: V3 측정(판정은 C-11).
+  - 특이사항:
+    - `--user-data-dir`로 따로 띄우려 했으나(`zed-capture.ps1`) CLI가 사용자 Zed에 새 창을 열었다. 그래서 카드 2절이 허락한 "사용자 Zed에서 새 창"으로 쟀다. 쓴 창 둘(spacing.md·INTENT.md)만 닫았고 사용자 창(workbench-core)은 그대로다.
+    - Zed 설정·테마는 바꾸지 않았다. tauri를 사용자 테마 One Light에 맞췄다.
+    - 첫 시험 파일은 빈 줄로 나뉜 목록이 하나의 느슨한 목록이 되어 다시 썼다.
+- **K-06a I-9 미리보기 찾기 (ORDER-06)** (2026-11-13, coder, 커밋 `9630b01`)
+  - 무엇을 했나: `src/editor/preview-find.ts`·`preview-find.test.ts`, `src/shell/preview-search.ts`를 새로 두고 `src/shell/markdown-preview.ts`·`Pane.tsx`, `src/workspace/context.ts`, `src/keymap/builtin.ts`, `src/app.css`를 고쳤다. CM `SearchQuery`(`literal: true`), `search.ts`의 `wholeWordTest`·`wholeWordOn`(I-20 단어 규칙), `.document-search` DOM·CSS·아이콘·문구, `EditorSearch` 키맵 문맥과 `editor::*` 명령 ID를 재사용했다.
+  - 결과:
+    - 대상: md·markdown·ipynb·csv·tsv. html·htm·svg·mmd·mermaid 미리보기와 이미지·PDF 탭에서는 Ctrl+F가 아무 일도 하지 않는다(`Preview.find`가 false).
+    - 키: 미리보기 안 `MarkdownPreview` 문맥(Ctrl+F·F3·Shift+F3·Esc), 바 입력칸 `EditorSearch` 문맥(Enter·Shift+Enter·Alt+C·W·R·Esc). 바가 닫힌 채 F3·Shift+F3를 누르면 바가 열린다.
+    - 표시: CSS Custom Highlight API. 공유 하이라이트 `preview-find`(`--ghost-element-selected`)·`preview-find-current`(`--players-0-selection`, priority 1)에 미리보기마다 자기 Range만 넣고 뺀다. DOM은 고치지 않는다.
+    - 찾는 글자: body의 텍스트 노드. `.code-block-header`·`.nb-count`(`[n]`)·`style`·`script`·`annotation`은 뺀다. 블록 경계에는 줄바꿈을 넣어 블록을 건너 이어지는 결과가 없다.
+    - 다시 계산: 바가 열린 동안 body의 MutationObserver(microtask로 묶음). 개수 문구 `n/m`·`0/0`·`Invalid regex`는 편집 탭과 같다.
+    - 스크롤: 지금 찾은 곳이 바 아래 보이는 영역 밖일 때만 가운데로 옮긴다. 넓은 CSV는 가로도 옮긴다.
+    - 바꾸기 줄·Select All·Find in Selection은 넣지 않았다(Zed 미리보기 바에도 없음).
+  - 검증: V1. `npx tsc --noEmit` 오류 0, 관련 테스트 43/43·15/15. 앱은 실행하지 않았다(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-06a-report.md`).
+  - 특이사항: 문서가 아주 크면 바가 열린 동안 편집할 때마다 전체를 다시 찾는다.
+- **K-06b I-8 제목·목록 간격 (ORDER-06)** (2026-11-13, coder, 커밋 `9630b01`)
+  - 무엇을 했나: `src/spec/metrics.ts`에 `markdown_preview.h1~h6.margin_top`·`margin_bottom` 12개(`prem`, 출처 주석 Zed 1.27.0 실측)를 더하고 `src/app.css`·`src/settings/model.ts`·`model.test.ts`를 고쳤다. v0.7 I-9 Settings 변수(`--preview-list-gap`·`--preview-list-line-gap`)를 재사용했다.
+  - 결과:
+
+    | 관계 | Zed | 고치기 전 | 고친 뒤 기대 | 무엇으로 |
+    |---|---|---|---|---|
+    | H1·H2 가로선 → 문단 | 19 | 7 | 19 | h1·h2 margin-bottom 12 |
+    | H3 / H4 / H5 / H6 → 문단 | 19 / 20 / 19 / 19 | 8 / 8 / 9 / 7 | 같음 | margin-bottom 11 / 12 / 10 / 12 |
+    | 문단 → H2 | 32 | 26 | 32 | h2 margin-top 22 |
+    | 문단 → H3 / H4 / H5 / H6 | 32 / 31 / 30 / 30 | 25 / 24 / 23 / 23 | 같음 | h3~h6 margin-top 23 |
+    | 붙은 항목 → 다음 | 26 | 36 | 26 | 줄 22(1em + 6) + 간격 4 |
+    | 감싼 항목 1줄 → 2줄 | 22 | 24 | 22 | list line gap 6 |
+    | 중첩 부모→자식 / 자식→자식 / 끝→다음 부모 | 21 / 26 / 31 | 23 / 36 / 41 | 같음 | flow-root, 중첩 목록 끝 4 |
+    | 번호 목록 → 다음 | 26 | 36 | 26 | |
+    | 느슨한 항목 → 다음 | 42 | 40 | 42 | 항목 안 문단 16 + 간격 4 |
+    | 문단 → 첫 항목 | 38 | 40 | 39 | 그대로 |
+    | 문단 → 문단 | 38 | 40 | 40 | 바꾸지 않음 |
+
+    - CSS: `li { display: list-item flow-root }`, `li > :is(ul, ol)` 아래 margin = `--preview-list-gap`, `li:last-child > :last-child` 아래 margin 0(목록 뒤 간격 그대로), `.nb-markdown > :first-child { margin-top: 0 }`.
+    - 기본값: `preview_list_line_gap` 8 → 6, `preview_list_gap` 12 → 4. 키·범위(0~48)·설정 화면은 그대로이고, 사용자 파일에 있는 값(옛 기본값 포함)을 그대로 쓴다.
+    - H1 위 여백은 시험 파일에 H1 앞 문단이 없어 재지 않았으므로 0이다. H2 글자→가로선 7(Zed 6)은 두었다.
+  - 검증: V1. `npx tsc --noEmit` 오류 0, `node --test src/settings/*.test.ts src/spec/metrics.test.ts` 12/12. 앱은 실행하지 않았다(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-06b-report.md`).
+  - 특이사항: `display: list-item flow-root`는 Chromium 115+에서 된다.
+- **K-06-R1 찾기 표시 지우기** (2026-11-13, coder, 커밋 `63edec6`)
+  - 무엇을 했나: V3에서 검색어를 바꾸거나 닫아도 앞 표시가 남는 것을 찾아 고쳤다. `src/editor/preview-find.ts`에 순수 함수 `repaint`를 더하고 `src/shell/preview-search.ts`·`preview-find.test.ts`를 고쳤다.
+  - 결과:
+    - 원인: `search()`가 `ranges`를 새 Range로 바꾼 뒤에 `paint()` 안 `clear()`가 `ranges`를 지웠다. 그래서 공유 하이라이트에 앞 Range가 남았다(current가 6, 7, 8…로 늘고, 닫은 뒤 apple×5가 남음).
+    - 고친 것: 넣은 Range를 `painted`에 따로 두고, 검색어·토글 변경, 지금 찾은 곳 이동, 다시 그림, 바 닫기, 탭 닫기 모두 `repaint`가 `painted`를 빼고 새로 넣는다. current는 늘 0개 또는 1개다.
+  - 검증: V1. `npx tsc --noEmit` 오류 0, `node --test src/editor/preview-find.test.ts` 3/3(새 테스트: 앞 표시가 남지 않음, F3 뒤 current 1개, 닫으면 다른 미리보기 Range는 남음). 보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-06-R1-report.md`.
+  - 특이사항: 없음.
+- **K-06-R2 숨은 미리보기 다시 계산·바 아래 스크롤** (2026-11-13, coder, 커밋 `e845831`)
+  - 무엇을 했나: V3에서 같은 pane의 숨은 미리보기가 갱신되지 않는 것(1/6 그대로)과 바가 버튼·제목을 가리는 것을 찾아 고쳤다. `src/shell/preview-search.ts` 한 줄, `src/app.css` 한 규칙.
+  - 결과:
+    - 원인 1: 바가 열렸는지를 `dom.isConnected`로 판단했다. 같은 pane에서 다른 탭을 보이면 미리보기가 문서에서 빠져(`PaneBody`의 `replaceChildren`) 다시 계산을 건너뛰었다.
+    - 고친 것 1: `isOpen = () => dom.parentNode === element`. 숨은 동안 다시 그려져도 바로 다시 계산한다(스크롤은 하지 않음).
+    - 고친 것 2: `.markdown-preview:has(> .preview-search)`에 바 높이만큼 `scroll-padding-top`(`.document-search` 크기 변수로 계산). Outline 제목 스크롤(`block: "start"`)과 블록 위치 연계(`nearest`)가 바 아래에서 멈춘다. 바가 닫히면 그대로다.
+  - 검증: V1. `npx tsc --noEmit` 오류 0, `node --test src/editor/preview-find.test.ts` 3/3. DOM·레이아웃 동작이라 테스트를 더하지 않았다(코드 확인, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-06-R2-report.md`).
+  - 특이사항: 없음.
+- **V3 측정** (2026-11-13, tauri-leader)
+  - 무엇을 했나: tauri에서 같은 `spacing.md`·`INTENT.md`를 One Light·미리보기 16px로 재고(`tauri-after.json`·`tauri-after-spacing-*.png`·`tauri-after-intent.png`, `63edec6`, 간격 코드는 `9630b01` 뒤 그대로), Zed와 나란히 캡처했다(`side-headings/lists/intent-tauri-vs-zed.png`, `measure-spacing.mjs`). 찾기는 `measure-find.mjs`로 `v3-find.json`·`v3-find-md.json`·`v3-find-hl.json`(R1 뒤)·`v3-find-pane.json`(R2 뒤)과 캡처 `c5-md-bar.png`·`c6-korean.png`·`c6-next-far.png`·`c8-side-by-side.png`·`c9-outline-with-bar.png`를 남겼다. 전체 검증 `npm.cmd run typecheck` 오류 0, `npm.cmd run test` 306/306(`e845831`).
+  - 결과: 판정은 C-11에서 한다. 측정값:
+    - 간격(고친 뒤, tauri / Zed): H1·H2 가로선→문단 19/19, 문단→H2~H6 32/32/31/30/30(같음), H3~H6→문단 19/20/19/19(같음), H2 글자→선 7/6, 붙은 항목 26/26, 감싼 줄 22/22, 중첩 21/26/31(같음), 번호 26/26, 느슨한 항목 42/42, 문단→첫 항목 39/38, 문단→문단 40/38, 목록 끝→다음 문단 38~40/33~35, 느슨한 목록 끝→문단 39/50. 가로선 H1·H2 1px #dfdfe0.
+    - `size20`(미리보기 20px): h2 margin-top 27.5·bottom 15, li 줄 26. `userListValues`: 설정 파일 12·8 → 변수 12px·8px.
+    - 찾기: 종류별 열림(`c5_kinds`), md 열기·토글·범위·다음/이전·Esc·회귀(`v3-find-md.json`), R1 뒤 검색어 바꿈·닫을 때 하이라이트와 나란히 갱신 1/6→1/8(`v3-find-hl.json`), R2 뒤 같은 pane 숨은 미리보기 1/6→1/8·하이라이트 7+1, 바 닫고 복사 원문 같음, 바 열린 채 Outline 제목 클릭 → 제목이 바 아래.
+  - 검증: V3.
+  - 특이사항:
+    - CDP 키가 블록 클릭 뒤 편집기로 가서 미리보기 포커스는 JS로 줬다. `v3-find.json`의 md 부분은 이 포커스 문제로 실패했고 `v3-find-md.json`으로 다시 쟀다.
+    - `v3-find-md.json`의 `c8_refresh`(같은 pane)와 `copy` "x"(바가 버튼을 가림)는 R2 전 값이고 R2로 고쳤다.
+    - 안쪽 링크(`#id`)는 스크롤되지 않는다. v0.4 `72bdaa7`부터 `anchor` 종류를 처리하는 코드가 없어서다(이 카드 전부터).
+    - 문단 간격(40 대 38)·목록 끝→문단(38~40 대 33~35)·느슨한 목록 끝(39 대 50)은 사용자가 말하지 않은 값이라 바꾸지 않았다.
+    - `INTENT.md` 나란히 캡처에서 Zed 본문 글자·불릿 들여쓰기가 tauri보다 작게 보인다(카드 범위 밖).
+    - PDF·이미지 미리보기의 Ctrl+F(#5)는 파일이 없어 재지 않았다.
+- **C-11 대리 검토·V3 판정** [1부 PASS, 2부 PASS] (2026-11-13, Claude Code 서브 에이전트)
+  - 무엇을 했나: `07e11d8..e845831`의 src를 검토하고 `verify/ORDER-06/`의 V3 결과를 판정했다. `npm.cmd run typecheck` 오류 0, `npm.cmd run test` 306/306, `git diff 07e11d8 e845831 -- spec` 출력 없음. `rows.mjs`로 Zed·tauri 캡처의 간격을 다시 계산했다. 앱·Zed는 띄우지 않았다.
+  - 결과:
+    - 1부 코드 검토 PASS. 꼭 고칠 것 없음. 권고 넷:
+      - 바가 열린 동안 MutationObserver가 비동기 그리기(코드 블록 색·수식·Mermaid)마다 전체를 다시 계산한다. 코드 블록이 많은 문서에서 입력 중 지연 가능 — 디바운스 권고.
+      - 제목 여백 ID(`markdown_preview.h1~h6.margin_*`)는 `spec/zed-metrics.toml`에 없다. 원본 반영은 core.
+      - `scroll-padding-top`이 바 높이를 `.document-search` 규칙과 따로 계산해, 그 규칙이 바뀌면 조용히 어긋난다.
+      - 숨은 글자(`display:none`, 닫힌 `details`)도 개수에 들어간다.
+    - 2부 V3 #1~#10 PASS, 불일치 0. `rows.mjs` 다시 계산이 leader 요약과 0~1px로 일치했다(H2 글자→선 7/6, 문단→첫 항목 39/38 외 0).
+  - 검증: V1 검토·V3 판정(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-11-report.md`).
+  - 특이사항: 근거가 약한 것 —
+    - #5 이미지·PDF 미리보기는 파일이 없어 코드 확인만 했다.
+    - 문서 중간 H1 위 여백은 재지 않았다(0 유지).
+    - Outline 제목 스크롤은 두 번 다 문서 끝(끝까지 스크롤된 상태)에서만 쟀다. scroll-padding 값이 바 높이와 같은지는 재지 않았다.
+    - 수식 `annotation` 제외는 코드 확인이다.
+    - ipynb·csv·tsv의 Esc 닫힘, csv·tsv의 검색어 개수는 기록이 없다(같은 코드 경로).
+    - 미리보기 20px에서 목록 간격은 px 고정이다(설정 단위가 px). ORDER 3.1 "비율 유지"를 목록에도 적용할지는 leader-core 판단.
+- **W-07 ORDER-06 PROGRESS·PLAN 기록** (2026-11-13, writer)
+  - 무엇을 했나: 위 Phase 6 항목을 K-06a·K-06b·K-06-R1·K-06-R2 보고 파일, C-11 카드(측정 요약)와 W-07 카드에서 옮겨 적고, `PLAN.md`에 Phase 6 작업 카드 표를 더했다.
+  - 결과: 문서만 바뀌었다.
+  - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-07-report.md`).
+  - 특이사항: 없음.

@@ -1,0 +1,190 @@
+{
+  "c5_md_open": {
+    "open": true,
+    "count": "0/0",
+    "focused": true,
+    "hl": 0,
+    "cur": 0,
+    "scrollTop": 0
+  },
+  "c6_toggles": {
+    "apple": {
+      "open": true,
+      "count": "1/6",
+      "focused": true,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "matchCase": {
+      "open": true,
+      "count": "1/4",
+      "focused": true,
+      "hl": 3,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "matchCaseOff": {
+      "open": true,
+      "count": "1/6",
+      "focused": true,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "word": {
+      "open": true,
+      "count": "1/4",
+      "focused": true,
+      "hl": 3,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "wordOff": {
+      "open": true,
+      "count": "1/6",
+      "focused": true,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "regexOn": {
+      "open": true,
+      "count": "1/6",
+      "focused": true,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "regexQuery": {
+      "open": true,
+      "count": "1/6",
+      "focused": true,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "regexOff": {
+      "open": true,
+      "count": "0/0",
+      "focused": true,
+      "hl": 0,
+      "cur": 0,
+      "scrollTop": 0
+    },
+    "korean": {
+      "open": true,
+      "count": "1/2",
+      "focused": true,
+      "hl": 1,
+      "cur": 1,
+      "scrollTop": 0
+    }
+  },
+  "c7_scope": {
+    "python": {
+      "open": true,
+      "count": "1/1",
+      "focused": true,
+      "hl": 0,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "banana": {
+      "open": true,
+      "count": "1/1",
+      "focused": true,
+      "hl": 0,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "math": {
+      "open": true,
+      "count": "1/1",
+      "focused": true,
+      "hl": 0,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "mermaid": {
+      "open": true,
+      "count": "1/1",
+      "focused": true,
+      "hl": 0,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "mermaidSvgText": 2
+  },
+  "c6_next_prev": {
+    "start": {
+      "open": true,
+      "count": "1/6",
+      "focused": true,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "enterSeq": [
+      "2/6@0",
+      "3/6@0",
+      "4/6@0",
+      "5/6@0",
+      "6/6@2327",
+      "1/6@0"
+    ],
+    "shiftEnter": {
+      "open": true,
+      "count": "6/6",
+      "focused": true,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 2327
+    }
+  },
+  "c5_esc": {
+    "open": false,
+    "count": null,
+    "focused": false,
+    "hl": 0,
+    "cur": 0,
+    "scrollTop": 2282
+  },
+  "c8_refresh": {
+    "before": {
+      "open": true,
+      "count": "1/6",
+      "focused": true,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "after": {
+      "open": true,
+      "count": "1/6",
+      "focused": false,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 0
+    }
+  },
+  "skipKinds": true,
+  "c9_regress": {
+    "editorFind": true,
+    "editorReplace": true,
+    "headingIds": [
+      "(no id)",
+      "(no id)"
+    ],
+    "linkScroll": {
+      "top": 2982,
+      "scrollTop": 0
+    },
+    "outlineWithBar": {
+      "headingTop": 720,
+      "barBottom": 110,
+      "hiddenUnderBar": false
+    },
+    "copy": "x"
+  }
+}

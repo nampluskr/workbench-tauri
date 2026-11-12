@@ -80,3 +80,15 @@
 | K-05-R1 | C-09 M-1(첫 코드 블록 위 여백 0 복원)·R-2(머리 줄 선택 안 됨)·R-3(Ubuntu Mono `copyright.txt`) | I-10 · I-12 |
 | C-10 | R1 검토·V3 판정 — 대리 검토(Claude Code 서브 에이전트, 새 컨텍스트) | I-10 · I-11 · I-12 |
 | W-06 | PROGRESS(ORDER-05 기록)·PLAN(이 표) | ORDER-05 |
+
+### Phase 6 작업 카드
+
+| 카드 | 할 일 | core 항목 |
+|---|---|---|
+| Zed 실측 | Zed 1.27.0에서 제목·목록 간격 실측(`verify/ORDER-06/`) — tauri-leader | I-8 |
+| K-06a | I-9 미리보기 찾기(md·ipynb·csv·tsv, 편집 탭 찾기 바 부품, CSS Highlight API) | I-9 |
+| K-06b | I-8 제목 여백 Zed 실측값, 목록 간격 기본값 6·4 | I-8 |
+| K-06-R1 | 찾기 표시를 바뀔 때·닫을 때 모두 지움(앞 검색 Range가 공유 하이라이트에 남던 것) | I-9 |
+| K-06-R2 | 숨은 미리보기가 다시 그려져도 찾기 결과 다시 계산, 찾기 바 아래에서 멈추는 스크롤(scroll-padding-top) | I-9 |
+| C-11 | 검토·V3 판정 — 대리 검토(Claude Code 서브 에이전트, 새 컨텍스트) | I-8 · I-9 |
+| W-07 | PROGRESS(ORDER-06 기록)·PLAN(이 표) | ORDER-06 |

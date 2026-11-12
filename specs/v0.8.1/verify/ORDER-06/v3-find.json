@@ -1,0 +1,102 @@
+{
+  "c5_md_open": {
+    "open": false,
+    "count": null,
+    "focused": false,
+    "hl": 0,
+    "cur": 0,
+    "scrollTop": 16
+  },
+  "c6_toggles": "ERR TypeError: Cannot read properties of null (reading 'querySelector')\n    at <anonymous>:1:124\n    at <anonymous>:1:312",
+  "c7_scope": "ERR TypeError: Cannot read properties of null (reading 'querySelector')\n    at <anonymous>:1:124\n    at <anonymous>:1:313",
+  "c6_next_prev": "ERR TypeError: Cannot read properties of null (reading 'querySelector')\n    at <anonymous>:1:124\n    at <anonymous>:1:312",
+  "c5_esc": {
+    "open": false,
+    "count": null,
+    "focused": false,
+    "hl": 0,
+    "cur": 0,
+    "scrollTop": 16
+  },
+  "c8_refresh": "ERR TypeError: Cannot read properties of null (reading 'querySelector')\n    at <anonymous>:1:124\n    at <anonymous>:1:312",
+  "c5_kinds": {
+    "find.ipynb": {
+      "open": true,
+      "count": "0/0",
+      "focused": true,
+      "hl": 0,
+      "cur": 0,
+      "scrollTop": 0
+    },
+    "ipynbCount7": {
+      "open": true,
+      "count": "0/0",
+      "focused": true,
+      "hl": 0,
+      "cur": 0,
+      "scrollTop": 0
+    },
+    "ipynbKiwi": {
+      "open": true,
+      "count": "1/3",
+      "focused": true,
+      "hl": 2,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "data.csv": {
+      "open": true,
+      "count": "0/0",
+      "focused": true,
+      "hl": 0,
+      "cur": 0,
+      "scrollTop": 0
+    },
+    "data.tsv": {
+      "open": true,
+      "count": "0/0",
+      "focused": true,
+      "hl": 0,
+      "cur": 0,
+      "scrollTop": 0
+    },
+    "page.html": {
+      "open": false,
+      "count": null,
+      "focused": false,
+      "hl": 0,
+      "cur": 0,
+      "scrollTop": 0
+    },
+    "pic.svg": {
+      "open": false,
+      "count": null,
+      "focused": false,
+      "hl": 0,
+      "cur": 0,
+      "scrollTop": 0
+    },
+    "d.mmd": {
+      "open": false,
+      "count": null,
+      "focused": false,
+      "hl": 0,
+      "cur": 0,
+      "scrollTop": 0
+    }
+  },
+  "c9_regress": {
+    "editorFind": true,
+    "editorReplace": true,
+    "linkScroll": {
+      "top": 2937,
+      "scrollTop": 0
+    },
+    "outlineWithBar": {
+      "headingTop": 720,
+      "barBottom": null,
+      "hiddenUnderBar": false
+    },
+    "copy": "def fruit():\n    return 'banana'"
+  }
+}

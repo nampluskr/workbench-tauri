@@ -1,0 +1,91 @@
+{
+  "q1": {
+    "s": {
+      "open": true,
+      "count": "1/6",
+      "focused": true,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "t": {
+      "all": [
+        "apple",
+        "apple",
+        "APPLE",
+        "apple",
+        "apple"
+      ],
+      "cur": [
+        "Apple"
+      ],
+      "labels": [
+        "Match Case (Alt+C)=false",
+        "Match Whole Word (Alt+W)=false",
+        "Use Regular Expression (Alt+R)=false"
+      ]
+    }
+  },
+  "q2": {
+    "s": {
+      "open": true,
+      "count": "1/1",
+      "focused": true,
+      "hl": 0,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "t": {
+      "all": [],
+      "cur": [
+        "python"
+      ],
+      "labels": [
+        "Match Case (Alt+C)=false",
+        "Match Whole Word (Alt+W)=false",
+        "Use Regular Expression (Alt+R)=false"
+      ]
+    }
+  },
+  "closed": {
+    "s": {
+      "open": false,
+      "count": null,
+      "focused": false,
+      "hl": 0,
+      "cur": 0,
+      "scrollTop": 0
+    },
+    "t": {
+      "all": [],
+      "cur": [],
+      "labels": []
+    }
+  },
+  "panes": [
+    [
+      "find.md",
+      "Preview find.md"
+    ],
+    [
+      "Preview find.md"
+    ]
+  ],
+  "sideBefore": {
+    "open": true,
+    "count": "1/6",
+    "focused": true,
+    "hl": 5,
+    "cur": 1,
+    "scrollTop": 0
+  },
+  "sideAfter": {
+    "open": true,
+    "count": "1/8",
+    "focused": false,
+    "hl": 7,
+    "cur": 1,
+    "scrollTop": 0
+  },
+  "fatal": "Error: hl run done\n    at file:///C:/Users/nampl/AppData/Local/Temp/claude/0b8282fad92e4259/2dcc8c40-f3c7-4825-9532-571c138ca732/scratchpad/o6f.mjs:66:11"
+}
