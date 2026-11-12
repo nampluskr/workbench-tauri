@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { DEFAULTS, categoryKeys, filterSettings, parseSettings, removeSettings, settingMenu, type SettingKey, settingNumber, settingStep, updateSetting, updateSettings } from "./model.ts";
+import { CODE_FONTS, DEFAULTS, categoryKeys, filterSettings, parseSettings, removeSettings, settingMenu, type SettingKey, settingNumber, settingStep, updateSetting, updateSettings } from "./model.ts";
 const THEMES = { theme: ["One Dark", "Catppuccin Mocha", "One Light"], icon_theme: ["Zed (Default)", "Catppuccin Mocha"] };
 import { stripJsonc } from "../keymap/user.ts";
 
@@ -92,13 +92,32 @@ test("I-9: the four preview gaps are whole pixels 0 to 48; a file value outside 
 
 test("settings search includes the category title, name and description", () => {
   const keys = (query: string) => filterSettings(query).map((r) => r.key);
-  assert.deepEqual(keys("preview"), ["preview_theme", "preview_font_size", "preview_paragraph_line_gap", "preview_paragraph_gap", "preview_list_line_gap", "preview_list_gap"]);
-  assert.deepEqual(keys("EDITOR"), ["editor_theme", "buffer_font_size", "editor_line_height", "editor_line_numbers", "editor_word_wrap", "editor_indent_guides", "editor_render_whitespace"]);
+  assert.deepEqual(keys("preview"), ["preview_theme", "preview_font_size", "preview_code_font_family", "preview_code_font_size", "preview_paragraph_line_gap", "preview_paragraph_gap", "preview_list_line_gap", "preview_list_gap"]);
+  assert.deepEqual(keys("EDITOR"), ["editor_theme", "buffer_font_family", "buffer_font_size", "editor_line_height", "editor_line_numbers", "editor_word_wrap", "editor_indent_guides", "editor_render_whitespace"]);
   assert.deepEqual(keys("ui"), ["theme", "icon_theme", "ui_font_size", "editor_indent_guides"]); // "guides" holds "ui"
   assert.deepEqual(keys("ui font size"), ["ui_font_size"]);
   assert.equal(keys("theme").length, 4);
-  assert.equal(keys("font size").length, 4); // the Line Height description names the font size
+  assert.equal(keys("font size").length, 5); // the Line Height and Code Font Size descriptions name the font size
   assert.equal(keys("missing").length, 0);
+});
+
+test("core v0.8.1 I-10: code fonts come from the bundled list, the code block size is a whole percent 50 to 150; anything else reads as the default", () => {
+  const read = (json: string) => parseSettings(json, THEMES);
+  assert.deepEqual([DEFAULTS.buffer_font_family, DEFAULTS.preview_code_font_family, DEFAULTS.preview_code_font_size], ["JetBrains Mono", "JetBrains Mono", 85]);
+  for (const key of ["buffer_font_family", "preview_code_font_family"] as const) {
+    for (const name of CODE_FONTS) assert.equal(read(`{"${key}":"${name}"}`)[key], name);
+    for (const value of ['"Consolas"', '"jetbrains mono"', "1", "null"]) assert.equal(read(`{"${key}":${value}}`)[key], "JetBrains Mono", `${key} ${value}`);
+    assert.deepEqual(settingMenu(key, "Hack", () => {}, THEMES).map((item) => [item.label, item.checked]), CODE_FONTS.map((name) => [name, name === "Hack"]));
+  }
+  for (const value of [50, 100, 150]) assert.equal(read(`{"preview_code_font_size":${value}}`).preview_code_font_size, value);
+  for (const value of [49, 151, 85.5, '"85"', "null"]) assert.equal(read(`{"preview_code_font_size":${value}}`).preview_code_font_size, 85, String(value));
+  assert.deepEqual([settingNumber("preview_code_font_size", 200), settingNumber("preview_code_font_size", 10), settingNumber("preview_code_font_size", 85.6)], [150, 50, 86]);
+  // Saved the usual way: comments and unknown keys stay.
+  const text = '{\n  // mine\n  "unknown": 1\n}\n';
+  const saved = updateSettings(text, { buffer_font_family: "D2Coding", preview_code_font_size: 90 }, THEMES);
+  assert.ok(saved.includes("// mine") && saved.includes('"unknown": 1'));
+  assert.deepEqual([read(saved).buffer_font_family, read(saved).preview_code_font_size], ["D2Coding", 90]);
+  assert.throws(() => updateSetting("{}", "preview_code_font_family", "Consolas", THEMES));
 });
 
 test("settings dropdown menus keep supported choices, selection and the saved value", () => {

@@ -15,7 +15,7 @@ const files = {
 
 test("I-29: the About list takes versions, licenses and copyright lines from the Licenses data", () => {
   const list = Object.fromEntries(attributions(files).map((entry) => [entry.name, entry]));
-  assert.deepEqual(Object.keys(list), ["Tauri", "Solid", "CodeMirror", "web-tree-sitter", "markdown-it", "KaTeX", "Mermaid", "Catppuccin Icons", "Codicons", "IBM Plex Sans", "Lilex"]);
+  assert.deepEqual(Object.keys(list), ["Tauri", "Solid", "CodeMirror", "web-tree-sitter", "markdown-it", "KaTeX", "Mermaid", "Catppuccin Icons", "Codicons", "IBM Plex Sans", "Lilex", "JetBrains Mono", "Hack", "Ubuntu Mono", "D2Coding"]);
   assert.deepEqual(list.Tauri, { name: "Tauri", version: "2.12.5", license: "Apache-2.0 OR MIT", copyright: "Copyright (c) 2017 - Present Tauri Apps Contributors" });
   assert.deepEqual(list.Solid, { name: "Solid", version: "1.9.18", license: "MIT", copyright: "Copyright (c) 2016-2025 Ryan Carniato" });
   assert.equal(list.CodeMirror.version, "6.43.15");
@@ -24,7 +24,7 @@ test("I-29: the About list takes versions, licenses and copyright lines from the
   assert.deepEqual(list.Codicons, { name: "Codicons", version: "0.0.46-24", license: "CC-BY-4.0", copyright: "Copyright (c) Microsoft Corporation." });
   assert.equal(list["Catppuccin Icons"].copyright, "Copyright (c) 2021 Catppuccin");
   for (const entry of Object.values(list)) assert.ok(entry.license && entry.copyright, entry.name);
-  assert.deepEqual(attributions({}).map((entry) => entry.name), ["IBM Plex Sans", "Lilex"], "missing data leaves out only what it cannot name");
+  assert.deepEqual(attributions({}).map((entry) => entry.name), ["IBM Plex Sans", "Lilex", "JetBrains Mono", "Hack", "Ubuntu Mono", "D2Coding"], "missing data leaves out only what it cannot name");
 });
 
 test("I-29: the Copy text holds the header, the technical lines and the main list; Windows 11 is told from the platform version", () => {

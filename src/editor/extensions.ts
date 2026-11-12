@@ -13,7 +13,7 @@ import {
   selectLineUp, selectPageDown, selectPageUp, simplifySelection,
 } from "@codemirror/commands";
 import { invoke } from "@tauri-apps/api/core";
-import { BUFFER_FONT_FAMILY, EDITOR_TAB_SIZE, EDITOR_UNDO_GROUP_INTERVAL_MS } from "../spec/metrics.ts";
+import { EDITOR_TAB_SIZE, EDITOR_UNDO_GROUP_INTERVAL_MS } from "../spec/metrics.ts";
 import { imeShortcutInput } from "./ime.ts";
 import { highlightSelectionMatches } from "@codemirror/search";
 import { documentSearch } from "./search.ts";
@@ -27,7 +27,7 @@ const lineHeight =
 const zedEditorTheme = EditorView.theme({
   "&": {
     height: "100%",
-    fontFamily: BUFFER_FONT_FAMILY,
+    fontFamily: "var(--editor-font-family)", // core v0.8.1 I-10
     fontSize: "var(--editor-buffer-font-size)",
     fontWeight: "var(--font-weight-default)", // I-14
     fontFeatureSettings: "normal", // I-14: UI calt setting does not apply to the buffer

@@ -48,10 +48,15 @@ function noticeFile(files: Record<string, string>, base: string, label: string, 
   return undefined;
 }
 
-// The fonts ship their license files in public/fonts and are fetched at run time, so the two lines are written here (versions: none stated).
+// The fonts ship their license files in public/fonts and are fetched at run time, so their lines are written here (IBM Plex Sans and Lilex state no version).
 const FONTS: Attribution[] = [
   { name: "IBM Plex Sans", version: "", license: "OFL-1.1", copyright: 'Copyright © 2017 IBM Corp. with Reserved Font Name "Plex"' },
   { name: "Lilex", version: "", license: "OFL-1.1", copyright: "Copyright 2019 The Lilex Project Authors" },
+  // core v0.8.1 I-10: the code fonts, versions as their release archives name them.
+  { name: "JetBrains Mono", version: "2.304", license: "OFL-1.1", copyright: "Copyright 2020 The JetBrains Mono Project Authors" },
+  { name: "Hack", version: "3.003", license: "MIT AND Bitstream-Vera", copyright: "Copyright 2018 Source Foundry Authors; Copyright 2003 Bitstream, Inc." },
+  { name: "Ubuntu Mono", version: "0.83", license: "Ubuntu Font Licence 1.0", copyright: "Copyright 2011 Canonical Ltd." },
+  { name: "D2Coding", version: "1.3.2", license: "OFL-1.1", copyright: "Copyright (c) 2015, NAVER Corporation" },
 ];
 
 /** The libraries the running app is built from: the framework, the editor, the syntax, Markdown, formula and diagram engines, the bundled icons and the fonts. */

@@ -106,7 +106,7 @@ test("K-10-R1: Settings, Keymap and Classic are active; custom layout is checked
 });
 
 test("K-09: license notices retain available text when a copy is missing", async () => {
-  assert.deepEqual(FONT_LICENSES, ["/fonts/ibm-plex-sans/license.txt", "/fonts/lilex/OFL.txt"]);
+  assert.deepEqual(FONT_LICENSES, ["/fonts/ibm-plex-sans/license.txt", "/fonts/lilex/OFL.txt", "/fonts/jetbrains-mono/OFL.txt", "/fonts/hack/LICENSE.md", "/fonts/ubuntu-mono/LICENCE.txt", "/fonts/d2coding/OFL.txt"]);
   assert.equal(await licenseText({ bundled: async () => "Full notice", missing: async () => { throw new Error("missing"); } }), "bundled\n\nFull notice\n\nmissing\n\nLicense copy unavailable.");
   assert.equal(await licenseText({}), "");
 });

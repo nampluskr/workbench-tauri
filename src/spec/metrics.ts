@@ -258,8 +258,6 @@ const METRICS: Record<string, string> = {
   "markdown_preview.code_block.padding": prem(12), // L-109
   "markdown_preview.code_block.margin_y": prem(16), // L-109
   "markdown_preview.code_block.corner_radius": prem(6), // L-109
-  // No toml ID yet (K-53): Zed markdown.rs:272-279 border_widths 1px solid border_variant; requested for registration.
-  "markdown_preview.code_block.border": prem(1),
   "markdown_preview.frontmatter.border": prem(1), // L-111
   "markdown_preview.frontmatter.corner_radius": prem(4), // L-111
   "markdown_preview.frontmatter.key_cell_font_weight": "600", // L-111
@@ -368,6 +366,7 @@ export const TAB_MAX_TITLE_CHARS = 24; // tab.max_title_chars (L-26)
 export const PANE_MIN_DRAG = { w: 80, h: 100 }; // pane.min_drag_width / min_drag_height (I-726)
 export const PANE_DROP_TARGET_SIZE_RATIO = 0.2; // pane.drop_target_size_ratio (I-712)
 export const MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS = 200; // markdown_preview.parse_debounce (I-082)
+export const CODE_BLOCK_COPIED_MS = 2000; // core v0.8.1 I-12, tauri's choice (no Zed value): how long a code block's Copy button shows its check
 // core I-3: not in spec/zed-metrics.toml; Zed 4304dec732 project_panel.rs (reported to tauri-leader for the toml).
 export const PROJECT_PANEL_DRAG_EXPAND_DELAY_MS = 500; // a closed folder held under a drag opens (hover_expand_task, :6428)
 export const PROJECT_PANEL_DRAG_SCROLL = { near: 0.05, far: 0.15, fast: 8, slow: 5, tickMs: 16 }; // edge scroll per tick (hover_scroll_task, :7600-7631)
@@ -394,7 +393,11 @@ export const EDITOR_FONT_SIZE_MAX = 100; // px
 
 // I-14: bundled Zed families; DirectWrite maps Korean to Malgun Gothic on this PC.
 const UI_FONT_FAMILY = '"IBM Plex Sans", "Malgun Gothic", sans-serif';
-export const BUFFER_FONT_FAMILY = '"Lilex", "Malgun Gothic", monospace';
+// core v0.8.1 I-10: the breadcrumbs, search result names and Settings section titles keep Lilex; the editor and preview code take the setting.
+const BUFFER_FONT_FAMILY = '"Lilex", "Malgun Gothic", monospace';
+const codeFontFamily = (name: string) => `"${name}", "Malgun Gothic", monospace`; // a font without Hangul falls back to Malgun Gothic (Zed, VS Code)
+/** core v0.8.1 I-10: the Settings code fonts and the preview code block size in % of the preview font size. */
+export type CodeFonts = { editor: string; preview: string; previewPercent: number };
 const FONT_WEIGHT = 400; // I-14: default UI and buffer weight
 const UI_FONT_FEATURE_SETTINGS = '"calt" 0'; // I-14: disable UI contextual alternates
 
@@ -403,20 +406,23 @@ let metricsSheet: CSSStyleSheet | undefined;
 /** core v0.7 I-9: the four preview gaps in px, not scaled by the preview font size. L-103 paragraph_gap (below) still spaces the non-paragraph blocks. */
 export type PreviewGaps = { paragraphLine: number; paragraph: number; listLine: number; list: number };
 export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15, editorFontSize = bufferFontSize, previewFontSize = 16, editorLineHeight = 1.6,
-  gaps: PreviewGaps = { paragraphLine: 8, paragraph: 16, listLine: 8, list: 12 }): Promise<void> {
+  gaps: PreviewGaps = { paragraphLine: 8, paragraph: 16, listLine: 8, list: 12 }, code: CodeFonts = { editor: "JetBrains Mono", preview: "JetBrains Mono", previewPercent: 85 }): Promise<void> {
   const bufferSize = `${bufferFontSize}px`;
   const editorSize = `${editorFontSize}px`;
   const vars = Object.entries(METRICS).map(
     ([id, value]) => `--${id.replace(/[._]/g, "-")}: ${value};`,
   );
 
-  // E-005: gutter margin = |descent| of the buffer font. CSS cannot read it.
-  await document.fonts.load(`${FONT_WEIGHT} ${editorSize} "Lilex"`);
+  // E-005: gutter margin = |descent| of the editor font. CSS cannot read it. The font file is loaded first, so neither this nor
+  // CM's line measure (the variable below changes only after the load) sees the fallback font.
+  const editorFamily = codeFontFamily(code.editor);
+  await document.fonts.load(`${FONT_WEIGHT} ${editorSize} ${editorFamily}`);
   const ctx = document.createElement("canvas").getContext("2d")!;
-  ctx.font = `${editorSize} ${BUFFER_FONT_FAMILY}`; // the gutter margin belongs to the editor text, so it follows the Ctrl+= size
+  ctx.font = `${editorSize} ${editorFamily}`; // the gutter margin belongs to the editor text, so it follows the Ctrl+= size
   const descent = Math.abs(ctx.measureText("0").fontBoundingBoxDescent);
   vars.push(`--editor-gutter-margin: ${descent}px;`);
-  vars.push(`--buffer-font-family: ${BUFFER_FONT_FAMILY};`); // L-103: code in the Markdown preview uses the buffer font
+  vars.push(`--buffer-font-family: ${BUFFER_FONT_FAMILY};`);
+  vars.push(`--editor-font-family: ${editorFamily}; --preview-code-font-family: ${codeFontFamily(code.preview)}; --preview-code-font-size: ${previewFontSize * code.previewPercent / 100}px;`);
   vars.push(`--editor-line-height-multiplier: ${editorLineHeight};`); // core v0.7 I-8: the Settings editor_line_height
   vars.push(`--preview-paragraph-line-gap: ${gaps.paragraphLine}px; --preview-paragraph-gap: ${gaps.paragraph}px; --preview-list-line-gap: ${gaps.listLine}px; --preview-list-gap: ${gaps.list}px;`);
   vars.push(`--ui-font-family: ${UI_FONT_FAMILY};`);

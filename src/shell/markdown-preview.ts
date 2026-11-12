@@ -1,4 +1,4 @@
-import { convertFileSrc } from "@tauri-apps/api/core";
+import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import DOMPurify from "dompurify";
 import { csvTable } from "../editor/csv.ts";
 import { blockAt, classifyLink, localImagePath, renderMarkdown, type LinkTarget } from "../editor/markdown.ts";
@@ -6,12 +6,15 @@ import { htmlSrcdoc } from "../editor/html.ts";
 import { NOTEBOOK_HTML_FORBID_ATTR, NOTEBOOK_HTML_FORBID_TAGS, parseNotebook, type NotebookOutput } from "../editor/notebook.ts";
 import { svgElement } from "../editor/svg.ts";
 import type { PreviewKind } from "../editor/preview-kind.ts";
-import { MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS } from "../spec/metrics.ts";
+import { CODE_BLOCK_COPIED_MS, MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS } from "../spec/metrics.ts";
 import { languages, loadSyntax } from "../syntax/assets.ts";
 import { codeBlockHighlights } from "../syntax/document.ts";
 import { onPreviewThemeChange, previewAppearance, previewColors, previewSyntaxKeys } from "../theme/apply.ts";
 import { syntaxClass } from "../theme/theme.ts";
 import { drawMath, drawMermaid } from "./rich-blocks.ts";
+import { iconElement } from "./icon-svg.ts";
+import { notify } from "./toast.ts";
+import { tooltip } from "./tooltip.ts";
 
 // The body of a Markdown preview tab (R-11, D-10). Rendered with markdown-it, sanitized with DOMPurify (no script, no
 // event attributes, no style attribute; data-line attributes stay), then put in the tab's element.
@@ -64,6 +67,45 @@ const makeNode = (tag: string, className: string, text?: string): HTMLElement =>
   if (text !== undefined) el.textContent = text;
   return el;
 };
+
+/**
+ * core v0.8.1 I-12: each code block (fenced, indented, ipynb code cell; not a mermaid block, the frontmatter or an output) goes in a
+ * box under a header row: the language (empty when none is given) and a Copy button for the block's text as it is. The box takes
+ * the block's source lines (markdown-it puts them on the code of a fence, on the pre of an indented block) for the position link.
+ */
+function addCodeHeaders(body: HTMLElement): void {
+  for (const code of body.querySelectorAll<HTMLElement>("pre:not(.frontmatter-raw) > code:not(.language-mermaid)")) {
+    const pre = code.parentElement!;
+    const box = makeNode("div", "code-block");
+    for (const name of ["data-line", "data-line-end"]) for (const el of [pre, code]) {
+      const value = el.getAttribute(name);
+      if (value === null) continue;
+      box.setAttribute(name, value);
+      el.removeAttribute(name);
+    }
+    const text = code.textContent ?? "";
+    const label = "Copy Code";
+    const button = makeNode("button", "icon-button code-block-copy");
+    button.setAttribute("type", "button");
+    button.setAttribute("aria-label", label);
+    button.append(iconElement("copy"));
+    tooltip(button, () => ({ title: label }));
+    let timer = 0;
+    button.addEventListener("click", (e) => {
+      e.stopPropagation(); // not a click on the block: the source selection stays
+      invoke("write_clipboard_text", { text }).then(() => {
+        clearTimeout(timer);
+        button.replaceChildren(iconElement("check"));
+        button.setAttribute("aria-label", "Copied");
+        timer = window.setTimeout(() => { button.replaceChildren(iconElement("copy")); button.setAttribute("aria-label", label); }, CODE_BLOCK_COPIED_MS);
+      }, (error) => notify([String(error)]));
+    });
+    const header = makeNode("div", "code-block-header");
+    header.append(makeNode("span", "code-block-language", /(?:^|\s)language-(\S+)/.exec(code.className)?.[1] ?? ""), button);
+    pre.replaceWith(box);
+    box.append(header, pre);
+  }
+}
 
 /** I-2: one output as DOM. Text is textContent; SVG and HTML are sanitized; a picture is a data: <img> (CSP allows data:). */
 function outputNode(output: NotebookOutput): HTMLElement | null {
@@ -197,6 +239,7 @@ export function createPreview(hooks: PreviewHooks): Preview {
   function afterRender(): void {
     const id = ++generation;
     const current = () => id === generation;
+    addCodeHeaders(body);
     void colorCodeBlocks(id);
     void drawMath(body, current);
     void drawMermaid(body, current);

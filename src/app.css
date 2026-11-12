@@ -47,6 +47,85 @@
   font-style: italic;
   font-weight: 700;
 }
+/* core v0.8.1 I-10: the code fonts (Settings editor / preview code font). D2Coding has Regular only (4 MB a face): bold and italic are synthesized. */
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/jetbrains-mono/JetBrainsMono-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/jetbrains-mono/JetBrainsMono-Italic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/jetbrains-mono/JetBrainsMono-Bold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/jetbrains-mono/JetBrainsMono-BoldItalic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Hack";
+  src: url("/fonts/hack/hack-regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Hack";
+  src: url("/fonts/hack/hack-italic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Hack";
+  src: url("/fonts/hack/hack-bold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Hack";
+  src: url("/fonts/hack/hack-bolditalic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Ubuntu Mono";
+  src: url("/fonts/ubuntu-mono/UbuntuMono-R.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Ubuntu Mono";
+  src: url("/fonts/ubuntu-mono/UbuntuMono-RI.ttf") format("truetype");
+  font-style: italic;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Ubuntu Mono";
+  src: url("/fonts/ubuntu-mono/UbuntuMono-B.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Ubuntu Mono";
+  src: url("/fonts/ubuntu-mono/UbuntuMono-BI.ttf") format("truetype");
+  font-style: italic;
+  font-weight: 700;
+}
+@font-face {
+  font-family: "D2Coding";
+  src: url("/fonts/d2coding/D2Coding-Ver1.3.2-20180524.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+}
 
 html, body, #root { height: 100%; margin: 0; }
 body {
@@ -756,23 +835,30 @@ button, input, select, textarea {
   text-decoration-thickness: var(--markdown-preview-link-underline-width);
   text-decoration-color: color-mix(in srgb, var(--text-accent) calc(var(--markdown-preview-link-underline-opacity) * 100%), transparent);
 }
-.markdown-body code { /* L-109 inline */
-  font-family: var(--buffer-font-family);
+.markdown-body code { /* L-109 inline; core v0.8.1 I-10: the Settings code font, the size stays L-109 */
+  font-family: var(--preview-code-font-family);
   font-size: var(--markdown-preview-inline-code-font-size);
   background: color-mix(in srgb, var(--editor-foreground) calc(var(--markdown-preview-inline-code-background-opacity) * 100%), transparent);
 }
-.markdown-body pre { /* L-109 block; K-53: Zed markdown.rs:272-279 gives the block a solid 1px border_variant border and the editor background (the old "no border" was wrong) */
-  font-family: var(--buffer-font-family); /* I-14 */
+/* L-109 block. core v0.8.1 I-11: a shaded box without a border, as GitHub and the VS Code preview draw it (was K-53's Zed editor background + 1px border);
+   panel.background differs from editor.background (the preview page) in every bundled theme. I-10: the Settings code font, at the Settings % of the preview size. */
+.markdown-body pre {
+  font-family: var(--preview-code-font-family);
+  font-size: var(--preview-code-font-size);
   font-weight: var(--font-weight-default);
   line-height: var(--editor-line-height-comfortable-multiplier);
   font-feature-settings: normal;
   margin: var(--markdown-preview-code-block-margin-y) 0;
   padding: var(--markdown-preview-code-block-padding);
-  border: var(--markdown-preview-code-block-border) solid var(--border-variant);
-  background: var(--editor-background);
+  background: var(--panel-background);
   border-radius: var(--markdown-preview-code-block-corner-radius);
   overflow-x: auto;
 }
+/* core v0.8.1 I-12: a code block (fenced, indented, ipynb code cell) is the header row (language, Copy) over its pre, in one shaded box. */
+.markdown-body .code-block { margin: var(--markdown-preview-code-block-margin-y) 0; background: var(--panel-background); border-radius: var(--markdown-preview-code-block-corner-radius); }
+.markdown-body .code-block > pre { margin: 0; padding-top: 0; background: none; border-radius: 0; }
+.code-block-header { display: flex; align-items: center; justify-content: space-between; padding: 0 0 0 var(--markdown-preview-code-block-padding); color: var(--text-muted); font-family: var(--ui-font-family); font-size: var(--typography-size-small); --icon-size: var(--icons-size-small); }
+.code-block-copy { border-radius: var(--markdown-preview-code-block-corner-radius); }
 .markdown-body pre code { font-size: inherit; background: none; }
 .markdown-body .frontmatter { /* L-111 */
   display: grid;
@@ -786,10 +872,10 @@ button, input, select, textarea {
 .markdown-body .fm-key:nth-child(n + 3), .markdown-body .fm-value:nth-child(n + 3) { border-top: var(--markdown-preview-frontmatter-row-border-top) solid var(--border); }
 .markdown-body img { max-width: 100%; height: auto; } /* core v0.8 I-3: shrink to fit, never enlarge */
 /* core v0.8 I-2: ipynb cells reuse the Markdown preview's code block (pre) and table rules; only what they lack is here. */
-.markdown-body .nb-count { color: var(--text-muted); font-family: var(--buffer-font-family); }
+.markdown-body .nb-count { color: var(--text-muted); font-family: var(--preview-code-font-family); font-size: var(--preview-code-font-size); }
 .markdown-body div.nb-output { margin: var(--markdown-preview-code-block-margin-y) 0; overflow-x: auto; }
 .markdown-body :is(.nb-stderr, .nb-error) { color: var(--error); }
-.markdown-body .nb-error-title { font-family: var(--buffer-font-family); }
+.markdown-body .nb-error-title { font-family: var(--preview-code-font-family); font-size: var(--preview-code-font-size); }
 .markdown-body :is(pre.nb-output, .nb-traceback, .nb-raw) { white-space: pre-wrap; overflow-wrap: anywhere; }
 .markdown-body .nb-hidden { color: var(--text-muted); margin: var(--markdown-preview-code-block-margin-y) 0; }
 /* core v0.8 I-4 / I-5: formulas (MathML, drawn by the WebView) and diagrams (Mermaid svg). The source text shows until they are drawn. */
