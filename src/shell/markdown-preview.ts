@@ -2,7 +2,7 @@ import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import DOMPurify from "dompurify";
 import { csvTable } from "../editor/csv.ts";
 import { blockAt, classifyLink, localImagePath, renderMarkdown, type LinkTarget } from "../editor/markdown.ts";
-import { htmlPreviewDoc, PREVIEW_CSP } from "../editor/html.ts";
+import { htmlPreviewDoc, PREVIEW_CSP, recordRecovery } from "../editor/html.ts";
 import { NOTEBOOK_HTML_FORBID_ATTR, NOTEBOOK_HTML_FORBID_TAGS, parseNotebook, type NotebookOutput } from "../editor/notebook.ts";
 import { svgElement } from "../editor/svg.ts";
 import type { PreviewKind } from "../editor/preview-kind.ts";
@@ -193,7 +193,8 @@ export function createPreview(hooks: PreviewHooks): Preview {
   const frameUrl = convertFileSrc(frameId, "preview");
   let frameScroll = 0; // reported by the frame document (headStart)
   let expected = false; // the next load is one this preview started
-  let recovered = false;
+  let recoveries: number[] = []; // times this render's document was shown again after a navigation
+  let stopped = false;
   const showFrame = () => { expected = true; frame.src = frameUrl; };
   const onFrameMessage = (e: MessageEvent) => {
     const y: unknown = e.source === frame.contentWindow ? e.data?.previewScrollY : undefined;
@@ -204,11 +205,16 @@ export function createPreview(hooks: PreviewHooks): Preview {
     frame.className = "html-frame";
     frame.setAttribute("sandbox", "allow-scripts");
     frame.setAttribute("csp", PREVIEW_CSP);
-    // A page script that navigates its frame is blocked by CSP and leaves an error page: show the preview again, once per render.
-    // shortcut: a second scripted navigation before the next render keeps the error page; count per user action if that matters.
+    // A page script that navigates its frame cannot be stopped first (opaque origin: no Navigation API events). What it lands on
+    // (a CSP error page, or the empty document WebView2 commits for the scheme's 204) is replaced by the preview again, each
+    // time; a page that keeps navigating gets a bounded number of these (recordRecovery), then a notice until the next render.
     frame.addEventListener("load", () => {
-      if (expected) expected = false;
-      else if (frame.src && !recovered) { recovered = true; showFrame(); }
+      if (expected) { expected = false; return; }
+      if (!frame.src || stopped) return;
+      const next = recordRecovery(recoveries, performance.now());
+      if (next) { recoveries = next; showFrame(); return; }
+      stopped = true;
+      notify(["This HTML page keeps navigating away.", "Its preview stops until the file or the theme changes."]);
     });
     window.addEventListener("message", onFrameMessage);
     body.append(frame);
@@ -227,7 +233,8 @@ export function createPreview(hooks: PreviewHooks): Preview {
       const id = ++generation;
       invoke("preview_set", { id: frameId, html }).then(() => {
         if (id !== generation) return; // disposed, or a newer render is on its way
-        recovered = false;
+        recoveries = [];
+        stopped = false;
         showFrame();
       }, (error) => notify(["Failed to show the HTML preview", String(error)]));
       return;

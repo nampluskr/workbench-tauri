@@ -58,6 +58,17 @@ const URL_ATTRS = new Set(["src", "href", "xlink:href", "poster", "data", "backg
 export const navigates = (tag: string, attr: string, value: string): boolean =>
   (attr === "href" || attr === "xlink:href") && (tag === "a" || tag === "area") ? !clean(value).startsWith("#") : attr === "action" || attr === "formaction";
 
+// Not Zed values (K-07a-R1, tauri decision): a page may navigate its frame away this many times within the window and still be
+// shown again. A user clicking through links stays far below it; a page navigating on a timer or on load reaches it in seconds.
+export const PREVIEW_RECOVER_LIMIT = 5;
+export const PREVIEW_RECOVER_WINDOW_MS = 5000;
+
+/** The recovery times still inside the window plus `now`, or null when showing the page again once more would pass the limit. */
+export function recordRecovery(times: readonly number[], now: number): number[] | null {
+  const recent = times.filter((t) => now - t < PREVIEW_RECOVER_WINDOW_MS);
+  return recent.length >= PREVIEW_RECOVER_LIMIT ? null : [...recent, now];
+}
+
 /** What an attribute becomes: its new value, null to drop it, undefined to keep it as it is (event handlers too: scripts run, I-7). */
 export function attributeValue(tag: string, name: string, value: string, sourcePath: string, convert: Convert): string | null | undefined {
   if (name === "ping") return null;

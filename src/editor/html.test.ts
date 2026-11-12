@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { attributeValue, defaultStyle, headStart, navigates, PREVIEW_CSP, resourceUrl, rewriteCss, rewriteSrcset, withHead } from "./html.ts";
+import { attributeValue, defaultStyle, headStart, navigates, PREVIEW_CSP, PREVIEW_RECOVER_LIMIT, PREVIEW_RECOVER_WINDOW_MS, recordRecovery, resourceUrl, rewriteCss, rewriteSrcset, withHead } from "./html.ts";
 import { renderMarkdown } from "./markdown.ts";
 import { hasPreview, previewKind } from "./preview-kind.ts";
 
@@ -94,4 +94,16 @@ test("markdown output has no style attribute", () => {
   const out = renderMarkdown('<p style="color:red">x</p>\n\n| a |\n|:-:|\n| b |\n');
   assert.ok(!/<[^>]+\sstyle=/.test(out));
   assert.ok(out.includes("align-center"));
+});
+
+// K-07a-R1: every navigation away is undone, but a page that keeps navigating is shown again only a bounded number of times.
+test("I-7: frame recoveries are bounded within the window, older ones expire", () => {
+  let times: number[] = [];
+  for (let i = 0; i < PREVIEW_RECOVER_LIMIT; i++) {
+    const next = recordRecovery(times, i * 10);
+    assert.ok(next, `recovery ${i + 1}`);
+    times = next;
+  }
+  assert.equal(recordRecovery(times, PREVIEW_RECOVER_LIMIT * 10), null);
+  assert.deepEqual(recordRecovery(times, PREVIEW_RECOVER_WINDOW_MS + 15), [20, 30, 40, PREVIEW_RECOVER_WINDOW_MS + 15]);
 });
