@@ -501,7 +501,8 @@ export function openPreview(ctx: FolderContext, from: PaneState, path: string, s
     return { path, preview: temporary, pinned: false, markdown: true, file: { doc: holder.doc, view: null, status, position, element: preview.element, dispose }, focus: false };
   };
   // core I-5: a tree click (`temporary`) follows the editor tabs' temporary-tab rule, so it may replace one of them.
-  const opened = openTab(pane.tabs(), pane.active(), path, temporary, PANE_MAX_PREVIEW_TABS, make, (t) => t.file.doc.dirty, true);
+  // A preview tab never holds edits (its doc is the source's), so only a modified editor tab is kept.
+  const opened = openTab(pane.tabs(), pane.active(), path, temporary, PANE_MAX_PREVIEW_TABS, make, (t) => !t.markdown && t.file.doc.dirty, true);
   if (opened.replaced) {
     release(opened.replaced.file);
     pane.recent = pane.recent.filter((f) => f !== opened.replaced!.file);

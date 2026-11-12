@@ -310,14 +310,16 @@ function TabList(props: { ctx: FolderContext; pane: PaneState }) {
   let list!: HTMLDivElement;
   // I-16: a tab that becomes the active one is scrolled into view (Zed scroll_to_item).
   const scrollActive = () => list.querySelector<HTMLElement>(".tab.active")?.scrollIntoView({ inline: "nearest", block: "nearest" });
+  let follow = true; // false once the wheel moved the row away from the active tab (I-16), until a tab is activated or clicked
   createEffect(() => {
     props.pane.active();
     tabs();
+    follow = true;
     scrollActive();
   });
   // core I-13: the row narrows after that scroll when the end buttons appear (they follow focus, which a tab click gives
   // the Pane only after activating it) or the window shrinks; keep the active tab whole then too.
-  const resized = new ResizeObserver(() => scrollActive());
+  const resized = new ResizeObserver(() => follow && scrollActive());
   onCleanup(() => resized.disconnect());
   return (
     <div
@@ -330,6 +332,7 @@ function TabList(props: { ctx: FolderContext; pane: PaneState }) {
         el.addEventListener("wheel", (e) => {
           if (e.deltaY === 0 || el.scrollWidth <= el.clientWidth) return;
           e.preventDefault();
+          follow = false;
           el.scrollLeft += tabWheelDelta(e.deltaY, e.deltaMode, parseFloat(getComputedStyle(document.documentElement).fontSize) * UI_LINE_HEIGHT_RATIO);
         }, { passive: false });
       }}
@@ -365,6 +368,7 @@ function TabList(props: { ctx: FolderContext; pane: PaneState }) {
               }}
               onClick={() => {
                 if (dragEnded) return;
+                follow = true; // clicking the already active tab changes no signal, but its buttons may still appear (I-13)
                 activateTab(props.ctx, props.pane, i()); // one click does not promote a preview tab (I-063)
                 focusPane(props.pane);
               }}
