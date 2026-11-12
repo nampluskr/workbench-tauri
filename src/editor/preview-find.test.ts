@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { SearchQuery } from "@codemirror/search";
-import { textMatches } from "./preview-find.ts";
+import { repaint, textMatches } from "./preview-find.ts";
 import { wholeWordTest } from "./search.ts";
 import { Keymap } from "../keymap/engine.ts";
 import { EDITOR_BINDINGS } from "../keymap/builtin.ts";
@@ -29,4 +29,16 @@ test("core v0.8.1 I-9: Ctrl+F, F3, Shift+F3 and Escape reach the find commands i
     assert.deepEqual(keys.dispatch([key], preview), { type: "match", action });
   }
   assert.deepEqual(keys.dispatch(["enter"], [...preview, new Set(["EditorSearch"])]), { type: "match", action: "editor::FindNext" });
+});
+
+test("core v0.8.1 I-9 (K-06-R1): a new search, a move and closing leave only this preview's current marks; current is 0 or 1", () => {
+  const others = new Set<string>(["other preview"]), current = new Set<string>();
+  let painted = repaint(others, current, [], ["apple1", "apple2", "Apple"], 2);
+  painted = repaint(others, current, painted, ["python"], 0); // the query changed: the ranges are new objects
+  assert.deepEqual([[...others], [...current]], [["other preview"], ["python"]]);
+  painted = repaint(others, current, painted, ["a", "b"], 1); // F3
+  painted = repaint(others, current, painted, ["a", "b"], 0);
+  assert.deepEqual([[...others], [...current]], [["other preview", "b"], ["a"]]);
+  repaint(others, current, painted, [], -1); // closed
+  assert.deepEqual([[...others], [...current]], [["other preview"], []]);
 });

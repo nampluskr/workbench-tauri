@@ -13,3 +13,14 @@ export function textMatches(text: string, query: SearchQuery): { from: number; t
   for (const { from, to } of { [Symbol.iterator]: () => query.getCursor(state) as Iterator<{ from: number; to: number }> }) if (to > from) found.push({ from, to });
   return found;
 }
+
+type RangeSet<T> = { add: (value: T) => unknown; delete: (value: T) => unknown };
+/**
+ * Swaps one preview's marks in the shared highlights: everything it put there before (`painted`) is taken out, then `next` goes in,
+ * `next[index]` alone in `current`. Returns what is painted now, to pass back next time.
+ */
+export function repaint<T>(others: RangeSet<T>, current: RangeSet<T>, painted: readonly T[], next: readonly T[], index: number): T[] {
+  for (const r of painted) { others.delete(r); current.delete(r); }
+  next.forEach((r, i) => (i === index ? current : others).add(r));
+  return [...next];
+}

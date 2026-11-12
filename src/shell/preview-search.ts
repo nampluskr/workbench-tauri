@@ -1,5 +1,5 @@
 import { SearchQuery } from "@codemirror/search";
-import { textMatches } from "../editor/preview-find.ts";
+import { repaint, textMatches } from "../editor/preview-find.ts";
 import { wholeWordOn, wholeWordTest } from "../editor/search.ts";
 import { iconElement } from "./icon-svg.ts";
 
@@ -56,7 +56,8 @@ export type PreviewSearch = { run: (action: string) => boolean; dispose: () => v
 /** The find bar of the preview `element` (the scroller) over `body`. */
 export function createPreviewSearch(element: HTMLElement, body: HTMLElement): PreviewSearch {
   let query = new SearchQuery({ search: "", literal: true });
-  let ranges: Range[] = [], index = -1, invalid = false;
+  // `painted` is what this preview has in the shared highlights; it is kept apart from `ranges`, which a new search replaces first.
+  let ranges: Range[] = [], painted: Range[] = [], index = -1, invalid = false;
 
   const make = (className: string, tag = "div") => {
     const el = document.createElement(tag);
@@ -94,11 +95,10 @@ export function createPreviewSearch(element: HTMLElement, body: HTMLElement): Pr
   dom.append(row);
 
   const isOpen = () => dom.isConnected;
-  const clear = () => { for (const r of ranges) { others.delete(r); current.delete(r); } };
+  const clear = () => { painted = repaint(others, current, painted, [], -1); };
   /** Marks, count and toggles from `ranges` and `index`. */
   const paint = (scroll: boolean) => {
-    clear();
-    ranges.forEach((r, i) => (i === index ? current : others).add(r));
+    painted = repaint(others, current, painted, ranges, index);
     count.textContent = invalid ? "Invalid regex" : `${index + 1}/${ranges.length}`;
     find.setAttribute("aria-invalid", String(invalid));
     for (const [el, option] of options) el.setAttribute("aria-pressed", String(option === "wholeWord" ? wholeWordOn(query) : query[option]));
