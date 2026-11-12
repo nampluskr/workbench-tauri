@@ -529,6 +529,9 @@ button, input, select, textarea {
 .tree-row.selected, .tree-row.marked { background: var(--ghost-element-selected); }
 .tree-row.marked, .tree-row.active-file { color: var(--text); } /* I-2: Zed is_marked; a cursor-only selection stays muted */
 .project-panel:focus-within .tree-row.selected { border-color: var(--border-focused); }
+/* core I-3: Zed paints the drop folder, every row under it, and a folded path's folder piece with drop_target.background. */
+.project-panel .tree-row.drop-target { background: var(--drop-target-background); border-color: transparent; }
+.tree-segment.drop-target, .tree-scroll.drop-target { background: var(--drop-target-background); }
 /* R-13 / L-47: overlay rows share the ordinary row's height and indentation, without adding scroll space. */
 .tree-sticky { position: sticky; top: 0; height: 0; z-index: 1; }
 .tree-sticky > .tree-row { position: absolute; left: 0; right: 0; background: var(--panel-overlay-background); }

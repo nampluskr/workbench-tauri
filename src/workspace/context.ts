@@ -796,6 +796,26 @@ export function dropTab(ctx: FolderContext, file: TabFile, to: PaneState, where:
   focusPane(target);
 }
 
+/**
+ * core I-3: a tree file dropped on `to` opens there as a normal tab (Zed handle_project_entry_drop), at the place a dragged
+ * tab would land (R-10): before a tab (pinned when that tab is), at the end, after the active tab, or in a new Pane at an edge.
+ */
+export function dropEntry(ctx: FolderContext, path: string, to: PaneState, where: DropWhere): void {
+  let target = to;
+  if (where.kind === "split") {
+    target = newPane();
+    ctx.setTree(split(ctx.tree(), to, where.dir, target));
+  }
+  activatePane(ctx, target);
+  openFile(ctx, path, false, true);
+  const tabs = target.tabs(), at = target.active();
+  if ((where.kind !== "tab" && where.kind !== "end") || at === null || tabs[at]?.path !== path) return;
+  const rest = tabs.filter((_, i) => i !== at);
+  const placed = place(rest, where.kind === "end" ? rest.length : where.index - (where.index > at ? 1 : 0), tabs[at]);
+  target.setTabs(placed.tabs);
+  activateTab(ctx, target, placed.index);
+}
+
 /** The folder goes (R-14): its tabs close with it. */
 export function disposeContext(ctx: FolderContext): void {
   for (const tab of allTabs(ctx)) release(tab.file);

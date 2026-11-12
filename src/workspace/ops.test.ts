@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { deletePrompt, failureText, pasteJobs, relativePath, targetDir } from "./ops.ts";
+import { deletePrompt, dragItems, dropJobs, failureText, moveTakenText, pasteJobs, relativePath, targetDir } from "./ops.ts";
 import { buildRows, isDirPath, parentOf, targetsOf, type Listing } from "./tree.ts";
 import { tildePath } from "./paths.ts";
 
@@ -103,4 +103,21 @@ test("L-247: the home folder shows as ~", () => {
   assert.equal(tildePath("c:\\users\\ME", "C:\\Users\\me"), "~");
   assert.equal(tildePath("C:\\Users\\me2\\a", "C:\\Users\\me"), "C:\\Users\\me2\\a");
   assert.equal(tildePath("D:\\x", null), "D:\\x");
+});
+
+test("I-3: a tree drag carries the marked items, never the root nor what is inside a carried folder", () => {
+  assert.deepEqual(dragItems(R, [`${R}\\a.txt`, `${R}\\src`], `${R}\\b.txt`), [`${R}\\b.txt`], "pressed outside the marks: it alone");
+  assert.deepEqual(dragItems(R, [`${R}\\src`, `${R}\\SRC\\m.rs`, `${R}\\src2`, R], `${R}\\src`), [`${R}\\src`, `${R}\\src2`]);
+  assert.deepEqual(dragItems(R, [], R), []);
+});
+
+test("I-3: a drop does nothing on the item itself, its own folders or (a move) where it already is", () => {
+  const src = `${R}\\src`, file = `${R}\\src\\m.rs`;
+  assert.deepEqual(dropJobs([src], src, false, R), [], "onto itself");
+  assert.deepEqual(dropJobs([src], `${src}\\deep`, false, R), [], "into its own folder");
+  assert.deepEqual(dropJobs([file], src, false, R), [], "already there");
+  assert.deepEqual(dropJobs([file], src, true, R), [file], "Ctrl copies into the same folder (a copy name, Rust transfer)");
+  assert.deepEqual(dropJobs([file, `${R}\\a.txt`], src, false, R), [`${R}\\a.txt`], "of several, only those that move");
+  assert.deepEqual(dropJobs([file], R, false, R), [file], "to the root");
+  assert.equal(moveTakenText("p\\a.txt", "p\\src\\a.txt"), "Failed to move `p\\a.txt` to `p\\src\\a.txt`. A file or folder already exists there.");
 });

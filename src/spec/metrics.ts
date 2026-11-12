@@ -355,6 +355,9 @@ export const TAB_MAX_TITLE_CHARS = 24; // tab.max_title_chars (L-26)
 export const PANE_MIN_DRAG = { w: 80, h: 100 }; // pane.min_drag_width / min_drag_height (I-726)
 export const PANE_DROP_TARGET_SIZE_RATIO = 0.2; // pane.drop_target_size_ratio (I-712)
 export const MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS = 200; // markdown_preview.parse_debounce (I-082)
+// core I-3: not in spec/zed-metrics.toml; Zed 4304dec732 project_panel.rs (reported to tauri-leader for the toml).
+export const PROJECT_PANEL_DRAG_EXPAND_DELAY_MS = 500; // a closed folder held under a drag opens (hover_expand_task, :6428)
+export const PROJECT_PANEL_DRAG_SCROLL = { near: 0.05, far: 0.15, fast: 8, slow: 5, tickMs: 16 }; // edge scroll per tick (hover_scroll_task, :7600-7631)
 
 // Editor values that script reads.
 export const EDITOR_TAB_SIZE = 4; // editor.tab_size (E-055)

@@ -167,7 +167,7 @@ function flexRules(node: Node<PaneState>, out: string[]): string[] {
 // --- tab drag (R-10, D-9): pointer events only, no HTML5 drag and drop ---------------------------------------------
 
 type Target = { pane: PaneState; where: DropWhere };
-type Drag = { ctx: FolderContext; file: TabFile; from: PaneState; fromIndex: number; target: Target | null };
+type Drag = { ctx: FolderContext; file: TabFile | null; from: PaneState | null; fromIndex: number; target: Target | null }; // file and from are null for a tree item (core I-3)
 const [drag, setDrag] = createSignal<Drag | null>(null);
 let dragEnded = false; // the click that follows a drag's pointerup is not a tab click
 
@@ -222,7 +222,7 @@ function startTabDrag(e: PointerEvent, ctx: FolderContext, pane: PaneState, file
     if (!d) return;
     dragEnded = true;
     setTimeout(() => (dragEnded = false));
-    if (drop && d.target) dropTab(d.ctx, d.file, d.target.pane, d.target.where, copy);
+    if (drop && d.target && d.file) dropTab(d.ctx, d.file, d.target.pane, d.target.where, copy);
   };
   const up = (u: PointerEvent) => finish(true, u.ctrlKey);
   const lost = () => finish(false, false);
@@ -235,6 +235,14 @@ function startTabDrag(e: PointerEvent, ctx: FolderContext, pane: PaneState, file
   el.addEventListener("pointermove", move);
   el.addEventListener("pointerup", up);
   el.addEventListener("lostpointercapture", lost);
+}
+
+/** core I-3: a tree item over the Panes shows the places a dragged tab would have (R-10); null clears them. */
+export function entryDropTarget(ctx: FolderContext, at: { x: number; y: number } | null): Target | null {
+  const d: Drag = { ctx, file: null, from: null, fromIndex: -1, target: null };
+  const target = at && hitTest(d, at.x, at.y);
+  setDrag(target ? { ...d, target } : null);
+  return target;
 }
 
 /** The drop line side for tab `index` of `pane` while it is the target (I-715). */

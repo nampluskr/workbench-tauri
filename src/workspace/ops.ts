@@ -61,3 +61,22 @@ export function pasteJobs(sources: string[], dir: string, cut: boolean, root: st
   return { run, refused };
 }
 
+
+/**
+ * I-3: what a tree drag carries when `pressed` is pressed: the marked items when it is among them, else it alone (Zed
+ * DraggedSelection::items). The root does not move, and an item inside another carried folder goes with that folder
+ * (Zed disjoint_entries).
+ */
+export function dragItems(root: string, marked: string[], pressed: string): string[] {
+  const items = (marked.includes(pressed) ? marked : [pressed]).filter((p) => p !== root);
+  return items.filter((p) => !items.some((q) => q !== p && p.toLowerCase().startsWith(q.toLowerCase().replace(/\\?$/, "\\"))));
+}
+
+/**
+ * I-3: the items a drop into `dir` moves (or copies, Ctrl): none for an item itself, its own folders, or (a move) the folder
+ * it is already in. The tree shows a drop place only while this is not empty for a move.
+ */
+export const dropJobs = (items: string[], dir: string, copy: boolean, root: string): string[] => pasteJobs(items, dir, !copy, root).run;
+
+/** I-3: Zed explain_move_error's text when the moved item's name is taken in the target folder (it is not overwritten). */
+export const moveTakenText = (from: string, to: string): string => `Failed to move \`${from}\` to \`${to}\`. A file or folder already exists there.`;

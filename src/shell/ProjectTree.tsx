@@ -1,9 +1,19 @@
 import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
-import { PROJECT_PANEL_ITEM_HEIGHT, PROJECT_PANEL_NAME_TOOLTIP_DELAY_MS, TREE_OVERSCAN_ROWS } from "../spec/metrics.ts";
-import { cancelEdit, commitEdit, revalidate } from "../workspace/actions.ts";
-import { activeTabOf, NEW_ROW, readDir, type FolderContext } from "../workspace/context.ts";
+import { getCurrentWebview } from "@tauri-apps/api/webview";
+import {
+  PROJECT_PANEL_DRAG_EXPAND_DELAY_MS,
+  PROJECT_PANEL_DRAG_SCROLL,
+  PROJECT_PANEL_ITEM_HEIGHT,
+  PROJECT_PANEL_NAME_TOOLTIP_DELAY_MS,
+  TREE_OVERSCAN_ROWS,
+} from "../spec/metrics.ts";
+import { cancelEdit, commitEdit, dropExternal, dropItems, revalidate } from "../workspace/actions.ts";
+import { underOrSame } from "../workspace/changes.ts";
+import { activeTabOf, dropEntry, NEW_ROW, readDir, setExpanded, type FolderContext } from "../workspace/context.ts";
 import { inputKeyAction } from "../workspace/names.ts";
-import { only, rowIndex, stickyRows, visibleRange, type Row } from "../workspace/tree.ts";
+import { dragItems, dropJobs, targetDir } from "../workspace/ops.ts";
+import { isDirPath, only, rowIndex, stickyRows, visibleRange, type Row } from "../workspace/tree.ts";
+import { entryDropTarget } from "./Pane.tsx";
 import FileIcon from "./FileIcon.tsx";
 import { tooltip } from "./tooltip.ts";
 import { pressMiddle, pressRow } from "./tree-commands.ts";
@@ -113,6 +123,103 @@ export default function ProjectTree(props: { ctx: FolderContext }) {
   };
   const mods = (e: MouseEvent) => ({ shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey });
 
+  // --- core I-3: drag and drop (pointer events, like the tab drag; Tauri keeps HTML5 drops of files for itself) ---
+  type Place = { dir: string; segment: boolean }; // segment: a folder piece of a folded path (Zed folded_directory_drag_target)
+  const [dropOn, setDropOn] = createSignal<Place | null>(null);
+  const highlighted = (row: Row) => { const on = dropOn(); return !!on && !on.segment && !row.isNew && underOrSame(on.dir, row.path); };
+  /** The folder under a point of the window: a folder row, a file row's folder, a folded piece, or the root under the rows. */
+  const placeAt = (x: number, y: number): Place | null => {
+    const el = document.elementFromPoint(x, y);
+    if (!el || !scroller.contains(el) || el.closest(".tree-sticky")) return null; // Zed: sticky rows take no drop
+    const rowEl = el.closest<HTMLElement>(".tree-row");
+    if (!rowEl) return { dir: ctx.root, segment: false }; // Zed DragTarget::Background
+    const path = rowEl.dataset.path, piece = el.closest<HTMLElement>(".tree-segment")?.dataset.path;
+    if (!path) return null;
+    if (piece && piece !== path) return { dir: piece, segment: true };
+    return { dir: targetDir(ctx.root, rows(), path), segment: false };
+  };
+  let expandTimer = 0, held: Place | null = null;
+  const holdOver = (place: Place | null) => {
+    if (place?.dir === held?.dir && place?.segment === held?.segment) return;
+    held = place;
+    clearTimeout(expandTimer);
+    const row = place && !place.segment ? rows()[rowIndex(rows(), place.dir)] : undefined;
+    if (row?.isDir && row.path === place!.dir && !row.expanded) expandTimer = setTimeout(() => setExpanded(ctx, row.path, true), PROJECT_PANEL_DRAG_EXPAND_DELAY_MS);
+  };
+  let scrollTimer = 0;
+  /** Zed: near the top or bottom of the list it scrolls, faster closer to the edge. */
+  const edgeScroll = (y: number) => {
+    clearInterval(scrollTimer);
+    const r = scroller.getBoundingClientRect();
+    if (r.height <= 0 || y < r.top || y > r.bottom) return;
+    const at = (y - r.top) / r.height, s = PROJECT_PANEL_DRAG_SCROLL;
+    const step = at <= s.near ? -s.fast : at <= s.far ? -s.slow : at >= 1 - s.near ? s.fast : at >= 1 - s.far ? s.slow : 0;
+    if (step) scrollTimer = setInterval(() => { scroller.scrollTop += step; onScroll(); }, s.tickMs);
+  };
+
+  /** Press on a row; the drag starts once the pointer leaves that row, so a press that stays on it is still a click. */
+  const startDrag = (e: PointerEvent, row: Row) => {
+    if (e.button !== 0 || row.isNew || ctx.edit()) return;
+    const pressed = (e.target as Element).closest<HTMLElement>(".tree-segment")?.dataset.path ?? row.path;
+    const box = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const id = e.pointerId;
+    let items: string[] | null = null;
+    let tree: Place | null = null, pane: ReturnType<typeof entryDropTarget> = null;
+    const move = (m: PointerEvent) => {
+      if (m.pointerId !== id) return;
+      if (!items) {
+        if (m.clientX >= box.left && m.clientX < box.right && m.clientY >= box.top && m.clientY < box.bottom) return;
+        items = dragItems(ctx.root, ctx.selection().marked, pressed);
+        if (items.length === 0) return finish(false, false);
+        scroller.setPointerCapture(id); // keeps the drag when rows are redrawn, and the release is no row click
+        scroller.addEventListener("lostpointercapture", lost);
+        window.addEventListener("keydown", escape, true);
+      }
+      tree = placeAt(m.clientX, m.clientY);
+      holdOver(tree);
+      setDropOn(tree && dropJobs(items, tree.dir, false, ctx.root).length > 0 ? tree : null); // Zed: no mark where a move does nothing
+      pane = tree ? entryDropTarget(ctx, null) : entryDropTarget(ctx, { x: m.clientX, y: m.clientY });
+      edgeScroll(m.clientY);
+    };
+    const finish = (drop: boolean, copy: boolean) => {
+      window.removeEventListener("pointermove", move, true);
+      window.removeEventListener("pointerup", up, true);
+      window.removeEventListener("keydown", escape, true);
+      scroller.removeEventListener("lostpointercapture", lost);
+      clearTimeout(expandTimer);
+      clearInterval(scrollTimer);
+      held = null;
+      setDropOn(null);
+      entryDropTarget(ctx, null);
+      if (scroller.hasPointerCapture(id)) scroller.releasePointerCapture(id);
+      if (!drop || !items) return;
+      if (tree) void dropItems(ctx, items, tree.dir, copy); // Zed drops on a row even where it shows no mark (a Ctrl copy)
+      else if (pane && !isDirPath(rows(), pressed)) dropEntry(ctx, pressed, pane.pane, pane.where); // Zed: a folder opens nothing
+    };
+    const up = (u: PointerEvent) => u.pointerId === id && finish(true, u.ctrlKey);
+    const lost = () => finish(false, false);
+    const escape = (k: KeyboardEvent) => {
+      if (k.key !== "Escape") return;
+      k.preventDefault();
+      k.stopPropagation();
+      finish(false, false);
+    };
+    window.addEventListener("pointermove", move, true);
+    window.addEventListener("pointerup", up, true);
+  };
+
+  // Files from Explorer: Tauri gives their paths and the point (physical pixels) of the window's webview.
+  onMount(() => {
+    const unlisten = getCurrentWebview().onDragDropEvent(({ payload }) => {
+      if (payload.type === "leave") return setDropOn(null);
+      const place = placeAt(payload.position.x / devicePixelRatio, payload.position.y / devicePixelRatio);
+      if (payload.type !== "drop") return setDropOn(place);
+      setDropOn(null);
+      if (place && !ctx.edit()) void dropExternal(ctx, payload.paths, place.dir);
+    });
+    onCleanup(() => void unlisten.then((stop) => stop()));
+  });
+
   const renderRow = (row: Row, stickyIndex?: number) => {
     const pinned = stickyIndex !== undefined;
     const isEditing = () => !pinned && editing(row);
@@ -132,6 +239,7 @@ export default function ProjectTree(props: { ctx: FolderContext }) {
           selected: covers(row),
           marked: marked(row),
           "active-file": activeFile(row),
+          "drop-target": !pinned && highlighted(row), // Zed: the target folder and every row under it
           editing: isEditing(),
           warning: isEditing() && ctx.issue()?.kind === "warning",
           error: isEditing() && ctx.issue()?.kind === "error",
@@ -143,6 +251,7 @@ export default function ProjectTree(props: { ctx: FolderContext }) {
         aria-selected={covers(row) || marked(row)}
         ref={(el) => !row.isNew && tooltip(el, () => ({ title: homePrefix(row.path) }), PROJECT_PANEL_NAME_TOOLTIP_DELAY_MS)}
         onClick={(e) => click(e, row.path)}
+        onPointerDown={(e) => !pinned && startDrag(e, row)}
         onContextMenu={(e) => {
           e.stopPropagation();
           if (pinned) { e.preventDefault(); return; }
@@ -176,7 +285,11 @@ export default function ProjectTree(props: { ctx: FolderContext }) {
                         {i() > 0 ? "\\" : ""}
                         <span
                           class="tree-segment"
-                          classList={{ active: row.segments.length > 1 && ctx.selection().selected === segment.path }}
+                          classList={{
+                            active: row.segments.length > 1 && ctx.selection().selected === segment.path,
+                            "drop-target": !pinned && !!dropOn()?.segment && dropOn()?.dir === segment.path,
+                          }}
+                          data-path={segment.path}
                           onClick={(e) => {
                             e.stopPropagation();
                             click(e, segment.path);
@@ -204,6 +317,7 @@ export default function ProjectTree(props: { ctx: FolderContext }) {
     // I-559: the empty area under the last row opens the menu of the root.
     <div
       class="tree-scroll"
+      classList={{ "drop-target": dropOn()?.dir === ctx.root && !dropOn()?.segment }}
       ref={scroller}
       onScroll={onScroll}
       onContextMenu={(e) => openTreeMenu(ctx, { x: e.clientX, y: e.clientY }, ctx.root)}

@@ -6,9 +6,9 @@ import { notify } from "../shell/toast.ts";
 import { followMove, forget, NEW_ROW, openFile, refreshDirs, reveal, select, type EditTarget, type FolderContext } from "./context.ts";
 import { confirmName, renameSelection, validationFor } from "./names.ts";
 import { baseName } from "./paths.ts";
-import { deletePrompt, failureText, pasteJobs, relativePath, targetDir } from "./ops.ts";
+import { deletePrompt, dropJobs, failureText, moveTakenText, pasteJobs, relativePath, targetDir } from "./ops.ts";
 import { eachContext } from "./store.ts";
-import { isDirPath, joinPath, only, parentOf, rowIndex, targetsOf } from "./tree.ts";
+import { isDirPath, joinPath, only, parentOf, rowIndex, targetsOf, type Child } from "./tree.ts";
 
 // What the project panel does to files (R-20~R-23): name an item in the tree, delete, copy and paste, copy paths, open
 // outside. The core does the disk work; every call here is awaited, so input stays responsive during long work (R-30).
@@ -242,6 +242,58 @@ export async function duplicate(ctx: FolderContext): Promise<void> {
   }
   if (failed > 0) notify(["Could not duplicate the item."]);
   await showCreated(ctx, created, targets.map((path) => parentOf(ctx.root, path)));
+}
+
+// --- drag and drop (core I-3) ------------------------------------------------------------------------------------
+
+/**
+ * A tree drag dropped into `dir` (Zed drag_onto): a move, or a copy with Ctrl (Zed is_copy_modifier_set on Windows). A move
+ * never takes a name that is there (Zed: a notice, nothing moves); tabs follow the move. A copy takes a free copy name.
+ */
+export async function dropItems(ctx: FolderContext, items: string[], dir: string, copy: boolean): Promise<void> {
+  const run = dropJobs(items, dir, copy, ctx.root);
+  if (ctx.edit() || run.length === 0) return;
+  const parents = run.map((path) => parentOf(ctx.root, path));
+  if (copy) return copyInto(ctx, run, dir, parents, false);
+  const lines: string[] = [];
+  let failed = false;
+  for (const from of run) {
+    const to = joinPath(dir, baseName(from));
+    try {
+      if (await exists(to)) {
+        lines.push(moveTakenText(relativePath(ctx.root, ctx.rootName, from), relativePath(ctx.root, ctx.rootName, to)));
+        continue;
+      }
+      await invoke("rename_path", { from, to }); // exclusive: a name taken meanwhile fails instead of being replaced
+      everywhere((other) => followMove(other, from, to));
+    } catch {
+      failed = true;
+    }
+  }
+  if (failed) lines.push("Could not move the item.");
+  if (lines.length > 0) notify(lines);
+  await refreshEverywhere([dir, ...parents]); // also after a failure: the tree shows what is on disk
+}
+
+/** Files and folders from Explorer dropped into `dir` are copied (Zed drop_external_files); a taken name gets a copy name. */
+export const dropExternal = (ctx: FolderContext, paths: string[], dir: string): Promise<void> => copyInto(ctx, paths, dir, [], paths.length === 1);
+
+async function copyInto(ctx: FolderContext, sources: string[], dir: string, dirs: string[], openOne: boolean): Promise<void> {
+  let created: string[] = [];
+  try {
+    const result = await invoke<{ created: string[]; failed: number }>("paste_paths", { sources, targetDir: dir, cut: false });
+    created = result.created;
+    if (result.failed > 0) notify(["Could not paste the item."]);
+  } catch {
+    notify(["Could not paste the item."]);
+  }
+  await refreshEverywhere([dir, ...dirs]);
+  const last = created.at(-1);
+  if (!last) return;
+  // Zed opens one dropped file (auto_open.on_drop) and else selects the last item made.
+  const listed = openOne ? await invoke<Child[]>("list_dir", { path: dir }).catch(() => []) : []; // the folder may never have been read
+  if (listed.find((child) => child.name === baseName(last))?.is_dir === false) openFile(ctx, last, false, true);
+  else reveal(ctx, last);
 }
 
 /** I-548, I-549: absolute or relative paths of the selected items as text, several joined by line breaks. */
