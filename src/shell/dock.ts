@@ -31,8 +31,11 @@ export function resizeHandle(handle: HTMLDivElement, sidebar?: { width: () => nu
     if (!handle.hasPointerCapture(e.pointerId)) return;
     // A negative width is invalid CSS and the declaration is dropped; clamp so min-width (L-31) applies.
     const width = Math.max(0, e.clientX - dock.getBoundingClientRect().left);
-    sheet.replaceSync(rule(`${width}px`));
-    setWidth(dock.getBoundingClientRect().width * 16 / parseFloat(getComputedStyle(document.documentElement).fontSize)); // L-01: compare logical spec units.
+    sheet.replaceSync(`${selector} { width: ${width}px; }`);
+    // R1-1: the variable the other bar subtracts is the width min/max-width let through, not the pointer's.
+    const applied = dock.getBoundingClientRect().width;
+    sheet.replaceSync(rule(`${applied}px`));
+    setWidth(applied * 16 / parseFloat(getComputedStyle(document.documentElement).fontSize)); // L-01: compare logical spec units.
   };
   handle.ondblclick = reset;
 }
