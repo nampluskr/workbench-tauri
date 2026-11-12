@@ -34,7 +34,7 @@ export type FileLocation = { line: number; column: number; endLine?: number; end
  * What stays the same for a tab while its list entry is copied (promotion, rename): its file, editor and state. A Markdown
  * preview tab (R-11) has no editor: `element` is its body, `dispose` lets go of what it holds.
  */
-export type TabFile = { doc: Doc; view: EditorView | null; readOnly?: boolean; editable?: boolean; status: Accessor<Status>; position?: Accessor<string>; toolPosition?: Accessor<string>; title?: Accessor<string>; icon?: IconName; iconSuccess?: boolean; location?: FileLocation; element?: HTMLElement; dispose?: () => void; reveal?: (line: number, heading?: number) => void };
+export type TabFile = { doc: Doc; view: EditorView | null; readOnly?: boolean; editable?: boolean; status: Accessor<Status>; position?: Accessor<string>; toolPosition?: Accessor<string>; title?: Accessor<string>; icon?: IconName; iconSuccess?: boolean; location?: FileLocation; element?: HTMLElement; dispose?: () => void; reveal?: (line: number, heading?: number) => void; find?: (action: string) => boolean };
 export type Tab = TabInfo & { file: TabFile; focus: boolean };
 
 
@@ -506,7 +506,7 @@ export function openPreview(ctx: FolderContext, from: PaneState, path: string, s
       set.delete(preview);
       release(holder);
     };
-    return { path, preview: temporary, pinned: false, markdown: true, file: { doc: holder.doc, view: null, status, position, element: preview.element, dispose, reveal }, focus: false };
+    return { path, preview: temporary, pinned: false, markdown: true, file: { doc: holder.doc, view: null, status, position, element: preview.element, dispose, reveal, find: preview.find }, focus: false };
   };
   // core I-5: a tree click (`temporary`) follows the editor tabs' temporary-tab rule, so it may replace one of them.
   // A preview tab never holds edits (its doc is the source's), so only a modified editor tab is kept.

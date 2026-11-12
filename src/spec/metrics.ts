@@ -239,6 +239,21 @@ const METRICS: Record<string, string> = {
   "markdown_preview.h4.font_size": prem(16), // L-104
   "markdown_preview.h5.font_size": prem(14), // L-104
   "markdown_preview.h6.font_size": prem(13.6), // L-104
+  // core v0.8.1 I-8: heading margins, Zed 1.27.0 measured (v0.8.1 ORDER-06, tauri-leader; ink distances at preview 16px, One Light).
+  // Top collapses with the 16px bottom margin of the block before (paragraph, list, code), so it is that gap plus what Zed adds.
+  // H1 top was not measured (no paragraph before an H1 in the test file): it stays 0.
+  "markdown_preview.h1.margin_top": prem(0),
+  "markdown_preview.h2.margin_top": prem(22),
+  "markdown_preview.h3.margin_top": prem(23),
+  "markdown_preview.h4.margin_top": prem(23),
+  "markdown_preview.h5.margin_top": prem(23),
+  "markdown_preview.h6.margin_top": prem(23),
+  "markdown_preview.h1.margin_bottom": prem(12),
+  "markdown_preview.h2.margin_bottom": prem(12),
+  "markdown_preview.h3.margin_bottom": prem(11),
+  "markdown_preview.h4.margin_bottom": prem(12),
+  "markdown_preview.h5.margin_bottom": prem(10),
+  "markdown_preview.h6.margin_bottom": prem(12),
   "markdown_preview.h1.padding_bottom": prem(8), // L-105
   "markdown_preview.h1.border_bottom": prem(1), // L-105
   "markdown_preview.h2.padding_bottom": prem(4), // L-105

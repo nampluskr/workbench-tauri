@@ -13,6 +13,7 @@ import { onPreviewThemeChange, previewAppearance, previewColors, previewSyntaxKe
 import { syntaxClass } from "../theme/theme.ts";
 import { drawMath, drawMermaid } from "./rich-blocks.ts";
 import { iconElement } from "./icon-svg.ts";
+import { createPreviewSearch } from "./preview-search.ts";
 import { notify } from "./toast.ts";
 import { tooltip } from "./tooltip.ts";
 
@@ -173,7 +174,7 @@ function notebookNodes(text: string, sourcePath: string): HTMLElement[] {
 }
 
 /** `reveal` (core v0.8.1 I-4, an Outline click): scroll a heading to the top, by its source line, or for a notebook by its order among the cells' headings. */
-export type Preview = { element: HTMLElement; changed: () => void; cursor: (line: number) => void; reveal: (line: number, heading?: number) => void; dispose: () => void };
+export type Preview = { element: HTMLElement; changed: () => void; cursor: (line: number) => void; reveal: (line: number, heading?: number) => void; find: (action: string) => boolean; dispose: () => void };
 
 export function createPreview(hooks: PreviewHooks): Preview {
   const element = document.createElement("div");
@@ -191,6 +192,8 @@ export function createPreview(hooks: PreviewHooks): Preview {
     frame.setAttribute("sandbox", "allow-same-origin");
     body.append(frame);
   }
+  // core v0.8.1 I-9: find only where the preview is text of the app's own (not HTML, SVG or a Mermaid file).
+  const search = ["markdown", "ipynb", "csv", "tsv"].includes(hooks.kind) ? createPreviewSearch(element, body) : null;
   let timer = 0;
   let lastLine = -1;
   let generation = 0;
@@ -312,7 +315,8 @@ export function createPreview(hooks: PreviewHooks): Preview {
         : body.querySelectorAll<HTMLElement>(".nb-markdown :is(h1, h2, h3, h4, h5, h6)")[heading];
       target?.scrollIntoView({ block: "start" });
     },
-    dispose: () => { stopTheme(); clearTimeout(timer); generation++; },
+    find: (action) => search?.run(action) ?? false,
+    dispose: () => { search?.dispose(); stopTheme(); clearTimeout(timer); generation++; },
   };
   return preview;
 }

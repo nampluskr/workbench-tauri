@@ -30,6 +30,11 @@ export const EDITOR_BINDINGS: KeymapSection[] = [{ context: "Editor", bindings: 
   "alt-r": "editor::SearchRegexp",
   "alt-enter": "editor::SelectSearchMatches",
   "escape": "editor::Cancel",
+} }, { context: "MarkdownPreview", bindings: { // core v0.8.1 I-9: the preview find bar, with the editor tab's keys
+  "ctrl-f": "editor::Find",
+  "f3": "editor::FindNext",
+  "shift-f3": "editor::FindPrevious",
+  "escape": "editor::Cancel",
 } }, { context: "ReplaceInput", bindings: {
   "enter": "editor::ReplaceNext",
   "ctrl-alt-enter": "editor::ReplaceAll",

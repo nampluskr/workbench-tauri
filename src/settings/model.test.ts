@@ -76,7 +76,9 @@ test("I-5 ~ I-8, I-10: the five editor view settings read, validate and write", 
 test("I-9: the four preview gaps are whole pixels 0 to 48; a file value outside that reads as the default", () => {
   const keys = ["preview_paragraph_line_gap", "preview_paragraph_gap", "preview_list_line_gap", "preview_list_gap"] as const;
   const read = (json: string) => parseSettings(json, THEMES);
-  assert.deepEqual(keys.map((k) => DEFAULTS[k]), [8, 16, 8, 12]);
+  assert.deepEqual(keys.map((k) => DEFAULTS[k]), [8, 16, 6, 4]); // core v0.8.1 I-8: the list defaults follow Zed
+  // A value already in the user file is kept, also the old defaults.
+  assert.deepEqual([read(`{"preview_list_line_gap":8,"preview_list_gap":12}`).preview_list_line_gap, read(`{"preview_list_gap":12}`).preview_list_gap, read("{}").preview_list_gap], [8, 12, 4]);
   for (const key of keys) {
     for (const value of [0, 1, 48]) assert.equal(read(`{"${key}":${value}}`)[key], value);
     for (const value of [-1, 49, 8.5, "\"8\"", "null"]) assert.equal(read(`{"${key}":${value}}`)[key], DEFAULTS[key], `${key} ${value}`);

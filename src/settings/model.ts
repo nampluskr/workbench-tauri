@@ -8,7 +8,7 @@ export const SETTINGS_BINDINGS: KeymapSection[] = [{ context: "Workspace", bindi
 // I-3: editor_theme and preview_theme follow theme until set (parseSettings), so the defaults repeat its default.
 export const DEFAULTS = { theme: DEFAULT_THEME as string, icon_theme: "Zed (Default)", editor_theme: DEFAULT_THEME as string, preview_theme: DEFAULT_THEME as string, ui_font_size: 16, buffer_font_size: 15, preview_font_size: 16,
   // I-9: the Markdown preview's line and block gaps, in px (they match the Zed values at the 16px preview size).
-  preview_paragraph_line_gap: 8, preview_paragraph_gap: 16, preview_list_line_gap: 8, preview_list_gap: 12,
+  preview_paragraph_line_gap: 8, preview_paragraph_gap: 16, preview_list_line_gap: 6, preview_list_gap: 4, // core v0.8.1 I-8: Zed 1.27.0 measured (list line 22px, tight items 4px apart at 16px)
   // I-5 ~ I-8, I-10: the editor body's view settings.
   editor_line_height: 1.6, editor_line_numbers: true, editor_word_wrap: true, editor_indent_guides: true, editor_render_whitespace: false,
   // core v0.8.1 I-10: the editor and preview code fonts (one list, CODE_FONTS) and the code block size in % of the preview font size.

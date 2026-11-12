@@ -68,7 +68,9 @@ const withCtx = (fn: (ctx: FolderContext) => void) => () => {
 
 commands.set("workspace::Save", withCtx((ctx) => void saveActive(ctx)));
 for (const [action, run] of SEARCH_COMMANDS) commands.set(action, () => {
-  const view = activeTab()?.file.view;
+  const file = activeTab()?.file;
+  if (file?.find) { file.find(action); return; } // core v0.8.1 I-9: a preview's own find bar
+  const view = file?.view;
   if (view) {
     if (["editor::AddNextOccurrence", "editor::SelectSelectionMatches", "editor::SkipOccurrence"].includes(action)) view.focus();
     run(view);

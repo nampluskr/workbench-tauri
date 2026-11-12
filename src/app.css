@@ -782,10 +782,19 @@ button, input, select, textarea {
 }
 /* core v0.8 I-1: an HTML preview is a sandboxed frame filling the tab. I-11: its text colour, link colour and color-scheme are weakest-priority defaults inside the srcdoc (editor/html.ts defaultStyle), from the Preview theme. */
 .markdown-preview.html-preview { padding: 0; overflow: hidden; }
+/* core v0.8.1 I-9: the preview find bar is the editor's (.document-search) as a full-width row over the scrolled content, pushing it down as the CM top panel does. */
+.preview-search {
+  position: sticky; top: calc(-1 * var(--markdown-preview-container-padding)); left: calc(-1 * var(--markdown-preview-container-padding)); z-index: 1;
+  margin: calc(-1 * var(--markdown-preview-container-padding)) calc(-1 * var(--markdown-preview-container-padding)) var(--markdown-preview-container-padding);
+  border-bottom: var(--toolbar-border-bottom) solid var(--border-variant); background: var(--toolbar-background); color: var(--text);
+}
+/* As the editor's marks: other matches light, the current one in the selection colour. */
+::highlight(preview-find) { background-color: var(--ghost-element-selected); }
+::highlight(preview-find-current) { background-color: var(--players-0-selection); }
 .html-preview .markdown-body { max-width: none; height: 100%; margin: 0; }
 /* The default background is the frame element's (a page `body { background }` then reaches the transparent canvas); the element's color-scheme equals the srcdoc root's, else Chromium paints an opaque canvas. */
 .html-frame { display: block; width: 100%; height: 100%; border: 0; background: var(--editor-background); color-scheme: var(--preview-color-scheme); }
-.markdown-body > :first-child { margin-top: 0; }
+.markdown-body > :first-child, .markdown-body .nb-markdown > :first-child { margin-top: 0; } /* a notebook markdown cell starts as a document does */
 .markdown-body :is(ul, ol, blockquote, table, .frontmatter) { margin: 0 0 var(--markdown-preview-paragraph-gap); } /* L-103 */
 /* core v0.7 I-9: px settings. A line is the font size plus the gap, so a bigger preview font never overlaps lines; a paragraph inside a list item follows the list line gap. */
 .markdown-body p { margin: 0 0 var(--markdown-preview-paragraph-gap); line-height: calc(1em + var(--preview-paragraph-line-gap)); }
@@ -794,18 +803,23 @@ button, input, select, textarea {
 .markdown-body li { line-height: calc(1em + var(--preview-list-line-gap)); }
 .markdown-body li p { line-height: inherit; }
 .markdown-body li + li { margin-top: var(--preview-list-gap); }
+/* core v0.8.1 I-8: as in Zed, what is inside an item does not merge its space with the gap to the next item: a loose item's paragraph gap and a nested
+   list's end add to it (Zed: loose items 16 + 4 apart, the end of a nested list 4 + 4). flow-root keeps the margins inside the item; list-item keeps the marker. */
+.markdown-body li { display: list-item flow-root; }
+.markdown-body li > :is(ul, ol):nth-child(n) { margin-bottom: var(--preview-list-gap); } /* :nth-child(n) only lifts it over the L-103 list margin rule */
+.markdown-body li:last-child > :last-child { margin-bottom: 0; } /* the list's own bottom margin ends it, as before */
 .markdown-body :is(h1, h2, h3, h4, h5, h6) {
-  margin: 0; /* L-104 top 24 / bottom 12 are estimates in the source: not applied */
+  margin: 0; /* core v0.8.1 I-8: each level's margins below, Zed 1.27.0 measured (metrics.ts) */
   font-weight: var(--markdown-preview-heading-font-weight);
   line-height: var(--markdown-preview-heading-line-height-multiplier);
   color: var(--text);
 }
-.markdown-body h1 { font-size: var(--markdown-preview-h1-font-size); padding-bottom: var(--markdown-preview-h1-padding-bottom); border-bottom: var(--markdown-preview-h1-border-bottom) solid var(--border-variant); }
-.markdown-body h2 { font-size: var(--markdown-preview-h2-font-size); padding-bottom: var(--markdown-preview-h2-padding-bottom); border-bottom: var(--markdown-preview-h2-border-bottom) solid var(--border-variant); }
-.markdown-body h3 { font-size: var(--markdown-preview-h3-font-size); }
-.markdown-body h4 { font-size: var(--markdown-preview-h4-font-size); }
-.markdown-body h5 { font-size: var(--markdown-preview-h5-font-size); }
-.markdown-body h6 { font-size: var(--markdown-preview-h6-font-size); color: var(--text-muted); }
+.markdown-body h1 { margin: var(--markdown-preview-h1-margin-top) 0 var(--markdown-preview-h1-margin-bottom); font-size: var(--markdown-preview-h1-font-size); padding-bottom: var(--markdown-preview-h1-padding-bottom); border-bottom: var(--markdown-preview-h1-border-bottom) solid var(--border-variant); }
+.markdown-body h2 { margin: var(--markdown-preview-h2-margin-top) 0 var(--markdown-preview-h2-margin-bottom); font-size: var(--markdown-preview-h2-font-size); padding-bottom: var(--markdown-preview-h2-padding-bottom); border-bottom: var(--markdown-preview-h2-border-bottom) solid var(--border-variant); }
+.markdown-body h3 { margin: var(--markdown-preview-h3-margin-top) 0 var(--markdown-preview-h3-margin-bottom); font-size: var(--markdown-preview-h3-font-size); }
+.markdown-body h4 { margin: var(--markdown-preview-h4-margin-top) 0 var(--markdown-preview-h4-margin-bottom); font-size: var(--markdown-preview-h4-font-size); }
+.markdown-body h5 { margin: var(--markdown-preview-h5-margin-top) 0 var(--markdown-preview-h5-margin-bottom); font-size: var(--markdown-preview-h5-font-size); }
+.markdown-body h6 { margin: var(--markdown-preview-h6-margin-top) 0 var(--markdown-preview-h6-margin-bottom); font-size: var(--markdown-preview-h6-font-size); color: var(--text-muted); }
 .markdown-body blockquote { /* L-106 */
   margin-inline: 0;
   padding: 0 0 0 var(--markdown-preview-blockquote-padding-left);
