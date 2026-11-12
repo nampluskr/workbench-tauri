@@ -1,0 +1,265 @@
+{
+  "procsBefore": "24",
+  "c3_isolation": {
+    "frame": {
+      "x": 440,
+      "y": 65,
+      "w": 1000,
+      "h": 756,
+      "src": "http://preview.localhost/p1",
+      "sandbox": "allow-scripts",
+      "csp": "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'"
+    },
+    "ran": "inline script ran",
+    "localjs": "local.js ran",
+    "cssBorder": "dashed",
+    "img": {
+      "complete": true,
+      "w": 32
+    },
+    "table": [
+      "window.parent.document | blocked | SecurityError: Failed to read a named property 'document' from 'Window': Blocked a frame with origin \"null\" from accessing a cross-origin frame.",
+      "window.top.document | blocked | SecurityError: Failed to read a named property 'document' from 'Window': Blocked a frame with origin \"null\" from accessing a cross-origin frame.",
+      "window.parent.location.href | blocked | SecurityError: Failed to read a named property 'href' from 'Location': Blocked a frame with origin \"null\" from accessing a cross-origin frame.",
+      "localStorage | blocked | SecurityError: Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
+      "sessionStorage | blocked | SecurityError: Failed to read the 'sessionStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
+      "indexedDB.open | blocked | SecurityError: Failed to execute 'open' on 'IDBFactory': access to the Indexed Database API is denied in this context.",
+      "document.cookie (write and read) | blocked | SecurityError: Failed to set the 'cookie' property on 'Document': The document is sandboxed and lacks the 'allow-same-origin' flag.",
+      "window.__TAURI__ | blocked | undefined",
+      "window.__TAURI_INTERNALS__ (present) | REACHED | object",
+      "window.ipc (present) | REACHED | object",
+      "window.chrome.webview (present) | REACHED | object",
+      "chrome.webview.postMessage | blocked | Error: sent, no answer channel (check the app log)",
+      "fetch ipc://localhost/about_info | blocked | TypeError: Failed to fetch",
+      "fetch http://ipc.localhost/about_info | blocked | TypeError: Failed to fetch",
+      "__TAURI_INTERNALS__.invoke('about_info') | blocked | Error: no answer in 3 s"
+    ],
+    "procsAfterOpen": "25",
+    "redrawAfterEdit": "edited marker"
+  },
+  "c4_network": {
+    "table": [
+      "fetch https://example.com | blocked | TypeError: Failed to fetch",
+      "FontFace https://… | blocked | NetworkError: A network error occurred.",
+      "XHR https://example.com | blocked | error event",
+      "WebSocket wss://echo.websocket.org | blocked | error event",
+      "script-built <script src=https://…> | blocked | error event",
+      "script-built <img src=https://…> | blocked | error event",
+      "markup <script src=https://…> | blocked | window._ is undefined",
+      "markup <img src=https://…> | blocked | src attribute: (removed)"
+    ],
+    "internetRequests": [],
+    "requestsSeen": [
+      "http://ipc.localhost/read_file",
+      "http://ipc.localhost/preview_set",
+      "http://preview.localhost/p2"
+    ]
+  },
+  "c5_navigate": {
+    "start": {
+      "started": "오전 7:23:56",
+      "count": "4",
+      "frameSrc": "http://preview.localhost/p3",
+      "title": "navigate",
+      "appTabs": [
+        "isolation.html",
+        "Preview isolation.html",
+        "network.html",
+        "Preview network.html",
+        "navigate.html",
+        "Preview navigate.html"
+      ],
+      "appUrl": "http://tauri.localhost/"
+    },
+    "links": {
+      "external link": "ERR {\"code\":-32602,\"message\":\"Invalid parameters\",\"data\":\"Failed to deserialize params.x - BINDINGS: double value expected at position 26\"}",
+      "local link": {
+        "started": "오전 7:23:56",
+        "count": "6",
+        "frameSrc": "http://preview.localhost/p3",
+        "title": "navigate",
+        "appTabs": [
+          "isolation.html",
+          "Preview isolation.html",
+          "network.html",
+          "Preview network.html",
+          "navigate.html",
+          "Preview navigate.html"
+        ],
+        "appUrl": "http://tauri.localhost/",
+        "scrollY": 0
+      },
+      "#bottom link": {
+        "started": "오전 7:23:56",
+        "count": "9",
+        "frameSrc": "http://preview.localhost/p3",
+        "title": "navigate",
+        "appTabs": [
+          "isolation.html",
+          "Preview isolation.html",
+          "network.html",
+          "Preview network.html",
+          "navigate.html",
+          "Preview navigate.html"
+        ],
+        "appUrl": "http://tauri.localhost/",
+        "scrollY": 1272
+      }
+    },
+    "buttons": {
+      "location.href = https://…": {
+        "started": "오전 7:24:06",
+        "count": "2",
+        "frameSrc": "http://preview.localhost/p3",
+        "title": "navigate",
+        "appTabs": [
+          "isolation.html",
+          "Preview isolation.html",
+          "network.html",
+          "Preview network.html",
+          "navigate.html",
+          "Preview navigate.html"
+        ],
+        "appUrl": "http://tauri.localhost/"
+      },
+      "location.href = refresh.html": {
+        "started": {
+          "id": 685016659,
+          "result": {
+            "result": {
+              "type": "object",
+              "subtype": "null",
+              "value": null
+            }
+          }
+        },
+        "count": {
+          "id": 193146255,
+          "result": {
+            "result": {
+              "type": "object",
+              "subtype": "null",
+              "value": null
+            }
+          }
+        },
+        "frameSrc": "http://preview.localhost/p3",
+        "title": "preview.localhost",
+        "appTabs": [
+          "isolation.html",
+          "Preview isolation.html",
+          "network.html",
+          "Preview network.html",
+          "navigate.html",
+          "Preview navigate.html"
+        ],
+        "appUrl": "http://tauri.localhost/"
+      },
+      "location = asset URL": "ERR {\"code\":-32602,\"message\":\"Invalid parameters\",\"data\":\"Failed to deserialize params.x - BINDINGS: double value expected at position 26\"}",
+      "window.open": "ERR {\"code\":-32602,\"message\":\"Invalid parameters\",\"data\":\"Failed to deserialize params.x - BINDINGS: double value expected at position 26\"}",
+      "form.submit()": "ERR {\"code\":-32602,\"message\":\"Invalid parameters\",\"data\":\"Failed to deserialize params.x - BINDINGS: double value expected at position 26\"}",
+      "top.location": "ERR {\"code\":-32602,\"message\":\"Invalid parameters\",\"data\":\"Failed to deserialize params.x - BINDINGS: double value expected at position 26\"}",
+      "submit button": "ERR {\"code\":-32602,\"message\":\"Invalid parameters\",\"data\":\"Failed to deserialize params.x - BINDINGS: double value expected at position 26\"}"
+    }
+  },
+  "c5_refresh": {
+    "title": {
+      "noFrame": true,
+      "contexts": [
+        "http://tauri.localhost"
+      ]
+    },
+    "body": {
+      "noFrame": true,
+      "contexts": [
+        "http://tauri.localhost"
+      ]
+    },
+    "src": "http://preview.localhost/p4"
+  },
+  "c7_plain_theme": {
+    "oneDark": {
+      "frame": {
+        "text": "rgb(220, 224, 229)",
+        "link": "rgb(116, 173, 232)",
+        "docBg": "rgba(0, 0, 0, 0)",
+        "bodyBg": "rgba(0, 0, 0, 0)",
+        "scheme": "dark"
+      },
+      "iframeBg": "rgb(40, 44, 51)"
+    },
+    "oneLight": {
+      "frame": {
+        "text": "rgb(36, 37, 41)",
+        "link": "rgb(92, 120, 226)",
+        "docBg": "rgba(0, 0, 0, 0)",
+        "bodyBg": "rgba(0, 0, 0, 0)",
+        "scheme": "light"
+      },
+      "iframeBg": "rgb(250, 250, 250)"
+    }
+  },
+  "c6_app_inline_blocked": {
+    "x": null,
+    "violation": "script-src-elem"
+  },
+  "c2_mockup": {
+    "designs": 6,
+    "svgs": 500,
+    "rows": 350,
+    "font": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+    "title": "Outline 시안 5안"
+  },
+  "c8_loop_and_stop": {
+    "counterRunning": [
+      "4",
+      "6"
+    ],
+    "appAnswerDuringLoop": 12,
+    "appAnswerMs": 1,
+    "framesAfterClose": 0,
+    "procsAfterClose": "25"
+  },
+  "c7_tab_into_frame": [
+    {
+      "main": "IFRAME",
+      "frame": {
+        "noFrame": true,
+        "contexts": [
+          "http://tauri.localhost"
+        ]
+      }
+    },
+    {
+      "main": "BUTTON",
+      "frame": {
+        "noFrame": true,
+        "contexts": [
+          "http://tauri.localhost"
+        ]
+      }
+    },
+    {
+      "main": "BUTTON",
+      "frame": {
+        "noFrame": true,
+        "contexts": [
+          "http://tauri.localhost"
+        ]
+      }
+    },
+    {
+      "main": "BUTTON",
+      "frame": {
+        "noFrame": true,
+        "contexts": [
+          "http://tauri.localhost"
+        ]
+      }
+    }
+  ],
+  "c9_pdf": {
+    "tag": "IFRAME",
+    "src": "http://asset.localhost/C%3A%5CUsers%5Cna"
+  }
+}

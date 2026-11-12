@@ -154,6 +154,7 @@ npm run tauri build             # release exe + NSIS 설치 파일
 - 빌드 경고(기존과 같은 종류, 0.8.0): Vite 500 kB 넘는 chunk(`index` 4,557.41 kB, 0.7.0은 3,863.55 kB; Mermaid 쪽 `elk` 1,462.86 kB·`chunk-NGNAAXSQ` 629.04 kB 등은 지연 로딩), web-tree-sitter direct eval. Rust 경고 없음.
 - `cargo test`: `folder_watch::tests::missing_root_is_watched_after_creation_and_recreation`가 0.8.0 빌드 확인(K-05c)에서 1회 실패했다(`expected filesystem event: Timeout`). 코드 변경 없이 다시 돌리면 통과(3회 모두)해서 간헐 실패로 본다. 원인은 조사하지 않았다.
 - 빌드 PC 네트워크: 첫 빌드의 NSIS 내려받기, fetch 스크립트 모두 인터넷이 필요하다. 샌드박스(예: Codex)에서는 네트워크가 막혀 실패한다(os error 10013).
+- 0.8.1 HTML 미리보기: 무한 루프(`while(true){}` 등) 페이지를 연 뒤에는 앱을 다시 열 때까지 HTML 미리보기가 빈 화면일 수 있고, 그 페이지의 렌더러 프로세스가 CPU 1코어를 계속 쓴다(ORDER-07 #8, leader-core 결정으로 사용자 확인 대기).
 
 ## 8. 라이선스 주의
 

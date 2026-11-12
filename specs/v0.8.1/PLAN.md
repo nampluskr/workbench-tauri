@@ -92,3 +92,19 @@
 | K-06-R2 | 숨은 미리보기가 다시 그려져도 찾기 결과 다시 계산, 찾기 바 아래에서 멈추는 스크롤(scroll-padding-top) | I-9 |
 | C-11 | 검토·V3 판정 — 대리 검토(Claude Code 서브 에이전트, 새 컨텍스트) | I-8 · I-9 |
 | W-07 | PROGRESS(ORDER-06 기록)·PLAN(이 표) | ORDER-06 |
+
+### Phase 7 작업 카드
+
+| 카드 | 할 일 | core 항목 |
+|---|---|---|
+| K-07a | I-7 HTML 미리보기 스크립트 실행(시제품·구현): `preview://` 별도 문서, sandbox `allow-scripts`(불투명 원점), 프레임 CSP(meta + iframe `csp` 속성), 앱 CSP는 `frame-src`에만 preview를 더함 | I-7 |
+| K-07a-R1 | 페이지가 프레임을 옮기면 매번 되돌림(5초 안 5번 넘으면 멈추고 토스트) | I-7 |
+| K-07b | 0.8.1 release 빌드, `docs/BUILD.md` 4A절, README 실행 절 | 0.8.1 빌드·`docs/BUILD.md`·README 실행 절 |
+| C-12 | 검토·V3 판정 — tauri-checker, REWORK(A 탭 전환 이중 로드·거짓 알림, B V3 근거 보강 #2·#4·#8) | I-7 |
+| K-07a-R2 | C-12 A: 탭 전환으로 다시 붙은 iframe의 load를 이동으로 세지 않음(미리보기 문서의 `previewReady`로 판정, 커밋 `267cfa5`) | I-7 |
+| W-08 | PROGRESS(ORDER-07 지금까지)·PLAN(이 표) | ORDER-07 |
+| K-07c | 0.8.1 release 다시 빌드(`267cfa5` 기준, `docs/BUILD.md` 4A절 갱신, 커밋 `88e2acf`) | 0.8.1 빌드·`docs/BUILD.md` |
+| C-13 | 검토·V3 판정 — tauri-checker, REWORK(재측정 2건: 빠른 탭 전환·R2 뒤 이동, 무한 루프 뒤 새 HTML 미리보기) | I-7 · 0.8.1 빌드·README · 전체 회귀 |
+| ORDER-07-R1 | C-13 재측정 — tauri-leader. 무한 루프 뒤 새 HTML 미리보기가 빈 화면 → [BLOCKED] #8 | I-7 |
+| K-07d | `docs/BUILD.md` 7절 알려진 제약에 무한 루프 한계 한 줄 | I-7 |
+| W-09 | PROGRESS(ORDER-07 마무리)·PLAN(이 표) | ORDER-07 |

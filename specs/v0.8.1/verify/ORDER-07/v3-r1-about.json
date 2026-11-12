@@ -1,0 +1,9 @@
+{
+  "exe": "D:/projects/workbench-tauri/src-tauri/target/release/workbench-tauri.exe",
+  "about": [
+    "workbench-tauri\n\nVersion 0.8.1\n\nVersion\n0.8.1\nDate\n2026-11-13\nHost\nTauri 2.12.5\n",
+    "",
+    ""
+  ],
+  "fatal": "Error: about done\n    at file:///C:/Users/nampl/AppData/Local/Temp/claude/0b8282fad92e4259/2dcc8c40-f3c7-4825-9532-571c138ca732/scratchpad/o7r.mjs:54:11"
+}

@@ -560,3 +560,151 @@
   - 결과: 문서만 바뀌었다.
   - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-07-report.md`).
   - 특이사항: 없음.
+
+### Phase 7 — HTML 미리보기 스크립트 실행, 0.8.1 release 빌드·README
+
+- **K-07a I-7 HTML 미리보기 스크립트 실행 (ORDER-07)** (2026-11-13, coder, 커밋 `4a47bb2`)
+  - 무엇을 했나: `src-tauri/src/preview.rs`를 새로 두고 `src-tauri/src/lib.rs`·`tauri.conf.json`, `src/editor/html.ts`·`html.test.ts`, `src/shell/markdown-preview.ts`를 고쳤다(`src/app.css`·`src/theme/apply.ts`는 주석만). 측정용 시험 파일은 `specs/v0.8.1/verify/ORDER-07/fixtures/`. 기존 정화 규칙(`resourceUrl`·`rewriteCss`·`rewriteSrcset`·`localImagePath`), I-11 `defaultStyle`, `convertFileSrc`, Tauri `register_uri_scheme_protocol`, `notify`를 재사용했다.
+  - 결과:
+    - 방식: v0.8의 `frame.srcdoc`는 앱 CSP(`script-src 'self' 'wasm-unsafe-eval'`)를 물려받아 인라인 스크립트가 돌 수 없다. 그래서 자기 URL을 가진 별도 문서로 바꿨다.
+      - Rust `preview` URI 스킴(Windows `http://preview.localhost/<id>`). `preview_set(id, html)`로 맡긴 id 경로에만 200, 그 밖의 경로는 모두 204. 탭을 닫으면 `preview_drop(id)`. 응답 헤더 `Content-Type: text/html; charset=utf-8`, `Cache-Control: no-store`, `Allow-CSP-From: *`.
+      - iframe `sandbox="allow-scripts"` 하나(`allow-same-origin` 없음 → 불투명 원점). 폼 전송·`window.open`·모달·`top.location`이 막힌다.
+      - 프레임 CSP(`PREVIEW_CSP`)를 `<head>` 첫 요소의 meta와 iframe `csp` 속성(CSP Embedded Enforcement) 두 곳에 건다. `csp` 속성은 `Allow-CSP-From`이 있는 응답만 받아들이므로, 페이지가 프레임을 asset URL(정화·CSP 없는 원본)로 옮기는 탈출을 막는다. PDF 미리보기가 asset iframe을 써서 앱 `frame-src`에서 asset을 뺄 수 없어서다.
+      - 정화: `<script>`·`on*`를 지우지 않는다. 링크는 `#id`만 남겨 페이지 안 스크롤로 쓴다. 나머지 규칙(외부·`javascript:`·`file:` URL 제거, 로컬 → asset, `<meta refresh>`·`<base>`·`iframe/embed/object` 제거, 폼 대상 제거)은 그대로. HTML 미리보기는 DOMPurify가 아니라 `DOMParser` 기반 자체 규칙이다(카드 전제 정정).
+      - 스크롤 유지: 부모가 불투명 원점 프레임의 `scrollY`를 읽을 수 없어, 문서 머리의 작은 스크립트가 `parent.postMessage({previewScrollY})`로 알린다. 부모는 `e.source === frame.contentWindow`이고 숫자일 때만 쓴다.
+      - 멈춤: dispose에서 `frame.remove()`, 메시지 리스너 제거, `preview_drop`.
+    - 보안 설정 앞(`20cbbf2`, v0.8 `e46a172`과 같음)·뒤:
+
+      | 항목 | 앞 | 뒤 |
+      |---|---|---|
+      | `csp`·`devCsp` | `frame-src asset: http://asset.localhost` (나머지 생략) | `frame-src asset: http://asset.localhost preview: http://preview.localhost`, `script-src`·`connect-src` 등 나머지 그대로 |
+      | iframe | `sandbox="allow-same-origin"`, `srcdoc` | `sandbox="allow-scripts"`, `csp="<PREVIEW_CSP>"`, `src=http://preview.localhost/p<n>` |
+      | 프레임 안 CSP | 없음(앱 CSP 상속) | `default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'` (meta + `csp` 속성) |
+      | preview 응답 | (없던 스킴) | 저장된 id 200 + `Allow-CSP-From: *`, `Cache-Control: no-store` / 그 밖 204 |
+      | 정화: 지우는 태그 | `script`, `base`, `iframe`, `frame`, `frameset`, `embed`, `object`, `applet`, `meta[http-equiv=refresh]`, stylesheet 아닌 `link` | `script`만 빠짐 |
+      | 정화: 속성 | `on*`·`ping` 지움, `a/area` href 통째로 지움, action·formaction 지움 | `ping`만 지움(`on*` 남김), `a/area` href는 `#id`만, action·formaction 지움, `script`의 crossorigin·integrity 지움 |
+
+      - capability·의존성 변경 없음(앱 명령 두 개는 app manifest를 쓰지 않아 capability 밖).
+    - IPC 하위 프레임 조사(코드·문서): wry 0.57.1은 Windows에서 스크립트를 하위 프레임에도 넣으므로 `__TAURI_INTERNALS__`·`window.ipc`는 프레임에도 있다. 판정은 호출이 막히는지다. `fetch http://ipc.localhost`는 프레임 `connect-src 'none'`이 막고(막히지 않더라도 `Origin: null`은 tauri가 거절), `chrome.webview.postMessage`는 wry가 최상위 `WebMessageReceived`만 등록해 받지 않는다. tauri `is_local_url`이 `http://preview.localhost`를 local로 쳐서 두 경로가 막히는지가 중요했다.
+    - 알려진 한계(`shortcut:` 주석): 스크립트가 만든 상대 URL(`img.src = "pic.png"`)은 204라 안 뜬다. 로컬 `type="module"` `<script src>`는 CORS라 안 돈다. 시안의 `file:///` 글꼴은 요청하지 않아 대체 글꼴로 보인다. 무한 루프는 막는 코드가 없다.
+  - 검증: V1. `npm run typecheck` 오류 0, `node --test src/editor/html.test.ts` 10/10, `cargo test preview` 1/1, `cargo clippy -- -D warnings` 경고 0. 앱은 실행하지 않았다(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-07a-report.md`).
+  - 특이사항: 스크립트 이동 되돌림이 렌더마다 1회라 같은 렌더에서 두 번째로 이동하면 오류 페이지가 남았다 → K-07a-R1.
+- **K-07a-R1 이동 매번 되돌림** (2026-11-13, coder, 커밋 `eb987f2`)
+  - 무엇을 했나: V3 이동 측정(R1 전)에서 두 번째 이동 뒤 빈 문서가 남은 것을 고쳤다. `src/shell/markdown-preview.ts`, `src/editor/html.ts`(`recordRecovery`·`PREVIEW_RECOVER_LIMIT`·`PREVIEW_RECOVER_WINDOW_MS`), `html.test.ts`.
+  - 결과:
+    - 원인: 되돌림이 `recovered` 플래그로 렌더마다 1회였다. 또 스킴의 204가 이동을 막지 못했다. 네트워크 HTTP 응답이면 Chromium은 204에 이동하지 않지만, WebView2 커스텀 스킴 응답에는 이 규칙이 적용되지 않아 빈 문서(`title "preview.localhost"`)를 커밋한다. 불투명 원점 문서는 Navigation API `navigate` 이벤트가 꺼져 있어 프레임 안에서 미리 취소할 수도 없다.
+    - 고친 것: 이 미리보기가 시작하지 않은 프레임 load(오류 페이지, 204 빈 문서, `location.reload()` 등)마다 미리보기 문서를 다시 띄운다. 5초(`PREVIEW_RECOVER_WINDOW_MS`) 안에 5번(`PREVIEW_RECOVER_LIMIT`)이면 더 띄우지 않고 토스트 "This HTML page keeps navigating away. / Its preview stops until the file or the theme changes."를 띄운다. 다음 렌더(원본 편집·테마 변경·탭 다시 열기)에서 기록을 비운다. 값은 Zed 값이 아닌 tauri 결정(코드 주석).
+    - Rust는 고치지 않았다.
+  - 검증: V1. `npm run typecheck` 오류 0, `node --test src/editor/html.test.ts` 11/11(새 테스트: 창 안 5번 허용, 6번째 null, 창 밖 기록 빠짐). 보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-07a-R1-report.md`.
+  - 특이사항: 1초보다 조금 느린 주기로 이동하는 페이지는 제한에 걸리지 않고 계속 돌아온다(앱을 바쁘게 만들지 않아 알려진 한계).
+- **K-07b 0.8.1 release 빌드·BUILD.md·README** (2026-11-13, coder, 커밋 `970ad01`)
+  - 무엇을 했나: HEAD `eb987f2`에서 `npm.cmd run tauri build`(exit 0, 빌드 직전 `workbench-tauri.exe` 프로세스 없음 확인). `docs/BUILD.md`에 "4A. 0.8.1 결과 파일" 절(0.8.0 절 그대로), README "실행" 절을 0.8.1 기준으로 마무리(설치 파일 이름 `workbench-tauri_0.8.1_x64-setup.exe`, 크기 링크는 BUILD.md 4A절, 사용자 요청 2026-11-11).
+  - 결과:
+
+    | 파일 | 크기 | 0.8.0 대비 | ProductVersion |
+    |---|---|---|---|
+    | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.8.1_x64-setup.exe` | 10,582,363 B | +3,118,616 B(+41.78%) | 0.8.1 |
+    | `src-tauri\target\release\workbench-tauri.exe` | 21,538,304 B | +3,248,128 B(+17.76%) | 0.8.1 |
+
+    - 증가는 대부분 ORDER-05 코드 글꼴 넷(`dist/fonts/` 비압축 5,846,782 B, `dist/` 증가의 98.7%).
+    - 빌드 71초(cargo release 50.98초). 경고는 기존 종류뿐(Vite 500 kB chunk, web-tree-sitter `[EVAL]` 2건), Rust 경고 없음.
+  - 검증: V0 + 빌드. 앱은 실행하지 않았다(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-07b-report.md`).
+  - 특이사항: exe zip은 만들지 않았다(카드에 없음). README 앵커 `#4a-081-결과-파일`은 렌더 확인을 하지 않았다. 빌드 HEAD가 `eb987f2`라 K-07a-R2 뒤 다시 빌드한다.
+- **V3 측정** (2026-11-13, tauri-leader)
+  - 무엇을 했나: debug exe, 1920×1080 100%, 창 1440×852, One Dark(일부 One Light)에서 `measure.mjs`와 `fixtures/`로 쟀다. 결과 `specs/v0.8.1/verify/ORDER-07/` `v3.json`·`v3-nav.json`·PNG.
+  - 결과: 판정은 C-12에서 한다. 측정값:
+    - 격리(`isolation.html`): 인라인·로컬 스크립트가 돌고 원본 편집 뒤 다시 그려진다. `parent`/`top`의 document·location, `localStorage`·`sessionStorage`·`indexedDB`·cookie는 SecurityError, `__TAURI__` undefined, ipc fetch 두 가지·`__TAURI_INTERNALS__.invoke`·`chrome.webview.postMessage` 막힘. `__TAURI_INTERNALS__`·`window.ipc`는 존재한다.
+    - 인터넷(`network.html`): 표의 모든 행 blocked.
+    - 이동(R1 뒤, `v3-nav.json`): 링크 3종·버튼 7종 뒤 모두 원래 문서(`title navigate`, `src …/p1`), 앱 탭·`appUrl` 그대로, `#bottom` scrollY 1272. 계속 이동하는 페이지(`loopnav.html`)는 5번 뒤 토스트로 멈춘다. meta refresh(`refresh.html`) 뒤에도 페이지 그대로.
+    - 스타일 없는 HTML: 글자·링크색·color-scheme·배경이 Preview 테마 색이고 테마를 바꾸면 따라 바뀐다. 투명 캔버스 유지. 로컬 CSS 점선 테두리·`pic.png` 32 px.
+    - 앱 창 인라인 스크립트는 여전히 막힌다(`script-src-elem` 위반).
+    - 시안 `mockups/outline/index.html`: designs 6, svg 500.
+    - 무한 루프 중 앱 응답 1 ms(프레임이 별도 렌더러, 프로세스 24→25). 탭을 닫으면 iframe 0.
+    - PDF 미리보기 그대로 뜬다.
+  - 검증: V3.
+  - 특이사항: 처음 이동 측정(R1 전, `v3.json`의 `c5_navigate`·`c5_refresh`)에서 두 번째 이동 뒤 빈 문서가 남아 K-07a-R1을 냈다. 그 기록은 판정에서 뺀다.
+- **C-12 검토·V3 판정** [REWORK] (2026-11-13, tauri-checker)
+  - 무엇을 했나: 한도가 풀려 대리 검토 대신 tauri-checker가 다시 맡았다. ORDER-07 코드를 검토하고 V3 결과를 판정했다. `npm.cmd run typecheck` 오류 0, `npm.cmd run test` 309/309. `cargo test`·`clippy`는 `target\debug\.cargo-build-lock` 액세스 거부(os error 5)로 돌리지 못해 K-07a 결과를 쓰고 `preview.rs`는 코드로 읽었다.
+  - 결과:
+    - 코드 검토: 격리 다섯 조건을 깨는 결함은 없다. 앱 `script-src`·`connect-src` 그대로, sandbox `allow-scripts`만, 프레임 CSP 두 곳, 스킴 저장된 id만 200, IPC 경로 막힘(코드·문서), 정화, postMessage 수신 검사, Rust 명령 모두 OK.
+    - REWORK A(코드, 중간): 탭 뷰는 DOM에서 뺐다 넣는 방식(`Pane.tsx:434`)이라 탭을 바꿨다 돌아오면 iframe이 다시 불러와져 `load`가 온다. 이 load를 이동으로 보고 다시 띄워 문서가 두 번 뜨고, 5초 안에 5번(두 탭 사이 3왕복)이면 거짓 토스트가 뜨고 진짜 이동도 되돌리지 않게 된다 → K-07a-R2.
+    - REWORK B(측정 보강): #2 시안 그림이 보이는 캡처(지금 `c2-mockup-preview.png`는 맨 위 설명 표만), #4 프레임 대상에 붙은 네트워크·`securitypolicyviolation` 기록(지금 기록은 메인 대상만 봐 OOPIF 프레임 요청이 안 들어옴), #8 닫은 뒤 남은 렌더러 프로세스의 CPU·일반 타이머 정지.
+    - V3: #3 격리: 앱·#5 이동·#6 보안 설정·#7 v0.8 기능 PASS. #2·#4는 보강 필요, #8은 부분 PASS.
+  - 검증: V1 검토·V3 판정(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-12-report.md`).
+  - 특이사항:
+    - 참고(결함 아님): 스크립트가 만든 `<script src=asset…>`은 디스크 어느 파일이든 스크립트로 실행해 본다(내용은 못 읽고 나갈 길 없음). `<link rel=preconnect|dns-prefetch>`·WebRTC는 CSP가 막지 않아 호스트 이름 수준 누출이 이론상 가능하다(미실측, 낮음).
+    - #3은 가능하면 부작용이 보이는 명령(예: 클립보드 쓰기)을 한 번 더 쏴 보라고 했다(선택).
+    - #7 Tab으로 프레임 안 포커스는 간접 근거다.
+    - 무한 루프에서 앱이 멈추지 않는 것은 WebView2가 `preview.localhost`를 별도 프로세스로 나누는 데 기댄 것이라 보장이 아니다 — 알려진 한계로 적는다.
+- **K-07a-R2 탭 전환 이중 로드·거짓 알림** (2026-11-13, coder, 커밋 `267cfa5`)
+  - 무엇을 했나: C-12 A를 고쳤다. `src/shell/markdown-preview.ts`(load 판정), `src/editor/html.ts`(`headStart` 스크립트 첫머리에 `previewReady` 알림), `src/editor/html.test.ts`(assert 1줄). 기존 프레임→부모 postMessage 경로(스크롤 `previewScrollY`와 같은 리스너·같은 `e.source === frame.contentWindow` 검사), `recordRecovery`·토스트를 재사용했다.
+  - 결과:
+    - 원인: 되돌림이 "이 미리보기가 `src`를 정한 직후의 load"(`expected`)만 우리 것으로 봤다. 탭 뷰를 DOM에서 뺐다 넣으면(`Pane.tsx`) 브라우저가 iframe `src`를 다시 불러오는데, 이 load가 이동으로 세어져 또 불러오고 `recordRecovery`에 쌓여 거짓 토스트와 `stopped`가 됐다.
+    - 고친 것: 판정 기준을 "지금 프레임에 든 문서가 미리보기 자신의 문서인가"로 바꿨다. 미리보기 문서는 머리 스크립트 첫 줄에서 `parent.postMessage({previewReady:true}, "*")`를 보내고, 부모는 `e.source === frame.contentWindow`이면 `ours = true`로 둔 뒤 프레임 load마다 읽고 비운다. 우리 문서의 load(렌더, 탭 다시 붙임, `location.reload()`)는 아무것도 하지 않는다. 막힌 이동이 남긴 문서(CSP 오류 페이지, 204 빈 문서)는 알림이 없어 K-07a-R1대로 되돌림·횟수 제한. `expected`는 지웠다.
+    - 페이지가 `previewReady`를 흉내 내고 이동하면 그 페이지의 오류 페이지가 되돌려지지 않을 뿐이다(격리와 무관).
+  - 검증: V1. `npm run typecheck` 오류 0, `node --test src/editor/html.test.ts` 11/11. Rust 변경 없음, 앱은 실행하지 않았다(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-07a-R2-report.md`).
+  - 특이사항: 프레임의 postMessage가 부모에서 그 프레임의 load보다 먼저 처리된다는 순서를 기대한다. V3 탭 전환 시험으로 확인한다(ORDER-07-R1에서 확인).
+- **W-08 ORDER-07 PROGRESS·PLAN 기록(지금까지)** (2026-11-13, writer)
+  - 무엇을 했나: 위 Phase 7 항목을 K-07a·K-07a-R1·K-07b·C-12 보고 파일, K-07a-R2 카드와 W-08 카드(V3 요약)에서 옮겨 적고, `PLAN.md`에 Phase 7 작업 카드 표를 더했다.
+  - 결과: 문서만 바뀌었다.
+  - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-08-report.md`).
+  - 특이사항: 없음.
+- **K-07c 0.8.1 release 다시 빌드** (2026-11-13, coder, 커밋 `88e2acf`)
+  - 무엇을 했나: HEAD `267cfa5`(K-07a-R2 반영)에서 `npm.cmd run tauri build`(exit 0). 빌드 직전 프로세스는 leader의 debug exe(PID 37392)뿐이고 release exe를 띄운 프로세스는 없어 그대로 두고 빌드했다. `docs/BUILD.md` 4A절 숫자와 "K-07a-R2 반영 다시 빌드" 한 줄, 머리 "고친 날" 줄의 기준 커밋(`eb987f2` → `267cfa5`)을 고쳤다. README는 그대로.
+  - 결과:
+
+    | 파일 | 크기 | 0.8.0 대비 | ProductVersion |
+    |---|---|---|---|
+    | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.8.1_x64-setup.exe` | 10,579,907 B(2026-11-13 07:44:58) | +3,116,160 B(+41.75%) | 0.8.1 |
+    | `src-tauri\target\release\workbench-tauri.exe` | 21,538,304 B(07:44:58) | +3,248,128 B(+17.76%) | 0.8.1 |
+
+    - K-07b 빌드 대비 설치 파일 −2,456 B, exe 같음. 빌드 70초(cargo release 48.09초). 경고는 기존 종류뿐, Rust 경고 없음.
+  - 검증: 빌드 + V0. 앱은 실행하지 않았다(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-07c-report.md`).
+  - 특이사항: 없음.
+- **V3 보강·release 회귀** (2026-11-13, tauri-leader)
+  - 무엇을 했나: C-12 B 보강과 R2 뒤 탭 전환을 debug exe(`267cfa5`)로 `measure-c.mjs`로 재고(`v3-c.json`, `c2-mockup-drawings.png`), #11 전체 회귀를 0.8.1 release exe(`267cfa5`)로 `measure-regress.mjs`로 쟀다(`v3-regress.json`·`v3-regress-fix.json`, `c11-release-regress.png`). 1920×1080 100%, 창 1440×852, One Dark. 교차 원점 프레임 안의 값은 프레임 대상(별도 프로세스)에 CDP로 붙어 읽었다.
+  - 결과: 판정은 C-13에서 한다. 측정값:
+    - #2 시안: 프레임을 `#designs`로 스크롤해 그림 영역을 캡처했다(`c2-mockup-drawings.png`, 브라우저 캡처 `..\ORDER-04\mockup-F.png`와 나란히), designs 6.
+    - #4 인터넷(`b4_frame_network`, 프레임 대상): fetch·XHR·WebSocket·script·img 모두 blocked, 시도마다 `securitypolicyviolation`(connect-src·script-src-elem·img-src), Log에 CSP 위반.
+    - #8 멈춤: 일반 타이머 페이지는 닫고 다시 열면 새 문서, 닫은 뒤 7초 동안 CPU를 쓰는 프로세스 0(`b8_stop`). 루프 페이지는 탭을 닫아도 같은 렌더러가 4초에 4.65 CPU-s를 쓴다(`b8_loop_close`, 앱은 응답).
+    - 탭 전환(`a_tab_switch`): 6번 오가도 토스트 없음.
+    - #11 release 회귀: I-1~I-13 대표 동작과 미리보기 종류(마크다운 위치 연계, 수식·Mermaid, CSV·SVG·ipynb·HTML·이미지·PDF) 모두 기대대로. 표는 `verify/ORDER-07/c13-regress-table.md`(C-13이 JSON에서 정리).
+  - 검증: V3.
+  - 특이사항:
+    - 화면 밖 요소 클릭·키 입력 문맥 문제로 몇 항목을 `v3-regress-fix.json`으로 다시 쟀다.
+    - release의 첫 I-3 실패는 펼친 첫 폴더(루트 바로 아래 첫 줄)에 스크롤 0에서도 sticky 행이 겹쳐 놓을 곳이 되지 않는 것이었다. debug exe에서도 같고 ORDER-02부터다.
+- **C-13 검토·V3 판정** [REWORK — 재측정 2건, 코드 변경 요구 없음] (2026-11-13, tauri-checker)
+  - 무엇을 했나: K-07a-R2·K-07c와 V3 보강·#11 회귀를 판정했다. `npm.cmd run typecheck` 오류 0, `npm.cmd run test` 309/309. `cargo test`·`clippy`는 C-12와 같은 사유(`.cargo-build-lock` 액세스 거부)로 돌리지 못했고, `git diff 267cfa5 HEAD -- src src-tauri`가 비어 있고 R2는 Rust를 고치지 않아 K-07a의 Rust 결과(test 1/1, clippy 0)가 그대로라고 봤다.
+  - 결과:
+    - PASS: B 보강 #2(F안 그림이 `mockup-F.png`와 같은 배치·색·아이콘)·#4(프레임 대상 기록, 요청은 CSP에서 막힘)·#8 일반 타이머, #9 빌드, #10 README, #11 전체 회귀(조건부 — 기대값이 든 표가 verify에 없어 C-13이 만든 표를 `c13-regress-table.md`로 옮김), #12 테스트.
+    - A(R2) 코드는 원인에 맞다. 그러나 `a_tab_switch`는 한 바퀴 약 3초라 고치기 전 코드도 통과했을 시험이고, 로드 횟수와 postMessage·load 순서를 증명하지 못한다. R2 뒤 navigate.html 이동·loopnav 제한을 다시 재지 않았다 → 재측정 ①.
+    - 루프 CPU는 알려진 한계로 볼 수 있으나, 그 프로세스가 그 뒤 여는 HTML 미리보기도 먹는지 확인이 필요하다(C-12 때 루프 직후 연 미리보기의 프레임 값이 모두 `noFrame`) → 재측정 ②. 실패하면 [BLOCKED]로 사용자 결정.
+    - sticky 겹침(I-3)은 결함이 아니다. Zed와 같은 동작(`ProjectTree.tsx:133` "Zed: sticky rows take no drop", R-13 "natural sticky slot")이고 범위 밖이다.
+  - 검증: V1 검토·V3 판정(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-13-report.md`).
+  - 특이사항:
+    - 페이지가 `location.reload()`로 자기 문서를 계속 다시 부르면 `ours`라 횟수 제한에 안 잡힌다(프레임 안에서만 도는 브라우저와 같은 동작, 결함 아님).
+    - 회귀 측정의 `about.ver`는 이름(`"workbench-tauri"`)이라 앱 정보의 버전을 확인하지 못했다(ORDER-07-R1에서 확인).
+- **ORDER-07-R1 재측정** (2026-11-13, tauri-leader)
+  - 무엇을 했나: C-13 재측정 두 건과 release 앱 정보 버전을 `measure-r1.mjs`로 쟀다(`v3-r1.json`·`v3-r1-about.json`, `r1-after-loop-new-preview.png`·`c9-release-about.png`).
+  - 결과:
+    - 빠른 탭 전환 10번(2.8초): 토스트 없음, 문서 그대로(`r1_fast_tabs`). 10번 전환 동안 프레임 문서 "Started at"이 1회 바뀌었다.
+    - 탭 전환 뒤 버튼 이동 3종 되돌림(`r1_nav_after_tabs`)과 loopnav 5번 제한·토스트(`r1_loopnav_after_tabs`) 그대로.
+    - release exe Help → About "Version 0.8.1".
+    - 무한 루프 페이지를 닫은 뒤 `page.html`을 열면 iframe(`src` p3)은 있으나 프레임 대상이 없고, 5초 뒤에도 스크립트 결과가 없으며 화면이 빈칸이다(`r1_after_loop_new_preview`). 앱 창·다른 미리보기 종류는 응답하고, 앱을 다시 열면 풀린다 → **[BLOCKED] #8**.
+  - 검증: V3.
+  - 특이사항: 원인은 닫은 루프 페이지의 렌더러가 계속 바쁘고(CPU 1코어), 그 뒤 연 HTML 미리보기(같은 `preview.localhost` 사이트)가 그 프로세스에 들어가 그려지지 않는 것으로 본다(프레임 대상이 DevTools에 안 잡힘). 고칠 방향 후보: 미리보기마다 다른 호스트 이름(`p<n>.preview.localhost`)으로 사이트를 나눠 새 프로세스에 넣기, 또는 알려진 한계로 받기.
+- **leader-core 결정 #8** (2026-11-13)
+  - 결함으로 보고 I-7 #8만 BLOCKED로 남긴다. 고치려면 프레임 프로세스 처리로 범위가 커져 사용자가 정한다 — 마지막 보고에서 묻는다. 지금 코드는 되돌리지 않는다(보통 HTML은 동작하고, 앱을 다시 열면 풀린다).
+  - 알려진 한계: 무한 루프 페이지를 연 뒤에는 앱을 다시 열 때까지 HTML 미리보기가 빌 수 있고, 그 프로세스가 CPU를 쓴다.
+- **K-07d BUILD.md 알려진 한계** (2026-11-13, coder)
+  - 무엇을 했나: `docs/BUILD.md` 7절 "알려진 제약" 끝에 한 줄: "0.8.1 HTML 미리보기: 무한 루프(`while(true){}` 등) 페이지를 연 뒤에는 앱을 다시 열 때까지 HTML 미리보기가 빈 화면일 수 있고, 그 페이지의 렌더러 프로세스가 CPU 1코어를 계속 쓴다(ORDER-07 #8, leader-core 결정으로 사용자 확인 대기)."
+  - 결과: 문서만 바뀌었다(알려진 한계 자리가 7절에 있어 4A절에는 넣지 않음).
+  - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-07d-report.md`).
+  - 특이사항: 없음.
+- **ORDER-07 보고** (2026-11-13, tauri-leader): `specs/v0.8.1/reports/ORDER-07.md` [BLOCKED] — #8의 한 사례(무한 루프 뒤 새 HTML 미리보기)만 막혔고 나머지 완료 기준은 충족. 미정: 펼친 첫 폴더 위 sticky 겹침을 고칠지(ORDER-02부터), 사용자 확인(V4: 시안·실제 HTML 페이지가 브라우저와 같게 보이는지, 계속 이동 토스트 문구).
+- **W-09 ORDER-07 PROGRESS·PLAN 마무리** (2026-11-13, writer)
+  - 무엇을 했나: K-07a-R2 항목을 끝난 것으로 고치고, 위 K-07c~ORDER-07 보고 항목을 `reports/ORDER-07.md`, K-07a-R2·K-07c·C-13·K-07d 보고 파일과 W-09 카드에서 옮겨 적었다. `PLAN.md` Phase 7 표에 K-07c·C-13·ORDER-07-R1·K-07d·W-09를 더했다.
+  - 결과: 문서만 바뀌었다.
+  - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-09-report.md`).
+  - 특이사항: 없음.
+- **상태**: ORDER-07 보고 [BLOCKED](#8만), leader-core 판정 대기.

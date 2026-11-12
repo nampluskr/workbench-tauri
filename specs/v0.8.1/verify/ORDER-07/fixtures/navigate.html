@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>navigate</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<h1 id="top">I-7 navigation</h1>
+<p>Counter (setInterval, 1 s): <b id="count">0</b> — it keeps counting while this page stays, and must stop when the tab closes.</p>
+<p>Started at: <span id="started"></span> (a new time means the page was loaded again)</p>
+<p><a href="https://example.com/">external link</a> · <a href="refresh.html">local link to refresh.html</a> · <a href="#bottom">#bottom link</a></p>
+<p>
+  <button onclick="location.href = 'https://example.com/'">location.href = https://…</button>
+  <button onclick="location.href = 'refresh.html'">location.href = refresh.html</button>
+  <button onclick="location.assign('http://asset.localhost/C%3A%5CWindows%5Cwin.ini')">location = asset URL</button>
+  <button onclick="window.open('https://example.com/')">window.open</button>
+  <button onclick="document.getElementById('form').submit()">form.submit()</button>
+  <button onclick="top.location.href = 'https://example.com/'">top.location</button>
+</p>
+<form id="form" action="https://example.com/" method="get"><input name="q" value="x"> <button type="submit">submit button</button></form>
+<p><button onclick="document.getElementById('looped').textContent = 'loop started'; setTimeout(() => { while (true) {} }, 50)">infinite loop (while(true){})</button> <span id="looped"></span></p>
+<p>After each button this page must stay (same "Started at", counter running) and the app must stay.</p>
+<div class="spacer"></div>
+<p id="bottom"><a href="#top">#top link</a> — bottom</p>
+<style>.spacer { height: 1600px; }</style>
+<script>
+document.getElementById("started").textContent = new Date().toLocaleTimeString();
+let n = 0;
+setInterval(() => { document.getElementById("count").textContent = String(++n); }, 1000);
+</script>
+</body></html>

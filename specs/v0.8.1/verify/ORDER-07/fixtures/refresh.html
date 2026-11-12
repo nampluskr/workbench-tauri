@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>refresh</title>
+<meta http-equiv="refresh" content="1; url=https://example.com/">
+</head>
+<body>
+<h1>I-7 meta refresh</h1>
+<p>Started at: <span id="started"></span>. The source has a markup &lt;meta refresh&gt; (to https://example.com in 1 s); after 3 s a script adds one too.</p>
+<p id="state">waiting</p>
+<script>
+document.getElementById("started").textContent = new Date().toLocaleTimeString();
+setTimeout(() => {
+  const m = document.createElement("meta");
+  m.httpEquiv = "refresh";
+  m.content = "0; url=https://example.com/";
+  document.head.append(m);
+  document.getElementById("state").textContent = "script-added meta refresh is in place (this page must stay)";
+}, 3000);
+</script>
+</body></html>

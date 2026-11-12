@@ -1,0 +1,5 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>loopnav</title></head>
+<body><h1>keeps navigating</h1><p>Started at: <span id="started"></span></p>
+<script>document.getElementById("started").textContent = new Date().toLocaleTimeString();
+setTimeout(() => { location.href = "elsewhere.html"; }, 300);</script></body></html>

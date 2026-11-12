@@ -1,0 +1,48 @@
+{
+  "about": {
+    "ver": "workbench-tauri"
+  },
+  "I-2_tree_color": {
+    "color": "rgb(169, 175, 188)",
+    "muted": "#a9afbcff"
+  },
+  "I-1_input_14px": "14px",
+  "I-3_drag": {
+    "moved": false,
+    "oldGone": false
+  },
+  "I-10_editor_font": "\"JetBrains Mono\", \"Malgun Gothic\", monospace",
+  "I-4_outline": [
+    "C A",
+    "m m",
+    "f f"
+  ],
+  "md_preview_kinds": {
+    "I8_h2": "22px",
+    "I11_bg": [
+      "rgb(47, 52, 62)",
+      "rgb(40, 44, 51)"
+    ],
+    "I12_lang": "python",
+    "I10_codeFont": "\"JetBrains Mono\"",
+    "math": true,
+    "mermaid": true,
+    "liGap": "4px",
+    "syncEditorLine": null,
+    "I9_findBar": true
+  },
+  "I-5_lock_temp_preview": [],
+  "I-6_search_tabs": 2,
+  "other_previews": {
+    "csv": true,
+    "svg": true,
+    "ipynb": 2,
+    "I7_htmlScript": "ran",
+    "image": true,
+    "pdf": true
+  },
+  "I-13_last_tab": {
+    "closeRight": 1348,
+    "edgeLeft": 1353
+  }
+}

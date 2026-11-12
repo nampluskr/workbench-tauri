@@ -1,0 +1,45 @@
+{
+  "exe": "debug",
+  "r1_fast_tabs": {
+    "switches": 10,
+    "ms": 2776,
+    "started0": "오전 8:00:24",
+    "startedNow": "오전 8:00:31",
+    "title": "navigate",
+    "toasts": []
+  },
+  "r1_nav_after_tabs": {
+    "https": {
+      "title": "navigate",
+      "started": "오전 8:00:33"
+    },
+    "refresh": {
+      "title": "navigate",
+      "started": "오전 8:00:36"
+    },
+    "asset": {
+      "title": "navigate",
+      "started": "오전 8:00:39"
+    },
+    "toasts": []
+  },
+  "r1_loopnav_after_tabs": {
+    "title": "preview.localhost",
+    "toasts": [
+      "This HTML page keeps navigating away.\nIts preview stops until the file or the theme changes."
+    ]
+  },
+  "r1_after_loop_new_preview": {
+    "ran": {
+      "noFrame": true
+    },
+    "iframe": {
+      "src": "http://preview.localhost/p3",
+      "w": 1000
+    },
+    "targets": [
+      "page http://tauri.localhost/"
+    ],
+    "appAlive": 2
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "exe": "debug",
+  "a_tab_switch": {
+    "started0": "오전 7:43:48",
+    "startedAfter": "오전 7:44:09",
+    "title": "navigate",
+    "toasts": []
+  },
+  "b4_frame_network": {
+    "out": {
+      "fetch": "blocked TypeError",
+      "xhr": "blocked",
+      "ws": "blocked",
+      "script": "blocked",
+      "img": "blocked"
+    },
+    "violations": [
+      "connect-src https://example.com/",
+      "connect-src https://example.com/",
+      "connect-src https://example.com/",
+      "connect-src https://example.com/",
+      "connect-src wss://echo.websocket.org/",
+      "connect-src wss://echo.websocket.org/",
+      "script-src-elem https://example.com/x.js",
+      "script-src-elem https://example.com/x.js",
+      "img-src https://example.com/x.png",
+      "img-src https://example.com/x.png"
+    ],
+    "networkRequestsFromFrame": [
+      "https://example.com/",
+      "https://example.com/x.js",
+      "https://example.com/x.png"
+    ],
+    "logViolations": [
+      "Connecting to 'https://example.com/' violates the following Content Security Policy directive: \"conn",
+      "Connecting to 'https://example.com/' violates the following Content Security Policy directive: \"conn",
+      "Fetch API cannot load https://example.com/. Refused to connect because it violates the document's Co",
+      "Connecting to 'https://example.com/' violates the following Content Security Policy directive: \"conn",
+      "Connecting to 'https://example.com/' violates the following Content Security Policy directive: \"conn",
+      "Connecting to 'wss://echo.websocket.org/' violates the following Content Security Policy directive: ",
+      "Connecting to 'wss://echo.websocket.org/' violates the following Content Security Policy directive: ",
+      "Loading the script 'https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js' violates the followin"
+    ]
+  },
+  "b2_mockup": {
+    "frame": {
+      "x": 440,
+      "y": 65,
+      "width": 1000,
+      "height": 756
+    },
+    "designs": 6
+  },
+  "b8_stop": {
+    "countBeforeClose": "5",
+    "reopenedCount": "5",
+    "procs": {
+      "before": 25,
+      "afterClose": 25,
+      "later": 25
+    },
+    "cpuDeltaAfterClose": []
+  },
+  "b8_loop_close": {
+    "busyDuringLoop": [
+      {
+        "id": 40560,
+        "d": 3.73
+      }
+    ],
+    "afterCloseDelta": [
+      {
+        "id": 40560,
+        "d": 4.65
+      }
+    ],
+    "procsAfter": 25,
+    "appAlive": 2
+  }
+}

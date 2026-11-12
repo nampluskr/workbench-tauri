@@ -1,0 +1,109 @@
+{
+  "procsBefore": "24",
+  "c5_navigate_r1": {
+    "start": {
+      "title": "navigate",
+      "started": "오전 7:29:05",
+      "count": "4",
+      "src": "http://preview.localhost/p1",
+      "appTabs": 2,
+      "appUrl": "http://tauri.localhost/"
+    },
+    "steps": {
+      "external link": {
+        "title": "navigate",
+        "started": "오전 7:29:05",
+        "count": "7",
+        "src": "http://preview.localhost/p1",
+        "appTabs": 2,
+        "appUrl": "http://tauri.localhost/"
+      },
+      "local link": {
+        "title": "navigate",
+        "started": "오전 7:29:05",
+        "count": "10",
+        "src": "http://preview.localhost/p1",
+        "appTabs": 2,
+        "appUrl": "http://tauri.localhost/"
+      },
+      "#bottom link": {
+        "title": "navigate",
+        "started": "오전 7:29:05",
+        "count": "13",
+        "src": "http://preview.localhost/p1",
+        "appTabs": 2,
+        "appUrl": "http://tauri.localhost/",
+        "scrollY": 1272
+      },
+      "location.href = https://…": {
+        "title": "navigate",
+        "started": "오전 7:29:19",
+        "count": "2",
+        "src": "http://preview.localhost/p1",
+        "appTabs": 2,
+        "appUrl": "http://tauri.localhost/"
+      },
+      "location.href = refresh.html": {
+        "title": "navigate",
+        "started": "오전 7:29:22",
+        "count": "2",
+        "src": "http://preview.localhost/p1",
+        "appTabs": 2,
+        "appUrl": "http://tauri.localhost/"
+      },
+      "location = asset URL": {
+        "title": "navigate",
+        "started": "오전 7:29:24",
+        "count": "2",
+        "src": "http://preview.localhost/p1",
+        "appTabs": 2,
+        "appUrl": "http://tauri.localhost/"
+      },
+      "window.open": {
+        "title": "navigate",
+        "started": "오전 7:29:24",
+        "count": "5",
+        "src": "http://preview.localhost/p1",
+        "appTabs": 2,
+        "appUrl": "http://tauri.localhost/"
+      },
+      "form.submit()": {
+        "title": "navigate",
+        "started": "오전 7:29:24",
+        "count": "8",
+        "src": "http://preview.localhost/p1",
+        "appTabs": 2,
+        "appUrl": "http://tauri.localhost/"
+      },
+      "top.location": {
+        "title": "navigate",
+        "started": "오전 7:29:24",
+        "count": "11",
+        "src": "http://preview.localhost/p1",
+        "appTabs": 2,
+        "appUrl": "http://tauri.localhost/"
+      },
+      "submit button": {
+        "title": "navigate",
+        "started": "오전 7:29:24",
+        "count": "14",
+        "src": "http://preview.localhost/p1",
+        "appTabs": 2,
+        "appUrl": "http://tauri.localhost/"
+      }
+    }
+  },
+  "c5_loopnav": {
+    "title": "preview.localhost",
+    "src": "http://preview.localhost/p2",
+    "toasts": [
+      "This HTML page keeps navigating away.\nIts preview stops until the file or the theme changes."
+    ],
+    "appAnswer": 2
+  },
+  "c5_refresh_r1": {
+    "title": "refresh",
+    "body": "I-7 meta refresh\n\nStarted at: 오전 7:30:01. The source has a markup <meta refresh> (to https://example"
+  },
+  "fatal": "Error: nav run done\n    at file:///C:/Users/nampl/AppData/Local/Temp/claude/0b8282fad92e4259/2dcc8c40-f3c7-4825-9532-571c138ca732/scratchpad/o7.mjs:91:11"
+}
