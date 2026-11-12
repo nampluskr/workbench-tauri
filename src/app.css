@@ -855,9 +855,9 @@ button, input, select, textarea {
   overflow-x: auto;
 }
 /* core v0.8.1 I-12: a code block (fenced, indented, ipynb code cell) is the header row (language, Copy) over its pre, in one shaded box. */
-.markdown-body .code-block { margin: var(--markdown-preview-code-block-margin-y) 0; background: var(--panel-background); border-radius: var(--markdown-preview-code-block-corner-radius); }
+.markdown-body :where(.code-block) { margin: var(--markdown-preview-code-block-margin-y) 0; background: var(--panel-background); border-radius: var(--markdown-preview-code-block-corner-radius); } /* :where: the first-child margin-top 0 above still wins */
 .markdown-body .code-block > pre { margin: 0; padding-top: 0; background: none; border-radius: 0; }
-.code-block-header { display: flex; align-items: center; justify-content: space-between; padding: 0 0 0 var(--markdown-preview-code-block-padding); color: var(--text-muted); font-family: var(--ui-font-family); font-size: var(--typography-size-small); --icon-size: var(--icons-size-small); }
+.code-block-header { display: flex; user-select: none; /* a drag selection or copy across the block leaves the language out */ align-items: center; justify-content: space-between; padding: 0 0 0 var(--markdown-preview-code-block-padding); color: var(--text-muted); font-family: var(--ui-font-family); font-size: var(--typography-size-small); --icon-size: var(--icons-size-small); }
 .code-block-copy { border-radius: var(--markdown-preview-code-block-corner-radius); }
 .markdown-body pre code { font-size: inherit; background: none; }
 .markdown-body .frontmatter { /* L-111 */

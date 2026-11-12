@@ -1,4 +1,4 @@
-export const FONT_LICENSES = ["/fonts/ibm-plex-sans/license.txt", "/fonts/lilex/OFL.txt", "/fonts/jetbrains-mono/OFL.txt", "/fonts/hack/LICENSE.md", "/fonts/ubuntu-mono/LICENCE.txt", "/fonts/d2coding/OFL.txt"];
+export const FONT_LICENSES = ["/fonts/ibm-plex-sans/license.txt", "/fonts/lilex/OFL.txt", "/fonts/jetbrains-mono/OFL.txt", "/fonts/hack/LICENSE.md", "/fonts/ubuntu-mono/LICENCE.txt", "/fonts/ubuntu-mono/copyright.txt", "/fonts/d2coding/OFL.txt"];
 
 /** A missing ignored copy must not prevent the remaining notices from being read. */
 export async function licenseText(sources: Record<string, () => Promise<string>>): Promise<string> {
