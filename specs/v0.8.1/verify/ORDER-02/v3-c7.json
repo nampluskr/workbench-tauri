@@ -1,0 +1,81 @@
+{
+  "diag": {
+    "url": "http://tauri.localhost/",
+    "panel": true,
+    "scroll": true,
+    "text": "o2ws\n\n\n\no2ws\no2ws\ndocs\ndst\ndst2\ndst3\nmany\nopenme\nsrc\nb.txt\nc.txt"
+  },
+  "rowsTop": [
+    "scratchpad/o2ws",
+    "o2ws/docs",
+    "o2ws/dst",
+    "o2ws/dst2",
+    "o2ws/dst3",
+    "o2ws/many",
+    "o2ws/openme",
+    "o2ws/src",
+    "o2ws/b.txt",
+    "o2ws/c.txt"
+  ],
+  "before": {
+    "dst3": [
+      "ext.txt"
+    ],
+    "old": "EXT-OLD"
+  },
+  "fileDrop": {
+    "status": "dropped",
+    "screen": [
+      500,
+      240
+    ],
+    "helper": "effect=Copy"
+  },
+  "afterFile": {
+    "dst3": [
+      "ext copy.txt",
+      "ext.txt"
+    ],
+    "old": "EXT-OLD",
+    "copies": [
+      [
+        "ext copy.txt",
+        "EXT-NEW"
+      ]
+    ],
+    "toasts": [],
+    "tabs": [
+      "ext copy.txt"
+    ]
+  },
+  "dirDrop": {
+    "status": "dropped",
+    "screen": [
+      500,
+      240
+    ],
+    "helper": "effect=Copy"
+  },
+  "afterDir": {
+    "dst3": [
+      "ext copy.txt",
+      "ext.txt",
+      "extdir"
+    ],
+    "g": "G",
+    "treeRows": [
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst3",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst3\\extdir",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst3\\ext copy.txt",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst3\\ext.txt"
+    ]
+  },
+  "originals": {
+    "file": "EXT-NEW",
+    "dir": true,
+    "list": [
+      "ext.txt",
+      "extdir"
+    ]
+  }
+}

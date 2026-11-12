@@ -1,0 +1,765 @@
+{
+  "window": {
+    "w": 1440,
+    "h": 852,
+    "dpr": 1
+  },
+  "c2_file_to_folder": {
+    "overDstFile": {
+      "under": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst\\keep.txt",
+      "rows": [
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst\\keep.txt"
+      ],
+      "segments": [],
+      "root": false,
+      "overlay": null,
+      "tabLine": [],
+      "barEnd": false,
+      "bg": "rgba(131, 137, 148, 0.5)",
+      "token": "#83899480"
+    },
+    "overDst": {
+      "under": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst",
+      "rows": [
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst\\keep.txt"
+      ],
+      "segments": [],
+      "root": false,
+      "overlay": null,
+      "tabLine": [],
+      "barEnd": false,
+      "bg": "rgba(131, 137, 148, 0.5)",
+      "token": "#83899480"
+    },
+    "disk": {
+      "src": [
+        "b.txt",
+        "c.txt",
+        "sub"
+      ],
+      "dst": [
+        "a.txt",
+        "keep.txt"
+      ]
+    }
+  },
+  "c3_c4_not_allowed": {
+    "srcOverOwnFile": {
+      "under": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\src\\b.txt",
+      "rows": [],
+      "segments": [],
+      "root": false,
+      "overlay": null,
+      "tabLine": [],
+      "barEnd": false,
+      "bg": null,
+      "token": "#83899480"
+    },
+    "srcOverChild": {
+      "under": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\src\\sub",
+      "rows": [],
+      "segments": [],
+      "root": false,
+      "overlay": null,
+      "tabLine": [],
+      "barEnd": false,
+      "bg": null,
+      "token": "#83899480"
+    },
+    "srcOverSelf": {
+      "under": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\src",
+      "rows": [],
+      "segments": [],
+      "root": false,
+      "overlay": null,
+      "tabLine": [],
+      "barEnd": false,
+      "bg": null,
+      "token": "#83899480"
+    },
+    "keepOverSameFolder": [
+      {
+        "under": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst\\a.txt",
+        "rows": [],
+        "segments": [],
+        "root": false,
+        "overlay": null,
+        "tabLine": [],
+        "barEnd": false,
+        "bg": null,
+        "token": "#83899480"
+      },
+      {
+        "under": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst",
+        "rows": [],
+        "segments": [],
+        "root": false,
+        "overlay": null,
+        "tabLine": [],
+        "barEnd": false,
+        "bg": null,
+        "token": "#83899480"
+      }
+    ],
+    "disk": {
+      "root": [
+        "deep",
+        "docs",
+        "dst",
+        "dst2",
+        "dst3",
+        "many",
+        "openme",
+        "proj",
+        "src"
+      ],
+      "src": [
+        "b.txt",
+        "c.txt",
+        "sub"
+      ],
+      "dst": [
+        "a.txt",
+        "keep.txt"
+      ]
+    }
+  },
+  "c2_folder_to_folder": {
+    "over": {
+      "under": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst",
+      "rows": [
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst\\a.txt",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst\\keep.txt"
+      ],
+      "segments": [],
+      "root": false,
+      "overlay": null,
+      "tabLine": [],
+      "barEnd": false,
+      "bg": "rgba(131, 137, 148, 0.5)",
+      "token": "#83899480"
+    },
+    "disk": {
+      "src": [
+        "b.txt",
+        "c.txt"
+      ],
+      "dst": [
+        "a.txt",
+        "keep.txt",
+        "sub"
+      ],
+      "dstSub": true
+    }
+  },
+  "c4_same_name": {
+    "over": {
+      "under": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst2",
+      "rows": [
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst2",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst2\\a.txt"
+      ],
+      "segments": [],
+      "root": false,
+      "overlay": null,
+      "tabLine": [],
+      "barEnd": false,
+      "bg": "rgba(131, 137, 148, 0.5)",
+      "token": "#83899480"
+    },
+    "toasts": [
+      "Failed to move `dst\\a.txt` to `dst2\\a.txt`. A file or folder already exists there."
+    ],
+    "dst2a": "EXISTING-A",
+    "dstA": "A-src",
+    "dst2": [
+      "a.txt"
+    ]
+  },
+  "c2_multi_to_root": {
+    "over": {
+      "under": null,
+      "rows": [
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\deep\\inner",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\docs",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\docs\\doc.md",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst\\sub",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst\\sub\\d.txt",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst\\a.txt",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst\\keep.txt",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst2",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst2\\a.txt",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst3",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst3\\ext.txt",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\many",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\openme",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\openme\\o1.txt",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\openme\\o2.txt",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\openme\\o3.txt",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\proj",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\proj\\f.md",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\src",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\src\\b.txt",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\src\\c.txt"
+      ],
+      "segments": [],
+      "root": true,
+      "overlay": null,
+      "tabLine": [],
+      "barEnd": false,
+      "bg": "rgba(131, 137, 148, 0.5)",
+      "token": "#83899480"
+    },
+    "disk": {
+      "root": [
+        "b.txt",
+        "c.txt",
+        "deep",
+        "docs",
+        "dst",
+        "dst2",
+        "dst3",
+        "many",
+        "openme",
+        "proj",
+        "src"
+      ],
+      "src": []
+    }
+  },
+  "c5_open_tab_file": {
+    "before": {
+      "tabs": [
+        [
+          {
+            "title": "doc.md",
+            "active": true,
+            "preview": false,
+            "dirty": true
+          }
+        ]
+      ],
+      "tip": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\docs\\doc.md"
+    },
+    "after": {
+      "tabs": [
+        [
+          {
+            "title": "doc.md",
+            "active": true,
+            "preview": false,
+            "dirty": true
+          }
+        ]
+      ],
+      "tip": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst\\doc.md",
+      "text": [
+        "# docEDIT1 "
+      ],
+      "activeRow": [
+        {
+          "path": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst\\doc.md",
+          "color": "rgb(220, 224, 229)"
+        }
+      ],
+      "disk": {
+        "docs": [],
+        "dstDoc": true
+      }
+    }
+  },
+  "c5_open_tab_folder": {
+    "tabs": [
+      [
+        {
+          "title": "doc.md",
+          "active": false,
+          "preview": false,
+          "dirty": true
+        },
+        {
+          "title": "f.md",
+          "active": true,
+          "preview": false,
+          "dirty": true
+        }
+      ]
+    ],
+    "tip": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst\\proj\\f.md",
+    "text": [
+      "# fEDIT2 "
+    ],
+    "activeRow": [
+      {
+        "path": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst\\proj\\f.md",
+        "color": "rgb(220, 224, 229)"
+      }
+    ],
+    "disk": {
+      "root": [
+        "b.txt",
+        "c.txt",
+        "deep",
+        "docs",
+        "dst",
+        "dst2",
+        "dst3",
+        "many",
+        "openme",
+        "src"
+      ],
+      "dstProj": true
+    }
+  },
+  "undo_redo": {
+    "undo": {
+      "toasts": [],
+      "disk": {
+        "root": [
+          "b.txt",
+          "c.txt",
+          "deep",
+          "docs",
+          "dst",
+          "dst2",
+          "dst3",
+          "many",
+          "openme",
+          "proj",
+          "src"
+        ],
+        "projBack": true
+      },
+      "tip": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\proj\\f.md"
+    },
+    "redo": {
+      "toasts": [],
+      "disk": {
+        "root": [
+          "b.txt",
+          "c.txt",
+          "deep",
+          "docs",
+          "dst",
+          "dst2",
+          "dst3",
+          "many",
+          "openme",
+          "src"
+        ],
+        "dstProj": true
+      },
+      "tip": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst\\proj\\f.md",
+      "tabs": [
+        [
+          {
+            "title": "doc.md",
+            "active": false,
+            "preview": false,
+            "dirty": true
+          },
+          {
+            "title": "f.md",
+            "active": false,
+            "preview": false,
+            "dirty": true
+          },
+          {
+            "title": "keep.txt",
+            "active": true,
+            "preview": true,
+            "dirty": false
+          }
+        ]
+      ]
+    },
+    "editorCtrlZ": {
+      "disk": {
+        "dstProj": true
+      },
+      "text": [
+        "K"
+      ]
+    }
+  },
+  "c6_pane_drop": {
+    "t0": [
+      [
+        {
+          "title": "doc.md",
+          "active": false,
+          "preview": false,
+          "dirty": true
+        },
+        {
+          "title": "f.md",
+          "active": false,
+          "preview": false,
+          "dirty": true
+        },
+        {
+          "title": "keep.txt",
+          "active": true,
+          "preview": true,
+          "dirty": false
+        }
+      ]
+    ],
+    "overBody": {
+      "under": null,
+      "rows": [],
+      "segments": [],
+      "root": false,
+      "overlay": "drop-overlay center",
+      "tabLine": [],
+      "barEnd": false,
+      "bg": null,
+      "token": "#83899480"
+    },
+    "t1": [
+      [
+        {
+          "title": "doc.md",
+          "active": false,
+          "preview": false,
+          "dirty": true
+        },
+        {
+          "title": "f.md",
+          "active": false,
+          "preview": false,
+          "dirty": true
+        },
+        {
+          "title": "keep.txt",
+          "active": false,
+          "preview": true,
+          "dirty": false
+        },
+        {
+          "title": "o1.txt",
+          "active": true,
+          "preview": false,
+          "dirty": false
+        }
+      ]
+    ],
+    "overTab": {
+      "under": null,
+      "rows": [],
+      "segments": [],
+      "root": false,
+      "overlay": null,
+      "tabLine": [
+        "tab edge-l edge-b drop-left"
+      ],
+      "barEnd": false,
+      "bg": null,
+      "token": "#83899480"
+    },
+    "t2": [
+      [
+        {
+          "title": "doc.md",
+          "active": false,
+          "preview": false,
+          "dirty": true
+        },
+        {
+          "title": "o2.txt",
+          "active": true,
+          "preview": false,
+          "dirty": false
+        },
+        {
+          "title": "f.md",
+          "active": false,
+          "preview": false,
+          "dirty": true
+        },
+        {
+          "title": "keep.txt",
+          "active": false,
+          "preview": true,
+          "dirty": false
+        },
+        {
+          "title": "o1.txt",
+          "active": false,
+          "preview": false,
+          "dirty": false
+        }
+      ]
+    ],
+    "overEdge": {
+      "under": null,
+      "rows": [],
+      "segments": [],
+      "root": false,
+      "overlay": "drop-overlay right",
+      "tabLine": [],
+      "barEnd": false,
+      "bg": null,
+      "token": "#83899480"
+    },
+    "t3": [
+      [
+        {
+          "title": "doc.md",
+          "active": false,
+          "preview": false,
+          "dirty": true
+        },
+        {
+          "title": "o2.txt",
+          "active": true,
+          "preview": false,
+          "dirty": false
+        },
+        {
+          "title": "f.md",
+          "active": false,
+          "preview": false,
+          "dirty": true
+        },
+        {
+          "title": "keep.txt",
+          "active": false,
+          "preview": true,
+          "dirty": false
+        },
+        {
+          "title": "o1.txt",
+          "active": false,
+          "preview": false,
+          "dirty": false
+        }
+      ],
+      [
+        {
+          "title": "o3.txt",
+          "active": true,
+          "preview": false,
+          "dirty": false
+        }
+      ]
+    ],
+    "folderOverBody": {
+      "under": null,
+      "rows": [],
+      "segments": [],
+      "root": false,
+      "overlay": "drop-overlay center",
+      "tabLine": [],
+      "barEnd": false,
+      "bg": null,
+      "token": "#83899480"
+    },
+    "t4": [
+      [
+        {
+          "title": "doc.md",
+          "active": false,
+          "preview": false,
+          "dirty": true
+        },
+        {
+          "title": "o2.txt",
+          "active": true,
+          "preview": false,
+          "dirty": false
+        },
+        {
+          "title": "f.md",
+          "active": false,
+          "preview": false,
+          "dirty": true
+        },
+        {
+          "title": "keep.txt",
+          "active": false,
+          "preview": true,
+          "dirty": false
+        },
+        {
+          "title": "o1.txt",
+          "active": false,
+          "preview": false,
+          "dirty": false
+        }
+      ],
+      [
+        {
+          "title": "o3.txt",
+          "active": true,
+          "preview": false,
+          "dirty": false
+        }
+      ]
+    ],
+    "firstTab": true
+  },
+  "c8_regress": {
+    "shortClick": {
+      "selected": [
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\openme\\o1.txt"
+      ],
+      "tabs": [
+        [
+          {
+            "title": "doc.md",
+            "active": false,
+            "preview": false,
+            "dirty": true
+          },
+          {
+            "title": "o2.txt",
+            "active": true,
+            "preview": false,
+            "dirty": false
+          },
+          {
+            "title": "f.md",
+            "active": false,
+            "preview": false,
+            "dirty": true
+          },
+          {
+            "title": "keep.txt",
+            "active": false,
+            "preview": true,
+            "dirty": false
+          },
+          {
+            "title": "o1.txt",
+            "active": false,
+            "preview": false,
+            "dirty": false
+          }
+        ],
+        [
+          {
+            "title": "o3.txt",
+            "active": false,
+            "preview": false,
+            "dirty": false
+          },
+          {
+            "title": "o1.txt",
+            "active": true,
+            "preview": true,
+            "dirty": false
+          }
+        ]
+      ]
+    },
+    "wiggleDuring": {
+      "under": null,
+      "rows": [],
+      "segments": [],
+      "root": false,
+      "overlay": null,
+      "tabLine": [],
+      "barEnd": false,
+      "bg": null,
+      "token": "#83899480"
+    },
+    "wiggleClick": {
+      "selected": [
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\dst\\keep.txt"
+      ],
+      "disk": [
+        "a.txt",
+        "doc.md",
+        "keep.txt",
+        "proj",
+        "sub"
+      ]
+    },
+    "multi": [
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\openme\\o2.txt",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\openme\\o3.txt"
+    ],
+    "renameInput": true,
+    "renameCancelled": true,
+    "contextMenu": 13,
+    "tabDrag": {
+      "pane": 0,
+      "before": [
+        "doc.md",
+        "o2.txt",
+        "f.md",
+        "keep.txt",
+        "o1.txt"
+      ],
+      "after": [
+        "o2.txt",
+        "f.md",
+        "keep.txt",
+        "o1.txt",
+        "doc.md"
+      ]
+    },
+    "sticky": [
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\many"
+    ],
+    "stickyDrag": {
+      "over": {
+        "under": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\many\\m40.txt",
+        "rows": [],
+        "segments": [],
+        "root": false,
+        "overlay": null,
+        "tabLine": [],
+        "barEnd": false,
+        "bg": null,
+        "token": "#83899480"
+      },
+      "manyStill": true
+    }
+  },
+  "f2_edge_scroll": {
+    "top0": 0,
+    "topAfter": 775,
+    "dropStateAtRelease": {
+      "under": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\openme\\o3.txt",
+      "rows": [
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\openme",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\openme\\o1.txt",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\openme\\o2.txt",
+        "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\openme\\o3.txt"
+      ],
+      "segments": [],
+      "root": false,
+      "overlay": null,
+      "tabLine": [],
+      "barEnd": false,
+      "bg": "rgba(131, 137, 148, 0.5)",
+      "token": "#83899480"
+    },
+    "innerGone": true,
+    "whereNow": "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o2ws\\openme\\deep\\inner\\e.txt"
+  },
+  "c7_explorer": "ERR Command failed: pwsh -NoProfile -File C:/Users/nampl/AppData/Local/Temp/claude/0b8282fad92e4259/2dcc8c40-f3c7-4825-9532-571c138ca732/scratchpad/ext-drop.ps1 -AppPid 36356 -X 280 -Y 358 -Paths C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\ext-src\\ext.txt\nException: C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\ext-drop.ps1:45\r\nLine |\r\n  45 |  … 2) -ne $src) { throw 'helper is not under the cursor; nothing sent' }\r\n     |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~에서\r\n     | helper is not under the cursor; nothing sent\r\n\r\n",
+  "getChildItem": [
+    "dst\\proj\\f.md = # f",
+    "dst\\sub\\d.txt = D",
+    "dst\\a.txt = A-src",
+    "dst\\doc.md = # doc",
+    "dst\\keep.txt = K",
+    "dst2\\a.txt = EXISTING-A",
+    "dst3\\ext.txt = EXT-OLD",
+    "openme\\deep\\inner\\e.txt = E",
+    "openme\\o1.txt = O1",
+    "openme\\o2.txt = O2",
+    "openme\\o3.txt = O3",
+    "b.txt = B",
+    "c.txt = C"
+  ]
+}

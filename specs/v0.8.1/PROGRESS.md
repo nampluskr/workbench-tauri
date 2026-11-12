@@ -73,3 +73,102 @@
   - 결과: 문서만 바뀌었다.
   - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-02-report.md`).
   - 특이사항: W-01 항목에 커밋 `798d696`을 더했다.
+
+### Phase 2 — 트리 드래그 앤 드롭
+
+- **K-02 I-3 트리 드래그 (ORDER-02)** (2026-11-13, coder, 커밋 `0c858aa`)
+  - 무엇을 했나: `src/shell/ProjectTree.tsx`·`Pane.tsx`, `src/workspace/actions.ts`·`context.ts`·`ops.ts`·`ops.test.ts`, `src/spec/metrics.ts`, `src/app.css`를 고쳤다. 탭 드래그의 놓을 곳 판정·표시(`hitTest`, `.drop-overlay`, `.tab.drop-left`, `.tab-bar-drop`), `drop.ts place()`, `pasteJobs`·`targetDir`, Rust `rename_path`(배타 `MoveFileExW`)·`paste_paths(cut=false)`·`paths_exist`, 이름 바꾸기의 `followMove`를 재사용했다.
+  - 결과: Zed 소스(로컬 사본 `zed-src-4304dec7`, 읽기만)로 확인한 동작을 따랐다.
+    - 놓을 곳 표시: 대상 폴더 행과 그 아래 행에 `drop_target.background`, 테두리 투명. 파일 위면 그 파일이 든 폴더, 행 아래 빈 곳이면 루트, 접힌 경로 조각이면 그 조각 폴더가 대상이다(`project_panel.rs:6201-6226`, `6052-6059`, `7990-8001`, `6902-6965`).
+    - 옮길 것이 하나도 없으면(자기 자신·하위 폴더·이미 든 폴더) 표시하지 않고 놓아도 아무 일 없다. 하위 폴더는 ORDER 3.1 결정이다(Zed는 막지 않고 파일 시스템 오류 알림).
+    - 같은 이름이면 옮기지 않고 Zed 문구로 알린다("Failed to move `{from}` to `{to}`. A file or folder already exists there.", `8429-8435`).
+    - Ctrl을 누른 채 놓으면 복사, 같은 이름이면 copy 이름(`5203-5206`). 여러 개는 marked 안을 누르면 marked 전부(다른 끄는 폴더 안 항목·루트는 뺌). sticky 행은 끌기·놓기 안 됨.
+    - 닫힌 폴더 위에 500ms 머물면 펼침(`6428`), 가장자리 스크롤은 목록 높이 5% 안 8px·15% 안 5px를 16ms마다(`7600-7631`). 새 상수 `PROJECT_PANEL_DRAG_EXPAND_DELAY_MS`·`PROJECT_PANEL_DRAG_SCROLL`.
+    - pane에 놓기: 누른 항목 하나를 일반 탭으로 열고 포커스, 놓을 곳은 R-10 판정(`workspace/pane.rs:4048-4146`).
+    - 탐색기에서 끌어 넣기: 복사, 파일 하나면 열기(`getCurrentWebview().onDragDropEvent`, 위치는 물리 px / `devicePixelRatio`).
+    - 끌기 시작은 수치 없이 "누른 행의 사각형 밖으로 나가면"이다(gpui 크레이트가 사본에 없어 Zed 문턱 미확인).
+  - 검증: V1. `npm.cmd run typecheck` 오류 0, `npm.cmd run test` 289/289(새 테스트 2개, `ops.test.ts`). Rust는 고치지 않았다. `tauri.conf.json`·capability 변경 없음(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-02-report.md`).
+  - 특이사항: 되돌리기는 카드 3.4(단축키 추가 안 함)와 부딪쳐 넣지 않고 leader-core에 물었다(→ K-02b). 끄는 동안 따라다니는 그림·커서 모양, Ctrl 복사 하나가 copy 이름일 때 이름 바꾸기 입력 열기, 한 개 끌 때 marked로 바꾸기는 생략했다.
+- **C-03 checker 검토(K-02)** [REWORK] (2026-11-13)
+  - 무엇을 했나: `0c858aa`를 검토했다. `npm.cmd run typecheck` 오류 0, `npm.cmd run test` 289/289, `git diff de17d49 -- src-tauri/tauri.conf.json src-tauri/capabilities` 출력 없음.
+  - 결과: 데이터 손실·열린 탭·클릭 회귀·탐색기 놓기·보안·하드코딩은 통과. 지적 셋:
+    - F-1(필수): `dropEntry`가 새로 열리는 파일에도 "이미 열린 탭 옮기기" 보정을 써서, 탭 위에 놓으면 한 칸 왼쪽에 들어간다(탭 [A,B,C,D] 활성 B, 새 X를 D 위에 → [A,B,X,C,D], R-10은 [A,B,C,X,D]).
+    - F-2(권고): 가장자리 자동 스크롤 중 놓을 곳이 갱신되지 않아, 멈춘 채 스크롤한 뒤 놓으면 이전 폴더로 옮겨진다.
+    - F-3(권고): `pointerup`이 오지 않으면(`pointercancel`·포커스 잃음) window 리스너가 남는다.
+  - 검증: V1 검토(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-03-report.md`).
+  - 특이사항: 끌다가 처음 누른 행에 돌아와 놓으면 click이 따라오는지는 코드로 단정 못 해 V3에서 볼 것으로 남겼다.
+- **leader-core 결정: 되돌리기 넣음** (2026-11-13, leader-core)
+  - 무엇을 했나: K-02 "미정"에 답했다. ITEMS I-3이 "되돌리기는 Zed와 같게"이고, 카드 3.4는 잘라내기/붙여넣기만 다룬다고 정했다.
+  - 결과: 되돌리기를 넣는다(→ K-02b). 새 상수 둘(머물면 펼침 지연, 가장자리 스크롤)은 leader-core가 core `spec/zed-metrics.toml`에 넣는다.
+  - 검증: 없음(결정).
+  - 특이사항: 없음.
+- **K-02b I-3 트리 드래그 되돌리기** (2026-11-13, coder, 커밋 `2c9d3ef`)
+  - 무엇을 했나: `src/workspace/undo.ts`(새)·`undo.test.ts`(새), `actions.ts`, `src/shell/tree-commands.ts`, `src/keymap/builtin.ts`·`builtin.test.ts`, `src/spec/metrics.ts`, `src-tauri/src/files.rs`·`lib.rs`를 고쳤다. Rust 새 명령 `trash_for_undo(path) -> id`(휴지통 전후 목록 차로 id)·`restore_trashed(id)`. 의존성 `trash = 5.2.9`는 이미 있던 것이다.
+  - 결과:
+    - 키: ProjectPanel 문맥에서만 `ctrl-z` → `project_panel::Undo`, `ctrl-shift-z` → `project_panel::Redo`(Zed `default-windows.json:1024-1025`). 편집기 Undo와 겹치지 않고, 이름 입력 중엔 아무것도 안 한다.
+    - 기록 단위: 한 번의 drop이 한 단계(트리 옮기기·Ctrl 복사·탐색기 끌어 넣기). 이름 바꾸기·삭제·붙여넣기·복제는 기록하지 않는다. 이력은 창에 하나, 한도 10,000단계(`undo.rs:335`).
+    - 역동작: 옮김 → 되돌려 옮김(배타, 열린 탭 따라감), 만든 복사본 → 확인창 한 번 뒤 휴지통, 휴지통 복사본 → 원래 자리로 복원. 실패한 역동작은 그 단계를 버리고, 확인창 거절은 남긴다. 되돌릴 자리·복원 자리에 무언가 있으면 하지 않는다.
+    - 알림: "Undo Failed"/"Redo Failed" + Zed 문구(`undo.rs:672-867`).
+    - 상수 표(leader-core가 core toml에 넣을 것). 앱 쪽 이름은 `src/spec/metrics.ts`의 `PROJECT_PANEL_DRAG_EXPAND_DELAY_MS`·`PROJECT_PANEL_DRAG_SCROLL`·`PROJECT_PANEL_UNDO_LIMIT`다.
+
+      | 상수 | 값 | Zed 소스 |
+      |---|---|---|
+      | 머물면 펼침 지연 | 500 ms | `project_panel.rs:6428` |
+      | 가장자리 near 구역 / 한 번 이동 | 5% / 8 px | `project_panel.rs:7600-7601`, `7604-7605` |
+      | 가장자리 far 구역 / 한 번 이동 | 15% / 5 px | `project_panel.rs:7602-7603`, `7606-7607` |
+      | 스크롤 간격 | 16 ms | `project_panel.rs:7631` |
+      | 되돌리기 이력 한도 | 10,000 단계 | `undo.rs:335` |
+
+  - 검증: V1. `npm.cmd run typecheck` 0, `npm.cmd run test` 291/291, `cargo clippy -- -D warnings` 통과, `cargo test` 22 통과(첫 실행에서 손대지 않은 `folder_watch::tests::missing_root_is_watched_after_creation_and_recreation` 1회 실패, 다시 돌려 통과 — 타이밍 흔들림으로 봄). 키맵 R-1 테스트는 v0.4 고정 표를 두고 새 두 줄을 근거 주석과 함께 더했다(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-02b-report.md`).
+  - 특이사항: 우클릭 메뉴 Undo/Redo 항목(Zed `project_panel.rs:1240-1244`)과, 저장 안 한 탭이 있는 복사본을 휴지통에 보낼 때 Zed의 dirty 안내는 넣지 않았다.
+- **K-02-R1 C-03 F-1~F-3** (2026-11-13, coder, 커밋 `53de8d5`)
+  - 무엇을 했나: `src/workspace/drop.ts`·`drop.test.ts`·`context.ts`, `src/shell/ProjectTree.tsx`를 고쳤다.
+    - F-1: `drop.ts`에 `entryIndex(index, at, existed)`. 그 pane에 같은 path 탭이 이미 있었으면 `index > at`일 때 1 빼고, 새 탭이면 `where.index` 그대로.
+    - F-2: `edgeScroll`은 속도가 바뀔 때만 타이머를 다시 만들고, 틱마다 `scrollTop` 이동 → `onScroll()` → `aim()`으로 마지막 포인터 좌표의 놓을 곳을 다시 계산한다.
+    - F-3: 누를 때 window에 `pointercancel`(capture)·`blur`, 끌기 시작 뒤 `lostpointercapture`를 달고 셋 다 `finish(false, false)`.
+    - 끌기가 시작된 뒤 끝나면 `dragEnded`를 켜고 다음 틱에 끈다. 행·조각·고정 행의 click은 이때 무시한다(탭 드래그·Sidebar와 같은 방식).
+  - 결과: 새 파일을 탭 위에 놓으면 그 탭 앞(R-10)에 들어간다.
+  - 검증: V1. `npm.cmd run typecheck` 오류 0, `node --test src/workspace/drop.test.ts` 5/5(새 테스트 1개, C-03 재현 그대로)(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-02-R1-report.md`).
+  - 특이사항: 없음.
+- **V3 측정** (2026-11-13, tauri-leader)
+  - 무엇을 했나: `53de8d5` debug exe를 1920×1080·100%, 창 1440×852, One Dark, 픽스처 `o2ws`로 띄워 CDP 마우스·키로 쟀다(`specs/v0.8.1/verify/ORDER-02/v3.json`, PNG, `measure.mjs`). 탐색기 놓기(#7)는 실제 OLE 끌기를 SendInput으로 했고, 놓기 직전 그 점이 앱 창인지 확인한다(`v3-c7.json`, `measure-c7.mjs`, `ext-drop.ps1`, `drag-src.ps1`).
+  - 결과: 판정은 C-04에 있다.
+  - 검증: V3.
+  - 특이사항: 탐색기 놓기는 처음엔 놓는 점이 다른 창에 가려 취소됐고, 앱을 앞으로 가져와 다시 했다. 1차 스크립트 문제로 다시 쟀다. `v3.json`의 `c7_explorer`(ERR)는 그 기록이 남은 것이고 `v3-c7.json`이 대체한다.
+- **C-04 checker 검토(K-02b·K-02-R1)와 V3 판정** [PASS] (2026-11-13)
+  - 무엇을 했나: `0c858aa..53de8d5`를 검토하고 V3 결과 파일을 판정했다. `npm.cmd run typecheck` 오류 0, `npm.cmd run test` 292/292, `git diff de17d49 -- src-tauri/tauri.conf.json src-tauri/capabilities` 출력 없음, `cargo clippy -- -D warnings` 경고 0.
+  - 결과:
+    - 검토: 기록 단위·키 문맥·이력·덮어쓰지 않음·Rust 새 명령 안전성·키맵 테스트 두 줄, F-1~F-3·click 무시 모두 통과. 권고 셋:
+      - R-1: `trash_with_id`의 경로 비교가 대소문자에 걸리면, 이미 휴지통에 간 항목을 "Failed to trash"로 알리고 그 단계를 버린다.
+      - R-2: `existed`가 같은 path의 마크다운 미리보기 탭도 세어 F-1 어긋남이 다시 날 수 있다.
+      - R-3: Undo가 확인창을 기다리는 동안 새 drop이 기록되면 순서가 바뀔 수 있다(낮은 위험).
+    - V3: #2·#3·#4·#5·#6·#7·#8 통과, 불일치 없음.
+      - #2 옮기기(파일·폴더·여러 개를 루트로), 내용 보존.
+      - #3 놓을 곳 표시: 대상 폴더 행과 그 아래 행, 배경 `rgba(131, 137, 148, 0.5)` = 토큰 `#83899480`. 놓을 수 없는 곳은 표시 없음.
+      - #4 막기: 자기 자신·하위·이미 든 폴더는 디스크 변화 없음, 같은 이름은 Zed 문구 알림·기존 내용 그대로.
+      - #5 열린 탭: 경로·툴팁·저장 안 한 편집 유지, 옮기기 되돌리기·다시 하기, 편집기 포커스의 Ctrl+Z는 트리를 안 건드림.
+      - #6 놓아 열기: 본문 가운데, 탭 앞, 가장자리 분할. 폴더는 열리지 않음.
+      - #7 탐색기: 파일·폴더 복사, 같은 이름은 `ext copy.txt`, 원본 그대로.
+      - #8 회귀: 짧은 클릭·흔들린 클릭·여러 개·F2/Esc·우클릭·탭 드래그·sticky, 가장자리 스크롤 뒤 표시된 폴더 = 놓인 폴더.
+  - 검증: V1 검토 + V3 판정(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-04-report.md`).
+  - 특이사항:
+    - `cargo test`는 21 통과 1 실패(`files::tests::cross_volume_cut_files_preserves_content_and_streams`). checker 샌드박스가 `src-tauri\target` 쓰기를 막아 `CARGO_TARGET_DIR`를 돌렸고, 그 테스트가 `CARGO_MANIFEST_DIR/target` 아래에 쓰다 거부된 환경 문제로 판단했다.
+    - 측정 약함: #6 F-1 분기(`where.index > at`)는 V3가 건드리지 않아 단위 테스트로만 확인했다. #8 고정 행 끌기는 목표가 자기 하위라 판별력이 없어 코드로 통과했다. #3의 접힌 경로 조각·루트 배경·테두리 투명은 코드 확인이다.
+    - 측정하지 않음: 가운데 클릭, `pointercancel`·`blur`로 끝나기, 처음 누른 행에 놓았을 때 click 무시, 탐색기 같은 이름 폴더, 탐색기 끌기 중 놓을 곳 표시.
+- **K-02-R2 C-04 권고 R-1·R-2** (2026-11-13, coder, 커밋 `ca2b33a`)
+  - 무엇을 했나: `src/workspace/context.ts`, `src-tauri/src/files.rs`를 고쳤다.
+    - R-2: `dropEntry`의 `existed`를 열기 전 path 일치로 세지 않고, 연 뒤 활성 탭의 `file`이 열기 전 목록에 있었는지로 센다. `openTab`이 탭을 다시 쓰면 file 객체가 그대로이고 새로 만들면 새 file이라, 소스 탭·마크다운 미리보기 탭·도구 탭 어느 규칙으로 맞췄든 `openTab`이 실제로 한 일과 같다.
+    - R-1: `trash_with_id`에서 휴지통 항목의 원래 경로를 `same_path`(대소문자 무시, `name_search.rs`와 같은 소문자 비교)로 맞춘다. Rust 테스트 `trash_lookup_ignores_letter_case`를 더했다.
+    - R-3: 하지 않았다(카드 지시).
+  - 결과: 같은 path의 미리보기 탭만 있는 pane에 소스 파일을 탭 위에 놓아도 F-1 어긋남이 다시 나지 않는다. 경로 표기의 대소문자가 달라도 휴지통 id를 찾는다.
+  - 검증: V1(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-02-R2-report.md`). tauri-leader가 `ca2b33a`에서 전체 검증: `npm.cmd run typecheck` 오류 0, `npm.cmd run test` 292/292, `cargo clippy -- -D warnings` 경고 0, `cargo test` 23 통과 0 실패(C-04 때 checker 샌드박스에서 실패한 `cross_volume_cut_files_preserves_content_and_streams`도 통과 — target 쓰기 거부가 원인이었음).
+  - 특이사항: R-2는 pane·탭 신호와 `openFile`을 거쳐야 해서 순수 계산으로 빼지 않았고 TS 테스트를 더하지 않았다. 자리 계산은 기존 `drop.test.ts` "I-3: a tree file dropped on a tab…"이 덮는다.
+- **W-03 ORDER-02 PROGRESS·PLAN 기록** (2026-11-13, writer)
+  - 무엇을 했나: 위 Phase 2 항목을 각 보고 파일·V3 결과 파일·leader-core 결정에서 옮겨 적고, `PLAN.md`에 Phase 2 작업 카드 표를 더했다.
+  - 결과: 문서만 바뀌었다.
+  - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-03-report.md`).
+  - 특이사항: Phase 2에서 남은 것.
+    - 복사 되돌리기(확인창 → 휴지통, 다시 하기 → 복원)는 확인창이 네이티브 창이라 V3로 재지 못하고 코드 검토로만 판정했다.
+    - 우클릭 메뉴 Undo/Redo 항목은 넣지 않았다(미정, leader-core).
+    - 폴더를 pane에 끌면 놓을 곳 표시는 뜨지만 놓으면 아무 일 없다. Zed가 이때 표시하는지는 소스로 확정하지 못했다.
+    - 탐색기에서 같은 이름을 놓으면 Zed는 Replace/Cancel을 묻지만, tauri는 묻지 않고 copy 이름으로 복사한다(ORDER "덮어쓰지 않음" 결정, Replace가 덮어쓰기라서).
