@@ -521,12 +521,12 @@ button, input, select, textarea {
   height: var(--project-panel-item-height); /* L-36 */
   border: var(--project-panel-item-border-width) solid transparent; /* L-48: the color shows only on the focused selection */
   border-right-width: var(--project-panel-item-border-right-width);
-  color: var(--text);
+  color: var(--text-muted); /* I-2: Zed entry_label_color (editor items.rs:2256) mutes names that are not marked */
   cursor: default;
   --icon-size: var(--icons-size-medium);
 }
 .tree-row:hover { background: var(--ghost-element-hover); }
-.tree-row.selected, .tree-row.marked { background: var(--ghost-element-selected); }
+.tree-row.selected, .tree-row.marked { background: var(--ghost-element-selected); color: var(--text); }
 .project-panel:focus-within .tree-row.selected { border-color: var(--border-focused); }
 /* R-13 / L-47: overlay rows share the ordinary row's height and indentation, without adding scroll space. */
 .tree-sticky { position: sticky; top: 0; height: 0; z-index: 1; }
@@ -538,6 +538,7 @@ button, input, select, textarea {
 .tree-main { display: flex; align-items: center; min-width: 0; gap: var(--project-panel-item-gap); padding-inline: var(--project-panel-item-padding-x); }
 .tree-main .icon { flex-shrink: 0; color: var(--icon-muted); }
 .tree-label { font-size: var(--typography-size-default); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tree-row .tree-input { font-size: var(--typography-size-default); } /* I-1: the input sits outside .tree-label; the Sidebar input inherits its row size */
 .tree-segment { padding-inline: var(--project-panel-collapsed-path-padding-x); } /* L-43 */
 .tree-segment.active { text-decoration: underline; }
 /* L-38: a guide per ancestor level, over the whole row (outside its border), a gap at the first and last row. */
@@ -568,7 +569,7 @@ button, input, select, textarea {
   border: 0;
   outline: none;
   background: transparent;
-  color: var(--text);
+  color: var(--editor-foreground); /* I-2: Zed single-line Editor text (editor.rs create_style) */
   font: inherit;
   user-select: text;
 }
