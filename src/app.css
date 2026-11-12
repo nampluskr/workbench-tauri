@@ -526,7 +526,8 @@ button, input, select, textarea {
   --icon-size: var(--icons-size-medium);
 }
 .tree-row:hover { background: var(--ghost-element-hover); }
-.tree-row.selected, .tree-row.marked { background: var(--ghost-element-selected); color: var(--text); }
+.tree-row.selected, .tree-row.marked { background: var(--ghost-element-selected); }
+.tree-row.marked, .tree-row.active-file { color: var(--text); } /* I-2: Zed is_marked; a cursor-only selection stays muted */
 .project-panel:focus-within .tree-row.selected { border-color: var(--border-focused); }
 /* R-13 / L-47: overlay rows share the ordinary row's height and indentation, without adding scroll space. */
 .tree-sticky { position: sticky; top: 0; height: 0; z-index: 1; }

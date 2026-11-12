@@ -1,7 +1,7 @@
 import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 import { PROJECT_PANEL_ITEM_HEIGHT, PROJECT_PANEL_NAME_TOOLTIP_DELAY_MS, TREE_OVERSCAN_ROWS } from "../spec/metrics.ts";
 import { cancelEdit, commitEdit, revalidate } from "../workspace/actions.ts";
-import { NEW_ROW, readDir, type FolderContext } from "../workspace/context.ts";
+import { activeTabOf, NEW_ROW, readDir, type FolderContext } from "../workspace/context.ts";
 import { inputKeyAction } from "../workspace/names.ts";
 import { only, rowIndex, stickyRows, visibleRange, type Row } from "../workspace/tree.ts";
 import FileIcon from "./FileIcon.tsx";
@@ -105,6 +105,8 @@ export default function ProjectTree(props: { ctx: FolderContext }) {
   };
   const covers = (row: Row) => row.segments.some((s) => s.path === ctx.selection().selected);
   const marked = (row: Row) => ctx.selection().marked.includes(row.path);
+  // I-2: Zed marks the active editor's file when it reveals it (project_panel.rs:7278-7281), so its name is not muted.
+  const activeFile = (row: Row) => !row.isNew && activeTabOf(ctx.pane())?.path === row.path;
   const editing = (row: Row) => {
     const edit = ctx.edit();
     return !!edit && (edit.kind === "new" ? row.isNew : row.segments.some((s) => s.path === edit.path));
@@ -129,6 +131,7 @@ export default function ProjectTree(props: { ctx: FolderContext }) {
         classList={{
           selected: covers(row),
           marked: marked(row),
+          "active-file": activeFile(row),
           editing: isEditing(),
           warning: isEditing() && ctx.issue()?.kind === "warning",
           error: isEditing() && ctx.issue()?.kind === "error",
