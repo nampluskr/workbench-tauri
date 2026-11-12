@@ -806,11 +806,13 @@ export function dropEntry(ctx: FolderContext, path: string, to: PaneState, where
     target = newPane();
     ctx.setTree(split(ctx.tree(), to, where.dir, target));
   }
-  const existed = target.tabs().some((t) => t.path === path);
+  const before = target.tabs();
   activatePane(ctx, target);
   openFile(ctx, path, false, true);
   const tabs = target.tabs(), at = target.active();
   if ((where.kind !== "tab" && where.kind !== "end") || at === null || tabs[at]?.path !== path) return;
+  // Reused, not made: whatever tab kind openTab matched (source, preview, tool) keeps its file; a new tab has a new one.
+  const existed = before.some((t) => t.file === tabs[at].file);
   const rest = tabs.filter((_, i) => i !== at);
   const placed = place(rest, where.kind === "end" ? rest.length : entryIndex(where.index, at, existed), tabs[at]);
   target.setTabs(placed.tabs);

@@ -63,8 +63,11 @@ pub async fn trash_paths(paths: Vec<String>) -> serde_json::Value {
 }
 
 /// core I-3 undo: trash one item and return the Recycle Bin id of what it became (Zed Change::Trashed keeps a TrashId).
+/// Windows paths name the same item whatever the letter case (as name_search.rs compares them).
+fn same_path(a: &Path, b: &Path) -> bool { a.to_string_lossy().to_lowercase() == b.to_string_lossy().to_lowercase() }
+
 fn trash_with_id(path: &Path) -> Result<String, String> {
-    let ids = |list: Vec<trash::TrashItem>| list.into_iter().filter(|item| item.original_path() == path).map(|item| item.id).collect::<Vec<_>>();
+    let ids = |list: Vec<trash::TrashItem>| list.into_iter().filter(|item| same_path(&item.original_path(), path)).map(|item| item.id).collect::<Vec<_>>();
     let before = ids(trash::os_limited::list().map_err(io_error)?);
     trash::delete(path).map_err(io_error)?;
     let after = ids(trash::os_limited::list().map_err(io_error)?);
@@ -436,6 +439,12 @@ mod tests {
         fs::write(&file, "content").unwrap();
         assert_eq!(transfer(&file, &dir, false, true).unwrap(), Some(dir.join("a copy.txt")));
         fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn trash_lookup_ignores_letter_case() {
+        assert!(same_path(Path::new(r"D:\Proj\A Copy.TXT"), Path::new(r"d:\proj\a copy.txt")));
+        assert!(!same_path(Path::new(r"D:\proj\a.txt"), Path::new(r"D:\proj\a.txt2")));
     }
 
     #[test]
