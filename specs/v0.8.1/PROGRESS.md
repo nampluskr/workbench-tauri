@@ -172,3 +172,72 @@
     - 우클릭 메뉴 Undo/Redo 항목은 넣지 않았다(미정, leader-core).
     - 폴더를 pane에 끌면 놓을 곳 표시는 뜨지만 놓으면 아무 일 없다. Zed가 이때 표시하는지는 소스로 확정하지 못했다.
     - 탐색기에서 같은 이름을 놓으면 Zed는 Replace/Cancel을 묻지만, tauri는 묻지 않고 copy 이름으로 복사한다(ORDER "덮어쓰지 않음" 결정, Replace가 덮어쓰기라서).
+
+### Phase 3 — 탭: Lock Preview 임시 탭, Search 탭 여러 개, 마지막 탭 잘림
+
+- **K-03 I-5·I-6·I-13 (ORDER-03)** (2026-11-13, coder, 커밋 `58a522c`)
+  - 무엇을 했나: `src/workspace/context.ts`·`tab-view.ts`·`tabs.test.ts`·`tab-view.test.ts`, `src/search/Search.tsx`, `src/shell/Pane.tsx`를 고쳤다. `openTab`(`PANE_MAX_PREVIEW_TABS`, 교체·고정 규칙), openSource/openView의 replaced 해제 방식, `keepTab`(탭 제목 더블클릭), `openTool`, `truncateName`(`TAB_MAX_TITLE_CHARS`)을 재사용했다.
+  - 결과:
+    - I-5: `openPreview(ctx, from, path, side, focus = true, temporary = false)`의 `temporary`를 탭의 `preview`와 `openTab`의 preview 인자로 넘긴다. `temporary`를 넘기는 곳은 트리 열기(`openFile(preview=true)`, 한 번 클릭·Space)뿐이다. 더블클릭·가운데 클릭은 임시 탭을 고정으로 바꾸고, 탭 제목 더블클릭은 기존 `keepTab`이 한다. 눈 버튼·`markdown::OpenPreview`·트리 메뉴·미리보기 안 링크·ORDER-02 `dropEntry`는 그대로 고정 탭이다. Lock Preview가 꺼져 있으면 openPreview로 가지 않는다.
+    - I-6: Search 탭 path는 `Search:<n>`(앱이 켜진 동안 늘어나는 번호, 화면에 안 보임)이라 열 때마다 새 탭이다. 제목은 검색할 때(Enter, 토글로 다시 검색) 그 검색어이고, 입력 중에는 바뀌지 않는다. 툴팁은 "Search"(I-11 그대로). Settings·Keymap Editor·Extensions·Licenses는 고정 path라 하나만 열린다.
+    - I-13 원인: `Pane.tsx`의 버튼 영역(`.tab-bar-edge.end`)은 포커스된 pane에만 그려진다. 포커스가 pane 밖(트리 등)일 때 탭을 클릭하면 `activateTab`이 버튼 영역이 없는 폭으로 `scrollIntoView`를 한 뒤 `focusPane` → focusin으로 버튼 영역이 나타나 탭 줄이 그만큼 줄고, 활성 탭의 닫기 x가 잘린다. 스크롤 effect는 active·tabs만 따라가 다시 돌지 않는다. 창 너비 변경도 같다. 원인은 탭 종류가 아니라 포커스에 따라 나타나는 버튼 영역이다.
+    - I-13 고침: `.tab-list`에 ResizeObserver를 달아 줄 폭이 바뀌면(버튼 영역이 나타나거나 사라질 때, 창·pane 너비가 바뀔 때) 같은 `scrollActive()`를 다시 부른다. 언마운트 때 disconnect한다. 버튼 영역을 늘 그리는 방법은 I-706(포커스된 pane에만 버튼)을 바꾸게 되어 고르지 않았다.
+  - 검증: V1. `npx tsc --noEmit` 오류 0, `npm run test` 294/294. 앱은 실행하지 않았다(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-03-report.md`).
+  - 특이사항: 휠로 활성 탭을 화면 밖으로 밀어 둔 상태에서 줄 폭이 바뀌면 활성 탭으로 다시 스크롤된다(창 너비가 바뀌어도 맞춘다는 요구와 같은 동작).
+- **V3 측정** (2026-11-13, tauri-leader)
+  - 무엇을 했나: `58a522c`를 띄워 쟀다(`specs/v0.8.1/verify/ORDER-03/` `v3.json`·`v3-c8-drop.json`, PNG, `measure.mjs`·`measure-c8-drop.mjs`).
+  - 결과: 판정은 C-06에서 한다. 측정값:
+    - #1 트리에서 m1·m2·m3를 한 번씩 클릭 → 미리보기 탭 하나, 제목 이탤릭.
+    - #2 다시 클릭·탭 제목 더블클릭·가운데 클릭으로 고정되고, 다음 클릭은 새 탭.
+    - #3 csv·ipynb도 같은 규칙. Lock Preview를 끄면 v0.8처럼 임시 편집 탭. Ctrl+Shift+V·Ctrl+K V·눈 버튼·View 메뉴는 고정 미리보기 탭.
+    - #4·#5 Search 버튼/Ctrl+Shift+F로 탭 셋, 검색어 m1·long-file-name-1·data, 결과 1·7·1. 탭을 오가도 그대로이고 제목 = 검색어. Extensions는 두 번 열어도 하나.
+    - #7 탭 16개 넘게 넘친 pane, 트리 포커스에서 마지막 탭 클릭: 편집·미리보기·도구 탭 모두 닫기 x 오른쪽 1348 < 버튼 영역 왼쪽 1353. 창 너비를 1124로 줄인 뒤 1032 < 1037.
+    - #8 회귀: 탭 휠 스크롤, 탭 메뉴, 탭 드래그 R-10, 트리 파일을 탭 위에 놓기(Lock 끔 → 그 탭 앞 일반 탭, 켬 → 고정 미리보기 탭), 임시 편집 탭, 미리보기 위치 연계(Section 6), 분할 pane 탭 바.
+  - 검증: V3.
+  - 특이사항:
+    - 앱 창이 앞에 없으면 WebView 포커스 이벤트가 오지 않아 버튼 영역이 나타나지 않는다. I-13 측정은 창을 앞으로 가져온 뒤 했다.
+    - Search는 파일 이름 검색이라 이름으로 검색했다.
+    - 창 너비는 win-input resize로 바뀌지 않아 SetWindowPos로 바꿨다.
+- **checker 한도와 leader-core 결정** (2026-11-13, leader-core, 위임)
+  - 무엇을 했나: checker(agy)가 사용 한도(약 3h35m)에 걸려 C-05를 진행하지 못해 leader-core에 [BLOCKED]를 보냈다.
+  - 결과: 결정 (c). 한도가 풀릴 때까지 검토·V3 판정은 tauri-leader가 구현에 참여하지 않은 Claude Code 서브 에이전트(새 컨텍스트)에 맡긴다. herdr 구성은 바꾸지 않는다. 다음 카드부터 tauri-checker로 돌아간다.
+  - 검증: 없음(결정).
+  - 특이사항: 대리 검토자는 coder와 같은 모델 계열이라 독립성이 낮다.
+- **C-05 대리 검토(K-03)** [PASS] (2026-11-13, Claude Code 서브 에이전트)
+  - 무엇을 했나: `58a522c`를 검토했다. `npm.cmd run typecheck` 오류 0, `npm.cmd run test` 294/294.
+  - 결과: 막는 지적 없음. 권고 둘:
+    - R-1: 휠로 밀어 둔 탭 줄이 포커스 이동(버튼 영역이 나타남)으로 활성 탭 쪽으로 되돌아간다.
+    - R-2: 원본이 dirty면 임시 미리보기 탭이 다음 트리 열기로 바뀌지 않는다.
+  - 검증: V1 검토(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-05-report.md`).
+  - 특이사항: 없음.
+- **C-06 대리 V3 판정** [조건부 PASS] (2026-11-13, Claude Code 서브 에이전트)
+  - 무엇을 했나: `verify/ORDER-03/`의 V3 결과를 판정했다.
+  - 결과: #1~#9 통과. 조건: 첫 실행 캡처에서 상태 표시줄·메뉴로 새 탭을 열 때 잘림이 보여, 창을 앞에 두고 다시 잴 것.
+  - 검증: V3 판정(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-06-report.md`).
+  - 특이사항:
+    - #2 "같은 파일을 따로 한 번 더 클릭"하면 고정되지 않는다. 편집 탭 규칙과 같지만 ITEMS 문장과 달라 사용자 확인으로 넘긴다.
+    - #3 눈 버튼·View 메뉴는 이미 있던 고정 탭을 다시 활성화한 것이라 측정이 약하다.
+- **다시 측정 1** (2026-11-13, tauri-leader)
+  - 무엇을 했나: 창을 앞에 두고 C-06 조건 항목을 다시 쟀다(`verify/ORDER-03/v3-c7b.json`·`measure-c7b.mjs`·`c7b-*.png`).
+  - 결과: 상태 표시줄 Search·User 메뉴 Extensions·View 메뉴 Open Preview로 연 새 탭 모두 닫기 x 오른쪽 ≈1348 < 버튼 영역 왼쪽 1353. 첫 실행의 잘림은 창이 뒤에 있던 측정 문제였다.
+  - 검증: V3.
+  - 특이사항: 없음.
+- **K-03-R1 C-05 권고 R-1·R-2** (2026-11-13, coder, 커밋 `ef330b3`)
+  - 무엇을 했나:
+    - R-1: `follow` 플래그. 휠로 탭 줄을 밀면 줄 폭이 바뀌어도 다시 스크롤하지 않고, 활성 탭이 바뀌거나 탭을 누르면 다시 따라간다.
+    - R-2: 임시 미리보기 탭의 keep을 `!t.markdown && dirty`로 바꿨다.
+  - 결과: 휠로 밀어 둔 탭 줄이 포커스 이동으로 되돌아가지 않는다. 원본이 dirty여도 임시 미리보기 탭은 다음 트리 열기로 바뀐다.
+  - 검증: V1(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-03-R1-report.md`).
+  - 특이사항: 없음.
+- **다시 측정 2** (2026-11-13, tauri-leader)
+  - 무엇을 했나: `ef330b3` debug exe로 다시 쟀다(같은 파일 `verify/ORDER-03/v3-c7b.json`). 전체 검증 `npm.cmd run typecheck` 오류 0, `npm.cmd run test` 294/294.
+  - 결과: 다시 측정 1의 세 경로와 트리 포커스에서 마지막 탭 클릭 모두 닫기 x 오른쪽 ≈1348 < 1353. R-1: 휠로 `scrollLeft` 1318 → 편집기 클릭(버튼 영역 나타남) 뒤 1318 그대로.
+  - 검증: V3.
+  - 특이사항:
+    - #2 다시 클릭 고정은 사용자 확인으로 남긴다(leader-core).
+    - 측정하지 않은 것: 긴 검색어 제목 잘림, Search 토글 유지, Settings 두 번 열기(Settings는 별도 창), 탭 바 메뉴로 Search 열기.
+- **W-04 ORDER-03 PROGRESS·PLAN 기록** (2026-11-13, writer)
+  - 무엇을 했나: 위 Phase 3 항목을 K-03·C-05·C-06·K-03-R1 보고 파일·V3 결과·leader-core 결정과 카드에서 옮겨 적고, `PLAN.md`에 Phase 3 작업 카드 표를 더했다.
+  - 결과: 문서만 바뀌었다.
+  - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-04-report.md`, 마무리 W-04-R1 보고 `v081-W-04-R1-report.md`).
+  - 특이사항: 없음.

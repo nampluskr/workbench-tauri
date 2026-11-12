@@ -1,0 +1,45 @@
+{
+  "hasFocus": true,
+  "statusSearch": {
+    "before": {
+      "active": "m2.md",
+      "closeRight": 1410.8,
+      "edgeLeft": null,
+      "focusInPane": false,
+      "hasFocus": true
+    },
+    "after": {
+      "active": "Search",
+      "closeRight": 1348.1,
+      "edgeLeft": 1353,
+      "focusInPane": true,
+      "hasFocus": true
+    }
+  },
+  "userMenuExtensions": {
+    "active": "Extensions",
+    "closeRight": 1347.8,
+    "edgeLeft": 1353,
+    "focusInPane": true,
+    "hasFocus": true
+  },
+  "viewMenuOpenPreview": {
+    "active": "Preview m2.md",
+    "closeRight": 1347.6,
+    "edgeLeft": 1353,
+    "focusInPane": true,
+    "hasFocus": true
+  },
+  "lastTabFromTree": {
+    "active": "Extensions",
+    "closeRight": 1347.7,
+    "edgeLeft": 1353,
+    "focusInPane": true,
+    "hasFocus": true
+  },
+  "r1": {
+    "wheeled": 1318,
+    "afterEditorClick": 1318,
+    "edgeShown": true
+  }
+}

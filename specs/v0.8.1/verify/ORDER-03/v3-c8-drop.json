@@ -1,0 +1,41 @@
+{
+  "rows": [
+    "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o3ws",
+    "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o3ws\\md",
+    "C:\\Users\\nampl\\AppData\\Local\\Temp\\claude\\0b8282fad92e4259\\2dcc8c40-f3c7-4825-9532-571c138ca732\\scratchpad\\o3ws\\txt"
+  ],
+  "start": [
+    [
+      "long-file-name-01.txt",
+      "long-file-name-02.txt",
+      "long-file-name-03.txt!"
+    ]
+  ],
+  "lockOff": {
+    "over": [
+      "long-file-name-02.txt"
+    ],
+    "tabs": [
+      [
+        "long-file-name-01.txt",
+        "m2.md!",
+        "long-file-name-02.txt",
+        "long-file-name-03.txt"
+      ]
+    ]
+  },
+  "lockOn": {
+    "over": [
+      "m2.md"
+    ],
+    "tabs": [
+      [
+        "long-file-name-01.txt",
+        "Preview m3.md!",
+        "m2.md",
+        "long-file-name-02.txt",
+        "long-file-name-03.txt"
+      ]
+    ]
+  }
+}
