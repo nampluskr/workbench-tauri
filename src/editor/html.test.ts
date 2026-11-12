@@ -53,6 +53,8 @@ test("I-7: preview CSP allows inline scripts and local sources only", () => {
   const head = headStart({ appearance: "dark", text: "#fff", accent: "#00f" }, 120.4);
   assert.ok(head.startsWith(`<meta http-equiv="Content-Security-Policy" content="${PREVIEW_CSP}">`)); // before any page element
   assert.ok(head.includes("scrollTo(0,120)"));
+  // K-07a-R2: the document announces itself first, before its load, so a re-attached frame's load is not a navigation.
+  assert.ok(head.includes('<script>parent.postMessage({previewReady:true},"*");'));
   assert.ok(headStart({ appearance: "dark", text: "#fff", accent: "#00f" }, Number.NaN).includes("scrollTo(0,0)"));
 });
 

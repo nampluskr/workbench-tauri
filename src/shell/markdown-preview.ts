@@ -192,12 +192,14 @@ export function createPreview(hooks: PreviewHooks): Preview {
   const frameId = `p${++previewFrames}`;
   const frameUrl = convertFileSrc(frameId, "preview");
   let frameScroll = 0; // reported by the frame document (headStart)
-  let expected = false; // the next load is one this preview started
+  let ours = false; // the frame's current document is the preview's own: it said so (headStart) before its load
   let recoveries: number[] = []; // times this render's document was shown again after a navigation
   let stopped = false;
-  const showFrame = () => { expected = true; frame.src = frameUrl; };
+  const showFrame = () => { frame.src = frameUrl; };
   const onFrameMessage = (e: MessageEvent) => {
-    const y: unknown = e.source === frame.contentWindow ? e.data?.previewScrollY : undefined;
+    if (e.source !== frame.contentWindow) return;
+    if (e.data?.previewReady === true) ours = true;
+    const y: unknown = e.data?.previewScrollY;
     if (typeof y === "number") frameScroll = y;
   };
   if (hooks.kind === "html") {
@@ -208,9 +210,12 @@ export function createPreview(hooks: PreviewHooks): Preview {
     // A page script that navigates its frame cannot be stopped first (opaque origin: no Navigation API events). What it lands on
     // (a CSP error page, or the empty document WebView2 commits for the scheme's 204) is replaced by the preview again, each
     // time; a page that keeps navigating gets a bounded number of these (recordRecovery), then a notice until the next render.
+    // A load of the preview's own document is never a navigation away: a render, a page reload, or the frame being loaded again
+    // because the tab view was taken out of the DOM and put back (Pane.tsx). Only those documents send previewReady.
     frame.addEventListener("load", () => {
-      if (expected) { expected = false; return; }
-      if (!frame.src || stopped) return;
+      const own = ours;
+      ours = false;
+      if (own || !frame.src || stopped) return;
       const next = recordRecovery(recoveries, performance.now());
       if (next) { recoveries = next; showFrame(); return; }
       stopped = true;

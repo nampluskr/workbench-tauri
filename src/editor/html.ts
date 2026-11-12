@@ -94,11 +94,13 @@ export function defaultStyle({ appearance, text, accent }: PreviewLook): string 
 /**
  * What goes first in the frame's `<head>`: the policy, the I-11 defaults, and a script that keeps the scroll across re-renders
  * (the parent cannot read a cross-origin frame's scroll: the frame reports it, and the next document starts at `scrollY`).
+ * The script first tells the parent this is the preview's own document (previewReady), so its load is not taken for a
+ * navigation away; an error page or the scheme's empty 204 document has no such script.
  */
 export function headStart(look: PreviewLook, scrollY: number): string {
   const top = Number.isFinite(scrollY) && scrollY > 0 ? Math.round(scrollY) : 0;
   return `<meta http-equiv="Content-Security-Policy" content="${PREVIEW_CSP}"><style>${defaultStyle(look)}</style>`
-    + `<script>addEventListener("load",()=>scrollTo(0,${top}));addEventListener("scroll",()=>parent.postMessage({previewScrollY:scrollY},"*"),{passive:true})</script>`;
+    + `<script>parent.postMessage({previewReady:true},"*");addEventListener("load",()=>scrollTo(0,${top}));addEventListener("scroll",()=>parent.postMessage({previewScrollY:scrollY},"*"),{passive:true})</script>`;
 }
 
 /** `serialized` (an `outerHTML` of a parsed document) with `html` as the first children of `<head>`, ahead of every page element. */
