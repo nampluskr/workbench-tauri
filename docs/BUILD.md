@@ -2,6 +2,7 @@
 
 - 작성일: 2026-11-11
 - 기준 커밋: `2866205`(ORDER-06 코드)
+- 고친 날: 2026-11-13(0.8.1 release 빌드, [4A절](#4a-081-결과-파일), 기준 커밋 `eb987f2`)
 
 배포본(release exe·NSIS 설치 파일)을 만드는 과정이다. 2026-11-11 0.8.0 release 빌드에 성공했고, 같은 날 ORDER-06(I-11)으로 다시 빌드했다. 도구·기존 측정은 각 절의 날짜를 따른다.
 
@@ -96,6 +97,33 @@ npm run tauri build             # release exe + NSIS 설치 파일
 
 - 이유: `dist/`에 KaTeX 청크(258.9 kB)와 Mermaid 쪽 청크(약 5.2 MB, 비압축)가 더해지고 `index`가 Licenses 텍스트만큼(+107.5 kB) 커져, 압축돼 exe에 들어간 것이다. 두 라이브러리는 처음 쓸 때만 불러와 앱 시작에는 읽히지 않는다.
 - 0.7.0 참고 값(2026-11-08 기록): exe zip(Compress-Archive Optimal) 7.66 MiB, `dist/` 18.57 MiB(이 중 문법 복사본 11.9 MB).
+
+## 4A. 0.8.1 결과 파일
+
+2026-11-13 tauri-coder(K-07b, ORDER-07)의 0.8.1 release 빌드 결과다. 기준 커밋 `eb987f2`(I-7 끝). 빌드 직전 `workbench-tauri.exe` 프로세스 없음(`Get-CimInstance Win32_Process`).
+
+| 파일 | 경로 | 크기·버전 |
+|---|---|---|
+| NSIS 설치 파일 | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.8.1_x64-setup.exe` | 10,582,363 바이트(수정 시각 2026-11-13 07:32:19); ProductVersion `0.8.1`, FileVersion `0.8.1` |
+| 앱 exe | `src-tauri\target\release\workbench-tauri.exe` | 21,538,304 바이트(수정 시각 2026-11-13 07:32:19); ProductVersion `0.8.1`, FileVersion `0.8.1` |
+| 참고: 프런트엔드 `dist/` | exe 안에 압축돼 들어감 | 31,174,963 바이트, 파일 4,998개, JS 청크 205개 |
+
+- 버전은 `(Get-Item …).VersionInfo`로 읽었다.
+
+### 0.8.0 대비
+
+| 파일 | 0.8.0 (ORDER-06 빌드) | 0.8.1 | 증가 |
+|---|---|---|---|
+| NSIS 설치 파일 | 7,463,747 B | 10,582,363 B | +3,118,616 B (+41.78%) |
+| 앱 exe | 18,290,176 B | 21,538,304 B | +3,248,128 B (+17.76%) |
+| `dist/` | 25,253,939 B | 31,174,963 B | +5,921,024 B |
+
+- 이유: 대부분 ORDER-05(I-10)에서 더한 코드 글꼴 넷이다. `dist/fonts/`의 d2coding·hack·jetbrains-mono·ubuntu-mono가 비압축 5,846,782 B(`dist/` 증가의 98.7%, 그중 D2Coding ttf 하나가 4,185,844 B)이고, zip(Compress-Archive Optimal)으로 묶으면 3,402,050 B라 exe·설치 파일 증가량과 비슷하다. 나머지는 `index` 청크 증가(4,557.41 → 4,596.46 kB)다.
+
+### 빌드 시간·경고
+
+- `npm.cmd run tauri build`(NSIS 켬): 전체 71초(07:31:08 → 07:32:19), cargo release 50.98초(`workbench-tauri` 크레이트만 다시 컴파일).
+- 경고는 기존과 같은 종류다: Vite 500 kB 넘는 chunk(`index` 4,596.46 kB, `elk` 1,462.86 kB, `chunk-NGNAAXSQ` 629.04 kB), web-tree-sitter direct eval(`[EVAL]` 2건). Rust 경고 없음.
 
 ## 5. 걸린 시간(이 PC)
 
