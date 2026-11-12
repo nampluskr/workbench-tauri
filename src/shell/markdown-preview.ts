@@ -130,7 +130,8 @@ function notebookNodes(text: string, sourcePath: string): HTMLElement[] {
   });
 }
 
-export type Preview = { element: HTMLElement; changed: () => void; cursor: (line: number) => void; dispose: () => void };
+/** `reveal` (core v0.8.1 I-4, an Outline click): scroll a heading to the top, by its source line, or for a notebook by its order among the cells' headings. */
+export type Preview = { element: HTMLElement; changed: () => void; cursor: (line: number) => void; reveal: (line: number, heading?: number) => void; dispose: () => void };
 
 export function createPreview(hooks: PreviewHooks): Preview {
   const element = document.createElement("div");
@@ -262,6 +263,12 @@ export function createPreview(hooks: PreviewHooks): Preview {
       }, MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS);
     },
     cursor: (line) => highlight(line, true),
+    reveal: (line, heading) => {
+      if (heading === undefined) highlight(line, false); // the block mark of I-083, as a click on the block gives
+      const target = heading === undefined ? body.querySelector<HTMLElement>(".active-block")
+        : body.querySelectorAll<HTMLElement>(".nb-markdown :is(h1, h2, h3, h4, h5, h6)")[heading];
+      target?.scrollIntoView({ block: "start" });
+    },
     dispose: () => { stopTheme(); clearTimeout(timer); generation++; },
   };
   return preview;

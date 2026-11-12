@@ -8,20 +8,21 @@ import type { Tab } from "../workspace/context.ts";
 
 test("I-22 / I-19: status buttons retain Zed's order, state, labels and tooltip shortcuts", () => {
   const stack = [new Set(["Workspace"]), new Set(["Pane"]), new Set(["Editor"])];
-  for (const sidebar of [false, true]) for (const dock of [false, true]) for (const locked of [false, true]) {
-    const buttons = statusButtons(sidebar, dock, locked);
+  for (const sidebar of [false, true]) for (const dock of [false, true]) for (const locked of [false, true]) for (const outline of [false, true]) {
+    const buttons = statusButtons(sidebar, dock, locked, outline);
     assert.deepEqual(buttons.flatMap((button) => [button.name, ...(button.dividerAfter ? ["divider"] : [])]), [
       ...(!sidebar ? ["threads_sidebar_left_closed", "divider"] : []),
-      "file_tree", "divider", "magnifying_glass", "eye",
+      "file_tree", "divider", "list_tree", "divider", "magnifying_glass", "eye",
     ]);
     assert.deepEqual(buttons.map((button) => [button.name, button.label, button.toggled]), [
       ...(!sidebar ? [["threads_sidebar_left_closed", "Open Folder Sidebar", undefined]] : []),
       ["file_tree", dock ? "Close Left Dock" : "Project Panel", dock],
+      ["list_tree", outline ? "Close Outline" : "Outline", outline],
       ["magnifying_glass", "Search", undefined],
       ["eye", "Lock Preview", locked],
     ]);
     assert.deepEqual(buttons.map((button) => shortcutFor(keymap, button.action, stack)?.join(" ")), [
-      ...(!sidebar ? ["Ctrl-Alt-J"] : []), dock ? "Ctrl-B" : "Ctrl-Shift-E", "Ctrl-Shift-F", undefined,
+      ...(!sidebar ? ["Ctrl-Alt-J"] : []), dock ? "Ctrl-B" : "Ctrl-Shift-E", undefined, "Ctrl-Shift-F", undefined,
     ]);
   }
   for (const [stroke, action] of [["ctrl-shift-f", "pane::DeploySearch"]]) {

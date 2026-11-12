@@ -34,5 +34,6 @@ declare module "markdown-it" {
     utils: { escapeHtml(text: string): string };
     use(plugin: (md: MarkdownIt) => void): this;
     render(src: string): string;
+    parse(src: string, env: object): Token[];
   }
 }

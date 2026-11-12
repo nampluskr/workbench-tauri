@@ -1,5 +1,6 @@
 // Pinned Zed grammars and recursive injections -> one themed mark per position.
 import type { ChangeSet } from "@codemirror/state";
+import { createSignal } from "solid-js";
 import { Decoration, ViewPlugin, type DecorationSet, type EditorView, type ViewUpdate } from "@codemirror/view";
 import { syntaxClass } from "../theme/theme.ts";
 import { syntaxKeys } from "../theme/apply.ts";
@@ -14,6 +15,10 @@ const mark = (key: string) => {
   return value;
 };
 
+/** core v0.8.1 I-4: each editor's syntax document, and the editor whose parse was committed last (the Outline follows it). */
+export const syntaxOf = new WeakMap<EditorView, SyntaxDocument>();
+export const [parsedView, setParsedView] = createSignal<EditorView | null>(null, { equals: false });
+
 export function syntaxHighlighting(config: LanguageConfig) {
   return ViewPlugin.fromClass(class {
     decorations: DecorationSet = Decoration.none;
@@ -23,7 +28,7 @@ export function syntaxHighlighting(config: LanguageConfig) {
     destroyed = false;
     themeKeys = syntaxKeys;
 
-    constructor(readonly view: EditorView) { void this.parseAll(); }
+    constructor(readonly view: EditorView) { syntaxOf.set(view, this.syntax); void this.parseAll(); }
 
     async parseAll(): Promise<void> {
       if (this.parsing || this.destroyed) return;
@@ -38,6 +43,7 @@ export function syntaxHighlighting(config: LanguageConfig) {
           this.themeKeys = syntaxKeys;
           this.decorations = this.build();
           this.view.dispatch({});
+          setParsedView(this.view);
           return;
         }
       } catch (error) {

@@ -1,7 +1,7 @@
 import { createSignal } from "solid-js";
 import { commands } from "../keymap/keyboard.ts";
 import { focusPane } from "../workspace/context.ts";
-import { editorContext } from "../workspace/store.ts";
+import { editorContext, outlineOpen, setOutlineOpen } from "../workspace/store.ts";
 
 // Showing and focusing the sidebar and the left Dock (R-17, A-17.1/2/7/8, I-098~I-100). Showing and focusing are
 // separate: Ctrl+Alt+J / Ctrl+B show and hide, Ctrl+Alt+; / Ctrl+Shift+E move focus.
@@ -56,7 +56,15 @@ export function togglePanelFocus(): void {
   panelEl()?.focus();
 }
 
+/** core v0.8.1 I-4: the status bar button shows or hides the Outline bar (no key); closing it from inside gives focus to the Pane. */
+export function toggleOutline(): void {
+  const inside = holds(document.querySelector<HTMLElement>(".outline-bar"));
+  setOutlineOpen(!outlineOpen());
+  if (inside) focusActivePane();
+}
+
 commands.set("multi_workspace::ToggleWorkspaceSidebar", toggleSidebar);
 commands.set("multi_workspace::FocusWorkspaceSidebar", toggleSidebarFocus);
 commands.set("workspace::ToggleLeftDock", toggleDock);
 commands.set("project_panel::ToggleFocus", togglePanelFocus);
+commands.set("outline_panel::Toggle", toggleOutline);

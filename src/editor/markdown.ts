@@ -61,6 +61,13 @@ export function renderMarkdown(text: string): string {
   return head + md.render(rest);
 }
 
+/** core v0.8.1 I-4: the headings markdown-it finds (so the preview draws the same ones; a `#` in a code block is not one). */
+export function markdownHeadings(text: string): { level: number; text: string; line: number }[] {
+  const tokens = md.parse(text, {});
+  return tokens.flatMap((token, i) => token.type === "heading_open" && token.map
+    ? [{ level: Number(token.tag.slice(1)), text: tokens[i + 1]?.content ?? "", line: token.map[0] }] : []);
+}
+
 /** I-083: of the blocks (start, end exclusive), the innermost one holding `line`; -1 when none. */
 export function blockAt(blocks: { start: number; end: number }[], line: number): number {
   let best = -1;

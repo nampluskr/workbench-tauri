@@ -6,6 +6,7 @@ import { useLanguageCatalog } from "../editor/filetype.ts";
 
 const configs = import.meta.glob<string>("../assets/zed-grammars/languages/*/config.toml", { query: "?raw", import: "default", eager: true });
 const queries = import.meta.glob<string>(["../assets/zed-grammars/languages/*/highlights.scm", "../assets/zed-grammars/languages/*/injections.scm"], { query: "?raw", import: "default" });
+const outlines = import.meta.glob<string>("../assets/zed-grammars/languages/*/outline.scm", { query: "?raw", import: "default" });
 const wasms = import.meta.glob<string>("../assets/zed-grammars/grammars/*.wasm", { query: "?url", import: "default" });
 export const languages = languageConfigs(configs);
 useLanguageCatalog(languages);
@@ -38,4 +39,18 @@ export function loadSyntax(config: LanguageConfig): Promise<LoadedLanguage | und
     languageCache.set(config.id, loaded);
   }
   return loaded;
+}
+
+const outlineCache = new Map<string, Promise<Query | undefined>>();
+/** core v0.8.1 I-4: the language's outline.scm, compiled on first use; undefined for a language without one (empty Outline). */
+export function outlineQuery(syntax: LoadedLanguage): Promise<Query | undefined> {
+  let query = outlineCache.get(syntax.config.id);
+  if (!query) {
+    const source = outlines[`../assets/zed-grammars/languages/${syntax.config.id}/outline.scm`];
+    query = source
+      ? source().then((text) => compileQuery(syntax.language, text)).catch((error: unknown) => { console.error(`Outline ${syntax.config.id}`, error); return undefined; })
+      : Promise.resolve(undefined);
+    outlineCache.set(syntax.config.id, query);
+  }
+  return query;
 }

@@ -115,7 +115,7 @@ button, input, select, textarea {
   height: var(--sidebar-header-height);
   border-bottom: var(--window-border-sidebar-header-bottom) solid var(--border);
 }
-.sidebar[hidden], .dock-left[hidden] { display: none; }
+.sidebar[hidden], .dock-left[hidden], .outline-bar[hidden] { display: none; }
 /* R-12: one row per folder; the list scrolls when there are many (A-16.7). */
 /* I-26: overflow-y:auto alone makes overflow-x compute to auto too, so any sliver of row overflow showed a horizontal bar. Names already clip with an ellipsis (.sidebar-item-name), so the list never scrolls sideways. */
 .sidebar-list { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; outline: none; }
@@ -233,8 +233,9 @@ button, input, select, textarea {
 .sidebar-footer .group { gap: var(--sidebar-footer-gap); }
 .grow { flex: 1; }
 
-/* L-14: [left Dock] -> [PaneGroup]. L-31: from the handle width up to the body width less the handle. */
-.dock-left {
+/* L-14: [left Dock] -> [PaneGroup]. L-31: from the handle width up to the body width less the handle.
+   core v0.8.1 I-4: the Outline bar after it has the same box, right edge and handle (no hover look). */
+.dock-left, .outline-bar {
   position: relative;
   flex-shrink: 0;
   box-sizing: border-box;
@@ -551,6 +552,43 @@ button, input, select, textarea {
 .tree-guide::before { content: ""; position: absolute; top: 0; bottom: 0; left: var(--project-panel-indent-guide-offset-x); width: var(--project-panel-indent-guide-width); background: var(--border); }
 .tree-guide.first::before { top: var(--project-panel-indent-guide-padding-y); }
 .tree-guide.last::before { bottom: var(--project-panel-indent-guide-padding-y); }
+
+/* core v0.8.1 I-4 (mockup F): header "Outline · file", then the project tree's rows. Badge numbers: outline.* in metrics.ts. */
+.outline-bar { display: flex; flex-direction: column; }
+.outline-header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--outline-header-gap);
+  box-sizing: border-box;
+  height: var(--tab-bar-height);
+  padding: 0 var(--outline-header-padding-right) 0 var(--outline-header-padding-left);
+  border-bottom: var(--tab-end-buttons-area-border-bottom) solid var(--border);
+  color: var(--text-muted);
+  font-size: var(--typography-size-small);
+  white-space: nowrap;
+  overflow: hidden;
+  --icon-size: var(--tab-bar-icon-size);
+}
+.outline-header .icon { flex-shrink: 0; color: var(--icon-muted); }
+.outline-doc { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
+.outline-list { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; padding-top: var(--outline-list-padding-top); user-select: none; }
+.outline-empty { padding-inline: var(--project-panel-item-padding-x); color: var(--text-muted); font-size: var(--typography-size-default); }
+.outline-toggle { display: flex; flex-shrink: 0; color: var(--icon-muted); }
+.outline-badge-slot { align-items: center; justify-content: center; }
+/* Three classes: above the theme's `.outline-bar .cm-syntax-*` (color, and a font style this badge does not take). */
+.outline-bar .tree-row .outline-badge {
+  width: var(--outline-badge-size);
+  height: var(--outline-badge-size);
+  line-height: var(--outline-badge-size);
+  border-radius: var(--outline-badge-corner-radius);
+  text-align: center;
+  font-size: var(--outline-badge-font-size);
+  font-style: normal;
+  font-weight: var(--outline-badge-font-weight);
+  background: color-mix(in srgb, currentColor var(--outline-badge-background-mix), transparent);
+}
+.outline-bar .tree-row .outline-badge.heading { font-size: var(--outline-badge-heading-font-size); letter-spacing: var(--outline-badge-heading-letter-spacing); }
 
 /* L-87: the left group of the title bar. */
 .title-left { display: flex; align-items: center; margin-right: auto; }

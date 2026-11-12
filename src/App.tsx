@@ -3,10 +3,11 @@ import TitleBar from "./shell/TitleBar.tsx";
 import { IconButton } from "./shell/Icon.tsx";
 import FolderList from "./shell/Sidebar.tsx";
 import ProjectPanel from "./shell/ProjectPanel.tsx";
+import OutlineBar from "./shell/Outline.tsx";
 import { PaneArea } from "./shell/Pane.tsx";
 import { resizeHandle } from "./shell/dock.ts";
 import { dockOpen, sidebarOpen, toggleSidebar } from "./shell/panels.ts";
-import { addFolder, editorContext, sidebarWidth, resizeSidebar, toggleLockPreview } from "./workspace/store.ts";
+import { addFolder, editorContext, outlineOpen, sidebarWidth, resizeSidebar, toggleLockPreview } from "./workspace/store.ts";
 import { activeTabOf, lockPreview } from "./workspace/context.ts";
 import { statusButtons, statusItems } from "./shell/status.ts";
 import { commands, focusStack } from "./keymap/keyboard.ts";
@@ -61,13 +62,15 @@ export default function App() {
             <div class="dock-resize-handle" ref={resizeHandle} />
             <ProjectPanel />
           </aside>
+          {/* core v0.8.1 I-4: between the left Dock and the Panes; it stays when the Dock is closed. */}
+          <OutlineBar />
           {/* L-15 / D-8: the active folder's split tree of Panes (R-26, R-9). */}
           <PaneArea />
         </div>
-        {/* I-22: the closed sidebar's toggle precedes the project panel and search. */}
+        {/* I-22: the closed sidebar's toggle precedes the project panel, then the Outline (core v0.8.1 I-4) and search. */}
         <footer class="status-bar">
           <div class="group grow">
-            <For each={statusButtons(sidebarOpen(), dockOpen(), lockPreview())}>{(button) => (<>
+            <For each={statusButtons(sidebarOpen(), dockOpen(), lockPreview(), outlineOpen())}>{(button) => (<>
               <IconButton {...button} onClick={() => commands.get(button.action)?.()} />
               <Show when={button.dividerAfter}><span class={button.dividerAfter === "toggle" ? "status-divider toggle" : "status-divider"} aria-hidden="true" /></Show>
             </>)}</For>

@@ -8,7 +8,7 @@ import { addOrActivate, move, moveCursor as nextCursor, remove, rename, type Fol
 import { askWarning, closingTabs, disposeContext, lockPreview, setLockPreview, newContext, type FolderContext } from "./context.ts";
 import { confirmClose } from "./closing.ts";
 import { folderName, normalizePath } from "./paths.ts";
-import { parseState, serializeState } from "./state-file.ts";
+import { OUTLINE_DEFAULT, parseState, serializeState, type Outline } from "./state-file.ts";
 
 // The registered folders and the state.json that keeps them (R-11~R-16, R-29, D-8, D-11). Folders, their order and
 // the active one are saved; the keyboard cursor and the existing-path marks are not.
@@ -20,7 +20,10 @@ const [activeId, setActiveId] = createSignal<string | null>(null);
 const [cursorId, setCursorId] = createSignal<string | null>(null); // keyboard cursor of the sidebar (D-8)
 const [missingIds, setMissingIds] = createSignal<ReadonlySet<string>>(new Set()); // folders whose path is gone (A-16.2)
 const [sidebarWidth, setSidebarWidth] = createSignal(SIDEBAR_WIDTH.default);
+const [outline, setOutline] = createSignal<Outline>(OUTLINE_DEFAULT); // core v0.8.1 I-4
 export { folders, activeId, cursorId, missingIds, sidebarWidth };
+export const outlineOpen = () => outline().open;
+export const outlineWidth = () => outline().width;
 
 export const activeFolder = (): Folder | null => folders().find((f) => f.id === activeId()) ?? null;
 
@@ -55,7 +58,7 @@ function write(): Promise<void> {
     if (!dirty || !canWrite) return;
     dirty = false;
     try {
-      await invoke("write_state", { json: serializeState(raw, { folders: folders(), activeId: activeId(), sidebarWidth: sidebarWidth(), lockPreview: lockPreview() }) });
+      await invoke("write_state", { json: serializeState(raw, { folders: folders(), activeId: activeId(), sidebarWidth: sidebarWidth(), lockPreview: lockPreview(), outline: outline() }) });
     } catch (reason) {
       dirty = true; // memory keeps the state; the next change writes it again from the start (A-24.4)
       notify([String(reason)]);
@@ -123,6 +126,7 @@ export async function loadWorkspace(): Promise<void> {
       setCursorId(loaded.activeId);
       setSidebarWidth(loaded.sidebarWidth);
       setLockPreview(loaded.lockPreview);
+      setOutline(loaded.outline);
     });
     await markMissing(loaded.folders);
   } catch {
@@ -201,6 +205,16 @@ export function renameFolder(id: string, name: string): void {
 
 export function resizeSidebar(width: number): void {
   setSidebarWidth(width);
+  changed();
+}
+
+export function resizeOutline(width: number): void {
+  setOutline((o) => ({ ...o, width }));
+  changed();
+}
+
+export function setOutlineOpen(open: boolean): void {
+  setOutline((o) => ({ ...o, open }));
   changed();
 }
 

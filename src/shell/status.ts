@@ -17,10 +17,12 @@ export const STATUS_BINDINGS: KeymapSection[] = [{ context: "Workspace", binding
 
 type StatusButton = { name: IconName; label: string; action: string; toggled?: boolean; dividerAfter?: boolean | "toggle" };
 
-export function statusButtons(sidebarOpen: boolean, dockOpen: boolean, lockPreview: boolean): StatusButton[] {
+/** I-22; core v0.8.1 I-4: tree | Outline | Search and Lock Preview, a divider after each of the first two. */
+export function statusButtons(sidebarOpen: boolean, dockOpen: boolean, lockPreview: boolean, outlineOpen: boolean): StatusButton[] {
   return [
     ...(!sidebarOpen ? [{ name: "threads_sidebar_left_closed" as const, label: "Open Folder Sidebar", action: "multi_workspace::ToggleWorkspaceSidebar", dividerAfter: "toggle" as const }] : []),
     { name: "file_tree", label: dockOpen ? "Close Left Dock" : "Project Panel", action: dockOpen ? "workspace::ToggleLeftDock" : "project_panel::ToggleFocus", toggled: dockOpen, dividerAfter: true },
+    { name: "list_tree", label: outlineOpen ? "Close Outline" : "Outline", action: "outline_panel::Toggle", toggled: outlineOpen, dividerAfter: true },
     { name: "magnifying_glass", label: "Search", action: "pane::DeploySearch" },
     { name: "eye", label: "Lock Preview", action: "markdown::ToggleLockPreview", toggled: lockPreview },
   ];

@@ -296,6 +296,12 @@ export class SyntaxDocument {
     }
   }
 
+  /** core v0.8.1 I-4: the last committed tree of the document itself (no injections) and the text it was parsed from. */
+  root(): { syntax: LoadedLanguage; tree: Tree; doc: Text } | undefined {
+    const layer = this.layers.get("root");
+    return layer && this.doc && { syntax: layer.syntax, tree: layer.tree, doc: this.doc };
+  }
+
   highlights(from: number, to: number, keys: ReadonlySet<string>): Highlight[] {
     const all: Capture[] = [];
     for (const layer of this.layers.values()) {

@@ -336,6 +336,19 @@ const METRICS: Record<string, string> = {
   "menu.separator.margin_y": rem(6), // I-318
   "menu.app_menu_button.icon_size": rem(14), // I-321
   "menu.horizontal.item_gap": rem(4), // I-321
+  // core v0.8.1 I-4: mockup F (core specs/v0.8.1/mockups/outline/index.html, chosen by the user); not in the toml.
+  // Rows, indent, guides and chevrons are the project panel's own (project_panel.*); the header is tab.bar_height tall, its icon tab.bar_icon_size.
+  "outline.header.padding_left": rem(10),
+  "outline.header.padding_right": rem(8),
+  "outline.header.gap": rem(6),
+  "outline.list.padding_top": rem(4),
+  "outline.badge.size": rem(15), // in the 16px icon slot
+  "outline.badge.corner_radius": rem(3),
+  "outline.badge.font_size": rem(11), // C, m, f...
+  "outline.badge.heading_font_size": rem(9), // H1..H6
+  "outline.badge.heading_letter_spacing": rem(-0.3),
+  "outline.badge.font_weight": "600",
+  "outline.badge.background_mix": "22%", // the badge color over transparent
 };
 
 // Tooltip values that script reads (the rest above reach CSS only).

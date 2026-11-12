@@ -10,9 +10,9 @@ export const resetDockWidth = () => resetWidth();
  * project_panel.default_width (L-32). The bounds (L-31) are min/max-width in app.css.
  * The width goes into an adopted sheet, not an inline style.
  */
-export function resizeHandle(handle: HTMLDivElement, sidebar?: { width: () => number; setWidth: (width: number) => void }): void {
+export function resizeHandle(handle: HTMLDivElement, sidebar?: { width: () => number; setWidth: (width: number) => void; selector?: string }): void {
   const dock = handle.parentElement!;
-  const selector = sidebar ? ".sidebar" : ".dock-left";
+  const selector = sidebar ? (sidebar.selector ?? ".sidebar") : ".dock-left"; // core v0.8.1 I-4: the Outline bar is kept like the Sidebar
   const setWidth = sidebar?.setWidth ?? setDockWidth;
   const sheet = new CSSStyleSheet();
   document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];

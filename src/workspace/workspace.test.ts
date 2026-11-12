@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { addOrActivate, displayNames, filterFolders, folderLabel, folderNameParts, searchRoots, move, moveCursor, remove, rename, type Folder } from "./folders.ts";
 import { folderName, normalizePath, parentName, pathKey, truncateName } from "./paths.ts";
-import { parseState, serializeState, STATE_VERSION } from "./state-file.ts";
+import { OUTLINE_DEFAULT, parseState, serializeState, STATE_VERSION } from "./state-file.ts";
 
 const folder = (id: string, path: string): Folder => ({ id, path, added_at: "2026-11-06T00:00:00.000Z" });
 const abc = [folder("a", "D:\\a"), folder("b", "D:\\b"), folder("c", "D:\\c")];
@@ -98,7 +98,7 @@ test("A-20, A-22.6, A-24.7: unknown keys survive a round trip; a bad active id m
   assert.equal(loaded.activeId, "a");
   assert.equal(loaded.sidebarWidth, 250);
   assert.equal(loaded.readOnly, false);
-  const out = JSON.parse(serializeState(loaded.raw, { folders: [loaded.folders[1], loaded.folders[0]], activeId: "b", sidebarWidth: 400, lockPreview: false }));
+  const out = JSON.parse(serializeState(loaded.raw, { folders: [loaded.folders[1], loaded.folders[0]], activeId: "b", sidebarWidth: 400, lockPreview: false, outline: OUTLINE_DEFAULT }));
   assert.deepEqual(out.recent, [{ path: "D:\\x" }]); // unknown top-level key
   assert.deepEqual(out.windows[0].window, { x: 1 }); // unknown key of the window
   assert.deepEqual(out.windows[0].sidebar, { open: false, width: 400 }); // sibling of the width kept
@@ -112,13 +112,22 @@ test("A-20, A-22.6, A-24.7: unknown keys survive a round trip; a bad active id m
 });
 
 test("R-11, A-22: state accepts Dock widths; invalid widths fall back to the default", () => {
-  const out = JSON.parse(serializeState({}, { folders: abc, activeId: "a", sidebarWidth: 300, lockPreview: false }));
+  const out = JSON.parse(serializeState({}, { folders: abc, activeId: "a", sidebarWidth: 300, lockPreview: false, outline: OUTLINE_DEFAULT }));
   assert.equal(out.version, STATE_VERSION);
   assert.equal(out.windows[0].folders.length, 3);
   for (const width of [6, 240, 900])
     assert.equal(parseState(JSON.stringify({ windows: [{ sidebar: { width } }] })).sidebarWidth, width);
   for (const width of [0, -1, 5, null, "240", 1e400])
     assert.equal(parseState(JSON.stringify({ windows: [{ sidebar: { width } }] })).sidebarWidth, 300);
+});
+
+test("core v0.8.1 I-4: the Outline starts closed at the left Dock width; open and width round trip, a bad width falls back", () => {
+  assert.deepEqual(parseState(null).outline, { open: false, width: 240 });
+  assert.deepEqual(parseState(JSON.stringify({ windows: [{ sidebar: { width: 300 } }] })).outline, { open: false, width: 240 }); // a v0.8 file
+  const saved = serializeState({ windows: [{ outline: { later: 1 } }] }, { folders: abc, activeId: "a", sidebarWidth: 300, lockPreview: false, outline: { open: true, width: 320 } });
+  assert.deepEqual(JSON.parse(saved).windows[0].outline, { later: 1, open: true, width: 320 });
+  assert.deepEqual(parseState(saved).outline, { open: true, width: 320 });
+  assert.deepEqual(parseState(JSON.stringify({ windows: [{ outline: { open: "yes", width: 3 } }] })).outline, { open: false, width: 240 });
 });
 
 test("R-10, R-19: display names, order and width round trip; search uses renamed names and clearing restores all", () => {
@@ -130,7 +139,7 @@ test("R-10, R-19: display names, order and width round trip; search uses renamed
   assert.equal(filterFolders(renamed, "").length, 3);
   assert.equal(folderLabel(rename(renamed, "b", "  ")[1]), "b");
   assert.equal(folderLabel({ ...abc[0], name: 12 } as unknown as Folder), "a");
-  const saved = serializeState({}, { folders: move(renamed, "c", "a"), activeId: "b", sidebarWidth: 900, lockPreview: false });
+  const saved = serializeState({}, { folders: move(renamed, "c", "a"), activeId: "b", sidebarWidth: 900, lockPreview: false, outline: OUTLINE_DEFAULT });
   const loaded = parseState(saved);
   assert.deepEqual(loaded.folders.map((f) => f.id), ["c", "a", "b"]);
   assert.equal(folderLabel(loaded.folders[2]), "Research");
@@ -141,7 +150,7 @@ test("R-10, R-19: display names, order and width round trip; search uses renamed
 
 test("R-18: preview lock round trips both states; old or malformed values default to off", () => {
   for (const lockPreview of [true, false]) {
-    const saved = serializeState({ unknown: 7 }, { folders: abc, activeId: "b", sidebarWidth: 300, lockPreview });
+    const saved = serializeState({ unknown: 7 }, { folders: abc, activeId: "b", sidebarWidth: 300, lockPreview, outline: OUTLINE_DEFAULT });
     const loaded = parseState(saved);
     assert.equal(loaded.lockPreview, lockPreview);
     assert.equal(loaded.raw.unknown, 7);
