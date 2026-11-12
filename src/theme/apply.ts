@@ -10,7 +10,7 @@ export let syntaxKeys: ReadonlySet<string> = new Set();
 export let previewSyntaxKeys: ReadonlySet<string> = new Set();
 /** Light or dark, for the applied preview theme (Mermaid picks its colours by it). */
 export let previewAppearance: "light" | "dark" = "dark";
-/** The applied preview theme's page colours, for the HTML preview's srcdoc (an iframe document does not inherit CSS variables): text, text.accent. */
+/** The applied preview theme's page colours, for the HTML preview's frame document (an iframe document does not inherit CSS variables): text, text.accent. */
 export let previewColors = { text: "", accent: "" };
 const previewListeners = new Set<() => void>();
 /** Call `fn` when the applied preview theme's colours or appearance change (not on every applyTheme). Returns the unsubscribe. */

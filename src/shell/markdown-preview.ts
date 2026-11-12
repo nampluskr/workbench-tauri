@@ -2,7 +2,7 @@ import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import DOMPurify from "dompurify";
 import { csvTable } from "../editor/csv.ts";
 import { blockAt, classifyLink, localImagePath, renderMarkdown, type LinkTarget } from "../editor/markdown.ts";
-import { htmlSrcdoc } from "../editor/html.ts";
+import { htmlPreviewDoc, PREVIEW_CSP } from "../editor/html.ts";
 import { NOTEBOOK_HTML_FORBID_ATTR, NOTEBOOK_HTML_FORBID_TAGS, parseNotebook, type NotebookOutput } from "../editor/notebook.ts";
 import { svgElement } from "../editor/svg.ts";
 import type { PreviewKind } from "../editor/preview-kind.ts";
@@ -176,6 +176,8 @@ function notebookNodes(text: string, sourcePath: string): HTMLElement[] {
 /** `reveal` (core v0.8.1 I-4, an Outline click): scroll a heading to the top, by its source line, or for a notebook by its order among the cells' headings. */
 export type Preview = { element: HTMLElement; changed: () => void; cursor: (line: number) => void; reveal: (line: number, heading?: number) => void; find: (action: string) => boolean; dispose: () => void };
 
+let previewFrames = 0; // ids of HTML preview documents (src-tauri preview.rs)
+
 export function createPreview(hooks: PreviewHooks): Preview {
   const element = document.createElement("div");
   element.className = "markdown-preview";
@@ -184,12 +186,31 @@ export function createPreview(hooks: PreviewHooks): Preview {
   const body = document.createElement("div");
   body.className = "markdown-body";
   element.append(body);
-  // I-1: an HTML file is one sandboxed frame (allow-same-origin only: no script, form, popup or navigation, M-12) filling the tab.
+  // I-1 / v0.8.1 I-7: an HTML file is one frame filling the tab, its document served by the preview scheme (editor/html.ts).
+  // allow-scripts only: an opaque origin, no form, popup, modal or top navigation (M-12). Never allow-same-origin with it.
   const frame = document.createElement("iframe");
+  const frameId = `p${++previewFrames}`;
+  const frameUrl = convertFileSrc(frameId, "preview");
+  let frameScroll = 0; // reported by the frame document (headStart)
+  let expected = false; // the next load is one this preview started
+  let recovered = false;
+  const showFrame = () => { expected = true; frame.src = frameUrl; };
+  const onFrameMessage = (e: MessageEvent) => {
+    const y: unknown = e.source === frame.contentWindow ? e.data?.previewScrollY : undefined;
+    if (typeof y === "number") frameScroll = y;
+  };
   if (hooks.kind === "html") {
     element.classList.add("html-preview");
     frame.className = "html-frame";
-    frame.setAttribute("sandbox", "allow-same-origin");
+    frame.setAttribute("sandbox", "allow-scripts");
+    frame.setAttribute("csp", PREVIEW_CSP);
+    // A page script that navigates its frame is blocked by CSP and leaves an error page: show the preview again, once per render.
+    // shortcut: a second scripted navigation before the next render keeps the error page; count per user action if that matters.
+    frame.addEventListener("load", () => {
+      if (expected) expected = false;
+      else if (frame.src && !recovered) { recovered = true; showFrame(); }
+    });
+    window.addEventListener("message", onFrameMessage);
     body.append(frame);
   }
   // core v0.8.1 I-9: find only where the preview is text of the app's own (not HTML, SVG or a Mermaid file).
@@ -202,10 +223,13 @@ export function createPreview(hooks: PreviewHooks): Preview {
     const text = hooks.text();
     if (text === null) return;
     if (hooks.kind === "html") {
-      // The new document starts at the top: put the scroll back once it has loaded.
-      const top = frame.contentWindow?.scrollY ?? 0;
-      frame.addEventListener("load", () => frame.contentWindow?.scrollTo(0, top), { once: true });
-      frame.srcdoc = htmlSrcdoc(text, hooks.sourcePath(), convertFileSrc, { ...previewColors, appearance: previewAppearance });
+      const html = htmlPreviewDoc(text, hooks.sourcePath(), convertFileSrc, { ...previewColors, appearance: previewAppearance }, frameScroll);
+      const id = ++generation;
+      invoke("preview_set", { id: frameId, html }).then(() => {
+        if (id !== generation) return; // disposed, or a newer render is on its way
+        recovered = false;
+        showFrame();
+      }, (error) => notify(["Failed to show the HTML preview", String(error)]));
       return;
     }
     if (hooks.kind === "svg") {
@@ -316,7 +340,14 @@ export function createPreview(hooks: PreviewHooks): Preview {
       target?.scrollIntoView({ block: "start" });
     },
     find: (action) => search?.run(action) ?? false,
-    dispose: () => { search?.dispose(); stopTheme(); clearTimeout(timer); generation++; },
+    dispose: () => {
+      search?.dispose(); stopTheme(); clearTimeout(timer); generation++;
+      if (hooks.kind !== "html") return;
+      // I-7: the frame's document goes with the tab, so its timers stop.
+      window.removeEventListener("message", onFrameMessage);
+      frame.remove();
+      invoke("preview_drop", { id: frameId }).catch(() => {}); // a stale entry only costs memory
+    },
   };
   return preview;
 }

@@ -6,6 +6,7 @@ mod folder_watch;
 mod text_io;
 mod user_file;
 mod name_search;
+mod preview;
 
 use notify::{Event, EventKind, RecursiveMode, Watcher};
 use tauri::{Emitter, Manager};
@@ -181,6 +182,10 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .manage(folder_watch::FolderWatch::default())
+        .manage(preview::PreviewDocs::default())
+        .register_uri_scheme_protocol("preview", |ctx, request| {
+            preview::respond(&ctx.app_handle().state::<preview::PreviewDocs>(), request.uri().path())
+        })
         .setup(|app| {
             let main = app.get_webview_window("main").ok_or("main window missing")?;
             let handle = app.handle().clone();
@@ -222,7 +227,7 @@ pub fn run() {
             }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![caption_set_colors, clipboard::read_clipboard_text, clipboard::write_clipboard_text, about_info, read_user_settings, write_user_settings, ensure_user_settings, edit_user_settings, open_settings, read_user_keymap, write_user_keymap, ensure_user_keymap, check_folder, paths_exist, read_state, write_state, files::list_dir, files::read_file, files::create_file, files::create_dir, files::rename_path, files::trash_paths, files::trash_for_undo, files::restore_trashed, files::delete_paths, files::confirm, files::confirm_buttons, files::paste_paths, files::duplicate_path, folder_watch::watch_folder, text_io::save_text, name_search::search_names])
+        .invoke_handler(tauri::generate_handler![caption_set_colors, clipboard::read_clipboard_text, clipboard::write_clipboard_text, about_info, read_user_settings, write_user_settings, ensure_user_settings, edit_user_settings, open_settings, read_user_keymap, write_user_keymap, ensure_user_keymap, check_folder, paths_exist, read_state, write_state, files::list_dir, files::read_file, files::create_file, files::create_dir, files::rename_path, files::trash_paths, files::trash_for_undo, files::restore_trashed, files::delete_paths, files::confirm, files::confirm_buttons, files::paste_paths, files::duplicate_path, folder_watch::watch_folder, text_io::save_text, name_search::search_names, preview::preview_set, preview::preview_drop])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
