@@ -6,6 +6,7 @@ import { activeId, editorContext, folders } from "../workspace/store.ts";
 import { searchRoots } from "../workspace/folders.ts";
 import { pathCrumb } from "../editor/breadcrumbs.ts";
 import { baseName } from "../workspace/paths.ts";
+import { searchPath, searchTitle } from "../workspace/tab-view.ts";
 import FileIcon from "../shell/FileIcon.tsx";
 import { IconButton } from "../shell/Icon.tsx";
 import { nameRegExp } from "./name-regexp.ts";
@@ -15,7 +16,9 @@ import "./search.css";
 
 const MAX_RESULTS = 5_000; // name_search.rs MAX_FILES; regexp results are cut here in the page
 
-function Search() {
+let opened = 0; // core I-6: numbers the Search tabs' paths
+
+function Search(props: { searched: (query: string) => void }) {
   const [query, setQuery] = createSignal("");
   const [entries, setEntries] = createSignal<SearchEntry[]>([]);
   const [busy, setBusy] = createSignal(false);
@@ -33,6 +36,7 @@ function Search() {
     setMessage("");
     setBusy(true);
     setSearched(true);
+    props.searched(query());
     // Regexp mode: Rust streams every name and the page keeps the matching ones; an invalid pattern just finds nothing.
     const matcher = regexp() ? nameRegExp(query(), { caseSensitive: caseSensitive(), wholeWord: wholeWord() }) : null;
     if (regexp() && !matcher) { setBusy(false); return; }
@@ -87,12 +91,13 @@ function Search() {
 }
 
 commands.set("pane::DeploySearch", () => {
-  openTool(editorContext(), "Search", () => {
+  openTool(editorContext(), searchPath(++opened), () => {
     const element = document.createElement("div");
     element.className = "project-search-tab";
     element.tabIndex = -1;
     element.onfocus = () => element.querySelector<HTMLInputElement>('input[aria-label="Search"]')?.focus();
-    const dispose = render(() => <Search />, element);
-    return { element, dispose, title: () => "Search", icon: "magnifying_glass" };
+    const [searched, setSearched] = createSignal("");
+    const dispose = render(() => <Search searched={setSearched} />, element);
+    return { element, dispose, title: () => searchTitle(searched()), icon: "magnifying_glass" };
   });
 });

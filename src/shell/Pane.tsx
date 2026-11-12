@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createRenderEffect, createSignal, For, Show } from "solid-js";
+import { createEffect, createMemo, createRenderEffect, createSignal, For, onCleanup, Show } from "solid-js";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { addCursorAbove, addCursorBelow, redo, selectAll, selectLine, toggleBlockComment, toggleComment, undo } from "@codemirror/commands";
 import { pasteClipboard, runHistory } from "../editor/extensions.ts";
@@ -309,17 +309,23 @@ function TabList(props: { ctx: FolderContext; pane: PaneState }) {
   const tabs = () => props.pane.tabs();
   let list!: HTMLDivElement;
   // I-16: a tab that becomes the active one is scrolled into view (Zed scroll_to_item).
+  const scrollActive = () => list.querySelector<HTMLElement>(".tab.active")?.scrollIntoView({ inline: "nearest", block: "nearest" });
   createEffect(() => {
     props.pane.active();
     tabs();
-    list.querySelector<HTMLElement>(".tab.active")?.scrollIntoView({ inline: "nearest", block: "nearest" });
+    scrollActive();
   });
+  // core I-13: the row narrows after that scroll when the end buttons appear (they follow focus, which a tab click gives
+  // the Pane only after activating it) or the window shrinks; keep the active tab whole then too.
+  const resized = new ResizeObserver(() => scrollActive());
+  onCleanup(() => resized.disconnect());
   return (
     <div
       class="tab-list"
       role="tablist"
       ref={(el) => {
         list = el;
+        resized.observe(el);
         // I-16: the vertical wheel scrolls the row sideways, by Zed's step. Not passive: the page must not scroll too.
         el.addEventListener("wheel", (e) => {
           if (e.deltaY === 0 || el.scrollWidth <= el.clientWidth) return;

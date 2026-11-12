@@ -465,7 +465,7 @@ export async function closeTabGroup(ctx: FolderContext, pane: PaneState, file: T
  * R-11: open the preview of `path` (I-077; a file with no preview kind is ignored), in `from`'s Pane, or with `side` in its right neighbour or a new
  * Pane split to the right (I-078; focus then stays where it was). One already there is activated (I-079).
  */
-export function openPreview(ctx: FolderContext, from: PaneState, path: string, side: boolean, focus = true): void {
+export function openPreview(ctx: FolderContext, from: PaneState, path: string, side: boolean, focus = true, temporary = false): void {
   const kind = previewKind(path);
   if (!kind) return;
   let pane = from;
@@ -498,9 +498,14 @@ export function openPreview(ctx: FolderContext, from: PaneState, path: string, s
       set.delete(preview);
       release(holder);
     };
-    return { path, preview: false, pinned: false, markdown: true, file: { doc: holder.doc, view: null, status, position, element: preview.element, dispose }, focus: false };
+    return { path, preview: temporary, pinned: false, markdown: true, file: { doc: holder.doc, view: null, status, position, element: preview.element, dispose }, focus: false };
   };
-  const opened = openTab(pane.tabs(), pane.active(), path, false, PANE_MAX_PREVIEW_TABS, make, () => false, true);
+  // core I-5: a tree click (`temporary`) follows the editor tabs' temporary-tab rule, so it may replace one of them.
+  const opened = openTab(pane.tabs(), pane.active(), path, temporary, PANE_MAX_PREVIEW_TABS, make, (t) => t.file.doc.dirty, true);
+  if (opened.replaced) {
+    release(opened.replaced.file);
+    pane.recent = pane.recent.filter((f) => f !== opened.replaced!.file);
+  }
   pane.setTabs(opened.tabs);
   if (side) {
     setActiveTab(pane, opened.active);
@@ -598,7 +603,7 @@ export function openFile(ctx: FolderContext, path: string, preview: boolean, foc
     const existing = panesOf(ctx).find((p) => p.tabs().some((t) => t.path === path && !t.markdown && !t.tool));
     if (existing) activatePane(ctx, existing);
     else {
-      openPreview(ctx, ctx.pane(), path, false, focusEditor);
+      openPreview(ctx, ctx.pane(), path, false, focusEditor, preview);
       return;
     }
   }

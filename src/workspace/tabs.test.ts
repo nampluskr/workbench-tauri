@@ -24,6 +24,19 @@ test("R-18: locking opens only previews of files that have one; opening the sour
   assert.equal(again.tabs[0], preview);
 });
 
+test("core I-5: with Lock Preview a tree click opens a temporary preview tab under the editor tabs' temporary-tab rule", () => {
+  const md = (path: string, preview: boolean) => (tabs: TabInfo[], active: number | null) =>
+    openTab(tabs, active, path, preview, 1, () => ({ path, preview, markdown: true }), () => false, true);
+  const a = md("a.md", true)([tab("e.ts", true)], 0); // replaces the temporary editor tab: one temporary tab per Pane
+  assert.deepEqual(names(a.tabs), ["a.md*"]);
+  assert.equal(a.replaced?.path, "e.ts");
+  const b = md("b.csv", true)(a.tabs, a.active); // the next click replaces it, tabs do not pile up
+  assert.deepEqual(names(b.tabs), ["b.csv*"]);
+  const kept = md("b.csv", false)(b.tabs, b.active); // a double or middle click on the same file keeps it
+  assert.deepEqual(names(kept.tabs), ["b.csv"]);
+  assert.deepEqual(names(md("c.ipynb", true)(kept.tabs, kept.active).tabs), ["b.csv", "c.ipynb*"]);
+});
+
 test("I-062: a new preview tab takes the place of the preview tab", () => {
   const first = open([], null, "a", true);
   assert.deepEqual(names(first.tabs), ["a*"]);

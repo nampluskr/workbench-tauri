@@ -7,10 +7,16 @@ import { WHEEL_PIXELS_PER_LINE } from "../spec/metrics.ts";
  */
 export function tabTooltip(tab: { path: string; tool?: boolean; title?: string; readOnly?: boolean }): Tip | null {
   if (tab.tool) {
-    return tab.path === "Search" ? { title: "Search" } : null;
+    return isSearchPath(tab.path) ? { title: "Search" } : null;
   }
   return tab.readOnly ? { title: tab.path, meta: "Read-Only Tab" } : { title: tab.path };
 }
+
+/** core I-6: every DeploySearch opens its own Search tab, so each gets a path of its own (openTool finds tool tabs by path). */
+export const searchPath = (n: number): string => `Search:${n}`;
+const isSearchPath = (path: string): boolean => path.startsWith("Search:");
+/** core I-6: a Search tab is titled with the query it last searched, "Search" before that. */
+export const searchTitle = (searched: string): string => searched || "Search";
 
 /** I-16: the sideways scroll of one wheel event over the tab row: `lineHeight` per wheel line; deltaMode 1 is already lines. */
 export function tabWheelDelta(deltaY: number, deltaMode: number, lineHeight: number): number {
