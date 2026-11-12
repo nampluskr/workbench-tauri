@@ -59,3 +59,14 @@
 | C-06 | V3 판정 — 대리 검토(Claude Code 서브 에이전트, 새 컨텍스트) | I-5 · I-6 · I-13 |
 | K-03-R1 | C-05 권고 R-1(휠로 밀어 둔 탭 줄을 줄 폭 변화로 되돌리지 않음)·R-2(원본 dirty여도 임시 미리보기 탭은 바뀜) | I-5 · I-13 |
 | W-04 | PROGRESS(ORDER-03 기록)·PLAN(이 표) | ORDER-03 |
+
+### Phase 4 작업 카드
+
+| 카드 | 할 일 | core 항목 |
+|---|---|---|
+| K-04 | I-4 Outline 사이드 바(시안 F): left dock과 편집 영역 사이, 상태 표시줄 트리\|Outline\|Search 버튼, Zed `outline.scm` 15개 언어·마크다운 제목·ipynb 셀 제목, 배지, 접기, 이동·따라가기, 열림·너비 저장 | I-4 |
+| C-07 | 검토 — 대리 검토(Claude Code 서브 에이전트, 새 컨텍스트), REWORK | I-4 |
+| K-04-R1 | C-07 R-1(출처 null이면 대기 계산 버림)·R-2(노트북 미리보기 원본 view가 늦게 생겨도 채움)·A-1(dock+Outline이 편집 영역을 0으로 만들지 않음)·A-3~A-7 | I-4 |
+| C-08 | R1 검토·V3 판정 — 대리 검토(Claude Code 서브 에이전트, 새 컨텍스트) | I-4 |
+| K-04-R2 | C-08 R1-1(dock·Outline 너비 변수에 잘린 실제 폭을 씀 — 한쪽을 한계 너머로 끌어도 다른 쪽이 줄지 않음) | I-4 |
+| W-05 | PROGRESS(ORDER-04 기록)·PLAN(이 표) | ORDER-04 |

@@ -1,0 +1,501 @@
+{
+  "window": {
+    "w": 1440,
+    "h": 852,
+    "dpr": 1
+  },
+  "c11_initial": {
+    "status": [
+      "Close Left Dock",
+      "|",
+      "Outline",
+      "|",
+      "Search",
+      "Lock Preview"
+    ],
+    "outlineHidden": true,
+    "layout": {
+      "dock": [
+        200,
+        240
+      ],
+      "paneArea": [
+        440,
+        1000
+      ],
+      "sidebar": [
+        0,
+        200
+      ]
+    }
+  },
+  "c1_open": {
+    "status": [
+      "Close Left Dock",
+      "|",
+      "Close Outline",
+      "|",
+      "Search",
+      "Lock Preview"
+    ],
+    "btnPressed": "true",
+    "layout": {
+      "dock": [
+        200,
+        240
+      ],
+      "outline": [
+        440,
+        240
+      ],
+      "paneArea": [
+        680,
+        760
+      ]
+    },
+    "outline": {
+      "doc": "doc.md",
+      "empty": null,
+      "rows": [
+        {
+          "depth": 0,
+          "badge": "H1",
+          "name": "Guide",
+          "selected": true,
+          "toggle": true
+        },
+        {
+          "depth": 1,
+          "badge": "H2",
+          "name": "Install",
+          "selected": false,
+          "toggle": true
+        },
+        {
+          "depth": 2,
+          "badge": "H3",
+          "name": "Windows",
+          "selected": false,
+          "toggle": true
+        },
+        {
+          "depth": 3,
+          "badge": "H4",
+          "name": "Path",
+          "selected": false,
+          "toggle": false
+        },
+        {
+          "depth": 1,
+          "badge": "H2",
+          "name": "Usage",
+          "selected": false,
+          "toggle": true
+        },
+        {
+          "depth": 2,
+          "badge": "H3",
+          "name": "Keys",
+          "selected": false,
+          "toggle": false
+        }
+      ]
+    },
+    "light": {
+      "text": "rgb(36, 37, 41)",
+      "badge": "rgb(211, 96, 79)"
+    },
+    "dockClosed": {
+      "dockHidden": true,
+      "outlineVisible": true,
+      "status": [
+        "Project Panel",
+        "|",
+        "Close Outline",
+        "|",
+        "Search",
+        "Lock Preview"
+      ]
+    }
+  },
+  "c2_metrics": {
+    "rowHeight": 26,
+    "indent": 20,
+    "guideLeft": "15px",
+    "guideWidth": "1px",
+    "guideColor": "rgb(70, 75, 87)",
+    "toggle": 16,
+    "slot": 16,
+    "badge": [
+      15,
+      15
+    ],
+    "badgeFont": "9px",
+    "badgeWeight": "600",
+    "headingBadgeFont": "9px",
+    "padX": "6px",
+    "gap": "4px",
+    "labelFont": "14px \"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+    "headerHeight": 32,
+    "barWidth": 240
+  },
+  "c3_border_resize": {
+    "before": {
+      "outline": "1px rgb(70, 75, 87)",
+      "dock": "1px rgb(70, 75, 87)",
+      "handleBg": "rgba(0, 0, 0, 0)",
+      "handleCursor": "col-resize",
+      "handleBorder": "rgb(220, 224, 229)"
+    },
+    "hover": {
+      "outline": "1px rgb(70, 75, 87)",
+      "dock": "1px rgb(70, 75, 87)",
+      "handleBg": "rgba(0, 0, 0, 0)",
+      "handleCursor": "col-resize",
+      "handleBorder": "rgb(220, 224, 229)"
+    },
+    "w0": 240,
+    "w1": 299
+  },
+  "c4_markdown": {
+    "doc": "doc.md",
+    "empty": null,
+    "rows": [
+      {
+        "depth": 0,
+        "badge": "H1",
+        "name": "Guide",
+        "selected": true,
+        "toggle": true
+      },
+      {
+        "depth": 1,
+        "badge": "H2",
+        "name": "Install",
+        "selected": false,
+        "toggle": true
+      },
+      {
+        "depth": 2,
+        "badge": "H3",
+        "name": "Windows",
+        "selected": false,
+        "toggle": true
+      },
+      {
+        "depth": 3,
+        "badge": "H4",
+        "name": "Path",
+        "selected": false,
+        "toggle": false
+      },
+      {
+        "depth": 1,
+        "badge": "H2",
+        "name": "Usage",
+        "selected": false,
+        "toggle": true
+      },
+      {
+        "depth": 2,
+        "badge": "H3",
+        "name": "Keys",
+        "selected": false,
+        "toggle": false
+      }
+    ]
+  },
+  "c7_click_editor": {
+    "cursor": {
+      "line": "## Usage",
+      "focused": true
+    },
+    "topLine": {
+      "lineTop": 343,
+      "viewport": 711
+    }
+  },
+  "c8_follow_edit": "ERR not found [...document.querySelectorAll('.cm-line')].filter(e=>e.offsetParent).find(l=>l.textContent==='### Windows')",
+  "c9_fold": {
+    "folded": [
+      "Guide",
+      "Install",
+      "Usage",
+      "Keys"
+    ],
+    "selectedWhileFolded": [
+      "Usage"
+    ],
+    "unfolded": [
+      "Guide",
+      "Install",
+      "Windows",
+      "Path",
+      "Usage",
+      "Keys"
+    ]
+  },
+  "c7_preview": {
+    "tabs": [
+      [
+        "doc.md",
+        "Preview doc.md!"
+      ]
+    ],
+    "outline": [
+      "Guide",
+      "Install",
+      "Windows",
+      "Path",
+      "Usage",
+      "Keys"
+    ],
+    "previewScroll": {
+      "headingTopFromPreviewTop": 556,
+      "previewHeight": 756
+    }
+  },
+  "c5_ipynb": {
+    "tabs": [
+      [
+        "doc.md",
+        "Preview doc.md",
+        "nb.ipynb!"
+      ]
+    ],
+    "outline": {
+      "doc": "nb.ipynb",
+      "empty": null,
+      "rows": [
+        {
+          "depth": 0,
+          "badge": "H1",
+          "name": "Analysis",
+          "selected": false,
+          "toggle": true
+        },
+        {
+          "depth": 1,
+          "badge": "H2",
+          "name": "Load data",
+          "selected": false,
+          "toggle": true
+        },
+        {
+          "depth": 2,
+          "badge": "H3",
+          "name": "Clean",
+          "selected": false,
+          "toggle": false
+        }
+      ]
+    },
+    "cursor": {
+      "line": "    \"## Load data\"",
+      "focused": true
+    }
+  },
+  "c6_code": {
+    "sample.py": {
+      "doc": "sample.py",
+      "empty": null,
+      "rows": [
+        {
+          "depth": 0,
+          "badge": "C",
+          "name": "GaussianMixture",
+          "selected": false,
+          "toggle": true
+        },
+        {
+          "depth": 1,
+          "badge": "m",
+          "name": "fit",
+          "selected": false,
+          "toggle": false
+        },
+        {
+          "depth": 1,
+          "badge": "m",
+          "name": "_e_step",
+          "selected": false,
+          "toggle": false
+        },
+        {
+          "depth": 0,
+          "badge": "f",
+          "name": "helper",
+          "selected": false,
+          "toggle": false
+        }
+      ]
+    },
+    "sample.ts": {
+      "doc": "sample.ts",
+      "empty": null,
+      "rows": [
+        {
+          "depth": 0,
+          "badge": "C",
+          "name": "Store",
+          "selected": false,
+          "toggle": true
+        },
+        {
+          "depth": 1,
+          "badge": "m",
+          "name": "add",
+          "selected": false,
+          "toggle": false
+        },
+        {
+          "depth": 0,
+          "badge": "f",
+          "name": "make",
+          "selected": false,
+          "toggle": false
+        },
+        {
+          "depth": 0,
+          "badge": "I",
+          "name": "Shape",
+          "selected": false,
+          "toggle": false
+        }
+      ]
+    },
+    "sample.rs": {
+      "doc": "sample.rs",
+      "empty": null,
+      "rows": [
+        {
+          "depth": 0,
+          "badge": "S",
+          "name": "Point",
+          "selected": true,
+          "toggle": false
+        },
+        {
+          "depth": 0,
+          "badge": "i",
+          "name": "Point",
+          "selected": false,
+          "toggle": true
+        },
+        {
+          "depth": 1,
+          "badge": "m",
+          "name": "len",
+          "selected": false,
+          "toggle": false
+        },
+        {
+          "depth": 0,
+          "badge": "f",
+          "name": "main",
+          "selected": false,
+          "toggle": false
+        },
+        {
+          "depth": 0,
+          "badge": "E",
+          "name": "Kind",
+          "selected": false,
+          "toggle": true
+        },
+        {
+          "depth": 1,
+          "badge": "e",
+          "name": "A",
+          "selected": false,
+          "toggle": false
+        },
+        {
+          "depth": 1,
+          "badge": "e",
+          "name": "B",
+          "selected": false,
+          "toggle": false
+        }
+      ]
+    },
+    "plain.txt": {
+      "doc": null,
+      "empty": "No outline",
+      "rows": []
+    },
+    "backToPy": [
+      "C GaussianMixture",
+      "m fit",
+      "m _e_step",
+      "f helper"
+    ]
+  },
+  "c10_perf": {
+    "big.ts": {
+      "rowsBefore": 1800,
+      "longTasks": [],
+      "typing30ms": 1392,
+      "insertToOutlineMs": null,
+      "probeListed": false
+    },
+    "big.md": {
+      "rowsBefore": 300,
+      "longTasks": [],
+      "typing30ms": 1372,
+      "insertToOutlineMs": null,
+      "probeListed": false
+    }
+  },
+  "c8_tab_switch": {
+    "rs": [
+      "Point",
+      "Point",
+      "len",
+      "main",
+      "Kind",
+      "A",
+      "B"
+    ],
+    "searchTab": {
+      "doc": null,
+      "empty": "No outline",
+      "rows": []
+    }
+  },
+  "c11_regress": {
+    "lockToggled": "true",
+    "closed": true,
+    "status": [
+      "Close Left Dock",
+      "|",
+      "Outline",
+      "|",
+      "Search",
+      "Lock Preview"
+    ],
+    "layout": {
+      "dock": [
+        200,
+        240
+      ],
+      "paneArea": [
+        440,
+        1000
+      ],
+      "sidebar": [
+        0,
+        200
+      ]
+    }
+  },
+  "widthBeforeRestart": 299,
+  "stateOutlineKey": {
+    "open": true,
+    "width": 299
+  },
+  "c3_restart": {
+    "open": true,
+    "width": 299
+  }
+}

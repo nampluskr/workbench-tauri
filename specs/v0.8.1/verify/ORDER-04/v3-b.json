@@ -1,0 +1,115 @@
+{
+  "small_md": {
+    "before": [
+      "Guide",
+      "Install",
+      "Windows",
+      "Path",
+      "Usage",
+      "Keys"
+    ],
+    "selectedAfterJump": [
+      "Windows"
+    ],
+    "addMs": 220,
+    "afterAdd": [
+      "Guide",
+      "Install",
+      "Windows",
+      "Added Section",
+      "Path",
+      "Usage",
+      "Keys"
+    ],
+    "selectedAfterAdd": [
+      "Added Section"
+    ],
+    "removeMs": 1,
+    "afterUndo": [
+      "Guide",
+      "Install",
+      "Windows",
+      "Path",
+      "Usage",
+      "Keys"
+    ],
+    "folded": {
+      "rows": [
+        "Guide",
+        "Install",
+        "Usage",
+        "Keys"
+      ],
+      "selected": [
+        "Install"
+      ]
+    }
+  },
+  "small_md_run": "ok",
+  "code_badge": {
+    "text": "C",
+    "size": [
+      15,
+      15
+    ],
+    "font": "11px",
+    "weight": "600",
+    "color": "rgb(110, 180, 191)",
+    "bg": "color(srgb 0.431373 0.705882 0.74902 / 0.22)"
+  },
+  "big": {
+    "big.ts": {
+      "rowsBefore": 1800,
+      "rowsAfter": 1801,
+      "typing30Ms": 1783,
+      "insertToListedMs": 559,
+      "longTasks": [
+        137
+      ],
+      "poSupported": true
+    },
+    "big.md": {
+      "rowsBefore": 300,
+      "rowsAfter": 301,
+      "typing30Ms": 1771,
+      "insertToListedMs": 234,
+      "longTasks": [],
+      "poSupported": true
+    }
+  },
+  "r1_stale": {
+    "empty": "No outline",
+    "rows": 0,
+    "doc": null
+  },
+  "r2_notebook_preview": {
+    "tabs": [
+      "doc.md",
+      "sample.py",
+      "big.ts",
+      "Search",
+      "Preview nb.ipynb",
+      "big.md"
+    ],
+    "names": [
+      "Analysis",
+      "Load data",
+      "Clean"
+    ]
+  },
+  "a2_big_json": {
+    "lines": 12001,
+    "rows": 6000,
+    "typing20Ms": 1224,
+    "longTasks": [
+      132
+    ]
+  },
+  "a1_widths": {
+    "dock": 240,
+    "outline": 994,
+    "paneArea": 6,
+    "body": 1240,
+    "inner": 1440
+  }
+}

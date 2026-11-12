@@ -1,0 +1,107 @@
+{
+  "skip": 1,
+  "diag": {
+    "focus": true,
+    "active": "cm-content cm-lineWrapping",
+    "tabs": [
+      "big.md"
+    ],
+    "editors": [
+      true
+    ],
+    "rows": 10
+  },
+  "c7r": {
+    "tabs": [
+      "big.md",
+      "Preview big.md"
+    ],
+    "previews": [
+      true
+    ],
+    "Section 150_tabs": [
+      "big.md",
+      "Preview big.md!"
+    ],
+    "Section 150": {
+      "top": 0,
+      "scrollTop": 18166
+    },
+    "Section 150_scrollers": [
+      {
+        "cls": "markdown-preview",
+        "st": 18166,
+        "sh": 36332,
+        "ch": 756,
+        "top": 0
+      }
+    ],
+    "Section 40_tabs": [
+      "big.md",
+      "Preview big.md!"
+    ],
+    "Section 40": {
+      "top": 0,
+      "scrollTop": 4856
+    },
+    "Section 40_scrollers": [
+      {
+        "cls": "markdown-preview",
+        "st": 4856,
+        "sh": 36332,
+        "ch": 756,
+        "top": 0
+      }
+    ]
+  },
+  "c7_preview_middle": {
+    "tabs": [
+      "big.md",
+      "Preview big.md"
+    ],
+    "previews": [
+      true
+    ],
+    "Section 150_tabs": [
+      "big.md",
+      "Preview big.md!"
+    ],
+    "Section 150": {
+      "top": 0,
+      "scrollTop": 18166
+    },
+    "Section 150_scrollers": [
+      {
+        "cls": "markdown-preview",
+        "st": 18166,
+        "sh": 36332,
+        "ch": 756,
+        "top": 0
+      }
+    ],
+    "Section 40_tabs": [
+      "big.md",
+      "Preview big.md!"
+    ],
+    "Section 40": {
+      "top": 0,
+      "scrollTop": 4856
+    },
+    "Section 40_scrollers": [
+      {
+        "cls": "markdown-preview",
+        "st": 4856,
+        "sh": 36332,
+        "ch": 756,
+        "top": 0
+      }
+    ]
+  },
+  "c8_follow_scroll": {
+    "before": 288,
+    "after": 2342,
+    "selected": "Section 118",
+    "selectedVisible": true
+  },
+  "errorsAll": []
+}

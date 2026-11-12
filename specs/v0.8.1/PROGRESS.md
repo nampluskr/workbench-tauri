@@ -241,3 +241,126 @@
   - 결과: 문서만 바뀌었다.
   - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-04-report.md`, 마무리 W-04-R1 보고 `v081-W-04-R1-report.md`).
   - 특이사항: 없음.
+
+### Phase 4 — Outline 사이드 바
+
+- **K-04 I-4 (ORDER-04)** (2026-11-13, coder, 커밋 `e25a4ac`)
+  - 무엇을 했나: `src/shell/Outline.tsx`·`src/syntax/outline.ts`·`outline.test.ts`를 새로 두고, `App.tsx`·`app.css`, `shell/status.ts`·`status.test.ts`·`panels.ts`·`dock.ts`·`Icon.tsx`·`markdown-preview.ts`, `syntax/assets.ts`·`document.ts`·`highlight.ts`, `editor/markdown.ts`·`markdown-it.d.ts`, `theme/apply.ts`, `spec/metrics.ts`, `workspace/context.ts`·`state-file.ts`·`store.ts`·`workspace.test.ts`를 고쳤다. 편집기 하이라이터의 SyntaxDocument 트리(다시 파싱하지 않음), Zed `outline.scm` 15개, 미리보기와 같은 markdown-it, `parseDocSliced`·`PARSE_SLICE_MS`, `MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS`, 트리 행 클래스(치수·정렬선·hover·selected·글자색), `.dock-left` 경계 규칙과 `.dock-resize-handle`, state.json 저장 방식(`window.sidebar`와 같게), 미리보기 블록 표시·원본 커서 이동을 재사용했다.
+  - 결과:
+    - 자리: `.workspace-body`에서 `.dock-left` 뒤·`PaneArea` 앞의 `aside.outline-bar`. dock과 따로 열고 닫는다. 처음 상태는 닫힘.
+    - 상태 표시줄 순서: 트리, 구분선, Outline, 구분선, Search, Lock Preview.
+    - 목록: 마크다운 H1~H6(코드 블록 `#` 제외), ipynb markdown 셀 제목(클릭하면 JSON 줄로), 코드 15개 언어(지역 변수·필드·속성 제외). 이름은 키워드를 빼고 이름만(`impl Display for Foo` → "Display for Foo").
+    - 클릭: 편집 탭은 커서를 이름 시작에 두고 그 줄을 화면 가운데로, 포커스. 마크다운 미리보기는 제목 블록을 위끝으로 스크롤하고 블록 표시·원본 커서 이동(블록 클릭과 같음). ipynb 미리보기는 n번째 markdown 셀 제목을 위끝으로.
+    - 따라가기·갱신: 커서 위치 행이 선택 배경. 갱신은 파싱 커밋(ipynb는 텍스트 변경) 뒤 200ms.
+    - 성능: 닫혀 있으면 계산하지 않는다. 최상위 노드가 32개를 넘으면 노드마다 질의하고 8ms마다 메인 스레드를 돌려준다. 새 입력이 오면 진행 중인 계산은 버린다. node 측정 TypeScript 6,301줄·1,800항목 ≈45ms, Python 7,201줄 ≈20ms, Markdown 7,201줄 ≈10ms.
+    - tauri가 고른 것:
+      - 명령 ID `outline_panel::Toggle`(키 없음). 툴팁·aria-label은 닫힘 "Outline", 열림 "Close Outline". View 메뉴 항목은 두지 않았다.
+      - 처음 너비 240px = `PROJECT_PANEL_DEFAULT_WIDTH`(left dock 기본과 같음, 시안 250과 다름). 최소·최대는 dock과 같은 규칙. 손잡이 더블클릭도 240.
+      - 저장 `windows[0].outline = { open, width }`(모르는 키 보존). 키가 없거나 잘못되면 `{ open: false, width: 240 }`.
+      - 빈 문구 "No outline"(도구 탭·Search·이미지·PDF·outline.scm 없는 언어·다른 미리보기·항목 0개 모두).
+      - 머리 줄: list_tree 아이콘과 "Outline · 파일 이름", 높이 tab.bar_height(32), 아래 1px border.
+      - 배지 글자 표: 제목 H1~H6, 클래스 C, 메서드 m, 함수 f, struct·union S, enum E, enum 멤버 e, interface·trait I, impl i, module·namespace N, type alias T, 변수·상수 v, 매크로 M, 키 k, TOML 표 [], CSS 선택자 s, CSS @ 규칙 @, HTML 요소 <>, 테스트 t. 색은 UI 테마 syntax 키(K-04 보고의 표).
+      - 접힌 부모: 커서가 접힌 항목 안에 있으면 그 접힌 부모 행이 선택 배경이고 저절로 펼치지 않는다. 접힌 상태는 문서마다 기억한다.
+      - 시안과 다른 곳: 클릭 선택 테두리 없음(행은 포커스를 받지 않음), 마우스 올림은 트리 `.tree-row:hover` 그대로.
+      - 시안 값 11개(`outline.header.padding_left` 10·`padding_right` 8·`gap` 6, `outline.list.padding_top` 4, `outline.badge.size` 15·`corner_radius` 3·`font_size` 11·`heading_font_size` 9·`heading_letter_spacing` −0.3·`font_weight` 600·`background_mix` 22%)는 toml에 없어 `metrics.ts`에 주석과 함께 CSS 변수로 두었다.
+  - 검증: V1. `npx tsc --noEmit` 오류 0, `npm.cmd run test` 301/301, `npx vite build` 오류 없음. 앱은 실행하지 않았다(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-04-report.md`).
+  - 특이사항:
+    - 생략: View 메뉴 항목·단축키·필터·정렬·행 키보드 이동(카드 3.5 범위 밖), HTML·CSV·SVG·Mermaid 미리보기 탭의 Outline(빈 목록).
+    - `shortcut:` ipynb는 갱신마다 JSON 전체를 파싱하고, 바뀐 최상위 노드만 다시 질의하지 않는다.
+- **checker 한도로 대리 검토** (2026-11-13, leader-core 결정)
+  - 무엇을 했나: checker 한도가 이어져 ORDER-03과 같은 결정(leader-core 2026-11-13)으로 C-07·C-08을 Claude Code 서브 에이전트(새 컨텍스트)에 맡겼다.
+  - 결과: herdr 구성은 바꾸지 않았다.
+  - 검증: 없음(결정).
+  - 특이사항: 대리 검토자는 coder와 같은 모델 계열이라 독립성이 낮다.
+- **C-07 대리 검토(K-04)** [REWORK] (2026-11-13, Claude Code 서브 에이전트)
+  - 무엇을 했나: `e25a4ac`를 검토했다. `npm.cmd run typecheck` 오류 0, `npm.cmd run test` 301/301. 15개 언어의 `outline.scm`을 분류 표와 하나씩 대조했다.
+  - 결과: 꼭 고칠 것 둘, 권고 여덟.
+    - R-1: 출처가 없는 탭(Search·이미지·`.txt`·CSV 미리보기)으로 200ms 안에 바꾸면 대기 중인 계산이 끝나 앞 문서의 Outline이 다시 나타난다.
+    - R-2: 편집 탭 없는 노트북 미리보기에서 원본 view가 200ms보다 늦게 생기면 다시 보기가 한 번만 돌아 계속 "No outline"이다.
+    - A-1: dock과 Outline 너비가 서로를 계산에 넣지 않아 편집 영역이 0까지 줄 수 있다.
+    - A-2: 최상위 노드 하나짜리 큰 파일(JSON·YAML·HTML·큰 클래스 하나)은 질의를 한 번에 동기로 한다.
+    - A-3: 출처 비교가 Tab 객체 기준이라 고정·이름 바꾸기·끌어 옮기기 때 목록이 깜박이고 다시 계산한다.
+    - A-4: 다른 편집기의 커밋·노트북 커서 이동이 진행 중인 계산을 처음부터 다시 시작시킨다.
+    - A-5: 노트북 미리보기가 앞일 때 원본이 바뀌어도 갱신되지 않는다.
+    - A-6: C++ 클래스 안 포인터 반환 메서드 선언이 빠진다.
+    - A-7: 노트북 줄 계산이 셀 줄 수의 제곱으로 늘고, 한 문자열 source 안에 같은 단계 제목이 둘이면 계층이 뒤집힌다.
+    - A-8: 행이 키보드로 닿지 않는다(AGENTS 4.3과 부딪칠 수 있음, leader 판단).
+  - 검증: V1 검토(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-07-report.md`).
+  - 특이사항: 검토하지 않은 것 — 앱 화면, `maxStartDepth: 0`의 실제 순회, `list_tree.svg`가 허용 복사본 목록에 있는지.
+- **K-04-R1 C-07 R-1·R-2·A-1·A-3~A-7** (2026-11-13, coder, 커밋 `3736c06`)
+  - 무엇을 했나: `src/shell/Outline.tsx`·`dock.ts`, `src/syntax/outline.ts`·`outline.test.ts`, `src/app.css`, `src/workspace/context.ts`를 고쳤다.
+  - 결과:
+    - R-1: 출처가 null로 바뀌면 `cancel()`(타이머 지우기 + generation 올리기).
+    - R-2: `context.ts`에 `changedDoc` 신호. 원본 텍스트가 바뀔 때와 첫 읽기로 view가 생길 때 알린다. 한 번만 돌던 다시 보기 타이머는 지웠다.
+    - A-1: `.workspace-body`에 `--dock-left-width`·`--outline-bar-width`를 두고, 둘 다 열렸을 때 각자 max-width = 100% − dock.resize_handle_width − 상대 폭. 새 수치 없음.
+    - A-3: 출처 비교를 `tab.file`·`view`로. 머리 줄 이름은 활성 탭 path에서 읽는다.
+    - A-4: 예약한 mark(`wanted`)와도 비교해 진행 중인 계산을 버리지 않는다.
+    - A-5: 노트북 출처는 `changedDoc`을 따른다.
+    - A-6: `pointer_declarator` 안이 `function_declarator`면 method, 아니면 필드(제외).
+    - A-7: 조각 시작 줄을 누적 줄 수로 구하고, 한 문자열 source 안의 제목 자리를 줄 수만큼 건너뛰어 순서·형제 관계를 지킨다.
+  - 검증: V1. `npx tsc --noEmit` 오류 0, `npm.cmd run test` 302/302. 앱은 실행하지 않았다(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-04-R1-report.md`).
+  - 특이사항:
+    - A-2 하지 않음: 한 단계 아래로 쪼개려면 사이 노드에서 시작하는 패턴을 노드마다 따로 돌려야 하고, 비용이 실제로 주는지 앱 측정 없이 알 수 없으며, 결과가 같은지 지킬 테스트도 몇 줄로 안 된다. 긴 작업이 질의인지 DOM 행 갱신인지도 구분되지 않았다.
+    - A-8 하지 않음: 카드 지시(leader-core 판단).
+    - A-1 남은 위험: 두 바의 지정 폭 합이 본문보다 크면 둘 다 상대 폭만큼 줄어 합이 본문보다 꽤 작아질 수 있다(창 360에서 240+240 → 각 114). 편집 영역은 0이 되지 않는다.
+- **V3 측정** (2026-11-13, tauri-leader)
+  - 무엇을 했나: 최종 `3736c06` debug exe를 띄워 쟀다(`specs/v0.8.1/verify/ORDER-04/` `v3.json`·`v3-b.json`, PNG, `measure.mjs`·`measure-b.mjs`, 시안은 Edge headless로 그린 `mockup-F.png`).
+  - 결과: 판정은 C-08에서 한다. 측정값:
+    - 상태 표시줄: Close Left Dock | Outline | Search·Lock Preview. Outline을 열고 dock을 닫아도 Outline은 남는다.
+    - 치수: 행 26, 들여쓰기 20, 정렬선 1px x15, 꺾쇠 16, 배지 15(제목 9px·코드 11px), 여백 6, 간격 4.
+    - 경계·너비: 1px border(dock과 같음), hover 무변화. 끌기 240→299, 다시 열어도 299·열림.
+    - 마크다운 H1~H4 계층, 코드 블록 `#` 제외. ipynb 제목 셋, 클릭 → JSON 줄.
+    - py·ts·rs 계층, 지역 변수 없음. plain.txt는 "No outline".
+    - 이동: 클릭 → 편집 줄(포커스), 미리보기는 제목으로 스크롤.
+    - 따라가기·갱신: 커서를 따라간다. 제목을 더하면 220ms 뒤 목록에 나오고 되돌리면 사라진다. 접힌 부모가 선택 배경.
+    - 탭 바꾸기: 그 문서의 목록, Search 탭은 빈 목록.
+    - 성능: 6,000줄 TS 입력 → 목록 559ms, 긴 작업 137ms 하나. 큰 마크다운 234ms, 긴 작업 없음. 12,001줄 JSON(6,000행) 입력 중 긴 작업 132ms 하나.
+    - R-1: 디바운스 안에 Search 탭으로 → "No outline". R-2: 편집 탭 없는 노트북 미리보기 목록 셋.
+    - A-1: Outline을 끝까지 끌어도 편집 영역 6px(손잡이 폭)이 남는다.
+    - 회귀: Outline을 닫은 처음 화면 배치가 처음과 같다.
+  - 검증: V3.
+  - 특이사항: 1차 스크립트(`measure.mjs`)의 화면 밖 줄 클릭·줄 가운데 삽입·꺾쇠 위 클릭 문제를 `measure-b.mjs`로 다시 쟀다.
+- **C-08 대리 R1 검토·V3 판정** [1부 REWORK(경미), 2부 PASS] (2026-11-13, Claude Code 서브 에이전트)
+  - 무엇을 했나: `3736c06`의 R1 변경을 검토하고 `verify/ORDER-04/`의 V3 결과를 판정했다. `npm.cmd run typecheck` 오류 0, `npm.cmd run test` 302/302.
+  - 결과:
+    - 1부 R1 검토 REWORK, 경미 1건. R-1·R-2·A-3~A-7은 원인에서 고쳐졌다.
+      - R1-1: dock·Outline 너비 변수에 max-width로 잘리기 전의 포인터 폭이 들어간다. 그래서 한쪽(dock)을 한계 너머로 끌면 다른 쪽(Outline)이 줄고, 손을 떼도 줄어든 채 남아 저장 너비와 어긋난다.
+    - 2부 V3 #1~#12 PASS. 불일치는 없고, 시안과 다른 값은 너비 250 → 240 하나다(이유 기록됨).
+  - 검증: V1 검토·V3 판정(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-08-report.md`).
+  - 특이사항: 근거가 약한 것 —
+    - #7 미리보기 이동은 마지막 제목만 눌러 "제목으로 스크롤"과 "맨 아래로 스크롤"이 구분되지 않는다.
+    - #8 목록이 짧아 목록 따라 스크롤을 재지 못했다.
+    - #10 Outline을 닫은 기준선과 비교하지 않았다.
+    - #11 `6bcb72b`와 직접 대조한 자료가 없다.
+    - #6 콘솔 오류를 모으지 않았다.
+    - `mockup-F.png`가 verify 폴더에 없었다.
+- **K-04-R2 C-08 R1-1** (2026-11-13, coder, 커밋 `3296af0`)
+  - 무엇을 했나: `src/shell/dock.ts`를 고쳤다. 기존 `rule`·adopted sheet·`getBoundingClientRect` 재기를 재사용했다.
+  - 결과: `onpointermove`에서 포인터 폭을 먼저 적용하고 min/max-width로 잘린 실제 폭을 잰 뒤, 그 값으로 너비와 `.workspace-body` 변수를 다시 쓴다. `setWidth`에도 같은 실제 폭이 간다. 한쪽을 한계 너머로 끌어도 다른 쪽의 max-width가 줄지 않고, 저장 너비와 화면이 같다. dock 혼자·Sidebar 동작은 그대로다.
+  - 검증: V1. `npx tsc --noEmit` 오류 0, `npm.cmd run test` 302/302. 앱은 실행하지 않았다(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-04-R2-report.md`).
+  - 특이사항: 이동마다 레이아웃을 한 번 더 강제한다.
+- **다시 측정** (2026-11-13, tauri-leader)
+  - 무엇을 했나: `3296af0` debug exe로 R1-1과 C-08의 약한 항목을 다시 쟀다(`verify/ORDER-04/` `v3-c.json`·`v3-c2.json`·`measure-c.mjs`). 전체 검증 `npm.cmd run typecheck` 오류 0, `npm.cmd run test` 302/302.
+  - 결과:
+    - R1-1: dock 손잡이를 한계 너머로 끌면 dock은 994에서 멈추고 Outline은 240 그대로다. 손을 뗀 뒤도 같고 저장 너비는 240이다.
+    - 콘솔: 코드·텍스트·노트북·큰 JSON을 여는 동안 콘솔 오류 0(`v3-c.json`).
+    - #7: big.md 미리보기에서 가운데 제목 "Section 150"·"Section 40"을 누르면 그 제목이 미리보기 맨 위에 온다(top 0, scrollTop 18166·4856, `v3-c2.json`).
+    - #8: big.md 편집기를 휠로 내려 아래 줄을 누르면 목록 scrollTop 288 → 2342, 선택 "Section 118"이 목록 안에 보인다.
+    - `mockup-F.png`: 두 번째 측정이 verify 폴더를 비울 때 지워졌던 것을 다시 그렸다.
+  - 검증: V3.
+  - 특이사항:
+    - 이 실행에서 CDP 키 입력이 편집기에 닿지 않았다(원인 미확인, 앱 동작과 무관 — 같은 키가 앞 실행에서는 동작했다). 그래서 미리보기 열기는 눈 버튼으로, 커서 이동은 마우스로 했다.
+    - doc.md는 미리보기에서 짧아(문단이 합쳐짐) 스크롤 판정에 big.md를 썼다.
+- **W-05 ORDER-04 PROGRESS·PLAN 기록** (2026-11-13, writer)
+  - 무엇을 했나: 위 Phase 4 항목을 K-04·C-07·K-04-R1 보고 파일·V3 결과·leader-core 결정과 카드에서 옮겨 적고, `PLAN.md`에 Phase 4 작업 카드 표를 더했다.
+  - 결과: 문서만 바뀌었다.
+  - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-05-report.md`).
+  - 특이사항:
+    - A-2(최상위 노드 하나짜리 큰 파일 질의 쪼개기)·A-8(행 키보드 접근)은 하지 않았다 — leader-core 판단.
+    - `outline.*` 시안 값 11개의 toml 반영 여부 — leader-core.
+    - 배지 글자·색 표와 "No outline" 문구는 사용자 확인(Phase 7 뒤).
+- **W-05-R1 ORDER-04 PROGRESS 마무리** (2026-11-13, writer)
+  - 무엇을 했나: C-08 "판정 대기" 줄을 C-08 보고로 채우고, K-04-R2와 다시 측정 항목을 더했다. `PLAN.md` Phase 4 표에 K-04-R2 행을 더했다.
+  - 결과: 문서만 바뀌었다.
+  - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-05-R1-report.md`).
+  - 특이사항: 없음.

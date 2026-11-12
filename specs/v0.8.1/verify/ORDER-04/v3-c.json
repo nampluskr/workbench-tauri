@@ -1,0 +1,54 @@
+{
+  "r1_1_dock_past_max": {
+    "before": {
+      "dock": 240,
+      "outline": 240,
+      "paneArea": 760
+    },
+    "during": [
+      {
+        "dock": 639,
+        "outline": 240,
+        "paneArea": 361
+      },
+      {
+        "dock": 994,
+        "outline": 240,
+        "paneArea": 6
+      },
+      {
+        "dock": 994,
+        "outline": 240,
+        "paneArea": 6
+      }
+    ],
+    "after": {
+      "dock": 994,
+      "outline": 240,
+      "paneArea": 6
+    },
+    "saved": {
+      "outline": {
+        "open": true,
+        "width": 240
+      },
+      "dock": null
+    }
+  },
+  "afterReset": {
+    "dock": 240,
+    "outline": 240,
+    "paneArea": 760
+  },
+  "c6_console": {
+    "errors": []
+  },
+  "c7_preview_middle": "ERR TypeError: Cannot read properties of undefined (reading 'querySelectorAll')\n    at <anonymous>:1:105\n    at <anonymous>:1:375",
+  "c8_follow_scroll": {
+    "before": 0,
+    "after": 0,
+    "selected": "Section 0",
+    "selectedVisible": true
+  },
+  "errorsAll": []
+}
