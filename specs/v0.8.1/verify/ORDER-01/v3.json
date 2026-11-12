@@ -1,0 +1,624 @@
+{
+  "window": {
+    "w": 1440,
+    "h": 852,
+    "iw": 1440,
+    "ih": 852,
+    "dpr": 1
+  },
+  "rows0": [
+    "workbench-core",
+    "a\\b",
+    "docs",
+    "spec",
+    "specs\\v0.8\\orders",
+    "README.md"
+  ],
+  "colors_OneDark": {
+    "normalFile": {
+      "cls": "tree-row",
+      "color": "rgb(169, 175, 188)",
+      "textColor": "rgb(169, 175, 188)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "border": "rgba(0, 0, 0, 0)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(169, 175, 188)",
+      "rowRect": {
+        "x": 200,
+        "y": 137,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "normalFolder": {
+      "cls": "tree-row selected",
+      "color": "rgb(169, 175, 188)",
+      "textColor": "rgb(169, 175, 188)",
+      "bg": "rgb(69, 74, 86)",
+      "border": "rgb(71, 103, 158)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(169, 175, 188)",
+      "rowRect": {
+        "x": 200,
+        "y": 163,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "hoverFile": {
+      "cls": "tree-row",
+      "color": "rgb(169, 175, 188)",
+      "textColor": "rgb(169, 175, 188)",
+      "bg": "rgb(54, 60, 70)",
+      "border": "rgba(0, 0, 0, 0)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(169, 175, 188)",
+      "rowRect": {
+        "x": 200,
+        "y": 189,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "hoverFolder": {
+      "cls": "tree-row",
+      "color": "rgb(169, 175, 188)",
+      "textColor": "rgb(169, 175, 188)",
+      "bg": "rgb(54, 60, 70)",
+      "border": "rgba(0, 0, 0, 0)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(169, 175, 188)",
+      "rowRect": {
+        "x": 200,
+        "y": 85,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "selectedFileFocused": {
+      "cls": "tree-row selected active-file",
+      "color": "rgb(220, 224, 229)",
+      "textColor": "rgb(220, 224, 229)",
+      "bg": "rgb(69, 74, 86)",
+      "border": "rgb(71, 103, 158)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(169, 175, 188)",
+      "rowRect": {
+        "x": 200,
+        "y": 215,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "markedCtrl": {
+      "cls": "tree-row selected marked",
+      "color": "rgb(220, 224, 229)",
+      "textColor": "rgb(220, 224, 229)",
+      "bg": "rgb(69, 74, 86)",
+      "border": "rgb(71, 103, 158)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(169, 175, 188)",
+      "rowRect": {
+        "x": 200,
+        "y": 241,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "firstAfterCtrl": {
+      "cls": "tree-row active-file marked",
+      "color": "rgb(220, 224, 229)",
+      "textColor": "rgb(220, 224, 229)",
+      "bg": "rgb(69, 74, 86)",
+      "border": "rgba(0, 0, 0, 0)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(169, 175, 188)",
+      "rowRect": {
+        "x": 200,
+        "y": 215,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "selectedFolder": {
+      "cls": "tree-row selected",
+      "color": "rgb(169, 175, 188)",
+      "textColor": "rgb(169, 175, 188)",
+      "bg": "rgb(69, 74, 86)",
+      "border": "rgb(71, 103, 158)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(169, 175, 188)",
+      "rowRect": {
+        "x": 200,
+        "y": 85,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "prevAfterPlainClick": {
+      "cls": "tree-row active-file",
+      "color": "rgb(220, 224, 229)",
+      "textColor": "rgb(220, 224, 229)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "border": "rgba(0, 0, 0, 0)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(169, 175, 188)",
+      "rowRect": {
+        "x": 200,
+        "y": 215,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "activeTab": "INDEX.md",
+    "keyboardCursor": {
+      "name": "gpui-vs-tauri.md",
+      "cls": "tree-row selected",
+      "textColor": "rgb(169, 175, 188)"
+    },
+    "collapsedPath": {
+      "text": "a\\b",
+      "segments": 2,
+      "color": "rgb(169, 175, 188)"
+    },
+    "selectedFileFocused2": {
+      "cls": "tree-row selected active-file",
+      "color": "rgb(220, 224, 229)",
+      "textColor": "rgb(220, 224, 229)",
+      "bg": "rgb(69, 74, 86)",
+      "border": "rgb(71, 103, 158)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(169, 175, 188)",
+      "rowRect": {
+        "x": 200,
+        "y": 137,
+        "w": 239,
+        "h": 26
+      }
+    }
+  },
+  "colors_OneLight": {
+    "normalFile": {
+      "cls": "tree-row selected active-file",
+      "color": "rgb(36, 37, 41)",
+      "textColor": "rgb(36, 37, 41)",
+      "bg": "rgb(202, 202, 202)",
+      "border": "rgb(125, 130, 232)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(88, 88, 90)",
+      "rowRect": {
+        "x": 200,
+        "y": 137,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "normalFolder": {
+      "cls": "tree-row",
+      "color": "rgb(88, 88, 90)",
+      "textColor": "rgb(88, 88, 90)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "border": "rgba(0, 0, 0, 0)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(88, 88, 90)",
+      "rowRect": {
+        "x": 200,
+        "y": 163,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "hoverFile": {
+      "cls": "tree-row",
+      "color": "rgb(88, 88, 90)",
+      "textColor": "rgb(88, 88, 90)",
+      "bg": "rgb(223, 223, 224)",
+      "border": "rgba(0, 0, 0, 0)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(88, 88, 90)",
+      "rowRect": {
+        "x": 200,
+        "y": 189,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "hoverFolder": {
+      "cls": "tree-row",
+      "color": "rgb(88, 88, 90)",
+      "textColor": "rgb(88, 88, 90)",
+      "bg": "rgb(223, 223, 224)",
+      "border": "rgba(0, 0, 0, 0)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(88, 88, 90)",
+      "rowRect": {
+        "x": 200,
+        "y": 85,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "selectedFileFocused": {
+      "cls": "tree-row selected active-file",
+      "color": "rgb(36, 37, 41)",
+      "textColor": "rgb(36, 37, 41)",
+      "bg": "rgb(202, 202, 202)",
+      "border": "rgb(125, 130, 232)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(88, 88, 90)",
+      "rowRect": {
+        "x": 200,
+        "y": 215,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "markedCtrl": {
+      "cls": "tree-row selected marked",
+      "color": "rgb(36, 37, 41)",
+      "textColor": "rgb(36, 37, 41)",
+      "bg": "rgb(202, 202, 202)",
+      "border": "rgb(125, 130, 232)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(88, 88, 90)",
+      "rowRect": {
+        "x": 200,
+        "y": 241,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "firstAfterCtrl": {
+      "cls": "tree-row active-file marked",
+      "color": "rgb(36, 37, 41)",
+      "textColor": "rgb(36, 37, 41)",
+      "bg": "rgb(202, 202, 202)",
+      "border": "rgba(0, 0, 0, 0)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(88, 88, 90)",
+      "rowRect": {
+        "x": 200,
+        "y": 215,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "selectedFolder": {
+      "cls": "tree-row selected",
+      "color": "rgb(88, 88, 90)",
+      "textColor": "rgb(88, 88, 90)",
+      "bg": "rgb(202, 202, 202)",
+      "border": "rgb(125, 130, 232)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(88, 88, 90)",
+      "rowRect": {
+        "x": 200,
+        "y": 85,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "prevAfterPlainClick": {
+      "cls": "tree-row active-file",
+      "color": "rgb(36, 37, 41)",
+      "textColor": "rgb(36, 37, 41)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "border": "rgba(0, 0, 0, 0)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(88, 88, 90)",
+      "rowRect": {
+        "x": 200,
+        "y": 215,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "activeTab": "INDEX.md",
+    "keyboardCursor": {
+      "name": "gpui-vs-tauri.md",
+      "cls": "tree-row selected",
+      "textColor": "rgb(88, 88, 90)"
+    },
+    "collapsedPath": {
+      "text": "a\\b",
+      "segments": 2,
+      "color": "rgb(88, 88, 90)"
+    },
+    "selectedFileFocused2": {
+      "cls": "tree-row selected active-file",
+      "color": "rgb(36, 37, 41)",
+      "textColor": "rgb(36, 37, 41)",
+      "bg": "rgb(202, 202, 202)",
+      "border": "rgb(125, 130, 232)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(88, 88, 90)",
+      "rowRect": {
+        "x": 200,
+        "y": 137,
+        "w": 239,
+        "h": 26
+      }
+    }
+  },
+  "i1_rename": {
+    "before": {
+      "rowY": 111,
+      "textX": 67,
+      "ink": {
+        "top": 8,
+        "bottom": 20,
+        "left": 69,
+        "right": 172,
+        "height": 13
+      }
+    },
+    "info0": {
+      "cls": "tree-row selected active-file",
+      "color": "rgb(220, 224, 229)",
+      "textColor": "rgb(220, 224, 229)",
+      "bg": "rgb(69, 74, 86)",
+      "border": "rgb(71, 103, 158)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(169, 175, 188)",
+      "rowRect": {
+        "x": 200,
+        "y": 111,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "during": {
+      "rowY": 111,
+      "textX": 67,
+      "ink": {
+        "top": 4,
+        "bottom": 21,
+        "left": 67,
+        "right": 170,
+        "height": 18
+      }
+    },
+    "info1": {
+      "cls": "tree-row selected active-file editing",
+      "color": "rgb(220, 224, 229)",
+      "textColor": "rgb(172, 178, 190)",
+      "bg": "rgb(47, 52, 62)",
+      "border": "rgb(71, 103, 158)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(169, 175, 188)",
+      "rowRect": {
+        "x": 200,
+        "y": 111,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "typed": {
+      "rowY": 111,
+      "textX": 67,
+      "ink": {
+        "top": 4,
+        "bottom": 21,
+        "left": 67,
+        "right": 178,
+        "height": 18
+      }
+    },
+    "value": "gpui-vs-tauri.mdx",
+    "cancelled": {
+      "editing": false,
+      "exists": true
+    }
+  },
+  "i1_newFile": {
+    "ref": {
+      "rowY": 137,
+      "textX": 67,
+      "ink": {
+        "top": 8,
+        "bottom": 20,
+        "left": 70,
+        "right": 202,
+        "height": 13
+      }
+    },
+    "empty": {
+      "cls": "tree-row editing",
+      "color": "rgb(169, 175, 188)",
+      "textColor": "rgb(172, 178, 190)",
+      "bg": "rgb(47, 52, 62)",
+      "border": "rgb(71, 103, 158)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(169, 175, 188)",
+      "rowRect": {
+        "x": 200,
+        "y": 111,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "err": {
+      "cls": "tree-row editing error",
+      "color": "rgb(169, 175, 188)",
+      "textColor": "rgb(172, 178, 190)",
+      "bg": "rgb(47, 52, 62)",
+      "border": "rgb(208, 114, 119)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(169, 175, 188)",
+      "rowRect": {
+        "x": 200,
+        "y": 111,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "errShot": {
+      "rowY": 111,
+      "textX": 67,
+      "ink": {
+        "top": 4,
+        "bottom": 21,
+        "left": 68,
+        "right": 201,
+        "height": 18
+      }
+    },
+    "warn": {
+      "cls": "tree-row editing warning",
+      "color": "rgb(169, 175, 188)",
+      "textColor": "rgb(172, 178, 190)",
+      "bg": "rgb(47, 52, 62)",
+      "border": "rgb(222, 193, 132)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(169, 175, 188)",
+      "rowRect": {
+        "x": 200,
+        "y": 111,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "afterEsc": false,
+    "created": true
+  },
+  "i1_newFolder_ime": {
+    "empty": {
+      "cls": "tree-row editing",
+      "color": "rgb(169, 175, 188)",
+      "textColor": "rgb(172, 178, 190)",
+      "bg": "rgb(47, 52, 62)",
+      "border": "rgb(71, 103, 158)",
+      "fontSize": "14px",
+      "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+      "fontWeight": "400",
+      "iconColor": "rgb(169, 175, 188)",
+      "rowRect": {
+        "x": 200,
+        "y": 111,
+        "w": 239,
+        "h": 26
+      }
+    },
+    "composing": {
+      "rowY": 111,
+      "textX": 67,
+      "ink": {
+        "top": 5,
+        "bottom": 22,
+        "left": 67,
+        "right": 81,
+        "height": 18
+      },
+      "value": "한",
+      "editing": true
+    },
+    "value": "한글",
+    "created": true
+  },
+  "sidebar_input": {
+    "normal": {
+      "item": "14px",
+      "name": "14px"
+    },
+    "menu": [
+      "Rename"
+    ],
+    "input": {
+      "fontSize": "14px",
+      "color": "rgb(172, 178, 190)"
+    }
+  },
+  "regress": {
+    "multi": [
+      "ambiguous.md",
+      "INDEX.md"
+    ],
+    "focusBorder": "rgb(71, 103, 158)",
+    "guides": 19,
+    "contextMenu": [
+      "New FileCtrl-N",
+      "New FolderAlt-N",
+      "Reveal in File ExplorerCtrl-Alt-R",
+      "Open in Default AppCtrl-Shift-Enter",
+      "Open Preview",
+      "CutCtrl-X",
+      "CopyCtrl-C",
+      "Duplicate",
+      "PasteCtrl-V",
+      "Copy PathAlt-Shift-C",
+      "Copy Relative PathCtrl-K Ctrl-Shift-C",
+      "RenameF2",
+      "TrashDelete",
+      "DeleteCtrl-Delete"
+    ],
+    "collapsedSpecs": [
+      "a\\b",
+      "specs\\v0.8\\orders"
+    ],
+    "sticky": [
+      {
+        "t": "workbench-core",
+        "color": "rgb(169, 175, 188)",
+        "bg": "rgb(47, 52, 62)"
+      },
+      {
+        "t": "specs\\v0.8\\orders",
+        "color": "rgb(169, 175, 188)",
+        "bg": "rgb(47, 52, 62)"
+      }
+    ]
+  },
+  "about": [
+    "workbench-tauri |  | Version 0.8.1"
+  ]
+}

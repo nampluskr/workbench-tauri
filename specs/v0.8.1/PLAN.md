@@ -32,4 +32,8 @@
 |---|---|---|
 | W-01 | v0.8.1 문서(PLAN·HERDR-SETUP·PROGRESS, `reports/`·`verify/`)와 루트 `AGENTS.md` 버전·참조, herdr 구성 | v0.8.1 시작 |
 | K-01 | 앱 버전 0.8.1, I-1 트리 이름 입력 글자 크기, I-2 트리 이름 글자색 | v0.8.1 시작 · I-1 · I-2 |
-| C-01 | 검토·V3 | v0.8.1 시작 · I-1 · I-2 |
+| C-01 | 검토 | v0.8.1 시작 · I-1 · I-2 |
+| K-01-R1 | I-2 글자색 조건을 marked·활성 파일 행으로 좁힘(커서만 선택한 행은 muted) | I-2 |
+| C-02 | V3 판정 | v0.8.1 시작 · I-1 · I-2 |
+| K-01-R2 | 입력칸 `editor.foreground`를 트리 행 안으로만, Sidebar 입력은 `--text` 그대로 | I-1 · I-2 |
+| W-02 | PROGRESS(ORDER-01 기록)·PLAN(이 표) | ORDER-01 |

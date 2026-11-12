@@ -1,0 +1,34 @@
+{
+  "OneDark": {
+    "tree": {
+      "fontSize": "14px",
+      "color": "rgb(172, 178, 190)",
+      "rowColor": "rgb(220, 224, 229)"
+    },
+    "sidebarNormal": {
+      "fontSize": "14px",
+      "itemColor": "rgb(220, 224, 229)",
+      "text": "#dce0e5ff"
+    },
+    "sidebarInput": {
+      "fontSize": "14px",
+      "color": "rgb(220, 224, 229)"
+    }
+  },
+  "OneLight": {
+    "tree": {
+      "fontSize": "14px",
+      "color": "rgb(36, 37, 41)",
+      "rowColor": "rgb(36, 37, 41)"
+    },
+    "sidebarNormal": {
+      "fontSize": "14px",
+      "itemColor": "rgb(36, 37, 41)",
+      "text": "#242529ff"
+    },
+    "sidebarInput": {
+      "fontSize": "14px",
+      "color": "rgb(36, 37, 41)"
+    }
+  }
+}
