@@ -34,6 +34,12 @@ const OWNERS = new Set<OutlineKind>(["class", "struct", "impl", "interface"]);
 function kindOf(node: Node, language: string): OutlineKind | null {
   // JSON / TOML keys are the whole outline there; in JS / TS an object key is a property.
   if (node.type === "pair") return language === "json" || language === "jsonc" || language === "toml" ? "key" : null;
+  // C++ `Foo* make();` in a class: a pointer declarator around a function declarator is a method, around a name a field.
+  if (node.type === "pointer_declarator") {
+    let inner: Node | null = node;
+    while (inner?.type === "pointer_declarator") inner = inner.childForFieldName("declarator");
+    return inner?.type === "function_declarator" ? "method" : null;
+  }
   const kind = KINDS[node.type];
   if (kind !== undefined) return kind;
   return "variable"; // const / let / var declarators, Go var and const specs, C++ declarators
@@ -140,17 +146,27 @@ export function notebookOutline(tree: Tree, length: number, headings: (markdown:
     // The source line each part starts on, to find the part (the JSON line) a heading is on.
     const starts: number[] = [];
     let text = "";
+    let lines = 0;
     for (const part of parts) {
-      starts.push(text.split("\n").length - 1);
-      text += stringOf(part) ?? "";
+      starts.push(lines);
+      const value = stringOf(part) ?? "";
+      text += value;
+      lines += value.split("\n").length - 1;
     }
     for (const heading of headings(text)) {
       let index = 0;
       while (index + 1 < starts.length && starts[index + 1] <= heading.line) index++;
       const node = parts[index];
       if (!node) continue;
-      items.push({ name: heading.text.replace(/\s+/g, " ").trim(), kind: "heading", level: heading.level, from: node.startIndex, to: length,
-        at: node.startIndex + 1, line: node.startPosition.row, heading: items.length, children: [] });
+      // Inside the part, past one escaped line break per line before the heading (a part may hold several lines).
+      let at = 1;
+      for (let k = heading.line - starts[index]; k > 0; k--) {
+        const next = node.text.indexOf("\\n", at);
+        if (next < 0) break;
+        at = next + 2;
+      }
+      items.push({ name: heading.text.replace(/\s+/g, " ").trim(), kind: "heading", level: heading.level, from: node.startIndex + at, to: length,
+        at: node.startIndex + at, line: node.startPosition.row, heading: items.length, children: [] });
     }
   }
   items.forEach((item, i) => { item.to = items.slice(i + 1).find((next) => next.level! <= item.level!)?.from ?? length; });

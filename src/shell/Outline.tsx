@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createSignal, Index, on, onCleanup, Show, untrack } from "solid-js";
+import { createEffect, createMemo, createSignal, Index, on, onCleanup, Show } from "solid-js";
 import { EditorView } from "@codemirror/view";
 import type { Text } from "@codemirror/state";
 import { Parser } from "web-tree-sitter";
@@ -13,7 +13,7 @@ import { parsedView, syntaxOf } from "../syntax/highlight.ts";
 import { parseDocSliced } from "../syntax/incremental.ts";
 import { codeOutline, itemAt, notebookOutline, outlineRows, type OutlineItem, type OutlineKind } from "../syntax/outline.ts";
 import { syntaxClass } from "../theme/theme.ts";
-import { activeTabOf, historyView, type Tab } from "../workspace/context.ts";
+import { activeTabOf, changedDoc, historyView, type Tab } from "../workspace/context.ts";
 import type { Doc } from "../workspace/doc.ts";
 import { editorContext, outlineOpen, outlineWidth, resizeOutline } from "../workspace/store.ts";
 
@@ -87,24 +87,27 @@ const collapsedOf = new WeakMap<Doc, Set<string>>();
 
 export default function OutlineBar() {
   // Read the tabs here, not through one memo of the tab: a tab gets its view later, in a copy of the same list.
-  const [retry, setRetry] = createSignal(0);
+  const activeTab = () => activeTabOf(editorContext().pane());
   const source = createMemo(() => {
-    parsedView(); // a preview's source view may appear only when its first parse is committed
-    retry();
-    return outlineOpen() ? sourceOf(activeTabOf(editorContext().pane())) : null;
-  }, null, { equals: (a, b) => a?.tab === b?.tab && a?.view === b?.view });
+    // A preview's source view appears when the file is read (changedDoc) or, with a grammar, when it is first parsed.
+    parsedView();
+    changedDoc();
+    return outlineOpen() ? sourceOf(activeTab()) : null;
+  }, null, { equals: (a, b) => a?.tab.file === b?.tab.file && a?.view === b?.view }); // a pinned, kept or renamed tab is a copy of the same file
   const [items, setItems] = createSignal<OutlineItem[]>([]);
   const [folds, setFolds] = createSignal(0);
   let timer = 0;
-  let retryTimer = 0;
   let generation = 0;
   let shown: unknown = null; // markOf the source when the shown items were made
+  let wanted: unknown = null; // markOf the source when the pending update was scheduled
   let current: Source | null = null;
-  onCleanup(() => { clearTimeout(timer); clearTimeout(retryTimer); generation++; });
+  const cancel = () => { clearTimeout(timer); generation++; };
+  onCleanup(cancel);
 
   const refresh = (src: Source, delay: number) => {
-    clearTimeout(timer);
-    const id = ++generation;
+    cancel();
+    const id = generation;
+    wanted = markOf(src);
     timer = window.setTimeout(async () => {
       const mark = markOf(src);
       const result = await compute(src, () => id !== generation);
@@ -114,23 +117,20 @@ export default function OutlineBar() {
     }, delay);
   };
 
-  // A new tab: at once. Edits: a code file once its parse is committed, a notebook once its text changed (its position
-  // follows each change), after I-082's parse debounce.
+  // A new tab: at once (none: nothing pending may still fill the list). Edits: a code file once its parse is committed, a
+  // notebook once its text changed (also from another view of it), after I-082's parse debounce. An update already on its
+  // way for the same mark is not started again (A-4: other editors' commits re-run this).
   createEffect(() => {
     const src = source();
-    if (src) { if (src.notebook) src.tab.file.position?.(); else parsedView(); }
+    if (src) { if (src.notebook) changedDoc(); else parsedView(); }
     if (src !== current) {
       current = src;
-      clearTimeout(retryTimer);
-      shown = null;
+      shown = wanted = null;
       setItems([]);
-      if (src) return refresh(src, 0);
-      // shortcut: a notebook preview whose text is still being read has no view and no parse to wait for; look again later.
-      const tab = untrack(() => outlineOpen() && activeTabOf(editorContext().pane()));
-      if (tab && !tab.tool && tab.markdown && previewKind(tab.path) === "ipynb") retryTimer = window.setTimeout(() => setRetry((n) => n + 1), MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS);
-      return;
+      return src ? refresh(src, 0) : cancel();
     }
-    if (src && markOf(src) !== shown) refresh(src, MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS);
+    const mark = src && markOf(src);
+    if (src && mark !== shown && mark !== wanted) refresh(src, MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS);
   });
 
   const collapsed = () => {
@@ -182,7 +182,7 @@ export default function OutlineBar() {
     }
   };
 
-  const name = () => { const src = source(); return src ? src.tab.path.slice(src.tab.path.lastIndexOf("\\") + 1) : ""; };
+  const name = () => { const path = source() && activeTab()?.path; return path ? path.slice(path.lastIndexOf("\\") + 1) : ""; };
   return (
     <aside class="outline-bar" hidden={!outlineOpen()}>
       <div class="dock-resize-handle" ref={(el) => resizeHandle(el, { width: outlineWidth, setWidth: resizeOutline, selector: ".outline-bar" })} />

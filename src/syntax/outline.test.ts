@@ -38,7 +38,7 @@ const shape = (items: OutlineItem[], depth = 0): string[] =>
 
 const SAMPLES: Record<string, [string, string]> = {
   c: ["struct point { int x; };\nint add(int a, int b) { int local = a; return local + b; }\n", "function add"],
-  cpp: ["namespace geo {\nclass Shape {\n  void draw();\n  int side;\n};\n}\n", "module geo"],
+  cpp: ["namespace geo {\nclass Shape {\n  void draw();\n  Shape* clone();\n  int side;\n  int* data;\n};\n}\n", "module geo"],
   css: ["body, p { color: red; }\n@media screen { a { color: blue; } }\n", "selector body, p"],
   go: ["package main\ntype Point struct { X int }\nfunc main() { x := 1; _ = x }\n", "function main"],
   html: ["<html><body><div>x</div></body></html>\n", "element html"],
@@ -67,7 +67,7 @@ test("I-4: code nests by range, methods are marked, locals and properties are le
   assert.deepEqual(shape(await outline("python", SAMPLES.python[0])), ["class GaussianMixture", "  method fit", "function main"]);
   assert.deepEqual(shape(await outline("typescript", SAMPLES.typescript[0])), ["interface Shape", "class Circle", "  method area", "function main"]);
   assert.deepEqual(shape(await outline("rust", SAMPLES.rust[0])), ["struct Point", "impl Point", "  method len", "function main"]);
-  assert.deepEqual(shape(await outline("cpp", SAMPLES.cpp[0])), ["module geo", "  class Shape", "    method draw"]);
+  assert.deepEqual(shape(await outline("cpp", SAMPLES.cpp[0])), ["module geo", "  class Shape", "    method draw", "    method clone"]); // A-6: a pointer-returning method stays, a pointer field goes
 });
 
 test("I-4 #10: a file of many top-level nodes is queried node by node with the same items, and a stop gives null", { skip: !available }, async () => {
@@ -103,6 +103,15 @@ test("I-4: a notebook lists markdown cell headings at their JSON line, not code 
   assert.match(lines[items[0].children[0].line], /"## Load\\n"/);
   assert.match(lines[items[0].children[0].children[0].line], /"source": "```/);
   assert.deepEqual([items[0].heading, items[0].children[0].heading, items[0].children[0].children[0].heading], [0, 1, 2]);
+});
+
+test("A-7: a markdown cell whose source is one string keeps its same-level headings apart and in order", { skip: !available }, async () => {
+  const notebook = JSON.stringify({ nbformat: 4, cells: [{ cell_type: "markdown", source: "# One\ntext\n# Two\n" }] });
+  const { tree } = await parse("json", notebook);
+  const items = notebookOutline(tree, notebook.length, markdownHeadings);
+  tree.delete();
+  assert.deepEqual(shape(items), ["heading1 One", "heading1 Two"]);
+  assert.ok(notebook.slice(items[1].at).startsWith("# Two"));
 });
 
 test("I-4: rows follow the open items, a collapsed key hides its children and guides mark the open range", () => {

@@ -55,6 +55,8 @@ export const NEW_ROW = "\0new";
 export type FolderContext = ReturnType<typeof newContext>;
 
 export const [lockPreview, setLockPreview] = createSignal(false);
+/** core v0.8.1 I-4: the Doc whose text changed or got its first view last (the Outline of a notebook, which has no parse, follows it). */
+export const [changedDoc, setChangedDoc] = createSignal<Doc | null>(null, { equals: false });
 
 export function newContext(root: string, rootName: string) {
   const [structure, setStructure] = createSignal(0); // bumped when what the rows are built from changes
@@ -277,6 +279,7 @@ function makeView(ctx: FolderContext, file: TabFile, text: string, editable: boo
     changed: () => {
       file.doc.refresh();
       for (const p of previews(file.doc)) p.changed();
+      setChangedDoc(file.doc);
     },
     edited: () => promote(ctx, file),
     peers: () => (filesOf.get(file.doc) ?? []).flatMap((f) => (f !== file && f.view ? [f.view] : [])),
@@ -319,6 +322,7 @@ function newFile(ctx: FolderContext, path: string): TabFile {
       if (made.length === 0) return;
       for (const f of made) makeView(ctx, f, text, editable);
       for (const p of previews(doc)) p.changed(); // a preview waiting for the first read
+      setChangedDoc(doc);
       for (const pane of panesOf(ctx)) if (pane.tabs().some((t) => made.includes(t.file))) pane.setTabs((list) => [...list]); // the Pane picks up the view
       const tab = activeTabOf(ctx.pane());
       if (tab?.focus && made.includes(tab.file)) tab.file.view!.focus();

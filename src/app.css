@@ -245,6 +245,9 @@ button, input, select, textarea {
   background: var(--panel-background);
   border-right: var(--window-border-dock-left) solid var(--border); /* L-16 */
 }
+/* core v0.8.1 I-4 (A-1): both open, each leaves the other's width (dock.ts sets the variables, unset: the default width) and the handle. */
+.dock-left:not([hidden]) + .outline-bar { max-width: calc(100% - var(--dock-resize-handle-width) - var(--dock-left-width, var(--project-panel-default-width))); }
+.dock-left:has(+ .outline-bar:not([hidden])) { max-width: calc(100% - var(--dock-resize-handle-width) - var(--outline-bar-width, var(--project-panel-default-width))); }
 /* L-30: the handle straddles the Dock edge, half on each side. */
 .dock-resize-handle {
   position: absolute;
