@@ -358,6 +358,7 @@ export const MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS = 200; // markdown_preview.parse
 // core I-3: not in spec/zed-metrics.toml; Zed 4304dec732 project_panel.rs (reported to tauri-leader for the toml).
 export const PROJECT_PANEL_DRAG_EXPAND_DELAY_MS = 500; // a closed folder held under a drag opens (hover_expand_task, :6428)
 export const PROJECT_PANEL_DRAG_SCROLL = { near: 0.05, far: 0.15, fast: 8, slow: 5, tickMs: 16 }; // edge scroll per tick (hover_scroll_task, :7600-7631)
+export const PROJECT_PANEL_UNDO_LIMIT = 10_000; // steps kept for project_panel::Undo (undo.rs:335 MAX_UNDO_OPERATIONS)
 
 // Editor values that script reads.
 export const EDITOR_TAB_SIZE = 4; // editor.tab_size (E-055)

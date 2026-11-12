@@ -62,6 +62,33 @@ pub async fn trash_paths(paths: Vec<String>) -> serde_json::Value {
     }
 }
 
+/// core I-3 undo: trash one item and return the Recycle Bin id of what it became (Zed Change::Trashed keeps a TrashId).
+fn trash_with_id(path: &Path) -> Result<String, String> {
+    let ids = |list: Vec<trash::TrashItem>| list.into_iter().filter(|item| item.original_path() == path).map(|item| item.id).collect::<Vec<_>>();
+    let before = ids(trash::os_limited::list().map_err(io_error)?);
+    trash::delete(path).map_err(io_error)?;
+    let after = ids(trash::os_limited::list().map_err(io_error)?);
+    let id = after.into_iter().find(|id| !before.contains(id)).ok_or("The trashed item was not found")?;
+    id.into_string().map_err(|_| "Unreadable trash id".to_string())
+}
+
+/// core I-3 redo: put a trashed item back where it was; something at that place is never replaced (an error instead).
+fn restore_by_id(id: &str) -> Result<(), String> {
+    let item = trash::os_limited::list().map_err(io_error)?.into_iter().find(|item| item.id == id).ok_or("Not in the Recycle Bin")?;
+    if fs::symlink_metadata(item.original_path()).is_ok() { return Err("Something already exists at its original location".into()); }
+    trash::os_limited::restore_all([item]).map_err(io_error)
+}
+
+#[tauri::command]
+pub async fn trash_for_undo(path: String) -> Result<String, String> {
+    tauri::async_runtime::spawn_blocking(move || trash_with_id(Path::new(&path))).await.map_err(io_error)?
+}
+
+#[tauri::command]
+pub async fn restore_trashed(id: String) -> Result<(), String> {
+    tauri::async_runtime::spawn_blocking(move || restore_by_id(&id)).await.map_err(io_error)?
+}
+
 #[tauri::command]
 pub async fn delete_paths(paths: Vec<String>) -> serde_json::Value {
     let count = paths.len();

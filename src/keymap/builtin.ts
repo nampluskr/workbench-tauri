@@ -114,6 +114,8 @@ export const BUILTIN: KeymapSection[] = [
       "ctrl-x": "project_panel::Cut",
       "shift-insert": "project_panel::Paste",
       "ctrl-v": "project_panel::Paste",
+      "ctrl-z": "project_panel::Undo", // core I-3, Zed default-windows.json:1024-1025 (ProjectPanel)
+      "ctrl-shift-z": "project_panel::Redo",
       "backspace": "project_panel::Trash",
       "delete": "project_panel::Trash",
       "shift-delete": "project_panel::Delete",

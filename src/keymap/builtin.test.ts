@@ -16,6 +16,9 @@ test("R-1: built-in keymap equals the PROGRESS expected table (key, context, act
     const [, , keys, , , context, action] = line.split("|").map((c) => c.trim().replace(/`/g, ""));
     expected.add(row(keys.replace(/ 키$/, "").replaceAll("+", "-"), context === "없음" ? "" : context, action));
   }
+  // v0.8.1 I-3 (leader-core 2026-11-13, K-02b): Zed's ProjectPanel Undo/Redo keys, added after the pinned v0.4 table.
+  expected.add(row("ctrl-z", "ProjectPanel", "project_panel::Undo"));
+  expected.add(row("ctrl-shift-z", "ProjectPanel", "project_panel::Redo"));
   // v0.8 M-5: the preview keys match every previewable extension, not only md; the pinned v0.4 table (a past version, read only) names md.
   const previewContext = /^Editor && \(extension == md \|\|[^)]*\)$/;
   const actual = new Set(BUILTIN.flatMap(({ context, bindings }) =>

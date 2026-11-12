@@ -8,6 +8,8 @@ import { confirmName, renameSelection, validationFor } from "./names.ts";
 import { baseName } from "./paths.ts";
 import { deletePrompt, dropJobs, failureText, moveTakenText, pasteJobs, relativePath, targetDir } from "./ops.ts";
 import { eachContext } from "./store.ts";
+import { UndoHistory, type Change } from "./undo.ts";
+import { PROJECT_PANEL_UNDO_LIMIT } from "../spec/metrics.ts";
 import { isDirPath, joinPath, only, parentOf, rowIndex, targetsOf, type Child } from "./tree.ts";
 
 // What the project panel does to files (R-20~R-23): name an item in the tree, delete, copy and paste, copy paths, open
@@ -246,9 +248,21 @@ export async function duplicate(ctx: FolderContext): Promise<void> {
 
 // --- drag and drop (core I-3) ------------------------------------------------------------------------------------
 
+const history = new UndoHistory(PROJECT_PANEL_UNDO_LIMIT); // one for the window, like the clipboard
+const shown = (ctx: FolderContext, path: string) => relativePath(ctx.root, ctx.rootName, path);
+
+/** Move without replacing anything (an exclusive rename); tabs and trees follow. Throws Zed's text when it cannot. */
+async function moveExclusive(ctx: FolderContext, from: string, to: string): Promise<void> {
+  if (!(await exists(from))) throw new Error(`Failed to move \`${shown(ctx, from)}\`. It no longer exists.`);
+  if (await exists(to)) throw new Error(moveTakenText(shown(ctx, from), shown(ctx, to)));
+  await invoke("rename_path", { from, to }).catch(() => { throw new Error("Could not move the item."); }); // a name taken meanwhile fails too
+  everywhere((other) => followMove(other, from, to));
+}
+
 /**
  * A tree drag dropped into `dir` (Zed drag_onto): a move, or a copy with Ctrl (Zed is_copy_modifier_set on Windows). A move
  * never takes a name that is there (Zed: a notice, nothing moves); tabs follow the move. A copy takes a free copy name.
+ * What it did is one undo step (Zed undo_manager.record).
  */
 export async function dropItems(ctx: FolderContext, items: string[], dir: string, copy: boolean): Promise<void> {
   const run = dropJobs(items, dir, copy, ctx.root);
@@ -256,21 +270,17 @@ export async function dropItems(ctx: FolderContext, items: string[], dir: string
   const parents = run.map((path) => parentOf(ctx.root, path));
   if (copy) return copyInto(ctx, run, dir, parents, false);
   const lines: string[] = [];
-  let failed = false;
+  const moved: Change[] = [];
   for (const from of run) {
     const to = joinPath(dir, baseName(from));
     try {
-      if (await exists(to)) {
-        lines.push(moveTakenText(relativePath(ctx.root, ctx.rootName, from), relativePath(ctx.root, ctx.rootName, to)));
-        continue;
-      }
-      await invoke("rename_path", { from, to }); // exclusive: a name taken meanwhile fails instead of being replaced
-      everywhere((other) => followMove(other, from, to));
-    } catch {
-      failed = true;
+      await moveExclusive(ctx, from, to);
+      moved.push({ kind: "moved", from, to });
+    } catch (error) {
+      lines.push((error as Error).message);
     }
   }
-  if (failed) lines.push("Could not move the item.");
+  history.record(moved);
   if (lines.length > 0) notify(lines);
   await refreshEverywhere([dir, ...parents]); // also after a failure: the tree shows what is on disk
 }
@@ -287,6 +297,7 @@ async function copyInto(ctx: FolderContext, sources: string[], dir: string, dirs
   } catch {
     notify(["Could not paste the item."]);
   }
+  history.record(created.map((path) => ({ kind: "created", path })));
   await refreshEverywhere([dir, ...dirs]);
   const last = created.at(-1);
   if (!last) return;
@@ -295,6 +306,53 @@ async function copyInto(ctx: FolderContext, sources: string[], dir: string, dirs
   if (listed.find((child) => child.name === baseName(last))?.is_dir === false) openFile(ctx, last, false, true);
   else reveal(ctx, last);
 }
+
+/**
+ * The inverse of a step, last change first (Zed Change::to_inverse): a move goes back, a copy goes to the Recycle Bin after
+ * one confirmation (null when declined), a binned copy comes back. Nothing is replaced; a failure throws Zed's text.
+ */
+async function invert(ctx: FolderContext, step: Change[]): Promise<Change[] | null> {
+  const binned = step.flatMap((c) => (c.kind === "created" ? [c.path] : []));
+  if (binned.length > 0) {
+    if (asking) return null;
+    const prompt = deletePrompt(binned.map(baseName), false, APP_NAME);
+    asking = true;
+    try {
+      if (!(await invoke<boolean>("confirm", { title: prompt.title, main: prompt.main, content: prompt.content, okLabel: prompt.okLabel, details: null }))) return null;
+    } finally {
+      asking = false;
+    }
+  }
+  const done: Change[] = [];
+  const dirs = new Set<string>();
+  try {
+    for (const change of [...step].reverse()) {
+      const path = change.kind === "moved" ? change.to : change.path;
+      dirs.add(parentOf(ctx.root, path));
+      if (change.kind === "moved") {
+        await moveExclusive(ctx, change.to, change.from);
+        dirs.add(parentOf(ctx.root, change.from));
+        done.push({ kind: "moved", from: change.to, to: change.from });
+      } else if (change.kind === "created") {
+        if (!(await exists(path))) throw new Error(`Failed to trash \`${shown(ctx, path)}\`. It no longer exists.`);
+        const id = await invoke<string>("trash_for_undo", { path }).catch(() => { throw new Error(`Failed to trash \`${shown(ctx, path)}\`.`); });
+        everywhere((other) => forget(other, path));
+        done.push({ kind: "trashed", path, id });
+      } else {
+        if (await exists(path)) throw new Error(`Failed to restore \`${shown(ctx, path)}\`. Something already exists at its original location.`);
+        await invoke("restore_trashed", { id: change.id }).catch(() => { throw new Error(`Failed to restore \`${shown(ctx, path)}\`. It may have been permanently deleted.`); });
+        done.push({ kind: "created", path });
+      }
+    }
+  } finally {
+    await refreshEverywhere([...dirs]);
+  }
+  return done;
+}
+
+/** project_panel::Undo / Redo (Zed ctrl-z / ctrl-shift-z in the ProjectPanel context): only drag and drop is recorded. */
+export const undoDrop = (ctx: FolderContext): Promise<void> => history.undo((step) => invert(ctx, step)).catch((error) => notify(["Undo Failed", (error as Error).message]));
+export const redoDrop = (ctx: FolderContext): Promise<void> => history.redo((step) => invert(ctx, step)).catch((error) => notify(["Redo Failed", (error as Error).message]));
 
 /** I-548, I-549: absolute or relative paths of the selected items as text, several joined by line breaks. */
 export async function copyPaths(ctx: FolderContext, relative: boolean): Promise<void> {

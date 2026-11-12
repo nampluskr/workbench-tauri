@@ -1,4 +1,4 @@
-import { copyItems, copyPaths, openInDefaultApp, paste, requestDelete, revealInExplorer, startNew, startRename } from "../workspace/actions.ts";
+import { copyItems, copyPaths, openInDefaultApp, paste, redoDrop, requestDelete, revealInExplorer, startNew, startRename, undoDrop } from "../workspace/actions.ts";
 import {
   collapseEverything,
   expandAll,
@@ -68,6 +68,8 @@ onTree("project_panel::Delete", (ctx) => void requestDelete(ctx, true));
 onTree("project_panel::Copy", (ctx) => copyItems(ctx, false));
 onTree("project_panel::Cut", (ctx) => copyItems(ctx, true));
 onTree("project_panel::Paste", (ctx) => void paste(ctx));
+onTree("project_panel::Undo", (ctx) => void undoDrop(ctx)); // core I-3: drag and drop only
+onTree("project_panel::Redo", (ctx) => void redoDrop(ctx));
 onTree("workspace::CopyPath", (ctx) => void copyPaths(ctx, false));
 onTree("workspace::CopyRelativePath", (ctx) => void copyPaths(ctx, true));
 onTree("project_panel::DeployContextMenu", (ctx) => openTreeMenuAtSelection(ctx));
