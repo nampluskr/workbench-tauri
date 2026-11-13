@@ -6,7 +6,7 @@
 
 ## 0. 근거
 
-- 구성은 사용자가 정했다(사용자 2026-11-13, core ORDER-01 3.1, core `specs/v0.8.1/PLAN.md` 운영). v0.8과 다른 점은 coder 모델(→ Opus 5.5 medium)과 checker 모델(→ agy의 `claude-sonnet-5-5-high`)이다. v0.8 구성은 `specs/v0.8/HERDR-SETUP.md` 1장에 있다.
+- 구성은 사용자가 정했다(사용자 2026-11-13, core ORDER-01 3.1, core `specs/v0.8.1/PLAN.md` 운영). v0.8과 다른 점은 coder 모델(→ Opus 5.5 medium)이다. checker 모델은 처음에 agy의 `claude-sonnet-5-5-high`로 띄웠다가 2026-11-13 사용자 요청으로 agy `/model`에서 `gemini-3.8-flash-high`로 바꿨다(다시 띄우지 않음, `--settings` 그대로, core ORDER-08 3.3). v0.8과 같은 모델이다. v0.8 구성은 `specs/v0.8/HERDR-SETUP.md` 1장에 있다.
 - 대상은 tauri 하나다. gpui는 동결이라 gpui와 화면 차례를 나누지 않는다.
 - core 리더 이름은 `leader-core`이고 패널은 `wT:p1`이다. 아래 프로토콜의 받는 이는 모두 `leader-core`다.
 - 한도가 바뀌어 구성을 바꾸면 사용자 승인을 받는다(루트 `AGENTS.md` 레포 규칙).
@@ -20,11 +20,11 @@
 | `tauri-leader` | w0:p1 | 카드 지시, 판정, 커밋, leader-core와 화면 차례 조율. 코드·문서는 쓰지 않는다 | Claude Code | Opus 5.5 | medium | `claude --model claude-opus-5-5 --effort medium` | 상시 |
 | `tauri-writer` | w0:p2 | v0.8.1 문서(PLAN·HERDR-SETUP)와 PROGRESS, 루트 `AGENTS.md` | Claude Code | Opus 5.5 | medium | `claude --model claude-opus-5-5 --effort medium` | 문서 단계와 Phase 끝 |
 | `tauri-coder` | w0:p3 | 구현 전부 | Claude Code | Opus 5.5 | medium | `claude --model claude-opus-5-5 --effort medium` | 구현 Phase 동안 |
-| `tauri-checker` | w0:p4 | 카드 리뷰(정확성, 카드 검증 수준만큼 빌드·테스트), 화면 검증(V2·V3)과 측정. `src/`는 고치지 않는다 | agy | `claude-sonnet-5-5-high` | - | `agy --model claude-sonnet-5-5-high --settings D:\projects\workbench-tauri\.agents\checker-settings.json` | 리뷰·검증 카드가 있을 때 |
+| `tauri-checker` | w0:p4 | 카드 리뷰(정확성, 카드 검증 수준만큼 빌드·테스트), 화면 검증(V2·V3)과 측정. `src/`는 고치지 않는다 | agy | `gemini-3.8-flash-high` | - | `agy --model gemini-3.8-flash-high --settings D:\projects\workbench-tauri\.agents\checker-settings.json` | 리뷰·검증 카드가 있을 때 |
 
-- 넷 모두 leader-core가 2026-11-13에 위 실행 명령으로 띄웠다.
+- 넷 모두 leader-core가 2026-11-13에 띄웠다. checker는 `claude-sonnet-5-5-high`로 띄운 뒤 같은 날 agy `/model`로 Gemini 3.8 Flash (High)로 바꿨다(사용자 2026-11-13, core ORDER-08 3.3). 표의 checker 실행 명령은 다시 띄울 때 쓴다.
 - worktree는 두지 않는다.
-- 리뷰 독립성: writer·coder(Claude Code Opus 5.5)의 산출물은 다른 모델(Sonnet 5.5)·다른 도구(agy)의 checker가 검토한다. 넷 모두 같은 Claude 계열이라 완전히 독립은 아니다.
+- 리뷰 독립성: writer·coder(Claude Code Opus 5.5)의 산출물은 다른 모델(Gemini 3.8 Flash)·다른 도구(agy)의 checker가 검토한다.
 - 측정자는 직접 고치지 않는다. checker는 불일치 목록을 leader에게 보고한다(루트 `AGENTS.md` 3A.4의 7).
 - 지금은 Codex를 쓰지 않는다.
 - Phase가 바뀔 때 서브 에이전트의 컨텍스트를 비운다(core COMMON 1절).
@@ -42,7 +42,7 @@ herdr session
     ├── tab: tauri-leader   w0:t1  pane w0:p1  (Claude Code Opus 5.5 medium)
     ├── tab: tauri-writer   w0:t2  pane w0:p2  (Claude Code Opus 5.5 medium)
     ├── tab: tauri-coder    w0:t3  pane w0:p3  (Claude Code Opus 5.5 medium)
-    └── tab: tauri-checker  w0:t4  pane w0:p4  (agy claude-sonnet-5-5-high)
+    └── tab: tauri-checker  w0:t4  pane w0:p4  (agy gemini-3.8-flash-high)
 ```
 
 - worktree: 없음.
