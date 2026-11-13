@@ -1,0 +1,33 @@
+{
+  "c6": {
+    "criterion": "#6 Cause reproduction (0.8.1)",
+    "status": "측정 불가",
+    "reason": "0.8.1 exe not found"
+  },
+  "c3": {
+    "criterion": "#3 Default values (no config)",
+    "status": "측정 불가",
+    "expected": "14px font, 700px width, 14px padding, 7/14/5.25/3.5 gaps",
+    "measured": {
+      "editorFontSize": null,
+      "previewMetrics": {
+        "previewFontSize": null,
+        "maxWidth": null,
+        "padding": null,
+        "paragraphLineGap": 7,
+        "paragraphGap": 14,
+        "listLineGap": 5.25,
+        "listGap": 3.5
+      },
+      "settingsValues": {
+        "editorFontSize": null,
+        "previewFontSize": null,
+        "paragraphLineSpacing": null,
+        "paragraphSpacing": null,
+        "listLineSpacing": null,
+        "listSpacing": null
+      }
+    },
+    "reason": "Could not read computed styles from DOM elements"
+  }
+}

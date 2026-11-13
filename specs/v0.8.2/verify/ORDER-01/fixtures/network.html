@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>network</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<h1>I-7 network</h1>
+<p>Every row must read "blocked". Check the network log for zero internet requests.</p>
+<table><thead><tr><th>attempt</th><th>result</th><th>detail</th></tr></thead><tbody id="rows"></tbody></table>
+<p>markup &lt;img src="https://…"&gt;: <img id="img" src="https://example.com/favicon.ico" alt="(no image)" width="16" height="16"></p>
+<script>
+const rows = document.getElementById("rows");
+function row(name, reached, detail) {
+  const tr = rows.insertRow();
+  tr.insertCell().textContent = name;
+  const c = tr.insertCell();
+  c.textContent = reached ? "REACHED" : "blocked";
+  c.className = reached ? "bad" : "ok";
+  tr.insertCell().textContent = String(detail);
+}
+fetch("https://example.com/").then((r) => row("fetch https://example.com", true, "status " + r.status), (e) => row("fetch https://example.com", false, e.name + ": " + e.message));
+try {
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", "https://example.com/");
+  xhr.onload = () => row("XHR https://example.com", true, "status " + xhr.status);
+  xhr.onerror = () => row("XHR https://example.com", false, "error event");
+  xhr.send();
+} catch (e) { row("XHR https://example.com", false, e.name + ": " + e.message); }
+try {
+  const ws = new WebSocket("wss://echo.websocket.org");
+  ws.onopen = () => row("WebSocket wss://echo.websocket.org", true, "open");
+  ws.onerror = () => row("WebSocket wss://echo.websocket.org", false, "error event");
+} catch (e) { row("WebSocket wss://echo.websocket.org", false, e.name + ": " + e.message); }
+const s = document.createElement("script");
+s.src = "https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js";
+s.onload = () => row("script-built <script src=https://…>", true, "loaded");
+s.onerror = () => row("script-built <script src=https://…>", false, "error event");
+document.head.append(s);
+const i = new Image();
+i.onload = () => row("script-built <img src=https://…>", true, "loaded");
+i.onerror = () => row("script-built <img src=https://…>", false, "error event");
+i.src = "https://example.com/favicon.ico";
+new FontFace("Remote", "url(https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2)").load()
+  .then(() => row("FontFace https://…", true, "loaded"), (e) => row("FontFace https://…", false, e.name + ": " + e.message));
+setTimeout(() => {
+  const img = document.getElementById("img");
+  row("markup <img src=https://…>", img.naturalWidth > 0, "src attribute: " + (img.getAttribute("src") ?? "(removed)"));
+}, 2000);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+<script>row("markup <script src=https://…>", typeof window._ === "function", "window._ is " + typeof window._);</script>
+</body></html>

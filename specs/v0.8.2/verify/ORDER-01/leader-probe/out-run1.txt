@@ -1,0 +1,99 @@
+{
+ "exe": "D:\\projects\\workbench-tauri\\src-tauri\\target\\debug\\workbench-tauri.exe",
+ "theme": "One Dark (default, no settings.json)",
+ "window": {
+  "action": "state",
+  "pid": 47028,
+  "hwnd": "0x590058",
+  "before": {
+   "frame": {
+    "x": 239,
+    "y": 89,
+    "width": 1442,
+    "height": 854
+   },
+   "clientOrigin": {
+    "x": 240,
+    "y": 90
+   },
+   "clientSize": {
+    "width": 1440,
+    "height": 852
+   },
+   "workArea": "0,0,1920,1032",
+   "layout": "0x0412",
+   "maximized": false,
+   "minimized": false,
+   "dpi": 96,
+   "foreground": false
+  },
+  "after": {
+   "frame": {
+    "x": 239,
+    "y": 89,
+    "width": 1442,
+    "height": 854
+   },
+   "clientOrigin": {
+    "x": 240,
+    "y": 90
+   },
+   "clientSize": {
+    "width": 1440,
+    "height": 852
+   },
+   "workArea": "0,0,1920,1032",
+   "layout": "0x0412",
+   "maximized": false,
+   "minimized": false,
+   "dpi": 96,
+   "foreground": false
+  }
+ },
+ "c2_about": {
+  "text": "workbench-tauri\n\nVersion 0.8.2\n\nVersion\n0.8.2\nDate\n2026-11-13\nHost\nTauri 2.12.5\nWebView2\n157.0.4341.46\nOS\nWindows 11 x64\nThird-Party Software & Attributions\nTauri 2.12.5 — Apache-2.0 OR MIT — Copyright (c) 2017 - Present Tauri Apps Contributors\nSolid 1.9.18 — MIT — Copyright (c) 2016-2025 Ryan Carniato\nCodeMirror 6.43.15 — MIT — Copyright (C) 2018-2021 by Marijn Haverbeke <marijn@haverbeke.berlin> and others\nweb-tree-sitter 0.27.1 — MIT — Copyright (c) 2018 Max Brunsfeld\nmarkdown-it 15.0.3 — MIT — Copyright (c) 2014 Vitaly Puzrin, Alex Kocharin.\nKaTeX 0.18.11 — MIT — Copyright (c) 2013-2020 Khan Academy and other contributors\nMermaid 12.2.0 — MIT — Copyright (c) 2014 - 2022 Knut Sveidqvist\nCatppuccin Icons 1.24.0 — MIT — Copyright (c) 2021 Catppuccin\nCodicons 0.0.46-24 — CC-BY-4.0 — Copyright (c) Microsoft Corporation.\nIBM Plex Sans — OFL-1.1 — Copyright © 2017 IBM Corp. with Reserved Font Name \"Plex\"\nLilex — OFL-1.1 — Copyright 2019 The Lilex Project Authors\nJetBrains Mono 2.304 — OFL-1.1 — Copyright 2020 The JetBrains Mono Project Authors\nHack 3.003 — MIT AND Bitstream-Vera — Copyright 2018 Source Foundry Authors; Copyright 2003 Bitstream, Inc.\nUbuntu Mono 0.83 — Ubuntu Font Licence 1.0 — Copyright 2011 Canonical Ltd.\nD2Coding 1.3.2 — OFL-1.1 — Copyright (c) 2015, NAVER Corporation\nand 192 Rust crates and 67 JavaScript packages, listed in full in Licenses\nCopy\nView All Licenses\nOK",
+  "pass": true
+ },
+ "c2_about_ms": 3336,
+ "c3_defaults": {
+  "error": "TypeError: Failed to execute 'getComputedStyle' on 'Window': parameter 1 is not of type 'Element'.\n    at <anonymous>:1:97\n    at <anonymous>:1:293"
+ },
+ "c3_defaults_ms": 4648,
+ "c7_same_pane": {
+  "tabs": [
+   "test.csv"
+  ],
+  "input": "SendInput wheel x6 (-120), tab clicks via CDP mouse",
+  "cases": [
+   {
+    "tab": "a.md",
+    "error": "not found [...document.querySelectorAll('.pane')][0]?.querySelectorAll('.tab') && [...[...document.querySelectorAll('.pane')][0].querySelectorAll('.tab')].find(e=>e.textContent.trim()===undefined)"
+   },
+   {
+    "tab": "code.py",
+    "error": "not found [...document.querySelectorAll('.pane')][0]?.querySelectorAll('.tab') && [...[...document.querySelectorAll('.pane')][0].querySelectorAll('.tab')].find(e=>e.textContent.trim()===undefined)"
+   },
+   {
+    "tab": "Preview a.md",
+    "error": "not found [...document.querySelectorAll('.pane')][0]?.querySelectorAll('.tab') && [...[...document.querySelectorAll('.pane')][0].querySelectorAll('.tab')].find(e=>e.textContent.trim()===undefined)"
+   },
+   {
+    "tab": "Preview test.ipynb",
+    "error": "not found [...document.querySelectorAll('.pane')][0]?.querySelectorAll('.tab') && [...[...document.querySelectorAll('.pane')][0].querySelectorAll('.tab')].find(e=>e.textContent.trim()===undefined)"
+   },
+   {
+    "tab": "Preview test.html",
+    "error": "not found [...document.querySelectorAll('.pane')][0]?.querySelectorAll('.tab') && [...[...document.querySelectorAll('.pane')][0].querySelectorAll('.tab')].find(e=>e.textContent.trim()===undefined)"
+   },
+   {
+    "tab": "Preview test.csv",
+    "error": "not found [...document.querySelectorAll('.pane')][0]?.querySelectorAll('.tab') && [...[...document.querySelectorAll('.pane')][0].querySelectorAll('.tab')].find(e=>e.textContent.trim()===undefined)"
+   }
+  ]
+ },
+ "c7_same_pane_ms": 17029,
+ "c8_split": {
+  "error": "not found [...document.querySelectorAll('.pane')][0]?.querySelectorAll('.tab') && [...[...document.querySelectorAll('.pane')][0].querySelectorAll('.tab')].find(e=>e.textContent.trim()===\"Preview a.md\")"
+ },
+ "c8_split_ms": 1
+}

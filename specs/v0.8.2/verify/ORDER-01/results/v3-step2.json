@@ -1,0 +1,18 @@
+{
+  "c6": {
+    "criterion": "#6 Cause reproduction (0.8.1)",
+    "status": "측정 불가",
+    "reason": "0.8.1 exe not found"
+  },
+  "c2": {
+    "criterion": "#2 About version",
+    "status": "FAIL",
+    "expected": "Version 0.8.2 (src-tauri/tauri.conf.json:3)",
+    "measured": null,
+    "details": {
+      "headerVer": null,
+      "infoVer": null,
+      "open": false
+    }
+  }
+}

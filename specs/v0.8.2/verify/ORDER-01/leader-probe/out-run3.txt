@@ -1,0 +1,154 @@
+{
+ "exe": "D:\\projects\\workbench-tauri\\src-tauri\\target\\debug\\workbench-tauri.exe",
+ "theme": "One Dark (default, no settings.json)",
+ "window": {
+  "action": "state",
+  "pid": 40804,
+  "hwnd": "0x7F0B7E",
+  "before": {
+   "frame": {
+    "x": 239,
+    "y": 89,
+    "width": 1442,
+    "height": 854
+   },
+   "clientOrigin": {
+    "x": 240,
+    "y": 90
+   },
+   "clientSize": {
+    "width": 1440,
+    "height": 852
+   },
+   "workArea": "0,0,1920,1032",
+   "layout": "0x0412",
+   "maximized": false,
+   "minimized": false,
+   "dpi": 96,
+   "foreground": true
+  },
+  "after": {
+   "frame": {
+    "x": 239,
+    "y": 89,
+    "width": 1442,
+    "height": 854
+   },
+   "clientOrigin": {
+    "x": 240,
+    "y": 90
+   },
+   "clientSize": {
+    "width": 1440,
+    "height": 852
+   },
+   "workArea": "0,0,1920,1032",
+   "layout": "0x0412",
+   "maximized": false,
+   "minimized": false,
+   "dpi": 96,
+   "foreground": true
+  }
+ },
+ "c3_defaults": {
+  "editorFont": 14,
+  "previewFont": 14,
+  "maxWidth": 700,
+  "bodyWidth": 700,
+  "outerPadding": 14,
+  "pass": true
+ },
+ "c3_defaults_ms": 4477,
+ "c7_same_pane": {
+  "tabs": [
+   "a.md",
+   "Preview a.md",
+   "code.py",
+   "b.md",
+   "test.ipynb",
+   "Preview test.ipynb",
+   "test.html",
+   "Preview test.html",
+   "test.csv",
+   "Preview test.csv"
+  ],
+  "input": "SendInput wheel x6 (-120), tab clicks via CDP mouse",
+  "cases": [
+   {
+    "tab": "a.md",
+    "via": "code.py",
+    "before": {
+     "y": 700
+    },
+    "after": {
+     "y": 0
+    },
+    "after3s": {
+     "y": 0
+    },
+    "pass": false
+   },
+   {
+    "tab": "a.md",
+    "via": "Preview a.md",
+    "before": {
+     "y": 600
+    },
+    "after": {
+     "y": 600
+    },
+    "after3s": {
+     "y": 600
+    },
+    "pass": true
+   },
+   {
+    "tab": "Preview test.html",
+    "via": "a.md",
+    "before": {
+     "y": 1200
+    },
+    "after": {
+     "y": 1200
+    },
+    "after3s": {
+     "y": 1200
+    },
+    "pass": true
+   },
+   {
+    "tab": "Preview test.html",
+    "via": "code.py",
+    "before": {
+     "y": 1800
+    },
+    "after": {
+     "y": 0
+    },
+    "after3s": {
+     "y": 0
+    },
+    "pass": false
+   },
+   {
+    "tab": "a.md",
+    "via": "code.py",
+    "before": {
+     "y": 2400
+    },
+    "after": {
+     "y": 2400
+    },
+    "after3s": {
+     "y": 2400
+    },
+    "pass": true
+   }
+  ]
+ },
+ "c7_same_pane_ms": 111798,
+ "c8_split": {
+  "error": "TypeError: Cannot read properties of undefined (reading 'querySelectorAll')\n    at <anonymous>:1:85\n    at <anonymous>:1:163\n    at <anonymous>:1:285"
+ },
+ "c8_split_ms": 3370
+}

@@ -1,0 +1,11 @@
+[ORDER-01 V3 Runner] 초기화 시작
+- 0.8.2 실행 파일: D:\projects\workbench-tauri\src-tauri\target\debug\workbench-tauri.exe (존재: true)
+- 0.8.1 실행 파일: C:\nonexistent.exe (존재: false)
+- Dry run 모드: false
+- 결과 출력 경로: D:\projects\workbench-tauri\specs\v0.8.2\verify\ORDER-01\results
+
+[세션 2] 0.8.2 앱 실행 중 (포트 9222)...
+- 기준 #2 About 버전 측정 중...
+[세션 2 완료] 0.8.2 프로세스(PID: 36292) 정리 중...
+
+[측정 완료] 결과 작성됨: D:\projects\workbench-tauri\specs\v0.8.2\verify\ORDER-01\results\criteria-summary.md
