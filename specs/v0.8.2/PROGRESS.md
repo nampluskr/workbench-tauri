@@ -1,4 +1,4 @@
-> 버전: v0.8.2 · 작성일: 2026-11-13 · 상태: ORDER-01 끝([PUSH] c4a9593), ORDER-02 진행 중(2026-11-14)
+> 버전: v0.8.2 · 작성일: 2026-11-13 · 상태: ORDER-02 끝([PUSH] 8f64e36), ORDER-03 진행 중(2026-11-14)
 >
 > 실제로 한 일과 검증 결과를 적는다. core I-n ↔ Phase ↔ tauri 카드 대응은 `ITEMS-MAP.md`에, 요구와 판정 방법은 core `specs/v0.8.2/ITEMS.md`와 카드 4절에, 에이전트 운영은 `HERDR-SETUP.md`에, core 보고는 `specs/v0.8.2/reports/`에 있다.
 
@@ -75,3 +75,8 @@
   - 검증: V3(`specs/v0.8.2/verify/ORDER-02/leader-probe/out/result.json`, `split-s5.png`).
   - 특이사항: 실험 고침·vitest는 analyst가 `%TEMP%\v082-analyst\wt` worktree에서만 했다(HERDR-SETUP 0장 예외).
 - **W-04 ORDER-02 기록** (2026-11-14, writer): 위 K-02 커밋·C-02·I-13·I-27 항목, HERDR-SETUP worktree 예외, ITEMS-MAP I-12·I-13·I-15·I-16·I-17·I-21·I-22·I-23 상태와 I-27 행을 적었다. 검증 V0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-W-04-report.md`).
+- **leader-core 판정·[PUSH]** (2026-11-14): `c4a9593..8f64e36` push. #1~#12 충족, #1~#6·#8 V3는 Phase 7로, I-27은 측정 오류이고 앱 코드 변경 없음, tauri가 고른 것을 받아들임.
+
+### Phase 3 — ORDER-03 (I-24·I-20): 본문 HTML 태그, 로컬 문서 링크
+
+- **시작** (2026-11-14, leader-core → tauri-leader): 카드 core `D:\projects\workbench-core\specs\v0.8.2\orders\ORDER-03.md`, 항목 I-24·I-20. 8절이 더해짐(화면 측정은 Phase 7로, #9 `<pre><code>` 안쪽 태그와 빈 줄 자르기). 사용자가 Phase 7까지 leader-core에 위임했다(2026-11-14). checker는 diff 리뷰만 한다.
