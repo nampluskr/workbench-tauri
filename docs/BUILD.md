@@ -2,7 +2,7 @@
 
 - 작성일: 2026-11-11
 - 기준 커밋: `2866205`(ORDER-06 코드)
-- 고친 날: 2026-11-13(0.8.1 release 빌드, [4A절](#4a-081-결과-파일), 기준 커밋 `267cfa5`)
+- 고친 날: 2026-11-13(0.8.1 release 빌드, [4A절](#4a-081-결과-파일), 기준 커밋 `267cfa5`; 같은 날 ORDER-09로 다시 빌드, 기준 커밋 `56c3b66`)
 
 배포본(release exe·NSIS 설치 파일)을 만드는 과정이다. 2026-11-11 0.8.0 release 빌드에 성공했고, 같은 날 ORDER-06(I-11)으로 다시 빌드했다. 도구·기존 측정은 각 절의 날짜를 따른다.
 
@@ -100,6 +100,22 @@ npm run tauri build             # release exe + NSIS 설치 파일
 
 ## 4A. 0.8.1 결과 파일
 
+### ORDER-09 다시 빌드 (지금 배포본)
+
+2026-11-13 tauri-coder(K-09d-R1, ORDER-09)의 0.8.1 release 다시 빌드다. 기준 커밋 `56c3b66`(ORDER-08 I-14·I-15, ORDER-09 I-16~I-24, K-09e I-21 규칙 특이도). 앞 K-09d 빌드(`9a27d12`)를 대신한다. 앱 버전은 0.8.1 그대로다. 빌드 직전 `src-tauri\target\release\workbench-tauri.exe`를 경로로 쓰는 프로세스는 없었다.
+
+| 파일 | 경로 | 크기·버전 |
+|---|---|---|
+| NSIS 설치 파일 | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.8.1_x64-setup.exe` | 10,579,833 바이트(수정 시각 2026-11-13 17:27:30); ProductVersion `0.8.1`, FileVersion `0.8.1` |
+| 앱 exe | `src-tauri\target\release\workbench-tauri.exe` | 21,521,920 바이트(수정 시각 2026-11-13 17:27:30); ProductVersion `0.8.1`, FileVersion `0.8.1` |
+| 참고: 프런트엔드 `dist/` | exe 안에 압축돼 들어감 | 31,180,417 바이트, 파일 4,998개, JS 청크 205개 |
+
+- 앞 0.8.1 빌드(K-07c) 대비: 설치 파일 10,579,907 → 10,579,833 B(**−74 B**), exe 21,538,304 → 21,521,920 B(−16,384 B), `dist/` 31,175,037 → 31,180,417 B(+5,380 B, `index` 청크 4,596.53 → 4,601.45 kB). 코드는 늘었는데 exe·설치 파일이 조금 준 까닭은 확인하지 않았다(Rust 코드 변경·압축 결과 차이로 보임, 가설). K-09d 빌드(`9a27d12`)는 설치 파일 10,575,886 B·exe 21,521,920 B였다.
+- 빌드 시간: 전체 72초(17:26:18 → 17:27:30), vite 7.00초, cargo release 50.41초(`workbench-tauri` 크레이트만 다시 컴파일), NSIS 포함.
+- 경고: 기존과 같은 종류 — Vite 500 kB 넘는 chunk(`index` 4,601.45 kB, `elk` 1,462.86 kB, `chunk-NGNAAXSQ` 629.04 kB), web-tree-sitter direct eval(`[EVAL]` 2건). Rust 경고 없음.
+
+### ORDER-07 빌드 (앞 빌드)
+
 2026-11-13 tauri-coder(K-07c, ORDER-07)의 0.8.1 release 빌드 결과다. K-07a-R2 반영 다시 빌드(기준 커밋 `267cfa5`, 앞 K-07b 빌드는 `eb987f2`). 빌드 직전 떠 있던 `workbench-tauri.exe`는 debug exe(PID 37392)뿐이라 release exe는 잠기지 않았다.
 
 | 파일 | 경로 | 크기·버전 |
@@ -154,7 +170,7 @@ npm run tauri build             # release exe + NSIS 설치 파일
 - 빌드 경고(기존과 같은 종류, 0.8.0): Vite 500 kB 넘는 chunk(`index` 4,557.41 kB, 0.7.0은 3,863.55 kB; Mermaid 쪽 `elk` 1,462.86 kB·`chunk-NGNAAXSQ` 629.04 kB 등은 지연 로딩), web-tree-sitter direct eval. Rust 경고 없음.
 - `cargo test`: `folder_watch::tests::missing_root_is_watched_after_creation_and_recreation`가 0.8.0 빌드 확인(K-05c)에서 1회 실패했다(`expected filesystem event: Timeout`). 코드 변경 없이 다시 돌리면 통과(3회 모두)해서 간헐 실패로 본다. 원인은 조사하지 않았다.
 - 빌드 PC 네트워크: 첫 빌드의 NSIS 내려받기, fetch 스크립트 모두 인터넷이 필요하다. 샌드박스(예: Codex)에서는 네트워크가 막혀 실패한다(os error 10013).
-- 0.8.1 HTML 미리보기: 무한 루프(`while(true){}` 등) 페이지를 연 뒤에는 앱을 다시 열 때까지 HTML 미리보기가 빈 화면일 수 있고, 그 페이지의 렌더러 프로세스가 CPU 1코어를 계속 쓴다(ORDER-07 #8, leader-core 결정으로 사용자 확인 대기).
+- 0.8.1 HTML 미리보기: 무한 루프(`while(true){}` 등) 페이지는 약 5초 뒤 미리보기 자리에 "This HTML page is not responding." 알림으로 바뀐다(core I-14, ORDER-08). 그때 프레임을 빼서 루프 렌더러가 5~10초 안에 끝나고, 멈춘 호스트는 20초 동안 피해 다른 HTML 미리보기는 계속 그려진다. 앱을 다시 열 필요는 없다. 파일이나 테마를 바꾸면 그 미리보기가 다시 그려진다. 남은 한계: 서로 다른 루프 페이지 둘이 20초 안에 보통 호스트 둘을 멈추면 피하지 못하고, 실제로 5초 넘게 스크립트를 도는 페이지에도 같은 알림이 뜬다(`specs/v0.8.1/reports/ORDER-08.md`).
 
 ## 8. 라이선스 주의
 

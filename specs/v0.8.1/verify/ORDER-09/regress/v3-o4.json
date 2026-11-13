@@ -1,0 +1,357 @@
+{
+  "c11_initial": {
+    "status": [
+      "Close Left Dock",
+      "|",
+      "Outline",
+      "|",
+      "Search",
+      "Lock Preview"
+    ],
+    "outlineHidden": true,
+    "layout": {
+      "dock": [
+        200,
+        240
+      ],
+      "paneArea": [
+        440,
+        1000
+      ],
+      "sidebar": [
+        0,
+        200
+      ]
+    }
+  },
+  "c1_open": {
+    "status": [
+      "Close Left Dock",
+      "|",
+      "Close Outline",
+      "|",
+      "Search",
+      "Lock Preview"
+    ],
+    "btnPressed": "true",
+    "layout": {
+      "dock": [
+        200,
+        240
+      ],
+      "outline": [
+        440,
+        240
+      ],
+      "paneArea": [
+        680,
+        760
+      ]
+    },
+    "outline": {
+      "rows": [
+        {
+          "name": "Guide",
+          "badge": "H1",
+          "level": 0,
+          "selected": true
+        },
+        {
+          "name": "Install",
+          "badge": "H2",
+          "level": 1,
+          "selected": false
+        },
+        {
+          "name": "Windows",
+          "badge": "H3",
+          "level": 2,
+          "selected": false
+        },
+        {
+          "name": "Path",
+          "badge": "H4",
+          "level": 3,
+          "selected": false
+        },
+        {
+          "name": "Usage",
+          "badge": "H2",
+          "level": 1,
+          "selected": false
+        },
+        {
+          "name": "Keys",
+          "badge": "H3",
+          "level": 2,
+          "selected": false
+        }
+      ]
+    },
+    "dockClosed": {
+      "dockHidden": true,
+      "outlineVisible": true,
+      "status": [
+        "Project Panel",
+        "|",
+        "Close Outline",
+        "|",
+        "Search",
+        "Lock Preview"
+      ]
+    }
+  },
+  "c3_border_resize": {
+    "before": {
+      "outline": "1px rgb(70, 75, 87)",
+      "dock": "1px rgb(70, 75, 87)",
+      "handleBg": "rgba(0, 0, 0, 0)",
+      "handleCursor": "col-resize",
+      "handleBorder": "rgb(220, 224, 229)"
+    },
+    "hover": {
+      "outline": "1px rgb(70, 75, 87)",
+      "dock": "1px rgb(70, 75, 87)",
+      "handleBg": "rgba(0, 0, 0, 0)",
+      "handleCursor": "col-resize",
+      "handleBorder": "rgb(220, 224, 229)"
+    },
+    "w0": 240,
+    "w1": 299
+  },
+  "c4_markdown": {
+    "rows": [
+      {
+        "name": "Guide",
+        "badge": "H1",
+        "level": 0,
+        "selected": true
+      },
+      {
+        "name": "Install",
+        "badge": "H2",
+        "level": 1,
+        "selected": false
+      },
+      {
+        "name": "Windows",
+        "badge": "H3",
+        "level": 2,
+        "selected": false
+      },
+      {
+        "name": "Path",
+        "badge": "H4",
+        "level": 3,
+        "selected": false
+      },
+      {
+        "name": "Usage",
+        "badge": "H2",
+        "level": 1,
+        "selected": false
+      },
+      {
+        "name": "Keys",
+        "badge": "H3",
+        "level": 2,
+        "selected": false
+      }
+    ]
+  },
+  "c5_ipynb": {
+    "outline": {
+      "rows": [
+        {
+          "name": "Analysis",
+          "badge": "H1",
+          "level": 0,
+          "selected": false
+        },
+        {
+          "name": "Load data",
+          "badge": "H2",
+          "level": 1,
+          "selected": false
+        },
+        {
+          "name": "Clean",
+          "badge": "H3",
+          "level": 2,
+          "selected": false
+        }
+      ]
+    },
+    "cursor": {
+      "line": "{\"cells\":[{\"cell_type\":\"markdown\",\"metadata\":{},\"source\":[\"#",
+      "focused": true
+    }
+  },
+  "c6_code": {
+    "py": {
+      "rows": [
+        {
+          "name": "GaussianMixture",
+          "badge": "C",
+          "level": 0,
+          "selected": true
+        },
+        {
+          "name": "fit",
+          "badge": "m",
+          "level": 1,
+          "selected": false
+        },
+        {
+          "name": "_e_step",
+          "badge": "m",
+          "level": 1,
+          "selected": false
+        },
+        {
+          "name": "helper",
+          "badge": "f",
+          "level": 0,
+          "selected": false
+        }
+      ]
+    },
+    "ts": {
+      "rows": [
+        {
+          "name": "Store",
+          "badge": "C",
+          "level": 0,
+          "selected": true
+        },
+        {
+          "name": "add",
+          "badge": "m",
+          "level": 1,
+          "selected": false
+        },
+        {
+          "name": "make",
+          "badge": "f",
+          "level": 0,
+          "selected": false
+        },
+        {
+          "name": "Shape",
+          "badge": "I",
+          "level": 0,
+          "selected": false
+        }
+      ]
+    },
+    "rs": {
+      "rows": [
+        {
+          "name": "Point",
+          "badge": "S",
+          "level": 0,
+          "selected": true
+        },
+        {
+          "name": "Point",
+          "badge": "i",
+          "level": 0,
+          "selected": false
+        },
+        {
+          "name": "len",
+          "badge": "m",
+          "level": 1,
+          "selected": false
+        },
+        {
+          "name": "main",
+          "badge": "f",
+          "level": 0,
+          "selected": false
+        },
+        {
+          "name": "Kind",
+          "badge": "E",
+          "level": 0,
+          "selected": false
+        },
+        {
+          "name": "A",
+          "badge": "e",
+          "level": 1,
+          "selected": false
+        },
+        {
+          "name": "B",
+          "badge": "e",
+          "level": 1,
+          "selected": false
+        }
+      ]
+    },
+    "plain": "No outline"
+  },
+  "c7_click_editor": {
+    "cursor": {
+      "line": "## Usage",
+      "focused": true
+    },
+    "topLine": {
+      "lineTop": 384,
+      "viewport": 711
+    }
+  },
+  "c7_preview": {
+    "headingTopFromPreviewTop": 522,
+    "previewHeight": 756
+  },
+  "c8_follow_edit": {
+    "cursorWindows": [
+      "Windows"
+    ],
+    "afterAdd": [
+      "Guide",
+      "Install",
+      "Windows",
+      "Added Section",
+      "Path",
+      "Usage",
+      "Keys"
+    ],
+    "afterUndo": [
+      "Guide",
+      "Install",
+      "Windows",
+      "Path",
+      "Usage",
+      "Keys"
+    ]
+  },
+  "c9_fold": {
+    "folded": [
+      "Guide",
+      "Install",
+      "Usage",
+      "Keys"
+    ],
+    "selectedWhileFolded": [
+      "Install"
+    ],
+    "unfolded": [
+      "Guide",
+      "Install",
+      "Windows",
+      "Path",
+      "Usage",
+      "Keys"
+    ]
+  },
+  "c8_follow_scroll": {
+    "scroll0": 0,
+    "scroll1": 2940,
+    "selected": [
+      "Section 141"
+    ]
+  }
+}

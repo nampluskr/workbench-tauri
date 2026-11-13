@@ -1,0 +1,136 @@
+{
+  "c5_md_open": {
+    "open": true,
+    "count": "0/0",
+    "focused": true,
+    "hl": 0,
+    "cur": 0,
+    "scrollTop": 0
+  },
+  "c6_toggles": {
+    "apple": {
+      "open": true,
+      "count": "1/6",
+      "focused": true,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "caseSensitive": {
+      "open": true,
+      "count": "1/4",
+      "focused": true,
+      "hl": 3,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "wholeWord": {
+      "open": true,
+      "count": "1/2",
+      "focused": true,
+      "hl": 1,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "regexOn": {
+      "open": true,
+      "count": "1/6",
+      "focused": true,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    "regexOff": {
+      "open": true,
+      "count": "0/0",
+      "focused": true,
+      "hl": 0,
+      "cur": 0,
+      "scrollTop": 0
+    },
+    "korean": {
+      "open": true,
+      "count": "1/2",
+      "focused": true,
+      "hl": 1,
+      "cur": 1,
+      "scrollTop": 0
+    }
+  },
+  "c6_next_prev": [
+    {
+      "open": true,
+      "count": "1/6",
+      "focused": true,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    {
+      "open": true,
+      "count": "2/6",
+      "focused": true,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    {
+      "open": true,
+      "count": "3/6",
+      "focused": true,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    {
+      "open": true,
+      "count": "4/6",
+      "focused": true,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    {
+      "open": true,
+      "count": "5/6",
+      "focused": true,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 0
+    },
+    {
+      "open": true,
+      "count": "6/6",
+      "focused": true,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 2329
+    },
+    {
+      "open": true,
+      "count": "5/6",
+      "focused": true,
+      "hl": 5,
+      "cur": 1,
+      "scrollTop": 0
+    }
+  ],
+  "c7_scope": {
+    "pythonCount": {
+      "open": true,
+      "count": "1/1",
+      "focused": true,
+      "hl": 0,
+      "cur": 1,
+      "scrollTop": 0
+    }
+  },
+  "c5_esc": {
+    "open": false,
+    "count": null,
+    "focused": false,
+    "hl": 0,
+    "cur": 0,
+    "scrollTop": 0
+  }
+}

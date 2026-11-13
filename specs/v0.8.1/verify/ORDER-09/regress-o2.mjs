@@ -58,7 +58,7 @@ const shot = async (name) => {
   writeFileSync(`${OUT}/${name}.png`, Buffer.from(r.data, "base64"));
 };
 const P = (rel) => rel ? `${WW}\\${rel.replace(/\//g, "\\")}` : WW;
-const row = (rel) => `document.querySelector('.tree-window .tree-row[data-path=' + JSON.stringify(JSON.stringify(${JSON.stringify(P(rel))})).slice(1, -1) + ']')`;
+const row = (rel) => `([...document.querySelectorAll('.tree-window .tree-row')].find(e => (e.dataset.path || e.getAttribute('data-path')) === ${JSON.stringify(P(rel))}) || document.querySelector('.tree-window .tree-row[data-path=${JSON.stringify(JSON.stringify(P(rel))).slice(1, -1)}]'))`;
 const pt = (js, dx = 0.5, dy = 0.5, cap = 80) => ev(`(()=>{const e=${js};if(!e)return null;const r=e.getBoundingClientRect();return {x:Math.round(r.x+Math.min(r.width*${dx},${cap})),y:Math.round(r.y+r.height*${dy})}})()`);
 const mid = (js) => pt(js, 0.5, 0.5, 100000);
 const sleep = (ms) => app.sleep(ms);
@@ -126,6 +126,33 @@ const tabTip = async (title) => {
 };
 const editorText = () => ev(`[...document.querySelectorAll('.cm-content')].filter(e=>e.offsetParent).map(e=>e.textContent.slice(0,40))`);
 const activeRow = () => ev(`[...document.querySelectorAll('.tree-row.active-file')].map(r=>({path:r.dataset.path,color:getComputedStyle(r.querySelector('.tree-label')).color}))`);
+const ensureFolderOpen = async (rel) => {
+  const parts = rel.split("/");
+  let acc = "";
+  for (let i = 0; i < parts.length; i++) {
+    acc = acc ? `${acc}/${parts[i]}` : parts[i];
+    const exp = await ev(`(()=>{const e=${row(acc)};return e?e.getAttribute('aria-expanded'):null})()`);
+    if (exp === "false") {
+      await click(row(acc));
+      await sleep(600);
+    }
+  }
+};
+const readMenu = () => ev(`(()=>{
+  const items = [...document.querySelectorAll('#context-menu .menu-item')].map(e=>({
+    label: e.firstElementChild?.textContent.trim() || e.textContent.trim().split('\\t')[0].trim(),
+    keys: e.querySelector('.menu-shortcut')?.textContent.trim() ?? null,
+    disabled: e.classList.contains('disabled') || e.getAttribute('aria-disabled') === 'true'
+  }));
+  const pIdx = items.findIndex(m => m.label === "Paste");
+  return {
+    paste: items[pIdx] || null,
+    undo: items[pIdx + 1] || null,
+    redo: items[pIdx + 2] || null,
+    isNextToPaste: pIdx !== -1 && items[pIdx + 1]?.label === "Undo" && items[pIdx + 2]?.label === "Redo",
+    items: items.slice(Math.max(0, pIdx - 1), pIdx + 4)
+  };
+})()`);
 const step = async (name, fn) => {
   try {
     log[name] = await fn();
@@ -147,12 +174,76 @@ try {
   }
   await shot("00-start");
 
+  // I-17 처음 상태: 이동 전 메뉴를 열어 Undo/Redo 비활성 상태 기록
+  let initialContextMenu = null;
+  try {
+    await click(row("src/a.txt"), { right: true });
+    await sleep(600);
+    initialContextMenu = await readMenu();
+    await key("Escape", "Escape", 27);
+    await sleep(400);
+  } catch (e) {
+    initialContextMenu = { err: e.message };
+  }
+
   // USER-TEST #4: 끌어 옮기기·대상 표시
   await step("c2_file_to_folder", async () => {
     const st = await drag(row("src/a.txt"), [row("dst/keep.txt"), row("dst")], { shot: "c3-over-dst" });
     return { overDstFile: st[0], overDst: st[1], disk: { src: ls("src"), dst: ls("dst") } };
   });
   await shot("c2-after-file");
+
+  // I-17: 트리 우클릭 Paste 뒤 Undo·Redo (상태·복구)
+  await step("i17_menu_undo_redo", async () => {
+    // c2_file_to_folder 에서 src/a.txt 가 dst/a.txt 로 이동된 직후
+    // 1) dst/a.txt 우클릭 -> 메뉴 확인: Undo 활성, Redo 비활성
+    const targetAfterMove = (await pt(row("dst/a.txt"))) ? row("dst/a.txt") : row("dst");
+    await click(targetAfterMove, { right: true });
+    await sleep(600);
+    const menuAfterMove = await readMenu();
+
+    // 2) Undo 클릭 -> 디스크에서 src/a.txt 복구, dst/a.txt 삭제 확인
+    await click(`[...document.querySelectorAll('#context-menu .menu-item')].find(e=>e.firstElementChild?.textContent.trim()==='Undo')`);
+    await sleep(1500);
+
+    const diskAfterUndo = {
+      srcRestored: has("src/a.txt"),
+      dstGone: !has("dst/a.txt")
+    };
+
+    // 3) src/a.txt 우클릭 -> 메뉴 확인: Undo 비활성, Redo 활성
+    const targetAfterUndo = (await pt(row("src/a.txt"))) ? row("src/a.txt") : row("src");
+    await click(targetAfterUndo, { right: true });
+    await sleep(600);
+    const menuAfterUndo = await readMenu();
+
+    // 4) Redo 클릭 -> 디스크에서 dst/a.txt 재이동, src/a.txt 삭제 확인
+    await click(`[...document.querySelectorAll('#context-menu .menu-item')].find(e=>e.firstElementChild?.textContent.trim()==='Redo')`);
+    await sleep(1500);
+
+    const diskAfterRedo = {
+      dstReMoved: has("dst/a.txt"),
+      srcGone: !has("src/a.txt")
+    };
+
+    // 5) dst/a.txt 우클릭 -> 메뉴 확인: Undo 활성, Redo 비활성 -> 메뉴 닫기
+    const targetAfterRedo = (await pt(row("dst/a.txt"))) ? row("dst/a.txt") : row("dst");
+    await click(targetAfterRedo, { right: true });
+    await sleep(600);
+    const menuAfterRedo = await readMenu();
+    await key("Escape", "Escape", 27);
+    await sleep(400);
+
+    return {
+      initial: initialContextMenu,
+      menuAfterMove,
+      diskAfterUndo,
+      menuAfterUndo,
+      diskAfterRedo,
+      menuAfterRedo
+    };
+  });
+  await shot("i17-after-undo-redo");
 
   // USER-TEST #5: 자기 자신·하위 막기
   await step("c3_c4_not_allowed", async () => {
@@ -163,6 +254,7 @@ try {
 
   // USER-TEST #4: 폴더 옮기기
   await step("c2_folder_to_folder", async () => {
+    await ensureFolderOpen("src/sub");
     const st = await drag(row("src/sub"), [row("dst")]);
     return { over: st[0], disk: { src: ls("src"), dst: ls("dst"), dstSub: has("dst/sub/d.txt") } };
   });
@@ -175,6 +267,7 @@ try {
 
   // USER-TEST #4: 다중 선택 루트로 옮기기
   await step("c2_multi_to_root", async () => {
+    await ensureFolderOpen("src");
     await click(row("src/b.txt"));
     await click(row("src/c.txt"), { ctrl: true });
     const below = await ev(`(()=>{const s=document.querySelector('.tree-scroll').getBoundingClientRect();const rows=[...document.querySelectorAll('.tree-window .tree-row')];const last=rows.at(-1).getBoundingClientRect();return {x:Math.round(s.x+60),y:Math.round(Math.min(s.bottom-8,last.bottom+20))}})()`);
@@ -185,6 +278,7 @@ try {
 
   // USER-TEST #6: 열린 탭이 따라감 (파일)
   await step("c5_open_tab_file", async () => {
+    await ensureFolderOpen("docs");
     await click(row("docs/doc.md"), { dbl: true });
     await sleep(800);
     await click(`[...document.querySelectorAll('.cm-content')].find(e=>e.offsetParent)`);
@@ -198,6 +292,7 @@ try {
 
   // USER-TEST #6: 열린 탭이 따라감 (폴더)
   await step("c5_open_tab_folder", async () => {
+    await ensureFolderOpen("proj");
     await click(row("proj/f.md"), { dbl: true });
     await sleep(800);
     await click(`[...document.querySelectorAll('.cm-content')].find(e=>e.offsetParent)`);
@@ -275,7 +370,7 @@ try {
     await ev(`(()=>{const s=document.querySelector('.tree-scroll');s.scrollTop=s.scrollHeight;s.dispatchEvent(new Event('scroll'))})()`);
     await sleep(800);
     r.sticky = await ev(`[...document.querySelectorAll('.tree-sticky > .tree-row')].map(e=>e.dataset.path)`);
-    const stickyRow = `document.querySelector('.tree-sticky > .tree-row[data-path=' + JSON.stringify(JSON.stringify(${JSON.stringify(P("many"))})).slice(1, -1) + ']')`;
+    const stickyRow = `([...document.querySelectorAll('.tree-sticky > .tree-row')].find(e => (e.dataset.path || e.getAttribute('data-path')) === ${JSON.stringify(P("many"))}) || document.querySelector('.tree-sticky > .tree-row[data-path=${JSON.stringify(JSON.stringify(P("many"))).slice(1, -1)}]'))`;
     if (await ev(`!!${stickyRow}`)) {
       const st = await drag(stickyRow, [row("many/m40.txt")]);
       r.stickyDrag = { over: st[0], manyStill: has("many/m01.txt") };
@@ -304,15 +399,42 @@ try {
   // USER-TEST #8: 탐색기에서 놓으면 복사 (OLE Drag & Drop)
   await step("c7_explorer", async () => {
     await ev(`(()=>{const s=document.querySelector('.tree-scroll');s.scrollTop=0;s.dispatchEvent(new Event('scroll'))})()`);
-    await sleep(600);
-    const extDropScript = resolve(REPO, "specs/v0.8.1/verify/ORDER-02/ext-drop.ps1");
+    await sleep(800);
+    const extDropScript = resolve(REPO, "specs/v0.8.1/verify/ORDER-09/ext-drop.ps1");
+    if (!(await ev(`!!${row("dst3/ext.txt")}`))) {
+      const p = await pt(row("dst3"));
+      if (p) {
+        await app.mouse("mousePressed", p.x, p.y, { button: "left", clickCount: 1 });
+        await app.mouse("mouseReleased", p.x, p.y, { button: "left", clickCount: 1 });
+        await sleep(800);
+      }
+    }
+    const fgRecords = [];
     const runDrop = async (paths) => {
       const p = await pt(row("dst3"));
-      execFileSync("pwsh", ["-NoProfile", "-File", resolve(REPO, "tools/win-input.ps1"), "-ProcessId", String(app.pid), "-Action", "foreground"], { encoding: "utf8" });
+      if (!p) throw new Error("dst3 not found");
+
+      // Record whether app window is foreground and its screen position/DPR
+      const fgRaw = execFileSync("pwsh", ["-NoProfile", "-File", resolve(REPO, "tools/win-input.ps1"), "-ProcessId", String(app.pid), "-Action", "foreground"], { encoding: "utf8" });
+      const fgState = JSON.parse(fgRaw.trim());
+      const record = {
+        isForeground: fgState?.before?.foreground,
+        clientOrigin: fgState?.before?.clientOrigin,
+        bounds: fgState?.before?.bounds,
+        dpi: fgState?.before?.dpi,
+        targetCssPt: p
+      };
+      fgRecords.push(record);
       await sleep(500);
-      const out = execFileSync("pwsh", ["-NoProfile", "-File", extDropScript, "-AppPid", String(app.pid), "-X", String(p.x), "-Y", String(p.y), "-Paths", ...paths], { encoding: "utf8" });
-      await sleep(2000);
-      return JSON.parse(out.trim().split(/\r?\n/).pop());
+
+      try {
+        const out = execFileSync("pwsh", ["-NoProfile", "-File", extDropScript, "-AppPid", String(app.pid), "-X", String(p.x), "-Y", String(p.y), "-Paths", ...paths], { encoding: "utf8" });
+        await sleep(2000);
+        const parsed = JSON.parse(out.trim().split(/\r?\n/).pop());
+        return { ...parsed, foregroundRecord: record };
+      } catch (e) {
+        return "ERR " + e.message.slice(0, 400);
+      }
     };
     const f = await runDrop([`${EXTW}\\ext.txt`]);
     const afterFile = { dst3: ls("dst3"), old: read("dst3/ext.txt"), toasts: await toasts(), tabs: await tabs() };
@@ -325,6 +447,7 @@ try {
       afterFile,
       dirDrop: d,
       afterDir,
+      fgRecords,
       originals: { file: existsSync(`${EXT}/ext.txt`) && readFileSync(`${EXT}/ext.txt`, "utf8"), dir: existsSync(`${EXT}/extdir/g.txt`) }
     };
   });

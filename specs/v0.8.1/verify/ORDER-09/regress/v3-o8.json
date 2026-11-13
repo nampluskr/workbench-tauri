@@ -1,0 +1,45 @@
+{
+  "c3_c4_hang_and_cpu": {
+    "notice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+    "noticeDetectedAtSec": 6.8,
+    "noticeForeground": {
+      "pid": 34200,
+      "name": "workbench-tauri",
+      "title": "workbench-tauri",
+      "hwnd": "0x1C0828"
+    },
+    "appResponsive": true,
+    "fgAtJudgement": {
+      "pid": 34200,
+      "name": "workbench-tauri",
+      "title": "workbench-tauri",
+      "hwnd": "0x1C0828"
+    },
+    "docHasFocus": true,
+    "visState": "visible",
+    "isForeground": true,
+    "undetermined": false,
+    "verdict": "PASS"
+  },
+  "c2_recovery_and_panes": "ERR not found ([...document.querySelectorAll('.tree-window .tree-row')].find(e => (e.dataset.path || e.getAttribute('data-path')) === \"C:\\\\Users\\\\nampl\\\\AppData\\\\Local\\\\Temp\\\\v081-regress-o8\\\\o8ws\\\\page.html\") || document.querySelector('.tree-window .tree-row[data-path=\\\"C:\\\\\\\\Users\\\\\\\\nampl\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\v081-regress-o8\\\\\\\\o8ws\\\\\\\\page.html\\\"]'))",
+  "c3_no_false_positive": {
+    "noticeHasFalsePositive": false,
+    "notice": null,
+    "fgAtJudgement": {
+      "pid": 34200,
+      "name": "workbench-tauri",
+      "title": "workbench-tauri",
+      "hwnd": "0x1C0828"
+    },
+    "docHasFocus": true,
+    "visState": "visible",
+    "isForeground": true,
+    "undetermined": false,
+    "verdict": "PASS"
+  },
+  "c7_security_settings": {
+    "stunPacketsCount": 0,
+    "stunPackets": []
+  },
+  "c8_plain_theme_and_tab": "ERR not found ([...document.querySelectorAll('.tree-window .tree-row')].find(e => (e.dataset.path || e.getAttribute('data-path')) === \"C:\\\\Users\\\\nampl\\\\AppData\\\\Local\\\\Temp\\\\v081-regress-o8\\\\o8ws\\\\plain.html\") || document.querySelector('.tree-window .tree-row[data-path=\\\"C:\\\\\\\\Users\\\\\\\\nampl\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\v081-regress-o8\\\\\\\\o8ws\\\\\\\\plain.html\\\"]'))"
+}

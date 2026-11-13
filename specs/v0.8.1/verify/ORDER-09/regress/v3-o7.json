@@ -1,0 +1,144 @@
+{
+  "c7_plain_theme": {
+    "onedark": {
+      "body": "rgb(220, 224, 229)",
+      "link": "rgb(116, 173, 232)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "iframeBg": "rgb(40, 44, 51)"
+    },
+    "onelight": {
+      "body": "rgb(36, 37, 41)",
+      "link": "rgb(92, 120, 226)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "iframeBg": "rgb(250, 250, 250)"
+    }
+  },
+  "c4_network": {
+    "results": [
+      [
+        "fetch https://example.com",
+        "blocked",
+        "TypeError: Failed to fetch"
+      ],
+      [
+        "FontFace https://…",
+        "blocked",
+        "NetworkError: A network error occurred."
+      ],
+      [
+        "XHR https://example.com",
+        "blocked",
+        "error event"
+      ],
+      [
+        "WebSocket wss://echo.websocket.org",
+        "blocked",
+        "error event"
+      ],
+      [
+        "script-built <script src=https://…>",
+        "blocked",
+        "error event"
+      ],
+      [
+        "script-built <img src=https://…>",
+        "blocked",
+        "error event"
+      ],
+      [
+        "markup <script src=https://…>",
+        "blocked",
+        "window._ is undefined"
+      ],
+      [
+        "markup <img src=https://…>",
+        "blocked",
+        "src attribute: (removed)"
+      ]
+    ]
+  },
+  "c5_navigate_r1": {
+    "startedAt": "오후 6:57:41",
+    "afterExtClick": "오후 6:57:41",
+    "scrollY": 1272
+  },
+  "c3_isolation": {
+    "rows": [
+      [
+        "window.parent.document",
+        "blocked",
+        "SecurityError: Failed to read a named property 'document' from 'Window': Blocked a frame with origin \"null\" from accessing a cross-origin frame."
+      ],
+      [
+        "window.top.document",
+        "blocked",
+        "SecurityError: Failed to read a named property 'document' from 'Window': Blocked a frame with origin \"null\" from accessing a cross-origin frame."
+      ],
+      [
+        "window.parent.location.href",
+        "blocked",
+        "SecurityError: Failed to read a named property 'href' from 'Location': Blocked a frame with origin \"null\" from accessing a cross-origin frame."
+      ],
+      [
+        "localStorage",
+        "blocked",
+        "SecurityError: Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag."
+      ],
+      [
+        "sessionStorage",
+        "blocked",
+        "SecurityError: Failed to read the 'sessionStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag."
+      ],
+      [
+        "indexedDB.open",
+        "blocked",
+        "SecurityError: Failed to execute 'open' on 'IDBFactory': access to the Indexed Database API is denied in this context."
+      ],
+      [
+        "document.cookie (write and read)",
+        "blocked",
+        "SecurityError: Failed to set the 'cookie' property on 'Document': The document is sandboxed and lacks the 'allow-same-origin' flag."
+      ],
+      [
+        "window.__TAURI__",
+        "blocked",
+        "undefined"
+      ],
+      [
+        "window.__TAURI_INTERNALS__ (present)",
+        "REACHED",
+        "object"
+      ],
+      [
+        "window.ipc (present)",
+        "REACHED",
+        "object"
+      ],
+      [
+        "window.chrome.webview (present)",
+        "REACHED",
+        "object"
+      ],
+      [
+        "chrome.webview.postMessage",
+        "blocked",
+        "Error: sent, no answer channel (check the app log)"
+      ],
+      [
+        "fetch ipc://localhost/about_info",
+        "blocked",
+        "TypeError: Failed to fetch"
+      ],
+      [
+        "fetch http://ipc.localhost/about_info",
+        "blocked",
+        "TypeError: Failed to fetch"
+      ],
+      [
+        "__TAURI_INTERNALS__.invoke('about_info')",
+        "blocked",
+        "Error: no answer in 3 s"
+      ]
+    ]
+  }
+}

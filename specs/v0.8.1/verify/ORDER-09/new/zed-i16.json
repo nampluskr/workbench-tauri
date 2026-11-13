@@ -1,0 +1,81 @@
+{
+  "date": "2026-11-13T10:11:19.668Z",
+  "beforeWindows": [
+    {
+      "hwnd": "0x1D0DA8",
+      "pid": 18548,
+      "title": "workbench-core"
+    }
+  ],
+  "restrictedDialog": {
+    "detected": true,
+    "action": "Stay in Restricted Mode",
+    "shortcut": "Ctrl-Alt-Shift-S",
+    "fallbackClick": {
+      "x": 490,
+      "y": 338
+    },
+    "beforeShot": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\zed-dialog-before.png",
+    "afterShot": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\zed-dialog-after.png"
+  },
+  "themeEstimation": {
+    "themeDisplay": "One Dark",
+    "themeTag": "OneDark",
+    "pixel": [
+      88,
+      88,
+      90
+    ],
+    "luminance": 88,
+    "isLight": false
+  },
+  "steps": {
+    "1-folder": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\zed-i16-1-folder.png",
+    "2-cursor-down": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\zed-i16-2-cursor-down.png",
+    "3-ctrl-click": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\zed-i16-3-ctrl-click.png",
+    "4-active-outside": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\zed-i16-4-active-outside.png"
+  },
+  "sideBySide": {
+    "1-folder": {
+      "desc": "폴더 맨 클릭 (단일 선택)",
+      "outPath": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\i16-side-1-folder.png",
+      "tauriSource": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\i16-tree-onedark.png",
+      "zedSource": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\zed-i16-1-folder.png",
+      "dimensions": {
+        "w": 497,
+        "h": 767
+      }
+    },
+    "2-cursor-down": {
+      "desc": "↓ 방향키 커서 행 이동",
+      "outPath": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\i16-side-2-cursor-down.png",
+      "tauriSource": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\i16-tree-onedark.png",
+      "zedSource": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\zed-i16-2-cursor-down.png",
+      "dimensions": {
+        "w": 497,
+        "h": 767
+      }
+    },
+    "3-ctrl-click": {
+      "desc": "Ctrl+클릭 다중 선택",
+      "outPath": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\i16-side-3-ctrl-click.png",
+      "tauriSource": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\i16-tree-onedark.png",
+      "zedSource": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\zed-i16-3-ctrl-click.png",
+      "dimensions": {
+        "w": 497,
+        "h": 767
+      }
+    },
+    "4-active-outside": {
+      "desc": "파일 열기 및 에디터 포커스 (트리 밖)",
+      "outPath": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\i16-side-4-active-outside.png",
+      "tauriSource": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\i16-tree-onedark.png",
+      "zedSource": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\zed-i16-4-active-outside.png",
+      "dimensions": {
+        "w": 497,
+        "h": 767
+      }
+    },
+    "master": "D:\\projects\\workbench-tauri\\specs\\v0.8.1\\verify\\ORDER-09\\new\\i16-side-OneDark.png"
+  }
+}

@@ -68,7 +68,7 @@ const shot = async (n) => {
   writeFileSync(`${OUT}/${n}.png`, Buffer.from(r.data, "base64"));
 };
 const P = (rel) => `${WW}\\${rel.replace(/\//g, "\\")}`;
-const row = (rel) => `document.querySelector('.tree-window .tree-row[data-path=' + JSON.stringify(JSON.stringify(${JSON.stringify(P(rel))})).slice(1, -1) + ']')`;
+const row = (rel) => `([...document.querySelectorAll('.tree-window .tree-row')].find(e => (e.dataset.path || e.getAttribute('data-path')) === ${JSON.stringify(P(rel))}) || document.querySelector('.tree-window .tree-row[data-path=${JSON.stringify(JSON.stringify(P(rel))).slice(1, -1)}]'))`;
 const pt = (js, center) => ev(`(()=>{const e=${js};if(!e)return null;e.scrollIntoView({block:'nearest'});const r=e.getBoundingClientRect();return {x:Math.round(r.x+${center ? "r.width/2" : "Math.min(r.width/2,60)"}),y:Math.round(r.y+r.height/2)}})()`);
 const click = async (js, o = {}) => {
   const p = await pt(js, o.center);
@@ -88,8 +88,22 @@ const step = async (name, fn) => {
   }
 };
 const preview = "[...document.querySelectorAll('.markdown-preview')].find(e=>e.offsetParent)";
+const editor = "[...document.querySelectorAll('.cm-editor')].find(e=>e.offsetParent)";
+const tabByTitle = (t) => "[...document.querySelectorAll('.pane .tab')].find(x=>x.querySelector('.tab-title').textContent.trim()===" + JSON.stringify(t) + ")";
 const fam = (js) => `(e=>e?getComputedStyle(e).fontFamily:null)(${js})`;
 const size = (js) => `(e=>e?getComputedStyle(e).fontSize:null)(${js})`;
+
+const platformFonts = async (js) => {
+  await app.send("DOM.enable");
+  await app.send("CSS.enable");
+  const { root } = await app.send("DOM.getDocument", { depth: -1 });
+  const { result } = await app.send("Runtime.evaluate", { expression: js });
+  if (!result.objectId) return null;
+  const { nodeId } = await app.send("DOM.requestNode", { objectId: result.objectId });
+  const r = await app.send("CSS.getPlatformFontsForNode", { nodeId });
+  return r.fonts.map((f) => f.familyName + ":" + f.glyphCount);
+};
+const koreanSpan = (scope) => "(()=>{const w=document.createTreeWalker(" + scope + ",NodeFilter.SHOW_TEXT);let n;while((n=w.nextNode()))if(/한글|주석/.test(n.textContent))return n.parentElement;return null})()";
 
 try {
   app = await launchApp(EXE);
@@ -104,12 +118,11 @@ try {
 
   // USER-TEST #19: 코드 블록 음영 (One Dark, One Light 등)
   await step("c8_shading", async () => {
-    const pre = `${preview} .code-block`;
     const checkTheme = async (theme) => {
-      writeSettings({ theme });
+      writeSettings({ theme, preview_theme: theme });
       await sleep(1500);
-      const bg = await ev(`({block:getComputedStyle(document.querySelector(${JSON.stringify(pre)})).backgroundColor,page:getComputedStyle(document.querySelector(${JSON.stringify(preview)})).backgroundColor})`);
-      return { theme, ...bg, diff: bg.block !== bg.page };
+      const bg = await ev(`(()=>{const p=${preview};const b=p?.querySelector('.code-block');return {block:b?getComputedStyle(b).backgroundColor:null,page:p?getComputedStyle(p).backgroundColor:null}})()`);
+      return { theme, ...bg, diff: bg?.block !== bg?.page };
     };
     const onedark = await checkTheme("One Dark");
     const onelight = await checkTheme("One Light");
@@ -120,19 +133,32 @@ try {
 
   // USER-TEST #19: 코드 블록 머리 줄 (언어 라벨, 복사 버튼, 수식/mermaid 제외)
   await step("c9_headers", async () => {
-    return ev(`(()=>{const p=document.querySelector(${JSON.stringify(preview)});const blocks=[...p.querySelectorAll('.code-block')].map(b=>({lang:b.querySelector('.code-block-language')?.textContent||null,hasCopy:!!b.querySelector('button[aria-label="Copy Code"], button[aria-label="Copied"]'),height:b.querySelector('.code-block-header')?.getBoundingClientRect().height||0}));return {blocks,mermaidHeader:!!p.querySelector('.mermaid-diagram .code-block-header'),mathHeader:!!p.querySelector('.katex .code-block-header')}})()`);
+    return ev(`(()=>{const p=${preview};if(!p)return {blocks:[],mermaidHeader:false,mathHeader:false};const blocks=[...p.querySelectorAll('.code-block')].map(b=>({lang:b.querySelector('.code-block-language')?.textContent||null,hasCopy:!!b.querySelector('button[aria-label="Copy Code"], button[aria-label="Copied"], .code-block-copy'),height:b.querySelector('.code-block-header')?.getBoundingClientRect().height||0}));return {blocks,mermaidHeader:!!p.querySelector('.mermaid-diagram .code-block-header'),mathHeader:!!p.querySelector('.katex .code-block-header, .math-display .code-block-header')}})()`);
   });
 
   // USER-TEST #19: 코드 블록 복사 (클립보드 원문 일치, 아이콘 변화)
   await step("c10_copy", async () => {
-    const copyBtn = `${preview} .code-block button[aria-label="Copy Code"]`;
-    await click(copyBtn);
+    await click(`${preview}?.querySelector('.code-block button, .code-block .code-block-copy')`, { center: true });
     await sleep(800);
-    const copiedIcon = await ev(`document.querySelector(${JSON.stringify(preview)} + ' .code-block button')?.getAttribute('aria-label')`);
-    const clip = execFileSync("powershell", ["-NoProfile", "-Command", "Get-Clipboard"], { encoding: "utf8" });
-    const normalizedClip = clip.replace(/\r\n/g, "\n");
-    const equal = normalizedClip === PY || normalizedClip.trim() === PY.trim();
-    return { copiedIcon, equal, clipLength: clip.length };
+    const copiedIcon = await ev(`${preview}?.querySelector('.code-block button, .code-block .code-block-copy')?.getAttribute('aria-label')`);
+
+    // Read via Rust command read_clipboard_text (app IPC)
+    const clipIpc = await ev(`window.__TAURI_INTERNALS__.invoke("read_clipboard_text")`).catch(() => null);
+    // Also read via pwsh UTF-8 Get-Clipboard -Raw
+    const clipPwsh = execFileSync("pwsh", ["-NoProfile", "-Command", "[Console]::OutputEncoding=[Text.Encoding]::UTF8; Get-Clipboard -Raw"], { encoding: "utf8" }).replace(/\r?\n$/, "");
+    const clip = typeof clipIpc === "string" ? clipIpc : clipPwsh;
+
+    const norm = (t) => (t || "").replace(/\r\n/g, "\n");
+    const equal = norm(clip) === PY || norm(clip) + "\n" === PY || norm(clip).trim() === PY.trim();
+    return {
+      expected: PY,
+      clip,
+      clipIpc,
+      clipPwsh,
+      equal,
+      clipLength: clip ? clip.length : 0,
+      copiedIcon
+    };
   });
 
   // USER-TEST #18: 5개 글꼴 설정 변경 반영
@@ -143,9 +169,9 @@ try {
       writeSettings({ theme: "One Dark", preview_code_font_family: f, buffer_font_family: f });
       await sleep(1500);
       r[f] = {
-        pre: await ev(fam(`${preview} pre`)),
-        preSize: await ev(size(`${preview} pre`)),
-        inline: await ev(fam(`${preview} code:not(pre code)`))
+        pre: await ev(fam(`${preview}?.querySelector('.code-block > pre')`)),
+        preSize: await ev(size(`${preview}?.querySelector('.code-block > pre')`)),
+        inline: await ev(fam(`${preview}?.querySelector(':not(pre) > code')`))
       };
     }
     writeSettings({ theme: "One Dark" });
@@ -155,38 +181,42 @@ try {
 
   // USER-TEST #18: 한글 글꼴 렌더 (JetBrains Mono vs D2Coding)
   await step("c5_korean_editor", async () => {
-    await click(row("doc.md"), { dbl: true });
-    await sleep(1000);
-    writeSettings({ theme: "One Dark", buffer_font_family: "JetBrains Mono" });
-    await sleep(1500);
-    const jbFonts = await app.send("CSS.getPlatformFontsForNode", {
-      nodeId: (await app.send("DOM.querySelector", { nodeId: (await app.send("DOM.getDocument")).root.nodeId, selector: ".cm-line" })).nodeId
-    }).catch(() => null);
-
-    writeSettings({ theme: "One Dark", buffer_font_family: "D2Coding" });
-    await sleep(1500);
-    const d2Fonts = await app.send("CSS.getPlatformFontsForNode", {
-      nodeId: (await app.send("DOM.querySelector", { nodeId: (await app.send("DOM.getDocument")).root.nodeId, selector: ".cm-line" })).nodeId
-    }).catch(() => null);
-
+    await click(tabByTitle("doc.md")).catch(() => click(row("doc.md"), { dbl: true }));
+    await sleep(800);
+    const r = {};
+    for (const f of ["JetBrains Mono", "D2Coding"]) {
+      writeSettings({ theme: "One Dark", buffer_font_family: f });
+      await sleep(2500);
+      r[f] = await platformFonts(koreanSpan(editor));
+    }
     writeSettings({ theme: "One Dark" });
-    return { jetbrains: jbFonts?.fonts?.map((f) => `${f.familyName}:${f.glyphCount}`), d2coding: d2Fonts?.fonts?.map((f) => `${f.familyName}:${f.glyphCount}`) };
+    await sleep(1500);
+    return {
+      "JetBrains Mono": r["JetBrains Mono"],
+      "D2Coding": r["D2Coding"],
+      jetbrains: r["JetBrains Mono"],
+      d2coding: r["D2Coding"]
+    };
   });
 
   // USER-TEST #20: Licenses 창에 4개 글꼴 라이선스 포함
   await step("c12_licenses", async () => {
     await click(`document.querySelector('[aria-label="Open Application Menu"]')`);
-    await click(`[...document.querySelectorAll('.menu-name, [role=menuitem], .menu-item')].find(e=>e.textContent.trim().startsWith("Help"))`);
-    await click(`[...document.querySelectorAll('.menu-name, [role=menuitem], .menu-item')].find(e=>e.textContent.trim().startsWith("About"))`);
+    await click(`[...document.querySelectorAll('.menu-name, [role=menuitem]')].find(e=>/^Help/.test(e.textContent.trim()))`).catch(() => {});
+    await click(`[...document.querySelectorAll('[role=menuitem], .menu-item')].find(e=>/About/.test(e.textContent))`);
     await sleep(1000);
-    const aboutList = await ev("[...document.querySelectorAll('.about-credits li, .about-license-item, .licenses-list li')].map(e=>e.textContent.trim())");
-    const btn = "[...document.querySelectorAll('button')].find(b=>b.textContent.includes('Licenses'))";
-    if (await ev(`!!${btn}`)) {
-      await click(btn);
-      await sleep(1500);
-    }
-    const licensesScan = await ev("(()=>{const text=document.body.innerText;return {jetbrains:text.includes('JetBrains Mono'),hack:text.includes('Hack'),ubuntu:text.includes('Ubuntu Mono'),d2coding:text.includes('D2Coding')}})()");
-    return { aboutList, licensesScan };
+    const list = await ev("[...document.querySelectorAll('.about-attributions li, .about-credits li')].map(l=>l.textContent).filter(t=>/JetBrains|Hack|Ubuntu|D2Coding/i.test(t))");
+    await shot("c12-about");
+    await click("[...document.querySelectorAll('.about-buttons button, button')].find(b=>b.textContent==='View All Licenses')").catch(() => {});
+    await sleep(1500);
+    const text = await ev("[...document.querySelectorAll('.cm-content, .licenses, pre')].map(e=>e.textContent).join('\\n')");
+    const scan = {
+      jetbrains: /JetBrains Mono/.test(text) || list.some((t) => /JetBrains/i.test(t)),
+      hack: (/Hack/.test(text) && /Bitstream Vera/.test(text)) || list.some((t) => /Hack/i.test(t)),
+      ubuntu: /UBUNTU FONT LICENCE|Ubuntu Mono/i.test(text) || list.some((t) => /Ubuntu/i.test(t)),
+      d2coding: /D2Coding/i.test(text) || list.some((t) => /D2Coding/i.test(t))
+    };
+    return { aboutList: list, licensesScan: scan, licensesHas: scan, licensesLen: text.length };
   });
 } catch (e) {
   log.fatal = e.stack;

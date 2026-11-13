@@ -73,7 +73,8 @@ const shot = async (n) => {
   const r = await app.send("Page.captureScreenshot", { format: "png" });
   writeFileSync(`${OUT}/${n}.png`, Buffer.from(r.data, "base64"));
 };
-const row = (rel) => `document.querySelector('.tree-window .tree-row[data-path=' + JSON.stringify(JSON.stringify(${JSON.stringify(WW + "\\") + " + " + JSON.stringify(rel.replace(/\//g, "\\"))})).slice(1, -1) + ']')`;
+const P = (rel) => `${WW}\\${rel.replace(/\//g, "\\")}`;
+const row = (rel) => `([...document.querySelectorAll('.tree-window .tree-row')].find(e => (e.dataset.path || e.getAttribute('data-path')) === ${JSON.stringify(P(rel))}) || document.querySelector('.tree-window .tree-row[data-path=${JSON.stringify(JSON.stringify(P(rel))).slice(1, -1)}]'))`;
 const pt = (js, center) => ev(`(()=>{const e=${js};if(!e)return null;e.scrollIntoView({block:'nearest'});const r=e.getBoundingClientRect();return {x:Math.round(r.x+${center ? "r.width/2" : "Math.min(r.width/2,60)"}),y:Math.round(r.y+r.height/2)}})()`);
 const click = async (js, o = {}) => {
   const p = await pt(js, o.center);
@@ -114,6 +115,10 @@ const setQuery = async (q) => {
   await sleep(500);
   return state();
 };
+const toggle = async (label) => {
+  await click(`[...(${bar}||document).querySelectorAll('button[aria-pressed]')].find(b=>new RegExp(${JSON.stringify(label)}, 'i').test(b.getAttribute('aria-label')||b.title||''))`);
+  return state();
+};
 
 try {
   app = await launchApp(EXE);
@@ -135,18 +140,15 @@ try {
 
   await step("c6_toggles", async () => {
     const q1 = await setQuery("apple");
-    await click(`${bar} button[aria-label="Match Case"]`);
-    const q2 = await state();
-    await click(`${bar} button[aria-label="Match Whole Word"]`);
-    const q3 = await state();
-    await click(`${bar} button[aria-label="Match Case"]`);
-    await click(`${bar} button[aria-label="Match Whole Word"]`);
-    await click(`${bar} button[aria-label="Use Regular Expression"]`);
-    const q4 = await setQuery("app.e");
-    await click(`${bar} button[aria-label="Use Regular Expression"]`);
-    const q5 = await state();
+    const q2 = await toggle("case");
+    const q3 = await toggle("word");
+    await toggle("case");
+    await toggle("word");
+    const q4 = await toggle("Regular");
+    const q4b = await setQuery("app.e");
+    const q5 = await toggle("Regular");
     const q6 = await setQuery("한글");
-    return { apple: q1, caseSensitive: q2, wholeWord: q3, regexOn: q4, regexOff: q5, korean: q6 };
+    return { apple: q1, caseSensitive: q2, wholeWord: q3, regexOn: q4b, regexOff: q5, korean: q6 };
   });
 
   await step("c6_next_prev", async () => {

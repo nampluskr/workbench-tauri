@@ -21,6 +21,9 @@ public static class XD {
   [DllImport("user32.dll")] public static extern IntPtr GetAncestor(IntPtr h, int flags);
   [DllImport("user32.dll")] public static extern bool ClientToScreen(IntPtr h, ref POINT p);
   [DllImport("user32.dll")] public static extern uint GetDpiForWindow(IntPtr h);
+  [DllImport("user32.dll")] public static extern bool SetWindowPos(IntPtr h, IntPtr after, int x, int y, int cx, int cy, uint f);
+  [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
+  [StructLayout(LayoutKind.Sequential)] public struct RECT { public int Left, Top, Right, Bottom; }
   public static void Mouse(int flags) { var a = new INPUT[1]; a[0].type = 0; a[0].u.mi.dwFlags = flags; SendInput(1, a, Marshal.SizeOf(typeof(INPUT))); }
   public static void Key(short vk, bool up) { var a = new INPUT[1]; a[0].type = 1; a[0].u.ki.vk = vk; a[0].u.ki.flags = up ? 2 : 0; SendInput(1, a, Marshal.SizeOf(typeof(INPUT))); }
 }
@@ -39,10 +42,25 @@ if (-not (Test-Path $ready)) { throw 'helper window did not start' }
 $h = (Get-Content $ready).Split(' '); $src = [IntPtr][long]$h[0]; $sx = [int]$h[1] + [int]$h[3] / 2; $sy = [int]$h[2] + [int]$h[4] / 2
 $down = $false; $status = 'not-started'
 try {
+  [void][XD]::SetWindowPos($src, [IntPtr]-1, 0, 0, 0, 0, 0x0043)
+  [void][XD]::SetForegroundWindow($src)
   [void][XD]::SetCursorPos($sx, $sy); Start-Sleep -Milliseconds 200
-  # Mouse input goes to the window under the cursor: press only when that is the helper.
   $sp = New-Object XD+POINT; $sp.X = $sx; $sp.Y = $sy
-  if ([XD]::GetAncestor([XD]::WindowFromPoint($sp), 2) -ne $src) { throw 'helper is not under the cursor; nothing sent' }
+  for ($try = 0; $try -lt 20; $try++) {
+    [void][XD]::SetWindowPos($src, [IntPtr]-1, 0, 0, 0, 0, 0x0043)
+    [void][XD]::SetForegroundWindow($src)
+    $rc = New-Object XD+RECT
+    if ([XD]::GetWindowRect($src, [ref]$rc)) {
+      $sx = [int](($rc.Left + $rc.Right) / 2); $sy = [int](($rc.Top + $rc.Bottom) / 2)
+      $sp.X = $sx; $sp.Y = $sy
+    }
+    [void][XD]::SetCursorPos($sx, $sy)
+    Start-Sleep -Milliseconds 100
+    $under = [XD]::WindowFromPoint($sp)
+    if ($under -eq $src -or [XD]::GetAncestor($under, 2) -eq $src) { break }
+  }
+  $under = [XD]::WindowFromPoint($sp)
+  if ($under -ne $src -and [XD]::GetAncestor($under, 2) -ne $src) { throw "helper is not under the cursor; nothing sent (under=$under, src=$src, sx=$sx, sy=$sy)" }
   [XD]::Mouse(2); $down = $true; Start-Sleep -Milliseconds 300   # left down on the helper -> DoDragDrop
   for ($s = 1; $s -le 30; $s++) { [void][XD]::SetCursorPos([int]($sx + ($pt.X - $sx) * $s / 30), [int]($sy + ($pt.Y - $sy) * $s / 30)); Start-Sleep -Milliseconds 30 }
   Start-Sleep -Milliseconds 600

@@ -1,0 +1,71 @@
+[measure-links] Target EXE: D:\projects\workbench-tauri\src-tauri\target\release\workbench-tauri.exe
+[measure-links] Workspace: C:\Users\nampl\AppData\Local\Temp\v081-links-work
+[measure-links] Output Dir: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\links
+
+--- Section 1: Clicked Links (6 categories + Tab/Enter) ---
+Initial preview tabs: {"count":2,"titles":["main-links.html","Preview main-links.html"],"active":"Preview main-links.html"}
+Testing (1a) Local other.html click...
+  -> 1a_local_html_other: PASS (3 tabs: [main-links.html, Preview main-links.html, Preview other.html], active: Preview other.html)
+Testing (1b) Local ./sub/page.html click...
+  -> 1b_local_html_sub: PASS (3 tabs: [main-links.html, Preview main-links.html, Preview page.html], active: Preview page.html)
+Testing (2) Local doc.md click...
+  -> 2_local_markdown: PASS (3 tabs: [main-links.html, Preview main-links.html, Preview doc.md], active: Preview doc.md)
+Testing (3a) Local notes.txt click...
+  -> 3a_local_txt: PASS (3 tabs: [main-links.html, Preview main-links.html, notes.txt], active: notes.txt)
+Testing (3b) Local data.csv click...
+  -> 3b_local_csv: PASS (3 tabs: [main-links.html, Preview main-links.html, data.csv], active: data.csv)
+Testing (4) External https://example.com click (open_url intercept)...
+  -> 4_external_browser: PASS (calls: 0, url: undefined, procs: 22->29 (+7), tabs: 2: [main-links.html, Preview main-links.html])
+Testing (5a) Blocked file:///... click...
+  -> 5a_blocked_file: PASS (tabs: 2: [main-links.html, Preview main-links.html], calls: 0)
+Testing (5b) Blocked javascript:... click...
+  -> 5b_blocked_js: PASS (jsRan: [object Object], tabs: 2: [main-links.html, Preview main-links.html], calls: 0)
+Testing (6) In-page anchor #bottom-marker click...
+  -> 6_anchor_scroll: PASS (scroll: 651 -> 3427)
+Testing (7) Keyboard Focus + Enter on link...
+  -> activeElement before Enter: k7-enter
+  -> 7_keyboard_enter: PASS (activeEl: k7-enter, 3 tabs: [main-links.html, Preview main-links.html, Preview other.html], active: Preview other.html)
+
+--- Section 2: Five Non-Click Avenues ---
+Testing Avenue 1: location.href = https://example.com
+  -> avenue_1_location_href: PASS (calls: 0, tabs: 4)
+Testing Avenue 2: window.open(https://example.com)
+  -> avenue_2_window_open: PASS (calls: 0, tabs: 4)
+Testing Avenue 3: synthetic a.click() and dispatchEvent
+  -> avenue_3_synthetic_clicks: PASS (calls: 0, tabs: 4)
+Testing Avenue 4: forged parent.postMessage
+  -> avenue_4_postmessage_forgery: PASS (calls: 0, tabs: 4)
+Testing Avenue 5: script-created <meta http-equiv=refresh>
+  -> avenue_5_script_meta_refresh: PASS (calls: 0, tabs: 4)
+
+--- Section 3: Prototype Tampering & Token Secrecy ---
+Testing Token Probe in DOM...
+  -> token_discovery_probe: PASS (hasOuterUuid: false, hasScriptToken: false)
+Testing Synthetic click with tampered prototypes...
+  -> synthetic_click_blocked: PASS (calls: 0, tabs: 6)
+Testing Trusted user click with tampered prototypes...
+  -> trusted_user_click_followed: PASS (7 tabs: [main-links.html, Preview main-links.html, non-click.html, Preview non-click.html, proto-tamper.html, Preview proto-tamper.htm…, Preview other.html], active: Preview other.html)
+
+--- Section 4: ORDER-07/08 Isolation Fixtures ---
+Running fixture: navigate.html...
+  -> navigate.html: PASS (frame: http://preview.localhost/p9, tabs: 8)
+Running fixture: refresh.html...
+  -> refresh.html: PASS (frame: http://preview.localhost/p10, tabs: 9)
+Running fixture: loopnav.html...
+  -> loopnav.html: PASS (frame: http://preview.localhost/p11, tabs: 10)
+Running fixture: isolation.html...
+  -> isolation.html: PASS (frame: http://preview.localhost/p12, tabs: 11)
+Running fixture: network.html...
+  -> network.html: PASS (frame: http://preview.localhost/p13, tabs: 12)
+
+--- Section 5: Real Browser Invocation Test (Single Execution at End) ---
+Unwrapping __TAURI_INTERNALS__.invoke hook...
+Browser process count before click: 26
+Dispatching trusted user click on https://example.com link...
+Browser process count after click: 31 (diff: 5)
+  -> real_browser_launch: PASS (26 -> 31)
+
+======================================================
+FINAL RESULTS: PASS=24, FAIL=0
+======================================================
+

@@ -1,0 +1,579 @@
+{
+  "window": {
+    "w": 1440,
+    "h": 852,
+    "dpr": 1
+  },
+  "c1_temp_preview": {
+    "lockPressed": "true",
+    "m1": [
+      [
+        {
+          "title": "Preview m1.md",
+          "active": true,
+          "preview": true,
+          "italic": "italic"
+        }
+      ]
+    ],
+    "m2": [
+      [
+        {
+          "title": "Preview m2.md",
+          "active": true,
+          "preview": true,
+          "italic": "italic"
+        }
+      ]
+    ],
+    "m3": [
+      [
+        {
+          "title": "Preview m3.md",
+          "active": true,
+          "preview": true,
+          "italic": "italic"
+        }
+      ]
+    ]
+  },
+  "c2_keep": {
+    "afterSecondClick": [
+      [
+        {
+          "title": "Preview m3.md",
+          "active": true,
+          "preview": true,
+          "italic": "italic"
+        }
+      ]
+    ],
+    "afterM4": [
+      [
+        {
+          "title": "Preview m4.md",
+          "active": true,
+          "preview": true,
+          "italic": "italic"
+        }
+      ]
+    ],
+    "afterTitleDblClick": [
+      [
+        {
+          "title": "Preview m4.md",
+          "active": true,
+          "preview": false,
+          "italic": "normal"
+        }
+      ]
+    ],
+    "afterM5": [
+      [
+        {
+          "title": "Preview m4.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "Preview m5.md",
+          "active": true,
+          "preview": true,
+          "italic": "italic"
+        }
+      ]
+    ],
+    "afterM5Middle": [
+      [
+        {
+          "title": "Preview m4.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "Preview m5.md",
+          "active": true,
+          "preview": false,
+          "italic": "normal"
+        }
+      ]
+    ]
+  },
+  "c3_other_kinds": {
+    "csv": [
+      [
+        {
+          "title": "Preview m4.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "Preview m5.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "Preview data.csv",
+          "active": true,
+          "preview": true,
+          "italic": "italic"
+        }
+      ]
+    ],
+    "ipynb": [
+      [
+        {
+          "title": "Preview m4.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "Preview m5.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "Preview nb.ipynb",
+          "active": true,
+          "preview": true,
+          "italic": "italic"
+        }
+      ]
+    ]
+  },
+  "c3_lock_off_and_commands": {
+    "lockPressed": "false",
+    "lockOffClick": [
+      [
+        {
+          "title": "Preview m4.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "Preview m5.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "m6.md",
+          "active": true,
+          "preview": true,
+          "italic": "italic"
+        }
+      ]
+    ],
+    "ctrlShiftV": [
+      [
+        {
+          "title": "Preview m4.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "Preview m5.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "m6.md",
+          "active": false,
+          "preview": true,
+          "italic": "italic"
+        },
+        {
+          "title": "Preview m6.md",
+          "active": true,
+          "preview": false,
+          "italic": "normal"
+        }
+      ]
+    ],
+    "ctrlKV": [
+      [
+        {
+          "title": "Preview m4.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "Preview m5.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "m6.md",
+          "active": true,
+          "preview": true,
+          "italic": "italic"
+        },
+        {
+          "title": "Preview m6.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        }
+      ],
+      [
+        {
+          "title": "Preview m6.md",
+          "active": true,
+          "preview": false,
+          "italic": "normal"
+        }
+      ]
+    ],
+    "eyeButton": [
+      [
+        {
+          "title": "Preview m4.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "Preview m5.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "m6.md",
+          "active": false,
+          "preview": true,
+          "italic": "italic"
+        },
+        {
+          "title": "Preview m6.md",
+          "active": true,
+          "preview": false,
+          "italic": "normal"
+        }
+      ],
+      [
+        {
+          "title": "Preview m6.md",
+          "active": true,
+          "preview": false,
+          "italic": "normal"
+        }
+      ]
+    ],
+    "viewMenu": [
+      [
+        {
+          "title": "Preview m4.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "Preview m5.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "m6.md",
+          "active": false,
+          "preview": true,
+          "italic": "italic"
+        },
+        {
+          "title": "Preview m6.md",
+          "active": true,
+          "preview": false,
+          "italic": "normal"
+        }
+      ],
+      [
+        {
+          "title": "Preview m6.md",
+          "active": true,
+          "preview": false,
+          "italic": "normal"
+        }
+      ]
+    ]
+  },
+  "c4_c5_search": {
+    "runs": [
+      {
+        "opened": {
+          "tabs": [
+            "Search"
+          ],
+          "input": {
+            "value": "",
+            "focused": true,
+            "count": null
+          }
+        },
+        "after": {
+          "value": "m1",
+          "focused": true,
+          "count": "1"
+        },
+        "titles": [
+          "Preview m4.md",
+          "Preview m5.md",
+          "m6.md",
+          "Preview m6.md",
+          "m1",
+          "Preview m6.md"
+        ]
+      },
+      {
+        "opened": {
+          "tabs": [
+            "m1",
+            "Search"
+          ],
+          "input": {
+            "value": "",
+            "focused": true,
+            "count": null
+          }
+        },
+        "after": {
+          "value": "long-file-name-1",
+          "focused": true,
+          "count": "7"
+        },
+        "titles": [
+          "Preview m4.md",
+          "Preview m5.md",
+          "m6.md",
+          "Preview m6.md",
+          "m1",
+          "long-file-name-1",
+          "Preview m6.md"
+        ]
+      },
+      {
+        "opened": {
+          "tabs": [
+            "m1",
+            "long-file-name-1",
+            "Search"
+          ],
+          "input": {
+            "value": "",
+            "focused": true,
+            "count": null
+          }
+        },
+        "after": {
+          "value": "data",
+          "focused": true,
+          "count": "1"
+        },
+        "titles": [
+          "Preview m4.md",
+          "Preview m5.md",
+          "m6.md",
+          "Preview m6.md",
+          "m1",
+          "long-file-name-1",
+          "data",
+          "Preview m6.md"
+        ]
+      }
+    ],
+    "revisit": [
+      {
+        "q": "m1",
+        "view": {
+          "value": "m1",
+          "focused": true,
+          "count": "1"
+        }
+      },
+      {
+        "q": "long-file-name-1",
+        "view": {
+          "value": "long-file-name-1",
+          "focused": true,
+          "count": "7"
+        }
+      },
+      {
+        "q": "data",
+        "view": {
+          "value": "data",
+          "focused": true,
+          "count": "1"
+        }
+      }
+    ],
+    "extensionsTabs": 1
+  },
+  "c8_drop": {
+    "lockOff": [
+      [
+        {
+          "title": "Preview m4.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "Preview m5.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "m6.md",
+          "active": false,
+          "preview": true,
+          "italic": "italic"
+        },
+        {
+          "title": "Preview m6.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "m2.md",
+          "active": true,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "m1",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "long-file-name-1",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "data",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "Extensions",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        }
+      ],
+      [
+        {
+          "title": "Preview m6.md",
+          "active": true,
+          "preview": false,
+          "italic": "normal"
+        }
+      ]
+    ],
+    "lockOn": [
+      [
+        {
+          "title": "Preview m4.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "Preview m5.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "m6.md",
+          "active": false,
+          "preview": true,
+          "italic": "italic"
+        },
+        {
+          "title": "Preview m6.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "Preview m3.md",
+          "active": true,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "m2.md",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "m1",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "long-file-name-1",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "data",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        },
+        {
+          "title": "Extensions",
+          "active": false,
+          "preview": false,
+          "italic": "normal"
+        }
+      ],
+      [
+        {
+          "title": "Preview m6.md",
+          "active": true,
+          "preview": false,
+          "italic": "normal"
+        }
+      ]
+    ]
+  },
+  "c7_last_tab": {
+    "before": {
+      "focusInTree": true,
+      "edgeShown": false
+    },
+    "after": {
+      "active": "Extensions",
+      "closeRight": 847.9,
+      "tabRight": 852.9,
+      "edgeLeft": 852.5,
+      "listRight": 852.5,
+      "scrollLeft": 2632,
+      "scrollMax": 2656,
+      "innerWidth": 1440
+    }
+  }
+}

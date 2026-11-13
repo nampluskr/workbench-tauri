@@ -1,0 +1,575 @@
+{
+  "step_i16_tree_selection": {
+    "oneDark": {
+      "folderPlain": {
+        "selected": true,
+        "marked": false,
+        "bg": "rgba(0, 0, 0, 0)",
+        "border": "rgb(71, 103, 158)",
+        "focusedBorderVar": "#47679eff",
+        "ghostSelectedVar": "#454a56ff"
+      },
+      "cursorRow": {
+        "path": "sub",
+        "selected": true,
+        "marked": false,
+        "bg": "rgba(0, 0, 0, 0)",
+        "border": "rgb(71, 103, 158)"
+      },
+      "markedRow": {
+        "selected": true,
+        "marked": true,
+        "bg": "rgb(69, 74, 86)"
+      },
+      "activeFileRow": {
+        "isActiveFile": true,
+        "bg": "rgb(69, 74, 86)"
+      },
+      "outsideFocus": {
+        "treeHasFocus": false,
+        "cursorRowBorder": "rgba(0, 0, 0, 0)",
+        "cursorRowBg": "rgb(69, 74, 86)",
+        "markedRowBg": null,
+        "activeRowBg": "rgb(69, 74, 86)"
+      }
+    },
+    "oneLight": {
+      "folderPlain": {
+        "selected": true,
+        "marked": false,
+        "bg": "rgba(0, 0, 0, 0)",
+        "border": "rgb(125, 130, 232)"
+      }
+    },
+    "zedCompare": {
+      "status": "measured",
+      "list": {
+        "pid": 18548,
+        "hwnd": "0x1D0DA8",
+        "title": "workbench-core"
+      }
+    }
+  },
+  "step_i17_initial_menu": {
+    "pasteIdx": 7,
+    "undo": {
+      "label": "Undo",
+      "keys": "Ctrl-Z",
+      "disabled": true
+    },
+    "redo": {
+      "label": "Redo",
+      "keys": "Ctrl-Shift-Z",
+      "disabled": true
+    },
+    "items": [
+      {
+        "label": "Duplicate",
+        "keys": null,
+        "disabled": false
+      },
+      {
+        "label": "Paste",
+        "keys": "Ctrl-V",
+        "disabled": true
+      },
+      {
+        "label": "Undo",
+        "keys": "Ctrl-Z",
+        "disabled": true
+      },
+      {
+        "label": "Redo",
+        "keys": "Ctrl-Shift-Z",
+        "disabled": true
+      },
+      {
+        "label": "Copy Path",
+        "keys": "Alt-Shift-C",
+        "disabled": false
+      }
+    ]
+  },
+  "step_i17_tree_menu_undo_redo": {
+    "initialMenu": {
+      "pasteIdx": 7,
+      "undo": {
+        "label": "Undo",
+        "keys": "Ctrl-Z",
+        "disabled": true
+      },
+      "redo": {
+        "label": "Redo",
+        "keys": "Ctrl-Shift-Z",
+        "disabled": true
+      },
+      "items": [
+        {
+          "label": "Duplicate",
+          "keys": null,
+          "disabled": false
+        },
+        {
+          "label": "Paste",
+          "keys": "Ctrl-V",
+          "disabled": true
+        },
+        {
+          "label": "Undo",
+          "keys": "Ctrl-Z",
+          "disabled": true
+        },
+        {
+          "label": "Redo",
+          "keys": "Ctrl-Shift-Z",
+          "disabled": true
+        },
+        {
+          "label": "Copy Path",
+          "keys": "Alt-Shift-C",
+          "disabled": false
+        }
+      ]
+    },
+    "diskAfterMove": {
+      "movedFileInFolder": false,
+      "origFileGone": false
+    },
+    "treeRowsAfterMove": [
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\folder",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\folder\\sub",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\folder\\keep.txt",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\doc-outline.md",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\move.txt",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\nb-test.ipynb",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\nb-toc.ipynb",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\readme-toc.md",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\root-file.txt",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\spacing.md"
+    ],
+    "treeRowsAfterExpand": [
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\folder",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\folder\\sub",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\folder\\keep.txt",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\doc-outline.md",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\move.txt",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\nb-test.ipynb",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\nb-toc.ipynb",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\readme-toc.md",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\root-file.txt",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\spacing.md"
+    ],
+    "undoTargetUsed": "([...document.querySelectorAll('.tree-window .tree-row')].find(e => (e.dataset.path || e.getAttribute('data-path')) === \"C:\\\\Users\\\\nampl\\\\AppData\\\\Local\\\\Temp\\\\v081-measure-new\\\\ws\\\\folder\") || document.querySelector('.tree-window .tree-row[data-path=\\\"C:\\\\\\\\Users\\\\\\\\nampl\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\v081-measure-new\\\\\\\\ws\\\\\\\\folder\\\"]'))",
+    "menuAfterMove": {},
+    "diskAfterUndo": {
+      "origRestored": true,
+      "folderFileGone": true
+    },
+    "treeRowsAfterUndo": [
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\folder",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\folder\\sub",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\folder\\keep.txt",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\doc-outline.md",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\move.txt",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\nb-test.ipynb",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\nb-toc.ipynb",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\readme-toc.md",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\root-file.txt",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\spacing.md"
+    ],
+    "redoTargetUsed": "([...document.querySelectorAll('.tree-window .tree-row')].find(e => (e.dataset.path || e.getAttribute('data-path')) === \"C:\\\\Users\\\\nampl\\\\AppData\\\\Local\\\\Temp\\\\v081-measure-new\\\\ws\\\\move.txt\") || document.querySelector('.tree-window .tree-row[data-path=\\\"C:\\\\\\\\Users\\\\\\\\nampl\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\v081-measure-new\\\\\\\\ws\\\\\\\\move.txt\\\"]'))",
+    "menuAfterUndo": {
+      "paste": {
+        "label": "Paste",
+        "keys": "Ctrl-V",
+        "disabled": true
+      },
+      "undo": {
+        "label": "Undo",
+        "keys": "Ctrl-Z",
+        "disabled": true
+      },
+      "redo": {
+        "label": "Redo",
+        "keys": "Ctrl-Shift-Z",
+        "disabled": true
+      }
+    },
+    "diskAfterRedo": {
+      "reMoved": false,
+      "origGoneAgain": false
+    },
+    "treeRowsAfterRedo": [
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\folder",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\folder\\sub",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\folder\\keep.txt",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\doc-outline.md",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\move.txt",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\nb-test.ipynb",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\nb-toc.ipynb",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\readme-toc.md",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\root-file.txt",
+      "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-measure-new\\ws\\spacing.md"
+    ]
+  },
+  "step_i18_outline_keyboard": {
+    "outlineFocused": true,
+    "borderOnSelected": {
+      "border": "rgb(71, 103, 158)",
+      "focusedVar": "#47679eff"
+    },
+    "nav": {
+      "afterDown": "Install",
+      "afterDown2": "Windows",
+      "afterLeft": "Windows",
+      "afterRight": "Windows"
+    },
+    "editorJump": {
+      "focused": true,
+      "activeLine": "### Windows",
+      "lineNo": null
+    },
+    "isolation": {
+      "pickedBefore": "Path",
+      "pickedAfter": "Path",
+      "isPreserved": true,
+      "activeElAfter": "outline-list"
+    }
+  },
+  "step_i19_code_block_borders": [
+    {
+      "theme": "One Dark",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(54, 60, 70)",
+      "borderVariantVar": "#363c46ff",
+      "blockBg": "rgb(47, 52, 62)",
+      "pageBg": "rgb(40, 44, 51)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "One Light",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(223, 223, 224)",
+      "borderVariantVar": "#dfdfe0ff",
+      "blockBg": "rgb(235, 235, 236)",
+      "pageBg": "rgb(250, 250, 250)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "Catppuccin Latte",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(231, 226, 245)",
+      "borderVariantVar": "#e7e2f5ff",
+      "blockBg": "rgb(230, 233, 239)",
+      "pageBg": "rgb(239, 241, 245)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "Catppuccin Frappé",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(60, 60, 83)",
+      "borderVariantVar": "#3c3c53ff",
+      "blockBg": "rgb(41, 44, 60)",
+      "pageBg": "rgb(48, 52, 70)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "Catppuccin Macchiato",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(49, 49, 72)",
+      "borderVariantVar": "#313148ff",
+      "blockBg": "rgb(30, 32, 48)",
+      "pageBg": "rgb(36, 39, 58)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "Catppuccin Mocha",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(44, 41, 61)",
+      "borderVariantVar": "#2c293dff",
+      "blockBg": "rgb(24, 24, 37)",
+      "pageBg": "rgb(30, 30, 46)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "Catppuccin Latte - No Italics",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(231, 226, 245)",
+      "borderVariantVar": "#e7e2f5ff",
+      "blockBg": "rgb(230, 233, 239)",
+      "pageBg": "rgb(239, 241, 245)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "Catppuccin Frappé - No Italics",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(60, 60, 83)",
+      "borderVariantVar": "#3c3c53ff",
+      "blockBg": "rgb(41, 44, 60)",
+      "pageBg": "rgb(48, 52, 70)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "Catppuccin Macchiato - No Italics",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(49, 49, 72)",
+      "borderVariantVar": "#313148ff",
+      "blockBg": "rgb(30, 32, 48)",
+      "pageBg": "rgb(36, 39, 58)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "Catppuccin Mocha - No Italics",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(44, 41, 61)",
+      "borderVariantVar": "#2c293dff",
+      "blockBg": "rgb(24, 24, 37)",
+      "pageBg": "rgb(30, 30, 46)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "macOS Classic Light",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(224, 224, 224)",
+      "borderVariantVar": "#e0e0e0ff",
+      "blockBg": "rgb(249, 249, 249)",
+      "pageBg": "rgb(255, 255, 255)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "macOS Classic Dark",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(58, 58, 58)",
+      "borderVariantVar": "#3a3a3aff",
+      "blockBg": "rgb(30, 29, 30)",
+      "pageBg": "rgb(19, 19, 19)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "Ayu Dark",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(45, 47, 52)",
+      "borderVariantVar": "#2d2f34ff",
+      "blockBg": "rgb(31, 33, 39)",
+      "pageBg": "rgb(13, 16, 22)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "Ayu Light",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(223, 224, 225)",
+      "borderVariantVar": "#dfe0e1ff",
+      "blockBg": "rgb(236, 236, 237)",
+      "pageBg": "rgb(252, 252, 252)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "Ayu Mirage",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(67, 70, 79)",
+      "borderVariantVar": "#43464fff",
+      "blockBg": "rgb(53, 57, 68)",
+      "pageBg": "rgb(36, 40, 53)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "Gruvbox Dark",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(73, 67, 64)",
+      "borderVariantVar": "#494340ff",
+      "blockBg": "rgb(58, 55, 53)",
+      "pageBg": "rgb(40, 40, 40)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "Gruvbox Dark Hard",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(73, 67, 64)",
+      "borderVariantVar": "#494340ff",
+      "blockBg": "rgb(57, 54, 52)",
+      "pageBg": "rgb(29, 32, 33)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "Gruvbox Dark Soft",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(73, 67, 64)",
+      "borderVariantVar": "#494340ff",
+      "blockBg": "rgb(59, 55, 53)",
+      "pageBg": "rgb(50, 48, 47)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "Gruvbox Light",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(221, 204, 167)",
+      "borderVariantVar": "#ddcca7ff",
+      "blockBg": "rgb(236, 221, 180)",
+      "pageBg": "rgb(251, 241, 199)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "Gruvbox Light Hard",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(221, 204, 167)",
+      "borderVariantVar": "#ddcca7ff",
+      "blockBg": "rgb(236, 221, 181)",
+      "pageBg": "rgb(249, 245, 215)",
+      "borderValid": true,
+      "distinguishable": true
+    },
+    {
+      "theme": "Gruvbox Light Soft",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderColor": "rgb(221, 204, 167)",
+      "borderVariantVar": "#ddcca7ff",
+      "blockBg": "rgb(236, 220, 179)",
+      "pageBg": "rgb(242, 229, 188)",
+      "borderValid": true,
+      "distinguishable": true
+    }
+  ],
+  "step_i20_ipynb_output_bg": {
+    "output": {
+      "tag": "PRE",
+      "className": "nb-output",
+      "bg": "rgba(0, 0, 0, 0)",
+      "borderTop": "0px"
+    },
+    "traceback": {
+      "tag": "PRE",
+      "className": "nb-traceback",
+      "bg": "rgba(0, 0, 0, 0)",
+      "borderTop": "0px"
+    },
+    "codeCell": {
+      "tag": "DIV",
+      "className": "code-block",
+      "bg": "rgb(47, 52, 62)"
+    },
+    "outputBg": "rgba(0, 0, 0, 0)",
+    "outputBorder": "0px",
+    "tracebackBg": "rgba(0, 0, 0, 0)",
+    "tracebackBorder": "0px",
+    "codeCellBg": "rgb(47, 52, 62)",
+    "panelBgVar": "#2f343eff",
+    "isOutputTransparent": true,
+    "isTbTransparent": true,
+    "isCellShaded": true
+  },
+  "step_i21_loose_list_spacing": {
+    "looseUlMarginBottom": "12px",
+    "lastPInLiMarginBottom": "16px",
+    "endPMarginTop": "0px",
+    "rectDistance": 12,
+    "totalMarginStack": 28,
+    "inkDistance": 51,
+    "inkTopDistance": 51,
+    "inkGapDistance": 31
+  },
+  "step_i22_heading_slug_links": {
+    "korean": {
+      "previewTop": 65,
+      "headingTop": 65,
+      "diff": 0,
+      "pass": true
+    },
+    "usage1": {
+      "previewTop": 65,
+      "headingTop": 65,
+      "diff": 0,
+      "pass": true
+    },
+    "usage2": {
+      "previewTop": 65,
+      "headingTop": 65,
+      "diff": 0,
+      "pass": true
+    },
+    "invalidLink": {
+      "before": 0,
+      "after": 0,
+      "unchanged": true,
+      "pass": true
+    },
+    "ipynb": {
+      "previewTop": 65,
+      "headingTop": 720,
+      "diff": 655,
+      "pass": false
+    }
+  },
+  "step_i23_list_gap_scaling": {
+    "scalingResults": {
+      "font_16": {
+        "fontSize": 16,
+        "listGap": "4px",
+        "listLineGap": "6px",
+        "paragraphGap": "16px",
+        "paragraphLineGap": "8px"
+      },
+      "font_20": {
+        "fontSize": 20,
+        "listGap": "5px",
+        "listLineGap": "7.5px",
+        "paragraphGap": "16px",
+        "paragraphLineGap": "8px"
+      },
+      "font_24": {
+        "fontSize": 24,
+        "listGap": "6px",
+        "listLineGap": "9px",
+        "paragraphGap": "16px",
+        "paragraphLineGap": "8px"
+      }
+    },
+    "descriptions": {
+      "listLineSpacing": "Controls the space between wrapped lines of a list item, in pixels at a 16px preview font. Scales with the preview font.",
+      "listItemSpacing": "Controls the space between list items, in pixels at a 16px preview font. Scales with the preview font."
+    }
+  }
+}

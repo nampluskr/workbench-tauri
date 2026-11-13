@@ -136,3 +136,28 @@
 | C-15-R6 | 5회차 남은 무효 항목(c6 전경·판정 불가 분리, c2 splitPane, c8), 뒤 창 시험 | I-14 · I-15 |
 | C-16 | ORDER-08 코드 리뷰·전체 검증(커밋 직전) — tauri-checker | I-14 · I-15 |
 | W-12 | PROGRESS(ORDER-08 기록)·PLAN(이 표) | ORDER-08 |
+
+### Phase 9 작업 카드
+
+| 카드 | 할 일 | core 항목 |
+|---|---|---|
+| K-09a | 트리 행 배경(marked·열린 파일만), 우클릭 메뉴 Undo·Redo, 코드 블록 1px 테두리, ipynb 출력 음영 빼기, 느슨한 목록 끝 여백, 목록 간격 비례·설명 문구 | I-16 · I-17 · I-19 · I-20 · I-21 · I-23 |
+| K-09b | Outline 행 키보드 이동(트리 키 규칙 재사용), 미리보기 `#슬러그` 링크(Zed 슬러그 규칙) | I-18 · I-22 |
+| K-09c | HTML 미리보기 링크 따라가기: 머리 스크립트(`isTrusted` + 비밀 토큰), `classifyHtmlLink` | I-24 |
+| C-17 | 회귀 준비: 나 16줄·대표 동작·ORDER-08 표, `verify/ORDER-09/run-regression.mjs`·`compare-criteria.mjs`·`regress-*.mjs` | ORDER-09 3.10 |
+| C-18 | I-16~I-23 V3 스크립트(`measure-new.mjs`)와 fixture | I-16 ~ I-23 |
+| C-19 | ORDER-09 코드 리뷰·전체 검증(I-24 보안 리뷰), I-24 V3 스크립트(`measure-links.mjs`)와 fixture — tauri-checker | I-16 ~ I-24 |
+| C-19-R1 | `measure-links.mjs`: 새 브라우저 PID 끝내기를 빼고 `openUrl` 호출 기록, 실제 호출은 마지막 한 번(기록만) | I-24 |
+| K-09d | 0.8.1 release 다시 빌드(`9a27d12`), `docs/BUILD.md` 4A절·7절 | ORDER-09 3.9 |
+| C-20 | 측정 스크립트 1차: `data-path` 선택자 이스케이프, 값 없음 → NO-DATA, o8 `page.html`, About 버전 | ORDER-09 3.10 · I-16 ~ I-24 |
+| C-20-R1 | 측정 스크립트 2차: I-17·I-18·I-20(fixture JSON)·I-21 잉크 간격·I-22·I-23·I-24 단계 격리 | I-16 ~ I-24 |
+| C-20-R2 | 회귀 스크립트: rep 키 이름, 폴더 펼침, o4·o5·o6·o7·o8 식·선택자, ext-drop | ORDER-09 3.10 |
+| K-09e | 느슨한 목록 끝 여백 규칙 특이도 (0,1,1) → (0,2,1) | I-21 |
+| K-09d-R1 | 0.8.1 release 다시 빌드(`56c3b66`), `docs/BUILD.md` 4A절 값 | ORDER-09 3.9 |
+| C-20-R3 | `measure-links` 외부 링크 기록(Fetch 가로채기)·Enter·토큰 판정, `measure-new` I-22 링크 찾기·I-17 처음 메뉴·디스크 판정 | I-17 · I-22 · I-24 |
+| C-20-R4 | 회귀: #13 판정, 요약 파일 쓰기, #8 도우미 창 좌표, #18 글리프, #19 클립보드, REP-I3·PREV | ORDER-09 3.10 |
+| C-20-R5 | I-17 단계를 `regress-o2`로(`i17_menu_undo_redo`), I-22 보이는 미리보기·긴 fixture·top 판정 | I-17 · I-22 |
+| C-20-R6 | 회귀: O8 I-14 전경 기록·판정 불가, #13 `writeFileSync`, REP-I3 대체 판정, REP-PREV 대기, #8 도우미 창 위치(ORDER-09로 복사) | ORDER-09 3.10 · I-14 |
+| C-21 | I-16 Zed 나란히 캡처 스크립트(`zed-i16.mjs`, 새 창만 조작·닫기) | I-16 |
+| C-21-R1 | `zed-i16.mjs`: Restricted Mode는 "Stay"로만 닫기, 테마 추정, 프로젝트 패널 자르기 단계 넷, `measure-new` One Light 네 단계 | I-16 |
+| W-14 | PROGRESS(ORDER-09 기록)·PLAN(이 표) | ORDER-09 |

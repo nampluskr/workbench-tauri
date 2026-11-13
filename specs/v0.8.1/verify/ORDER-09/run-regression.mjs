@@ -10,7 +10,7 @@
 //   --compare                              Evaluate existing results against criteria without running tests
 //   --help                                 Show usage help
 
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { resolve } from "node:path";
 import { evaluateCriteria, formatMarkdownTable } from "./compare-criteria.mjs";
@@ -162,4 +162,9 @@ const results = evaluateCriteria();
 const table = formatMarkdownTable(results);
 console.log(table);
 
-console.log("\nDetailed markdown table saved in verify/ORDER-09/regress/regression-summary.md");
+try {
+  writeFileSync(resolve(REPO, "specs/v0.8.1/verify/ORDER-09/regress/regression-summary.md"), table);
+  console.log("\nDetailed markdown table saved in verify/ORDER-09/regress/regression-summary.md");
+} catch (e) {
+  console.warn(`[WARN] Could not write regression-summary.md: ${e.message}`);
+}

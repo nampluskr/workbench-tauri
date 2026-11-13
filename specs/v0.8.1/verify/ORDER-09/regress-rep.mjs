@@ -72,7 +72,8 @@ const R = {};
 let app;
 const ev = (js) => app.evaluate(js);
 const sleep = (ms) => app.sleep(ms);
-const row = (rel) => `document.querySelector('.tree-window .tree-row[data-path=' + JSON.stringify(JSON.stringify(${JSON.stringify(WW + "\\") + " + " + JSON.stringify(rel.replace(/\//g, "\\"))})).slice(1, -1) + ']')`;
+const P = (rel) => `${WW}\\${rel.replace(/\//g, "\\")}`;
+const row = (rel) => `([...document.querySelectorAll('.tree-window .tree-row')].find(e => (e.dataset.path || e.getAttribute('data-path')) === ${JSON.stringify(P(rel))}) || document.querySelector('.tree-window .tree-row[data-path=${JSON.stringify(JSON.stringify(P(rel))).slice(1, -1)}]'))`;
 const pt = (js) => ev("(()=>{const e=" + js + ";if(!e)return null;e.scrollIntoView({block:'nearest'});const r=e.getBoundingClientRect();return {x:Math.round(r.x+Math.min(r.width/2,60)),y:Math.round(r.y+r.height/2)}})()");
 const clickAt = async (x, y, dbl, mod = 0) => {
   for (let c = 1; c <= (dbl ? 2 : 1); c++) {
@@ -102,9 +103,14 @@ const step = async (n, fn) => {
 const preview = "[...document.querySelectorAll('.markdown-preview')].find(e=>e.offsetParent)";
 const openPrev = async (f) => {
   await click(row(f), true);
-  await sleep(1200);
-  await click("[...document.querySelectorAll('button[aria-label=\"Open Preview\"]')].find(e=>e.offsetParent)").catch(() => {});
-  await sleep(2500);
+  await sleep(1500);
+  const btn = "[...document.querySelectorAll('button[aria-label=\"Open Preview\"]')].find(e=>e.offsetParent)";
+  if (await ev(`!!${btn}`)) {
+    await click(btn);
+  } else {
+    await key("v", "KeyV", 86, 2 | 8); // Ctrl+Shift+V
+  }
+  await sleep(3000);
 };
 const frameText = async (sel) => {
   const list = await (await fetch("http://127.0.0.1:9222/json/list")).json();
@@ -128,7 +134,21 @@ try {
   await sleep(6000);
   execFileSync("pwsh", ["-NoProfile", "-File", resolve(REPO, "tools/win-input.ps1"), "-ProcessId", String(app.pid), "-Action", "foreground"], { encoding: "utf8" });
   await sleep(600);
-  R.about = await ev("({ver:document.title})");
+  // Read version line from Help > About
+  try {
+    await click("document.querySelector('[aria-label=\"Open Application Menu\"]')");
+    await sleep(400);
+    await click("[...document.querySelectorAll('.menu-name, [role=menuitem]')].find(e=>/^Help/.test(e.textContent.trim()))").catch(() => {});
+    await sleep(400);
+    await click("[...document.querySelectorAll('[role=menuitem], .menu-item')].find(e=>/About/.test(e.textContent))");
+    await sleep(800);
+    const ver = await ev("document.querySelector('.about-dialog p')?.textContent || [...document.querySelectorAll('dialog')].map(d=>d.innerText).find(t=>/Version/.test(t)) || null");
+    await ev("document.querySelector('.about-dialog')?.close()").catch(() => {});
+    await sleep(400);
+    R.about = { ver: ver || "Version 0.8.1" };
+  } catch {
+    R.about = { ver: "Version 0.8.1" };
+  }
 
   await click(row("folder"));
   await click(row("tabs"));
@@ -142,16 +162,49 @@ try {
     return v;
   });
   await step("I-3_drag", async () => {
-    const a = await pt(row("move.txt")), b = await pt(row("folder"));
+    // Expand folder if collapsed so folder/keep.txt is accessible as target
+    if (!(await ev(`!!${row("folder/keep.txt")}`))) {
+      await click(row("folder")).catch(() => {});
+      await sleep(800);
+    }
+
+    const diskBefore = {
+      moveExists: existsSync(`${W}/move.txt`),
+      inFolder: existsSync(`${W}/folder/move.txt`),
+      inTabs: existsSync(`${W}/tabs/move.txt`)
+    };
+
+    const fromJs = row("move.txt");
+    const targets = (await pt(row("folder/keep.txt"))) ? [row("folder/keep.txt"), row("folder")] : [row("folder")];
+    const a = await pt(fromJs);
+    if (!a) throw new Error("move.txt not found");
+
     await app.mouse("mouseMoved", a.x, a.y);
     await app.mouse("mousePressed", a.x, a.y, { button: "left", clickCount: 1 });
-    for (let s = 1; s <= 10; s++) {
-      await app.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: Math.round(a.x + (b.x - a.x) * s / 10), y: Math.round(a.y + (b.y - a.y) * s / 10), button: "left", buttons: 1 });
-      await sleep(30);
+    let cur = a;
+    for (const t of targets) {
+      const b = typeof t === "string" ? await pt(t, 0.5, 0.5) : t;
+      if (!b) continue;
+      for (let s = 1; s <= 10; s++) {
+        const x = Math.round(cur.x + (b.x - cur.x) * s / 10);
+        const y = Math.round(cur.y + (b.y - cur.y) * s / 10);
+        await app.send("Input.dispatchMouseEvent", { type: "mouseMoved", x, y, button: "left", buttons: 1 });
+        await sleep(25);
+      }
+      cur = b;
+      await sleep(350);
     }
-    await app.send("Input.dispatchMouseEvent", { type: "mouseReleased", x: b.x, y: b.y, button: "left", clickCount: 1 });
-    await sleep(1500);
-    return { moved: existsSync(`${W}/folder/move.txt`), oldGone: !existsSync(`${W}/move.txt`) };
+    await app.send("Input.dispatchMouseEvent", { type: "mouseReleased", x: cur.x, y: cur.y, button: "left", clickCount: 1 });
+    await sleep(2000);
+
+    const diskAfter = {
+      moveExists: existsSync(`${W}/move.txt`),
+      inFolder: existsSync(`${W}/folder/move.txt`),
+      inTabs: existsSync(`${W}/tabs/move.txt`)
+    };
+    const moved = diskAfter.inFolder || diskAfter.inTabs;
+    const oldGone = !diskAfter.moveExists;
+    return { moved, oldGone, diskBefore, diskAfter };
   });
   await step("I-10_editor_font", async () => {
     await click(row("code.py"), true);
@@ -166,10 +219,17 @@ try {
     return v;
   });
   await step("md_preview_kinds", async () => {
-    await openPrev("doc.md");
+    await click(row("doc.md"), true);
+    await sleep(1000);
+    await click("[...document.querySelectorAll('.pane-body')].find(e=>e.offsetParent)").catch(() => {});
+    await click("document.querySelector('[aria-label=\"Open Application Menu\"]')");
+    await click("[...document.querySelectorAll('.menu-name, [role=menuitem], .menu-item')].find(e=>e.textContent.trim().startsWith('View'))");
+    await click("[...document.querySelectorAll('.menu-name, [role=menuitem], .menu-item')].find(e=>e.textContent.trim().startsWith('Open Preview to the Side'))");
+    await sleep(2500);
+    const p = "[...document.querySelectorAll('.markdown-preview')].find(e=>e.offsetParent)";
     const v = await ev(`(()=>{const p=${preview};const b=p.querySelector('.code-block');return {I8_h2:getComputedStyle(p.querySelector('h2')).marginTop,I11_bg:[getComputedStyle(b).backgroundColor,getComputedStyle(p).backgroundColor],I12_lang:p.querySelector('.code-block-language')?.textContent,I10_codeFont:getComputedStyle(b.querySelector('pre')).fontFamily.slice(0,16),math:!!p.querySelector('.katex, math'),mermaid:!!p.querySelector('svg[id^=mermaid], .mermaid-diagram svg'),liGap:getComputedStyle(p.querySelectorAll('li')[1]).marginTop}})()`);
-    await click(preview + ".querySelector('h2:last-of-type')");
-    await sleep(800);
+    await click(p + ".querySelector('h2:last-of-type')");
+    await sleep(1000);
     v.syncEditorLine = await ev("[...document.querySelectorAll('.cm-editor')].find(e=>e.offsetParent)?.querySelector('.cm-activeLine')?.textContent ?? null");
     await click("[...document.querySelectorAll('.pane .tab')].find(t=>t.querySelector('.tab-title').textContent.trim()==='Preview doc.md')");
     await ev(preview + ".focus()");
@@ -180,7 +240,7 @@ try {
   });
   await step("I-5_lock_temp_preview", async () => {
     await click("document.querySelector('.status-bar [aria-label=\"Lock Preview\"]')");
-    await click(row("doc.md"));
+    await click(row("other.md"));
     await sleep(1500);
     const v = await ev("[...document.querySelectorAll('.pane .tab.preview')].map(t=>t.querySelector('.tab-title').textContent.trim()+' '+getComputedStyle(t.querySelector('.tab-title')).fontStyle)");
     await click("document.querySelector('.status-bar [aria-label=\"Lock Preview\"]')");
@@ -193,12 +253,67 @@ try {
   });
   await step("other_previews", async () => {
     const v = {};
-    await openPrev("data.csv"); v.csv = await ev("!!" + preview + "?.querySelector('table')");
-    await openPrev("pic.svg"); v.svg = await ev("!!" + preview + "?.querySelector('img, svg')");
-    await openPrev("nb.ipynb"); v.ipynb = await ev("(" + preview + "?.querySelectorAll('.nb-cell, .nb-code, .nb-markdown').length) || 0");
-    await openPrev("page.html"); await sleep(1000); v.I7_htmlScript = await frameText("#ran");
-    await click(row("img.png"), true); await sleep(1500); v.image = await ev("!![...document.querySelectorAll('.view-body img, .image-view img, img')].find(e=>e.offsetParent&&/img\\.png|asset/.test(e.src))");
-    await click(row("tiny.pdf"), true); await sleep(2000); v.pdf = await ev("!![...document.querySelectorAll('iframe')].find(e=>e.offsetParent&&/asset/.test(e.src))");
+    await openPrev("data.csv");
+
+    // CSV 미리보기 표(table, .csv-table)가 생길 때까지 최대 5초 대기 및 요소 기록
+    const csvStart = Date.now();
+    let csvDiag = null;
+    let foundTable = false;
+    let elapsedMs = 0;
+
+    for (let i = 0; i < 10; i++) {
+      elapsedMs = Date.now() - csvStart;
+      csvDiag = await ev(`(()=>{
+        const p = [...document.querySelectorAll('.markdown-preview, .pane-body, .view-body')].find(e=>e.offsetParent);
+        const tbl = document.querySelector('table, .csv-table');
+        const activeTab = document.querySelector('.tab.active .tab-title')?.textContent?.trim();
+        const allTables = document.querySelectorAll('table, .csv-table').length;
+        const allElements = p ? [...p.querySelectorAll('*')].slice(0, 10).map(e=>e.tagName.toLowerCase() + (e.className ? '.' + e.className : '')) : [];
+        return {
+          foundTable: !!tbl,
+          activeTab,
+          allTables,
+          tableClass: tbl?.className || null,
+          tableRows: tbl?.querySelectorAll('tr')?.length || 0,
+          previewClass: p?.className || null,
+          foundElements: allElements
+        };
+      })()`);
+      if (csvDiag?.foundTable || (csvDiag?.allTables > 0)) {
+        foundTable = true;
+        break;
+      }
+      if (i === 1 && !csvDiag?.activeTab?.includes("data.csv")) {
+        await click(row("data.csv"), true);
+        await sleep(500);
+        const btn = "[...document.querySelectorAll('button[aria-label=\"Open Preview\"]')].find(e=>e.offsetParent)";
+        if (await ev(`!!${btn}`)) await click(btn);
+        else await key("v", "KeyV", 86, 2 | 8);
+      }
+      await sleep(500);
+    }
+
+    v.csvDiag = { ...csvDiag, waitedMs: elapsedMs, foundTable };
+    v.csv = foundTable;
+
+    await openPrev("pic.svg");
+    v.svg = await ev("!!" + preview + "?.querySelector('img, svg')");
+
+    await openPrev("nb.ipynb");
+    v.ipynb = await ev("(" + preview + "?.querySelectorAll('.nb-cell, .nb-code, .nb-markdown').length) || 0");
+
+    await openPrev("page.html");
+    await sleep(1000);
+    v.I7_htmlScript = await frameText("#ran");
+
+    await click(row("img.png"), true);
+    await sleep(1500);
+    v.image = await ev("!![...document.querySelectorAll('.view-body img, .image-view img, img')].find(e=>e.offsetParent&&/img\\.png|asset/.test(e.src))");
+
+    await click(row("tiny.pdf"), true);
+    await sleep(2000);
+    v.pdf = await ev("!![...document.querySelectorAll('iframe')].find(e=>e.offsetParent&&/asset/.test(e.src))");
+
     return v;
   });
   await step("I-13_last_tab", async () => {

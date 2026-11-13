@@ -1,0 +1,522 @@
+{
+  "exe": "D:\\projects\\workbench-tauri\\src-tauri\\target\\release\\workbench-tauri.exe",
+  "timestamp": "2026-11-13T09:16:20.532Z",
+  "clickedLinks": {
+    "1a_local_html_other": {
+      "pass": true,
+      "tabs": {
+        "count": 3,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html",
+          "Preview other.html"
+        ],
+        "active": "Preview other.html"
+      },
+      "titles": [
+        "main-links.html",
+        "Preview main-links.html",
+        "Preview other.html"
+      ],
+      "openUrlCalls": []
+    },
+    "1b_local_html_sub": {
+      "pass": true,
+      "tabs": {
+        "count": 3,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html",
+          "Preview page.html"
+        ],
+        "active": "Preview page.html"
+      },
+      "titles": [
+        "main-links.html",
+        "Preview main-links.html",
+        "Preview page.html"
+      ],
+      "openUrlCalls": []
+    },
+    "2_local_markdown": {
+      "pass": true,
+      "tabs": {
+        "count": 3,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html",
+          "Preview doc.md"
+        ],
+        "active": "Preview doc.md"
+      },
+      "titles": [
+        "main-links.html",
+        "Preview main-links.html",
+        "Preview doc.md"
+      ],
+      "openUrlCalls": []
+    },
+    "3a_local_txt": {
+      "pass": true,
+      "tabs": {
+        "count": 3,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html",
+          "notes.txt"
+        ],
+        "active": "notes.txt"
+      },
+      "titles": [
+        "main-links.html",
+        "Preview main-links.html",
+        "notes.txt"
+      ],
+      "openUrlCalls": []
+    },
+    "3b_local_csv": {
+      "pass": true,
+      "tabs": {
+        "count": 3,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html",
+          "data.csv"
+        ],
+        "active": "data.csv"
+      },
+      "titles": [
+        "main-links.html",
+        "Preview main-links.html",
+        "data.csv"
+      ],
+      "openUrlCalls": []
+    },
+    "4_external_browser": {
+      "pass": true,
+      "openUrlCalls": [],
+      "procsBefore": 22,
+      "procsAfter": 29,
+      "procsDiff": 7,
+      "browserLaunched": true,
+      "tabs": {
+        "count": 2,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html"
+        ],
+        "active": "Preview main-links.html"
+      },
+      "titles": [
+        "main-links.html",
+        "Preview main-links.html"
+      ]
+    },
+    "5a_blocked_file": {
+      "pass": true,
+      "tabs": {
+        "count": 2,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html"
+        ],
+        "active": "Preview main-links.html"
+      },
+      "titles": [
+        "main-links.html",
+        "Preview main-links.html"
+      ],
+      "openUrlCalls": []
+    },
+    "5b_blocked_js": {
+      "pass": true,
+      "jsRan": {
+        "id": 771100785,
+        "result": {
+          "result": {
+            "type": "undefined"
+          }
+        }
+      },
+      "tabs": {
+        "count": 2,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html"
+        ],
+        "active": "Preview main-links.html"
+      },
+      "titles": [
+        "main-links.html",
+        "Preview main-links.html"
+      ],
+      "openUrlCalls": []
+    },
+    "6_anchor_scroll": {
+      "pass": true,
+      "scrollBefore": 651,
+      "scrollAfter": 3427,
+      "tabs": {
+        "count": 2,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html"
+        ],
+        "active": "Preview main-links.html"
+      },
+      "titles": [
+        "main-links.html",
+        "Preview main-links.html"
+      ],
+      "openUrlCalls": []
+    },
+    "7_keyboard_enter": {
+      "pass": true,
+      "activeElement": "k7-enter",
+      "tabs": {
+        "count": 3,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html",
+          "Preview other.html"
+        ],
+        "active": "Preview other.html"
+      },
+      "titles": [
+        "main-links.html",
+        "Preview main-links.html",
+        "Preview other.html"
+      ],
+      "openUrlCalls": []
+    }
+  },
+  "nonClickAvenues": {
+    "avenue_1_location_href": {
+      "pass": true,
+      "openUrlCalls": [],
+      "tabs": {
+        "count": 4,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html",
+          "non-click.html",
+          "Preview non-click.html"
+        ],
+        "active": "Preview non-click.html"
+      },
+      "titles": [
+        "main-links.html",
+        "Preview main-links.html",
+        "non-click.html",
+        "Preview non-click.html"
+      ]
+    },
+    "avenue_2_window_open": {
+      "pass": true,
+      "openUrlCalls": [],
+      "tabs": {
+        "count": 4,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html",
+          "non-click.html",
+          "Preview non-click.html"
+        ],
+        "active": "Preview non-click.html"
+      },
+      "titles": [
+        "main-links.html",
+        "Preview main-links.html",
+        "non-click.html",
+        "Preview non-click.html"
+      ]
+    },
+    "avenue_3_synthetic_clicks": {
+      "pass": true,
+      "openUrlCalls": [],
+      "tabs": {
+        "count": 4,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html",
+          "non-click.html",
+          "Preview non-click.html"
+        ],
+        "active": "Preview non-click.html"
+      },
+      "titles": [
+        "main-links.html",
+        "Preview main-links.html",
+        "non-click.html",
+        "Preview non-click.html"
+      ]
+    },
+    "avenue_4_postmessage_forgery": {
+      "pass": true,
+      "openUrlCalls": [],
+      "tabs": {
+        "count": 4,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html",
+          "non-click.html",
+          "Preview non-click.html"
+        ],
+        "active": "Preview non-click.html"
+      },
+      "titles": [
+        "main-links.html",
+        "Preview main-links.html",
+        "non-click.html",
+        "Preview non-click.html"
+      ]
+    },
+    "avenue_5_script_meta_refresh": {
+      "pass": true,
+      "openUrlCalls": [],
+      "tabs": {
+        "count": 4,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html",
+          "non-click.html",
+          "Preview non-click.html"
+        ],
+        "active": "Preview non-click.html"
+      },
+      "titles": [
+        "main-links.html",
+        "Preview main-links.html",
+        "non-click.html",
+        "Preview non-click.html"
+      ]
+    }
+  },
+  "prototypeTampering": {
+    "synthetic_click_blocked": {
+      "pass": true,
+      "openUrlCalls": [],
+      "tabs": {
+        "count": 6,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html",
+          "non-click.html",
+          "Preview non-click.html",
+          "proto-tamper.html",
+          "Preview proto-tamper.htm…"
+        ],
+        "active": "Preview proto-tamper.htm…"
+      },
+      "titles": [
+        "main-links.html",
+        "Preview main-links.html",
+        "non-click.html",
+        "Preview non-click.html",
+        "proto-tamper.html",
+        "Preview proto-tamper.htm…"
+      ]
+    },
+    "trusted_user_click_followed": {
+      "pass": true,
+      "tabs": {
+        "count": 7,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html",
+          "non-click.html",
+          "Preview non-click.html",
+          "proto-tamper.html",
+          "Preview proto-tamper.htm…",
+          "Preview other.html"
+        ],
+        "active": "Preview other.html"
+      },
+      "titles": [
+        "main-links.html",
+        "Preview main-links.html",
+        "non-click.html",
+        "Preview non-click.html",
+        "proto-tamper.html",
+        "Preview proto-tamper.htm…",
+        "Preview other.html"
+      ],
+      "openUrlCalls": []
+    }
+  },
+  "tokenDiscovery": {
+    "pass": true,
+    "hasOuterUuid": false,
+    "hasScriptToken": false,
+    "discovery": {
+      "scriptCount": 2,
+      "scriptTexts": [
+        "delete window.RTCPeerConnection;delete window.webkitRTCPeerConnection;parent.postMessage({previewReady:true},\"*\");addEventListener(\"message\",e=>{if(e.source===parent&&e.data?.previewPing===true)parent.postMessage({previewPong:true},\"*\")});addEventListener(\"load\",()=>scrollTo(0,0));addEventListener(\"scroll\",()=>parent.postMessage({previewScrollY:scrollY},\"*\"),{passive:true})",
+        "\n    // 1. Token inspection probe\n    window.__tokenDiscovery = {\n      scriptCount: document.scripts.length,\n      scriptTexts: [...document.scripts].map(s => s.textContent || s.innerText || \"\"),\n      outerHtmlMatches: (document.documentElement.outerHTML.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi) || []),\n      previewLinkMatches: (document.documentElement.outerHTML.match(/previewLink/g) || [])\n    };\n\n    // 2. Prototype monkey-patching / tampering\n    try {\n      Element.prototype.closest = function() { throw new Error(\"tampered_closest\"); };\n      Element.prototype.getAttribute = function() { return \"tampered_attribute\"; };\n      Event.prototype.preventDefault = function() { throw new Error(\"tampered_preventDefault\"); };\n      EventTarget.prototype.addEventListener = function() { throw new Error(\"tampered_addEventListener\"); };\n      Function.prototype.call = function() { throw new Error(\"tampered_call\"); };\n      Function.prototype.apply = function() { throw new Error(\"tampered_apply\"); };\n      Reflect.apply = function() { throw new Error(\"tampered_reflect_apply\"); };\n      MessagePort.prototype.postMessage = function() { throw new Error(\"tampered_port_postMessage\"); };\n      window.postMessage = function() { throw new Error(\"tampered_window_postMessage\"); };\n      window.__tamperInstalled = true;\n    } catch (e) {\n      window.__tamperError = e.message;\n    }\n\n    // 3. Dispatch synthetic click under tampered environment\n    window.runTamperedSynth = () => {\n      try {\n        const a = document.getElementById(\"tamper-synth\");\n        a.dispatchEvent(new MouseEvent(\"click\", { bubbles: true, cancelable: true }));\n        return { dispatched: true };\n      } catch (e) {\n        return { error: e.message };\n      }\n    };\n  "
+      ],
+      "outerHtmlMatches": [],
+      "previewLinkMatches": [
+        "previewLink",
+        "previewLink"
+      ]
+    }
+  },
+  "isolationFixtures": {
+    "navigate.html": {
+      "pass": true,
+      "frame": {
+        "x": 460,
+        "y": 65,
+        "w": 980,
+        "h": 756,
+        "src": "http://preview.localhost/p9",
+        "sandbox": "allow-scripts",
+        "csp": "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'; webrtc 'block'"
+      },
+      "tabs": {
+        "count": 8,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html",
+          "navigate.html",
+          "Preview navigate.html",
+          "Preview non-click.html",
+          "proto-tamper.html",
+          "Preview proto-tamper.htm…",
+          "Preview other.html"
+        ],
+        "active": "Preview navigate.html"
+      },
+      "openUrlCalls": []
+    },
+    "refresh.html": {
+      "pass": true,
+      "frame": {
+        "x": 460,
+        "y": 65,
+        "w": 980,
+        "h": 756,
+        "src": "http://preview.localhost/p10",
+        "sandbox": "allow-scripts",
+        "csp": "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'; webrtc 'block'"
+      },
+      "tabs": {
+        "count": 9,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html",
+          "refresh.html",
+          "Preview refresh.html",
+          "Preview navigate.html",
+          "Preview non-click.html",
+          "proto-tamper.html",
+          "Preview proto-tamper.htm…",
+          "Preview other.html"
+        ],
+        "active": "Preview refresh.html"
+      },
+      "openUrlCalls": []
+    },
+    "loopnav.html": {
+      "pass": true,
+      "frame": {
+        "x": 460,
+        "y": 65,
+        "w": 980,
+        "h": 756,
+        "src": "http://preview.localhost/p11",
+        "sandbox": "allow-scripts",
+        "csp": "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'; webrtc 'block'"
+      },
+      "tabs": {
+        "count": 10,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html",
+          "loopnav.html",
+          "Preview loopnav.html",
+          "Preview refresh.html",
+          "Preview navigate.html",
+          "Preview non-click.html",
+          "proto-tamper.html",
+          "Preview proto-tamper.htm…",
+          "Preview other.html"
+        ],
+        "active": "Preview loopnav.html"
+      },
+      "openUrlCalls": []
+    },
+    "isolation.html": {
+      "pass": true,
+      "frame": {
+        "x": 460,
+        "y": 65,
+        "w": 980,
+        "h": 756,
+        "src": "http://preview.localhost/p12",
+        "sandbox": "allow-scripts",
+        "csp": "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'; webrtc 'block'"
+      },
+      "tabs": {
+        "count": 11,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html",
+          "isolation.html",
+          "Preview isolation.html",
+          "Preview loopnav.html",
+          "Preview refresh.html",
+          "Preview navigate.html",
+          "Preview non-click.html",
+          "proto-tamper.html",
+          "Preview proto-tamper.htm…",
+          "Preview other.html"
+        ],
+        "active": "Preview isolation.html"
+      },
+      "openUrlCalls": []
+    },
+    "network.html": {
+      "pass": true,
+      "frame": {
+        "x": 460,
+        "y": 65,
+        "w": 980,
+        "h": 756,
+        "src": "http://preview.localhost/p13",
+        "sandbox": "allow-scripts",
+        "csp": "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'; webrtc 'block'"
+      },
+      "tabs": {
+        "count": 12,
+        "titles": [
+          "main-links.html",
+          "Preview main-links.html",
+          "network.html",
+          "Preview network.html",
+          "Preview isolation.html",
+          "Preview loopnav.html",
+          "Preview refresh.html",
+          "Preview navigate.html",
+          "Preview non-click.html",
+          "proto-tamper.html",
+          "Preview proto-tamper.htm…",
+          "Preview other.html"
+        ],
+        "active": "Preview network.html"
+      },
+      "openUrlCalls": []
+    }
+  },
+  "realBrowserTest": {
+    "pass": true,
+    "browserCountBefore": 26,
+    "browserCountAfter": 31,
+    "diff": 5,
+    "note": "Single real browser execution at test conclusion. No processes terminated; open tab preserved as requested."
+  },
+  "summary": {
+    "pass": 24,
+    "fail": 0
+  }
+}

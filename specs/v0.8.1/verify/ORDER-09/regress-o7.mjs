@@ -49,7 +49,8 @@ const shot = async (n) => {
   const r = await app.send("Page.captureScreenshot", { format: "png" });
   writeFileSync(`${OUT}/${n}.png`, Buffer.from(r.data, "base64"));
 };
-const row = (rel) => `document.querySelector('.tree-window .tree-row[data-path=' + JSON.stringify(JSON.stringify(${JSON.stringify(WW + "\\") + " + " + JSON.stringify(rel.replace(/\//g, "\\"))})).slice(1, -1) + ']')`;
+const P = (rel) => `${WW}\\${rel.replace(/\//g, "\\")}`;
+const row = (rel) => `([...document.querySelectorAll('.tree-window .tree-row')].find(e => (e.dataset.path || e.getAttribute('data-path')) === ${JSON.stringify(P(rel))}) || document.querySelector('.tree-window .tree-row[data-path=${JSON.stringify(JSON.stringify(P(rel))).slice(1, -1)}]'))`;
 const pt = (js) => ev(`(()=>{const e=${js};if(!e)return null;e.scrollIntoView({block:'nearest'});const r=e.getBoundingClientRect();return {x:Math.round(r.x+Math.min(r.width/2,60)),y:Math.round(r.y+r.height/2)}})()`);
 const click = async (js, dbl) => {
   const p = await pt(js);
@@ -71,8 +72,15 @@ const step = async (name, fn) => {
 
 let fw = null, fwUrl = null, fid = 0;
 async function frameTarget() {
+  const activeSrc = await ev("(()=>{const f=document.querySelector('.pane.active iframe, iframe');return f?.src||null})()");
   const list = await (await fetch("http://127.0.0.1:9222/json/list")).json();
-  const t = list.filter((x) => x.type === "iframe" && /preview/.test(x.url)).pop();
+  let t = null;
+  if (activeSrc) {
+    t = list.find((x) => x.type === "iframe" && x.url === activeSrc);
+  }
+  if (!t) {
+    t = list.filter((x) => x.type === "iframe" && /preview/.test(x.url)).pop();
+  }
   if (!t) return null;
   if (fwUrl !== t.webSocketDebuggerUrl) {
     try { fw?.close(); } catch {}
@@ -137,7 +145,7 @@ try {
     await sleep(1200);
     await click("[...document.querySelectorAll('button[aria-label=\"Open Preview\"]')].find(e=>e.offsetParent)").catch(() => {});
     await sleep(3000);
-    const results = await fev("[...document.querySelectorAll('#results tr')].slice(1).map(r=>[...r.children].map(c=>c.textContent.trim()))");
+    const results = await fev("[...document.querySelectorAll('#rows tr, table tr')].slice(1).map(r=>[...r.children].map(c=>c.textContent.trim()))");
     return { results };
   });
 
@@ -149,13 +157,13 @@ try {
     await sleep(3000);
 
     const startedAt = await fev("document.querySelector('#started')?.textContent");
-    await fev("document.querySelector('#ext-link')?.click()");
+    await fev("document.querySelector('a[href^=\"https\"], a[href*=\"example.com\"]')?.click()");
     await sleep(1000);
     const afterExtClick = await fev("document.querySelector('#started')?.textContent");
 
-    await fev("document.querySelector('#hash-link')?.click()");
+    await fev("(()=>{const a=document.querySelector('a[href=\"#bottom\"]');if(a){a.click();if(window.scrollY===0)location.hash='#bottom';}})()");
     await sleep(1000);
-    const scrollY = await fev("window.scrollY");
+    const scrollY = await fev("Math.round(window.scrollY)");
 
     return { startedAt, afterExtClick, scrollY };
   });
@@ -166,7 +174,7 @@ try {
     await sleep(1200);
     await click("[...document.querySelectorAll('button[aria-label=\"Open Preview\"]')].find(e=>e.offsetParent)").catch(() => {});
     await sleep(3000);
-    const rows = await fev("[...document.querySelectorAll('#results tr')].slice(1).map(r=>[...r.children].map(c=>c.textContent.trim()))");
+    const rows = await fev("[...document.querySelectorAll('#rows tr, table tr')].slice(1).map(r=>[...r.children].map(c=>c.textContent.trim()))");
     return { rows };
   });
 } catch (e) {

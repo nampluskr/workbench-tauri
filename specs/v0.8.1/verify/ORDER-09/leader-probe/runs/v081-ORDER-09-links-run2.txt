@@ -1,0 +1,12 @@
+[measure-links] Target EXE: D:\projects\workbench-tauri\src-tauri\target\release\workbench-tauri.exe
+[measure-links] Workspace: C:\Users\nampl\AppData\Local\Temp\v081-links-work
+[measure-links] Output Dir: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\links
+
+--- Section 1: Clicked Links (6 categories + Tab/Enter) ---
+Initial preview tabs: {"count":2,"titles":["main-links.html","Preview main-links.html"],"active":"Preview main-links.html"}
+Testing (1a) Local other.html click...
+  -> 1a_local_html_other: FAIL (3 tabs, active: Preview other.html)
+Testing (1b) Local ./sub/page.html click...
+Test execution error: Error: No active preview frame found
+    at clickInFrame (file:///D:/projects/workbench-tauri/specs/v0.8.1/verify/ORDER-09/measure-links.mjs:191:17)
+    at async file:///D:/projects/workbench-tauri/specs/v0.8.1/verify/ORDER-09/measure-links.mjs:285:5

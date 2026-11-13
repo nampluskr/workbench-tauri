@@ -790,3 +790,137 @@
 - **ORDER-08 보고** (2026-11-13, tauri-leader): `specs/v0.8.1/reports/ORDER-08.md` [DONE], 커밋 `1c9a430`(코드·측정·문서)·`33ea4a0`(보고). #6은 leader-core 판정.
 - **[PUSH] ORDER-08** (2026-11-13): origin/master `33ea4a0`.
 - **상태**: Phase 1~8 끝(ORDER-01~08 모두 [PUSH]), origin/master `33ea4a0`. 2026-11-13 ORDER-09(Phase 9, v0.8.1 마지막 카드, core `specs/v0.8.1/orders/ORDER-09.md`, ITEMS I-16~I-24, 비교 기준 `33ea4a0`, 끝에 0.8.1 release 다시 빌드·release 전체 회귀) 시작 전: tauri-leader 컨텍스트가 절반을 넘어 정리한 뒤 시작한다. 서브 에이전트 컨텍스트는 비움.
+
+### Phase 9 — ORDER-09 (I-16~I-24): 작은 고침 여덟, HTML 미리보기 링크, 0.8.1 release 다시 빌드, 전체 회귀
+
+근거 경로는 `specs/v0.8.1/verify/ORDER-09/`(이하 `v9/`)다. 코드는 커밋 `9a27d12`(K-09a~c 코드 + `v9/` 스크립트)와 `56c3b66`(K-09e)에 있다. `docs/BUILD.md`, `v9/`의 C-20~C-21-R1 스크립트 고침·측정 결과, `verify/ORDER-02/drag-src.ps1`·`ext-drop.ps1` 고침은 작업 트리(커밋 전)다. 측정은 모두 leader가 화면 차례 안에서 release exe로 돌렸고, 회차별 출력은 `v9/leader-probe/runs/*.txt`에 있다.
+
+- **K-09a I-16·I-17·I-19·I-20·I-21·I-23** (2026-11-13, coder, 커밋 `9a27d12`)
+  - 무엇을 했나: `src/app.css`, `src/shell/tree-menu.ts`, `src/workspace/actions.ts`, `src/spec/metrics.ts`·`metrics.test.ts`, `src/settings/model.ts`. `UndoHistory.canUndo/canRedo`, `undoDrop`·`redoDrop`, 메뉴 `item(label, run, action, disabled)`, `prem()`·`--border-variant`·L-103 `--markdown-preview-list-gap`을 재사용했다.
+  - 결과:
+    - I-16: 트리 행 배경을 `.tree-row.marked, .tree-row.active-file`에만(sticky 줄도). 커서만 있는 행(`.selected`)은 배경 없이 포커스 테두리만. 트리에 포커스가 없으면 커서 행 테두리도 투명이고 marked·열린 파일 배경은 남는다(Zed `show_focused_border`·`bg_color` 규칙). marked 행 hover는 marked 색. Sidebar(폴더 목록)는 이미 같은 규칙(`.cursor`는 테두리만, 배경은 `.active`만)이라 바꾸지 않았다.
+    - I-17: 우클릭 메뉴 Paste 바로 뒤 같은 그룹에 `Undo`(`project_panel::Undo`)·`Redo`(`project_panel::Redo`). `canUndoDrop()`·`canRedoDrop()`(actions.ts 새 한 줄 export)가 거짓이면 비활성. 단축키는 다른 항목처럼 action ID로 표시.
+    - I-19: 새 metric `markdown_preview.code_block.border` = `prem(1)`(toml에 없음, core I-19 값, L-111 frontmatter 테두리와 같은 방식), 색 `border-variant`. 테두리는 `.code-block`(머리 줄 + pre) 상자 하나에, 안쪽 `pre`는 `border: 0`. 머리 줄과 코드 사이에는 선을 두지 않았다. 머리 줄 없는 `pre`(frontmatter 원문, ipynb raw, mermaid 원문)도 같은 테두리.
+    - I-20: `.markdown-body :is(pre.nb-output, pre.nb-traceback) { background: none; border: 0 }`. padding·코드 셀 음영 그대로.
+    - I-21: `li:last-child > :last-child { margin-bottom: 0 }` → `…:last-child:not(p)`로 느슨한 항목 마지막 문단은 16을 그대로 갖고, 마지막 항목이 문단으로 끝나는 목록은 아래 여백을 L-103 list_gap(prem 12)으로. 끝 여백 16 + 12 = 28, 예상 잉크 50~51(Zed 50). "문단 16 + 항목 4 + 목록 12"를 그대로 32로 쌓으면 붙은 목록 끝의 5px 차이(#6a) 때문에 약 55가 나와 Zed 측정값에 맞는 28을 골랐다.
+    - I-23: `scaledListGap(px, previewFontSize) = px * previewFontSize / REM_SIZE(16)`를 `--preview-list-line-gap`·`--preview-list-gap`에만. 문단 두 값은 px 그대로. 16px에서 같은 값(6·4px). 설정 키·저장 값 그대로. 문구: List Line Spacing "Controls the space between wrapped lines of a list item, in pixels at a 16px preview font. Scales with the preview font.", List Item Spacing "Controls the space between list items, in pixels at a 16px preview font. Scales with the preview font." (처음 문구의 "font size"가 Settings 검색 테스트 `keys("font size").length === 5`에 걸려 "size"를 뺐다. 테스트 기대값은 그대로.)
+    - 테스트: `metrics.test.ts` `applyMetrics` 테스트에 16px → 6/4px, 24px → 9/6px, 문단 8/16px 유지 줄.
+  - 검증: V1. `npm.cmd run typecheck` 0, `node --test src/spec/metrics.test.ts src/settings/model.test.ts src/shell/menu.test.ts` 18/18. Rust 안 바뀜. 앱 실행 안 함(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-09a-report.md`).
+  - 특이사항: Zed의 "마우스를 누르는 동안 포커스 테두리 숨김"(`!self.mouse_down`)은 하지 않았다(카드 밖). I-21의 특이도 계산이 틀려 K-09e에서 고쳤다(아래). 사용자 확인 필요: I-19 머리 줄과 코드 사이에 선이 없는 모양.
+- **K-09b I-18 Outline 키보드 이동, I-22 `#슬러그` 링크** (2026-11-13, coder, 커밋 `9a27d12`)
+  - 무엇을 했나: `src/syntax/outline.ts`·`outline.test.ts`, `src/shell/Outline.tsx`, `src/app.css`(Outline 두 줄), `src/editor/markdown.ts`·`markdown.test.ts`, `src/shell/markdown-preview.ts`, `src/spec/metrics.ts`(상수 하나). 트리 키 규칙 `move`·`expandStep`·`collapseStep`·`only`(workspace/tree.ts), `chain`, `menu` 문맥 바인딩, `--border-focused`, Outline 클릭 `go`, 미리보기 `reveal`을 재사용했다.
+  - 결과:
+    - I-18: `outlineStep(rows, selected, action)`이 Outline 행을 트리 `Row`로 바꿔 트리 함수를 그대로 부른다(↑↓ Home End `move`, → `expandStep`, ← `collapseStep`, Enter는 클릭과 같은 `go`). 목록에 `tabindex="0"`, `data-keymap-context="OutlinePanel menu"`. ←→는 `menu::SelectParent`·`menu::SelectChild`. 처음 Zed처럼 `OutlinePanel` 문맥에 `outline_panel::Collapse/ExpandSelectedEntry`를 더했다가 내장 키맵 표 테스트(R-1)가 깨져 되돌렸다 — `builtin.ts`는 바뀌지 않았다. 핸들러 일곱 개는 `chain`으로 목록에 포커스가 있을 때만. 키로 고른 행(`picked`)이 있으면 커서 행은 무시하고, 목록에 포커스가 있는 동안 커서 변화로 자동 스크롤하지 않으며, 포커스가 나가면 `picked`를 지운다. 포커스 테두리 `.outline-list:focus .tree-row.selected { border-color: var(--border-focused) }`.
+    - I-22: Zed 소스는 로컬 sparse 사본 `%TEMP%\zed-src-4304dec7`에서 `crates/util/src/markdown.rs`(`generate_heading_slug`)와 `crates/markdown/src/parser.rs:102-147`(`build_heading_slugs`)를 읽고 규칙만 따라 새로 썼다. `headingSlugs(texts)`: 앞뒤 공백을 뗀 글자에서 Unicode 글자·숫자·`-`·`_`는 소문자로, 공백은 `-`, 나머지는 버림(연속 공백은 합치지 않음). 같은 id는 `-1`·`-2`…, 이미 있는 id는 건너뜀, 128번째 반복부터 id 없음(상수 `MARKDOWN_PREVIEW_HEADING_SLUG_MAX_DUPLICATES`, toml에 없음, 주석에 Zed 출처). `markdown-preview.ts`: `classifyLink`가 `anchor`면 `revealAnchor(id)` → 제목 `textContent`의 슬러그로 찾아 `preview.reveal`(Outline 클릭과 같은 함수). 마크다운은 제목 `data-line`, ipynb는 markdown 셀 제목 순번. 없는 id는 아무 일 없음. `context.ts` `followLink`는 바뀌지 않았다. 편집 탭 연계는 지금과 같다.
+    - 테스트: `outline.test.ts`(↓·↑·→·← 경우), `markdown.test.ts`(앞뒤 공백, 한글 `설치 방법`→`설치-방법`, 기호 `C++ & Rust: v2.0!`→`c--rust-v20`, `_`·`-`, 같은 제목 셋 `usage`·`usage-1`·`usage-2`, 이미 있는 id 건너뛰기, 빈 id).
+  - 검증: V1. typecheck 0, `node --test src/editor/markdown.test.ts src/syntax/outline.test.ts src/keymap/*.test.ts src/spec/metrics.test.ts` 47/47. Rust 안 바뀜. 앱 실행 안 함(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-09b-report.md`).
+  - 특이사항: Outline 행 클릭은 지금처럼 포커스가 편집기·미리보기로 간다(키보드로는 Tab이나 목록 빈 곳 클릭). `menu` 문맥이라 목록 안 Tab은 다음 행. 슬러그의 제목 글은 렌더된 `textContent`라 제목 안 수식·날 HTML `<h2>`는 Zed와 다를 수 있고, ipynb는 셀을 넘어 문서 전체로 센다.
+- **K-09c I-24 HTML 미리보기 링크 따라가기** (2026-11-13, coder, 커밋 `9a27d12`)
+  - 무엇을 했나: `src/editor/html.ts`·`html.test.ts`, `src/shell/markdown-preview.ts`. `classifyLink`·`LinkTarget`, `previewKind`, `followLink`(바뀌지 않음, `hooks.link`로 감), `openUrl` 경로, `clean`·`navigates`를 재사용했다. 후보 (가) 머리 스크립트 + 비밀 토큰을 골랐다. (나) WebView2 `IsUserInitiated`는 쓰지 않았다(의존성·Rust 변경 없음).
+  - 결과:
+    - 링크(`a`·`area`의 `href`, `xlink:href`)는 원래 값을 `data-preview-href`(`PREVIEW_LINK_ATTR`)에 두고 `href="#"`로 바꾼다(키보드 포커스·링크 모양 유지). `#id` 링크·form 처리는 그대로.
+    - 머리에 두 번째 `<script>`: 쓸 내장 함수(`Reflect.apply`, `parent`·`postMessage`, `Element.prototype.closest`·`getAttribute`, `String.prototype.trim`·`startsWith`, `Event.prototype.preventDefault`, `target`·`altKey` getter)를 먼저 저장해 그것만 `Reflect.apply`로 부르고, `document.currentScript.remove()`로 토큰이 든 자기 자신을 지운 뒤, `window` `click` 캡처 리스너를 가장 먼저 등록한다. 링크 클릭이면 `#…`을 빼고 모두 `preventDefault`, `e.isTrusted`일 때만 `{previewLink:{token, href, alt}}`를 부모로 보낸다.
+    - 부모: 미리보기마다 `crypto.randomUUID()` 토큰을 `headStart`에 넣고, `e.source === frame.contentWindow`이고 토큰이 같은 `previewLink`만 받아 `classifyHtmlLink`로 나눈 뒤 `followLink`로. MessagePort 대신 토큰을 고른 까닭은 포트 주고받기가 없어 프레임이 다른 문서로 옮겨진 뒤 포트를 다시 받아 가는 길이 생기지 않기 때문이다.
+    - `classifyHtmlLink(href, sourcePath, alt)`: 탭·줄바꿈 제거·trim 뒤 빈 값·`#…`·`//host` → null. 스킴(드라이브 문자 제외)은 `http(s)://`만 `external`, 나머지(`file:`·`javascript:`·`mailto:`·`ftp:` 등) null. 로컬은 `classifyLink`(HTML 파일 기준, `?`·`#` 뗌, Alt면 편집 탭)에 맡기고 결과가 `open`이면서 `.html`·`.htm`이면 `preview`. 잘못된 `%` 이스케이프는 null. 마크다운 미리보기의 `classifyLink`는 바뀌지 않았다(마크다운 안의 `.html` 링크는 지금처럼 편집 탭).
+    - 보안 앞뒤: 앞은 링크 `href`를 통째로 지우고 머리 스크립트 한 개. 뒤는 `href="#"` + `data-preview-href`, 머리 스크립트 하나 더(원문은 K-09c 보고). 그대로: 앱 CSP, capability, `PREVIEW_CSP`, `sandbox="allow-scripts"`, Rust 이동 처리, `recordRecovery`, ping/pong, WebRTC 지우기, `<meta refresh>` 지우기.
+    - 테스트: `html.test.ts` 기존 `headStart` 호출에 토큰 인자(기대값은 지우지 않음) + 새 스크립트 모양(스스로 지움이 리스너보다 먼저, 캡처 등록, isTrusted일 때만 보고, 저장한 함수만 씀), 분류 테스트 하나(로컬 html·htm 상대 `../`, Alt, `.md`, 기타 파일, 절대 경로, http(s)·대문자 스킴, `#id`·빈 값·`file:`·`javascript:`·`java\tscript:`·`mailto:`·`ftp:`·`//host`·잘못된 `%`).
+  - 검증: V1. typecheck 0, `node --test src/editor/html.test.ts src/editor/markdown.test.ts` 24/24. Rust·Cargo 안 바뀜. 머리 스크립트는 레포 밖 스크래치에서 node DOM 흉내 객체로 한 번 돌려 봤다. 앱 실행 안 함(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-09c-report.md`).
+  - 특이사항(구별 방법의 한계): 사용자가 실제로 누른 링크의 대상은 페이지가 정할 수 있다(`mousedown`에서 `data-preview-href`를 바꾸거나 페이지를 덮는 투명 링크) — 그래도 갈 곳은 `classifyHtmlLink`가 허락한 것뿐. 페이지 스크립트가 `a.href`를 읽으면 `…#`이 나오고 `a[href^=http]` 같은 CSS는 원래 값과 맞지 않는다. 키보드 Enter는 신뢰된 click이라 따라간다. 링크가 아닌 요소의 `onclick="location.href=…"`는 지금처럼 프레임 이동 → 되살리기. `navigate.html`의 "external link"·"local link to refresh.html"은 이제 사람이 누르면 브라우저·미리보기가 열린다(의도된 변화).
+- **C-17 회귀 준비** (2026-11-13, checker)
+  - 무엇을 했나: core USER-TEST "나" 16줄(#4~#11, #13, #15, #16, #18~#20, #23, #25), ORDER-07 #11 대표 동작(I-1~I-13, 미리보기 종류), ORDER-08 I-14·I-15의 debug 측정 스크립트·fixture·판정 기준을 표로 정리하고(보고 1·2절), `v9/`에 `run-regression.mjs`(exe 인자, 기본 release exe, `--suite`·`--dry-run`·`--compare`), `compare-criteria.mjs`, `regress-rep.mjs`·`regress-o2.mjs`~`regress-o8.mjs`를 만들었다. ORDER-02~06 스크립트는 exe 인자가 없고 scratchpad 경로가 하드코딩돼 있으며 시작 때 결과 폴더를 지우므로 그대로 쓰지 않고 복사해 출력을 `v9/regress/`로 모았다.
+  - 결과: 회귀 묶음 준비. 앱 실행 없음.
+  - 검증: V3 준비. `node --check` 10개 오류 0, `run-regression.mjs --dry-run`(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-17-report.md`).
+  - 특이사항: 없음.
+- **C-18 I-16~I-23 V3 측정 스크립트** (2026-11-13, checker)
+  - 무엇을 했나: `v9/measure-new.mjs`(exe 인자, 단계 거르기 인자, `%TEMP%\v081-measure-new`의 워크스페이스·appdata, 입력 전 `win-input.ps1 -Action foreground`, 결과 `v9/new/v3-new.json`·`summary.md`)와 fixture `v9/new/fixtures/`(`spacing.md`, `doc-outline.md`, `readme-toc.md`, `nb-test.ipynb`, `nb-toc.ipynb`). 단계 여덟: I-16 행 배경·테두리(One Dark·One Light, Zed 비교 단계), I-17 메뉴·Undo·Redo, I-18 Outline 키, I-19 테마 21개 테두리, I-20 ipynb 출력 배경, I-21 느슨한 목록 간격, I-22 슬러그 링크, I-23 글자 16·20·24px 간격·설명 문구.
+  - 결과: 스크립트 준비. 앱 실행 없음.
+  - 검증: V3 준비. `node --check` 오류 0(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-18-report.md`).
+  - 특이사항: 없음.
+- **C-19 코드 리뷰·전체 검증, I-24 V3 스크립트** (2026-11-13, checker)
+  - 무엇을 했나: `git diff HEAD -- src src-tauri`(K-09a~c)를 리뷰하고, I-24 머리 스크립트를 공격자 입장에서 봤다(토큰 얻는 길 — `document.scripts`·`outerHTML`·같은 문서 다시 읽기·`Error().stack`·파싱 순서, 먼저 도는 캡처 리스너, 저장한 함수 바꿔치기, `isTrusted`, 부모 받는 조건, `classifyHtmlLink` 밖으로 나가는 href — 대소문자·공백·역슬래시·`\\host`·`C:` 절대 경로·`..`). `v9/measure-links.mjs`(결과 `v9/links/`)와 fixture `v9/links/fixtures/`(`main-links.html` 누른 링크 여섯 종류 + Tab·Enter, `non-click.html` 클릭 없는 길 다섯, `proto-tamper.html` 프로토타입 바꿔치기·토큰 찾기, 보조 파일, ORDER-07·08 격리 fixture 다섯 복사)를 만들었다.
+  - 결과: **PASS**. 프레임 CSP `default-src 'none'`으로 같은 문서 다시 읽기가 막히고, 스크립트는 실행 즉시 스스로 지워지며, 앱 CSP·capability·`sandbox`·`PREVIEW_CSP`는 그대로(`git diff`).
+  - 검증: V1 전체 검증 1회. `npm.cmd run typecheck` 0, `npm.cmd run test` 313/313. `cargo test`·`clippy`는 샌드박스 `.cargo-build-lock` 접근 거부(os error 5)로 checker가 돌리지 못해 leader가 돌렸다: `cargo test` 24, clippy 0(`src-tauri` 변경 없음). 그 뒤 코드를 커밋했다(`9a27d12`, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-19-report.md`).
+  - 특이사항: C-19의 `measure-links.mjs`는 `https://example.com` 뒤 새로 생긴 브라우저 PID를 `taskkill`하는 방식이었다 → C-19-R1에서 뺐다.
+- **C-19-R1 `measure-links.mjs` 브라우저 처리** (2026-11-13, checker)
+  - 무엇을 했나: `checkAndKillNewBrowser`(새 msedge·chrome PID 끝내기 — 사용자 브라우저일 수 있어 금지)를 지우고, 측정 세션에서만 CDP `Runtime.evaluate`로 `window.__TAURI_INTERNALS__.invoke`를 감싸 `plugin:opener|open_url` 호출을 기록하고 부르지 않게 했다(앱 코드에는 넣지 않음). 모든 단계 판정은 이 기록 + 탭 수·제목. 실제 브라우저 호출은 마지막에 감싸기를 풀고 한 번만, 프로세스 수 앞뒤를 기록만 한다.
+  - 결과: 어떤 프로세스도 끝내지 않는다.
+  - 검증: V0. `node --check` 0(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-19-R1-report.md`).
+  - 특이사항: 없음.
+- **K-09d 0.8.1 release 다시 빌드 (`9a27d12`)** (2026-11-13, coder)
+  - 무엇을 했나: 빌드 직전 `src-tauri\target\release\workbench-tauri.exe`를 쓰는 프로세스 없음을 확인하고(사용자 앱 복사본은 건드리지 않음) `npm.cmd run tauri build`(NSIS 포함, 버전 0.8.1 그대로). `docs/BUILD.md` 머리 "고친 날", 4A절 맨 위 "ORDER-09 다시 빌드 (지금 배포본)" 소절(기존 K-07c 내용은 "ORDER-07 빌드 (앞 빌드)" 소절로 그대로), 7절 무한 루프 줄을 ORDER-08 결과(약 5초 뒤 "This HTML page is not responding." 알림, 렌더러 5~10초 안에 끝남, 멈춘 호스트 20초 피함, 앱 다시 열 필요 없음, 파일·테마를 바꾸면 다시 그림, 남은 한계)로 고쳤다.
+  - 결과: 설치 파일 10,575,886 B(앞 0.8.1 10,579,907 B 대비 −4,021 B), exe 21,521,920 B(−16,384 B), 2026-11-13 16:57:06, ProductVersion·FileVersion 0.8.1. 빌드 76초(vite 7.26초, cargo release 54.05초). 경고는 기존과 같은 종류뿐(Vite 500 kB 넘는 chunk 셋, web-tree-sitter `[EVAL]` 2건), Rust 경고 0. 코드가 늘었는데 파일이 준 까닭은 조사하지 않았다(BUILD.md에 "가설").
+  - 검증: V0 + 빌드(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-09d-report.md`).
+  - 특이사항: 이 빌드는 K-09d-R1이 대신한다.
+- **C-20 측정 스크립트 1차 고침** (2026-11-13, checker)
+  - 무엇을 했나: 1회차(`9a27d12` release exe)에서 모든 ORDER-09 스크립트가 첫 트리 행 찾기에서 죽었다 — `row()`가 `JSON.stringify(JSON.stringify(...)).slice(1,-1)`를 페이지 안에서 다시 돌려 선택자에 `\"`가 남음. 10개 파일 11곳을 ORDER-02 원본처럼 node 쪽 계산으로 고쳤다. `compare-criteria.mjs`가 값이 `undefined`인데 PASS를 낸 것(REP-I2·I13, O8-I14-3·I15)을 `NO-DATA`로(요약도 같게). `regress-o8.mjs`에 빠진 `page.html` fixture, `regress-rep.mjs` `about.ver`를 About 대화 상자의 버전 줄에서 읽게. I-16(커서 행 배경 없어짐)·I-24(`navigate.html` 사람 클릭은 따라감)로 바뀌는 기대값은 기준 칸에 참고로만 적었다.
+  - 결과: 스크립트 고침.
+  - 검증: V0. `node --check` 12개 0(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-20-report.md`).
+  - 특이사항: 없음.
+- **C-20-R1 측정 스크립트 2차 고침** (2026-11-13, checker)
+  - 무엇을 했나: 2회차 `measure-new`·`measure-links` 실패를 고쳤다. `row()`를 `dataset.path` 직접 비교 + 선택자 폴백으로(회귀 스크립트도 미리 같게), I-17 폴더 펼침·메뉴 닫기, I-18 줄 읽기(ORDER-04 `c7_click_editor` 방식), I-20 fixture `nb-test.ipynb`·`nb-toc.ipynb`의 `"nbformat_minor` 닫는 따옴표 빠짐(파싱 실패로 셀이 안 생겼음)과 요소 기록, I-21 잉크 간격(ORDER-06 방식, `inkTopDistance`) 추가, I-22 식 문자열(`… a[href=…]`가 JS가 아님), I-23 Settings 열기(`Ctrl+,`·`open_settings`, Settings 창 target에서 문구 읽기), I-24 `resetToMainPreview()`·단계마다 try/catch·열린 탭 제목 기록.
+  - 결과: 스크립트 고침.
+  - 검증: V0. `node --check` 12개 0, fixture JSON 파싱(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-20-R1-report.md`).
+  - 특이사항: 2회차 I-21은 margin 32(기대 28)로 코드 쪽 특이도 문제였다 → K-09e.
+- **C-20-R2 회귀 스크립트 고침** (2026-11-13, checker)
+  - 무엇을 했나: 회귀 2회차 실패를 고쳤다. `compare-criteria.mjs` rep 키 이름(`I-2_…` vs `I_2_…`), `REP-ABOUT` 행. `regress-rep` I-3 끌기 유지 시간·I-5 안 열린 파일 클릭·SYNC 나란히 열기. `regress-o2` 폴더 펼침(`ensureFolderOpen`)·`c7_explorer`. `regress-o4` 상태 표시줄 선택자·`c8_follow_scroll`. `regress-o5`·`o6` 겹친 따옴표 식, `c12_licenses` 여는 순서. `regress-o7` 활성 pane 프레임 찾기·`#rows tr`·링크 선택자. `regress-o8` `plain.html`, 알림 문단 폴링. 그리고 `verify/ORDER-02/ext-drop.ps1`에 도우미 창 전경·대기 루프를 더했다.
+  - 결과: 스크립트 고침.
+  - 검증: V0. `node --check` 12개 0(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-20-R2-report.md`).
+  - 특이사항: `verify/ORDER-02/`의 지난 스크립트를 직접 고쳤다(C-20-R4도) — C-20-R5부터는 ORDER-09로 복사해 고친다.
+- **K-09e I-21 느슨한 목록 끝 여백 특이도** (2026-11-13, coder, 커밋 `56c3b66`)
+  - 무엇을 했나: release exe(`9a27d12`) 측정에서 느슨한 목록 `ul` margin-bottom이 16(기대 12)이었다. `:is()`는 인자 중 가장 무거운 것의 특이도를 가져 L-103 규칙 `.markdown-body :is(ul, ol, blockquote, table, .frontmatter)`가 (0,2,0)이고, K-09a 규칙 `.markdown-body :is(ul, ol):where(:has(> li:last-child > p:last-child))`는 (0,1,1)이라 졌다(K-09a 보고에서 (0,1,1)로 잘못 셈). 끝에 `:nth-child(n)`(기존 813줄과 같은 방법)을 붙여 (0,2,1)로 했다(`src/app.css` +2 −1).
+  - 결과: 느슨한 목록 margin-bottom 12. 중첩 목록 `li > :is(ul, ol):nth-child(n)`(0,2,2)과 `li:last-child > :last-child:not(p)`(0,3,2)는 그대로 이긴다. 붙은 목록·blockquote·table·frontmatter·제목은 그대로.
+  - 검증: V0. typecheck 0, 특이도는 코드 확인(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-09e-report.md`).
+  - 특이사항: 없음.
+- **K-09d-R1 0.8.1 release 다시 빌드 (`56c3b66`)** (2026-11-13, coder)
+  - 무엇을 했나: K-09d와 같은 절차(잠김 없음 확인, `npm.cmd run tauri build`). `docs/BUILD.md` 머리 기준 커밋 `56c3b66`, 4A절 ORDER-09 소절의 카드 ID·커밋·크기·시각·증가량·빌드 시간(K-09d 값은 참고 한 줄). 7절은 K-09d 그대로.
+  - 결과: 설치 파일 `workbench-tauri_0.8.1_x64-setup.exe` 10,579,833 B(앞 0.8.1 10,579,907 B 대비 −74 B, K-09d 10,575,886 B), exe 21,521,920 B(−16,384 B), 2026-11-13 17:27:30, ProductVersion·FileVersion 0.8.1. `dist/` 31,180,417 B(+5,380 B). 빌드 72초(vite 7.00초, cargo release 50.41초). 경고는 K-09d와 같고 Rust 경고 0.
+  - 검증: V0 + 빌드(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-09d-R1-report.md`). `docs/BUILD.md`는 커밋 전.
+  - 특이사항: 없음.
+- **C-20-R3 `measure-links`·`measure-new` 3차 고침** (2026-11-13, checker)
+  - 무엇을 했나: rebuild exe(`56c3b66`)의 links 3회차(21 PASS / 3 FAIL)를 고쳤다. `4_external_browser`: 감싸기 직후 `invoke === hookFn` 검사를 기록하고 CDP `Fetch.enable`(opener·`open_url` 패턴)로 요청을 잡아 `Fetch.fulfillRequest`(200, `null`)로 돌려주는 길을 함께 둠, 브라우저 프로세스 수 앞뒤 기록. `7_keyboard_enter`: `keyDown`(`text:"\r"`)·`keyUp`, 보내기 전 프레임 `activeElement` 기록. 토큰 찾기 판정을 `outerHtmlMatches`(UUID 꼴) 비었고 `scriptTexts`에 UUID·`previewLink:{token`이 없을 때 PASS로. 1a~3b는 기대 탭 제목으로 이미 판정함을 확인. `measure-new`: I-22 링크를 디코드한 href·글자로 찾기(markdown-it 퍼센트 인코딩), I-17 처음 메뉴를 옮기기 전 따로 기록·ORDER-02 끌기·디스크로 판정.
+  - 결과: 스크립트 고침.
+  - 검증: V0. `node --check` 0(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-20-R3-report.md`).
+  - 특이사항: 없음.
+- **C-20-R4 회귀 남은 것** (2026-11-13, checker)
+  - 무엇을 했나: 회귀 3회차 남은 것. `compare-criteria.mjs` #13 판정, `run-regression.mjs`가 `regression-summary.md`를 쓰게. #8 `drag-src.ps1`·`ext-drop.ps1`(`verify/ORDER-02/`)에 도우미 창 `HWND_TOPMOST`·창 중심 좌표 다시 계산, `regress-o2`에서 ext-drop 앞 전경·창 경계·DPI 기록. #18 ORDER-05의 `CSS.getPlatformFontsForNode` 글리프 세기 이식. #19 클립보드를 `read_clipboard_text` IPC로 읽고 `\r\n` 정규화. REP-I3 끌기를 o2 방식으로·디스크 앞뒤 기록. REP-PREV CSV 진단 기록.
+  - 결과: 스크립트 고침.
+  - 검증: V0. `node --check` 0(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-20-R4-report.md`).
+  - 특이사항: 없음.
+- **C-20-R5 I-17·I-22 측정 고침** (2026-11-13, checker)
+  - 무엇을 했나: leader probe(`v9/leader-probe/probe-i22.mjs`·`.json`은 I-22 동작 확인, `probe-i17.mjs`·`.json`은 처음 메뉴 Paste·Undo·Redo 비활성 확인 — 루트 파일을 옆 폴더로 끄는 것은 drop-target이 생기지 않아 옮기지 못함)를 바탕으로, I-17을 `regress-o2.mjs`의 단계 `i17_menu_undo_redo`(실제로 옮기는 `c2_file_to_folder` 바로 뒤: 메뉴 → Undo → 디스크 → 메뉴 → Redo → 디스크 → 메뉴, 맨 앞에 처음 메뉴)로 옮기고 `compare-criteria.mjs`에 `I-17` 행을 더했다. 메뉴 라벨은 `.menu-item`의 첫 `span`(라벨에 단축키 글이 붙어 `label === "Paste"`가 틀렸음). I-22는 보이는 미리보기(`offsetParent`)를 잡고, fixture `readme-toc.md`·`nb-toc.ipynb`에 문단 40개를 넣어 스크롤이 생기게 하고, 판정을 제목 `top`과 미리보기 위쪽 차 ±2로.
+  - 결과: 스크립트 고침.
+  - 검증: V0. `node --check` 0(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-20-R5-report.md`).
+  - 특이사항: 없음.
+- **C-20-R6 회귀 o8·rep·o2 남은 것** (2026-11-13, checker)
+  - 무엇을 했나: 회귀 4회차(#18·#19·#20 PASS로 바뀜) 남은 것. O8 I-14가 회차마다 뒤집힘 — 앱은 창에 포커스가 있을 때만 ping을 보내므로 `regress-o8`의 단계 시작·판정 직전에 `win-input.ps1 -Action foreground`, 판정 때 전경 창(PID·이름)·`document.hasFocus()`·알림 뜬 시각을 기록하고, 앱이 전경이 아니면 "판정 불가". #13 행이 안 나온 원인은 `run-regression.mjs`에 `writeFileSync` import가 빠져 요약 파일이 옛것이었기 때문. REP-I3는 이 환경의 한계(루트 파일 → 옆 루트 폴더 drop-target 없음, 앞 0.8.1 빌드도 같음)로 `regress-o2` `c2_file_to_folder` 결과로 판정(표에 근거). REP-PREV csv는 표가 생길 때까지 최대 5초. #8은 도우미 창 `(1720, 900)`이 작업 표시줄과 겹쳐(`WindowFromPoint`가 `Shell_TrayWnd`) `drag-src.ps1`·`ext-drop.ps1`을 `v9/`로 복사해 `(1500, 200)`으로 옮기고, 고칠 수 없으면 "측정 불가 — OLE 도우미 창 커서 미위치"로 적게 했다.
+  - 결과: 스크립트 고침.
+  - 검증: V0. `node --check` 0, `run-regression.mjs --compare` 구동(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-20-R6-report.md`).
+  - 특이사항: 없음.
+- **C-21·C-21-R1 I-16 Zed 나란히 캡처 스크립트** (2026-11-13, checker)
+  - 무엇을 했나: C-21: `v9/zed-i16.mjs` — 띄우기 전 Zed 창 목록을 기록하고 `zed -n <%TEMP%\v081-zed-i16-ws>`로 새 창, 새로 생긴 창만 대상(이미 떠 있던 사용자 창은 건드리지 않음), 1440×852, 입력 직전마다 전경 확인 뒤 폴더 맨 클릭 → ↓ → Ctrl 클릭 → 파일 열고 편집기 클릭, 각 캡처, `tools/png.mjs`로 나란히 합성, 끝나면 대상 창에만 `WM_CLOSE`. 사용자 Zed 설정은 바꾸지 않는다. C-21-R1(1회 실행에서 "Unrecognized Project — Restricted Mode" 대화 상자가 입력을 막고, 자르기가 틀림): "Stay in Restricted Mode"(`Ctrl-Alt-Shift-S`, 안 되면 버튼 클릭)로만 닫고("Trust …"는 누르지 않음) 앞뒤 캡처, Zed 테마는 패널 픽셀 밝기로 추정, 두 앱 모두 프로젝트 패널(tauri `.project-panel` 사각형, Zed 창 왼쪽 x 0~240·y 33~800)을 단계끼리 잘라 `v9/new/i16-side-<단계>.png` 넷. `measure-new.mjs` I-16 One Light에도 네 단계 캡처를 더했다.
+  - 결과: 스크립트 준비.
+  - 검증: V0. `node --check` 0(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-21-report.md`·`-C-21-R1-report.md`).
+  - 특이사항: 없음.
+- **측정 결과 (release exe, leader 실행)** (2026-11-13, tauri-leader)
+  - 무엇을 했나: 화면 차례 안에서 `measure-new.mjs`(5회), `measure-links.mjs`(4회), `run-regression.mjs`(5회), `zed-i16.mjs`(2회)를 release exe로 돌렸다. 1회차는 `9a27d12` 빌드, rebuild(`56c3b66`) 뒤 3~5회차. 출력 `v9/leader-probe/runs/*.txt`.
+  - 결과:
+    - 회차 경과: 1회차 모든 스크립트가 `data-path` 선택자 이스케이프 오류로 죽음(C-20). 2회차 I-21 margin 32(코드 특이도 → K-09e) 등. rebuild 뒤 3~5회차에서 대부분 PASS.
+    - 새 항목(`v9/new/v3-new.json`·`summary.md`, 5회차):
+      - I-16: One Dark 폴더 맨 클릭·↓ 커서 행 배경 `rgba(0, 0, 0, 0)`, 테두리 `rgb(71, 103, 158)`(= `--border-focused` `#47679e`). Ctrl 선택 행·열린 파일 행 배경 `rgb(69, 74, 86)`(= `--ghost-element-selected` `#454a56`). 트리 밖 포커스: 커서 행 테두리 `rgba(0, 0, 0, 0)`, 커서 행 배경 `rgb(69, 74, 86)`, 열린 파일 행 배경 `rgb(69, 74, 86)`. One Light는 폴더 맨 클릭(배경 없음, 테두리 `rgb(125, 130, 232)`)만 있다 — C-21-R1에서 늘린 One Light 네 단계는 이 결과 파일에 없다. 캡처 `i16-tree-onedark.png`·`i16-tree-onelight.png`.
+      - I-16 Zed(`v9/new/zed-i16.json`, 2회차): Restricted Mode 대화 상자를 단축키로 닫지 못해 "Stay in Restricted Mode" 버튼 클릭으로 닫음(`zed-dialog-before/after.png`). 패널 픽셀 `[88, 88, 90]`(밝기 88)로 테마를 One Dark로 추정. 단계 넷 캡처 `zed-i16-*.png`, 나란히 `i16-side-1-folder`·`2-cursor-down`·`3-ctrl-click`·`4-active-outside.png`(497×767). tauri 쪽 원본은 네 장 모두 `i16-tree-onedark.png` 하나다. 새 창은 이미 떠 있던 Zed 프로세스(PID 18548) 안에 열려(`isNewProcess: false`) 그 새 창(HWND `0x6F0B7E`)에만 `WM_CLOSE`를 보냈다.
+      - I-17: 처음 메뉴 `Duplicate`·`Paste`(Ctrl-V, 비활성)·`Undo`(Ctrl-Z, 비활성)·`Redo`(Ctrl-Shift-Z, 비활성)·`Copy Path`. `measure-new`의 옮기기는 루트 파일 → 옆 루트 폴더라 이 환경에서 drop-target이 생기지 않아 옮겨지지 않았다(앞 0.8.1 빌드도 같음, `probe-i17.json`). 옮기기 뒤 판정은 회귀 `regress-o2` `i17_menu_undo_redo`로 했다: 처음 비활성, 옮긴 뒤 Undo 활성·Redo 비활성, Undo → 디스크 되돌아감, Redo 활성, Redo → 다시 옮겨짐 — PASS.
+      - I-18: Outline 목록 포커스, 선택 행 테두리 `rgb(71, 103, 158)`(= `--border-focused`). ↓ Install, ↓ Windows, ← Windows, → Windows. Enter 뒤 편집기 포커스·활성 줄 `### Windows`(줄 번호는 못 읽음). 편집기 커서를 바꿔도 고른 행 Path·`activeElement` `outline-list` 그대로 — PASS.
+      - I-19: 테마 21개 모두 `.code-block` 1px solid, 색 = 그 테마 `--border-variant`, 블록 배경 ≠ 본문 배경(예: One Dark 테두리 `rgb(54, 60, 70)`, 블록 `rgb(47, 52, 62)`, 본문 `rgb(40, 44, 51)`; Catppuccin Latte 테두리 `rgb(231, 226, 245)`, 블록 `rgb(230, 233, 239)`, 본문 `rgb(239, 241, 245)`) — PASS. 캡처 `i19-code-block-border.png`.
+      - I-20: `pre.nb-output`·`pre.nb-traceback` 배경 `rgba(0, 0, 0, 0)`·테두리 0, 코드 셀 `.code-block` `rgb(47, 52, 62)`(= `--panel-background`) — PASS. 캡처 `i20-ipynb-output.png`.
+      - I-21: 느슨한 `ul` margin-bottom 12, 마지막 항목 `p` 16, 쌓임 28, 잉크 위끝 간격 **51**(Zed 50±1) — PASS. 붙은 목록·제목 간격은 회귀 REP-I8(h2 22px, li 4px)로 ORDER-06 값 그대로. 캡처 `i21-loose-list-spacing.png`.
+      - I-22: 마크다운 `#한글-제목`·`#usage`·`#usage-1`을 누르면 그 제목 top = 미리보기 위쪽(차 0), 없는 id는 scrollTop 0 그대로. 요약 표는 ipynb 단계의 차 655로 FAIL이지만, leader probe(`probe-i22.json`)에서 같은 동작이 확인됐다: 마크다운 세 링크 각 제목이 top 65(미리보기 위쪽), 없는 id는 scrollTop 0·탭 수 2 그대로, ipynb 목차는 대상 top 1775 → 65.
+      - I-23: 미리보기 16/20/24px에서 `--preview-list-gap` 4/5/6px, `--preview-list-line-gap` 6/7.5/9px, 문단 16/8px 고정. 설명 문구 두 줄이 K-09a 문구와 같다 — PASS.
+    - I-24 링크(`v9/links/v3-links.json`·`SUMMARY.md`, 4회차): **24/24 PASS** — 누른 링크 여섯 종류 + Enter(1a `other.html`·1b `sub/page.html`·2 `.md`·3a `.txt`·3b `.csv`는 탭 3, 4 외부, 5a `file:`·5b `javascript:`·6 `#id`는 탭 2, 7 Enter 탭 3), 클릭 없는 길 다섯(`location.href`·`window.open`·만든 클릭·위조 `postMessage`·`<meta refresh>`, 호출 기록 0), 프로토타입 바꿔치기(만든 클릭 막힘, 사용자 클릭 따라감), 토큰 찾기 못 함, ORDER-07·08 격리 fixture 다섯(`navigate`·`refresh`·`loopnav`·`isolation`·`network`, 프레임 `http://preview.localhost/p9`~`p13`, 호출 기록 0). 단 `openUrl` 가로채기(`__TAURI_INTERNALS__.invoke` 감싸기)는 적용되지 않아 호출 기록이 늘 0이었다 — 외부 링크는 브라우저 프로세스 수 증가(22→29, 4번 단계 +7)로, 클릭 없는 길은 탭 수 그대로 + 호출 기록 0으로 판정했다. 마지막 실제 호출 단계는 26→31(+5). 실제 브라우저 탭이 사용자 기본 브라우저에 example.com으로 몇 번 열렸다(프로세스는 끝내지 않음).
+    - 회귀(`v9/regress/regression-summary.md`, 5회차): 나 16줄 중 #4·#5·#6·#7·#9·#10·#11·#13·#15·#16·#18·#19·#20·#23·#25 PASS, **#8 NO-DATA** — 탐색기 OLE 놓기는 도우미 창이 커서 아래로 오지 않아(`helper is not under the cursor; nothing sent (under=4855124, src=1640418, sx=1588, sy=264)`) 측정 불가. 대표 동작 REP-ABOUT(Version 0.8.1)·I1~I13·SYNC·PREV PASS(REP-I3는 o2 `c2_file_to_folder` 결과로 대체 판정). ORDER-08: O8-I14-1(알림 6.8초, 앱 응답, 전경 workbench-tauri)·I14-3(거짓 알림 없음, `hasFocus` true)·I15(LAN STUN 0패킷) PASS, **O8-I14-2**(루프 닫은 뒤 새 HTML)는 3·4회차 PASS, 5회차는 스크립트 오류(행 못 찾음)로 NO-DATA. I-17 PASS(위).
+  - 검증: V3(측정).
+  - 특이사항: checker가 C-20-R2·R4에서 `verify/ORDER-02/drag-src.ps1`·`ext-drop.ps1`을 직접 고쳤다(그 뒤 ORDER-09로 복사해 씀). 두 파일의 고침은 작업 트리(커밋 전)다.
+- **W-14 ORDER-09 PROGRESS·PLAN 기록** (2026-11-13, writer)
+  - 무엇을 했나: 위 Phase 9 항목을 K-09a~K-09e·K-09d-R1·C-17~C-21-R1 카드·보고 파일, 커밋 `9a27d12`·`56c3b66`, `v9/`의 측정 결과(`new/v3-new.json`·`summary.md`·`zed-i16.json`, `links/v3-links.json`·`SUMMARY.md`, `regress/regression-summary.md`, `leader-probe/probe-i17.json`·`probe-i22.json`, `leader-probe/runs/*.txt`)와 W-14 카드의 회차 요약에서 옮겨 적고, `PLAN.md`에 Phase 9 작업 카드 표를 더했다.
+  - 결과: 문서만 바뀌었다. 루트 `AGENTS.md` 1장 "현재 상태"는 바꾸지 않았다.
+  - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-14-report.md`).
+  - 특이사항: 없음.

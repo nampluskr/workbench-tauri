@@ -1,0 +1,33 @@
+==================================================================
+ v0.8.1 ORDER-09: Zed I-16 Project Panel Capture & Side-by-Side
+==================================================================
+[ZED-INIT] Found 1 existing Zed window(s): workbench-core (0x1D0DA8)
+[ZED-INIT] Setting up fixture workspace at: C:\Users\nampl\AppData\Local\Temp\v081-zed-i16-ws
+[ZED-LAUNCH] Spawning Zed on temp workspace: C:\Users\nampl\AppData\Local\Temp\v081-zed-i16-ws
+[ZED-LAUNCH] Waiting for new window to appear...
+[ZED-TARGET] Acquired target window: HWND 0x6F0B7E, PID 18548 (isNewProcess: false)
+[ZED-LAYOUT] Setting window size to 1440x852...
+[ZED-DIALOG] Checking and handling Restricted Mode dialog...
+[ZED-DIALOG] Captured pre-check screenshot: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\new\zed-dialog-before.png
+[ZED-DIALOG] Modal check: pixel at (700, 150) = [242, 242, 243], dialogDetected = true
+[ZED-DIALOG] Sending shortcut: Ctrl-Alt-Shift-S (Stay in Restricted Mode)...
+[ZED-DIALOG] Captured post-dismissal screenshot: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\new\zed-dialog-after.png
+[ZED-DIALOG] Scrim still detected after shortcut, attempting click on 'Stay in Restricted Mode' button (490, 338)...
+[ZED-DIALOG] Captured updated post-click screenshot: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\new\zed-dialog-after.png
+[ZED-THEME] Sampled panel pixel at (120, 200): [88, 88, 90], luminance: 88 -> Theme: One Dark
+[ZED-ACTION] Step 1: Plain folder click...
+[ZED-SHOT] Captured: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\new\zed-i16-1-folder.png
+[ZED-ACTION] Step 2: Down arrow cursor movement...
+[ZED-SHOT] Captured: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\new\zed-i16-2-cursor-down.png
+[ZED-ACTION] Step 3: Ctrl+click multiple selection...
+[ZED-SHOT] Captured: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\new\zed-i16-3-ctrl-click.png
+[ZED-ACTION] Step 4: Open file & focus editor outside tree...
+[ZED-SHOT] Captured: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\new\zed-i16-4-active-outside.png
+[ZED-COMPOSER] Composing side-by-side comparison images (theme: One Dark)...
+[ZED-COMPOSER] Saved side-by-side [1-folder]: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\new\i16-side-1-folder.png (497x767)
+[ZED-COMPOSER] Saved side-by-side [2-cursor-down]: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\new\i16-side-2-cursor-down.png (497x767)
+[ZED-COMPOSER] Saved side-by-side [3-ctrl-click]: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\new\i16-side-3-ctrl-click.png (497x767)
+[ZED-COMPOSER] Saved side-by-side [4-active-outside]: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\new\i16-side-4-active-outside.png (497x767)
+[ZED-COMPOSER] Master side-by-side saved: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\new\i16-side-OneDark.png
+[ZED-CLEANUP] Closing target window 0x6F0B7E (PID: 18548, isNewProcess: false)
+[ZED-DONE] Results logged in: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\new\zed-i16.json

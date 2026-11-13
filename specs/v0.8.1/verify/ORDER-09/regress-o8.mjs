@@ -63,6 +63,8 @@ for (const name of ["direct", "blank", "srcdoc", "open", "worker", "proto"]) {
     writeFileSync(`${W}/webrtc-${name}.html`, replaced);
   }
 }
+writeFileSync(`${W}/page.html`, "<p id=\"ran\">no</p><script>document.getElementById('ran').textContent='ran'</script>\n");
+writeFileSync(`${W}/plain.html`, "<h1>Plain</h1><p>Unstyled text with <a href=\"#x\">a link</a>.</p><p id=\"x\">x</p>\n");
 
 writeFileSync(`${DATA}/settings.json`, JSON.stringify({ theme: "One Dark" }) + "\n");
 writeFileSync(`${DATA}/state.json`, JSON.stringify({
@@ -117,7 +119,8 @@ const shot = async (n) => {
   const r = await app.send("Page.captureScreenshot", { format: "png" });
   writeFileSync(`${OUT}/${n}.png`, Buffer.from(r.data, "base64"));
 };
-const row = (rel) => `document.querySelector('.tree-window .tree-row[data-path=' + JSON.stringify(JSON.stringify(${JSON.stringify(WW + "\\") + " + " + JSON.stringify(rel.replace(/\//g, "\\"))})).slice(1, -1) + ']')`;
+const P = (rel) => `${WW}\\${rel.replace(/\//g, "\\")}`;
+const row = (rel) => `([...document.querySelectorAll('.tree-window .tree-row')].find(e => (e.dataset.path || e.getAttribute('data-path')) === ${JSON.stringify(P(rel))}) || document.querySelector('.tree-window .tree-row[data-path=${JSON.stringify(JSON.stringify(P(rel))).slice(1, -1)}]'))`;
 const pt = (js) => ev(`(()=>{const e=${js};if(!e)return null;e.scrollIntoView({block:'nearest'});const r=e.getBoundingClientRect();return {x:Math.round(r.x+Math.min(r.width/2,60)),y:Math.round(r.y+r.height/2)}})()`);
 const click = async (js, dbl) => {
   const p = await pt(js);
@@ -128,6 +131,30 @@ const click = async (js, dbl) => {
     await app.mouse("mouseReleased", p.x, p.y, { button: "left", clickCount: c });
   }
   await sleep(700);
+};
+
+const ensureForeground = () => {
+  try {
+    execFileSync("pwsh", ["-NoProfile", "-File", resolve(REPO, "tools/win-input.ps1"), "-ProcessId", String(app.pid), "-Action", "foreground"], { encoding: "utf8" });
+  } catch {}
+};
+
+const getForegroundInfo = () => {
+  try {
+    const cmd = `
+      $h = (Add-Type -MemberDefinition '[DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();' -Name "W$([Guid]::NewGuid().ToString('N').Substring(0,8))" -Namespace "U" -PassThru)::GetForegroundWindow()
+      $p = Get-Process | Where-Object { $_.MainWindowHandle -eq $h }
+      if ($p) {
+        [PSCustomObject]@{ pid = $p.Id; name = $p.ProcessName; title = $p.MainWindowTitle; hwnd = ('0x{0:X}' -f [int64]$h) } | ConvertTo-Json -Compress
+      } else {
+        [PSCustomObject]@{ pid = $null; name = "unknown"; title = ""; hwnd = ('0x{0:X}' -f [int64]$h) } | ConvertTo-Json -Compress
+      }
+    `;
+    const raw = execFileSync("powershell", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", cmd], { encoding: "utf8", windowsHide: true }).trim();
+    return JSON.parse(raw);
+  } catch (e) {
+    return { name: "err", pid: null, error: e.message };
+  }
 };
 
 const step = async (name, fn) => {
@@ -143,40 +170,125 @@ try {
   await startStunServer();
   app = await launchApp(EXE);
   await sleep(6000);
-  execFileSync("pwsh", ["-NoProfile", "-File", resolve(REPO, "tools/win-input.ps1"), "-ProcessId", String(app.pid), "-Action", "foreground"], { encoding: "utf8" });
+  ensureForeground();
   await sleep(600);
 
   // I-14: 무한 루프 알림 및 앱 반응성
   await step("c3_c4_hang_and_cpu", async () => {
+    ensureForeground();
+    await sleep(400);
+
     await click(row("loop.html"), true);
     await sleep(1000);
     await click("[...document.querySelectorAll('button[aria-label=\"Open Preview\"]')].find(e=>e.offsetParent)").catch(() => {});
-    await sleep(6000); // 5초 초과 후 hang notice 확인
-    const notice = await ev("document.querySelector('.preview-hang-notice, .html-preview-hang, .toast')?.textContent||null");
+    
+    ensureForeground();
+    await sleep(400);
+
+    const startTime = Date.now();
+    let notice = null;
+    let noticeDetectedAtSec = null;
+    let noticeForeground = null;
+
+    for (let i = 0; i < 20; i++) {
+      await sleep(1000);
+      if (i % 3 === 0) ensureForeground();
+      const n = await ev("[...document.querySelectorAll('p')].find(p=>p.textContent.includes('This HTML page is not responding'))?.textContent || document.querySelector('.preview-hang-notice, .html-preview-hang, .toast')?.textContent || null");
+      if (n) {
+        notice = n;
+        noticeDetectedAtSec = Math.round((Date.now() - startTime) / 100) / 10;
+        noticeForeground = getForegroundInfo();
+        break;
+      }
+    }
+
+    ensureForeground();
+    await sleep(300);
+    const fgAtJudgement = getForegroundInfo();
+    const docHasFocus = await ev("document.hasFocus()");
+    const visState = await ev("document.visibilityState");
+
     await shot("c3-hang-notice");
-    const appResponsive = await ev("1+1") === 2;
-    return { notice, appResponsive };
+    const appResponsive = (await ev("1+1")) === 2;
+
+    const isForeground = fgAtJudgement?.pid === app.pid || fgAtJudgement?.name?.toLowerCase().includes("workbench");
+    const undetermined = !isForeground || !docHasFocus;
+
+    return {
+      notice,
+      noticeDetectedAtSec,
+      noticeForeground,
+      appResponsive,
+      fgAtJudgement,
+      docHasFocus,
+      visState,
+      isForeground,
+      undetermined,
+      verdict: undetermined ? "판정 불가" : (notice && appResponsive ? "PASS" : "FAIL")
+    };
   });
 
   // I-14: 루프 후 새 페이지 및 pane 복구
   await step("c2_recovery_and_panes", async () => {
-    // 탭 닫기
-    await click("document.querySelector('.tab.active button[aria-label=\"Close Tab\"]')");
+    ensureForeground();
+    await sleep(400);
+
+    // 탭 닫기 (이전 loop.html 프레임 및 탭 정리)
+    await ev("document.querySelectorAll('.tab-close').forEach(c=>c.click())").catch(() => {});
     await sleep(1500);
+
     // page.html 열기
     await click(row("page.html"), true);
     await sleep(1000);
     await click("[...document.querySelectorAll('button[aria-label=\"Open Preview\"]')].find(e=>e.offsetParent)").catch(() => {});
     await sleep(2500);
-    const pageText = await ev("document.querySelector('iframe')?.contentDocument?.body?.innerText||null");
-    return { pageRecovered: pageText !== null };
+
+    ensureForeground();
+    await sleep(300);
+    const frameSrc = await ev("document.querySelector('iframe')?.src||null");
+    const fgAtJudgement = getForegroundInfo();
+    const docHasFocus = await ev("document.hasFocus()");
+
+    return {
+      pageRecovered: frameSrc !== null && /preview/.test(frameSrc),
+      frameSrc,
+      fgAtJudgement,
+      docHasFocus
+    };
   });
 
   // I-14: 보통 페이지 거짓 알림 없음
   await step("c3_no_false_positive", async () => {
-    await sleep(5000);
-    const notice = await ev("document.querySelector('.preview-hang-notice, .html-preview-hang')?.textContent||null");
-    return { noticeHasFalsePositive: notice !== null };
+    ensureForeground();
+    await sleep(400);
+
+    // 5초간 전경 유지하며 관찰
+    for (let i = 0; i < 5; i++) {
+      await sleep(1000);
+      ensureForeground();
+    }
+
+    ensureForeground();
+    await sleep(300);
+    const fgAtJudgement = getForegroundInfo();
+    const docHasFocus = await ev("document.hasFocus()");
+    const visState = await ev("document.visibilityState");
+
+    const notice = await ev("[...document.querySelectorAll('p')].find(p=>p.textContent.includes('This HTML page is not responding'))?.textContent || document.querySelector('.preview-hang-notice, .html-preview-hang')?.textContent || null");
+
+    const isForeground = fgAtJudgement?.pid === app.pid || fgAtJudgement?.name?.toLowerCase().includes("workbench");
+    const undetermined = !isForeground || !docHasFocus;
+
+    return {
+      noticeHasFalsePositive: notice !== null,
+      notice,
+      fgAtJudgement,
+      docHasFocus,
+      visState,
+      isForeground,
+      undetermined,
+      verdict: undetermined ? "판정 불가" : (!notice ? "PASS" : "FAIL")
+    };
   });
 
   // I-15: 보안 설정 및 WebRTC 누출 차단
@@ -188,10 +300,10 @@ try {
   // I-7 회귀: 스타일 없는 HTML 테마 반영
   await step("c8_plain_theme_and_tab", async () => {
     await click(row("plain.html"), true);
-    await sleep(1000);
+    await sleep(1200);
     await click("[...document.querySelectorAll('button[aria-label=\"Open Preview\"]')].find(e=>e.offsetParent)").catch(() => {});
-    await sleep(2000);
-    const frameBg = await ev("getComputedStyle(document.querySelector('iframe')).backgroundColor");
+    await sleep(2500);
+    const frameBg = await ev("(()=>{const f=document.querySelector('iframe');return f?getComputedStyle(f).backgroundColor:null})()");
     return { frameBg };
   });
 } catch (e) {

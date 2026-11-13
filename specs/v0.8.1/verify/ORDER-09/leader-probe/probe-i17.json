@@ -1,0 +1,16 @@
+{
+  "menuOpenAfterEsc": false,
+  "dropState": {
+    "under": "C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-probe-i17\\ws\\folder",
+    "rows": [],
+    "root": false
+  },
+  "afterMove": {
+    "inFolder": false,
+    "atRoot": true
+  },
+  "menuAfterMove": {
+    "next": []
+  },
+  "error": "Error: not found [...document.querySelectorAll('#context-menu .menu-item')].find(e=>e.firstElementChild?.textContent.trim()==='Undo')"
+}

@@ -91,7 +91,7 @@ const shot = async (n) => {
   writeFileSync(`${OUT}/${n}.png`, Buffer.from(r.data, "base64"));
 };
 const P = (rel) => `${WW}\\${rel.replace(/\//g, "\\")}`;
-const row = (rel) => `document.querySelector('.tree-window .tree-row[data-path=' + JSON.stringify(JSON.stringify(${JSON.stringify(P(rel))})).slice(1, -1) + ']')`;
+const row = (rel) => `([...document.querySelectorAll('.tree-window .tree-row')].find(e => (e.dataset.path || e.getAttribute('data-path')) === ${JSON.stringify(P(rel))}) || document.querySelector('.tree-window .tree-row[data-path=${JSON.stringify(JSON.stringify(P(rel))).slice(1, -1)}]'))`;
 const pt = (js, center) => ev(`(()=>{const e=${js};if(!e)return null;e.scrollIntoView({block:'nearest'});const r=e.getBoundingClientRect();return {x:Math.round(r.x+${center ? "r.width/2" : "Math.min(r.width/2,60)"}),y:Math.round(r.y+r.height/2)}})()`);
 const click = async (js, o = {}) => {
   const p = await pt(js, o.center);
@@ -116,7 +116,7 @@ const press = async (k, mod = 0) => {
   await sleep(500);
 };
 const CTRL = 2, SHIFT = 8;
-const statusOrder = () => ev("[...document.querySelectorAll('.status-bar-left > *')].map(e=>e.classList.contains('status-separator')?'|':(e.getAttribute('aria-label')||e.textContent.trim()))");
+const statusOrder = () => ev("[...(document.querySelector('.status-bar .group.grow')||document.querySelector('.status-bar-left'))?.children||[]].map(e=>(e.classList.contains('status-divider')||e.classList.contains('status-separator'))?'|':(e.getAttribute('aria-label')||e.textContent.trim()))");
 const outlineRows = () => ev("(()=>{const list=document.querySelector('.outline-list');if(!list)return null;const r=[...list.querySelectorAll('.tree-row')].map(x=>({name:x.querySelector('.tree-label')?.textContent,badge:x.querySelector('.outline-badge')?.textContent,level:x.querySelectorAll('.tree-item > .tree-indent').length,selected:x.classList.contains('selected')}));return {title:document.querySelector('.outline-header-title')?.textContent,rows:r}})()");
 const outlineRow = (name) => `[...document.querySelectorAll('.outline-list > .tree-row')].find(r=>r.querySelector('.tree-label')?.textContent===${JSON.stringify(name)})`;
 const cursorLine = () => ev("(()=>{const ed=[...document.querySelectorAll('.cm-editor')].find(e=>e.offsetParent);if(!ed)return null;const l=ed.querySelector('.cm-activeLine');return {line:l?l.textContent.slice(0,60):null,focused:ed.classList.contains('cm-focused')}})()");
@@ -268,11 +268,22 @@ try {
 
   // USER-TEST #16: 큰 문서에서 커서 스크롤 따라가기
   await step("c8_follow_scroll", async () => {
-    await click(row("big.md"), { dbl: true }); await sleep(1200);
-    const scroll0 = await ev("document.querySelector('.outline-list').scrollTop");
-    await click("[...document.querySelectorAll('.cm-line')].filter(e=>e.offsetParent).find(l=>l.textContent.includes('Section 118'))");
-    await sleep(1000);
-    const scroll1 = await ev("document.querySelector('.outline-list').scrollTop");
+    await click(row("big.md"), { dbl: true });
+    await sleep(2500);
+    const scroll0 = await ev("document.querySelector('.outline-list')?.scrollTop || 0");
+    await click("[...document.querySelectorAll('.cm-content')].find(e=>e.offsetParent)");
+    const ep = await pt("[...document.querySelectorAll('.cm-scroller')].find(e=>e.offsetParent)");
+    if (ep) {
+      for (let i = 0; i < 20; i++) {
+        await app.send("Input.dispatchMouseEvent", { type: "mouseWheel", x: ep.x + 200, y: ep.y, deltaX: 0, deltaY: 2000 });
+        await sleep(50);
+      }
+    }
+    await sleep(800);
+    const lineTarget = "[...document.querySelectorAll('.cm-line')].filter(e=>e.offsetParent&&e.getBoundingClientRect().top>200&&e.getBoundingClientRect().top<600).find(l=>l.textContent.startsWith('text')||l.textContent.includes('Section'))";
+    await click(lineTarget).catch(() => {});
+    await sleep(1500);
+    const scroll1 = await ev("document.querySelector('.outline-list')?.scrollTop || 0");
     const sel = (await outlineRows()).rows.filter((x) => x.selected).map((x) => x.name);
     return { scroll0, scroll1, selected: sel };
   });

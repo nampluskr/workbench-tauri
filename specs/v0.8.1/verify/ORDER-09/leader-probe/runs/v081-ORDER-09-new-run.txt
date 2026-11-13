@@ -1,0 +1,10 @@
+[MEASURE] Running step: step_i16_tree_selection
+[MEASURE] Running step: step_i17_tree_menu_undo_redo
+[MEASURE] Running step: step_i18_outline_keyboard
+[MEASURE] Running step: step_i19_code_block_borders
+[MEASURE] Running step: step_i20_ipynb_output_bg
+[MEASURE] Running step: step_i21_loose_list_spacing
+[MEASURE] Running step: step_i22_heading_slug_links
+[MEASURE] Running step: step_i23_list_gap_scaling
+[MEASURE] New items verification data written to: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\new\v3-new.json
+[MEASURE] Summary markdown generated at: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\new\summary.md

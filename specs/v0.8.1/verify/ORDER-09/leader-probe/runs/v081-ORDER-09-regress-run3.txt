@@ -1,0 +1,103 @@
+==================================================================
+ v0.8.1 ORDER-09 Regression Test Suite Runner
+ Target EXE: D:\projects\workbench-tauri\src-tauri\target\release\workbench-tauri.exe
+ Target Suites: rep, o2, o3, o4, o5, o6, o7, o8
+ Output Directory: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\regress
+==================================================================
+
+>>> Starting Suite [rep]: ORDER-07 #11 release representative regression (I-1~I-13, preview kinds)
+    Command: node D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\regress-rep.mjs "D:\projects\workbench-tauri\src-tauri\target\release\workbench-tauri.exe"
+[REP] Result written to: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\regress\v3-regress-rep.json
+<<< Completed Suite [rep] successfully.
+
+>>> Starting Suite [o2]: Phase 2 (USER-TEST #4, #5, #6, #7, #8, #9: tree drag, guards, tabs, ext-drop, undo)
+    Command: node D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\regress-o2.mjs "D:\projects\workbench-tauri\src-tauri\target\release\workbench-tauri.exe"
+[31;1mException: [0mD:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-02\ext-drop.ps1:53
+[36;1mLine |[0m
+[36;1m[36;1m  53 | [0m �� -ne $src) { [36;1mthrow "helper is not under the cursor; nothing sent (unde ��[0m
+[36;1m     | [31;1m               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~����[0m
+[36;1m[31;1m[31;1m[36;1m     | [31;1mhelper is not under the cursor; nothing sent (under=920366, src=3148854)[0m
+[36;1m[31;1m[31;1m[36;1m[31;1m[0m
+[31;1mException: [0mD:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-02\ext-drop.ps1:53
+[36;1mLine |[0m
+[36;1m[36;1m  53 | [0m �� -ne $src) { [36;1mthrow "helper is not under the cursor; nothing sent (unde ��[0m
+[36;1m     | [31;1m               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~����[0m
+[36;1m[31;1m[31;1m[36;1m     | [31;1mhelper is not under the cursor; nothing sent (under=920366, src=3020062)[0m
+[36;1m[31;1m[31;1m[36;1m[31;1m[0m
+[O2] Result written to: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\regress\v3-o2.json
+<<< Completed Suite [o2] successfully.
+
+>>> Starting Suite [o3]: Phase 3 (USER-TEST #7 drop, #10 Lock temp/keep, #11 Search tabs, I-13 last tab)
+    Command: node D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\regress-o3.mjs "D:\projects\workbench-tauri\src-tauri\target\release\workbench-tauri.exe"
+[O3] Result written to: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\regress\v3-o3.json
+<<< Completed Suite [o3] successfully.
+
+>>> Starting Suite [o4]: Phase 4 (USER-TEST #13 Outline bar/resize, #15 Outline kinds/jump, #16 cursor follow/edit)
+    Command: node D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\regress-o4.mjs "D:\projects\workbench-tauri\src-tauri\target\release\workbench-tauri.exe"
+[O4] Result written to: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\regress\v3-o4.json
+<<< Completed Suite [o4] successfully.
+
+>>> Starting Suite [o5]: Phase 5 (USER-TEST #18 5 fonts/D2Coding, #19 code shading/copy, #20 licenses)
+    Command: node D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\regress-o5.mjs "D:\projects\workbench-tauri\src-tauri\target\release\workbench-tauri.exe"
+[O5] Result written to: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\regress\v3-o5.json
+<<< Completed Suite [o5] successfully.
+
+>>> Starting Suite [o6]: Phase 6 (USER-TEST #23 I-9 preview find bar Ctrl+F, toggles, navigation)
+    Command: node D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\regress-o6.mjs "D:\projects\workbench-tauri\src-tauri\target\release\workbench-tauri.exe"
+[O6] Result written to: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\regress\v3-o6.json
+<<< Completed Suite [o6] successfully.
+
+>>> Starting Suite [o7]: Phase 7 (USER-TEST #25 unstyled HTML theme, network isolation, link navigate)
+    Command: node D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\regress-o7.mjs "D:\projects\workbench-tauri\src-tauri\target\release\workbench-tauri.exe"
+[O7] Result written to: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\regress\v3-o7.json
+<<< Completed Suite [o7] successfully.
+
+>>> Starting Suite [o8]: Phase 8 (ORDER-08 I-14 loop recovery/hang notice, I-15 WebRTC/links leak block)
+    Command: node D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\regress-o8.mjs "D:\projects\workbench-tauri\src-tauri\target\release\workbench-tauri.exe"
+[O8] Result written to: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\regress\v3-o8.json
+<<< Completed Suite [o8] successfully.
+
+==================================================================
+ Regression Execution Finished. Evaluating Criteria Summary...
+==================================================================
+
+| # | 구분 | 항목 | 스위트 | 테스트 케이스 | 판정 기준 (Debug 기준값) | 릴리스 측정값 | 판정 |
+|---|---|---|---|---|---|---|---|
+| #4 | Phase 2 | 끌어 옮기기·대상 표시·펼침·Ctrl 복사 | regress-o2 | c2_file_to_folder / f2_edge_scroll | dst=[a.txt, keep.txt], bg=rgba(131,137,148,0.5), topAfter=775, under=openme (참고: I-16 이후 커서 전용 행은 배경 없음/테두리만 표시됨) | dst=[a.txt,keep.txt], bg=rgba(131, 137, 148, 0.5), topAfter=786 | **PASS** |
+| #5 | Phase 2 | 자기 자신·하위로 안 옮겨짐, 같은 이름 알림 | regress-o2 | c3_c4_not_allowed / c4_same_name | rows=[], bg=null, toast='Failed to move... already exists there.' | selfRows=0, toast=Failed to move `dst\a.txt` to `dst2\a.txt`. A file or folder already exists there. | **PASS** |
+| #6 | Phase 2 | 열린 탭이 따라감 | regress-o2 | c5_open_tab_file / c5_open_tab_folder | tip=...\dst\doc.md, dirty=true, text=['EDIT1 # doc'], tip=...\dst\proj\f.md | fileTip=C:\Users\nampl\AppData\Local\Temp\v081-regress-o2\o2ws\dst\doc.md, projTip=C:\Users\nampl\AppData\Local\Temp\v081-regress-o2\o2ws\dst\proj\f.md, dirty=true | **PASS** |
+| #7 | Phase 2/3 | 트리 파일을 pane에 놓기 | regress-o2/o3 | c6_pane_drop / c8_drop | t1 o1.txt 끝 추가, t2 o2.txt 앞 삽입, t3 right 분할 pane o3.txt, lockOff 일반 탭, lockOn 고정 미리보기 | paneT1=true, paneT2=true, paneT3=true, lockDrop=true | **PASS** |
+| #8 | Phase 2 | 탐색기에서 놓으면 복사 (OLE) | regress-o2 | c7_explorer | status='dropped', dst3에 'ext copy.txt' (EXT-NEW), 기존 'ext.txt' (EXT-OLD) 보존 | status=undefined, dst3=[ext.txt] | **NO-DATA** |
+| #9 | Phase 2 | Ctrl+Z / Ctrl+Shift+Z | regress-o2 | undo_redo | undo.projBack=true, redo.dstProj=true, editorCtrlZ.dstProj=true | projBack=true, dstProj=true, editorCtrlZ=true | **PASS** |
+| #10 | Phase 3 | I-5 Lock Preview 임시 탭·고정 | regress-o3 | c1_temp_preview / c2_keep / c3_lock_off_and_commands | m1~m3 임시 탭 1개 교체 (italic), 더블클릭/가운데클릭 고정 (normal), 눈버튼/단축키 고정 | tempItalic=true, keptNormal=true | **PASS** |
+| #11 | Phase 3 | I-6 Search 탭 여러 개 | regress-o3 | c4_c5_search | Search 탭 3개, 제목=검색어('m1','long-file-name-1','data'), 결과 유지, Extensions 탭 1개 유지 | titles=[Preview m4.md,Preview m5.md,m6.md,Preview m6.md,m1,long-file-name-1,data,Preview m6.md], extensionsTabs=1 | **PASS** |
+| #13 | Phase 4 | 상태 표시줄 순서, Outline 여닫기 | regress-o4 | c11_initial / c1_open / c3_border_resize | status=['Close Left Dock','\|','Outline','\|','Search','Lock Preview'], Outline폭 240, dock 닫아도 유지, 리사이즈 299 | status=[Close Left Dock,\|,Outline,\|,Search,Lock Preview], dockClosedStay=true, w1=299 | **PASS** |
+| #15 | Phase 4 | 종류별 Outline 내용, 누르면 이동 | regress-o4 | c4_markdown / c5_ipynb / c6_code / c7_click_editor | Guide>Install>Windows>Path 계층, ipynb markdown 셀만, code py/ts/rs 계층, Usage 클릭 줄 가운데 정렬 | mdGuide=true, ipynbLoad=true, editorLine=## Usage | **PASS** |
+| #16 | Phase 4 | 커서 따라감, 편집하면 바뀜 | regress-o4 | c8_follow_edit / c9_fold / c8_follow_scroll | Windows 커서 선택, 'Added Section' 추가 반영/되돌리기, Install 접힌 부모 선택, big.md scrollTop 288->2342 | addReflect=true, undoReflect=true, foldParent=true, scroll1=2940 | **PASS** |
+| #18 | Phase 5 | Settings에서 글꼴 다섯 바꾸기, D2Coding 한글 | regress-o5 | c3_fonts / c5_korean_editor | 5개 글꼴 pre/inline 즉시 반영, preSize 13.6px, JetBrains는 Malgun Gothic 대체, D2Coding은 D2Coding 렌더 | jbPre=true, d2Pre=true, d2Glyphs=undefined | **NO-DATA** |
+| #19 | Phase 5 | 코드 블록 음영·머리 줄·복사 | regress-o5 | c8_shading / c9_headers / c10_copy | One Dark block!=page (rgb(47,52,62) vs rgb(40,44,51)), python 머리줄+복사버튼, 클립보드 원문 일치 | diffDark=true, lang=python, clipEqual=false | **FAIL** |
+| #20 | Phase 5 | Licenses에 글꼴 넷 | regress-o5 | c12_licenses | JetBrains Mono, Hack, Ubuntu Mono, D2Coding 4개 글꼴 라이선스 및 본문 표지 포함 | jetbrains=true, hack=true, ubuntu=true, d2coding=true | **PASS** |
+| #23 | Phase 6 | I-9 미리보기 찾기 바 | regress-o6 | c5_md_open / c6_toggles / c6_next_prev | Ctrl+F open=true, Esc open=false, 'apple' 1/6, 대소문자 1/4, 단어 1/4, 정규식 1/6, 한글 1/2, Enter 2/6~6/6 | open=true, esc=false, appleCount=1/6, koreanCount=1/2 | **PASS** |
+| #25 | Phase 7 | 스타일 없는 HTML의 테마색, 링크, 인터넷 | regress-o7 | c7_plain_theme / c4_network / c5_navigate_r1 | One Dark 프레임 글자 rgb(220,224,229)·배경 rgb(40,44,51), network 8행 blocked (요청 0), #bottom scrollY=1272 (참고: I-24 이후 navigate.html 사용자 클릭 시 링크 따라감, 미클릭 단계는 차단 유지) | bodyColor=rgb(220, 224, 229), iframeBg=rgb(40, 44, 51), netBlocked=true, scrollY=1272 | **PASS** |
+| REP-ABOUT | Phase 1 | 도움말 About 버전 | regress-rep | about.ver | Version 0.8.1 | Version 0.8.1 | **PASS** |
+| REP-I1 | Phase 1 | I-1 입력칸 글자 크기 | regress-rep | I-1_input_14px | 14px | 14px | **PASS** |
+| REP-I2 | Phase 1 | I-2 트리 보통 이름 색 | regress-rep | I-2_tree_color | color === muted (#a9afbc) | color=rgb(169, 175, 188), muted=#a9afbcff | **PASS** |
+| REP-I3 | Phase 2 | I-3 파일 끌어 옮기기 | regress-rep | I-3_drag | moved=true, oldGone=true | moved=false, oldGone=false | **FAIL** |
+| REP-I4 | Phase 4 | I-4 Outline (Python) | regress-rep | I-4_outline | ['C A', 'm m', 'f f'] | ["C A","m m","f f"] | **PASS** |
+| REP-I5 | Phase 3 | I-5 Lock Preview 임시 탭 | regress-rep | I-5_lock_temp_preview | ['Preview other.md italic'] | ["Preview other.md italic"] | **PASS** |
+| REP-I6 | Phase 3 | I-6 Search 탭 2개 | regress-rep | I-6_search_tabs | 2 | 2 | **PASS** |
+| REP-I7 | Phase 7 | I-7 HTML 인라인 스크립트 | regress-rep | other_previews.I7_htmlScript | 'ran' | ran | **PASS** |
+| REP-I8 | Phase 6 | I-8 미리보기 h2 여백·목록 간격 | regress-rep | md_preview_kinds (I8_h2, liGap) | h2=22px, liGap=4px | h2=22px, liGap=4px | **PASS** |
+| REP-I9 | Phase 6 | I-9 미리보기 찾기 바 열림 | regress-rep | md_preview_kinds.I9_findBar | true | true | **PASS** |
+| REP-I10 | Phase 5 | I-10 편집기·코드 글꼴 | regress-rep | I-10_editor_font | JetBrains Mono | "JetBrains Mono", "Malgun Gothic", monospace | **PASS** |
+| REP-I11 | Phase 5 | I-11 코드 블록 음영 | regress-rep | md_preview_kinds.I11_bg | rgb(47,52,62) != rgb(40,44,51) | rgb(47, 52, 62) vs rgb(40, 44, 51) | **PASS** |
+| REP-I12 | Phase 5 | I-12 코드 블록 머리 줄 | regress-rep | md_preview_kinds.I12_lang | 'python' | python | **PASS** |
+| REP-I13 | Phase 3 | I-13 마지막 탭 닫기 버튼 | regress-rep | I-13_last_tab | closeRight 1348 < edgeLeft 1353 | closeRight=848, edgeLeft=853 | **PASS** |
+| REP-SYNC | Phase 3 | 마크다운 위치 연계 | regress-rep | md_preview_kinds.syncEditorLine | '## End' | ## End | **PASS** |
+| REP-PREV | Phase 7 | 미리보기 종류 (csv, svg, ipynb, image, pdf) | regress-rep | other_previews | 모두 true/존재 | csv=false, svg=true, ipynb=2, img=true, pdf=true | **FAIL** |
+| O8-I14-1 | Phase 8 | I-14 무한 루프 알림 및 앱 반응 | regress-o8 | c3_c4_hang_and_cpu | notice 포함 ('This HTML page is not responding...'), appResponsive=true | notice=This HTML page is not responding. Its pr, responsive=true | **PASS** |
+| O8-I14-2 | Phase 8 | I-14 루프 닫은 후 복구 | regress-o8 | c2_recovery_and_panes | pageRecovered=true (루프 닫은 후 새 HTML 정상 렌더링) | pageRecovered=true | **PASS** |
+| O8-I14-3 | Phase 8 | I-14 보통 페이지 거짓 알림 0 | regress-o8 | c3_no_false_positive | noticeHasFalsePositive=false (보통 페이지 알림 없음) | falseNotice=false | **PASS** |
+| O8-I15 | Phase 8 | I-15 WebRTC 및 링크 외부 요청 차단 | regress-o8 | c7_security_settings | stunPacketsCount=0 (LAN STUN 수신 0패킷, ICE 후보 0) | stunCount=0 | **PASS** |
+
+Detailed markdown table saved in verify/ORDER-09/regress/regression-summary.md

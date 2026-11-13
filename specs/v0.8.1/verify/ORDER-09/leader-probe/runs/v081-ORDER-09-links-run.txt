@@ -1,0 +1,11 @@
+[measure-links] Target EXE: D:\projects\workbench-tauri\src-tauri\target\release\workbench-tauri.exe
+[measure-links] Workspace: C:\Users\nampl\AppData\Local\Temp\v081-links-work
+[measure-links] Output Dir: D:\projects\workbench-tauri\specs\v0.8.1\verify\ORDER-09\links
+
+--- Section 1: Clicked Links (6 categories + Tab/Enter) ---
+Test execution error: Error: SyntaxError: Failed to execute 'querySelector' on 'Document': '.tree-window .tree-row[data-path=\"C:\\\\Users\\\\nampl\\\\AppData\\\\Local\\\\Temp\\\\v081-links-work\\\\main-links.html\"]' is not a valid selector.
+    at <anonymous>:2:24
+    at <anonymous>:7:5
+    at Object.evaluate (file:///D:/projects/workbench-tauri/tools/cdp-lib.mjs:70:35)
+    at async openFileInTree (file:///D:/projects/workbench-tauri/specs/v0.8.1/verify/ORDER-09/measure-links.mjs:206:14)
+    at async file:///D:/projects/workbench-tauri/specs/v0.8.1/verify/ORDER-09/measure-links.mjs:262:3

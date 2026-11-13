@@ -1,0 +1,81 @@
+{
+  "about": {
+    "ver": "Version 0.8.1"
+  },
+  "I-2_tree_color": {
+    "color": "rgb(169, 175, 188)",
+    "muted": "#a9afbcff"
+  },
+  "I-1_input_14px": "14px",
+  "I-3_drag": {
+    "moved": false,
+    "oldGone": false,
+    "diskBefore": {
+      "moveExists": true,
+      "inFolder": false,
+      "inTabs": false
+    },
+    "diskAfter": {
+      "moveExists": true,
+      "inFolder": false,
+      "inTabs": false
+    }
+  },
+  "I-10_editor_font": "\"JetBrains Mono\", \"Malgun Gothic\", monospace",
+  "I-4_outline": [
+    "C A",
+    "m m",
+    "f f"
+  ],
+  "md_preview_kinds": {
+    "I8_h2": "22px",
+    "I11_bg": [
+      "rgb(47, 52, 62)",
+      "rgb(40, 44, 51)"
+    ],
+    "I12_lang": "python",
+    "I10_codeFont": "\"JetBrains Mono\"",
+    "math": true,
+    "mermaid": true,
+    "liGap": "4px",
+    "syncEditorLine": "## End",
+    "I9_findBar": true
+  },
+  "I-5_lock_temp_preview": [
+    "Preview other.md italic"
+  ],
+  "I-6_search_tabs": 2,
+  "other_previews": {
+    "csvDiag": {
+      "foundTable": true,
+      "activeTab": "Preview data.csv",
+      "allTables": 1,
+      "tableClass": "csv-table",
+      "tableRows": 2,
+      "previewClass": "pane-body",
+      "foundElements": [
+        "div.pane-item",
+        "div.markdown-preview",
+        "div.markdown-body",
+        "table.csv-table",
+        "thead",
+        "tr",
+        "th",
+        "th",
+        "tbody",
+        "tr"
+      ],
+      "waitedMs": 3020
+    },
+    "csv": true,
+    "svg": true,
+    "ipynb": 2,
+    "I7_htmlScript": "ran",
+    "image": true,
+    "pdf": true
+  },
+  "I-13_last_tab": {
+    "closeRight": 848,
+    "edgeLeft": 853
+  }
+}
