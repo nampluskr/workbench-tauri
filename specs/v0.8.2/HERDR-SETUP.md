@@ -1,12 +1,13 @@
 > 버전: v0.8.2 · 작성일: 2026-11-13 · 상태: 초안
 >
-> workbench-tauri v0.8.2의 herdr 에이전트 구성, 레이아웃, 파일 소유권, 작업 프로토콜이다. 구성은 v0.8.1 끝 그대로다(사용자 2026-11-13 "v0.8.1 구성 그대로", core `specs/v0.8.2/orders/ORDER-01.md` 3.1). 화면 차례·보고·커밋과 push는 core v0.8.2 `orders/COMMON.md` 4·5·6절을 따른다. 공통 규칙은 루트 `AGENTS.md`에, core I-n ↔ Phase ↔ tauri 카드 대응은 `ITEMS-MAP.md`에, 진행은 `PROGRESS.md`에 있다. 지난 구성은 `specs/v0.8.1/HERDR-SETUP.md`에 있다(읽기만 한다).
+> workbench-tauri v0.8.2의 herdr 에이전트 구성, 레이아웃, 파일 소유권, 작업 프로토콜이다. 구성은 v0.8.1 끝 그대로다(사용자 2026-11-13 "v0.8.1 구성 그대로", core `specs/v0.8.2/orders/ORDER-01.md` 3.1). 2026-11-14 `tauri-analyst`를 더하고 coder 모델을 바꿨다(0장). 화면 차례·보고·커밋과 push는 core v0.8.2 `orders/COMMON.md` 4·5·6절을 따른다. 공통 규칙은 루트 `AGENTS.md`에, core I-n ↔ Phase ↔ tauri 카드 대응은 `ITEMS-MAP.md`에, 진행은 `PROGRESS.md`에 있다. 지난 구성은 `specs/v0.8.1/HERDR-SETUP.md`에 있다(읽기만 한다).
 
 # HERDR-SETUP — workbench-tauri v0.8.2
 
 ## 0. 근거
 
 - 구성은 사용자가 정했다(사용자 2026-11-13 "v0.8.1 구성 그대로", core ORDER-01 3.1, core `specs/v0.8.2/PLAN.md` 운영). v0.8.1 끝과 같다: 새로 띄우지 않고 모델도 바꾸지 않는다. checker 모델은 v0.8.1에서 처음 agy의 `claude-sonnet-5-5-high`로 띄웠다가 2026-11-13 사용자 요청으로 agy `/model`에서 `gemini-3.8-flash-high`로 바꾼 것이다(core v0.8.1 ORDER-08 3.3). v0.8.1 구성은 `specs/v0.8.1/HERDR-SETUP.md` 1장에 있다.
+- 2026-11-14 바뀜(사용자 지시, leader-core 전달): (1) w0:p5에 `tauri-analyst`(Claude Code Fable 5.2 medium)를 띄웠다 — core ITEMS I-27 원인 분석만 하고 tauri 파일을 고치지 않으며 앱도 띄우지 않는다. 결과는 leader-core가 받아 경로를 `tauri-leader`에 전달한다. (2) `tauri-coder` 모델을 Fable 5.2 medium으로 바꿨다(`/model`, 다시 띄우지 않음).
 - 대상은 tauri 하나다. gpui는 동결이라 gpui와 화면 차례를 나누지 않는다.
 - core 리더 이름은 `leader-core`이고 패널은 `wT:p1`이다. 아래 프로토콜의 받는 이는 모두 `leader-core`다. w0:p1의 herdr 이름이 비어 있어 leader-core가 2026-11-13 `tauri-leader`로 다시 붙였다(core ORDER-01 3.1).
 - 한도가 바뀌어 구성을 바꾸면 사용자 승인을 받는다(루트 `AGENTS.md` 레포 규칙).
@@ -19,12 +20,13 @@
 |---|---|---|---|---|---|---|---|
 | `tauri-leader` | w0:p1 | 카드 지시, 판정, 커밋, leader-core와 화면 차례 조율. 코드·문서는 쓰지 않는다 | Claude Code | Opus 5.5 | medium | `claude --model claude-opus-5-5 --effort medium` | 상시 |
 | `tauri-writer` | w0:p2 | v0.8.2 문서(ITEMS-MAP·HERDR-SETUP)와 PROGRESS, 루트 `AGENTS.md` | Claude Code | Opus 5.5 | medium | `claude --model claude-opus-5-5 --effort medium` | 문서 단계와 Phase 끝 |
-| `tauri-coder` | w0:p3 | 구현 전부 | Claude Code | Opus 5.5 | medium | `claude --model claude-opus-5-5 --effort medium` | 구현 Phase 동안 |
+| `tauri-coder` | w0:p3 | 구현 전부 | Claude Code | Fable 5.2 | medium | `claude --model claude-fable-5-2 --effort medium` | 구현 Phase 동안 |
 | `tauri-checker` | w0:p4 | 카드 리뷰(정확성, 카드 검증 수준만큼 빌드·테스트), 화면 검증(V2·V3)과 측정. `src/`는 고치지 않는다 | agy | `gemini-3.8-flash-high` | - | `agy --model gemini-3.8-flash-high --settings D:\projects\workbench-tauri\.agents\checker-settings.json` | 리뷰·검증 카드가 있을 때 |
+| `tauri-analyst` | w0:p5 | core ITEMS I-27 원인 분석만. tauri 파일 쓰기·앱 실행·커밋 없음. 결과는 leader-core 경유 | Claude Code | Fable 5.2 | medium | `claude --model claude-fable-5-2 --effort medium` | I-27 분석 동안 |
 
-- 넷 모두 v0.8.1에서 leader-core가 2026-11-13에 띄운 것을 그대로 쓴다(v0.8.2에서 새로 띄우지 않음). checker는 `claude-sonnet-5-5-high`로 띄운 뒤 같은 날 agy `/model`로 Gemini 3.8 Flash (High)로 바꿨다(사용자 2026-11-13, core v0.8.1 ORDER-08 3.3). 표의 checker 실행 명령은 다시 띄울 때 쓴다.
+- leader·writer·coder·checker 넷은 v0.8.1에서 leader-core가 2026-11-13에 띄운 것을 그대로 쓴다. coder는 2026-11-14 `/model`로 Fable 5.2로 바꿨다(다시 띄우지 않음). `tauri-analyst`는 2026-11-14 leader-core가 새로 띄웠다(0장). checker는 `claude-sonnet-5-5-high`로 띄운 뒤 같은 날 agy `/model`로 Gemini 3.8 Flash (High)로 바꿨다(사용자 2026-11-13, core v0.8.1 ORDER-08 3.3). 표의 checker 실행 명령은 다시 띄울 때 쓴다.
 - worktree는 두지 않는다.
-- 리뷰 독립성: writer·coder(Claude Code Opus 5.5)의 산출물은 다른 모델(Gemini 3.8 Flash)·다른 도구(agy)의 checker가 검토한다.
+- 리뷰 독립성: writer(Claude Code Opus 5.5)·coder(Claude Code Fable 5.2)의 산출물은 다른 모델(Gemini 3.8 Flash)·다른 도구(agy)의 checker가 검토한다.
 - 측정자는 직접 고치지 않는다. checker는 불일치 목록을 leader에게 보고한다(루트 `AGENTS.md` 3A.4의 7).
 - 지금은 Codex를 쓰지 않는다.
 - Phase가 바뀔 때 서브 에이전트의 컨텍스트를 비운다(core COMMON 1절).
@@ -41,12 +43,13 @@ herdr session
 └── workspace: w0  workbench-tauri  (D:\projects\workbench-tauri, 브랜치 master, worktree 없음)
     ├── tab: tauri-leader   w0:t1  pane w0:p1  (Claude Code Opus 5.5 medium)
     ├── tab: tauri-writer   w0:t2  pane w0:p2  (Claude Code Opus 5.5 medium)
-    ├── tab: tauri-coder    w0:t3  pane w0:p3  (Claude Code Opus 5.5 medium)
-    └── tab: tauri-checker  w0:t4  pane w0:p4  (agy gemini-3.8-flash-high)
+    ├── tab: tauri-coder    w0:t3  pane w0:p3  (Claude Code Fable 5.2 medium)
+    ├── tab: tauri-checker  w0:t4  pane w0:p4  (agy gemini-3.8-flash-high)
+    └── tab: tauri-analyst  w0:t5  pane w0:p5  (Claude Code Fable 5.2 medium)
 ```
 
 - worktree: 없음.
-- 탭·pane은 v0.8.1에서 leader-core가 2026-11-13에 띄운 것 그대로다. tauri는 새로 띄우지 않는다.
+- 탭·pane은 v0.8.1에서 leader-core가 2026-11-13에 띄운 것 그대로이고, `tauri-analyst`(w0:t5·w0:p5)만 2026-11-14 leader-core가 더했다. tauri는 새로 띄우지 않는다.
 - 같은 세션에 core 워크스페이스(`leader-core`, `wT:p1`)가 함께 떠 있다. 이 레포의 에이전트는 그 워크스페이스에 입력하지 않고 파일을 쓰지 않는다.
 
 ---
@@ -65,6 +68,7 @@ herdr session
 | `specs/v0.8.2/reports/<카드 ID>.md` | `tauri-leader` |
 | `src/`, `index.html`, `vite.config.ts`, `tsconfig.json`, `src-tauri/`, `docs/BUILD.md`, `README.md`, `package.json`·`package-lock.json`·`Cargo.toml`·`Cargo.lock` | `tauri-coder`. 의존성 변경은 사용자 승인(카드가 미리 허락한 것만 예외, core COMMON 3절), 보안 설정(CSP·asset protocol·capability·sandbox·정화 규칙)은 v0.8.1 끝(`c0609e5`)과 같게 두고, 카드가 허락한 것만 바꾼다 — Phase 3(ORDER-03) 본문 HTML 정화 규칙, Phase 6·7(ORDER-06·07) HTML 미리보기 프레임(루트 `AGENTS.md` 9장, core COMMON 3절) |
 | `tools/`, `specs/v0.8.2/verify/` | `tauri-checker` |
+| (쓰는 파일 없음) | `tauri-analyst`. 보고는 `%TEMP%` 또는 leader-core가 정한 곳에만 쓴다 |
 | 커밋 | `tauri-leader`만. push는 leader-core의 `[PUSH]` 뒤에 한다(core COMMON 6절) |
 | 서브 에이전트 카드·보고 | 5.2의 `%TEMP%` 파일 |
 | `spec/`, `docs/refs/`, 지난 버전 폴더(v0.1~v0.8.1) | 아무도 고치지 않는다 |

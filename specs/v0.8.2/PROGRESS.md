@@ -64,3 +64,6 @@
 ### Phase 2 — ORDER-02 (I-13·I-15·I-16·I-17·I-21·I-22·I-23): 여백·표·코드 블록
 
 - **시작** (2026-11-14, leader-core → tauri-leader): 카드 core `D:\projects\workbench-core\specs\v0.8.2\orders\ORDER-02.md`, 항목 I-13·I-15·I-16·I-17·I-21·I-22·I-23. 화면 측정은 leader 프로브 방식으로 하고 checker는 diff 리뷰만 한다(leader-core 지시).
+- **ORDER-02 바뀜** (2026-11-14, 사용자 요청 작업 — 계획 밖, leader-core 전달): 화면 측정을 Phase 7로 모음(core COMMON 8절 끝), I-27 더함(core ORDER-02 8절).
+- **K-02 I-13·I-15·I-16·I-17·I-21·I-22·I-23 (ORDER-02)** (2026-11-14, coder, 커밋 대기): 코드 변경(`src/editor/code-block.ts`·`.test.ts` 새로, `src/shell/markdown-preview.ts`, `src/app.css`, `src/settings/model.ts`·`model.test.ts`·`load.ts`, `src/spec/metrics.ts`, `src/editor/extensions.ts`). 검증 V1: `npm.cmd run test` 318/318, typecheck 0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-K-02-report.md`).
+- **W-03 herdr 구성 바뀜 반영** (2026-11-14, writer): `HERDR-SETUP.md` 0·1·2·4장과 루트 `AGENTS.md` "HERDR 구성은 core가 정한다" 문장에 `tauri-analyst`(w0:p5, Claude Code Fable 5.2 medium, I-27 원인 분석만)와 coder 모델 Fable 5.2(사용자 2026-11-14, leader-core 전달)를 적었다. 검증 V0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-W-03-report.md`).
