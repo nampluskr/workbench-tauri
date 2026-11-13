@@ -126,3 +126,7 @@
   - ORDER-07로 넘긴 것(더함): ORDER-05 6절 #1·#3·#6·#7·#8·#9 V3, Welcome 치수의 고정 커밋 `4304dec732` 대조.
   - 측정부터는 측정 조건에 테마를 적는다(기본이 One Light로 바뀜).
   - 마지막 서브 카드 ID: W-09, K-06, C-06.
+
+### Phase 6 — ORDER-06
+
+- **시작** (2026-11-14, leader-core → tauri-leader): 카드 core D:\projects\workbench-core\specs\v0.8.2\orders\ORDER-06.md(8절 더함). ORDER-05는 [PUSH] 317c987. 서브 에이전트 컨텍스트를 비우고 시작. Claude 5h 한도 96%라 한도에 걸리면 멈추고 04:32 뒤 leader-core 지시로 이어 감.
