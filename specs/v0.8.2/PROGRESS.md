@@ -95,3 +95,18 @@
   - checker(agy)는 core 파일을 읽을 때 "Allow access" 확인이 뜬다 — leader가 `herdr agent send-keys tauri-checker enter`로 승인한다.
   - 카드·보고 파일은 `%TEMP%\v082-<ID>-card.md`·`-report.md`. 마지막 서브 카드 ID: W-07, K-03, C-03.
 - **W-07 ORDER-03 끝·ORDER-04 시작 전 상태 기록** (2026-11-14, writer): 위 판정·[PUSH], 상태, 운영 메모와 상태 줄을 적었다. 검증 V0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-W-07-report.md`).
+
+### Phase 4 — ORDER-04 (I-6·I-7·I-8·I-9·I-10·I-11·I-18): Outline 넓히기와 미리보기 섹션 접기
+
+- **시작** (2026-11-14, leader-core → tauri-leader): 카드 core `D:\projects\workbench-core\specs\v0.8.2\orders\ORDER-04.md`, 항목 I-6·I-7·I-8·I-9·I-10·I-11·I-18. 8절이 더해짐(화면 측정은 Phase 7로, #10 성능은 코드 근거). 서브 에이전트 컨텍스트를 비우고 시작했다.
+- **K-04 I-6·I-7·I-8·I-9·I-10·I-11·I-18 (ORDER-04)** (2026-11-14, coder, 커밋 `499bab6`): HTML 편집 탭 제목 Outline(`htmlOutline`), ipynb·Outline 클릭 뒤 제목 줄 표시와 접힌 곳 펴기, 숫자 방식 `headingNumbers`, Outline 우클릭 메뉴(공용 `openContextMenu`), 처음 2층 펼침 `initialCollapsed`, 단계별 제목 색(`--heading-color-1..6`, UI 테마·Preview 테마), 미리보기 섹션 접기(Outline과 문서당 한 상태, 찾기·Outline 클릭·`#id`·위치 연계가 펴고 이동). 저장값 `outline_heading_numbers`·`outline_heading_colors`(기본 `false`). 바꾼 파일 `src/syntax/outline.ts`·`.test.ts`, `src/shell/Outline.tsx`·`markdown-preview.ts`·`preview-search.ts`, `src/workspace/context.ts`, `src/settings/model.ts`·`model.test.ts`·`load.ts`, `src/theme/theme.ts`·`apply.ts`, `src/editor/markdown.ts`, `src/app.css`. 검증 V1: `npm.cmd run test` 327/327, typecheck 0, 보안 설정 diff 없음, 앱 안 띄움(보고 `C:\Users\nampl\AppData\Local\Temp\v082-K-04-report.md`).
+- **바뀐 동작** (K-04): `## 제목 ##`의 Outline 이름에서 닫는 `#`를 뗀다(미리보기 글자와 같아야 접기 키가 맞음).
+- **C-04 checker 리뷰(K-04)** [PASS] (2026-11-14): diff 리뷰만(범위·보안 설정 불변, 번호 규칙과 테스트 일치, 처음 펼침 문서당 1회, 섹션 범위와 네 경로 펼침, ipynb 클릭이 에디터 커서를 움직이지 않음, 제목 색 기본 꺼짐, 저장값). 테스트는 다시 돌리지 않았다(core COMMON 8절). 검증 V0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-C-04-report.md`).
+  - 특이사항(운영 사건): agy가 core `ORDER-04.md` 읽기 "Allow access" 확인에서 멈췄고, tauri-leader·leader-core의 `send-keys` 승인을 auto mode가 막았다. 사용자 지시로 leader-core가 승인했다(사용자 요청 작업 — 계획 밖 작업 아님).
+- **보고** (2026-11-14, tauri-leader): `specs/v0.8.2/reports/ORDER-04.md` `[DONE]`. V3 줄(#1·#2·#4·#6·#8)은 Phase 7. 미정 셋 — leader-core가 사용자 확인: (1) Outline이 열려 있으면 미리보기도 처음에 하위 제목 있는 둘째 층 섹션이 접혀 열림, (2) 에디터에서 키로 커서를 옮겨도 Outline·미리보기의 접힌 곳이 펴짐, (3) 단계를 건너뛴 문서의 `0.1` 번호.
+- **W-08 ORDER-04 기록** (2026-11-14, writer): 위 시작·K-04·C-04·보고 항목, 운영 메모, ITEMS-MAP I-6·I-7·I-8·I-9·I-10·I-11·I-18 상태를 적었다. 검증 V0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-W-08-report.md`).
+- **상태**: Phase 4 보고 보냄, `[PUSH] ORDER-04` 기다림.
+- **운영 메모**(Phase 3 절 운영 메모에 이어서)
+  - checker(agy) 카드에는 core 파일 경로를 주지 않고 필요한 내용을 `%TEMP%` 카드 안에 옮겨 적는다 — core 파일 읽기 확인 창을 auto mode가 승인하지 못한다(leader-core 2026-11-14). Phase 3 메모의 "checker(agy)는 core 파일을 읽을 때 Allow access ... send-keys enter로 승인한다" 줄은 지난 사실로 두고 이 줄이 대신한다.
+  - ORDER-07로 넘긴 것(더함): ORDER-04 6절 #1·#2·#4·#6·#8 V3, 보고 "미정"의 Phase 7 볼 것(꺾쇠가 여백 안·제목 첫 줄 높이에 맞는지, 긴 번호 줄 모양, 접힌 ipynb의 빈 markdown 셀 틈, 접힌 섹션 안 mermaid가 뒤늦게 그려져도 숨는지).
+  - 마지막 서브 카드 ID: W-08, K-04, C-04.
