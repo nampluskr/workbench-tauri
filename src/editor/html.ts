@@ -1,4 +1,5 @@
 import { classifyLink, localImagePath, type LinkTarget } from "./markdown.ts";
+import { CODE_BLOCK_COPIED_MS } from "../spec/metrics.ts";
 
 // core v0.8 I-1 / v0.8.1 I-7: HTML preview. The page is its own document at `http://preview.localhost/<id>` (src-tauri
 // preview.rs) in `<iframe sandbox="allow-scripts" csp=PREVIEW_CSP>`: its scripts run in an opaque origin (no parent DOM, no
@@ -126,7 +127,48 @@ export function attributeValue(tag: string, name: string, value: string, sourceP
 }
 
 /** The applied Preview theme as the HTML preview needs it: the same tokens as the Markdown preview (text, L-108 link colour). */
-export type PreviewLook = { appearance: "light" | "dark"; text: string; accent: string };
+export type PreviewLook = { appearance: "light" | "dark"; text: string; accent: string; /** core v0.8.2 I-14: the base look (frameBaseStyle, fonts), put after the defaults */ base?: string };
+
+// core v0.8.2 I-14: what the Markdown preview gets from its containers and not from a `.markdown-body` rule, by the same variables:
+// the container padding (L-102), the app's text font (app.css body), and which icon the Copy button shows (the head script sets data-copied).
+const FRAME_GLUE = "html{padding:var(--markdown-preview-container-padding)}"
+  + "body{font-family:var(--ui-font-family);font-weight:var(--font-weight-default);font-feature-settings:var(--ui-font-feature-settings)}"
+  + ".code-block-copy:not([data-copied])>:nth-child(2),.code-block-copy[data-copied]>:first-child{display:none}";
+
+/**
+ * core v0.8.2 I-14: the Markdown preview's look for the frame document. `css` is the app's own preview rules as they are (the
+ * `.markdown-body`, code block, icon and Preview theme syntax rules); `value` gives a variable's value at a preview. The page's
+ * `<body>` stands for `.markdown-body` (each selector keeps its weight against the others), variables become their values (a frame
+ * inherits none, and a page's own `--text` must not reach these rules; a variable the rules set themselves stays), and rem
+ * lengths become the app's (the frame's root size is the page's). All of it is one cascade layer: any page rule, outside a layer,
+ * wins whatever its specificity (M-7), so only what the page leaves unset shows it.
+ */
+export function frameBaseStyle(css: string, value: (name: string) => string): string {
+  let out = (FRAME_GLUE + css)
+    .replaceAll(".heading-colors .markdown-body", ":root:root body")
+    .replaceAll(".markdown-body.left-margin", ":root body") // core v0.8.2 I-15: an HTML page gets the left margin too
+    .replaceAll(".markdown-body", ":root body")
+    .replaceAll(".markdown-preview ", ":root ");
+  const own = new Set(Array.from(out.matchAll(/[{;]\s*(--[\w-]+)\s*:/g), (m) => m[1]));
+  const inner = /var\(\s*(--[\w-]+)\s*(?:,([^()]*))?\)/g; // a var() with no var() inside: nested ones resolve from the inside out
+  for (let last = ""; last !== out;) {
+    last = out;
+    out = out.replace(inner, (all, name: string, fallback?: string) => own.has(name) ? all.replace("var(", "var\0(") : value(name) || (fallback ?? "").trim());
+  }
+  const rem = value("--units-rem-size");
+  return `@layer{${out.replaceAll("var\0(", "var(").replace(/(\d*\.?\d+)rem\b/g, `calc($1 * ${rem})`).replace(/<\//g, "<\\/")}}`;
+}
+
+/**
+ * core v0.8.2 I-14: the text a frame asks the app to copy (its head script, on a click the user made on a code block's Copy
+ * button), or null: not from this preview's frame, without the preview's token, or not a string. Writing that text to the
+ * clipboard is all such a message can do.
+ */
+export function copyRequest(e: { source: unknown; data: unknown }, frameWindow: unknown, token: string): string | null {
+  if (!frameWindow || e.source !== frameWindow) return null;
+  const copy: unknown = (e.data as { previewCopy?: unknown } | null | undefined)?.previewCopy;
+  return copy && typeof copy === "object" && "token" in copy && copy.token === token && "text" in copy && typeof copy.text === "string" ? copy.text : null;
+}
 
 /**
  * core v0.8 I-11: page defaults from the Preview theme. Every selector is `:where()` (specificity 0), so any rule, `<link>`,
@@ -153,12 +195,18 @@ export function defaultStyle({ appearance, text, accent }: PreviewLook): string 
  */
 export function headStart(look: PreviewLook, scrollY: number, token: string): string {
   const top = Number.isFinite(scrollY) && scrollY > 0 ? Math.round(scrollY) : 0;
-  return `<meta http-equiv="Content-Security-Policy" content="${PREVIEW_CSP}"><style>${defaultStyle(look)}</style>`
+  return `<meta http-equiv="Content-Security-Policy" content="${PREVIEW_CSP}"><style>${defaultStyle(look)}</style>${look.base ? `<style>${look.base}</style>` : ""}`
     + `<script>${NO_WEBRTC.map((name) => `delete window.${name};`).join("")}parent.postMessage({previewReady:true},"*");addEventListener("message",e=>{if(e.source!==parent)return;if(e.data?.previewPing===true)parent.postMessage({previewPong:true},"*");if(typeof e.data?.previewScrollTo==="number")scrollTo(0,e.data.previewScrollTo)});addEventListener("load",()=>scrollTo(0,${top}));addEventListener("scroll",()=>parent.postMessage({previewScrollY:scrollY},"*"),{passive:true})</script>`
     + `<script>(()=>{const T=${JSON.stringify(token)},U=parent,A=Reflect.apply,P=U.postMessage,E=Element.prototype,S=String.prototype,C=E.closest,G=E.getAttribute,M=S.trim,W=S.startsWith,D=Event.prototype.preventDefault,O=Object.getOwnPropertyDescriptor,R=O(Event.prototype,"target").get,K=O(MouseEvent.prototype,"altKey").get;`
     + `document.currentScript.remove();addEventListener("click",e=>{let a=null;try{a=A(C,A(R,e,[]),["a,area"])}catch{}if(!a)return;`
     + `const d=A(G,a,["${PREVIEW_LINK_ATTR}"]),h=d===null?A(G,a,["href"]):d;if(h===null||d===null&&A(W,A(M,h,[]),["#"]))return;`
-    + `A(D,e,[]);if(e.isTrusted)A(P,U,[{previewLink:{token:T,href:h,alt:A(K,e,[])}},"*"])},true)})()</script>`;
+    + `A(D,e,[]);if(e.isTrusted)A(P,U,[{previewLink:{token:T,href:h,alt:A(K,e,[])}},"*"])},true);`
+    // core v0.8.2 I-14: a code block's Copy button (the app builds it, markdown-preview.ts frameBlocks): the block's text goes to
+    // the app, which owns the clipboard. Only a click the user made, and with the token, as a link.
+    + `const Q=E.querySelector,X=O(Node.prototype,"textContent").get,Y=E.setAttribute,Z=E.removeAttribute,N=setTimeout;`
+    + `addEventListener("click",e=>{let b=null;try{b=A(C,A(R,e,[]),["button.code-block-copy"])}catch{}if(!b||!e.isTrusted)return;`
+    + `const x=A(C,b,[".code-block"]),p=x&&A(Q,x,["pre"]);if(!p)return;A(P,U,[{previewCopy:{token:T,text:A(X,p,[])}},"*"]);`
+    + `A(Y,b,["data-copied",""]);N(()=>A(Z,b,["data-copied"]),${CODE_BLOCK_COPIED_MS})},true)})()</script>`;
 }
 
 /** `serialized` (an `outerHTML` of a parsed document) with `html` as the first children of `<head>`, ahead of every page element. */
@@ -173,7 +221,8 @@ export function withHead(serialized: string, html: string): string {
  * shortcut: only the markup's URLs are rewritten; a relative URL a script builds resolves against the preview URL and gets
  * nothing (204). Serve local files from the preview scheme if scripted pages must load them.
  */
-export function htmlPreviewDoc(text: string, sourcePath: string, convert: Convert, look: PreviewLook, scrollY: number, token: string): string {
+export async function htmlPreviewDoc(text: string, sourcePath: string, convert: Convert, look: PreviewLook, scrollY: number, token: string,
+  decorate?: (doc: Document) => Promise<void>): Promise<string> {
   const doc = new DOMParser().parseFromString(text, "text/html");
   for (const el of doc.querySelectorAll(DROP_TAGS)) el.remove();
   for (const el of doc.querySelectorAll('meta[http-equiv="refresh" i]')) el.remove();
@@ -200,5 +249,6 @@ export function htmlPreviewDoc(text: string, sourcePath: string, convert: Conver
       }
     }
   }
+  await decorate?.(doc); // core v0.8.2 I-14: the app's own blocks (table and code block boxes), after the page's attributes are rewritten
   return (doc.doctype ? "<!DOCTYPE html>" : "") + withHead(doc.documentElement.outerHTML, headStart(look, scrollY, token));
 }

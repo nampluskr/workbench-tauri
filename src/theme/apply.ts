@@ -13,10 +13,14 @@ export let previewAppearance: "light" | "dark" = "dark";
 /** The applied preview theme's page colours, for the HTML preview's frame document (an iframe document does not inherit CSS variables): text, text.accent. */
 export let previewColors = { text: "", accent: "" };
 const previewListeners = new Set<() => void>();
-/** Call `fn` when the applied preview theme's colours or appearance change (not on every applyTheme). Returns the unsubscribe. */
+/** Call `fn` when what an HTML preview's frame document carries may have changed: a theme was applied, or the Settings (previewLookChanged). Returns the unsubscribe. */
 export function onPreviewThemeChange(fn: () => void): () => void {
   previewListeners.add(fn);
   return () => void previewListeners.delete(fn);
+}
+/** core v0.8.2 I-14: the Settings an HTML preview shows (sizes, gaps, code font, heading colours) were applied; the preview compares and re-renders. */
+export function previewLookChanged(): void {
+  for (const fn of previewListeners) fn();
 }
 
 // I-3: the UI theme is :root; the editor and preview themes redefine the same variables on their tab bodies, so
@@ -38,7 +42,6 @@ export async function applyTheme(ui?: string, editor = ui, preview = ui): Promis
   const [u, e, p] = [ui, editor, preview].map((name) => resolve(forced ?? name));
   syntaxKeys = new Set(Object.keys(e.style.syntax ?? {}));
   previewSyntaxKeys = new Set(Object.keys(p.style.syntax ?? {}));
-  const lookChanged = previewAppearance !== p.appearance || previewColors.text !== p.tokens.text || previewColors.accent !== p.tokens["text.accent"];
   previewAppearance = p.appearance;
   previewColors = { text: p.tokens.text, accent: p.tokens["text.accent"] };
   document.documentElement.dataset.appearance = u.appearance; // the tooltip shadow alpha differs by light/dark (L-212)
@@ -53,7 +56,7 @@ export async function applyTheme(ui?: string, editor = ui, preview = ui): Promis
     headingColorsCss(u.style), headingColorsCss(p.style, PREVIEW_BODY), // core v0.8.2 I-11: the Outline's heading text by the UI theme, a preview's by the Preview theme
   ].join("\n"));
   if (!document.adoptedStyleSheets.includes(sheet)) document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
-  if (lookChanged) for (const fn of previewListeners) fn();
+  previewLookChanged();
   // The native maximize button (src-tauri/src/caption.rs) cannot read CSS: send it the flat colors.
   const { tokens } = u;
   const bar = tokens["title_bar.background"];

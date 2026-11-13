@@ -3,7 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { EditorView } from "@codemirror/view";
 import { applyMetrics, type CodeFonts, type PreviewGaps } from "../spec/metrics.ts";
-import { applyTheme } from "../theme/apply.ts";
+import { applyTheme, previewLookChanged } from "../theme/apply.ts";
 import { choices } from "./choices.ts";
 import { setAppliedIconTheme } from "../theme/icons.ts";
 import { notify } from "../shell/toast.ts";
@@ -42,6 +42,7 @@ async function reload(): Promise<void> {
     await showAreaThemes(next);
     setAppliedIconTheme(next.icon_theme);
     document.documentElement.classList.toggle("heading-colors", next.outline_heading_colors); // core v0.8.2 I-11 (app.css)
+    previewLookChanged(); // core v0.8.2 I-14: an open HTML preview carries these values in its frame document
     setSettings(next);
   } catch (error) { notify([String(error)]); }
 }
@@ -79,6 +80,7 @@ export function adjustFontSize(target: FontTarget, direction: -1 | 0 | 1): void 
     else previewFontSize = direction === 0 ? null : stepEditorFontSize(previewFontSize ?? preview_font_size, direction, preview_font_size);
     try {
       await applyMetrics(ui_font_size, buffer_font_size, editorFontSize ?? buffer_font_size, previewFontSize ?? preview_font_size, settings().editor_line_height, previewGaps(settings()), codeFonts(settings()));
+      previewLookChanged();
       if (target === "editor") remeasureEditors(); // line height and character width changed; the gutter, find highlights and cursors are redrawn from them
     } catch (error) { notify([String(error)]); }
   });

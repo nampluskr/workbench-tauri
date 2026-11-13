@@ -1,9 +1,9 @@
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import DOMPurify from "dompurify";
 import { csvTable } from "../editor/csv.ts";
-import { codeBlockParts, trimBlankLinesIn } from "../editor/code-block.ts";
+import { codeBlockParts, codeLanguage, trimBlankLinesIn } from "../editor/code-block.ts";
 import { blockAt, classifyLink, headingSlugs, localImagePath, MARKDOWN_HTML_ATTR, MARKDOWN_HTML_TAGS, renderMarkdown, type Heading, type LinkTarget } from "../editor/markdown.ts";
-import { classifyHtmlLink, htmlPreviewDoc, PREVIEW_CSP, PREVIEW_HANG_MS, PREVIEW_HOST_AVOID_MS, PREVIEW_PING_MS, previewHost, recordRecovery, type PreviewHost } from "../editor/html.ts";
+import { classifyHtmlLink, copyRequest, frameBaseStyle, htmlPreviewDoc, PREVIEW_CSP, PREVIEW_HANG_MS, PREVIEW_HOST_AVOID_MS, PREVIEW_PING_MS, previewHost, recordRecovery, type PreviewHost } from "../editor/html.ts";
 import { NOTEBOOK_HTML_FORBID_ATTR, NOTEBOOK_HTML_FORBID_TAGS, parseNotebook, type NotebookOutput } from "../editor/notebook.ts";
 import { svgElement } from "../editor/svg.ts";
 import type { PreviewKind } from "../editor/preview-kind.ts";
@@ -91,29 +91,57 @@ const makeNode = (tag: string, className: string, text?: string): HTMLElement =>
  * core v0.8.2 I-22: the blank lines at the start and end are neither drawn nor copied. I-23: the line numbers sit beside the pre,
  * shown by the Settings (a CSS variable) and drawn from an attribute (codeBlockParts), so they are never text.
  */
+const COPY_LABEL = "Copy Code";
+
+/** The box of one code block, in place of its `pre`: the header (language, a Copy button holding `icons`) over [line numbers][pre]. `text` is what the block shows and Copy writes (I-22). */
+function codeBox(pre: HTMLElement, code: HTMLElement, ...icons: HTMLElement[]): { box: HTMLElement; button: HTMLElement; text: string } {
+  const box = makeNode("div", "code-block");
+  const { text, numbers } = codeBlockParts(code.textContent ?? "");
+  if (text !== code.textContent) {
+    // Cut in the text nodes, so tags inside the code (HTML typed in the body, I-24) stay.
+    const walker = code.ownerDocument.createTreeWalker(code, NodeFilter.SHOW_TEXT);
+    const nodes: Text[] = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+    trimBlankLinesIn(nodes.map((node) => node.data)).forEach((part, i) => { nodes[i].data = part; });
+  }
+  const button = makeNode("button", "icon-button code-block-copy");
+  button.setAttribute("type", "button");
+  button.setAttribute("aria-label", COPY_LABEL);
+  button.append(...icons);
+  const header = makeNode("div", "code-block-header");
+  header.append(makeNode("span", "code-block-language", codeLanguage(code.className)), button);
+  const gutter = makeNode("div", "code-line-numbers");
+  gutter.setAttribute("aria-hidden", "true");
+  gutter.dataset.lines = numbers;
+  pre.replaceWith(box);
+  box.append(header, gutter, pre);
+  return { box, button, text };
+}
+
+/** K-53: `code` (text only) in the syntax colours of `found` (class only, built with the DOM, not HTML). */
+function paintCode(code: HTMLElement, text: string, found: Awaited<ReturnType<typeof codeBlockHighlights>>): void {
+  if (!found.length) return;
+  let at = 0;
+  const nodes: (string | HTMLElement)[] = [];
+  for (const span of found) {
+    if (span.from > at) nodes.push(text.slice(at, span.from));
+    nodes.push(makeNode("span", syntaxClass(span.key), text.slice(span.from, span.to)));
+    at = span.to;
+  }
+  code.replaceChildren(...nodes, text.slice(at));
+}
+
 function addCodeHeaders(body: HTMLElement): void {
   for (const code of body.querySelectorAll<HTMLElement>("pre:not(.frontmatter-raw) > code:not(.language-mermaid)")) {
     const pre = code.parentElement!;
-    const box = makeNode("div", "code-block");
+    const label = COPY_LABEL;
+    const { box, button, text } = codeBox(pre, code, iconElement("copy"));
     for (const name of ["data-line", "data-line-end"]) for (const el of [pre, code]) {
       const value = el.getAttribute(name);
       if (value === null) continue;
       box.setAttribute(name, value);
       el.removeAttribute(name);
     }
-    const { text, numbers } = codeBlockParts(code.textContent ?? "");
-    if (text !== code.textContent) {
-      // Cut in the text nodes, so tags inside the code (HTML typed in the body, I-24) stay.
-      const walker = document.createTreeWalker(code, NodeFilter.SHOW_TEXT);
-      const nodes: Text[] = [];
-      while (walker.nextNode()) nodes.push(walker.currentNode as Text);
-      trimBlankLinesIn(nodes.map((node) => node.data)).forEach((part, i) => { nodes[i].data = part; });
-    }
-    const label = "Copy Code";
-    const button = makeNode("button", "icon-button code-block-copy");
-    button.setAttribute("type", "button");
-    button.setAttribute("aria-label", label);
-    button.append(iconElement("copy"));
     tooltip(button, () => ({ title: label }));
     let timer = 0;
     button.addEventListener("click", (e) => {
@@ -125,14 +153,74 @@ function addCodeHeaders(body: HTMLElement): void {
         timer = window.setTimeout(() => { button.replaceChildren(iconElement("copy")); button.setAttribute("aria-label", label); }, CODE_BLOCK_COPIED_MS);
       }, (error) => notify([String(error)]));
     });
-    const header = makeNode("div", "code-block-header");
-    header.append(makeNode("span", "code-block-language", /(?:^|\s)language-(\S+)/.exec(code.className)?.[1] ?? ""), button);
-    const gutter = makeNode("div", "code-line-numbers");
-    gutter.setAttribute("aria-hidden", "true");
-    gutter.dataset.lines = numbers;
-    pre.replaceWith(box);
-    box.append(header, gutter, pre);
   }
+}
+
+/**
+ * core v0.8.2 I-14 / I-16: an HTML page's tables and code blocks as the Markdown preview draws them, in the inert frame document
+ * (htmlPreviewDoc): a table in its `.table-wrap`, every `pre` in a code block box, coloured here by its `language-…` class (the
+ * frame has no parser). The Copy button holds both icons; the frame's head script shows one and sends the text (headStart).
+ * shortcut: a page's own `.code-block` / `.table-wrap` classes get these rules too; rename the frame's classes if pages collide.
+ */
+async function frameBlocks(doc: Document): Promise<void> {
+  for (const table of doc.querySelectorAll("table")) {
+    if (table.parentElement?.classList.contains("table-wrap")) continue;
+    const wrap = makeNode("div", "table-wrap");
+    table.replaceWith(wrap);
+    wrap.append(table);
+  }
+  for (const pre of doc.querySelectorAll<HTMLElement>("pre")) {
+    const code = pre.querySelector<HTMLElement>(":scope > code") ?? pre;
+    const { button, text } = codeBox(pre, code, iconElement("copy"), iconElement("check"));
+    button.setAttribute("title", COPY_LABEL); // the app's tooltip cannot reach into the frame
+    const name = codeLanguage(code.className);
+    if (name && !code.childElementCount) paintCode(code, text, await codeBlockHighlights(name, text, languages, loadSyntax, previewSyntaxKeys).catch(() => []));
+  }
+}
+
+// core v0.8.2 I-14: the app's rules an HTML frame gets (frameBaseStyle): the Markdown body's, the code block's and its icons', the Preview theme's syntax colours.
+const FRAME_RULE = /\.markdown-body|^\.markdown-preview \.cm-syntax-|^\.(code-|icon\b)/;
+
+/** I-14: the frame's base look as it is now: the live rules, with the variables' values at a preview (Preview theme, Settings), and the font families those name. */
+function frameLook(): { css: string; families: string[] } {
+  const headingColors = document.documentElement.classList.contains("heading-colors"); // core v0.8.2 I-11
+  const rules: string[] = [];
+  for (const sheet of [...document.styleSheets, ...document.adoptedStyleSheets]) for (const rule of sheet.cssRules) {
+    if (!(rule instanceof CSSStyleRule) || !FRAME_RULE.test(rule.selectorText) || rule.selectorText.includes(".html-preview")) continue;
+    if (headingColors || !rule.selectorText.includes(".heading-colors")) rules.push(rule.cssText);
+  }
+  const probe = document.body.appendChild(makeNode("div", "markdown-preview")); // the preview itself may not be in the document yet
+  const style = getComputedStyle(probe);
+  const value = (name: string) => style.getPropertyValue(name).trim();
+  const css = frameBaseStyle(rules.join(""), value);
+  const families = `${value("--ui-font-family")},${value("--preview-code-font-family")}`.split(",").map((name) => name.trim().replace(/^["']|["']$/g, ""));
+  probe.remove();
+  return { css, families };
+}
+
+const fontData = new Map<string, Promise<string>>(); // font file URL -> data: URL
+/**
+ * I-14: the app's bundled faces of `families` as `@font-face` rules with data: sources. The frame's policy takes fonts from data:
+ * and asset: only, and the asset protocol answers CORS for the app's origin alone, so the app reads its own files and hands them over.
+ * shortcut: every face of the families rides in each frame document (IBM Plex Sans + JetBrains Mono: about 0.9 MB as base64;
+ * D2Coding 5.6 MB); serve them from the preview scheme if rendering gets slow.
+ */
+async function frameFonts(families: string[]): Promise<string> {
+  const faces: Promise<string>[] = [];
+  for (const sheet of document.styleSheets) for (const rule of sheet.cssRules) {
+    if (!(rule instanceof CSSFontFaceRule) || !families.includes(rule.style.getPropertyValue("font-family").replace(/^["']|["']$/g, ""))) continue;
+    const src = /url\(\s*["']?([^"')]+)["']?\s*\)/.exec(rule.style.getPropertyValue("src"))?.[1];
+    if (!src) continue;
+    const url = new URL(src, sheet.href ?? location.href).href;
+    if (!fontData.has(url)) fontData.set(url, fetch(url).then((r) => r.blob()).then((blob) => new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(blob);
+    })));
+    faces.push(fontData.get(url)!.then((data) => rule.cssText.replace(/url\([^)]*\)/, `url("${data}")`), () => "")); // a face that cannot be read is left out: the fallback font shows
+  }
+  return (await Promise.all(faces)).join("");
 }
 
 /** I-2: one output as DOM. Text is textContent; SVG and HTML are sanitized; a picture is a data: <img> (CSP allows data:). */
@@ -233,6 +321,8 @@ export function createPreview(hooks: PreviewHooks): Preview {
   let waitTimer = 0; // a render waiting for preview2's avoidance to end
   const showFrame = () => { pingSince = 0; frame.src = frameUrl; };
   const linkToken = crypto.randomUUID(); // I-24: only the frame's head script knows it (headStart)
+  let shownLook = ""; // I-14: the look the last render put in the frame document
+  const lookKey = (css: string) => css + previewAppearance + previewColors.text + previewColors.accent;
   const onFrameMessage = (e: MessageEvent) => {
     if (e.source !== frame.contentWindow) return;
     const link: unknown = e.data?.previewLink;
@@ -240,6 +330,8 @@ export function createPreview(hooks: PreviewHooks): Preview {
       const target = classifyHtmlLink(link.href, hooks.sourcePath(), "alt" in link && link.alt === true);
       if (target) hooks.link(target);
     }
+    const copy = copyRequest(e, frame.contentWindow, linkToken); // core v0.8.2 I-14: a code block's Copy button
+    if (copy !== null) invoke("write_clipboard_text", { text: copy }).catch((error) => notify([String(error)]));
     if (e.data?.previewReady === true) ours = true;
     if (e.data?.previewPong === true) pingSince = 0;
     const y: unknown = e.data?.previewScrollY;
@@ -323,11 +415,15 @@ export function createPreview(hooks: PreviewHooks): Preview {
     const text = hooks.text();
     if (text === null) return;
     if (hooks.kind === "html") {
-      const html = htmlPreviewDoc(text, hooks.sourcePath(), convertFileSrc, { ...previewColors, appearance: previewAppearance }, frameScroll, linkToken);
       const id = ++generation;
-      invoke("preview_set", { id: frameId, html }).then(() => {
-        show(id);
-      }, (error) => notify(["Failed to show the HTML preview", String(error)]));
+      const { css, families } = frameLook();
+      const look = { ...previewColors, appearance: previewAppearance };
+      const scroll = frameScroll;
+      shownLook = lookKey(css);
+      frameFonts(families)
+        .then((fonts) => htmlPreviewDoc(text, hooks.sourcePath(), convertFileSrc, { ...look, base: fonts + css }, scroll, linkToken, frameBlocks))
+        .then((html) => id === generation ? invoke("preview_set", { id: frameId, html }).then(() => show(id)) : undefined) // else a newer render is on its way
+        .catch((error) => notify(["Failed to show the HTML preview", String(error)]));
       return;
     }
     if (hooks.kind === "svg") {
@@ -429,17 +525,7 @@ export function createPreview(hooks: PreviewHooks): Preview {
       if (!name || code.childElementCount) continue; // tags typed inside the code stay as they are (I-24)
       const found = await codeBlockHighlights(name, text, languages, loadSyntax, previewSyntaxKeys).catch(() => []);
       if (id !== generation || !code.isConnected) return; // a newer render replaced these blocks
-      let at = 0;
-      const nodes: (string | HTMLElement)[] = [];
-      for (const span of found) {
-        if (span.from > at) nodes.push(text.slice(at, span.from));
-        const el = document.createElement("span");
-        el.className = syntaxClass(span.key);
-        el.textContent = text.slice(span.from, span.to);
-        nodes.push(el);
-        at = span.to;
-      }
-      if (found.length) code.replaceChildren(...nodes, text.slice(at));
+      paintCode(code, text, found);
     }
   }
   const blocks = () => [...body.querySelectorAll<HTMLElement>("[data-line]")];
@@ -485,8 +571,9 @@ export function createPreview(hooks: PreviewHooks): Preview {
   });
 
   render();
-  // I-11: the frame does not inherit CSS variables, so a changed Preview theme re-renders it (the same debounced path as an edit).
-  const stopTheme = hooks.kind === "html" ? onPreviewThemeChange(() => preview.changed()) : () => {};
+  // I-11 / core v0.8.2 I-14: the frame does not inherit CSS variables, so a Preview theme or Settings change that gives it another
+  // look re-renders it (the same debounced path as an edit).
+  const stopTheme = hooks.kind === "html" ? onPreviewThemeChange(() => { if (lookKey(frameLook().css) !== shownLook) preview.changed(); }) : () => {};
   const preview: Preview = {
     element,
     // I-082: a change re-renders after the parse debounce; one already waiting is not scheduled again.

@@ -229,6 +229,7 @@ const METRICS: Record<string, string> = {
   // core v0.8.2 I-15, tauri's choice (not in the toml): the left margin outside the body width, for a notebook's [n]. JupyterLab's
   // --jp-cell-prompt-width 64px (theme-light-extension variables.css), here 64px at the 14px preview font and scaling with it.
   "markdown_preview.left_margin": `calc(${64 / PREVIEW_BASE_FONT_SIZE} * var(--typography-preview-font-size))`,
+  "markdown_preview.sublist_indent": "2em", // core v0.8.2 I-14 (not in the toml): a nested list's indent, 28px at the 14px body (GitHub's)
   "markdown_preview.body.font_size": prem(16), // L-103
   "markdown_preview.body.line_height_multiplier": "1.5", // L-103
   "markdown_preview.paragraph_gap": prem(16), // L-103

@@ -869,6 +869,7 @@ button, input, select, textarea {
 /* core v0.8.1 I-8: as in Zed, what is inside an item does not merge its space with the gap to the next item: a loose item's paragraph gap and a nested
    list's end add to it (Zed: loose items 16 + 4 apart, the end of a nested list 4 + 4). flow-root keeps the margins inside the item; list-item keeps the marker. */
 .markdown-body li { display: list-item flow-root; }
+.markdown-body li > :is(ul, ol) { padding-left: var(--markdown-preview-sublist-indent); } /* core v0.8.2 I-14: Markdown, notebook and HTML alike */
 .markdown-body li > :is(ul, ol):nth-child(n) { margin-bottom: var(--preview-list-gap); } /* :nth-child(n) only lifts it over the L-103 list margin rule */
 /* the list's own bottom margin ends it. core v0.8.1 I-21: except a loose item's paragraph (Zed stacks paragraph + list end, USER-TEST #6b) */
 .markdown-body li:last-child > :last-child:not(p) { margin-bottom: 0; }

@@ -32,3 +32,6 @@ export function codeBlockParts(source: string): { text: string; numbers: string 
   const count = text ? text.split("\n").length : 0;
   return { text, numbers: Array.from({ length: count }, (_, i) => String(i + 1)).join("\n") };
 }
+
+/** A code block's language, from its `language-…` class (markdown-it's, and an HTML page's own, core v0.8.2 I-14); "" when it names none: the header then has the Copy button only. */
+export const codeLanguage = (className: string): string => /(?:^|\s)language-(\S+)/.exec(className)?.[1] ?? "";

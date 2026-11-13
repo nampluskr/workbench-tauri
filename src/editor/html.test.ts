@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { attributeValue, classifyHtmlLink, defaultStyle, headStart, navigates, PREVIEW_CSP, PREVIEW_RECOVER_LIMIT, PREVIEW_RECOVER_WINDOW_MS, previewHost, recordRecovery, resourceUrl, rewriteCss, rewriteSrcset, withHead } from "./html.ts";
+import { attributeValue, classifyHtmlLink, copyRequest, defaultStyle, frameBaseStyle, headStart, navigates, PREVIEW_CSP, PREVIEW_RECOVER_LIMIT, PREVIEW_RECOVER_WINDOW_MS, previewHost, recordRecovery, resourceUrl, rewriteCss, rewriteSrcset, withHead } from "./html.ts";
 import { MARKDOWN_HTML_ATTR, renderMarkdown } from "./markdown.ts";
+import { codeBlockParts, codeLanguage } from "./code-block.ts";
 import { hasPreview, previewKind } from "./preview-kind.ts";
 
 const SOURCE = "C:\\site\\pages\\index.html";
@@ -145,4 +146,48 @@ test("I-7: frame recoveries are bounded within the window, older ones expire", (
   }
   assert.equal(recordRecovery(times, PREVIEW_RECOVER_LIMIT * 10), null);
   assert.deepEqual(recordRecovery(times, PREVIEW_RECOVER_WINDOW_MS + 15), [20, 30, 40, PREVIEW_RECOVER_WINDOW_MS + 15]);
+});
+
+// core v0.8.2 I-14 (ORDER-06 #2, #3): the frame's base look is the app's own preview rules, weaker than any page rule, carrying the Settings and theme values.
+const VALUES: Record<string, string> = { "--text": "#111", "--markdown-preview-max-width": "calc(50 * 14px)", "--markdown-preview-container-padding": "14px", "--ui-font-family": '"IBM Plex Sans", sans-serif',
+  "--heading-color-1": "#a00", "--icons-size-small": "0.875rem", "--buttons-height-default": "1.375rem", "--units-rem-size": "16px", "--preview-code-line-numbers": "none" };
+const RULES = ".markdown-body { max-width: var(--markdown-preview-max-width); color: var(--text); }.markdown-body.left-margin { padding-left: 64px; }"
+  + ".heading-colors .outline-bar .heading-1, .heading-colors .markdown-body h1 { color: var(--heading-color-1); }.markdown-body :is(h1, h2) { color: var(--text); }"
+  + ".markdown-preview .cm-syntax-keyword { color: rgb(1, 2, 3); }.code-block-header { --icon-size: var(--icons-size-small); }.icon { width: var(--icon-size); }"
+  + ".icon-button { width: var(--button-size, var(--buttons-height-default)); }.code-line-numbers { display: var(--preview-code-line-numbers); }";
+test("I-14: the frame's base style is one cascade layer of the preview's rules with the values put in", () => {
+  const css = frameBaseStyle(RULES, (name) => VALUES[name] ?? "");
+  assert.ok(css.startsWith("@layer{") && css.endsWith("}")); // a page rule (outside a layer) wins whatever its specificity
+  assert.ok(css.includes(":root body { max-width: calc(50 * 14px); color: #111; }")); // the page's body is the Markdown body
+  assert.ok(css.includes(":root body { padding-left: 64px; }")); // I-15
+  assert.ok(css.includes('html{padding:14px}body{font-family:"IBM Plex Sans", sans-serif;')); // L-102, the app's text font
+  assert.ok(css.includes(":root:root body h1 { color: #a00; }")); // I-11: still heavier than the plain heading colour that follows it
+  assert.ok(css.includes(":root .cm-syntax-keyword { color: rgb(1, 2, 3); }"));
+  assert.ok(css.includes(".code-block-header { --icon-size: calc(0.875 * 16px); }.icon { width: var(--icon-size); }")); // a variable the rules set stays; rem is the app's
+  assert.ok(css.includes(".icon-button { width: calc(1.375 * 16px); }")); // an unset variable gives its fallback
+  assert.ok(!/markdown-(body|preview)|var\(--(?!icon-size)/.test(css));
+  assert.notEqual(css, frameBaseStyle(RULES, (name) => name === "--text" ? "#222" : VALUES[name] ?? "")); // a changed value is a changed style: the preview re-renders
+  const head = headStart({ appearance: "light", text: "#111", accent: "#00f", base: css }, 0, "tok");
+  assert.ok(head.indexOf(`<style>${css}</style>`) > head.indexOf("Content-Security-Policy") && head.indexOf(css) < head.indexOf("<script>"));
+});
+
+// core v0.8.2 I-14 / I-23 (ORDER-06 #4): the header's language comes from the class; the numbers follow the Settings variable; Copy is sent by the head script.
+test("I-14: a code block's language, line numbers and Copy in the frame", () => {
+  assert.equal(codeLanguage("hljs language-python"), "python");
+  assert.equal(codeLanguage(""), ""); // no language: the header has the Copy button only
+  assert.equal(codeBlockParts("\na = 1\nb = 2\n").numbers, "1\n2");
+  for (const shown of ["block", "none"]) assert.ok(frameBaseStyle(RULES, (name) => name === "--preview-code-line-numbers" ? shown : "").includes(`.code-line-numbers { display: ${shown}; }`));
+  const script = headStart({ appearance: "light", text: "#111", accent: "#00f" }, 0, "tok");
+  assert.ok(script.includes('["button.code-block-copy"])}catch{}if(!b||!e.isTrusted)return;')); // only a click the user made
+  assert.ok(script.includes('A(P,U,[{previewCopy:{token:T,text:A(X,p,[])}},"*"])'));
+});
+
+// core v0.8.2 I-14 (ORDER-06 #6): the one new frame -> app message; a made-up one is not taken.
+test("I-14: a copy request is taken only from the preview's frame, with its token and a string", () => {
+  const frame = {}, good = { previewCopy: { token: "tok", text: "a = 1" } };
+  assert.equal(copyRequest({ source: frame, data: good }, frame, "tok"), "a = 1");
+  assert.equal(copyRequest({ source: {}, data: good }, frame, "tok"), null); // another window
+  assert.equal(copyRequest({ source: null, data: good }, null, "tok"), null); // the frame is gone
+  for (const data of [null, "x", {}, { previewCopy: "a" }, { previewCopy: { text: "a" } }, { previewCopy: { token: "other", text: "a" } }, { previewCopy: { token: "tok", text: 1 } }, { previewCopy: { token: "tok" } }])
+    assert.equal(copyRequest({ source: frame, data }, frame, "tok"), null, JSON.stringify(data));
 });
