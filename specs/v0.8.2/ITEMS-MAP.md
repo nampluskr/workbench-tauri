@@ -16,8 +16,8 @@
 | I-3 | 빈 화면 안내 | G-1 | 5 | ORDER-05 | 구현·테스트 충족, 화면은 Phase 7 |
 | I-4 | 분할된 pane 사이 구분선이 보이지 않음 | G-1 | — | — | 거둠 |
 | I-5 | Outline 키보드 이동 | G-2 | — | — | 거둠 |
-| I-6 | HTML의 Outline을 제목 계층으로 | G-2 | 4 · 7 (편집 탭 4, HTML 미리보기 탭 7) | ORDER-04 | 편집 탭 구현·테스트 충족, 화면은 Phase 7. HTML 미리보기 탭은 ORDER-07 |
-| I-7 | 클릭한 위치를 Outline에 표시 — 미리보기 포함 | G-2 | 4 · 7 (에디터·마크다운·ipynb 4, HTML 미리보기 7) | ORDER-04 | 에디터·마크다운·ipynb 구현·테스트 충족, 화면은 Phase 7. HTML 미리보기는 ORDER-07 |
+| I-6 | HTML의 Outline을 제목 계층으로 | G-2 | 4 · 7 (편집 탭 4, HTML 미리보기 탭 7) | ORDER-04 | 편집 탭 구현·테스트 충족, 화면은 Phase 7. HTML 미리보기 탭은 ORDER-07에서 구현·테스트·화면 측정 충족 |
+| I-7 | 클릭한 위치를 Outline에 표시 — 미리보기 포함 | G-2 | 4 · 7 (에디터·마크다운·ipynb 4, HTML 미리보기 7) | ORDER-04 | 에디터·마크다운·ipynb 구현·테스트 충족, 화면은 Phase 7. HTML 미리보기는 ORDER-07에서 구현·테스트·화면 측정 충족 |
 | I-8 | 제목 앞 표시: 아이콘 방식과 숫자 방식 | G-2 | 4 | ORDER-04 | 구현·테스트 충족 |
 | I-9 | Outline 우클릭 메뉴 | G-2 | 4 | ORDER-04 | 구현 충족(코드 확인), 화면은 Phase 7 |
 | I-10 | 처음 열 때 2단계까지만 펼침 | G-2 | 4 | ORDER-04 | 구현·테스트 충족 |
@@ -29,13 +29,13 @@
 | I-16 | 표를 본문 너비에 꽉 차게 | G-4 | 2 · 6 (마크다운·ipynb 2, HTML 6) | ORDER-02 · ORDER-06 | 마크다운·ipynb(ORDER-02)·HTML(ORDER-06) 구현·테스트 충족, 화면은 Phase 7 |
 | I-17 | 코드·결과창·표의 기본 크기를 12px로 | G-4 | 2 · 6 (마크다운·ipynb 2, HTML 6) | ORDER-02 · ORDER-06 | 마크다운·ipynb(ORDER-02)·HTML(ORDER-06) 구현·테스트 충족, 화면은 Phase 7 |
 | I-18 | 미리보기 섹션 접기·펼치기 | G-4 | 4 | ORDER-04 | 구현·테스트 충족, 화면은 Phase 7 |
-| I-19 | 미리보기 `Ctrl`+`+`/`-`로 글자 크기 바꾸기 — md·ipynb·HTML 모두 | G-4 | 7 | 미정 | 대기 |
+| I-19 | 미리보기 `Ctrl`+`+`/`-`로 글자 크기 바꾸기 — md·ipynb·HTML 모두 | G-4 | 7 | ORDER-07 | 구현·테스트·화면 측정 충족(HTML은 프레임 root `zoom`) |
 | I-20 | 미리보기의 로컬 문서 링크는 어디서든 미리보기로 | G-4 | 3 | ORDER-03 | 구현·테스트 충족, 화면은 Phase 7 |
 | I-21 | 코드 블록 줄 간격 설정 | G-5 | 2 · 6 (마크다운·ipynb 2, HTML 6) | ORDER-02 · ORDER-06 | 마크다운·ipynb(ORDER-02)·HTML(ORDER-06) 구현·테스트 충족, 화면은 Phase 7 |
 | I-22 | 코드 블록 앞뒤 빈 줄 숨김 | G-5 | 2 | ORDER-02 | 구현·테스트 충족, 화면은 Phase 7 |
 | I-23 | 미리보기 코드 줄 번호 설정 | G-5 | 2 · 6 (마크다운·ipynb 2, HTML 6) | ORDER-02 · ORDER-06 | 마크다운·ipynb(ORDER-02)·HTML(ORDER-06) 구현·테스트 충족, 화면은 Phase 7 |
 | I-24 | 마크다운·노트북 본문 안의 HTML 태그를 HTML로 그림 | G-5 | 3 | ORDER-03 | 구현·테스트 충족, 화면은 Phase 7 |
-| I-25 | 미리보기 찾기를 HTML에도 — md·ipynb·HTML 모두 `Ctrl+F` | G-4 | 7 | 미정 | 대기 |
+| I-25 | 미리보기 찾기를 HTML에도 — md·ipynb·HTML 모두 `Ctrl+F` | G-4 | 7 | ORDER-07 | 구현·테스트·화면 측정 충족(WebView 찾기 창 안 뜸) |
 | I-26 | 에디터·미리보기 기본 글자 크기를 14px로 | G-3 | 1 | ORDER-01 | 충족 |
 | I-27 | 탭 스크롤 위치 — 남은 두 경우 | G-3 | 2 (ORDER-02 8절) | ORDER-02 | 충족 — 측정 오류, 앱 코드 변경 없음 |
 

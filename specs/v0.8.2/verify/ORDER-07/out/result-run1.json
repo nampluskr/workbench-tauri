@@ -1,0 +1,2093 @@
+{
+  "card": "core v0.8.2 ORDER-07",
+  "exe": "C:\\Users\\nampl\\AppData\\Local\\Temp\\v082-exe082\\workbench-tauri.exe",
+  "sections": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "started": "2026-11-13T20:24:52.920Z",
+  "input": "keys/wheel/drag/type: SendInput (tools/win-input.ps1, foreground-checked); clicks: CDP mouse after an elementFromPoint check",
+  "records": [
+    {
+      "section": "B",
+      "id": "O5-6",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        null
+      ],
+      "expected": "settings.json absent -> all three areas One Light (I-2 기본), first screen capture",
+      "measured": {
+        "appearance": "light",
+        "status": [
+          "Close Folder Sidebar",
+          "Close Left Dock",
+          "Close Outline",
+          "Search",
+          "Lock Preview",
+          "UI: Light Theme",
+          "Editor: Light Theme",
+          "Preview: Light Theme"
+        ],
+        "settingsFile": false
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O5-6-first-screen-onelight.png"
+    },
+    {
+      "section": "B",
+      "id": "O5-8·9-welcome",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        null
+      ],
+      "expected": "Welcome (icon, title, subtitle, GET STARTED two rows) centred in the pane (|dx|,|dy| <= 1 px); side by side with Zed G1-welcome-zed.png",
+      "measured": {
+        "content": {
+          "x": 804,
+          "y": 293.5,
+          "w": 512,
+          "h": 299
+        },
+        "welcome": {
+          "x": 680,
+          "y": 65,
+          "w": 760,
+          "h": 756
+        },
+        "pane": {
+          "x": 680,
+          "y": 33,
+          "w": 760,
+          "h": 788
+        },
+        "dxPane": 0,
+        "dyPane": 16,
+        "dxWelcome": 0,
+        "dyWelcome": 0,
+        "title": "Welcome to Workbench",
+        "subtitle": "A compact, powerful editor",
+        "sections": [
+          "Get Started",
+          "Recent Projects"
+        ],
+        "rows": [
+          "Open Folder Ctrl-K Ctrl-O",
+          "Open Settings Ctrl-,",
+          "ws Ctrl-1"
+        ]
+      },
+      "verdict": "pass",
+      "note": "Zed captures copied to out/zed-G1-welcome-zed*.png for side by side (leader-core judges the look). Centre is checked against the .welcome box; the pane centre offset is recorded too.",
+      "shot": "O5-8-welcome.png"
+    },
+    {
+      "section": "B",
+      "id": "O5-9.2-icon",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        null
+      ],
+      "expected": "app icon sharp: natural size >= drawn size x devicePixelRatio",
+      "measured": {
+        "natural": [
+          256,
+          256
+        ],
+        "drawn": {
+          "x": 933.61,
+          "y": 325.5,
+          "w": 45,
+          "h": 45
+        },
+        "dpr": 1,
+        "complete": true
+      },
+      "verdict": "pass",
+      "note": "visual sharpness beyond the pixel ratio is for the user (V4)",
+      "shot": null
+    },
+    {
+      "section": "B",
+      "id": "O5-8·9-nofile",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        null
+      ],
+      "expected": "left dock \"No File\" = Outline \"No outline\": font family, size, weight, colour, line height, padding (I-3 #9)",
+      "measured": {
+        "noFile": {
+          "text": "No File",
+          "visible": true,
+          "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "color": "rgb(88, 88, 90)",
+          "lineHeight": "normal",
+          "padding": "0px 6px",
+          "margin": "0px",
+          "textAlign": "start"
+        },
+        "noOutline": {
+          "text": "No outline",
+          "visible": true,
+          "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "color": "rgb(88, 88, 90)",
+          "lineHeight": "normal",
+          "padding": "0px 6px",
+          "margin": "0px",
+          "textAlign": "start"
+        },
+        "oldButton": false
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O5-9-nofile.png"
+    },
+    {
+      "section": "B",
+      "id": "O5-8·9-rows",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        null
+      ],
+      "expected": "GET STARTED rows run their command: Open Settings -> the Settings window opens",
+      "measured": {
+        "settingsWindowOpened": true
+      },
+      "verdict": "pass",
+      "note": "Open Folder row: unmeasured — it opens the native folder dialog, which the probe cannot close safely (win-input sends to the app window only)",
+      "shot": null
+    },
+    {
+      "section": "B",
+      "id": "O5-8·9-recent",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        null
+      ],
+      "expected": "clicking the RECENT PROJECTS row opens that folder (tree rows appear, Welcome goes)",
+      "measured": {
+        "treeRowsAfterMs": 1,
+        "welcomeGone": true,
+        "recentRows": [
+          "Open Folder Ctrl-K Ctrl-O",
+          "Open Settings Ctrl-,",
+          "ws Ctrl-1"
+        ]
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O5-8-after-recent.png"
+    },
+    {
+      "section": "A",
+      "id": "O7-6.1",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview plain.html"
+      ],
+      "expected": "Outline row click in the HTML preview tab scrolls the frame: scrollY before < after, the heading at the frame top (|top| <= 2 px or end of document)",
+      "measured": {
+        "outlineRows": [
+          "Pair Document",
+          "Section 1",
+          "Section 2",
+          "Section 3",
+          "Section 4",
+          "Section 5",
+          "Section 6"
+        ],
+        "before": 0,
+        "after": 1245,
+        "headingTop": 206,
+        "maxScroll": 1245,
+        "selected": "Section 5"
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O7-6.1-outline-click.png"
+    },
+    {
+      "section": "A",
+      "id": "O7-6.2",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview plain.html"
+      ],
+      "expected": "paragraph click in the frame (under \"Section 3.1\", folded at depth 2) -> Outline selected row \"Section 3.1\" (unfolded to show it)",
+      "measured": {
+        "selected": "Section 3.1"
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O7-6.2-frame-click.png"
+    },
+    {
+      "section": "A",
+      "id": "O7-6.3-plain-in",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview plain.html"
+      ],
+      "expected": "focus inside the frame, Ctrl+= once (SendInput): root zoom 1 -> >1 and drawn text grows (no CSS); Ctrl+0 -> zoom 1",
+      "measured": {
+        "focus": {
+          "activeElement": "IFRAME"
+        },
+        "before": {
+          "zoom": "1",
+          "computedZoom": "1",
+          "bodyFontSize": "14px",
+          "pHeight": 21,
+          "pFontSize": "14px",
+          "appPreviewSize": "14px"
+        },
+        "after": {
+          "zoom": "1.07143",
+          "computedZoom": "1.07143",
+          "bodyFontSize": "14px",
+          "pHeight": 22.5,
+          "pFontSize": "14px",
+          "appPreviewSize": "15px"
+        },
+        "reset": {
+          "zoom": "1",
+          "computedZoom": "1",
+          "bodyFontSize": "14px",
+          "pHeight": 21,
+          "pFontSize": "14px",
+          "appPreviewSize": "14px"
+        }
+      },
+      "verdict": "pass",
+      "note": "bodyFontSize is the computed (unzoomed) value; root zoom and the drawn paragraph height show the growth (K-08: root zoom)",
+      "shot": "O7-6.3-plain-in-zoomed.png"
+    },
+    {
+      "section": "A",
+      "id": "O7-6.3-plain-out",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview plain.html"
+      ],
+      "expected": "focus outside the frame, Ctrl+= once (SendInput): root zoom 1 -> >1 and drawn text grows (no CSS); Ctrl+0 -> zoom 1",
+      "measured": {
+        "focus": {
+          "how": "tab click",
+          "where": {
+            "tag": "DIV",
+            "cls": "markdown-preview html-preview",
+            "inPreview": true
+          }
+        },
+        "before": {
+          "zoom": "1",
+          "computedZoom": "1",
+          "bodyFontSize": "14px",
+          "pHeight": 21,
+          "pFontSize": "14px",
+          "appPreviewSize": "14px"
+        },
+        "after": {
+          "zoom": "1.07143",
+          "computedZoom": "1.07143",
+          "bodyFontSize": "14px",
+          "pHeight": 22.5,
+          "pFontSize": "14px",
+          "appPreviewSize": "15px"
+        },
+        "reset": {
+          "zoom": "1",
+          "computedZoom": "1",
+          "bodyFontSize": "14px",
+          "pHeight": 21,
+          "pFontSize": "14px",
+          "appPreviewSize": "14px"
+        }
+      },
+      "verdict": "pass",
+      "note": "bodyFontSize is the computed (unzoomed) value; root zoom and the drawn paragraph height show the growth (K-08: root zoom)",
+      "shot": "O7-6.3-plain-out-zoomed.png"
+    },
+    {
+      "section": "A",
+      "id": "O7-6.3-styled-in",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview styled.html"
+      ],
+      "expected": "focus inside the frame, Ctrl+= once (SendInput): root zoom 1 -> >1 and drawn text grows (page CSS 18px); Ctrl+0 -> zoom 1",
+      "measured": {
+        "focus": {
+          "activeElement": "IFRAME"
+        },
+        "before": {
+          "zoom": "1",
+          "computedZoom": "1",
+          "bodyFontSize": "18px",
+          "pHeight": 25,
+          "pFontSize": "18px",
+          "appPreviewSize": "14px"
+        },
+        "after": {
+          "zoom": "1.07143",
+          "computedZoom": "1.07143",
+          "bodyFontSize": "18px",
+          "pHeight": 26.78,
+          "pFontSize": "18px",
+          "appPreviewSize": "15px"
+        },
+        "reset": {
+          "zoom": "1",
+          "computedZoom": "1",
+          "bodyFontSize": "18px",
+          "pHeight": 25,
+          "pFontSize": "18px",
+          "appPreviewSize": "14px"
+        }
+      },
+      "verdict": "pass",
+      "note": "bodyFontSize is the computed (unzoomed) value; root zoom and the drawn paragraph height show the growth (K-08: root zoom)",
+      "shot": "O7-6.3-styled-in-zoomed.png"
+    },
+    {
+      "section": "A",
+      "id": "O7-6.3-styled-out",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview styled.html"
+      ],
+      "expected": "focus outside the frame, Ctrl+= once (SendInput): root zoom 1 -> >1 and drawn text grows (page CSS 18px); Ctrl+0 -> zoom 1",
+      "measured": {
+        "focus": {
+          "how": "tab click",
+          "where": {
+            "tag": "DIV",
+            "cls": "markdown-preview html-preview",
+            "inPreview": true
+          }
+        },
+        "before": {
+          "zoom": "1",
+          "computedZoom": "1",
+          "bodyFontSize": "18px",
+          "pHeight": 25,
+          "pFontSize": "18px",
+          "appPreviewSize": "14px"
+        },
+        "after": {
+          "zoom": "1.07143",
+          "computedZoom": "1.07143",
+          "bodyFontSize": "18px",
+          "pHeight": 26.78,
+          "pFontSize": "18px",
+          "appPreviewSize": "15px"
+        },
+        "reset": {
+          "zoom": "1",
+          "computedZoom": "1",
+          "bodyFontSize": "18px",
+          "pHeight": 25,
+          "pFontSize": "18px",
+          "appPreviewSize": "14px"
+        }
+      },
+      "verdict": "pass",
+      "note": "bodyFontSize is the computed (unzoomed) value; root zoom and the drawn paragraph height show the growth (K-08: root zoom)",
+      "shot": "O7-6.3-styled-out-zoomed.png"
+    },
+    {
+      "section": "A",
+      "id": "O7-6.4-in",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview plain.html"
+      ],
+      "expected": "focus inside the frame, Ctrl+F (SendInput) opens the app find bar; \"needle\" -> count 1/2; Enter (next) -> 2/2 and the frame scrolls",
+      "measured": {
+        "focus": {
+          "activeElement": "IFRAME"
+        },
+        "bar": {
+          "present": true,
+          "focusInInput": true
+        },
+        "count1": "1/2",
+        "scrollY1": 0,
+        "count2": "2/2",
+        "scrollY2": 1290,
+        "closedByEsc": true
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O7-6.4-in-findbar.png"
+    },
+    {
+      "section": "A",
+      "id": "O7-6.4-out",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview plain.html"
+      ],
+      "expected": "focus outside the frame, Ctrl+F (SendInput) opens the app find bar; \"needle\" -> count 1/2; Enter (next) -> 2/2 and the frame scrolls",
+      "measured": {
+        "focus": {
+          "how": "tab click",
+          "where": {
+            "tag": "DIV",
+            "cls": "markdown-preview html-preview",
+            "inPreview": true
+          }
+        },
+        "bar": {
+          "present": true,
+          "focusInInput": true
+        },
+        "count1": "1/2",
+        "scrollY1": 0,
+        "count2": "2/2",
+        "scrollY2": 1290,
+        "closedByEsc": true
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O7-6.4-out-findbar.png"
+    },
+    {
+      "section": "A",
+      "id": "O7-6.4-webview-find",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview plain.html"
+      ],
+      "expected": "no WebView find window: visible top-level windows of the app process tree are the same before and after Ctrl+F in the frame (full-monitor capture)",
+      "measured": {
+        "before": [
+          "0x6B0866 pid=36712 class=Tauri Window title=\"workbench-tauri\" rect=232,89,1456,861",
+          "0xAD03D8 pid=36712 class=Tao Thread Event Target title=\"\" rect=0,0,16,16"
+        ],
+        "after": [
+          "0x6B0866 pid=36712 class=Tauri Window title=\"workbench-tauri\" rect=232,89,1456,861",
+          "0xAD03D8 pid=36712 class=Tao Thread Event Target title=\"\" rect=0,0,16,16"
+        ],
+        "file": "O7-6.4-webview-find-monitor.png"
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O7-6.4-webview-find-monitor.png"
+    },
+    {
+      "section": "B",
+      "id": "O4-9.2-firstopen",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview pair.md"
+      ],
+      "expected": "Outline open, first open of an H1 document's preview: Outline shows depth 2 (H1, H2) only (I-10); the preview's folds follow the link (reported)",
+      "measured": {
+        "outlineLevels": [
+          1,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "outlineRows": 7,
+        "previewFoldedBlocks": 28,
+        "previewH3Shown": 0,
+        "chevrons": [
+          "true",
+          "false",
+          "true",
+          "false",
+          "true",
+          "false",
+          "true",
+          "false",
+          "true",
+          "false",
+          "true",
+          "false",
+          "true"
+        ]
+      },
+      "verdict": "pass",
+      "note": "preview fold state is reported as measured (ORDER-04 3.7 asks for a report)",
+      "shot": "O4-9.2-firstopen.png"
+    },
+    {
+      "section": "B",
+      "id": "O2-8",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview pair.md"
+      ],
+      "expected": "preview code line numbers on: code cell and code block numbered from 1, colour = editor line number colour (non-active line)",
+      "measured": {
+        "editorLineNumberColor": "rgb(180, 180, 187)",
+        "md": null,
+        "nb": {
+          "display": "block",
+          "color": "rgb(180, 180, 187)",
+          "lines": "1"
+        }
+      },
+      "verdict": "problem",
+      "note": "",
+      "shot": "O2-8-md-linenumbers.png"
+    },
+    {
+      "section": "B",
+      "id": "O2-1·3",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "code.py"
+      ],
+      "expected": "md and ipynb preview text start equal; fixed left margin = container padding + left margin = 78 px (14 + 64 at 14 px); editor text start with line numbers off = 78 px (I-13)",
+      "measured": {
+        "md": {
+          "textFromPreview": 78,
+          "bodyFromPreview": 14,
+          "fixed": 78,
+          "previewWidth": 760
+        },
+        "nb": {
+          "textFromPreview": 78,
+          "bodyFromPreview": 14,
+          "fixed": 78,
+          "previewWidth": 760
+        },
+        "editor": {
+          "textFromEditor": 78,
+          "gutters": false
+        }
+      },
+      "verdict": "pass",
+      "note": "textFromPreview includes any centring of the 700 px body in a wide pane (I-13: the editor does not follow it); 'fixed' is padding + margin",
+      "shot": "O2-3-editor-no-linenumbers.png"
+    },
+    {
+      "section": "B",
+      "id": "O2-2",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview nb.ipynb"
+      ],
+      "expected": "notebook: [1] and [ ] inside the 64 px left margin, beside the code box (no line above it)",
+      "measured": [
+        {
+          "text": "[1]",
+          "countLeftFromBody": 0,
+          "countRightToBox": 0,
+          "countTopToBox": 36.88,
+          "marginPx": 64
+        },
+        {
+          "text": "[ ]",
+          "countLeftFromBody": 0,
+          "countRightToBox": 0,
+          "countTopToBox": 36.88,
+          "marginPx": 64
+        }
+      ],
+      "verdict": "pass",
+      "note": "",
+      "shot": "O2-2-notebook.png"
+    },
+    {
+      "section": "B",
+      "id": "O2-4",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview data.csv"
+      ],
+      "expected": "md and ipynb table width = body content width; CSV table content-sized (narrower)",
+      "measured": {
+        "md": {
+          "table": 0,
+          "body": 668
+        },
+        "nb": {
+          "table": 668,
+          "body": 668
+        },
+        "csv": {
+          "table": 191.94,
+          "body": 700
+        }
+      },
+      "verdict": "problem",
+      "note": "",
+      "shot": "O2-4-csv.png"
+    },
+    {
+      "section": "B",
+      "id": "O2-5",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview nb.ipynb"
+      ],
+      "expected": "at 14 px: code block, notebook output and table text 12.04 px, inline code 12.25 px",
+      "measured": {
+        "md": {
+          "body": 14,
+          "pre": 12.04,
+          "preLineHeight": 17.46,
+          "td": 12.04
+        },
+        "nb": {
+          "pre": 12.04,
+          "preLineHeight": 17.46,
+          "output": 12.04,
+          "outputLineHeight": 17.46
+        },
+        "inline": null
+      },
+      "verdict": "pass",
+      "note": "a.md has no inline code: inline size not measured",
+      "shot": null
+    },
+    {
+      "section": "B",
+      "id": "O2-6",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview nb.ipynb"
+      ],
+      "expected": "code block, code cell and output line height = font size x 1.45 (default), computed",
+      "measured": {
+        "md": [
+          12.04,
+          17.46
+        ],
+        "codeCell": [
+          12.04,
+          17.46
+        ],
+        "output": [
+          12.04,
+          17.46
+        ]
+      },
+      "verdict": "pass",
+      "note": "values read in O2-5 (same open documents)",
+      "shot": null
+    },
+    {
+      "section": "B",
+      "id": "O2-9.2",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "same as O2-1·3, O2-2",
+      "measured": [
+        "O2-1·3: pass",
+        "O2-2: pass"
+      ],
+      "verdict": "pass",
+      "note": "ORDER-02 9.2 (chevron/[n] inside the 64 px margin, editor text start 78 px) is read by O2-1·3 and O2-2",
+      "shot": null
+    },
+    {
+      "section": "B",
+      "id": "O3-1-notebook",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview lab.ipynb"
+      ],
+      "expected": "user notebook (copy of 01-llm-langchain-lab.ipynb): first line drawn as a heading; first screen capture",
+      "measured": {
+        "firstCell": "nb-cell nb-markdown",
+        "firstTag": "H1",
+        "firstText": "LLM LangChain"
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O3-1-user-notebook.png"
+    },
+    {
+      "section": "B",
+      "id": "O3-1-bodyhtml",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview a.md"
+      ],
+      "expected": "markdown body HTML <h2>Body HTML Heading</h2> drawn as an h2 (capture)",
+      "measured": {
+        "tag": "H2",
+        "fontSize": "19.6px"
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O3-1-bodyhtml.png"
+    },
+    {
+      "section": "B",
+      "id": "O3-8-sanitize",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview a.md"
+      ],
+      "expected": "ORDER-07 8절: the sanitized .markdown-body innerHTML has no script, style, iframe, form, onclick/onerror, javascript: URL, external img src",
+      "measured": {
+        "left": [
+          "style",
+          "externalImg"
+        ],
+        "pageFlags": {
+          "xss": null,
+          "click": null,
+          "err": null,
+          "js": null
+        },
+        "dumpChars": 20244
+      },
+      "verdict": "problem",
+      "note": "",
+      "shot": "O3-8-sanitize-dump.html"
+    },
+    {
+      "section": "B",
+      "id": "O3-6",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview nb.ipynb"
+      ],
+      "expected": "three link combos open preview tabs: md preview -> .html, md preview -> .ipynb, HTML preview -> .ipynb",
+      "measured": {
+        "mdToHtml": {
+          "active": "Preview plain.html",
+          "html": true
+        },
+        "mdToIpynb": {
+          "active": "Preview nb.ipynb",
+          "notebook": true
+        },
+        "htmlToIpynb": {
+          "active": "Preview nb.ipynb",
+          "notebook": true
+        }
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O3-6-html-to-ipynb.png"
+    },
+    {
+      "section": "B",
+      "id": "O4-1",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "plain.html"
+      ],
+      "expected": "HTML edit tab Outline is the h1~h6 heading tree (no tag items); capture",
+      "measured": [
+        "Pair Document",
+        "Section 1",
+        "Section 2",
+        "Section 3",
+        "Section 4",
+        "Section 5",
+        "Section 6"
+      ],
+      "verdict": "pass",
+      "note": "",
+      "shot": "O4-1-html-edit-outline.png"
+    },
+    {
+      "section": "B",
+      "id": "O4-2",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview nb.ipynb"
+      ],
+      "expected": "ipynb preview: click \"Text in section B.\" -> Outline selected \"Section B\"; Outline click \"Section C\" -> selected \"Section C\"",
+      "measured": {
+        "afterClick": "Section B",
+        "afterOutline": "Section C"
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O4-2-ipynb-click.png"
+    },
+    {
+      "section": "B",
+      "id": "O4-4",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview a.md"
+      ],
+      "expected": "heading Outline right-click menu: Show Icons, Show Numbers, Expand All, Collapse All, Show Heading Colors; capture with numbers and heading colours on",
+      "measured": {
+        "first": [
+          {
+            "label": "Show Icons",
+            "checked": "true"
+          },
+          {
+            "label": "Show Numbers",
+            "checked": "false"
+          },
+          {
+            "label": "Expand All",
+            "checked": null
+          },
+          {
+            "label": "Collapse All",
+            "checked": null
+          },
+          {
+            "label": "Show Heading Colors",
+            "checked": "false"
+          }
+        ],
+        "both": [
+          {
+            "label": "Show Icons",
+            "checked": "false"
+          },
+          {
+            "label": "Show Numbers",
+            "checked": "true"
+          },
+          {
+            "label": "Expand All",
+            "checked": null
+          },
+          {
+            "label": "Collapse All",
+            "checked": null
+          },
+          {
+            "label": "Show Heading Colors",
+            "checked": "true"
+          }
+        ]
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O4-4-outline-menu-numbers-colors.png"
+    },
+    {
+      "section": "B",
+      "id": "O4-6",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview pair.md"
+      ],
+      "expected": "heading colours on: Outline H1~H3 label colour = UI --heading-color-N; preview H1~H3 colour = Preview --heading-color-N (computed)",
+      "measured": [
+        {
+          "level": 1,
+          "outline": "rgb(211, 96, 79)",
+          "outlineExpected": "rgb(211, 96, 79)",
+          "preview": "rgb(211, 96, 79)",
+          "previewExpected": "rgb(211, 96, 79)",
+          "headingColorsClass": true
+        },
+        {
+          "level": 2,
+          "outline": "rgb(173, 110, 37)",
+          "outlineExpected": "rgb(173, 110, 37)",
+          "preview": "rgb(173, 110, 37)",
+          "previewExpected": "rgb(173, 110, 37)",
+          "headingColorsClass": true
+        },
+        {
+          "level": 3,
+          "outline": "rgb(100, 159, 87)",
+          "outlineExpected": "rgb(100, 159, 87)",
+          "preview": "rgb(100, 159, 87)",
+          "previewExpected": "rgb(100, 159, 87)",
+          "headingColorsClass": true
+        }
+      ],
+      "verdict": "pass",
+      "note": "",
+      "shot": "O4-6-heading-colors.png"
+    },
+    {
+      "section": "B",
+      "id": "O4-9.2-longnum",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview a.md"
+      ],
+      "expected": "number style: the long H6 number (1.1.1.1.1) and its label do not overlap (capture)",
+      "measured": {
+        "number": "2.1.1.1.1",
+        "numberRight": 613.13,
+        "labelLeft": 617.13,
+        "labelOverflow": false
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O4-9.2-longnum.png"
+    },
+    {
+      "section": "B",
+      "id": "O4-8",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview pair.md"
+      ],
+      "expected": "preview chevron on \"Section 2\" folds it; the Outline row of the same item shows folded (aria-expanded=false); capture",
+      "measured": {
+        "chevron": "true",
+        "hidden": 23,
+        "outline": "true"
+      },
+      "verdict": "problem",
+      "note": "",
+      "shot": "O4-8-preview-fold.png"
+    },
+    {
+      "section": "B",
+      "id": "O4-9.2-chevron",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview pair.md"
+      ],
+      "expected": "chevron sits in the left margin (right edge <= body text start) and within the heading's first line",
+      "measured": {
+        "chevronRight": 758,
+        "textStart": 758,
+        "chevronCenterY": 180.63,
+        "lineTop": 167.38,
+        "lineBottom": 191.88
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O4-9.2-chevron.png"
+    },
+    {
+      "section": "B",
+      "id": "O4-9.2-emptycell",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview nb.ipynb"
+      ],
+      "expected": "folded ipynb: the gap below a folded section holding an empty markdown cell (A) = the gap below one without (B), +-1 px",
+      "measured": {
+        "gapAtoB": 10.5,
+        "gapBtoC": 10.5
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O4-9.2-emptycell-folded.png"
+    },
+    {
+      "section": "B",
+      "id": "O4-9.2-mermaid",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview a.md"
+      ],
+      "expected": "a mermaid diagram inside a folded section is drawn (non-zero size) after the section is unfolded",
+      "measured": {
+        "svgInFoldedBlocks": 5,
+        "afterUnfold": {
+          "x": 1000.5,
+          "y": 396.33,
+          "w": 168,
+          "h": 152
+        }
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O4-9.2-mermaid.png"
+    },
+    {
+      "section": "B",
+      "id": "O4-9.2-big",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "big.md"
+      ],
+      "expected": "big.md (generated, the v0.8.1 Outline test file not located; 2001 headings): Outline rows appear after opening the edit tab, ms",
+      "measured": {
+        "msFromDoubleClick": 1836,
+        "appAnswers": true
+      },
+      "verdict": "pass",
+      "note": "time includes the 1.8 s wait after the double-click (openFile); pass = rows appear and the app answers",
+      "shot": "O4-9.2-big.png"
+    },
+    {
+      "section": "B",
+      "id": "O5-1-light",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "big.md"
+      ],
+      "expected": "pressed status bar button cell: 22x22, radius 4, background editor.background, 1 px inset border, colour text.accent (One Light)",
+      "measured": {
+        "label": "Close Folder Sidebar",
+        "w": 22,
+        "h": 22,
+        "radius": "4px",
+        "background": "rgb(250, 250, 250)",
+        "boxShadow": "color(srgb 0 0 0 / 0.2) 0px 1px 2px 0px inset, rgb(201, 201, 202) 0px 0px 0px 1px inset",
+        "color": "rgb(92, 120, 226)",
+        "expect": {
+          "background": "rgb(250, 250, 250)",
+          "border": "rgb(201, 201, 202)",
+          "accent": "rgb(92, 120, 226)"
+        }
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O5-1-light.png"
+    },
+    {
+      "section": "B",
+      "id": "O5-3-statusbar",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "code.py"
+      ],
+      "expected": "status bar with the folder sidebar open (toggle in two places): left five buttons, UI/Edit/View at the right end after a divider; capture",
+      "measured": {
+        "left": [
+          "Close Folder Sidebar",
+          "Close Left Dock",
+          "Close Outline",
+          "Search",
+          "Lock Preview"
+        ],
+        "right": [
+          "UI",
+          "Edit",
+          "View"
+        ],
+        "dividers": 4,
+        "sidebarShown": true,
+        "sidebarToggle": true
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O5-3-statusbar.png"
+    },
+    {
+      "section": "B",
+      "id": "O5-3-edit",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "pressing Edit flips only the editor theme: editor background changes, UI and preview backgrounds stay",
+      "measured": null,
+      "verdict": "unmeasured",
+      "note": "error: click target covered or off-screen: __p.vis('.cm-content')",
+      "shot": "err-O5-3-edit.png"
+    },
+    {
+      "section": "B",
+      "id": "O5-7",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "pair.md"
+      ],
+      "expected": "Themes… selector: list split into dark and light (a divider), capture",
+      "measured": {
+        "open": false,
+        "items": 21,
+        "dividers": 1,
+        "labels": [
+          "Ayu Dark",
+          "Ayu Mirage",
+          "Catppuccin Frappé",
+          "Catppuccin Frappé - No Italics",
+          "Catppuccin Macchiato",
+          "Catppuccin Macchiato - No Italics",
+          "Catppuccin Mocha",
+          "Catppuccin Mocha - No Italics",
+          "Gruvbox Dark",
+          "Gruvbox Dark Hard",
+          "Gruvbox Dark Soft",
+          "One Dark",
+          "macOS Classic Dark",
+          "Ayu Light",
+          "Catppuccin Latte",
+          "Catppuccin Latte - No Italics",
+          "Gruvbox Light",
+          "Gruvbox Light Hard",
+          "Gruvbox Light Soft",
+          "One Light",
+          "macOS Classic Light"
+        ]
+      },
+      "verdict": "problem",
+      "note": "",
+      "shot": "O5-7-themes.png"
+    },
+    {
+      "section": "B",
+      "id": "O6-1",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview plain.html"
+      ],
+      "expected": "CSS-less HTML = same Markdown (computed): font, size, p line height and gap, list line and gap, sub-list 28 px (2em), body 700 px, text start, table 100%, code 12.04 px and line height, h1~h3",
+      "measured": {
+        "md": {
+          "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+          "fontSize": 14,
+          "pLineHeight": 21,
+          "pMarginBottom": 14,
+          "liLineHeight": 19.25,
+          "liGap": 0,
+          "subIndent": 28,
+          "bodyWidth": 668,
+          "textStart": 78,
+          "tableWidth": 0,
+          "preFontSize": 12.04,
+          "preLineHeight": 17.46,
+          "h1": 24.5,
+          "h2": 19.6,
+          "h3": 16.8
+        },
+        "html": {
+          "fontFamily": "\"IBM Plex Sans\", \"Malgun Gothic\", sans-serif",
+          "fontSize": 14,
+          "pLineHeight": 21,
+          "pMarginBottom": 14,
+          "liLineHeight": 19.25,
+          "liGap": 0,
+          "subIndent": 28,
+          "bodyWidth": 653,
+          "textStart": 78,
+          "tableWidth": 653,
+          "preFontSize": 12.04,
+          "preLineHeight": 17.46,
+          "h1": 24.5,
+          "h2": 19.6,
+          "h3": 16.8
+        },
+        "differs": [
+          "bodyWidth",
+          "tableWidth"
+        ]
+      },
+      "verdict": "problem",
+      "note": "two captures (O6-1-md.png, O6-1-html.png) at the same pane width instead of a split view: a split narrows the 700 px body",
+      "shot": "O6-1-html.png"
+    },
+    {
+      "section": "B",
+      "id": "O6-2",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview styled.html"
+      ],
+      "expected": "page CSS wins: styled.html body font-size 18px, colour rgb(200, 30, 30), h1 colour rgb(0, 128, 0)",
+      "measured": {
+        "fontSize": "18px",
+        "color": "rgb(200, 30, 30)",
+        "h1Color": "rgb(0, 128, 0)"
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O6-2-styled.png"
+    },
+    {
+      "section": "B",
+      "id": "O6-5",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview styled.html"
+      ],
+      "expected": "external requests 0 while styled.html (with an external <img>) is open: frame resource entries and app Network requests hold no non-local URL",
+      "measured": {
+        "external": [],
+        "frameResources": 0,
+        "pageRequests": 5
+      },
+      "verdict": "pass",
+      "note": "frame requests blocked by its CSP never leave and leave no entry; page requests from Network.enable on the app target (v0.8.1 way)",
+      "shot": null
+    },
+    {
+      "section": "B",
+      "id": "O6-3",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview plain.html"
+      ],
+      "expected": "Settings window: Preview Font Size + once (no Ctrl+=) -> open HTML preview body font-size 15 px, zoom 1; settings.json saved",
+      "measured": {
+        "before": {
+          "fs": "14px",
+          "zoom": "1"
+        },
+        "after": {
+          "fs": "15px",
+          "zoom": "1"
+        },
+        "savedPreviewFontSize": 15
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O6-3-after-settings.png"
+    },
+    {
+      "section": "B",
+      "id": "O6-4",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview plain.html"
+      ],
+      "expected": "HTML code block: header shows \"python\" and Copy; Copy click -> clipboard = the block without its blank lines",
+      "measured": {
+        "language": "python",
+        "copy": true,
+        "colored": 10,
+        "shown": "def hello():\n    print(\"hi\")\n\n    return 1",
+        "clipboard": "def hello():\n    print(\"hi\")\n\n    return 1"
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O6-4-html-code-block.png"
+    },
+    {
+      "section": "B",
+      "id": "O6-7",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview mockup.html"
+      ],
+      "expected": "v0.8.1 mockup page (copy) capture: report whether the base look / 700 px body changed it",
+      "measured": {
+        "bodyWidth": 700,
+        "title": "Outline 시안 5안",
+        "viewport": 760
+      },
+      "verdict": "pass",
+      "note": "capture only: the difference from v0.8.1 is judged by leader-core against v0.8.1 captures",
+      "shot": "O6-7-mockup.png"
+    },
+    {
+      "section": "B",
+      "id": "O6-9.2-font",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview plain.html"
+      ],
+      "expected": "the frame's data: fonts load: body and code font families are loaded faces (document.fonts.check)",
+      "measured": {
+        "body": "\"IBM Plex Sans\"",
+        "code": "\"JetBrains Mono\"",
+        "bodyLoaded": true,
+        "codeLoaded": true,
+        "loaded": [
+          "IBM Plex Sans 400",
+          "IBM Plex Sans 600",
+          "JetBrains Mono 400"
+        ]
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O6-9.2-font.png"
+    },
+    {
+      "section": "B",
+      "id": "O6-9.2-cssRules",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview plain.html"
+      ],
+      "expected": "release build: the app's cssRules reach the frame (the frame base style holds the .markdown-body rules in one @layer)",
+      "measured": {
+        "styles": 2,
+        "baseChars": 0,
+        "layerRules": 135,
+        "hasBodyRule": false
+      },
+      "verdict": "problem",
+      "note": "",
+      "shot": null
+    },
+    {
+      "section": "C",
+      "id": "O7-9.2-redraw-default",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "time from one typed character in the HTML edit tab to the frame document reload, default code font (about 0.9 MB of fonts)",
+      "measured": null,
+      "verdict": "unmeasured",
+      "note": "error: click target covered or off-screen: __p.vis('.cm-content')",
+      "shot": "err-O7-9.2-redraw-default.png"
+    },
+    {
+      "section": "C",
+      "id": "O7-9.2-redraw-d2coding",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "same with preview_code_font_family D2Coding (about 5.6 MB)",
+      "measured": null,
+      "verdict": "unmeasured",
+      "note": "error: click target covered or off-screen: __p.vis('.cm-content')",
+      "shot": "err-O7-9.2-redraw-d2coding.png"
+    },
+    {
+      "section": "D",
+      "id": "R-open-markdown",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview pair.md"
+      ],
+      "expected": "pair.md preview opens and draws",
+      "measured": {
+        "drawn": true
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-open-ipynb",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview nb.ipynb"
+      ],
+      "expected": "nb.ipynb preview opens and draws",
+      "measured": {
+        "drawn": true
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-open-html",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview plain.html"
+      ],
+      "expected": "plain.html preview opens and draws",
+      "measured": {
+        "drawn": true
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-open-csv",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview data.csv"
+      ],
+      "expected": "data.csv preview opens and draws",
+      "measured": {
+        "drawn": true
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-open-tsv",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview data.tsv"
+      ],
+      "expected": "data.tsv preview opens and draws",
+      "measured": {
+        "drawn": true
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-open-svg",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview pic.svg"
+      ],
+      "expected": "pic.svg preview opens and draws",
+      "measured": {
+        "drawn": false
+      },
+      "verdict": "problem",
+      "note": "",
+      "shot": "R-open-svg.png"
+    },
+    {
+      "section": "D",
+      "id": "R-open-mermaid",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview diagram.mmd"
+      ],
+      "expected": "diagram.mmd preview opens and draws",
+      "measured": {
+        "drawn": false
+      },
+      "verdict": "problem",
+      "note": "",
+      "shot": "R-open-mermaid.png"
+    },
+    {
+      "section": "D",
+      "id": "R-md-sync",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "md edit tab <-> preview: editor line -> preview block marked; preview block click -> editor cursor line",
+      "measured": null,
+      "verdict": "unmeasured",
+      "note": "error: click target covered or off-screen: __p.vis('.cm-content')",
+      "shot": "err-R-md-sync.png"
+    },
+    {
+      "section": "D",
+      "id": "R-md-anchor",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview a.md"
+      ],
+      "expected": "#section-b link scrolls the md preview to that heading",
+      "measured": {
+        "before": 0,
+        "after": 1241,
+        "top": 667.6
+      },
+      "verdict": "problem",
+      "note": "",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-find-md",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview pair.md"
+      ],
+      "expected": "preview find (md): Ctrl+F, \"needle\" -> a count 1/2",
+      "measured": {
+        "count": "1/2"
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-find-ipynb",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview nb.ipynb"
+      ],
+      "expected": "preview find (ipynb): Ctrl+F, \"section\" -> a count > 0",
+      "measured": {
+        "count": "1/6"
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-tabscroll-setup",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview scroll.html"
+      ],
+      "expected": "four tabs open for the 9.3 cases (scroll.md, code.py, scroll.html, Preview scroll.html)",
+      "measured": [
+        "scroll.md",
+        "code.py",
+        "scroll.html",
+        "Preview scroll.html"
+      ],
+      "verdict": "pass",
+      "note": "",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-tabscroll-md-code",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "scroll.md"
+      ],
+      "expected": "scroll.md scrolled (SendInput wheel x6), code.py shown, back: same position (+-1 px), active tabs as clicked",
+      "measured": {
+        "before": 600,
+        "after": 600,
+        "activeBefore": "scroll.md",
+        "activeVia": "code.py",
+        "activeAfter": "scroll.md"
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-tabscroll-html-md",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview scroll.html"
+      ],
+      "expected": "Preview scroll.html scrolled (SendInput wheel x6), scroll.md shown, back: same position (+-1 px), active tabs as clicked",
+      "measured": {
+        "before": 600,
+        "after": 600,
+        "activeBefore": "Preview scroll.html",
+        "activeVia": "scroll.md",
+        "activeAfter": "Preview scroll.html"
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-tabscroll-html-code",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview scroll.html"
+      ],
+      "expected": "Preview scroll.html scrolled (SendInput wheel x6), code.py shown, back: same position (+-1 px), active tabs as clicked",
+      "measured": {
+        "before": 1200,
+        "after": 1200,
+        "activeBefore": "Preview scroll.html",
+        "activeVia": "code.py",
+        "activeAfter": "Preview scroll.html"
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-code-copy",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview pair.md"
+      ],
+      "expected": "md code block Copy -> clipboard = shown text; leading/trailing blank lines not drawn (I-22)",
+      "measured": null,
+      "verdict": "unmeasured",
+      "note": "error: TypeError: Cannot read properties of undefined (reading 'textContent')\n    at <anonymous>:1:42",
+      "shot": "err-R-code-copy.png"
+    },
+    {
+      "section": "D",
+      "id": "R-code-blank",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "same as R-code-copy",
+      "measured": [
+        "R-code-copy: unmeasured"
+      ],
+      "verdict": "unmeasured",
+      "note": "shown text equals the block without its leading/trailing blank lines (R-code-copy compares it with the fixture)",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-code-linenums",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "same as O2-8",
+      "measured": [
+        "O2-8: problem"
+      ],
+      "verdict": "problem",
+      "note": "on: O2-8; off is the default state every other capture shows",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-bodyhtml",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "same as O3-1-bodyhtml, O3-8-sanitize",
+      "measured": [
+        "O3-1-bodyhtml: pass",
+        "O3-8-sanitize: problem"
+      ],
+      "verdict": "problem",
+      "note": "derived from the record(s) above, not measured twice",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-links3",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "same as O3-6",
+      "measured": [
+        "O3-6: pass"
+      ],
+      "verdict": "pass",
+      "note": "derived from the record(s) above, not measured twice",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-outline-keys",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview pair.md"
+      ],
+      "expected": "Outline keyboard (v0.8.1 I-18): focus a row, Down (SendInput) moves the selection",
+      "measured": {
+        "before": "Pair Document",
+        "after": [
+          "Pair Document"
+        ]
+      },
+      "verdict": "problem",
+      "note": "pass = the marked row moved off the clicked one",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-outline-menu",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "same as O4-4",
+      "measured": [
+        "O4-4: pass"
+      ],
+      "verdict": "pass",
+      "note": "derived from the record(s) above, not measured twice",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-outline-numbers",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "same as O4-4, O4-9.2-longnum",
+      "measured": [
+        "O4-4: pass",
+        "O4-9.2-longnum: pass"
+      ],
+      "verdict": "pass",
+      "note": "derived from the record(s) above, not measured twice",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-outline-colors",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "same as O4-6",
+      "measured": [
+        "O4-6: pass"
+      ],
+      "verdict": "pass",
+      "note": "derived from the record(s) above, not measured twice",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-outline-fold",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "same as O4-8",
+      "measured": [
+        "O4-8: problem"
+      ],
+      "verdict": "problem",
+      "note": "derived from the record(s) above, not measured twice",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-status-buttons",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview pair.md"
+      ],
+      "expected": "status bar: five toggle buttons at the left, UI/Edit/View at the right",
+      "measured": {
+        "left": 5,
+        "right": [
+          "UI",
+          "Edit",
+          "View"
+        ]
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-themes",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "same as O5-7",
+      "measured": [
+        "O5-7: problem"
+      ],
+      "verdict": "problem",
+      "note": "derived from the record(s) above, not measured twice",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-welcome",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "same as O5-8·9-welcome, O5-8·9-rows, O5-8·9-recent",
+      "measured": [
+        "O5-8·9-welcome: pass",
+        "O5-8·9-rows: pass",
+        "O5-8·9-recent: pass"
+      ],
+      "verdict": "pass",
+      "note": "Open Folder row not run (native dialog), see O5-8·9-rows",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-nofile",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "same as O5-8·9-nofile",
+      "measured": [
+        "O5-8·9-nofile: pass"
+      ],
+      "verdict": "pass",
+      "note": "derived from the record(s) above, not measured twice",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-html-same",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "same as O6-1",
+      "measured": [
+        "O6-1: problem"
+      ],
+      "verdict": "problem",
+      "note": "derived from the record(s) above, not measured twice",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-html-copy",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "same as O6-4",
+      "measured": [
+        "O6-4: pass"
+      ],
+      "verdict": "pass",
+      "note": "derived from the record(s) above, not measured twice",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-html-net0",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "same as O6-5",
+      "measured": [
+        "O6-5: pass"
+      ],
+      "verdict": "pass",
+      "note": "derived from the record(s) above, not measured twice",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-html-scripts",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "Preview beacon.html"
+      ],
+      "expected": "v0.8.1 script pages: links.html lists four created links and beacon.html reports its calls; no external request leaves",
+      "measured": {
+        "links": {
+          "created": 4,
+          "res": [
+            "https://prefetch-leak-test.example.com/asset.js",
+            "https://preload-leak-test.example.com/style.css"
+          ]
+        },
+        "beacon": {
+          "beacon": "sendBeacon returned: true",
+          "es": "EventSource error (blocked)",
+          "res": [
+            "https://eventsource-leak-test.example.com/events"
+          ]
+        },
+        "external": [
+          "https://prefetch-leak-test.example.com/asset.js",
+          "https://preload-leak-test.example.com/style.css",
+          "https://eventsource-leak-test.example.com/events"
+        ]
+      },
+      "verdict": "problem",
+      "note": "",
+      "shot": "R-html-scripts-beacon.png"
+    },
+    {
+      "section": "D",
+      "id": "R-tree-select",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "rename-me.txt"
+      ],
+      "expected": "tree row click selects it",
+      "measured": {
+        "selected": true
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-tree-rename",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "renamed.txt"
+      ],
+      "expected": "F2 (SendInput), type renamed.txt, Enter -> the file is renamed on disk",
+      "measured": {
+        "inputShown": true,
+        "renamedOnDisk": true,
+        "row": true
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-tree-drag",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "renamed.txt"
+      ],
+      "expected": "drag move-me.txt onto sub (SendInput drag) -> sub/move-me.txt on disk",
+      "measured": {
+        "movedOnDisk": true,
+        "dialog": false
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-settings",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": null,
+      "expected": "same as O6-3",
+      "measured": [
+        "O6-3: pass"
+      ],
+      "verdict": "pass",
+      "note": "Settings opened from the User menu, Preview Font Size + saved (settings.json) and shown, then − back",
+      "shot": null
+    },
+    {
+      "section": "D",
+      "id": "R-about",
+      "theme": "One Light (default, no settings.json)",
+      "activeTab": [
+        "renamed.txt"
+      ],
+      "expected": "Help > About shows Version 0.8.2",
+      "measured": {
+        "version": "Version 0.8.2"
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "R-about.png"
+    },
+    {
+      "section": "B",
+      "id": "O5-1-dark",
+      "theme": "One Dark (settings.json *_mode dark)",
+      "activeTab": [
+        null
+      ],
+      "expected": "pressed status bar button cell: 22x22, radius 4, background editor.background, 1 px inset border, colour text.accent (One Dark)",
+      "measured": {
+        "appearance": "dark",
+        "label": "Close Folder Sidebar",
+        "w": 22,
+        "h": 22,
+        "radius": "4px",
+        "background": "rgb(40, 44, 51)",
+        "boxShadow": "color(srgb 0 0 0 / 0.4) 0px 1px 2px 0px inset, rgb(70, 75, 87) 0px 0px 0px 1px inset",
+        "color": "rgb(116, 173, 232)",
+        "expect": {
+          "background": "rgb(40, 44, 51)",
+          "border": "rgb(70, 75, 87)",
+          "accent": "rgb(116, 173, 232)"
+        }
+      },
+      "verdict": "pass",
+      "note": "",
+      "shot": "O5-1-dark.png"
+    }
+  ],
+  "webviewFind": {
+    "before": [
+      "0x6B0866 pid=36712 class=Tauri Window title=\"workbench-tauri\" rect=232,89,1456,861",
+      "0xAD03D8 pid=36712 class=Tao Thread Event Target title=\"\" rect=0,0,16,16"
+    ],
+    "after": [
+      "0x6B0866 pid=36712 class=Tauri Window title=\"workbench-tauri\" rect=232,89,1456,861",
+      "0xAD03D8 pid=36712 class=Tao Thread Event Target title=\"\" rect=0,0,16,16"
+    ],
+    "file": "O7-6.4-webview-find-monitor.png"
+  },
+  "styledNet": {
+    "frameResources": [],
+    "page": [
+      {
+        "t": 1794601851889,
+        "url": "http://ipc.localhost/read_file"
+      },
+      {
+        "t": 1794601851895,
+        "url": "http://ipc.localhost/read_file"
+      },
+      {
+        "t": 1794601853772,
+        "url": "http://ipc.localhost/preview_set"
+      },
+      {
+        "t": 1794601853879,
+        "url": "http://ipc.localhost/preview_set"
+      },
+      {
+        "t": 1794601853881,
+        "url": "http://preview.localhost/p35"
+      }
+    ]
+  },
+  "settingsRun": {
+    "saved": 15,
+    "before": {
+      "fs": "14px",
+      "zoom": "1"
+    },
+    "after": {
+      "fs": "15px",
+      "zoom": "1"
+    }
+  },
+  "finished": "2026-11-13T20:35:44.013Z",
+  "summary": {
+    "pass": [
+      "O5-6",
+      "O5-8·9-welcome",
+      "O5-9.2-icon",
+      "O5-8·9-nofile",
+      "O5-8·9-rows",
+      "O5-8·9-recent",
+      "O7-6.1",
+      "O7-6.2",
+      "O7-6.3-plain-in",
+      "O7-6.3-plain-out",
+      "O7-6.3-styled-in",
+      "O7-6.3-styled-out",
+      "O7-6.4-in",
+      "O7-6.4-out",
+      "O7-6.4-webview-find",
+      "O4-9.2-firstopen",
+      "O2-1·3",
+      "O2-2",
+      "O2-5",
+      "O2-6",
+      "O2-9.2",
+      "O3-1-notebook",
+      "O3-1-bodyhtml",
+      "O3-6",
+      "O4-1",
+      "O4-2",
+      "O4-4",
+      "O4-6",
+      "O4-9.2-longnum",
+      "O4-9.2-chevron",
+      "O4-9.2-emptycell",
+      "O4-9.2-mermaid",
+      "O4-9.2-big",
+      "O5-1-light",
+      "O5-3-statusbar",
+      "O6-2",
+      "O6-5",
+      "O6-3",
+      "O6-4",
+      "O6-7",
+      "O6-9.2-font",
+      "R-open-markdown",
+      "R-open-ipynb",
+      "R-open-html",
+      "R-open-csv",
+      "R-open-tsv",
+      "R-find-md",
+      "R-find-ipynb",
+      "R-tabscroll-setup",
+      "R-tabscroll-md-code",
+      "R-tabscroll-html-md",
+      "R-tabscroll-html-code",
+      "R-links3",
+      "R-outline-menu",
+      "R-outline-numbers",
+      "R-outline-colors",
+      "R-status-buttons",
+      "R-welcome",
+      "R-nofile",
+      "R-html-copy",
+      "R-html-net0",
+      "R-tree-select",
+      "R-tree-rename",
+      "R-tree-drag",
+      "R-settings",
+      "R-about",
+      "O5-1-dark"
+    ],
+    "problem": [
+      "O2-8",
+      "O2-4",
+      "O3-8-sanitize",
+      "O4-8",
+      "O5-7",
+      "O6-1",
+      "O6-9.2-cssRules",
+      "R-open-svg",
+      "R-open-mermaid",
+      "R-md-anchor",
+      "R-code-linenums",
+      "R-bodyhtml",
+      "R-outline-keys",
+      "R-outline-fold",
+      "R-themes",
+      "R-html-same",
+      "R-html-scripts"
+    ],
+    "unmeasured": [
+      "O5-3-edit",
+      "O7-9.2-redraw-default",
+      "O7-9.2-redraw-d2coding",
+      "R-md-sync",
+      "R-code-copy",
+      "R-code-blank"
+    ]
+  }
+}
