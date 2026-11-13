@@ -25,7 +25,7 @@
 | `tauri-analyst` | w0:p5 | core ITEMS I-27 원인 분석만. tauri 파일 쓰기·앱 실행·커밋 없음. 결과는 leader-core 경유 | Claude Code | Fable 5.2 | medium | `claude --model claude-fable-5-2 --effort medium` | I-27 분석 동안 |
 
 - leader·writer·coder·checker 넷은 v0.8.1에서 leader-core가 2026-11-13에 띄운 것을 그대로 쓴다. coder는 2026-11-14 `/model`로 Fable 5.2로 바꿨다(다시 띄우지 않음). `tauri-analyst`는 2026-11-14 leader-core가 새로 띄웠다(0장). checker는 `claude-sonnet-5-5-high`로 띄운 뒤 같은 날 agy `/model`로 Gemini 3.8 Flash (High)로 바꿨다(사용자 2026-11-13, core v0.8.1 ORDER-08 3.3). 표의 checker 실행 명령은 다시 띄울 때 쓴다.
-- worktree는 두지 않는다.
+- worktree는 두지 않는다. 예외(사용자 2026-11-14, leader-core 전달): `tauri-analyst`는 `%TEMP%\v082-analyst\wt`(detached `090e5d1`, `node_modules` junction)에서만 실험 고침·vitest를 하고, 커밋·push·브랜치 만들기는 하지 않는다. 작업 폴더와 부딪치지 않는다.
 - 리뷰 독립성: writer(Claude Code Opus 5.5)·coder(Claude Code Fable 5.2)의 산출물은 다른 모델(Gemini 3.8 Flash)·다른 도구(agy)의 checker가 검토한다.
 - 측정자는 직접 고치지 않는다. checker는 불일치 목록을 leader에게 보고한다(루트 `AGENTS.md` 3A.4의 7).
 - 지금은 Codex를 쓰지 않는다.
@@ -48,7 +48,7 @@ herdr session
     └── tab: tauri-analyst  w0:t5  pane w0:p5  (Claude Code Fable 5.2 medium)
 ```
 
-- worktree: 없음.
+- worktree: 없음. 예외는 `tauri-analyst`의 `%TEMP%\v082-analyst\wt` 하나(1장).
 - 탭·pane은 v0.8.1에서 leader-core가 2026-11-13에 띄운 것 그대로이고, `tauri-analyst`(w0:t5·w0:p5)만 2026-11-14 leader-core가 더했다. tauri는 새로 띄우지 않는다.
 - 같은 세션에 core 워크스페이스(`leader-core`, `wT:p1`)가 함께 떠 있다. 이 레포의 에이전트는 그 워크스페이스에 입력하지 않고 파일을 쓰지 않는다.
 

@@ -1,0 +1,278 @@
+{
+  "exe": "D:\\projects\\workbench-tauri\\src-tauri\\target\\debug\\workbench-tauri.exe",
+  "theme": "One Dark (default, no settings.json)",
+  "input": "SendInput wheel x6 (-120), tab clicks via CDP mouse",
+  "sessions": [
+    {
+      "session": 1,
+      "cases": [
+        {
+          "tab": "a.md",
+          "via": "code.py",
+          "before": 600,
+          "after": 600,
+          "activeBefore": "a.md",
+          "activeVia": "code.py",
+          "activeAfter": "a.md",
+          "pass": true
+        },
+        {
+          "tab": "Preview test.html",
+          "via": "a.md",
+          "before": 600,
+          "after": 600,
+          "activeBefore": "Preview test.html",
+          "activeVia": "a.md",
+          "activeAfter": "Preview test.html",
+          "pass": true
+        },
+        {
+          "tab": "Preview test.html",
+          "via": "code.py",
+          "before": 1200,
+          "after": 1200,
+          "activeBefore": "Preview test.html",
+          "activeVia": "code.py",
+          "activeAfter": "Preview test.html",
+          "pass": true
+        }
+      ],
+      "window": {
+        "width": 1440,
+        "height": 852
+      },
+      "tabs": [
+        "a.md",
+        "code.py",
+        "test.html",
+        "Preview test.html"
+      ]
+    },
+    {
+      "session": 2,
+      "cases": [
+        {
+          "tab": "a.md",
+          "via": "code.py",
+          "before": 600,
+          "after": 600,
+          "activeBefore": "a.md",
+          "activeVia": "code.py",
+          "activeAfter": "a.md",
+          "pass": true
+        },
+        {
+          "tab": "Preview test.html",
+          "via": "a.md",
+          "before": 600,
+          "after": 600,
+          "activeBefore": "Preview test.html",
+          "activeVia": "a.md",
+          "activeAfter": "Preview test.html",
+          "pass": true
+        },
+        {
+          "tab": "Preview test.html",
+          "via": "code.py",
+          "before": 1200,
+          "after": 1200,
+          "activeBefore": "Preview test.html",
+          "activeVia": "code.py",
+          "activeAfter": "Preview test.html",
+          "pass": true
+        }
+      ],
+      "window": {
+        "width": 1440,
+        "height": 852
+      },
+      "tabs": [
+        "a.md",
+        "code.py",
+        "test.html",
+        "Preview test.html"
+      ]
+    },
+    {
+      "session": 3,
+      "cases": [
+        {
+          "tab": "a.md",
+          "via": "code.py",
+          "before": 600,
+          "after": 600,
+          "activeBefore": "a.md",
+          "activeVia": "code.py",
+          "activeAfter": "a.md",
+          "pass": true
+        },
+        {
+          "tab": "Preview test.html",
+          "via": "a.md",
+          "before": 600,
+          "after": 600,
+          "activeBefore": "Preview test.html",
+          "activeVia": "a.md",
+          "activeAfter": "Preview test.html",
+          "pass": true
+        },
+        {
+          "tab": "Preview test.html",
+          "via": "code.py",
+          "before": 1200,
+          "after": 1200,
+          "activeBefore": "Preview test.html",
+          "activeVia": "code.py",
+          "activeAfter": "Preview test.html",
+          "pass": true
+        }
+      ],
+      "window": {
+        "width": 1440,
+        "height": 852
+      },
+      "tabs": [
+        "a.md",
+        "code.py",
+        "test.html",
+        "Preview test.html"
+      ]
+    },
+    {
+      "session": 4,
+      "cases": [
+        {
+          "tab": "a.md",
+          "via": "code.py",
+          "before": 600,
+          "after": 600,
+          "activeBefore": "a.md",
+          "activeVia": "code.py",
+          "activeAfter": "a.md",
+          "pass": true
+        },
+        {
+          "tab": "Preview test.html",
+          "via": "a.md",
+          "before": 600,
+          "after": 600,
+          "activeBefore": "Preview test.html",
+          "activeVia": "a.md",
+          "activeAfter": "Preview test.html",
+          "pass": true
+        },
+        {
+          "tab": "Preview test.html",
+          "via": "code.py",
+          "before": 1200,
+          "after": 1200,
+          "activeBefore": "Preview test.html",
+          "activeVia": "code.py",
+          "activeAfter": "Preview test.html",
+          "pass": true
+        }
+      ],
+      "window": {
+        "width": 1440,
+        "height": 852
+      },
+      "tabs": [
+        "a.md",
+        "code.py",
+        "test.html",
+        "Preview test.html"
+      ]
+    },
+    {
+      "session": 5,
+      "cases": [
+        {
+          "tab": "a.md",
+          "via": "code.py",
+          "before": 600,
+          "after": 600,
+          "activeBefore": "a.md",
+          "activeVia": "code.py",
+          "activeAfter": "a.md",
+          "pass": true
+        },
+        {
+          "tab": "Preview test.html",
+          "via": "a.md",
+          "before": 600,
+          "after": 600,
+          "activeBefore": "Preview test.html",
+          "activeVia": "a.md",
+          "activeAfter": "Preview test.html",
+          "pass": true
+        },
+        {
+          "tab": "Preview test.html",
+          "via": "code.py",
+          "before": 1200,
+          "after": 1200,
+          "activeBefore": "Preview test.html",
+          "activeVia": "code.py",
+          "activeAfter": "Preview test.html",
+          "pass": true
+        }
+      ],
+      "window": {
+        "width": 1440,
+        "height": 852
+      },
+      "tabs": [
+        "a.md",
+        "code.py",
+        "test.html",
+        "Preview test.html"
+      ],
+      "split": {
+        "panes": 2,
+        "before": 600,
+        "afterSplit": 600,
+        "rightY": 200,
+        "after": 600,
+        "pass": true
+      }
+    }
+  ],
+  "summary": [
+    {
+      "case": "a.md|code.py",
+      "pass": 5,
+      "of": 5,
+      "values": [
+        "600->600",
+        "600->600",
+        "600->600",
+        "600->600",
+        "600->600"
+      ]
+    },
+    {
+      "case": "Preview test.html|a.md",
+      "pass": 5,
+      "of": 5,
+      "values": [
+        "600->600",
+        "600->600",
+        "600->600",
+        "600->600",
+        "600->600"
+      ]
+    },
+    {
+      "case": "Preview test.html|code.py",
+      "pass": 5,
+      "of": 5,
+      "values": [
+        "1200->1200",
+        "1200->1200",
+        "1200->1200",
+        "1200->1200",
+        "1200->1200"
+      ]
+    }
+  ]
+}

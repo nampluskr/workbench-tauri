@@ -65,5 +65,13 @@
 
 - **시작** (2026-11-14, leader-core → tauri-leader): 카드 core `D:\projects\workbench-core\specs\v0.8.2\orders\ORDER-02.md`, 항목 I-13·I-15·I-16·I-17·I-21·I-22·I-23. 화면 측정은 leader 프로브 방식으로 하고 checker는 diff 리뷰만 한다(leader-core 지시).
 - **ORDER-02 바뀜** (2026-11-14, 사용자 요청 작업 — 계획 밖, leader-core 전달): 화면 측정을 Phase 7로 모음(core COMMON 8절 끝), I-27 더함(core ORDER-02 8절).
-- **K-02 I-13·I-15·I-16·I-17·I-21·I-22·I-23 (ORDER-02)** (2026-11-14, coder, 커밋 대기): 코드 변경(`src/editor/code-block.ts`·`.test.ts` 새로, `src/shell/markdown-preview.ts`, `src/app.css`, `src/settings/model.ts`·`model.test.ts`·`load.ts`, `src/spec/metrics.ts`, `src/editor/extensions.ts`). 검증 V1: `npm.cmd run test` 318/318, typecheck 0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-K-02-report.md`).
+- **K-02 I-13·I-15·I-16·I-17·I-21·I-22·I-23 (ORDER-02)** (2026-11-14, coder, 커밋 `090e5d1`): 코드 변경(`src/editor/code-block.ts`·`.test.ts` 새로, `src/shell/markdown-preview.ts`, `src/app.css`, `src/settings/model.ts`·`model.test.ts`·`load.ts`, `src/spec/metrics.ts`, `src/editor/extensions.ts`). 검증 V1: `npm.cmd run test` 318/318, typecheck 0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-K-02-report.md`).
 - **W-03 herdr 구성 바뀜 반영** (2026-11-14, writer): `HERDR-SETUP.md` 0·1·2·4장과 루트 `AGENTS.md` "HERDR 구성은 core가 정한다" 문장에 `tauri-analyst`(w0:p5, Claude Code Fable 5.2 medium, I-27 원인 분석만)와 coder 모델 Fable 5.2(사용자 2026-11-14, leader-core 전달)를 적었다. 검증 V0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-W-03-report.md`).
+- **C-02 checker 리뷰(K-02)** [PASS] (2026-11-14): K-02 diff와 보안 설정 `git diff c0609e5 -- src-tauri/tauri.conf.json src-tauri/capabilities`를 읽었다. 테스트·typecheck는 다시 돌리지 않고 coder 출력(318/318, 0)을 근거로 했다(core COMMON 8절). 검증 V0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-C-02-report.md`).
+- **I-13 [BLOCKED] → [UNBLOCK]** (2026-11-14, 사용자 결정, leader-core 전달): "78px로 같게(지금 구현 그대로)". I-15 여백 64px, 줄 번호를 끈 에디터 여백 78px(core ITEMS I-13 "정한 것 더함" 고침). 코드는 바꾸지 않았다.
+- **I-27 탭 스크롤 위치 — 남은 두 경우** (2026-11-14, 사용자 요청 작업 — 계획 밖, core ORDER-02 8절로 더해짐)
+  - 무엇을 했나: `tauri-analyst`가 원인을 분석했다(`C:\Users\nampl\AppData\Local\Temp\v082-analyst\I-27-analysis.md`). 앱 코드에서 위치를 0으로 만드는 곳은 없고, ORDER-01 프로브가 탭 막대 밖으로 밀린 탭의 좌표를 눌러 클릭이 빗나간 것이었다. leader-core 지시로 coder는 고치지 않고 tauri-leader가 프로브를 고쳤다: 클릭 전 `elementFromPoint` 확인, 탭 `scrollIntoView`, 탭 4개, 매 단계 활성 탭 기록, scrollTop 쓰기·프레임 메시지 기록.
+  - 결과: V3 #12(debug exe `090e5d1`, One Dark 기본, 창 1440×852): 새로 띄운 앱 5회 × 세 경우 15/15 유지(`a.md`→`code.py` 600→600, HTML 미리보기→`a.md` 600→600, HTML 미리보기→`code.py` 1200→1200). 분할 pane 600→600(분할 직후 600). 결론: 측정 오류이고 앱 코드는 바꾸지 않았다.
+  - 검증: V3(`specs/v0.8.2/verify/ORDER-02/leader-probe/out/result.json`, `split-s5.png`).
+  - 특이사항: 실험 고침·vitest는 analyst가 `%TEMP%\v082-analyst\wt` worktree에서만 했다(HERDR-SETUP 0장 예외).
+- **W-04 ORDER-02 기록** (2026-11-14, writer): 위 K-02 커밋·C-02·I-13·I-27 항목, HERDR-SETUP worktree 예외, ITEMS-MAP I-12·I-13·I-15·I-16·I-17·I-21·I-22·I-23 상태와 I-27 행을 적었다. 검증 V0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-W-04-report.md`).
