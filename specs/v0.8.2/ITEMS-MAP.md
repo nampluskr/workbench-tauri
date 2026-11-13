@@ -21,19 +21,19 @@
 | I-8 | 제목 앞 표시: 아이콘 방식과 숫자 방식 | G-2 | 4 | ORDER-04 | 구현·테스트 충족 |
 | I-9 | Outline 우클릭 메뉴 | G-2 | 4 | ORDER-04 | 구현 충족(코드 확인), 화면은 Phase 7 |
 | I-10 | 처음 열 때 2단계까지만 펼침 | G-2 | 4 | ORDER-04 | 구현·테스트 충족 |
-| I-11 | 단계별 제목 색 — Outline과 미리보기 제목 | G-2 | 4 · 6 (Outline·마크다운·ipynb 4, HTML 제목 6) | ORDER-04 | Outline·마크다운·ipynb 구현·테스트 충족, 화면은 Phase 7. HTML 미리보기 제목 색은 ORDER-06 |
+| I-11 | 단계별 제목 색 — Outline과 미리보기 제목 | G-2 | 4 · 6 (Outline·마크다운·ipynb 4, HTML 제목 6) | ORDER-04 · ORDER-06 | Outline·마크다운·ipynb 구현·테스트 충족(ORDER-04), HTML 미리보기 제목 색 구현·테스트 충족(ORDER-06), 화면은 Phase 7 |
 | I-12 | 탭을 오갈 때 스크롤 위치 기억 — 편집 탭과 미리보기 탭 | G-3 | 1 | ORDER-01 | 충족(남은 두 경우는 I-27에서 측정 오류로 밝혀짐) |
 | I-13 | 줄 번호를 껐을 때 에디터 왼쪽 여백 | G-3 | 2 | ORDER-02 | 구현·테스트 충족, 화면은 Phase 7 |
-| I-14 | 공통 원칙: md·ipynb·HTML 미리보기를 같은 모양으로 | G-4 | 6 | 미정 | 대기 |
-| I-15 | 왼쪽 여백과 노트북 실행 번호 | G-4 | 2 · 6 (마크다운·ipynb 2, HTML 6) | ORDER-02 | 구현·테스트 충족, 화면은 Phase 7 |
-| I-16 | 표를 본문 너비에 꽉 차게 | G-4 | 2 · 6 (마크다운·ipynb 2, HTML 6) | ORDER-02 | 구현·테스트 충족, 화면은 Phase 7 |
-| I-17 | 코드·결과창·표의 기본 크기를 12px로 | G-4 | 2 · 6 (마크다운·ipynb 2, HTML 6) | ORDER-02 | 구현·테스트 충족, 화면은 Phase 7 |
+| I-14 | 공통 원칙: md·ipynb·HTML 미리보기를 같은 모양으로 | G-4 | 6 | ORDER-06 | 구현·테스트 충족(같은 출처는 코드 근거), 화면(계산값)은 Phase 7 |
+| I-15 | 왼쪽 여백과 노트북 실행 번호 | G-4 | 2 · 6 (마크다운·ipynb 2, HTML 6) | ORDER-02 · ORDER-06 | 마크다운·ipynb(ORDER-02)·HTML(ORDER-06) 구현·테스트 충족, 화면은 Phase 7 |
+| I-16 | 표를 본문 너비에 꽉 차게 | G-4 | 2 · 6 (마크다운·ipynb 2, HTML 6) | ORDER-02 · ORDER-06 | 마크다운·ipynb(ORDER-02)·HTML(ORDER-06) 구현·테스트 충족, 화면은 Phase 7 |
+| I-17 | 코드·결과창·표의 기본 크기를 12px로 | G-4 | 2 · 6 (마크다운·ipynb 2, HTML 6) | ORDER-02 · ORDER-06 | 마크다운·ipynb(ORDER-02)·HTML(ORDER-06) 구현·테스트 충족, 화면은 Phase 7 |
 | I-18 | 미리보기 섹션 접기·펼치기 | G-4 | 4 | ORDER-04 | 구현·테스트 충족, 화면은 Phase 7 |
 | I-19 | 미리보기 `Ctrl`+`+`/`-`로 글자 크기 바꾸기 — md·ipynb·HTML 모두 | G-4 | 7 | 미정 | 대기 |
 | I-20 | 미리보기의 로컬 문서 링크는 어디서든 미리보기로 | G-4 | 3 | ORDER-03 | 구현·테스트 충족, 화면은 Phase 7 |
-| I-21 | 코드 블록 줄 간격 설정 | G-5 | 2 · 6 (마크다운·ipynb 2, HTML 6) | ORDER-02 | 구현·테스트 충족, 화면은 Phase 7 |
+| I-21 | 코드 블록 줄 간격 설정 | G-5 | 2 · 6 (마크다운·ipynb 2, HTML 6) | ORDER-02 · ORDER-06 | 마크다운·ipynb(ORDER-02)·HTML(ORDER-06) 구현·테스트 충족, 화면은 Phase 7 |
 | I-22 | 코드 블록 앞뒤 빈 줄 숨김 | G-5 | 2 | ORDER-02 | 구현·테스트 충족, 화면은 Phase 7 |
-| I-23 | 미리보기 코드 줄 번호 설정 | G-5 | 2 · 6 (마크다운·ipynb 2, HTML 6) | ORDER-02 | 구현·테스트 충족, 화면은 Phase 7 |
+| I-23 | 미리보기 코드 줄 번호 설정 | G-5 | 2 · 6 (마크다운·ipynb 2, HTML 6) | ORDER-02 · ORDER-06 | 마크다운·ipynb(ORDER-02)·HTML(ORDER-06) 구현·테스트 충족, 화면은 Phase 7 |
 | I-24 | 마크다운·노트북 본문 안의 HTML 태그를 HTML로 그림 | G-5 | 3 | ORDER-03 | 구현·테스트 충족, 화면은 Phase 7 |
 | I-25 | 미리보기 찾기를 HTML에도 — md·ipynb·HTML 모두 `Ctrl+F` | G-4 | 7 | 미정 | 대기 |
 | I-26 | 에디터·미리보기 기본 글자 크기를 14px로 | G-3 | 1 | ORDER-01 | 충족 |

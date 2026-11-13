@@ -130,3 +130,12 @@
 ### Phase 6 — ORDER-06
 
 - **시작** (2026-11-14, leader-core → tauri-leader): 카드 core D:\projects\workbench-core\specs\v0.8.2\orders\ORDER-06.md(8절 더함). ORDER-05는 [PUSH] 317c987. 서브 에이전트 컨텍스트를 비우고 시작. Claude 5h 한도 96%라 한도에 걸리면 멈추고 04:32 뒤 leader-core 지시로 이어 감.
+- **K-07 I-14·I-11·I-15·I-16·I-17·I-21·I-23 HTML 부분 (ORDER-06)** (2026-11-14, coder, 커밋 `a66d40a`): HTML 미리보기 프레임에 마크다운 미리보기 바탕 모양(실행 중인 앱의 미리보기 규칙 `cssText`를 모으고 변수는 `.markdown-preview` 계산값으로 바꿔 `@layer{…}` 하나로 넣음, 페이지 CSS가 늘 이김), 글꼴 `data:` `@font-face`(프레임 CSP `font-src data:` 그대로), 설정·테마 바뀜 알림과 다시 그리기(새 스타일이 다를 때만), 표 `div.table-wrap`, 코드 블록 상자(언어 이름·줄 번호·복사, 구문 강조는 앱에서 미리 칠함), 프레임 → 앱 새 메시지 `previewCopy`(창·토큰·형식 검사, `isTrusted` 클릭만), 하위 목록 2em(`markdown_preview.sublist_indent`). Claude 5h 한도로 한 번 멈췄다가 04:30 뒤 자동으로 이어 갔다. 검증 V1: `npm.cmd run test` 335/335, typecheck 0, 보안 설정(`tauri.conf.json`·capabilities)·프레임 CSP·`sandbox` diff 없음, Rust 변경 없음, 앱 안 띄움(보고 `C:\Users\nampl\AppData\Local\Temp\v082-K-07-report.md`).
+- **바뀐 동작** (K-07): HTML 미리보기에 마크다운 미리보기 바탕 모양이 들어감(페이지가 정하지 않은 곳). 하위 목록 들여쓰기 2em(마크다운·ipynb·HTML 셋 모두, 최상위 목록은 그대로). HTML 미리보기 렌더가 동기에서 비동기로 바뀜(늦게 끝난 렌더는 버림).
+- **C-07 checker 리뷰(K-07)** [PASS] (2026-11-14): diff 리뷰만(CSP·`sandbox` 줄 무변경, `previewCopy`의 창·토큰·형식 검사와 `isTrusted`·토큰 은닉, 외부 URL 주입 길 없음, `</style>` 탈출 방지, 본문 바꾸기는 `textContent`만, `@layer`, 늦은 렌더 폐기, 기존 테스트 무수정). 지적 없음. 테스트는 다시 돌리지 않았다(core COMMON 8절). 격리 조건 다섯은 카드에 옮겨 적었다. 검증 V0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-C-07-report.md`).
+- **보고** (2026-11-14, tauri-leader): `specs/v0.8.2/reports/ORDER-06.md` `[DONE]`. V3 줄(6절 #1~#5·#7)은 Phase 7. 미정 — (1) 글꼴을 렌더마다 `data:`로 싣는 비용(기본 약 0.9MB, D2Coding 약 5.6MB, 느리면 preview scheme 길은 leader-core가 정함), (2) 최상위 목록 들여쓰기도 2em으로 할지(leader-core), (3) 시안 페이지 차이(본문 700px로 시안 그림이 넘치고 두 칸이 쌓임)를 받아들일지(leader-core/사용자).
+- **W-11 ORDER-06 기록** (2026-11-14, writer): 위 K-07·C-07·보고 항목, 운영 메모, ITEMS-MAP I-14와 I-11·I-15·I-16·I-17·I-21·I-23 HTML 부분 상태를 적었다. 검증 V0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-W-11-report.md`).
+- **상태**: Phase 6 보고 보냄, `[PUSH] ORDER-06` 기다림.
+- **운영 메모**(Phase 5 절 운영 메모에 이어서)
+  - ORDER-07로 넘긴 것(더함): ORDER-06 6절 #1~#5·#7 V3, 보고 "앱에서 확인하지 못한 것"(살아 있는 규칙 읽기·`data:` 글꼴 로드·비동기 렌더 체감 속도·복사 버튼·페이지 자체 스타일 `<pre>`).
+  - 마지막 서브 카드 ID: W-11, K-07, C-07.
