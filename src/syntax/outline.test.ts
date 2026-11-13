@@ -5,8 +5,8 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { Parser, type Language } from "web-tree-sitter";
 import { languageConfigs } from "./catalog.ts";
 import { compileQuery, loadLanguage } from "./grammar.ts";
-import { codeOutline, itemAt, notebookOutline, outlineRows, outlineStep, type OutlineItem } from "./outline.ts";
-import { markdownHeadings } from "../editor/markdown.ts";
+import { codeOutline, itemAt, notebookOutline, outlineRows, outlineStep, withHtmlHeadings, type OutlineItem } from "./outline.ts";
+import { markdownHeadings, renderMarkdown } from "../editor/markdown.ts";
 
 const root = new URL("../assets/zed-grammars/", import.meta.url);
 const available = existsSync(new URL("manifest.json", root));
@@ -103,6 +103,42 @@ test("I-4: a notebook lists markdown cell headings at their JSON line, not code 
   assert.match(lines[items[0].children[0].line], /"## Load\\n"/);
   assert.match(lines[items[0].children[0].children[0].line], /"source": "```/);
   assert.deepEqual([items[0].heading, items[0].children[0].heading, items[0].children[0].children[0].heading], [0, 1, 2]);
+});
+
+test("core v0.8.2 I-24: HTML headings of the body are Outline items, and the scroll target of each item is that heading", { skip: !available }, async () => {
+  const flat = (items: OutlineItem[]): OutlineItem[] => items.flatMap((item) => [item, ...flat(item.children)]);
+  // What the preview draws: tag, data-line, data-heading and text of each numbered heading element, in order.
+  const drawn = (html: string) => [...html.matchAll(/<(h[1-6]) data-line="(\d+)" data-line-end="\d+" data-heading="(\d+)"[^>]*>([^<]*)/g)]
+    .map(([, tag, line, heading, text]) => ({ tag, line: Number(line), heading: Number(heading), text }));
+
+  // .md: a click reveals by line (markdown-preview.ts reveal): the innermost block on the line of the item is its heading element.
+  const source = "# Top\n\n<h2>Raw A</h2>\n\n### Deep\n\n<div align=\"center\">\n<h2 class=\"x\">Raw B</h2>\n<!-- <h1>not drawn</h1> -->\n</div>\n\n```html\n<h1>code</h1>\n```\n\n## Last\n";
+  const lines = source.split("\n");
+  const lineStart = (line: number) => lines.slice(0, line).join("\n").length + (line ? 1 : 0);
+  const items = withHtmlHeadings(await outline("markdown", source), markdownHeadings(source), lineStart, source.length);
+  assert.deepEqual(shape(items), ["heading1 Top", "  heading2 Raw A", "    heading3 Deep", "  heading2 Raw B", "  heading2 Last"]);
+  assert.deepEqual(flat(items).map((item) => [`h${item.level}`, item.line, item.name]), drawn(renderMarkdown(source)).map((h) => [h.tag, h.line, h.text]));
+  assert.ok(source.slice(flat(items)[3].at).startsWith("<h2 class=\"x\">Raw B"));
+  const plain = await outline("markdown", "# Only\n\n## Marks\n");
+  assert.equal(withHtmlHeadings(plain, markdownHeadings("# Only\n\n## Marks\n"), lineStart, 18), plain); // no HTML heading: untouched
+
+  // .ipynb: a click reveals by number (`heading`), counted over the markdown cells: the element with that data-heading.
+  const cells = ["<h1>LLM LangChain</h1>", "## Setup\n\n<h3>Raw step</h3>\ntext\n", "<!-- <h2>not drawn</h2> -->\n\n<h2>Raw end</h2>\n\n# Next"];
+  const notebook = JSON.stringify({ nbformat: 4, nbformat_minor: 5, metadata: {}, cells: [
+    { cell_type: "markdown", metadata: {}, source: cells[0] },
+    { cell_type: "code", metadata: {}, source: "print('<h1>no</h1>')", outputs: [], execution_count: null },
+    { cell_type: "markdown", metadata: {}, source: cells[1].split(/(?<=\n)/) },
+    { cell_type: "markdown", metadata: {}, source: cells[2] },
+  ] }, null, 1);
+  const { tree } = await parse("json", notebook);
+  const cellItems = notebookOutline(tree, notebook.length, markdownHeadings);
+  tree.delete();
+  assert.deepEqual(shape(cellItems), ["heading1 LLM LangChain", "  heading2 Setup", "    heading3 Raw step", "  heading2 Raw end", "heading1 Next"]);
+  const headings: ReturnType<typeof markdownHeadings> = []; // one list over the cells, as notebookNodes renders them
+  const cellHtml = cells.map((cell) => renderMarkdown(cell, headings)).join("");
+  assert.deepEqual(flat(cellItems).map((item) => [`h${item.level}`, item.heading, item.name]), drawn(cellHtml).map((h) => [h.tag, h.heading, h.text]));
+  assert.deepEqual(flat(cellItems).map((item) => item.heading), [0, 1, 2, 3, 4]);
+  assert.match(notebook.split("\n")[flat(cellItems)[2].line], /<h3>Raw step<\/h3>/);
 });
 
 test("A-7: a markdown cell whose source is one string keeps its same-level headings apart and in order", { skip: !available }, async () => {

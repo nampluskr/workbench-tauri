@@ -1,5 +1,4 @@
 import { classifyLink, localImagePath, type LinkTarget } from "./markdown.ts";
-import { previewKind } from "./preview-kind.ts";
 
 // core v0.8 I-1 / v0.8.1 I-7: HTML preview. The page is its own document at `http://preview.localhost/<id>` (src-tauri
 // preview.rs) in `<iframe sandbox="allow-scripts" csp=PREVIEW_CSP>`: its scripts run in an opaque origin (no parent DOM, no
@@ -106,17 +105,12 @@ export function previewHost(now: number, avoidUntil: Readonly<Record<PreviewHost
 }
 
 /**
- * core v0.8.1 I-24: a link the user clicked in an HTML preview, as the Markdown preview follows it (classifyLink, I-085), relative
- * to the HTML file: a local HTML file opens its HTML preview, another local file as a Markdown link does, http(s) the system
- * browser. Null (nothing) for `#id` (the page scrolls itself), an empty link, `//host` and every other scheme (file:, javascript:...).
+ * core v0.8.1 I-24 / v0.8.2 I-20: a link the user clicked in an HTML preview, as every preview follows it (classifyLink), relative
+ * to the HTML file. Null (nothing) for `#id` too: the page scrolls itself.
  */
 export function classifyHtmlLink(href: string, sourcePath: string, alt: boolean): LinkTarget | null {
-  const v = clean(href);
-  if (v === "" || v.startsWith("#") || v.startsWith("//")) return null;
-  if (/^[a-z][a-z0-9+.-]*:/i.test(v) && !/^[a-z]:[\\/]/i.test(v)) return /^https?:\/\//i.test(v) ? { kind: "external", url: v } : null;
-  let target: LinkTarget;
-  try { target = classifyLink(v, sourcePath, alt); } catch { return null; } // a malformed %-escape
-  return target.kind === "open" && !alt && previewKind(target.path) === "html" ? { kind: "preview", path: target.path } : target;
+  const target = classifyLink(href, sourcePath, alt);
+  return target?.kind === "anchor" ? null : target;
 }
 
 /** I-24: where a link's own target is kept in the frame document; its `href` becomes `#`, so the frame itself never navigates to it. */

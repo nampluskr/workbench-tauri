@@ -12,7 +12,7 @@ declare module "markdown-it" {
     attrSet(name: string, value: string): void;
     attrs: [string, string][] | null;
   };
-  type StateCore = { tokens: Token[] };
+  type StateCore = { tokens: Token[]; env: { headings?: import("./markdown.ts").Heading[] } };
   type StateInline = { src: string; pos: number; posMax: number; push(type: string, tag: string, nesting: 1 | 0 | -1): Token };
   type StateBlock = {
     src: string;
@@ -33,7 +33,7 @@ declare module "markdown-it" {
     renderer: { rules: Record<string, (tokens: Token[], index: number, options: unknown, env: unknown, self: Renderer) => string> };
     utils: { escapeHtml(text: string): string };
     use(plugin: (md: MarkdownIt) => void): this;
-    render(src: string): string;
+    render(src: string, env?: object): string;
     parse(src: string, env: object): Token[];
   }
 }

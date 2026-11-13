@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { attributeValue, classifyHtmlLink, defaultStyle, headStart, navigates, PREVIEW_CSP, PREVIEW_RECOVER_LIMIT, PREVIEW_RECOVER_WINDOW_MS, previewHost, recordRecovery, resourceUrl, rewriteCss, rewriteSrcset, withHead } from "./html.ts";
-import { renderMarkdown } from "./markdown.ts";
+import { MARKDOWN_HTML_ATTR, renderMarkdown } from "./markdown.ts";
 import { hasPreview, previewKind } from "./preview-kind.ts";
 
 const SOURCE = "C:\\site\\pages\\index.html";
@@ -75,7 +75,7 @@ test("I-24: a clicked HTML preview link is followed as a Markdown link, relative
   assert.deepEqual(classifyHtmlLink("../sub/page.HTM#x", SOURCE, false), { kind: "preview", path: "C:\\site\\sub\\page.HTM" });
   assert.deepEqual(classifyHtmlLink("other.html", SOURCE, true), { kind: "open", path: "C:\\site\\pages\\other.html" }); // Alt: an editor tab
   assert.deepEqual(classifyHtmlLink("docs/a.md", SOURCE, false), { kind: "preview", path: "C:\\site\\pages\\docs\\a.md" });
-  assert.deepEqual(classifyHtmlLink("data/x.csv", SOURCE, false), { kind: "open", path: "C:\\site\\pages\\data\\x.csv" });
+  assert.deepEqual(classifyHtmlLink("data/x.csv", SOURCE, false), { kind: "preview", path: "C:\\site\\pages\\data\\x.csv" }); // core v0.8.2 I-20
   assert.deepEqual(classifyHtmlLink("D:\\notes\\b.txt", SOURCE, false), { kind: "open", path: "D:\\notes\\b.txt" });
   assert.deepEqual(classifyHtmlLink(" https://example.com/a ", SOURCE, false), { kind: "external", url: "https://example.com/a" });
   assert.deepEqual(classifyHtmlLink("HTTP://example.com", SOURCE, false), { kind: "external", url: "HTTP://example.com" });
@@ -126,11 +126,13 @@ test("I-11: default style is specificity 0, carries the theme values, and sits f
   assert.ok(out.startsWith('<html lang="en" data-x="<head>"><head><style>'));
 });
 
-// The Markdown preview keeps its rule (no style attribute): raw HTML is escaped, table alignment is a class.
+// The Markdown preview keeps its rule (no style attribute): table alignment is a class, and a style typed in the body's HTML
+// (core v0.8.2 I-24) is not an attribute the sanitizer keeps.
 test("markdown output has no style attribute", () => {
-  const out = renderMarkdown('<p style="color:red">x</p>\n\n| a |\n|:-:|\n| b |\n');
+  const out = renderMarkdown("| a |\n|:-:|\n| b |\n");
   assert.ok(!/<[^>]+\sstyle=/.test(out));
   assert.ok(out.includes("align-center"));
+  assert.ok(!MARKDOWN_HTML_ATTR.includes("style"));
 });
 
 // K-07a-R1: every navigation away is undone, but a page that keeps navigating is shown again only a bounded number of times.

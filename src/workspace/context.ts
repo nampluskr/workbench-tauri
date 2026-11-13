@@ -18,7 +18,7 @@ import { entryIndex, place } from "./drop.ts";
 import { inDirection, leaves, remove, split, type Dir, type Node } from "./split.ts";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import type { LinkTarget } from "../editor/markdown.ts";
-import { previewKind, viewKind, type ViewKind } from "../editor/preview-kind.ts";
+import { hasPreview, previewKind, viewKind, type ViewKind } from "../editor/preview-kind.ts";
 import { createPreview, type Preview } from "../shell/markdown-preview.ts";
 import { viewBody } from "../shell/view-body.ts";
 import { activeAfterClose, closeTargets, type CloseMode, openTab, opensPreview, stepTab, togglePin, type TabInfo } from "./tabs.ts";
@@ -535,12 +535,14 @@ function selectSourceLine(doc: Doc, line: number): void {
   }
 }
 
-/** I-085: a local Markdown link opens its preview here, another local file an editor tab, a URL the system browser. */
+/** I-085 / core v0.8.2 I-20: a local file with a preview opens its preview here, another local file an editor tab, a URL the system browser. */
 function followLink(ctx: FolderContext, pane: PaneState, target: LinkTarget): void {
   if (target.kind === "preview") openPreview(ctx, pane, target.path, false);
   else if (target.kind === "open") {
     activatePane(ctx, pane);
-    openFile(ctx, target.path, false, true);
+    // "open" on a file that has a preview is an Alt click: its editor tab, whatever Lock Preview says (openFile would follow it).
+    if (hasPreview(target.path)) openSource(ctx, target.path, false, true);
+    else openFile(ctx, target.path, false, true);
   } else if (target.kind === "external") void openUrl(target.url).catch((error) => notify([String(error)])); // only http(s) is allowed
 }
 

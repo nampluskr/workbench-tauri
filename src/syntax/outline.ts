@@ -115,7 +115,28 @@ export async function codeOutline(tree: Tree, query: Query, language: string, sl
   return roots;
 }
 
-export type Heading = { level: number; text: string; line: number };
+export type Heading = { level: number; text: string; line: number; html?: boolean };
+
+/** Headings in document order as sections: each runs to the next heading of the same or a higher level, and holds the ones inside. */
+function nestSections(items: OutlineItem[], length: number): OutlineItem[] {
+  items.forEach((item, i) => { item.to = items.slice(i + 1).find((next) => (next.level ?? 1) <= (item.level ?? 1))?.from ?? length; });
+  return nest(items);
+}
+
+/**
+ * core v0.8.2 I-24: a Markdown outline (`items`: the `#` headings, from outline.scm) with the body's HTML headings (the `html` ones
+ * of `headings`, the preview's own list) put among them by line. An HTML heading's place is the start of its line.
+ */
+export function withHtmlHeadings(items: OutlineItem[], headings: Heading[], lineStart: (line: number) => number, length: number): OutlineItem[] {
+  const html = headings.filter((heading) => heading.html);
+  if (!html.length) return items;
+  const flat = (list: OutlineItem[]): OutlineItem[] => list.flatMap((item) => [{ ...item, children: [] }, ...flat(item.children)]);
+  const added = html.map((heading): OutlineItem => {
+    const at = lineStart(heading.line);
+    return { name: heading.text.replace(/\s+/g, " ").trim(), kind: "heading", level: heading.level, from: at, to: length, at, line: heading.line, children: [] };
+  });
+  return nestSections([...flat(items), ...added].sort((a, b) => a.from - b.from), length);
+}
 
 const pairValue = (object: Node | null | undefined, key: string): Node | null => {
   for (const pair of object?.namedChildren ?? []) {
@@ -170,8 +191,7 @@ export function notebookOutline(tree: Tree, length: number, headings: (markdown:
         at: node.startIndex + at, line: node.startPosition.row, heading: items.length, children: [] });
     }
   }
-  items.forEach((item, i) => { item.to = items.slice(i + 1).find((next) => next.level! <= item.level!)?.from ?? length; });
-  return nest(items);
+  return nestSections(items, length);
 }
 
 /** The innermost item holding `offset`. */

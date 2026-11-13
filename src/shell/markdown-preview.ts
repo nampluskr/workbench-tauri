@@ -1,8 +1,8 @@
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import DOMPurify from "dompurify";
 import { csvTable } from "../editor/csv.ts";
-import { codeBlockParts } from "../editor/code-block.ts";
-import { blockAt, classifyLink, headingSlugs, localImagePath, renderMarkdown, type LinkTarget } from "../editor/markdown.ts";
+import { codeBlockParts, trimBlankLinesIn } from "../editor/code-block.ts";
+import { blockAt, classifyLink, headingSlugs, localImagePath, MARKDOWN_HTML_ATTR, MARKDOWN_HTML_TAGS, renderMarkdown, type Heading, type LinkTarget } from "../editor/markdown.ts";
 import { classifyHtmlLink, htmlPreviewDoc, PREVIEW_CSP, PREVIEW_HANG_MS, PREVIEW_HOST_AVOID_MS, PREVIEW_PING_MS, previewHost, recordRecovery, type PreviewHost } from "../editor/html.ts";
 import { NOTEBOOK_HTML_FORBID_ATTR, NOTEBOOK_HTML_FORBID_TAGS, parseNotebook, type NotebookOutput } from "../editor/notebook.ts";
 import { svgElement } from "../editor/svg.ts";
@@ -18,8 +18,9 @@ import { createPreviewSearch } from "./preview-search.ts";
 import { notify } from "./toast.ts";
 import { tooltip } from "./tooltip.ts";
 
-// The body of a Markdown preview tab (R-11, D-10). Rendered with markdown-it, sanitized with DOMPurify (no script, no
-// event attributes, no style attribute; data-line attributes stay), then put in the tab's element.
+// The body of a Markdown preview tab (R-11, D-10). Rendered with markdown-it, sanitized with DOMPurify, then put in the tab's
+// element. core v0.8.2 I-24: HTML typed in the body is drawn, so only the tags and attributes of MARKDOWN_HTML_TAGS / _ATTR stay
+// (editor/markdown.ts: no script, style, iframe, form, event or style attribute; stricter than a notebook output's rules).
 // I-3: images are rewritten while the sanitized tree is still inert: a local file (relative to the Markdown file, or absolute)
 // goes through the asset protocol; an image of any URL scheme is removed, so no request and no broken-image box.
 
@@ -53,8 +54,9 @@ function csvNodes(text: string, delimiter: string): HTMLElement[] {
 }
 
 /** Markdown text as a sanitized tree: images are local files through the asset protocol (I-3), any other image is removed. */
-function markdownTree(text: string, sourcePath: string): DocumentFragment {
-  const tree = DOMPurify.sanitize(renderMarkdown(text), { FORBID_ATTR: ["style"], ALLOW_DATA_ATTR: true, RETURN_DOM_FRAGMENT: true });
+function markdownTree(text: string, sourcePath: string, headings?: Heading[]): DocumentFragment {
+  const tree = DOMPurify.sanitize(renderMarkdown(text, headings),
+    { ALLOWED_TAGS: MARKDOWN_HTML_TAGS, ALLOWED_ATTR: MARKDOWN_HTML_ATTR, ALLOW_DATA_ATTR: false, ALLOW_ARIA_ATTR: false, RETURN_DOM_FRAGMENT: true });
   for (const image of tree.querySelectorAll("img")) {
     const path = localImagePath(image.getAttribute("src") ?? "", sourcePath);
     if (path) image.setAttribute("src", convertFileSrc(path));
@@ -94,7 +96,13 @@ function addCodeHeaders(body: HTMLElement): void {
       el.removeAttribute(name);
     }
     const { text, numbers } = codeBlockParts(code.textContent ?? "");
-    if (text !== code.textContent) code.textContent = text;
+    if (text !== code.textContent) {
+      // Cut in the text nodes, so tags inside the code (HTML typed in the body, I-24) stay.
+      const walker = document.createTreeWalker(code, NodeFilter.SHOW_TEXT);
+      const nodes: Text[] = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+      trimBlankLinesIn(nodes.map((node) => node.data)).forEach((part, i) => { nodes[i].data = part; });
+    }
     const label = "Copy Code";
     const button = makeNode("button", "icon-button code-block-copy");
     button.setAttribute("type", "button");
@@ -164,10 +172,11 @@ function outputNode(output: NotebookOutput): HTMLElement | null {
 function notebookNodes(text: string, sourcePath: string): HTMLElement[] {
   const notebook = parseNotebook(text);
   if (!notebook.ok) return [makeNode("p", "nb-note", notebook.message)];
+  const headings: Heading[] = []; // I-24: data-heading counts on over the cells, as the notebook's Outline does
   return notebook.cells.map((cell) => {
     const box = makeNode("div", `nb-cell nb-${cell.type}`);
     if (cell.type === "markdown") {
-      const tree = markdownTree(cell.source, sourcePath);
+      const tree = markdownTree(cell.source, sourcePath, headings);
       // A cell's line numbers are not the file's (M-1: no position link), so a click on a block must not move the editor.
       for (const block of tree.querySelectorAll("[data-line]")) { block.removeAttribute("data-line"); block.removeAttribute("data-line-end"); }
       box.append(tree);
@@ -186,7 +195,7 @@ function notebookNodes(text: string, sourcePath: string): HTMLElement[] {
   });
 }
 
-/** `reveal` (core v0.8.1 I-4, an Outline click): scroll a heading to the top, by its source line, or for a notebook by its order among the cells' headings. */
+/** `reveal` (core v0.8.1 I-4, an Outline click): scroll a heading to the top, by its source line, or for a notebook by its number among the cells' headings (markdownHeadings). */
 export type Preview = { element: HTMLElement; changed: () => void; cursor: (line: number) => void; reveal: (line: number, heading?: number) => void; find: (action: string) => boolean; dispose: () => void };
 
 let previewFrames = 0; // ids of HTML preview documents (src-tauri preview.rs)
@@ -352,7 +361,7 @@ export function createPreview(hooks: PreviewHooks): Preview {
     for (const code of body.querySelectorAll<HTMLElement>("pre > code[class*='language-']:not(.language-mermaid)")) { // a mermaid block becomes a diagram
       const name = /(?:^|\s)language-(\S+)/.exec(code.className)?.[1];
       const text = code.textContent ?? "";
-      if (!name) continue;
+      if (!name || code.childElementCount) continue; // tags typed inside the code stay as they are (I-24)
       const found = await codeBlockHighlights(name, text, languages, loadSyntax, previewSyntaxKeys).catch(() => []);
       if (id !== generation || !code.isConnected) return; // a newer render replaced these blocks
       let at = 0;
@@ -385,9 +394,9 @@ export function createPreview(hooks: PreviewHooks): Preview {
   /** core v0.8.1 I-22: `#id` scrolls to the heading with that id (headingSlugs), as an Outline click does; an unknown id does nothing. */
   function revealAnchor(id: string): void {
     const notebook = hooks.kind === "ipynb"; // a notebook's headings are counted over its markdown cells, as reveal counts them
-    const headings = [...body.querySelectorAll<HTMLElement>(notebook ? ".nb-markdown :is(h1, h2, h3, h4, h5, h6)" : ":is(h1, h2, h3, h4, h5, h6)[data-line]")];
+    const headings = [...body.querySelectorAll<HTMLElement>(notebook ? ".nb-markdown :is(h1, h2, h3, h4, h5, h6)[data-heading]" : ":is(h1, h2, h3, h4, h5, h6)[data-line]")];
     const at = headingSlugs(headings.map((h) => h.textContent ?? "")).indexOf(id);
-    if (at >= 0) preview.reveal(notebook ? 0 : Number(headings[at].dataset.line), notebook ? at : undefined);
+    if (at >= 0) preview.reveal(notebook ? 0 : Number(headings[at].dataset.line), notebook ? Number(headings[at].dataset.heading) : undefined);
   }
 
   element.addEventListener("click", (e) => {
@@ -421,7 +430,7 @@ export function createPreview(hooks: PreviewHooks): Preview {
     reveal: (line, heading) => {
       if (heading === undefined) highlight(line, false); // the block mark of I-083, as a click on the block gives
       const target = heading === undefined ? body.querySelector<HTMLElement>(".active-block")
-        : body.querySelectorAll<HTMLElement>(".nb-markdown :is(h1, h2, h3, h4, h5, h6)")[heading];
+        : body.querySelector<HTMLElement>(`.nb-markdown :is(h1, h2, h3, h4, h5, h6)[data-heading="${heading}"]`); // the number renderMarkdown gave it
       target?.scrollIntoView({ block: "start" });
     },
     find: (action) => search?.run(action) ?? false,

@@ -12,7 +12,7 @@ import { languages, loadSyntax, outlineQuery } from "../syntax/assets.ts";
 import { PARSE_SLICE_MS } from "../syntax/document.ts";
 import { parsedView, syntaxOf } from "../syntax/highlight.ts";
 import { parseDocSliced } from "../syntax/incremental.ts";
-import { codeOutline, itemAt, notebookOutline, outlineRows, outlineStep, type OutlineItem, type OutlineKind, type OutlineMove } from "../syntax/outline.ts";
+import { codeOutline, itemAt, notebookOutline, outlineRows, outlineStep, withHtmlHeadings, type OutlineItem, type OutlineKind, type OutlineMove } from "../syntax/outline.ts";
 import { syntaxClass } from "../theme/theme.ts";
 import { activeTabOf, changedDoc, historyView, type Tab } from "../workspace/context.ts";
 import type { Doc } from "../workspace/doc.ts";
@@ -80,7 +80,12 @@ async function compute(source: Source, stale: () => boolean): Promise<OutlineIte
   const root = syntax.root();
   if (!root || stale()) return null;
   const tree = root.tree.copy(); // the next commit deletes the editor's tree while this one is still being read
-  try { return await codeOutline(tree, query, root.syntax.config.id, (from, to) => root.doc.sliceString(from, to), pause); } finally { tree.delete(); }
+  let items: OutlineItem[] | null;
+  try { items = await codeOutline(tree, query, root.syntax.config.id, (from, to) => root.doc.sliceString(from, to), pause); } finally { tree.delete(); }
+  if (!items || root.syntax.config.id !== "markdown") return items;
+  // core v0.8.2 I-24: the preview draws the body's HTML headings, so they are listed too (parsed only when the text has one).
+  const text = root.doc.toString();
+  return /<h[1-6][\s>]/i.test(text) ? withHtmlHeadings(items, markdownHeadings(text), (line) => root.doc.line(Math.min(line + 1, root.doc.lines)).from, root.doc.length) : items;
 }
 
 // I-4: a folded item stays folded while its document is open.
