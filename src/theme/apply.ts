@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { BASE_THEME, pickTheme } from "./registry.ts";
 import { registry } from "./themes.ts";
-import { formatColor, over, panelFocusedBorder, parseColor, resolveTokens, syntaxCss, themeCss } from "./theme.ts";
+import { formatColor, headingColorsCss, over, panelFocusedBorder, parseColor, resolveTokens, syntaxCss, themeCss } from "./theme.ts";
 
 const sheet = new CSSStyleSheet();
 /** Syntax keys of the applied editor theme, for the T-27.1 lookup. */
@@ -50,6 +50,7 @@ export async function applyTheme(ui?: string, editor = ui, preview = ui): Promis
     `${PREVIEW_BODY} { --preview-color-scheme: ${p.appearance}; }`, // the HTML preview frame's color-scheme (app.css .html-frame)
     syntaxCss(e.style, ".cm-editor"), syntaxCss(p.style, PREVIEW_BODY), keymapColors, panelColors,
     syntaxCss(u.style, ".outline-bar"), // core v0.8.1 I-4: the Outline badges are UI, so the UI theme's syntax colors
+    headingColorsCss(u.style), headingColorsCss(p.style, PREVIEW_BODY), // core v0.8.2 I-11: the Outline's heading text by the UI theme, a preview's by the Preview theme
   ].join("\n"));
   if (!document.adoptedStyleSheets.includes(sheet)) document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
   if (lookChanged) for (const fn of previewListeners) fn();

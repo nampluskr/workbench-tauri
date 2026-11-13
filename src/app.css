@@ -673,6 +673,17 @@ button, input, select, textarea {
   background: color-mix(in srgb, currentColor var(--outline-badge-background-mix), transparent);
 }
 .outline-bar .tree-row .outline-badge.heading { font-size: var(--outline-badge-heading-font-size); letter-spacing: var(--outline-badge-heading-letter-spacing); }
+/* core v0.8.2 I-8: a heading's number in the badge's place, in its colour and letter size. As wide as the number (a long one is never cut;
+   the name gives way), at least the badge slot, so the names under short numbers line up as under the badges. */
+.outline-bar .tree-row .outline-number { flex: none; min-width: var(--icon-size); font-size: var(--outline-badge-font-size); font-style: normal; font-weight: var(--outline-badge-font-weight); font-variant-numeric: tabular-nums; }
+/* core v0.8.2 I-11: Show Heading Colors (the class is on the root, settings/load.ts): a heading's text in the syntax colour of its level
+   (theme/theme.ts HEADING_KEYS, the badge's colours): the Outline by the UI theme, a preview by the Preview theme (--heading-color-n is set on each). */
+.heading-colors .outline-bar .tree-label.heading-1, .heading-colors .markdown-body h1 { color: var(--heading-color-1); }
+.heading-colors .outline-bar .tree-label.heading-2, .heading-colors .markdown-body h2 { color: var(--heading-color-2); }
+.heading-colors .outline-bar .tree-label.heading-3, .heading-colors .markdown-body h3 { color: var(--heading-color-3); }
+.heading-colors .outline-bar .tree-label.heading-4, .heading-colors .markdown-body h4 { color: var(--heading-color-4); }
+.heading-colors .outline-bar .tree-label.heading-5, .heading-colors .markdown-body h5 { color: var(--heading-color-5); }
+.heading-colors .outline-bar .tree-label.heading-6, .heading-colors .markdown-body h6 { color: var(--heading-color-6); }
 
 /* L-87: the left group of the title bar. */
 .title-left { display: flex; align-items: center; margin-right: auto; }
@@ -829,6 +840,16 @@ button, input, select, textarea {
 .markdown-body h4 { margin: var(--markdown-preview-h4-margin-top) 0 var(--markdown-preview-h4-margin-bottom); font-size: var(--markdown-preview-h4-font-size); }
 .markdown-body h5 { margin: var(--markdown-preview-h5-margin-top) 0 var(--markdown-preview-h5-margin-bottom); font-size: var(--markdown-preview-h5-font-size); }
 .markdown-body h6 { margin: var(--markdown-preview-h6-margin-top) 0 var(--markdown-preview-h6-margin-bottom); font-size: var(--markdown-preview-h6-font-size); color: var(--text-muted); }
+/* core v0.8.2 I-18: a heading's fold chevron, always shown: in the left margin (I-15) beside the heading's first line, so the text does not move. */
+.markdown-body :is(h1, h2, h3, h4, h5, h6)[data-heading] { position: relative; }
+.markdown-body .heading-fold {
+  position: absolute; right: 100%; top: 0; height: calc(1em * var(--markdown-preview-heading-line-height-multiplier)); /* font: inherit, so one heading line */
+  display: flex; align-items: center; padding: 0 var(--markdown-preview-code-block-padding) 0 0; border: 0; background: none;
+  font: inherit; color: var(--icon-muted); cursor: pointer; user-select: none; --icon-size: var(--icons-size-small);
+}
+.markdown-body .heading-fold:hover { color: var(--text); }
+/* What a folded heading hides (markdown-preview.ts applyFolds), over every display rule here; a notebook's markdown cell with nothing left to show goes with it. */
+.markdown-body [data-folded]:nth-child(n), .markdown-body .nb-markdown:has(> [data-folded]):not(:has(> :not([data-folded]))) { display: none; }
 .markdown-body blockquote { /* L-106 */
   margin-inline: 0;
   padding: 0 0 0 var(--markdown-preview-blockquote-padding-left);

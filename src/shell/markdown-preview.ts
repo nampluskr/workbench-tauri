@@ -9,6 +9,7 @@ import { svgElement } from "../editor/svg.ts";
 import type { PreviewKind } from "../editor/preview-kind.ts";
 import { CODE_BLOCK_COPIED_MS, MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS } from "../spec/metrics.ts";
 import { languages, loadSyntax } from "../syntax/assets.ts";
+import { foldedBlocks, headingOfBlock, headingSections, unfoldKeys, type Section } from "../syntax/outline.ts";
 import { codeBlockHighlights } from "../syntax/document.ts";
 import { onPreviewThemeChange, previewAppearance, previewColors, previewSyntaxKeys } from "../theme/apply.ts";
 import { syntaxClass } from "../theme/theme.ts";
@@ -32,6 +33,11 @@ export type PreviewHooks = {
   line: (line: number) => void;
   /** I-085 */
   link: (target: LinkTarget) => void;
+  /** core v0.8.2 I-7: a click in a notebook preview: the number of the heading whose section holds the clicked block (-1: before the first). */
+  heading: (heading: number) => void;
+  /** core v0.8.2 I-18: the folded sections of the document, as Outline keys (the Outline's own folds), and a fold or unfold of some. */
+  folded: () => ReadonlySet<string>;
+  fold: (keys: string[], folded: boolean) => void;
 };
 
 /** I-7: the table of a CSV / TSV text, built with the DOM and textContent only (a cell is never read as HTML). Styled as a Markdown table. */
@@ -168,11 +174,11 @@ function outputNode(output: NotebookOutput): HTMLElement | null {
   }
 }
 
-/** I-2: the notebook's cells in file order, or one line saying why it is not shown. */
-function notebookNodes(text: string, sourcePath: string): HTMLElement[] {
+/** I-2: the notebook's cells in file order, or one line saying why it is not shown. `headings` gets the headings of its markdown cells. */
+function notebookNodes(text: string, sourcePath: string, headings: Heading[]): HTMLElement[] {
   const notebook = parseNotebook(text);
   if (!notebook.ok) return [makeNode("p", "nb-note", notebook.message)];
-  const headings: Heading[] = []; // I-24: data-heading counts on over the cells, as the notebook's Outline does
+  // I-24: data-heading counts on over the cells (one `headings` for all), as the notebook's Outline does
   return notebook.cells.map((cell) => {
     const box = makeNode("div", `nb-cell nb-${cell.type}`);
     if (cell.type === "markdown") {
@@ -196,7 +202,8 @@ function notebookNodes(text: string, sourcePath: string): HTMLElement[] {
 }
 
 /** `reveal` (core v0.8.1 I-4, an Outline click): scroll a heading to the top, by its source line, or for a notebook by its number among the cells' headings (markdownHeadings). */
-export type Preview = { element: HTMLElement; changed: () => void; cursor: (line: number) => void; reveal: (line: number, heading?: number) => void; find: (action: string) => boolean; dispose: () => void };
+/** `folded` (core v0.8.2 I-18): the document's folds changed (hooks.folded), here or in its Outline or another preview of it. */
+export type Preview = { element: HTMLElement; changed: () => void; cursor: (line: number) => void; reveal: (line: number, heading?: number) => void; folded: () => void; find: (action: string) => boolean; dispose: () => void };
 
 let previewFrames = 0; // ids of HTML preview documents (src-tauri preview.rs)
 const hostAvoidUntil: Record<PreviewHost, number> = { preview: 0, preview1: 0, preview2: 0 }; // I-14: until when each host's renderer is taken as stuck
@@ -285,7 +292,14 @@ export function createPreview(hooks: PreviewHooks): Preview {
     frame.contentWindow?.postMessage({ previewPing: true }, "*");
   }, PREVIEW_PING_MS);
   // core v0.8.1 I-9: find only where the preview is text of the app's own (not HTML, SVG or a Mermaid file).
-  const search = ["markdown", "ipynb", "csv", "tsv"].includes(hooks.kind) ? createPreviewSearch(element, body) : null;
+  const search = ["markdown", "ipynb", "csv", "tsv"].includes(hooks.kind) ? createPreviewSearch(element, body, (node) => unfold(node)) : null;
+  // core v0.8.2 I-18: the sections of a Markdown or notebook preview fold at their headings. What is kept from a render is one entry
+  // per numbered heading (markdownHeadings); a fold change then only walks the blocks.
+  let sections: Section[] = [];
+  let headingEls: HTMLElement[] = []; // by heading number; a heading that was not drawn has no entry
+  let holders = new Set<Element>(); // the elements with a numbered heading inside (a notebook's markdown cell, an HTML block's <div>)
+  let parts: HTMLElement[] = []; // what a fold hides or shows, in order
+  let blockHeadings: number[] = []; // of each block: the number of the heading it is, or -1
   let timer = 0;
   let lastLine = -1;
   let generation = 0;
@@ -324,9 +338,10 @@ export function createPreview(hooks: PreviewHooks): Preview {
       body.replaceChildren(svg ?? note);
       return;
     }
+    const headings: Heading[] = [];
     if (hooks.kind === "ipynb") {
-      body.replaceChildren(...notebookNodes(text, hooks.sourcePath()));
-      afterRender();
+      body.replaceChildren(...notebookNodes(text, hooks.sourcePath(), headings));
+      afterRender(headings);
       return;
     }
     if (hooks.kind === "mermaid") {
@@ -341,19 +356,69 @@ export function createPreview(hooks: PreviewHooks): Preview {
       body.replaceChildren(...csvNodes(text, hooks.kind === "tsv" ? "\t" : ","));
       return;
     }
-    body.replaceChildren(markdownTree(text, hooks.sourcePath()));
+    body.replaceChildren(markdownTree(text, hooks.sourcePath(), headings));
     if (lastLine >= 0) highlight(lastLine, false);
-    afterRender();
+    afterRender(headings);
   };
 
   /** Code colours (K-53), formulas (I-4) and diagrams (I-5) are put on the fresh tree; a newer render makes older ones stop. */
-  function afterRender(): void {
+  function afterRender(headings?: Heading[]): void {
     const id = ++generation;
     const current = () => id === generation;
     addCodeHeaders(body);
+    if (headings) addFolds(headings);
     void colorCodeBlocks(id);
     void drawMath(body, current);
-    void drawMermaid(body, current);
+    void drawMermaid(body, current).then(() => { if (headings && current()) applyFolds(); }); // a diagram is a new block in place of its source
+  }
+
+  /** I-18: after a render: each numbered heading gets its chevron (always shown), then the folds are drawn. */
+  function addFolds(headings: Heading[]): void {
+    sections = headingSections(headings);
+    headingEls = [];
+    holders = new Set();
+    for (const el of body.querySelectorAll<HTMLElement>(":is(h1, h2, h3, h4, h5, h6)[data-heading]:not(.nb-output *)")) { // not a heading of a notebook output
+      const number = Number(el.dataset.heading);
+      if (!sections[number] || headingEls[number]) continue; // a data-heading typed in the text
+      headingEls[number] = el;
+      for (let up = el.parentElement; up && up !== body && !holders.has(up); up = up.parentElement) holders.add(up);
+      const button = makeNode("button", "heading-fold");
+      button.setAttribute("type", "button");
+      button.setAttribute("aria-label", "Toggle Section");
+      button.addEventListener("click", (e) => {
+        e.stopPropagation(); // not a click on the block
+        const key = sections[number].key;
+        hooks.fold([key], !hooks.folded().has(key));
+      });
+      el.prepend(button);
+    }
+    applyFolds();
+  }
+
+  /** I-18: the folds as they are now. A block is a child of the body, or of a holder (which is looked into, so every numbered heading is a block). */
+  function applyFolds(): void {
+    const folded = hooks.folded();
+    parts = [];
+    const walk = (parent: Element) => { for (const el of parent.children) if (holders.has(el)) walk(el); else parts.push(el as HTMLElement); };
+    walk(body);
+    const numbers = new Map<Element, number>();
+    headingEls.forEach((el, number) => numbers.set(el, number));
+    blockHeadings = parts.map((el) => numbers.get(el) ?? -1);
+    foldedBlocks(blockHeadings, sections, folded).forEach((hidden, i) => parts[i].toggleAttribute("data-folded", hidden));
+    headingEls.forEach((el, number) => {
+      const button = el.firstElementChild!;
+      const open = String(!folded.has(sections[number].key));
+      if (button.getAttribute("aria-expanded") === open) return;
+      button.setAttribute("aria-expanded", open);
+      button.replaceChildren(iconElement(open === "true" ? "chevron_down" : "chevron_right"));
+    });
+  }
+
+  /** I-18: the sections folded over `node` are opened (in the Outline and every preview of the document), so it can be scrolled to. */
+  function unfold(node: Node | null): void {
+    const hidden = (node instanceof Element ? node : node?.parentElement)?.closest<HTMLElement>("[data-folded]");
+    const at = hidden ? parts.indexOf(hidden) : -1;
+    if (at >= 0) hooks.fold(unfoldKeys(blockHeadings, sections, at), false);
   }
 
   /** K-53: fenced code blocks get the editor's syntax colours after the render (class only, built with the DOM, not HTML). */
@@ -388,7 +453,9 @@ export function createPreview(hooks: PreviewHooks): Preview {
     const el = list[at];
     if (!el) return;
     el.classList.add("active-block");
-    if (scroll) el.scrollIntoView({ block: "nearest" });
+    if (!scroll) return;
+    unfold(el);
+    el.scrollIntoView({ block: "nearest" });
   }
 
   /** core v0.8.1 I-22: `#id` scrolls to the heading with that id (headingSlugs), as an Outline click does; an unknown id does nothing. */
@@ -411,6 +478,10 @@ export function createPreview(hooks: PreviewHooks): Preview {
     }
     const block = (e.target as Element).closest<HTMLElement>("[data-line]");
     if (block) hooks.line(Number(block.dataset.line));
+    // core v0.8.2 I-7: a notebook's blocks have no source line (M-1): the Outline gets the heading the clicked block is under.
+    if (hooks.kind !== "ipynb") return;
+    const at = parts.findIndex((el) => el.contains(e.target as Node));
+    if (at >= 0) hooks.heading(headingOfBlock(blockHeadings, at));
   });
 
   render();
@@ -431,8 +502,10 @@ export function createPreview(hooks: PreviewHooks): Preview {
       if (heading === undefined) highlight(line, false); // the block mark of I-083, as a click on the block gives
       const target = heading === undefined ? body.querySelector<HTMLElement>(".active-block")
         : body.querySelector<HTMLElement>(`.nb-markdown :is(h1, h2, h3, h4, h5, h6)[data-heading="${heading}"]`); // the number renderMarkdown gave it
+      unfold(target);
       target?.scrollIntoView({ block: "start" });
     },
+    folded: applyFolds,
     find: (action) => search?.run(action) ?? false,
     dispose: () => {
       search?.dispose(); stopTheme(); clearTimeout(timer); clearTimeout(waitTimer); clearInterval(pinger); generation++;

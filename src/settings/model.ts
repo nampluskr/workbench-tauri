@@ -17,7 +17,9 @@ export const DEFAULTS = { theme: DEFAULT_THEME as string, icon_theme: "Zed (Defa
   // core v0.8.2 I-17: 86% is 12.04px at the 14px preview font (was 85). A saved value stays as it is.
   buffer_font_family: "JetBrains Mono", preview_code_font_family: "JetBrains Mono", preview_code_font_size: 86,
   // core v0.8.2 I-21 / I-23: the preview code line height (GitHub's 1.45) and the preview code line numbers (off: the 0.8.1 look).
-  preview_code_line_height: 1.45, preview_code_line_numbers: false };
+  preview_code_line_height: 1.45, preview_code_line_numbers: false,
+  // core v0.8.2 I-8 / I-11: the Outline's right-click choices, one each for the app (no Settings row). Off: the 0.8.1 look (H1~H6 badges, no heading colours).
+  outline_heading_numbers: false, outline_heading_colors: false };
 export type Settings = typeof DEFAULTS;
 export type SettingKey = keyof Settings;
 export type SettingValue = string | number | boolean;

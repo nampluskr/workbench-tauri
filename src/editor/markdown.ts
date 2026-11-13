@@ -26,7 +26,7 @@ export type Heading = { level: number; text: string; line: number; html: boolean
 
 const ENTITIES: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', "#39": "'", nbsp: " " };
 /** The text of an HTML heading: from after its open tag (`rest` starts inside that tag) to its close tag, tags dropped. */
-const htmlHeadingText = (rest: string): string => (/^[^>]*>([\s\S]*?)(?:<\/h[1-6]|$)/i.exec(rest)?.[1] ?? "")
+export const htmlHeadingText = (rest: string): string => (/^[^>]*>([\s\S]*?)(?:<\/h[1-6]|$)/i.exec(rest)?.[1] ?? "")
   .replace(/<[^>]*>/g, "").replace(/&(amp|lt|gt|quot|#39|nbsp);/g, (_, name: string) => ENTITIES[name]);
 
 const md = new MarkdownIt({ html: true, linkify: false, typographer: false }).use(mathPlugin); // I-4: `$…$` split here, drawn by the preview

@@ -236,3 +236,16 @@ test("I-17: deleting keys leaves valid JSONC for a first, last, only, inline and
   assert.equal(del("// only a comment\n", "theme"), "// only a comment\n");
   assert.throws(() => del("broken", "theme"));
 });
+
+test("core v0.8.2 I-8 / I-11: the Outline's numbers and heading colours are off until saved, and saving keeps the rest of the file", () => {
+  const read = (text: string | null) => parseSettings(text, THEMES);
+  assert.deepEqual([DEFAULTS.outline_heading_numbers, DEFAULTS.outline_heading_colors], [false, false]); // the 0.8.1 look
+  assert.deepEqual([read(null).outline_heading_numbers, read('{"theme":"One Light"}').outline_heading_colors], [false, false]); // a 0.8.1 file
+  for (const value of ['"numbers"', "1", "null"]) assert.equal(read(`{"outline_heading_numbers":${value}}`).outline_heading_numbers, false, value);
+  const text = '{\r\n  // keep\r\n  "unknown": 1,\r\n  "theme": "One Light" // note\r\n}\r\n';
+  const saved = updateSetting(updateSetting(text, "outline_heading_numbers", true, THEMES), "outline_heading_colors", true, THEMES);
+  assert.ok(saved.includes("// keep") && saved.includes('"unknown": 1') && saved.includes("// note") && !saved.replace(/\r\n/g, "").includes("\n"));
+  assert.deepEqual([read(saved).outline_heading_numbers, read(saved).outline_heading_colors, read(saved).theme], [true, true, "One Light"]);
+  assert.equal(read(updateSetting(saved, "outline_heading_numbers", false, THEMES)).outline_heading_numbers, false); // Show Icons again
+  assert.throws(() => updateSetting(text, "outline_heading_colors", "on", THEMES));
+});

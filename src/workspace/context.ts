@@ -34,7 +34,7 @@ export type FileLocation = { line: number; column: number; endLine?: number; end
  * What stays the same for a tab while its list entry is copied (promotion, rename): its file, editor and state. A Markdown
  * preview tab (R-11) has no editor: `element` is its body, `dispose` lets go of what it holds.
  */
-export type TabFile = { doc: Doc; view: EditorView | null; readOnly?: boolean; editable?: boolean; status: Accessor<Status>; position?: Accessor<string>; toolPosition?: Accessor<string>; title?: Accessor<string>; icon?: IconName; iconSuccess?: boolean; location?: FileLocation; element?: HTMLElement; dispose?: () => void; reveal?: (line: number, heading?: number) => void; find?: (action: string) => boolean };
+export type TabFile = { doc: Doc; view: EditorView | null; readOnly?: boolean; editable?: boolean; status: Accessor<Status>; position?: Accessor<string>; toolPosition?: Accessor<string>; title?: Accessor<string>; icon?: IconName; iconSuccess?: boolean; location?: FileLocation; element?: HTMLElement; dispose?: () => void; reveal?: (line: number, heading?: number) => void; heading?: Accessor<number>; find?: (action: string) => boolean };
 export type Tab = TabInfo & { file: TabFile; focus: boolean };
 
 
@@ -252,6 +252,21 @@ const shownFiles = (doc: Doc) => (filesOf.get(doc) ?? []).filter((f) => !hidden.
 // R-11 (I-082, I-083): the previews of a file follow its changes and its cursor.
 const previewsOf = new WeakMap<Doc, Set<Preview>>();
 const previews = (doc: Doc) => previewsOf.get(doc) ?? new Set<Preview>();
+
+// core v0.8.2 I-10 / I-18: the folded Outline items of a document (outlineRows keys). Its Outline and the sections of its previews
+// are this one state while the document is open; nothing of it is saved.
+const foldedOf = new WeakMap<Doc, Set<string>>();
+const NO_FOLDS: ReadonlySet<string> = new Set();
+/** Read by the Outline to follow a fold made anywhere. */
+export const [foldsChanged, setFoldsChanged] = createSignal(undefined, { equals: false });
+export const foldedKeys = (doc: Doc): ReadonlySet<string> => foldedOf.get(doc) ?? NO_FOLDS;
+export function setFolded(doc: Doc, keys: Iterable<string>, folded: boolean): void {
+  let set = foldedOf.get(doc);
+  if (!set) foldedOf.set(doc, (set = new Set()));
+  for (const key of [...keys]) if (folded) set.add(key); else set.delete(key); // copied first: `keys` may be the set itself (Expand All)
+  setFoldsChanged();
+  for (const p of previews(doc)) p.folded();
+}
 
 const io: Io = {
   async read(path) {
@@ -483,9 +498,11 @@ export function openPreview(ctx: FolderContext, from: PaneState, path: string, s
     hidden.add(holder);
     if (!source) void holder.doc.read();
     const [position, setPosition] = createSignal("1:1");
-    const reveal = (line: number, heading?: number) => {
-      preview.reveal(line, heading);
-      if (heading === undefined) { setPosition(`${line + 1}:1`); selectSourceLine(holder.doc, line); } // as a click on the block (I-084)
+    const [heading, setHeading] = createSignal(-1); // core v0.8.2 I-7: a notebook preview's place, for the Outline
+    const reveal = (line: number, number?: number) => {
+      preview.reveal(line, number);
+      if (number === undefined) { setPosition(`${line + 1}:1`); selectSourceLine(holder.doc, line); } // as a click on the block (I-084)
+      else setHeading(number);
     };
     const preview = createPreview({
       kind,
@@ -497,6 +514,9 @@ export function openPreview(ctx: FolderContext, from: PaneState, path: string, s
         selectSourceLine(holder.doc, line);
       },
       link: (target) => followLink(ctx, pane, target),
+      heading: setHeading,
+      folded: () => foldedKeys(holder.doc),
+      fold: (keys, folded) => setFolded(holder.doc, keys, folded),
     });
     const set = previewsOf.get(holder.doc) ?? new Set<Preview>();
     previewsOf.set(holder.doc, set.add(preview));
@@ -506,7 +526,7 @@ export function openPreview(ctx: FolderContext, from: PaneState, path: string, s
       set.delete(preview);
       release(holder);
     };
-    return { path, preview: temporary, pinned: false, markdown: true, file: { doc: holder.doc, view: null, status, position, element: preview.element, dispose, reveal, find: preview.find }, focus: false };
+    return { path, preview: temporary, pinned: false, markdown: true, file: { doc: holder.doc, view: null, status, position, heading, element: preview.element, dispose, reveal, find: preview.find }, focus: false };
   };
   // core I-5: a tree click (`temporary`) follows the editor tabs' temporary-tab rule, so it may replace one of them.
   // A preview tab never holds edits (its doc is the source's), so only a modified editor tab is kept.

@@ -53,8 +53,8 @@ function rangeOf(segments: Segment[], from: number, to: number): Range {
 
 export type PreviewSearch = { run: (action: string) => boolean; dispose: () => void };
 
-/** The find bar of the preview `element` (the scroller) over `body`. */
-export function createPreviewSearch(element: HTMLElement, body: HTMLElement): PreviewSearch {
+/** The find bar of the preview `element` (the scroller) over `body`. `show` (core v0.8.2 I-18): the current match is in this node, which may be in a folded section. */
+export function createPreviewSearch(element: HTMLElement, body: HTMLElement, show: (node: Node) => void): PreviewSearch {
   let query = new SearchQuery({ search: "", literal: true });
   // `painted` is what this preview has in the shared highlights; it is kept apart from `ranges`, which a new search replaces first.
   let ranges: Range[] = [], painted: Range[] = [], index = -1, invalid = false;
@@ -105,6 +105,7 @@ export function createPreviewSearch(element: HTMLElement, body: HTMLElement): Pr
     for (const [el, option] of options) el.setAttribute("aria-pressed", String(option === "wholeWord" ? wholeWordOn(query) : query[option]));
     const r = ranges[index];
     if (!scroll || !r) return;
+    show(r.startContainer);
     // Bring the match to the middle of what the bar leaves visible, when it is not in view.
     const rect = r.getBoundingClientRect(), box = element.getBoundingClientRect(), top = dom.getBoundingClientRect().bottom;
     if (rect.top < top || rect.bottom > box.bottom) element.scrollTop += (rect.top + rect.bottom - top - box.bottom) / 2;

@@ -107,7 +107,9 @@ export async function codeOutline(tree: Tree, query: Query, language: string, sl
     if (seen.has(key)) continue;
     seen.add(key);
     const level = kind === "heading" ? Number(/^atx_h(\d)_marker$/.exec(item.firstNamedChild?.firstChild?.type ?? "")?.[1] ?? 1) : undefined;
-    items.push({ name: slice(first.startIndex, last.endIndex).replace(/\s+/g, " ").trim(), kind, level, from: item.startIndex, to: item.endIndex,
+    // A heading's closing `##` is not part of its text (the preview does not draw it; the same name gives the same key, I-18).
+    const name = tidy(slice(first.startIndex, last.endIndex));
+    items.push({ name: level ? name.replace(/(^| )#+$/, "").trimEnd() : name, kind, level, from: item.startIndex, to: item.endIndex,
       at: first.startIndex, line: first.startPosition.row, children: [] });
   }
   const roots = nest(items);
@@ -117,10 +119,30 @@ export async function codeOutline(tree: Tree, query: Query, language: string, sl
 
 export type Heading = { level: number; text: string; line: number; html?: boolean };
 
-/** Headings in document order as sections: each runs to the next heading of the same or a higher level, and holds the ones inside. */
+const tidy = (text: string): string => text.replace(/\s+/g, " ").trim();
+/** Every item in document order, each a copy without children. */
+const flat = (list: OutlineItem[]): OutlineItem[] => list.flatMap((item) => [{ ...item, children: [] }, ...flat(item.children)]);
+
+/** Headings in document order as sections: each runs to the next heading of the same or a higher level, and holds the ones inside. One pass. */
 function nestSections(items: OutlineItem[], length: number): OutlineItem[] {
-  items.forEach((item, i) => { item.to = items.slice(i + 1).find((next) => (next.level ?? 1) <= (item.level ?? 1))?.from ?? length; });
+  const open: OutlineItem[] = [];
+  for (const item of items) {
+    while (open.length && (open.at(-1)!.level ?? 1) >= (item.level ?? 1)) open.pop()!.to = item.from;
+    open.push(item);
+  }
+  for (const item of open) item.to = length;
   return nest(items);
+}
+
+/**
+ * core v0.8.2 I-6: the outline of an HTML file is its h1~h6 elements as sections (the Markdown shape), not the tag tree.
+ * `elements`: codeOutline by the html outline.scm (every element, named by its tag); `text`: the heading text of one of them.
+ */
+export function htmlOutline(elements: OutlineItem[], text: (element: OutlineItem) => string, length: number): OutlineItem[] {
+  return nestSections(flat(elements).flatMap((item): OutlineItem[] => {
+    const level = /^h([1-6])$/i.exec(item.name)?.[1];
+    return level ? [{ ...item, name: tidy(text(item)), kind: "heading", level: Number(level) }] : [];
+  }), length);
 }
 
 /**
@@ -130,10 +152,9 @@ function nestSections(items: OutlineItem[], length: number): OutlineItem[] {
 export function withHtmlHeadings(items: OutlineItem[], headings: Heading[], lineStart: (line: number) => number, length: number): OutlineItem[] {
   const html = headings.filter((heading) => heading.html);
   if (!html.length) return items;
-  const flat = (list: OutlineItem[]): OutlineItem[] => list.flatMap((item) => [{ ...item, children: [] }, ...flat(item.children)]);
   const added = html.map((heading): OutlineItem => {
     const at = lineStart(heading.line);
-    return { name: heading.text.replace(/\s+/g, " ").trim(), kind: "heading", level: heading.level, from: at, to: length, at, line: heading.line, children: [] };
+    return { name: tidy(heading.text), kind: "heading", level: heading.level, from: at, to: length, at, line: heading.line, children: [] };
   });
   return nestSections([...flat(items), ...added].sort((a, b) => a.from - b.from), length);
 }
@@ -187,7 +208,7 @@ export function notebookOutline(tree: Tree, length: number, headings: (markdown:
         if (next < 0) break;
         at = next + 2;
       }
-      items.push({ name: heading.text.replace(/\s+/g, " ").trim(), kind: "heading", level: heading.level, from: node.startIndex + at, to: length,
+      items.push({ name: tidy(heading.text), kind: "heading", level: heading.level, from: node.startIndex + at, to: length,
         at: node.startIndex + at, line: node.startPosition.row, heading: items.length, children: [] });
     }
   }
@@ -197,6 +218,16 @@ export function notebookOutline(tree: Tree, length: number, headings: (markdown:
 /** The innermost item holding `offset`. */
 export function itemAt(items: OutlineItem[], offset: number): OutlineItem[] {
   for (const item of items) if (item.from <= offset && offset <= item.to) return [item, ...itemAt(item.children, offset)];
+  return [];
+}
+
+/** core v0.8.2 I-7: the path to the item of heading number `heading` (a notebook's items carry it); empty when there is none. */
+export function itemOfHeading(items: OutlineItem[], heading: number): OutlineItem[] {
+  for (const item of items) {
+    if (item.heading === heading) return [item];
+    const below = itemOfHeading(item.children, heading);
+    if (below.length) return [item, ...below];
+  }
   return [];
 }
 
@@ -225,6 +256,72 @@ export function outlineRows(items: OutlineItem[], collapsed: ReadonlySet<string>
   };
   walk(items, 0, "");
   return rows;
+}
+
+/** core v0.8.2 I-10: what is folded when an Outline is first shown: the items of the second layer, so two layers show (VS Code's fold level 2). */
+export const initialCollapsed = (items: OutlineItem[]): string[] =>
+  outlineRows(items, new Set()).filter((row) => row.depth === 1 && row.item.children.length > 0).map((row) => row.key);
+
+/**
+ * core v0.8.2 I-8: the number of each heading, by its level, in document order. H1 has none and starts the count again; H2 is `1`,
+ * H3 `1.1`, one more part per level down to H6 (five parts). A level that was skipped counts 0 (H1 then H3: `0.1`), so the
+ * number of parts always says the level.
+ */
+export function headingNumbers(levels: number[]): string[] {
+  const count = [0, 0, 0, 0, 0]; // H2..H6
+  return levels.map((level) => {
+    if (level <= 1) { count.fill(0); return ""; }
+    count[level - 2]++;
+    count.fill(0, level - 1);
+    return count.slice(0, level - 1).join(".");
+  });
+}
+
+/** Of heading i (document order): its Outline key, the heading it is under (-1: none), the first heading past its section. */
+export type Section = { key: string; parent: number; end: number };
+
+/**
+ * core v0.8.2 I-18: the sections of a preview's headings (markdownHeadings: `#` and HTML ones, a notebook's over its cells), with
+ * the keys outlineRows gives the same headings in the Outline, so a fold is one state for both.
+ */
+export function headingSections(headings: { level: number; text: string }[]): Section[] {
+  const items = nestSections(headings.map((heading, i): OutlineItem =>
+    ({ name: tidy(heading.text), kind: "heading", level: heading.level, from: i, to: i, at: i, line: 0, heading: i, children: [] })), headings.length);
+  const sections: Section[] = [];
+  const above: number[] = [];
+  for (const row of outlineRows(items, new Set())) {
+    above[row.depth] = row.item.from;
+    sections[row.item.from] = { key: row.key, parent: row.depth ? above[row.depth - 1] : -1, end: row.item.to };
+  }
+  return sections;
+}
+
+/**
+ * I-18: which of a preview's blocks are hidden. `blocks`: per drawn block in order, the number of the heading it is, or -1 (a
+ * paragraph, a list, a notebook's code cell with its outputs...). A folded heading hides what follows it up to the next heading
+ * of the same or a higher level; the heading itself stays.
+ */
+export function foldedBlocks(blocks: number[], sections: Section[], collapsed: ReadonlySet<string>): boolean[] {
+  let end = -1; // hiding up to this heading; -1: not hiding
+  return blocks.map((heading) => {
+    if (heading >= end) end = -1;
+    const hidden = end >= 0;
+    if (!hidden && heading >= 0 && collapsed.has(sections[heading].key)) end = sections[heading].end;
+    return hidden;
+  });
+}
+
+/** core v0.8.2 I-7: the heading whose section holds block `at` (the block itself when it is one), -1 before the first heading. */
+export function headingOfBlock(blocks: number[], at: number): number {
+  for (let i = at; i >= 0; i--) if (blocks[i] >= 0) return blocks[i];
+  return -1;
+}
+
+/** I-18: the keys to unfold so that block `at` shows: every heading it is under (a heading's own fold does not hide it). */
+export function unfoldKeys(blocks: number[], sections: Section[], at: number): string[] {
+  const keys: string[] = [];
+  for (let heading = blocks[at] >= 0 ? sections[blocks[at]].parent : headingOfBlock(blocks, at); heading >= 0; heading = sections[heading].parent) keys.push(sections[heading].key);
+  return keys;
 }
 
 export type OutlineMove = "next" | "prev" | "first" | "last" | "expand" | "collapse";

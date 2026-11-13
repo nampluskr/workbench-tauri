@@ -157,6 +157,15 @@ export function themeCss(tokens: Record<Token, string>, selector = ":root"): str
 // classes for R-9. Class "cm-syntax-<key with . -> ->" per theme syntax key.
 type SyntaxStyle = { color?: string | null; font_style?: string | null; font_weight?: number | null };
 
+/** core v0.8.1 I-4 (mockup F): the syntax key of each heading level, H1..H6: the Outline badge's colour. */
+export const HEADING_KEYS = ["title", "number", "string", "type", "function", "keyword"];
+
+/** core v0.8.2 I-11: `--heading-color-1`..`-6` on `selector`: the theme's syntax colours of HEADING_KEYS (none for a key the theme lacks). */
+export function headingColorsCss(style: ThemeStyle, selector = ":root"): string {
+  const syntax = (style.syntax ?? {}) as Record<string, SyntaxStyle>;
+  return `${selector} { ${HEADING_KEYS.map((key, i) => syntax[key]?.color ? `--heading-color-${i + 1}: ${formatColor(parseColor(syntax[key].color))};` : "").join(" ")} }`;
+}
+
 export const syntaxClass = (key: string) => "cm-syntax-" + key.replace(/\./g, "-");
 
 export function syntaxCss(style: ThemeStyle, scope = ""): string {

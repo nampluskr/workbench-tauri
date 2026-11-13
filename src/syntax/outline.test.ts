@@ -5,8 +5,8 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { Parser, type Language } from "web-tree-sitter";
 import { languageConfigs } from "./catalog.ts";
 import { compileQuery, loadLanguage } from "./grammar.ts";
-import { codeOutline, itemAt, notebookOutline, outlineRows, outlineStep, withHtmlHeadings, type OutlineItem } from "./outline.ts";
-import { markdownHeadings, renderMarkdown } from "../editor/markdown.ts";
+import { codeOutline, foldedBlocks, headingNumbers, headingOfBlock, headingSections, htmlOutline, initialCollapsed, itemAt, itemOfHeading, notebookOutline, outlineRows, outlineStep, unfoldKeys, withHtmlHeadings, type OutlineItem } from "./outline.ts";
+import { htmlHeadingText, markdownHeadings, renderMarkdown } from "../editor/markdown.ts";
 
 const root = new URL("../assets/zed-grammars/", import.meta.url);
 const available = existsSync(new URL("manifest.json", root));
@@ -172,4 +172,92 @@ test("core v0.8.1 I-18: Outline keys follow the project tree's rules", () => {
   assert.deepEqual(outlineStep(rows, A, "collapse"), { toggle: A }); // open: close it
   assert.deepEqual(outlineStep(rows, a2, "collapse"), { select: A }); // closed: to the parent
   assert.equal(outlineStep(rows, B, "collapse"), null); // a top-level leaf
+});
+
+test("core v0.8.2 I-6: an HTML file's Outline is its h1~h6 as sections, not its tags", { skip: !available }, async () => {
+  const source = '<html><head><title>T</title><script>const s = "<h1>no</h1>";</script></head>\n<body>\n<h1 class="x">Top <b>bold</b> &amp; more</h1>\n<p>text</p>\n'
+    + '<div><h2>Part\n  A</h2></div>\n<!-- <h2>hidden</h2> -->\n<h3>Deep</h3>\n<h2>Part B</h2>\n</body></html>\n';
+  const items = htmlOutline(await outline("html", source), (item) => htmlHeadingText(source.slice(item.at + item.name.length, item.to)), source.length);
+  assert.deepEqual(shape(items), ["heading1 Top bold & more", "  heading2 Part A", "    heading3 Deep", "  heading2 Part B"]);
+  const last = items[0].children[1];
+  assert.equal(source.split("\n")[last.line], "<h2>Part B</h2>"); // a click puts the cursor on the heading's line
+  assert.ok(source.slice(last.at).startsWith("h2>Part B"));
+  assert.deepEqual(itemAt(items, source.indexOf("Deep")).map((item) => item.name), ["Top bold & more", "Part A", "Deep"]);
+});
+
+test("core v0.8.2 I-8: heading numbers: none for H1, one more part per level, again from 1 under each H1, 0 for a skipped level", { skip: !available }, () => {
+  const table: [string, number[], string[]][] = [
+    ["several H1", [1, 2, 2, 3, 1, 2, 3, 4], ["", "1", "2", "2.1", "", "1", "1.1", "1.1.1"]],
+    ["a skipped level", [1, 3, 3, 2, 4], ["", "0.1", "0.2", "1", "1.0.1"]],
+    ["no H1", [2, 3, 2, 3, 3], ["1", "1.1", "2", "2.1", "2.2"]],
+    ["H5 and H6", [2, 3, 4, 5, 6, 6, 5], ["1", "1.1", "1.1.1", "1.1.1.1", "1.1.1.1.1", "1.1.1.1.2", "1.1.1.2"]],
+    // the HTML headings of a Markdown body are in the list the numbers are made from (I-24); an inline one in a paragraph is not
+    ["HTML headings", markdownHeadings("# Top\n\n<h2>Raw</h2>\n\ntext <h2>inline</h2>\n\n### Deep\n\n<div>\n<h2>Raw B</h2>\n</div>\n").map((h) => h.level), ["", "1", "1.1", "2"]],
+  ];
+  for (const [name, levels, expected] of table) assert.deepEqual(headingNumbers(levels), expected, name);
+});
+
+test("core v0.8.2 I-10: an Outline first shows two layers, whatever level it starts at", { skip: !available }, async () => {
+  const first = (items: OutlineItem[]) => outlineRows(items, new Set(initialCollapsed(items))).map((row) => `${row.depth}${row.item.name}`);
+  assert.deepEqual(first(await outline("markdown", "# Top\n\n## A\n\n### A.1\n\n#### A.1.a\n\n## B\n\n# Next\n\n## C\n\n### C.1\n")), ["0Top", "1A", "1B", "0Next", "1C"]);
+  assert.deepEqual(first(await outline("markdown", "## A\n\n### A.1\n\n#### A.1.a\n\n## B\n")), ["0A", "1A.1", "0B"]); // starts at H2: H2 and H3
+  assert.deepEqual(first(await outline("python", "class A:\n    def f(self):\n        def inner():\n            pass\n\ndef main():\n    pass\n")), ["0A", "1f", "0main"]);
+  const open = await outline("markdown", "# Top\n\n## A\n\n### A.1\n\n#### A.1.a\n");
+  assert.deepEqual(outlineRows(open, new Set(initialCollapsed(open).slice(1))).map((row) => row.item.name), ["Top", "A", "A.1", "A.1.a"]); // only the second layer is folded
+});
+
+test("core v0.8.2 I-18: a folded heading hides up to the next heading of its level or higher, by the Outline's own key; going inside unfolds", { skip: !available }, async () => {
+  // .md, with HTML headings of the body: the preview's sections have the keys of the Outline's rows, so a fold is one state for both.
+  const source = "# Top\n\nintro\n\n## A  `code` ##\n\ntext\n\n<h3>Raw</h3>\n\nmore\n\n## B\n\n<div>\n<h3>Raw</h3>\n</div>\n\n# Next\n";
+  const lines = source.split("\n");
+  const lineStart = (line: number) => lines.slice(0, line).join("\n").length + (line ? 1 : 0);
+  const rows = outlineRows(withHtmlHeadings(await outline("markdown", source), markdownHeadings(source), lineStart, source.length), new Set());
+  const sections = headingSections(markdownHeadings(source));
+  assert.deepEqual(sections.map((section) => section.key), rows.map((row) => row.key));
+  assert.deepEqual(sections.map((section) => [section.parent, section.end]), [[-1, 5], [0, 3], [1, 3], [0, 5], [3, 5], [-1, 6]]);
+  const [top, a, raw] = sections.map((section) => section.key);
+  // blocks: Top, intro, A, text, Raw, more, B, Raw (in the div), Next
+  const blocks = [0, -1, 1, -1, 2, -1, 3, 4, 5];
+  const hidden = (...keys: string[]) => foldedBlocks(blocks, sections, new Set(keys)).map(Number).join("");
+  assert.equal(hidden(), "000000000");
+  assert.equal(hidden(a), "000111000"); // H2 stops at the next H2, its H3 goes with it
+  assert.equal(hidden(raw), "000001000"); // H3 stops at the H2
+  assert.equal(hidden(top, raw), "011111110"); // H1 stops at the next H1 only
+  assert.deepEqual(unfoldKeys(blocks, sections, 5), [raw, a, top]); // a find match, an editor cursor: the paragraph under Raw
+  assert.deepEqual(unfoldKeys(blocks, sections, 4), [a, top]); // an Outline click, a #id link: the heading itself (its own fold does not hide it)
+  assert.deepEqual(unfoldKeys(blocks, sections, 1), [top]);
+  assert.deepEqual(unfoldKeys(blocks, sections, 0), []);
+
+  // .ipynb: headings are counted over the markdown cells; a code cell (with its outputs) is one block under the heading before it.
+  const cells = ["# One", "## Two\n\ntext", "# Three"];
+  const notebook = JSON.stringify({ nbformat: 4, cells: [
+    { cell_type: "markdown", source: cells[0] }, { cell_type: "code", source: "a = 1", outputs: [] },
+    { cell_type: "markdown", source: cells[1] }, { cell_type: "code", source: "b = 2", outputs: [] }, { cell_type: "markdown", source: cells[2] },
+  ] }, null, 1);
+  const { tree } = await parse("json", notebook);
+  const items = notebookOutline(tree, notebook.length, markdownHeadings);
+  tree.delete();
+  const headings: ReturnType<typeof markdownHeadings> = [];
+  for (const cell of cells) renderMarkdown(cell, headings); // as the preview draws them
+  const nb = headingSections(headings);
+  assert.deepEqual(nb.map((section) => section.key), outlineRows(items, new Set()).map((row) => row.key));
+  const nbBlocks = [0, -1, 1, -1, -1, 2]; // One, code cell, Two, text, code cell, Three
+  assert.deepEqual(foldedBlocks(nbBlocks, nb, new Set([nb[1].key])), [false, false, false, true, true, false]);
+  assert.deepEqual(foldedBlocks(nbBlocks, nb, new Set([nb[0].key])), [false, true, true, true, true, false]);
+  assert.deepEqual(unfoldKeys(nbBlocks, nb, 4), [nb[1].key, nb[0].key]);
+});
+
+test("core v0.8.2 I-7: a click in a notebook preview marks the Outline row of the heading its block is under", { skip: !available }, async () => {
+  const notebook = JSON.stringify({ nbformat: 4, cells: [
+    { cell_type: "code", source: "import x", outputs: [] }, { cell_type: "markdown", source: "# One" }, { cell_type: "code", source: "a = 1", outputs: [] },
+    { cell_type: "markdown", source: "## Two\n\ntext" }, { cell_type: "code", source: "b = 2", outputs: [] }, { cell_type: "markdown", source: "# Three" },
+  ] }, null, 1);
+  const { tree } = await parse("json", notebook);
+  const items = notebookOutline(tree, notebook.length, markdownHeadings);
+  tree.delete();
+  const blocks = [-1, 0, -1, 1, -1, -1, 2]; // code cell, One, code cell, Two, text, code cell, Three
+  const rowOf = (block: number) => itemOfHeading(items, headingOfBlock(blocks, block)).map((item) => item.name);
+  assert.deepEqual([rowOf(2), rowOf(4), rowOf(5), rowOf(3), rowOf(6)], [["One"], ["One", "Two"], ["One", "Two"], ["One", "Two"], ["Three"]]);
+  assert.deepEqual(rowOf(0), []); // before the first heading: no row
+  assert.equal(itemOfHeading(items, 1).at(-1)!.heading, 1); // the row an Outline click reveals by number is the row marked after it
 });

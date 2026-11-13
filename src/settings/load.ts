@@ -41,6 +41,7 @@ async function reload(): Promise<void> {
     showViewOptions(next);
     await showTheme(next.theme, next.editor_theme, next.preview_theme);
     setAppliedIconTheme(next.icon_theme);
+    document.documentElement.classList.toggle("heading-colors", next.outline_heading_colors); // core v0.8.2 I-11 (app.css)
     setSettings(next);
   } catch (error) { notify([String(error)]); }
 }
