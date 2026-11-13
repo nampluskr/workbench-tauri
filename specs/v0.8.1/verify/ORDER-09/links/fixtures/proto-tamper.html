@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>I-24 Prototype Tampering & Token Probe</title>
+</head>
+<body>
+  <h1>Prototype Tampering Test</h1>
+  
+  <p><a id="tamper-real" href="other.html">Tampered User Click Target</a></p>
+  <p><a id="tamper-synth" href="https://example.com">Tampered Synthetic Click Target</a></p>
+
+  <script>
+    // 1. Token inspection probe
+    window.__tokenDiscovery = {
+      scriptCount: document.scripts.length,
+      scriptTexts: [...document.scripts].map(s => s.textContent || s.innerText || ""),
+      outerHtmlMatches: (document.documentElement.outerHTML.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi) || []),
+      previewLinkMatches: (document.documentElement.outerHTML.match(/previewLink/g) || [])
+    };
+
+    // 2. Prototype monkey-patching / tampering
+    try {
+      Element.prototype.closest = function() { throw new Error("tampered_closest"); };
+      Element.prototype.getAttribute = function() { return "tampered_attribute"; };
+      Event.prototype.preventDefault = function() { throw new Error("tampered_preventDefault"); };
+      EventTarget.prototype.addEventListener = function() { throw new Error("tampered_addEventListener"); };
+      Function.prototype.call = function() { throw new Error("tampered_call"); };
+      Function.prototype.apply = function() { throw new Error("tampered_apply"); };
+      Reflect.apply = function() { throw new Error("tampered_reflect_apply"); };
+      MessagePort.prototype.postMessage = function() { throw new Error("tampered_port_postMessage"); };
+      window.postMessage = function() { throw new Error("tampered_window_postMessage"); };
+      window.__tamperInstalled = true;
+    } catch (e) {
+      window.__tamperError = e.message;
+    }
+
+    // 3. Dispatch synthetic click under tampered environment
+    window.runTamperedSynth = () => {
+      try {
+        const a = document.getElementById("tamper-synth");
+        a.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+        return { dispatched: true };
+      } catch (e) {
+        return { error: e.message };
+      }
+    };
+  </script>
+</body>
+</html>

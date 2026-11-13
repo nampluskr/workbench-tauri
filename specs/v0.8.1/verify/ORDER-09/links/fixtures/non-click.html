@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>I-24 Non-Click Avenues Test</title>
+</head>
+<body>
+  <h1>I-24 Five Non-Click Avenues</h1>
+  <p>None of these operations should open tabs or launch the external browser.</p>
+
+  <a id="synth-target-1" href="https://example.com">Synth Target 1</a>
+  <a id="synth-target-2" href="https://example.com">Synth Target 2</a>
+
+  <script>
+    window.__log = [];
+
+    // Avenue 1: timer location.href
+    window.runAvenue1 = () => {
+      try { location.href = "https://example.com"; window.__log.push("nav1_set"); }
+      catch (e) { window.__log.push("nav1_err:" + e.message); }
+    };
+
+    // Avenue 2: window.open
+    window.runAvenue2 = () => {
+      try { const w = window.open("https://example.com"); window.__log.push("nav2_open:" + (w !== null)); }
+      catch (e) { window.__log.push("nav2_err:" + e.message); }
+    };
+
+    // Avenue 3: a.click() & a.dispatchEvent(...)
+    window.runAvenue3 = () => {
+      try {
+        const a1 = document.getElementById("synth-target-1");
+        a1.click();
+        const a2 = document.getElementById("synth-target-2");
+        a2.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+        window.__log.push("nav3_dispatched");
+      } catch (e) { window.__log.push("nav3_err:" + e.message); }
+    };
+
+    // Avenue 4: parent.postMessage forged messages
+    window.runAvenue4 = () => {
+      try {
+        // Without token
+        parent.postMessage({ previewLink: { href: "https://example.com" } }, "*");
+        // With arbitrary / guessed token
+        parent.postMessage({ previewLink: { token: "00000000-0000-0000-0000-000000000000", href: "https://example.com" } }, "*");
+        parent.postMessage({ previewLink: { token: "guessed-token", href: "https://example.com" } }, "*");
+        window.__log.push("nav4_posted");
+      } catch (e) { window.__log.push("nav4_err:" + e.message); }
+    };
+
+    // Avenue 5: script-created <meta refresh>
+    window.runAvenue5 = () => {
+      try {
+        const meta = document.createElement("meta");
+        meta.httpEquiv = "refresh";
+        meta.content = "0;url=https://example.com";
+        document.head.appendChild(meta);
+        window.__log.push("nav5_meta_added");
+      } catch (e) { window.__log.push("nav5_err:" + e.message); }
+    };
+  </script>
+</body>
+</html>

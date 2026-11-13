@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>I-24 Link Types Test</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+    .section { margin-bottom: 24px; padding: 12px; border: 1px solid #ccc; border-radius: 4px; }
+    .spacer { height: 2600px; background: linear-gradient(#eee, #ddd); margin: 20px 0; }
+  </style>
+</head>
+<body>
+  <h1>I-24 HTML Preview Link Click Targets</h1>
+  
+  <div class="section" id="sec-local-html">
+    <h2>1. Local HTML</h2>
+    <p><a id="k1-other" href="other.html">other.html</a></p>
+    <p><a id="k1-sub" href="./sub/page.html">./sub/page.html</a></p>
+  </div>
+
+  <div class="section" id="sec-local-md">
+    <h2>2. Local Markdown</h2>
+    <p><a id="k2-md" href="doc.md">doc.md</a></p>
+  </div>
+
+  <div class="section" id="sec-local-other">
+    <h2>3. Other Local Files</h2>
+    <p><a id="k3-txt" href="notes.txt">notes.txt</a></p>
+    <p><a id="k3-csv" href="data.csv">data.csv</a></p>
+  </div>
+
+  <div class="section" id="sec-external">
+    <h2>4. External Link</h2>
+    <p><a id="k4-ext" href="https://example.com">https://example.com</a></p>
+  </div>
+
+  <div class="section" id="sec-blocked">
+    <h2>5. Blocked Schemes</h2>
+    <p><a id="k5-file" href="file:///C:/Windows/System32/drivers/etc/hosts">file:///...</a></p>
+    <p><a id="k5-js" href="javascript:window.__js_ran=true">javascript:...</a></p>
+  </div>
+
+  <div class="section" id="sec-anchor">
+    <h2>6. In-Page Anchor</h2>
+    <p><a id="k6-anchor" href="#bottom-marker">Jump to #bottom-marker</a></p>
+  </div>
+
+  <div class="section" id="sec-enter">
+    <h2>7. Keyboard Focus & Enter</h2>
+    <p><a id="k7-enter" href="other.html">Keyboard Enter Link</a></p>
+  </div>
+
+  <div class="spacer">Scroll Spacer</div>
+  <h2 id="bottom-marker">Bottom Marker Heading</h2>
+  <p>Target for in-page anchor jump.</p>
+</body>
+</html>

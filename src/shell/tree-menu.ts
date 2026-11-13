@@ -1,15 +1,19 @@
 import { MENU_KEYBOARD_OFFSET } from "../spec/metrics.ts";
 import {
   canPaste,
+  canRedoDrop,
+  canUndoDrop,
   copyItems,
   copyPaths,
   duplicate,
   openInDefaultApp,
   paste,
+  redoDrop,
   requestDelete,
   revealInExplorer,
   startNew,
   startRename,
+  undoDrop,
 } from "../workspace/actions.ts";
 import { collapseEverything, expandAll, openPreview, select, setSubtree, type FolderContext } from "../workspace/context.ts";
 import { activeId, addFolder, removeFolder } from "../workspace/store.ts";
@@ -58,6 +62,8 @@ function groups(ctx: FolderContext, target: string): MenuItem[][] {
       item("Copy", () => copyItems(ctx, false), "project_panel::Copy"),
       item("Duplicate", () => void duplicate(ctx)),
       item("Paste", () => void paste(ctx), "project_panel::Paste", !canPaste()), // I-544
+      item("Undo", () => void undoDrop(ctx), "project_panel::Undo", !canUndoDrop()), // core I-17, Zed project_panel.rs:1239-1243
+      item("Redo", () => void redoDrop(ctx), "project_panel::Redo", !canRedoDrop()),
     ],
     [item("Copy Path", () => void copyPaths(ctx, false), "workspace::CopyPath"), item("Copy Relative Path", () => void copyPaths(ctx, true), "workspace::CopyRelativePath")],
     isRoot

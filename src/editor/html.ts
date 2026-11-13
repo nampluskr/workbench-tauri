@@ -1,4 +1,5 @@
-import { localImagePath } from "./markdown.ts";
+import { classifyLink, localImagePath, type LinkTarget } from "./markdown.ts";
+import { previewKind } from "./preview-kind.ts";
 
 // core v0.8 I-1 / v0.8.1 I-7: HTML preview. The page is its own document at `http://preview.localhost/<id>` (src-tauri
 // preview.rs) in `<iframe sandbox="allow-scripts" csp=PREVIEW_CSP>`: its scripts run in an opaque origin (no parent DOM, no
@@ -104,6 +105,23 @@ export function previewHost(now: number, avoidUntil: Readonly<Record<PreviewHost
   return ORDINARY_HOSTS.find((h) => avoidUntil[h] <= now) ?? ORDINARY_HOSTS.reduce((a, b) => (avoidUntil[b] < avoidUntil[a] ? b : a));
 }
 
+/**
+ * core v0.8.1 I-24: a link the user clicked in an HTML preview, as the Markdown preview follows it (classifyLink, I-085), relative
+ * to the HTML file: a local HTML file opens its HTML preview, another local file as a Markdown link does, http(s) the system
+ * browser. Null (nothing) for `#id` (the page scrolls itself), an empty link, `//host` and every other scheme (file:, javascript:...).
+ */
+export function classifyHtmlLink(href: string, sourcePath: string, alt: boolean): LinkTarget | null {
+  const v = clean(href);
+  if (v === "" || v.startsWith("#") || v.startsWith("//")) return null;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(v) && !/^[a-z]:[\\/]/i.test(v)) return /^https?:\/\//i.test(v) ? { kind: "external", url: v } : null;
+  let target: LinkTarget;
+  try { target = classifyLink(v, sourcePath, alt); } catch { return null; } // a malformed %-escape
+  return target.kind === "open" && !alt && previewKind(target.path) === "html" ? { kind: "preview", path: target.path } : target;
+}
+
+/** I-24: where a link's own target is kept in the frame document; its `href` becomes `#`, so the frame itself never navigates to it. */
+export const PREVIEW_LINK_ATTR = "data-preview-href";
+
 /** What an attribute becomes: its new value, null to drop it, undefined to keep it as it is (event handlers too: scripts run, I-7). */
 export function attributeValue(tag: string, name: string, value: string, sourcePath: string, convert: Convert): string | null | undefined {
   if (name === "ping") return null;
@@ -132,11 +150,21 @@ export function defaultStyle({ appearance, text, accent }: PreviewLook): string 
  * The script first tells the parent this is the preview's own document (previewReady), so its load is not taken for a
  * navigation away; an error page or the scheme's empty 204 document has no such script. It answers the parent's ping (I-14),
  * so a page stuck in a loop is found by its silence. Before all that it removes WebRTC (NO_WEBRTC).
+ *
+ * I-24: a second script follows clicked links (classifyHtmlLink in the parent). It runs before any page script, so it keeps the
+ * built-ins it uses (a page may replace prototypes later), listens first in the window's capture phase, cancels every link click
+ * (the frame never navigates), and reports only clicks the user made (`isTrusted` is an unforgeable own property). The report
+ * carries `token`, a secret of the preview: the script removes itself first, so no page script can read the token, and a
+ * `parent.postMessage` of the page (or of a document the frame was navigated to) without it is ignored.
  */
-export function headStart(look: PreviewLook, scrollY: number): string {
+export function headStart(look: PreviewLook, scrollY: number, token: string): string {
   const top = Number.isFinite(scrollY) && scrollY > 0 ? Math.round(scrollY) : 0;
   return `<meta http-equiv="Content-Security-Policy" content="${PREVIEW_CSP}"><style>${defaultStyle(look)}</style>`
-    + `<script>${NO_WEBRTC.map((name) => `delete window.${name};`).join("")}parent.postMessage({previewReady:true},"*");addEventListener("message",e=>{if(e.source===parent&&e.data?.previewPing===true)parent.postMessage({previewPong:true},"*")});addEventListener("load",()=>scrollTo(0,${top}));addEventListener("scroll",()=>parent.postMessage({previewScrollY:scrollY},"*"),{passive:true})</script>`;
+    + `<script>${NO_WEBRTC.map((name) => `delete window.${name};`).join("")}parent.postMessage({previewReady:true},"*");addEventListener("message",e=>{if(e.source===parent&&e.data?.previewPing===true)parent.postMessage({previewPong:true},"*")});addEventListener("load",()=>scrollTo(0,${top}));addEventListener("scroll",()=>parent.postMessage({previewScrollY:scrollY},"*"),{passive:true})</script>`
+    + `<script>(()=>{const T=${JSON.stringify(token)},U=parent,A=Reflect.apply,P=U.postMessage,E=Element.prototype,S=String.prototype,C=E.closest,G=E.getAttribute,M=S.trim,W=S.startsWith,D=Event.prototype.preventDefault,O=Object.getOwnPropertyDescriptor,R=O(Event.prototype,"target").get,K=O(MouseEvent.prototype,"altKey").get;`
+    + `document.currentScript.remove();addEventListener("click",e=>{let a=null;try{a=A(C,A(R,e,[]),["a,area"])}catch{}if(!a)return;`
+    + `const d=A(G,a,["${PREVIEW_LINK_ATTR}"]),h=d===null?A(G,a,["href"]):d;if(h===null||d===null&&A(W,A(M,h,[]),["#"]))return;`
+    + `A(D,e,[]);if(e.isTrusted)A(P,U,[{previewLink:{token:T,href:h,alt:A(K,e,[])}},"*"])},true)})()</script>`;
 }
 
 /** `serialized` (an `outerHTML` of a parsed document) with `html` as the first children of `<head>`, ahead of every page element. */
@@ -151,7 +179,7 @@ export function withHead(serialized: string, html: string): string {
  * shortcut: only the markup's URLs are rewritten; a relative URL a script builds resolves against the preview URL and gets
  * nothing (204). Serve local files from the preview scheme if scripted pages must load them.
  */
-export function htmlPreviewDoc(text: string, sourcePath: string, convert: Convert, look: PreviewLook, scrollY: number): string {
+export function htmlPreviewDoc(text: string, sourcePath: string, convert: Convert, look: PreviewLook, scrollY: number, token: string): string {
   const doc = new DOMParser().parseFromString(text, "text/html");
   for (const el of doc.querySelectorAll(DROP_TAGS)) el.remove();
   for (const el of doc.querySelectorAll('meta[http-equiv="refresh" i]')) el.remove();
@@ -165,10 +193,18 @@ export function htmlPreviewDoc(text: string, sourcePath: string, convert: Conver
   for (const style of doc.querySelectorAll("style")) style.textContent = rewriteCss(style.textContent ?? "", sourcePath, convert);
   for (const el of doc.querySelectorAll("*")) {
     for (const { name, value } of [...el.attributes]) {
-      const to = attributeValue(el.localName, name.toLowerCase(), value, sourcePath, convert);
+      const lower = name.toLowerCase();
+      const to = attributeValue(el.localName, lower, value, sourcePath, convert);
       if (to) el.setAttribute(name, to);
-      else if (to !== undefined) el.removeAttribute(name);
+      else if (to !== undefined) {
+        el.removeAttribute(name);
+        // I-24: a link keeps its target for the head script; `href="#"` keeps it a focusable link that cannot leave the page.
+        if (lower === "href" || lower === "xlink:href") if (navigates(el.localName, lower, value)) {
+          el.setAttribute(PREVIEW_LINK_ATTR, value);
+          if (lower === "href") el.setAttribute("href", "#");
+        }
+      }
     }
   }
-  return (doc.doctype ? "<!DOCTYPE html>" : "") + withHead(doc.documentElement.outerHTML, headStart(look, scrollY));
+  return (doc.doctype ? "<!DOCTYPE html>" : "") + withHead(doc.documentElement.outerHTML, headStart(look, scrollY, token));
 }

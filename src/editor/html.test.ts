@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { attributeValue, defaultStyle, headStart, navigates, PREVIEW_CSP, PREVIEW_RECOVER_LIMIT, PREVIEW_RECOVER_WINDOW_MS, previewHost, recordRecovery, resourceUrl, rewriteCss, rewriteSrcset, withHead } from "./html.ts";
+import { attributeValue, classifyHtmlLink, defaultStyle, headStart, navigates, PREVIEW_CSP, PREVIEW_RECOVER_LIMIT, PREVIEW_RECOVER_WINDOW_MS, previewHost, recordRecovery, resourceUrl, rewriteCss, rewriteSrcset, withHead } from "./html.ts";
 import { renderMarkdown } from "./markdown.ts";
 import { hasPreview, previewKind } from "./preview-kind.ts";
 
@@ -51,7 +51,7 @@ test("I-7: preview CSP allows inline scripts and local sources only", () => {
   assert.ok(policy.get("script-src")?.includes("'unsafe-inline'"));
   for (const name of ["frame-src", "child-src", "worker-src", "object-src"]) assert.equal(policy.get(name), undefined, name); // falls back to 'none'
   for (const values of policy.values()) for (const v of values) assert.ok(v.startsWith("'") || ["asset:", "http://asset.localhost", "data:", "blob:"].includes(v), v);
-  const head = headStart({ appearance: "dark", text: "#fff", accent: "#00f" }, 120.4);
+  const head = headStart({ appearance: "dark", text: "#fff", accent: "#00f" }, 120.4, "tok");
   assert.ok(head.startsWith(`<meta http-equiv="Content-Security-Policy" content="${PREVIEW_CSP}">`)); // before any page element
   assert.ok(head.includes("scrollTo(0,120)"));
   // K-07a-R2: the document announces itself first, before its load, so a re-attached frame's load is not a navigation.
@@ -59,7 +59,28 @@ test("I-7: preview CSP allows inline scripts and local sources only", () => {
   assert.ok(head.includes('<script>delete window.RTCPeerConnection;delete window.webkitRTCPeerConnection;parent.postMessage({previewReady:true},"*");'));
   // I-14: it answers the parent's ping, and only the parent's.
   assert.ok(head.includes('addEventListener("message",e=>{if(e.source===parent&&e.data?.previewPing===true)parent.postMessage({previewPong:true},"*")})'));
-  assert.ok(headStart({ appearance: "dark", text: "#fff", accent: "#00f" }, Number.NaN).includes("scrollTo(0,0)"));
+  assert.ok(headStart({ appearance: "dark", text: "#fff", accent: "#00f" }, Number.NaN, "tok").includes("scrollTo(0,0)"));
+  // I-24: the link script removes itself (the token stays in its closure), listens first in the capture phase, cancels every
+  // link click and reports trusted ones only, through built-ins kept before any page script runs.
+  const link = head.slice(head.lastIndexOf("<script>"));
+  assert.ok(link.startsWith('<script>(()=>{const T="tok",U=parent,A=Reflect.apply,P=U.postMessage,'));
+  assert.ok(link.indexOf("document.currentScript.remove();") < link.indexOf("addEventListener"));
+  assert.ok(link.includes('A(D,e,[]);if(e.isTrusted)A(P,U,[{previewLink:{token:T,href:h,alt:A(K,e,[])}},"*"])},true)'));
+  assert.ok(link.includes('A(G,a,["data-preview-href"])'));
+  assert.ok(!/[^A-Za-z](parent|e)\.(postMessage|preventDefault|target|closest|getAttribute)\(/.test(link.slice(link.indexOf("remove();")))); // no lookups a page can replace
+});
+
+test("I-24: a clicked HTML preview link is followed as a Markdown link, relative to the HTML file", () => {
+  assert.deepEqual(classifyHtmlLink("other.html", SOURCE, false), { kind: "preview", path: "C:\\site\\pages\\other.html" });
+  assert.deepEqual(classifyHtmlLink("../sub/page.HTM#x", SOURCE, false), { kind: "preview", path: "C:\\site\\sub\\page.HTM" });
+  assert.deepEqual(classifyHtmlLink("other.html", SOURCE, true), { kind: "open", path: "C:\\site\\pages\\other.html" }); // Alt: an editor tab
+  assert.deepEqual(classifyHtmlLink("docs/a.md", SOURCE, false), { kind: "preview", path: "C:\\site\\pages\\docs\\a.md" });
+  assert.deepEqual(classifyHtmlLink("data/x.csv", SOURCE, false), { kind: "open", path: "C:\\site\\pages\\data\\x.csv" });
+  assert.deepEqual(classifyHtmlLink("D:\\notes\\b.txt", SOURCE, false), { kind: "open", path: "D:\\notes\\b.txt" });
+  assert.deepEqual(classifyHtmlLink(" https://example.com/a ", SOURCE, false), { kind: "external", url: "https://example.com/a" });
+  assert.deepEqual(classifyHtmlLink("HTTP://example.com", SOURCE, false), { kind: "external", url: "HTTP://example.com" });
+  for (const href of ["#top", " #top", "", "file:///C:/x.html", "javascript:alert(1)", "java\tscript:alert(1)", "mailto:a@b.c", "ftp://x.test/", "//x.test/a", "bad%zz.html"])
+    assert.equal(classifyHtmlLink(href, SOURCE, false), null, href);
 });
 
 test("I-14: a preview is drawn on a host that is not avoided, else the one free first; a once-stuck one on preview2 only", () => {

@@ -3,6 +3,7 @@ import { EditorView } from "@codemirror/view";
 import type { Text } from "@codemirror/state";
 import { Parser } from "web-tree-sitter";
 import Icon from "./Icon.tsx";
+import { chain } from "./chain.ts";
 import { resizeHandle } from "./dock.ts";
 import { MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS } from "../spec/metrics.ts";
 import { markdownHeadings } from "../editor/markdown.ts";
@@ -11,7 +12,7 @@ import { languages, loadSyntax, outlineQuery } from "../syntax/assets.ts";
 import { PARSE_SLICE_MS } from "../syntax/document.ts";
 import { parsedView, syntaxOf } from "../syntax/highlight.ts";
 import { parseDocSliced } from "../syntax/incremental.ts";
-import { codeOutline, itemAt, notebookOutline, outlineRows, type OutlineItem, type OutlineKind } from "../syntax/outline.ts";
+import { codeOutline, itemAt, notebookOutline, outlineRows, outlineStep, type OutlineItem, type OutlineKind, type OutlineMove } from "../syntax/outline.ts";
 import { syntaxClass } from "../theme/theme.ts";
 import { activeTabOf, changedDoc, historyView, type Tab } from "../workspace/context.ts";
 import type { Doc } from "../workspace/doc.ts";
@@ -166,7 +167,12 @@ export default function OutlineBar() {
     return null;
   });
   let list!: HTMLDivElement;
-  createEffect(on(cursorKey, (key) => { if (key) list.querySelector<HTMLElement>(".tree-row.selected")?.scrollIntoView({ block: "nearest" }); }));
+  // core v0.8.1 I-18: while the list has focus the keys pick a row; the cursor (I-4) takes over again when focus leaves.
+  const [picked, setPicked] = createSignal<string | null>(null);
+  const shownKey = () => { const key = picked(); return key !== null && rows().some((row) => row.key === key) ? key : cursorKey(); };
+  const listFocused = () => list.contains(document.activeElement);
+  const scrollToShown = () => list.querySelector<HTMLElement>(".tree-row.selected")?.scrollIntoView({ block: "nearest" });
+  createEffect(on(cursorKey, (key) => { if (key && !listFocused()) scrollToShown(); }));
 
   const go = (item: OutlineItem) => {
     const src = source();
@@ -182,6 +188,23 @@ export default function OutlineBar() {
     }
   };
 
+  const press = (action: OutlineMove | "confirm") => {
+    if (action === "confirm") {
+      const row = rows().find((r) => r.key === shownKey());
+      if (row) go(row.item); // as a click
+      return;
+    }
+    const step = outlineStep(rows(), shownKey(), action);
+    if (!step) return;
+    if ("toggle" in step) { setPicked(step.toggle); fold(step.toggle); } else setPicked(step.select);
+    scrollToShown();
+  };
+  // Registered when the bar is made (once, like the Sidebar's), so it sits in front of the menu and tree handlers.
+  for (const [name, action] of [["menu::SelectNext", "next"], ["menu::SelectPrevious", "prev"], ["menu::SelectFirst", "first"], ["menu::SelectLast", "last"],
+    ["menu::SelectChild", "expand"], ["menu::SelectParent", "collapse"], ["menu::Confirm", "confirm"]] as const) {
+    chain(name, listFocused, () => press(action));
+  }
+
   const name = () => { const path = source() && activeTab()?.path; return path ? path.slice(path.lastIndexOf("\\") + 1) : ""; };
   return (
     <aside class="outline-bar" hidden={!outlineOpen()}>
@@ -192,18 +215,19 @@ export default function OutlineBar() {
         <span>Outline</span>
         <Show when={name()}><span>·</span><span class="outline-doc">{name()}</span></Show>
       </div>
-      <div class="outline-list" ref={list} role="tree">
+      <div class="outline-list" ref={list} role="tree" tabindex="0" data-keymap-context="OutlinePanel menu"
+        onFocusOut={(e) => { if (!list.contains(e.relatedTarget as Node | null)) setPicked(null); }}>
         <Show when={rows().length} fallback={<div class="outline-empty">No outline</div>}>
           <Index each={rows()}>{(row) => {
             const [letter, key] = [() => badge(row().item)[0], () => badge(row().item)[1]];
             return (
               <div
                 class="tree-row"
-                classList={{ selected: cursorKey() === row().key, marked: cursorKey() === row().key }}
+                classList={{ selected: shownKey() === row().key, marked: shownKey() === row().key }}
                 role="treeitem"
                 aria-level={row().depth + 1}
                 aria-expanded={row().item.children.length ? row().open : undefined}
-                aria-selected={cursorKey() === row().key}
+                aria-selected={shownKey() === row().key}
                 onClick={() => go(row().item)}
               >
                 <div class="tree-guides">

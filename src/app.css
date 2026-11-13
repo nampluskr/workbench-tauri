@@ -609,7 +609,8 @@ button, input, select, textarea {
   --icon-size: var(--icons-size-medium);
 }
 .tree-row:hover { background: var(--ghost-element-hover); }
-.tree-row.selected, .tree-row.marked { background: var(--ghost-element-selected); }
+/* core I-16: Zed paints only marked rows; a cursor-only row (plain folder click, keyboard) shows just the focus border. */
+.tree-row.marked, .tree-row.active-file { background: var(--ghost-element-selected); }
 .tree-row.marked, .tree-row.active-file { color: var(--text); } /* I-2: Zed is_marked; a cursor-only selection stays muted */
 .project-panel:focus-within .tree-row.selected { border-color: var(--border-focused); }
 /* core I-3: Zed paints the drop folder, every row under it, and a folded path's folder piece with drop_target.background. */
@@ -619,7 +620,7 @@ button, input, select, textarea {
 .tree-sticky { position: sticky; top: 0; height: 0; z-index: 1; }
 .tree-sticky > .tree-row { position: absolute; left: 0; right: 0; background: var(--panel-overlay-background); }
 .tree-sticky > .tree-row:hover { background: var(--panel-overlay-hover); }
-.tree-sticky > .tree-row.marked { background: var(--ghost-element-selected); }
+.tree-sticky > .tree-row.marked, .tree-sticky > .tree-row.active-file { background: var(--ghost-element-selected); }
 .tree-item { display: flex; align-items: center; height: var(--project-panel-item-content-height); }
 .tree-indent { flex: none; width: var(--project-panel-indent-step); } /* L-37 */
 .tree-main { display: flex; align-items: center; min-width: 0; gap: var(--project-panel-item-gap); padding-inline: var(--project-panel-item-padding-x); }
@@ -654,7 +655,8 @@ button, input, select, textarea {
 }
 .outline-header .icon { flex-shrink: 0; color: var(--icon-muted); }
 .outline-doc { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
-.outline-list { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; padding-top: var(--outline-list-padding-top); user-select: none; }
+.outline-list { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; padding-top: var(--outline-list-padding-top); user-select: none; outline: none; }
+.outline-list:focus .tree-row.selected { border-color: var(--border-focused); } /* core v0.8.1 I-18: the tree's focus ring */
 .outline-empty { padding-inline: var(--project-panel-item-padding-x); color: var(--text-muted); font-size: var(--typography-size-default); }
 .outline-toggle { display: flex; flex-shrink: 0; color: var(--icon-muted); }
 .outline-badge-slot { align-items: center; justify-content: center; }
@@ -809,7 +811,9 @@ button, input, select, textarea {
    list's end add to it (Zed: loose items 16 + 4 apart, the end of a nested list 4 + 4). flow-root keeps the margins inside the item; list-item keeps the marker. */
 .markdown-body li { display: list-item flow-root; }
 .markdown-body li > :is(ul, ol):nth-child(n) { margin-bottom: var(--preview-list-gap); } /* :nth-child(n) only lifts it over the L-103 list margin rule */
-.markdown-body li:last-child > :last-child { margin-bottom: 0; } /* the list's own bottom margin ends it, as before */
+/* the list's own bottom margin ends it. core v0.8.1 I-21: except a loose item's paragraph (Zed stacks paragraph + list end, USER-TEST #6b) */
+.markdown-body li:last-child > :last-child:not(p) { margin-bottom: 0; }
+.markdown-body :is(ul, ol):where(:has(> li:last-child > p:last-child)) { margin-bottom: var(--markdown-preview-list-gap); } /* :where: a nested list keeps its item gap above */
 .markdown-body :is(h1, h2, h3, h4, h5, h6) {
   margin: 0; /* core v0.8.1 I-8: each level's margins below, Zed 1.27.0 measured (metrics.ts) */
   font-weight: var(--markdown-preview-heading-font-weight);
@@ -867,12 +871,14 @@ button, input, select, textarea {
   margin: var(--markdown-preview-code-block-margin-y) 0;
   padding: var(--markdown-preview-code-block-padding);
   background: var(--panel-background);
+  border: var(--markdown-preview-code-block-border) solid var(--border-variant); /* core v0.8.1 I-19: the shade alone is faint in some light themes */
   border-radius: var(--markdown-preview-code-block-corner-radius);
   overflow-x: auto;
 }
 /* core v0.8.1 I-12: a code block (fenced, indented, ipynb code cell) is the header row (language, Copy) over its pre, in one shaded box. */
-.markdown-body :where(.code-block) { margin: var(--markdown-preview-code-block-margin-y) 0; background: var(--panel-background); border-radius: var(--markdown-preview-code-block-corner-radius); } /* :where: the first-child margin-top 0 above still wins */
-.markdown-body .code-block > pre { margin: 0; padding-top: 0; background: none; border-radius: 0; }
+.markdown-body :where(.code-block) { margin: var(--markdown-preview-code-block-margin-y) 0; background: var(--panel-background); border: var(--markdown-preview-code-block-border) solid var(--border-variant); border-radius: var(--markdown-preview-code-block-corner-radius); } /* :where: the first-child margin-top 0 above still wins */
+/* I-19: one border around the header and the code; no line between them (the header is part of the same box). */
+.markdown-body .code-block > pre { margin: 0; padding-top: 0; background: none; border: 0; border-radius: 0; }
 .code-block-header { display: flex; user-select: none; /* a drag selection or copy across the block leaves the language out */ align-items: center; justify-content: space-between; padding: 0 0 0 var(--markdown-preview-code-block-padding); color: var(--text-muted); font-family: var(--ui-font-family); font-size: var(--typography-size-small); --icon-size: var(--icons-size-small); }
 .code-block-copy { border-radius: var(--markdown-preview-code-block-corner-radius); }
 .markdown-body pre code { font-size: inherit; background: none; }
@@ -893,6 +899,7 @@ button, input, select, textarea {
 .markdown-body :is(.nb-stderr, .nb-error) { color: var(--error); }
 .markdown-body .nb-error-title { font-family: var(--preview-code-font-family); font-size: var(--preview-code-font-size); }
 .markdown-body :is(pre.nb-output, .nb-traceback, .nb-raw) { white-space: pre-wrap; overflow-wrap: anywhere; }
+.markdown-body :is(pre.nb-output, pre.nb-traceback) { background: none; border: 0; } /* core v0.8.1 I-20: only the code cell is shaded (VS Code, Jupyter) */
 .markdown-body .nb-hidden { color: var(--text-muted); margin: var(--markdown-preview-code-block-margin-y) 0; }
 /* core v0.8 I-4 / I-5: formulas (MathML, drawn by the WebView) and diagrams (Mermaid svg). The source text shows until they are drawn. */
 .markdown-body .math-display { display: block; margin: var(--markdown-preview-code-block-margin-y) 0; text-align: center; white-space: pre-wrap; overflow-x: auto; }

@@ -1,8 +1,8 @@
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import DOMPurify from "dompurify";
 import { csvTable } from "../editor/csv.ts";
-import { blockAt, classifyLink, localImagePath, renderMarkdown, type LinkTarget } from "../editor/markdown.ts";
-import { htmlPreviewDoc, PREVIEW_CSP, PREVIEW_HANG_MS, PREVIEW_HOST_AVOID_MS, PREVIEW_PING_MS, previewHost, recordRecovery, type PreviewHost } from "../editor/html.ts";
+import { blockAt, classifyLink, headingSlugs, localImagePath, renderMarkdown, type LinkTarget } from "../editor/markdown.ts";
+import { classifyHtmlLink, htmlPreviewDoc, PREVIEW_CSP, PREVIEW_HANG_MS, PREVIEW_HOST_AVOID_MS, PREVIEW_PING_MS, previewHost, recordRecovery, type PreviewHost } from "../editor/html.ts";
 import { NOTEBOOK_HTML_FORBID_ATTR, NOTEBOOK_HTML_FORBID_TAGS, parseNotebook, type NotebookOutput } from "../editor/notebook.ts";
 import { svgElement } from "../editor/svg.ts";
 import type { PreviewKind } from "../editor/preview-kind.ts";
@@ -202,8 +202,14 @@ export function createPreview(hooks: PreviewHooks): Preview {
   let wasStuck = false; // I-14: once stuck, this preview draws on preview2 only (previewHost)
   let waitTimer = 0; // a render waiting for preview2's avoidance to end
   const showFrame = () => { pingSince = 0; frame.src = frameUrl; };
+  const linkToken = crypto.randomUUID(); // I-24: only the frame's head script knows it (headStart)
   const onFrameMessage = (e: MessageEvent) => {
     if (e.source !== frame.contentWindow) return;
+    const link: unknown = e.data?.previewLink;
+    if (link && typeof link === "object" && "token" in link && link.token === linkToken && "href" in link && typeof link.href === "string") {
+      const target = classifyHtmlLink(link.href, hooks.sourcePath(), "alt" in link && link.alt === true);
+      if (target) hooks.link(target);
+    }
     if (e.data?.previewReady === true) ours = true;
     if (e.data?.previewPong === true) pingSince = 0;
     const y: unknown = e.data?.previewScrollY;
@@ -277,7 +283,7 @@ export function createPreview(hooks: PreviewHooks): Preview {
     const text = hooks.text();
     if (text === null) return;
     if (hooks.kind === "html") {
-      const html = htmlPreviewDoc(text, hooks.sourcePath(), convertFileSrc, { ...previewColors, appearance: previewAppearance }, frameScroll);
+      const html = htmlPreviewDoc(text, hooks.sourcePath(), convertFileSrc, { ...previewColors, appearance: previewAppearance }, frameScroll, linkToken);
       const id = ++generation;
       invoke("preview_set", { id: frameId, html }).then(() => {
         show(id);
@@ -359,12 +365,22 @@ export function createPreview(hooks: PreviewHooks): Preview {
     if (scroll) el.scrollIntoView({ block: "nearest" });
   }
 
+  /** core v0.8.1 I-22: `#id` scrolls to the heading with that id (headingSlugs), as an Outline click does; an unknown id does nothing. */
+  function revealAnchor(id: string): void {
+    const notebook = hooks.kind === "ipynb"; // a notebook's headings are counted over its markdown cells, as reveal counts them
+    const headings = [...body.querySelectorAll<HTMLElement>(notebook ? ".nb-markdown :is(h1, h2, h3, h4, h5, h6)" : ":is(h1, h2, h3, h4, h5, h6)[data-line]")];
+    const at = headingSlugs(headings.map((h) => h.textContent ?? "")).indexOf(id);
+    if (at >= 0) preview.reveal(notebook ? 0 : Number(headings[at].dataset.line), notebook ? at : undefined);
+  }
+
   element.addEventListener("click", (e) => {
     const a = (e.target as Element).closest("a");
     if (a) {
       e.preventDefault();
       const href = a.getAttribute("href");
-      if (href) hooks.link(classifyLink(href, hooks.sourcePath(), e.altKey));
+      const target = href ? classifyLink(href, hooks.sourcePath(), e.altKey) : null;
+      if (target?.kind === "anchor") revealAnchor(target.id);
+      else if (target) hooks.link(target);
       return;
     }
     const block = (e.target as Element).closest<HTMLElement>("[data-line]");

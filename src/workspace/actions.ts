@@ -353,6 +353,8 @@ async function invert(ctx: FolderContext, step: Change[]): Promise<Change[] | nu
 /** project_panel::Undo / Redo (Zed ctrl-z / ctrl-shift-z in the ProjectPanel context): only drag and drop is recorded. */
 export const undoDrop = (ctx: FolderContext): Promise<void> => history.undo((step) => invert(ctx, step)).catch((error) => notify(["Undo Failed", (error as Error).message]));
 export const redoDrop = (ctx: FolderContext): Promise<void> => history.redo((step) => invert(ctx, step)).catch((error) => notify(["Redo Failed", (error as Error).message]));
+export const canUndoDrop = (): boolean => history.canUndo();
+export const canRedoDrop = (): boolean => history.canRedo();
 
 /** I-548, I-549: absolute or relative paths of the selected items as text, several joined by line breaks. */
 export async function copyPaths(ctx: FolderContext, relative: boolean): Promise<void> {

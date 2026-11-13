@@ -1,6 +1,7 @@
 // core v0.8.1 I-4: the Outline list. Code items come from the pinned Zed `outline.scm` run over the editor's own tree;
 // a notebook lists only the headings of its markdown cells. Pure: the tree, the query and the text come in from outside.
 import type { Node, Query, Tree } from "web-tree-sitter";
+import { collapseStep, expandStep, move, only, type Row } from "../workspace/tree.ts";
 
 export type OutlineKind = "heading" | "class" | "method" | "function" | "struct" | "enum" | "member" | "interface" | "impl" | "module"
   | "type" | "variable" | "macro" | "key" | "table" | "selector" | "rule" | "element" | "test";
@@ -204,4 +205,24 @@ export function outlineRows(items: OutlineItem[], collapsed: ReadonlySet<string>
   };
   walk(items, 0, "");
   return rows;
+}
+
+export type OutlineMove = "next" | "prev" | "first" | "last" | "expand" | "collapse";
+
+/**
+ * core v0.8.1 I-18: the project tree's key rules (tree.ts move / expandStep / collapseStep) on the Outline rows: Up / Down /
+ * Home / End move; Right opens a closed item, else goes to its first child; Left closes an open item, else goes to its parent.
+ * Returns the key to select, or the key to open or close.
+ */
+export function outlineStep(rows: OutlineRow[], selected: string | null, action: OutlineMove): { select: string } | { toggle: string } | null {
+  const tree: Row[] = rows.map((row) => ({
+    path: row.key, depth: row.depth, isDir: row.item.children.length > 0, isRoot: false, expanded: row.open,
+    segments: [{ name: row.item.name, path: row.key }], guides: row.guides, isNew: false,
+  }));
+  if (action === "expand" || action === "collapse") {
+    const step = (action === "expand" ? expandStep : collapseStep)(tree, only(selected));
+    return step?.expanded ? { toggle: step.expanded.path } : step?.select !== undefined ? { select: step.select } : null;
+  }
+  const moved = move(tree, only(selected), action, false);
+  return moved && { select: tree[moved.index].path };
 }

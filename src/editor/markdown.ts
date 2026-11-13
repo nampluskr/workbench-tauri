@@ -1,6 +1,7 @@
 import MarkdownIt from "markdown-it";
 import { mathPlugin } from "./math.ts";
 import { previewKind } from "./preview-kind.ts";
+import { MARKDOWN_PREVIEW_HEADING_SLUG_MAX_DUPLICATES } from "../spec/metrics.ts";
 
 // Markdown preview rendering (R-11, D-10): markdown-it with HTML pass-through off. Every block carries the source lines it
 // came from (data-line, data-line-end: 0-based start, end exclusive) for I-083 / I-084. Table alignment is a class, not
@@ -75,6 +76,29 @@ export function blockAt(blocks: { start: number; end: number }[], line: number):
     if (b.start <= line && line < b.end && (best < 0 || b.end - b.start <= blocks[best].end - blocks[best].start)) best = i;
   });
   return best;
+}
+
+/**
+ * core v0.8.1 I-22: the ids of `#id` links, one per heading in document order (Zed util/src/markdown.rs generate_heading_slug and
+ * markdown/src/parser.rs build_heading_slugs). The trimmed text keeps letters, digits, `-` and `_` (lowercased), a space becomes
+ * `-`, anything else is dropped. A repeated id gets `-1`, `-2`... (skipping ids already taken); null for no id.
+ */
+export function headingSlugs(texts: string[]): (string | null)[] {
+  const taken = new Set<string>();
+  const counts = new Map<string, number>();
+  return texts.map((text) => {
+    const base = [...text.trim()].map((c) => (/[\p{Alphabetic}\p{N}_-]/u.test(c) ? [...c.toLowerCase()][0] : c === " " ? "-" : "")).join("");
+    let n = counts.get(base) ?? 0;
+    let slug = n === 0 ? base : `${base}-${n}`;
+    for (n++; taken.has(slug); n++) {
+      if (n >= MARKDOWN_PREVIEW_HEADING_SLUG_MAX_DUPLICATES) { slug = ""; break; }
+      slug = `${base}-${n}`;
+    }
+    counts.set(base, n);
+    if (!slug) return null;
+    taken.add(slug);
+    return slug;
+  });
 }
 
 export type LinkTarget = { kind: "preview" | "open"; path: string } | { kind: "external"; url: string } | { kind: "anchor"; id: string };

@@ -273,6 +273,7 @@ const METRICS: Record<string, string> = {
   "markdown_preview.code_block.padding": prem(12), // L-109
   "markdown_preview.code_block.margin_y": prem(16), // L-109
   "markdown_preview.code_block.corner_radius": prem(6), // L-109
+  "markdown_preview.code_block.border": prem(1), // core v0.8.1 I-19 (not in the toml), like the L-111 frontmatter border
   "markdown_preview.frontmatter.border": prem(1), // L-111
   "markdown_preview.frontmatter.corner_radius": prem(4), // L-111
   "markdown_preview.frontmatter.key_cell_font_weight": "600", // L-111
@@ -386,6 +387,8 @@ export const CODE_BLOCK_COPIED_MS = 2000; // core v0.8.1 I-12, tauri's choice (n
 export const PROJECT_PANEL_DRAG_EXPAND_DELAY_MS = 500; // a closed folder held under a drag opens (hover_expand_task, :6428)
 export const PROJECT_PANEL_DRAG_SCROLL = { near: 0.05, far: 0.15, fast: 8, slow: 5, tickMs: 16 }; // edge scroll per tick (hover_scroll_task, :7600-7631)
 export const PROJECT_PANEL_UNDO_LIMIT = 10_000; // steps kept for project_panel::Undo (undo.rs:335 MAX_UNDO_OPERATIONS)
+// core v0.8.1 I-22: not in the toml; Zed 4304dec732 markdown/src/parser.rs:102 MAX_DUPLICATE_HEADING_SLUGS.
+export const MARKDOWN_PREVIEW_HEADING_SLUG_MAX_DUPLICATES = 128; // a heading text repeated more often gets no id
 
 // Editor values that script reads.
 export const EDITOR_TAB_SIZE = 4; // editor.tab_size (E-055)
@@ -418,8 +421,10 @@ const UI_FONT_FEATURE_SETTINGS = '"calt" 0'; // I-14: disable UI contextual alte
 
 /** Publish the metrics as CSS variables on :root (constructable sheet, no inline style). */
 let metricsSheet: CSSStyleSheet | undefined;
-/** core v0.7 I-9: the four preview gaps in px, not scaled by the preview font size. L-103 paragraph_gap (below) still spaces the non-paragraph blocks. */
+/** core v0.7 I-9: the four preview gaps in px. L-103 paragraph_gap (below) still spaces the non-paragraph blocks. core v0.8.1 I-23: the two list
+ * gaps are px at a 16px preview font and scale with it (Zed rems(0.25), relative(1.5)); the paragraph gaps stay px. */
 export type PreviewGaps = { paragraphLine: number; paragraph: number; listLine: number; list: number };
+const scaledListGap = (px: number, previewFontSize: number): number => px * previewFontSize / REM_SIZE;
 export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15, editorFontSize = bufferFontSize, previewFontSize = 16, editorLineHeight = 1.6,
   gaps: PreviewGaps = { paragraphLine: 8, paragraph: 16, listLine: 8, list: 12 }, code: CodeFonts = { editor: "JetBrains Mono", preview: "JetBrains Mono", previewPercent: 85 }): Promise<void> {
   const bufferSize = `${bufferFontSize}px`;
@@ -439,7 +444,7 @@ export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15, editorF
   vars.push(`--buffer-font-family: ${BUFFER_FONT_FAMILY};`);
   vars.push(`--editor-font-family: ${editorFamily}; --preview-code-font-family: ${codeFontFamily(code.preview)}; --preview-code-font-size: ${previewFontSize * code.previewPercent / 100}px;`);
   vars.push(`--editor-line-height-multiplier: ${editorLineHeight};`); // core v0.7 I-8: the Settings editor_line_height
-  vars.push(`--preview-paragraph-line-gap: ${gaps.paragraphLine}px; --preview-paragraph-gap: ${gaps.paragraph}px; --preview-list-line-gap: ${gaps.listLine}px; --preview-list-gap: ${gaps.list}px;`);
+  vars.push(`--preview-paragraph-line-gap: ${gaps.paragraphLine}px; --preview-paragraph-gap: ${gaps.paragraph}px; --preview-list-line-gap: ${scaledListGap(gaps.listLine, previewFontSize)}px; --preview-list-gap: ${scaledListGap(gaps.list, previewFontSize)}px;`);
   vars.push(`--ui-font-family: ${UI_FONT_FAMILY};`);
   vars.push(`--font-weight-default: ${FONT_WEIGHT};`);
   vars.push(`--ui-font-feature-settings: ${UI_FONT_FEATURE_SETTINGS};`);

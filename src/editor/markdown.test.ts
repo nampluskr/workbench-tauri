@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { blockAt, classifyLink, frontmatterOf, frontmatterRows, localImagePath, renderMarkdown } from "./markdown.ts";
+import { blockAt, classifyLink, frontmatterOf, frontmatterRows, headingSlugs, localImagePath, renderMarkdown } from "./markdown.ts";
 
 test("L-110: frontmatter is a table only when every line is `key: value` without a leading space", () => {
   assert.deepEqual(frontmatterRows(["title: Hello", "tags: a, b"]), [["title", "Hello"], ["tags", "a, b"]]);
@@ -98,6 +98,14 @@ test("I-085: external URLs, local Markdown into a preview (relative to the sourc
   assert.deepEqual(classifyLink("b.md", src, true), { kind: "open", path: "C:\\w\\docs\\b.md" });
   assert.deepEqual(classifyLink("img/x.png", src, false), { kind: "open", path: "C:\\w\\docs\\img\\x.png" });
   assert.deepEqual(classifyLink("#intro", src, false), { kind: "anchor", id: "intro" });
+});
+
+test("core v0.8.1 I-22: heading ids follow Zed's slug rule; repeats get -1, -2", () => {
+  assert.deepEqual(headingSlugs(["  Hello World  ", "설치 방법", "C++ & Rust: v2.0!", "snake_case-name"]),
+    ["hello-world", "설치-방법", "c--rust-v20", "snake_case-name"]);
+  assert.deepEqual(headingSlugs(["Usage", "Usage", "Usage"]), ["usage", "usage-1", "usage-2"]);
+  assert.deepEqual(headingSlugs(["A-1", "A", "A"]), ["a-1", "a", "a-2"]); // "a-1" is taken, so the second "A" skips it
+  assert.deepEqual(headingSlugs(["!!!", "?"]), [null, "-1"]); // an empty id is none, its repeat is "-1" (as in Zed)
 });
 
 test("I-3: a preview image resolves to a local file next to the Markdown file; a URL of any scheme gives none", () => {

@@ -5,7 +5,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { Parser, type Language } from "web-tree-sitter";
 import { languageConfigs } from "./catalog.ts";
 import { compileQuery, loadLanguage } from "./grammar.ts";
-import { codeOutline, itemAt, notebookOutline, outlineRows, type OutlineItem } from "./outline.ts";
+import { codeOutline, itemAt, notebookOutline, outlineRows, outlineStep, type OutlineItem } from "./outline.ts";
 import { markdownHeadings } from "../editor/markdown.ts";
 
 const root = new URL("../assets/zed-grammars/", import.meta.url);
@@ -121,4 +121,19 @@ test("I-4: rows follow the open items, a collapsed key hides its children and gu
   assert.deepEqual(rows.map((row) => `${row.depth}${row.item.name}`), ["0A", "1a1", "1a2", "2x", "0B"]);
   assert.deepEqual(rows.map((row) => row.guides.map((g) => `${+g.first}${+g.last}`).join(",")), ["", "10", "00", "01,11", ""]);
   assert.deepEqual(outlineRows(items, new Set(["/A#0/a2#0"])).map((row) => row.item.name), ["A", "a1", "a2", "B"]);
+});
+
+test("core v0.8.1 I-18: Outline keys follow the project tree's rules", () => {
+  const item = (name: string, children: OutlineItem[] = []): OutlineItem => ({ name, kind: "heading", from: 0, to: 0, at: 0, line: 0, children });
+  const rows = outlineRows([item("A", [item("a1"), item("a2", [item("x")])]), item("B")], new Set(["/A#0/a2#0"]));
+  const [A, a1, a2, B] = rows.map((row) => row.key);
+  assert.deepEqual(outlineStep(rows, null, "next"), { select: A }); // nothing selected: Down gives the first row
+  assert.deepEqual(outlineStep(rows, B, "next"), { select: B }); // stops at the end
+  assert.deepEqual(outlineStep(rows, a1, "prev"), { select: A });
+  assert.deepEqual(outlineStep(rows, A, "expand"), { select: a1 }); // open: to the first child
+  assert.deepEqual(outlineStep(rows, a2, "expand"), { toggle: a2 }); // closed: open it
+  assert.equal(outlineStep(rows, a1, "expand"), null); // a leaf
+  assert.deepEqual(outlineStep(rows, A, "collapse"), { toggle: A }); // open: close it
+  assert.deepEqual(outlineStep(rows, a2, "collapse"), { select: A }); // closed: to the parent
+  assert.equal(outlineStep(rows, B, "collapse"), null); // a top-level leaf
 });

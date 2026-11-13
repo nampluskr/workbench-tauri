@@ -55,8 +55,8 @@ export const ROWS: { key: SettingKey; name: string; description: string; categor
   { key: "preview_code_font_size", name: "Code Font Size", description: "Controls the font size of code blocks as a percentage of the preview font size.", category: "Preview" },
   { key: "preview_paragraph_line_gap", name: "Paragraph Line Spacing", description: "Controls the space in pixels between wrapped lines of a paragraph.", category: "Preview" },
   { key: "preview_paragraph_gap", name: "Paragraph Spacing", description: "Controls the space in pixels between paragraphs.", category: "Preview" },
-  { key: "preview_list_line_gap", name: "List Line Spacing", description: "Controls the space in pixels between wrapped lines of a list item.", category: "Preview" },
-  { key: "preview_list_gap", name: "List Item Spacing", description: "Controls the space in pixels between list items.", category: "Preview" },
+  { key: "preview_list_line_gap", name: "List Line Spacing", description: "Controls the space between wrapped lines of a list item, in pixels at a 16px preview font. Scales with the preview font.", category: "Preview" },
+  { key: "preview_list_gap", name: "List Item Spacing", description: "Controls the space between list items, in pixels at a 16px preview font. Scales with the preview font.", category: "Preview" },
 ];
 
 function object(text: string): Record<string, unknown> {
