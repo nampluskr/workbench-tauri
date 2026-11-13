@@ -777,10 +777,16 @@
   - 결과: 40초 실행은 두 exe 모두 외부 연결 0. 길게 두면 두 exe 모두 **약 50초에** msedgewebview2 `--type=utility`가 Microsoft·CDN 주소로 연결한다(0.8.1 debug: `23.55.51.144:80`·`150.171.27.11:443`, 0.8.0 release: `150.171.28.11:443`·`146.75.114.172:80`). 미리보기 페이지와 상관없는 WebView2 자체 연결이고, ORDER-08 전(0.8.0)부터 있었다.
   - 검증: V3(측정).
   - 특이사항: c6의 "앱 트리 새 TCP"는 이 기준선을 빼고 읽는다.
-- **C-16 코드 리뷰·전체 검증** (2026-11-13, checker, 진행 중): 대상 `git diff HEAD -- src src-tauri`(K-08a·K-08b·K-08b-R1·K-08c·K-08d·K-08d-R1·K-08e). 정확성(호스트 고르기, ping/pong·멈춤·피함·`wasStuck`·`waitTimer`·dispose, generation과 타이머 경합, `hasFocus`, recordRecovery·previewReady), 보안(바뀐 것이 프레임 CSP `webrtc 'block'`, 머리 스크립트 pong·지우기, `frame-src` 두 호스트, scheme 등록 둘, `additionalBrowserArgs`뿐인지), 테스트, ponytail. 전체 검증 1회(typecheck·test·cargo test·clippy).
+- **C-16 코드 리뷰·전체 검증** (2026-11-13, checker)
+  - 무엇을 했나: 대상 `git diff HEAD -- src src-tauri`(K-08a·K-08b·K-08b-R1·K-08c·K-08d·K-08d-R1·K-08e). 정확성(호스트 고르기, ping/pong·멈춤·피함·`wasStuck`·`waitTimer`·dispose, generation과 타이머 경합, `hasFocus`, recordRecovery·previewReady), 보안(바뀐 것이 프레임 CSP `webrtc 'block'`, 머리 스크립트 pong·지우기, `frame-src` 두 호스트, scheme 등록 둘, `additionalBrowserArgs`뿐인지), 테스트, ponytail. 전체 검증 1회(typecheck·test·cargo test·clippy).
+  - 결과: PASS. typecheck 0, `npm test` 310/310, `cargo test` 24, clippy 0, 코드 리뷰 PASS.
+  - 검증: V1(전체 검증 1회, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-16-report.md`).
+  - 특이사항: 없음.
 - **W-12 ORDER-08 PROGRESS·PLAN 기록** (2026-11-13, writer)
   - 무엇을 했나: 위 Phase 8 항목을 W-11~C-15-R6 카드·보고 파일, `C:\Users\nampl\AppData\Local\Temp\v081-ORDER-08-interim.md`, `v/`의 측정 결과(`m-host*.json`, `v3*.json`, `leader-probe/*`)에서 옮겨 적고, `PLAN.md`에 Phase 8 작업 카드 표를 더했다.
   - 결과: 문서만 바뀌었다.
   - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-12-report.md`).
   - 특이사항: 없음.
-- **상태**: Phase 8 진행 중(ORDER-08 보고 전).
+- **ORDER-08 보고** (2026-11-13, tauri-leader): `specs/v0.8.1/reports/ORDER-08.md` [DONE], 커밋 `1c9a430`(코드·측정·문서)·`33ea4a0`(보고). #6은 leader-core 판정.
+- **[PUSH] ORDER-08** (2026-11-13): origin/master `33ea4a0`.
+- **상태**: Phase 1~8 끝(ORDER-01~08 모두 [PUSH]), origin/master `33ea4a0`. 2026-11-13 ORDER-09(Phase 9, v0.8.1 마지막 카드, core `specs/v0.8.1/orders/ORDER-09.md`, ITEMS I-16~I-24, 비교 기준 `33ea4a0`, 끝에 0.8.1 release 다시 빌드·release 전체 회귀) 시작 전: tauri-leader 컨텍스트가 절반을 넘어 정리한 뒤 시작한다. 서브 에이전트 컨텍스트는 비움.

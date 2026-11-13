@@ -23,6 +23,7 @@
 | Phase 6 — 미리보기 제목·목록 간격, 미리보기 찾기 | Phase 6 (ORDER-06) | G-4 | I-8 · I-9 |
 | Phase 7 — HTML 미리보기 스크립트 실행, 0.8.1 release 빌드·README | Phase 7 (ORDER-07) | G-4 | I-7 · 0.8.1 빌드·`docs/BUILD.md`·README 실행 절 |
 | Phase 8 — ORDER-08 (I-14·I-15): HTML 미리보기 안정·보안(무한 루프 뒤 복구, 인터넷 유출 길) | Phase 8 (ORDER-08) | G-6 | I-14 · I-15 |
+| Phase 9 — ORDER-09 (I-16~I-24) | Phase 9 (ORDER-09) | G-7 | I-16 ~ I-24 · 0.8.1 release 다시 빌드·전체 회귀 |
 
 - 보안 설정(CSP·asset protocol·capability·sandbox)은 Phase 1~6에서 바꾸지 않는다. Phase 7에서만 바꾼다(core PLAN, core COMMON 3절).
 - 사용자 확인은 Phase 7 뒤 한 번이다(core PLAN). tauri는 V4를 하지 않는다.
