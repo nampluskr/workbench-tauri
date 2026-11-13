@@ -707,4 +707,4 @@
   - 결과: 문서만 바뀌었다.
   - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-09-report.md`).
   - 특이사항: 없음.
-- **상태**: ORDER-07 보고 [BLOCKED](#8만), leader-core 판정 대기.
+- **상태**: Phase 1~7 끝(ORDER-01~07 모두 [PUSH], ORDER-07은 #8만 BLOCKED — 무한 루프 뒤 HTML 미리보기 빈 화면, 사용자 확인 대기), origin/master `e9ae9aa`. 2026-11-13 ORDER-08(Phase 8, 사용자 확인 뒤 더함, core `specs/v0.8.1/orders/ORDER-08.md`, ITEMS I-14·I-15, USER-TEST #7a·#7b) 시작 전: tauri-leader 컨텍스트가 절반을 넘어 정리한 뒤 시작한다. checker는 agy Gemini 3.8 Flash High로 바뀜(ORDER-08 3.3).
