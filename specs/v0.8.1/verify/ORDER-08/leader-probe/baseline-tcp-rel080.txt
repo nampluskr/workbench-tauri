@@ -1,0 +1,1 @@
+tag=rel080 exe=C:\Users\nampl\AppData\Local\Temp\v081-app\workbench-tauri-0.8.0-v08end.exe external TCP remotes: 0

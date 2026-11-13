@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>webrtc-srcdoc</title>
+</head>
+<body>
+  <pre id="o"></pre>
+  <script>
+    const o = document.getElementById("o");
+    function out(s) { o.textContent += s + "\n"; }
+    const f = document.createElement("iframe");
+    f.srcdoc = '<script>' +
+      'try {' +
+      '  const pc = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }] });' +
+      '  pc.onicecandidate = (e) => {' +
+      '    if (e.candidate) parent.postMessage({ c: e.candidate.candidate }, "*");' +
+      '  };' +
+      '  pc.createDataChannel("x");' +
+      '  pc.createOffer().then((offer) => pc.setLocalDescription(offer));' +
+      '  parent.postMessage({ s: "srcdoc pc created" }, "*");' +
+      '} catch (e) {' +
+      '  parent.postMessage({ s: "srcdoc err " + e }, "*");' +
+      '}' +
+      '<\/script>';
+    window.addEventListener("message", (e) => {
+      if (e.data?.s) out("srcdoc | " + e.data.s);
+      if (e.data?.c) out("srcdoc | OPEN cand | " + e.data.c.split(" ").slice(4, 8).join(" "));
+    });
+    document.body.append(f);
+  </script>
+</body>
+</html>

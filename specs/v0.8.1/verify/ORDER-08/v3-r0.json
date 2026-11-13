@@ -1,0 +1,830 @@
+{
+  "exe": "debug",
+  "procsBefore": 24,
+  "c3_c4_hang_and_cpu": {
+    "openTime": 1794544678146,
+    "appAliveDuringLoop": 28,
+    "appAliveMs": 1,
+    "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+    "hangNoticeDetectedAtSec": 4,
+    "frameCountAfterHang": 0,
+    "cpuTimeline": {
+      "0s": [
+        {
+          "Id": 2044,
+          "cpu": 131.3
+        },
+        {
+          "Id": 2628,
+          "cpu": 1.38
+        },
+        {
+          "Id": 2776,
+          "cpu": 2.86
+        },
+        {
+          "Id": 3024,
+          "cpu": 1.75
+        },
+        {
+          "Id": 9848,
+          "cpu": 4.12
+        },
+        {
+          "Id": 9976,
+          "cpu": 0.88
+        },
+        {
+          "Id": 12552,
+          "cpu": 219.7
+        },
+        {
+          "Id": 14244,
+          "cpu": 0.31
+        },
+        {
+          "Id": 14824,
+          "cpu": 14.59
+        },
+        {
+          "Id": 14944,
+          "cpu": 0.39
+        },
+        {
+          "Id": 15056,
+          "cpu": 7
+        },
+        {
+          "Id": 18096,
+          "cpu": 0.91
+        },
+        {
+          "Id": 18540,
+          "cpu": 5.19
+        },
+        {
+          "Id": 18596,
+          "cpu": 1.08
+        },
+        {
+          "Id": 18768,
+          "cpu": 0.58
+        },
+        {
+          "Id": 19128,
+          "cpu": 10.5
+        },
+        {
+          "Id": 19256,
+          "cpu": 0.52
+        },
+        {
+          "Id": 20916,
+          "cpu": 3.5
+        },
+        {
+          "Id": 28696,
+          "cpu": 206.2
+        },
+        {
+          "Id": 30808,
+          "cpu": 1.25
+        },
+        {
+          "Id": 32628,
+          "cpu": 0.09
+        },
+        {
+          "Id": 36100,
+          "cpu": 0.12
+        },
+        {
+          "Id": 36348,
+          "cpu": 1.8
+        },
+        {
+          "Id": 37668,
+          "cpu": 7.78
+        },
+        {
+          "Id": 40600,
+          "cpu": 0.36
+        }
+      ],
+      "10s": [
+        {
+          "Id": 2044,
+          "cpu": 131.3
+        },
+        {
+          "Id": 2628,
+          "cpu": 1.38
+        },
+        {
+          "Id": 2776,
+          "cpu": 2.86
+        },
+        {
+          "Id": 3024,
+          "cpu": 1.75
+        },
+        {
+          "Id": 9848,
+          "cpu": 4.12
+        },
+        {
+          "Id": 9976,
+          "cpu": 0.88
+        },
+        {
+          "Id": 12552,
+          "cpu": 219.7
+        },
+        {
+          "Id": 14244,
+          "cpu": 0.31
+        },
+        {
+          "Id": 14824,
+          "cpu": 14.59
+        },
+        {
+          "Id": 14944,
+          "cpu": 0.39
+        },
+        {
+          "Id": 15056,
+          "cpu": 7
+        },
+        {
+          "Id": 18096,
+          "cpu": 0.91
+        },
+        {
+          "Id": 18540,
+          "cpu": 5.19
+        },
+        {
+          "Id": 18596,
+          "cpu": 1.08
+        },
+        {
+          "Id": 18768,
+          "cpu": 0.58
+        },
+        {
+          "Id": 19128,
+          "cpu": 10.5
+        },
+        {
+          "Id": 19256,
+          "cpu": 0.52
+        },
+        {
+          "Id": 20916,
+          "cpu": 3.5
+        },
+        {
+          "Id": 28696,
+          "cpu": 206.2
+        },
+        {
+          "Id": 30808,
+          "cpu": 1.25
+        },
+        {
+          "Id": 32628,
+          "cpu": 0.09
+        },
+        {
+          "Id": 36100,
+          "cpu": 0.12
+        },
+        {
+          "Id": 36348,
+          "cpu": 1.86
+        },
+        {
+          "Id": 40600,
+          "cpu": 0.36
+        }
+      ],
+      "20s": [
+        {
+          "Id": 2044,
+          "cpu": 131.3
+        },
+        {
+          "Id": 2628,
+          "cpu": 1.47
+        },
+        {
+          "Id": 2776,
+          "cpu": 2.86
+        },
+        {
+          "Id": 3024,
+          "cpu": 1.75
+        },
+        {
+          "Id": 9848,
+          "cpu": 4.12
+        },
+        {
+          "Id": 9976,
+          "cpu": 0.88
+        },
+        {
+          "Id": 12552,
+          "cpu": 219.7
+        },
+        {
+          "Id": 14244,
+          "cpu": 0.31
+        },
+        {
+          "Id": 14824,
+          "cpu": 14.59
+        },
+        {
+          "Id": 14944,
+          "cpu": 0.39
+        },
+        {
+          "Id": 15056,
+          "cpu": 7
+        },
+        {
+          "Id": 18096,
+          "cpu": 0.91
+        },
+        {
+          "Id": 18540,
+          "cpu": 5.19
+        },
+        {
+          "Id": 18596,
+          "cpu": 1.08
+        },
+        {
+          "Id": 18768,
+          "cpu": 0.58
+        },
+        {
+          "Id": 19128,
+          "cpu": 10.5
+        },
+        {
+          "Id": 19256,
+          "cpu": 0.52
+        },
+        {
+          "Id": 20916,
+          "cpu": 3.5
+        },
+        {
+          "Id": 28696,
+          "cpu": 206.2
+        },
+        {
+          "Id": 30808,
+          "cpu": 1.25
+        },
+        {
+          "Id": 32628,
+          "cpu": 0.11
+        },
+        {
+          "Id": 36100,
+          "cpu": 0.12
+        },
+        {
+          "Id": 36348,
+          "cpu": 1.88
+        },
+        {
+          "Id": 40600,
+          "cpu": 0.36
+        }
+      ],
+      "30s": [
+        {
+          "Id": 2044,
+          "cpu": 131.3
+        },
+        {
+          "Id": 2628,
+          "cpu": 1.47
+        },
+        {
+          "Id": 2776,
+          "cpu": 2.86
+        },
+        {
+          "Id": 3024,
+          "cpu": 1.75
+        },
+        {
+          "Id": 9848,
+          "cpu": 4.12
+        },
+        {
+          "Id": 9976,
+          "cpu": 0.88
+        },
+        {
+          "Id": 12552,
+          "cpu": 219.7
+        },
+        {
+          "Id": 14244,
+          "cpu": 0.31
+        },
+        {
+          "Id": 14824,
+          "cpu": 14.59
+        },
+        {
+          "Id": 14944,
+          "cpu": 0.39
+        },
+        {
+          "Id": 15056,
+          "cpu": 7
+        },
+        {
+          "Id": 18096,
+          "cpu": 0.91
+        },
+        {
+          "Id": 18540,
+          "cpu": 5.19
+        },
+        {
+          "Id": 18596,
+          "cpu": 1.08
+        },
+        {
+          "Id": 18768,
+          "cpu": 0.58
+        },
+        {
+          "Id": 19128,
+          "cpu": 10.52
+        },
+        {
+          "Id": 19256,
+          "cpu": 0.52
+        },
+        {
+          "Id": 20916,
+          "cpu": 3.5
+        },
+        {
+          "Id": 28696,
+          "cpu": 206.2
+        },
+        {
+          "Id": 30808,
+          "cpu": 1.27
+        },
+        {
+          "Id": 32628,
+          "cpu": 0.11
+        },
+        {
+          "Id": 36100,
+          "cpu": 0.12
+        },
+        {
+          "Id": 36348,
+          "cpu": 1.91
+        },
+        {
+          "Id": 40600,
+          "cpu": 0.36
+        }
+      ]
+    },
+    "procsAfterClose": 24
+  },
+  "c2_recovery_and_panes": {
+    "page": {
+      "ran": "ran",
+      "frame": {
+        "x": 440,
+        "y": 65,
+        "w": 1000,
+        "h": 756,
+        "src": "http://preview.localhost/p2",
+        "sandbox": "allow-scripts",
+        "csp": "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'; webrtc 'block'"
+      }
+    },
+    "mockup": {
+      "designs": 6,
+      "title": "Outline 시안 5안",
+      "frame": {
+        "x": 440,
+        "y": 65,
+        "w": 1000,
+        "h": 756,
+        "src": "http://preview.localhost/p3",
+        "sandbox": "allow-scripts",
+        "csp": "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'; webrtc 'block'"
+      }
+    },
+    "noticeBeforeEdit": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+    "fixedRedraw": {
+      "fixedText": "recovered successfully",
+      "title": "",
+      "hasNotice": false
+    },
+    "splitPane": {
+      "panes": 2,
+      "pageRan": {
+        "noFrame": true
+      },
+      "iframes": [
+        {
+          "src": "http://preview1.localhost/p6",
+          "w": 500
+        }
+      ]
+    }
+  },
+  "c3_no_false_positive": {
+    "normalPage10s": {
+      "ran": "ran",
+      "notice": null
+    },
+    "fastTabSwitches": {
+      "switches": 10,
+      "notice": null,
+      "toasts": []
+    }
+  },
+  "c5_order07_regression": {
+    "isolation": {
+      "frame": {
+        "x": 440,
+        "y": 65,
+        "w": 1000,
+        "h": 756,
+        "src": "http://preview.localhost/p9",
+        "sandbox": "allow-scripts",
+        "csp": "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'; webrtc 'block'"
+      },
+      "ran": "inline script ran",
+      "localjs": "local.js ran",
+      "cssBorder": "dashed",
+      "img": {
+        "complete": true,
+        "w": 32
+      },
+      "table": [
+        "window.parent.document | blocked | SecurityError: Failed to read a named property 'document' from 'Window': Blocked a frame with origin \"null\" from accessing a cross-origin frame.",
+        "window.top.document | blocked | SecurityError: Failed to read a named property 'document' from 'Window': Blocked a frame with origin \"null\" from accessing a cross-origin frame.",
+        "window.parent.location.href | blocked | SecurityError: Failed to read a named property 'href' from 'Location': Blocked a frame with origin \"null\" from accessing a cross-origin frame.",
+        "localStorage | blocked | SecurityError: Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
+        "sessionStorage | blocked | SecurityError: Failed to read the 'sessionStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
+        "indexedDB.open | blocked | SecurityError: Failed to execute 'open' on 'IDBFactory': access to the Indexed Database API is denied in this context.",
+        "document.cookie (write and read) | blocked | SecurityError: Failed to set the 'cookie' property on 'Document': The document is sandboxed and lacks the 'allow-same-origin' flag.",
+        "window.__TAURI__ | blocked | undefined",
+        "window.__TAURI_INTERNALS__ (present) | REACHED | object",
+        "window.ipc (present) | REACHED | object",
+        "window.chrome.webview (present) | REACHED | object",
+        "chrome.webview.postMessage | blocked | Error: sent, no answer channel (check the app log)",
+        "fetch ipc://localhost/about_info | blocked | TypeError: Failed to fetch",
+        "fetch http://ipc.localhost/about_info | blocked | TypeError: Failed to fetch",
+        "__TAURI_INTERNALS__.invoke('about_info') | blocked | Error: no answer in 3 s"
+      ],
+      "redrawAfterEdit": "edited marker"
+    },
+    "network": {
+      "table": [
+        "fetch https://example.com | blocked | TypeError: Failed to fetch",
+        "FontFace https://… | blocked | NetworkError: A network error occurred.",
+        "XHR https://example.com | blocked | error event",
+        "WebSocket wss://echo.websocket.org | blocked | error event",
+        "script-built <script src=https://…> | blocked | error event",
+        "script-built <img src=https://…> | blocked | error event",
+        "markup <script src=https://…> | blocked | window._ is undefined",
+        "markup <img src=https://…> | blocked | src attribute: (removed)"
+      ],
+      "internetRequests": []
+    },
+    "navigate": {
+      "start": {
+        "title": "navigate",
+        "started": "오후 1:40:36",
+        "count": "5",
+        "appUrl": "http://tauri.localhost/"
+      },
+      "clicks": {
+        "location.href = https://…": {
+          "title": "navigate",
+          "started": "오후 1:40:42",
+          "count": "2",
+          "appUrl": "http://tauri.localhost/"
+        },
+        "location.href = refresh.html": {
+          "title": "navigate",
+          "started": "오후 1:40:44",
+          "count": "2",
+          "appUrl": "http://tauri.localhost/"
+        },
+        "location = asset URL": {
+          "title": "navigate",
+          "started": "오후 1:40:47",
+          "count": "2",
+          "appUrl": "http://tauri.localhost/"
+        },
+        "window.open": {
+          "title": "navigate",
+          "started": "오후 1:40:47",
+          "count": "5",
+          "appUrl": "http://tauri.localhost/"
+        },
+        "form.submit()": {
+          "title": "navigate",
+          "started": "오후 1:40:47",
+          "count": "7",
+          "appUrl": "http://tauri.localhost/"
+        },
+        "top.location": {
+          "title": "navigate",
+          "started": "오후 1:40:47",
+          "count": "10",
+          "appUrl": "http://tauri.localhost/"
+        }
+      }
+    },
+    "refresh": {
+      "title": "refresh",
+      "body": "I-7 meta refresh\n\nStarted at: 오후 1:41:09. The source has a markup <meta refresh> (to https://example",
+      "src": "http://preview.localhost/p12"
+    },
+    "loopnav": {
+      "title": "preview.localhost",
+      "src": "http://preview.localhost/p13",
+      "toasts": [
+        "This HTML page keeps navigating away.\nIts preview stops until the file or the theme changes."
+      ],
+      "appAnswer": 2
+    },
+    "preview1_host": {
+      "frameSrc": "http://preview1.localhost/p15",
+      "usesPreview1": true,
+      "ran": "inline script ran",
+      "localjs": "local.js ran"
+    }
+  },
+  "c6_leak_tests": {
+    "webrtc": {
+      "status": {
+        "noFrame": true
+      },
+      "candidates": {
+        "noFrame": true
+      },
+      "errors": {
+        "noFrame": true
+      },
+      "cdpExternalRequests": [],
+      "osNewTcpConnections": [
+        {
+          "OwningProcess": 33280,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 9343,
+          "RemoteAddress": "73.25.2.210",
+          "RemotePort": 17899,
+          "State": 3
+        },
+        {
+          "OwningProcess": 33280,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 9342,
+          "RemoteAddress": "117.181.83.61",
+          "RemotePort": 15000,
+          "State": 3
+        },
+        {
+          "OwningProcess": 33280,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 3740,
+          "RemoteAddress": "31.200.249.146",
+          "RemotePort": 31828,
+          "State": 5
+        },
+        {
+          "OwningProcess": 33280,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 3739,
+          "RemoteAddress": "58.242.131.174",
+          "RemotePort": 15001,
+          "State": 3
+        },
+        {
+          "OwningProcess": 33280,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 3737,
+          "RemoteAddress": "182.220.68.125",
+          "RemotePort": 34592,
+          "State": 3
+        },
+        {
+          "OwningProcess": 33280,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 3736,
+          "RemoteAddress": "58.209.158.79",
+          "RemotePort": 15000,
+          "State": 3
+        },
+        {
+          "OwningProcess": 33280,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 3734,
+          "RemoteAddress": "60.27.233.112",
+          "RemotePort": 13013,
+          "State": 3
+        },
+        {
+          "OwningProcess": 33280,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 3733,
+          "RemoteAddress": "27.145.136.176",
+          "RemotePort": 45146,
+          "State": 3
+        }
+      ]
+    },
+    "links": {
+      "created": [
+        "Created link rel=dns-prefetch href=https://dns-leak-test.example.com",
+        "Created link rel=preconnect href=https://preconnect-leak-test.example.com",
+        "Created link rel=prefetch href=https://prefetch-leak-test.example.com/asset.js",
+        "Created link rel=preload href=https://preload-leak-test.example.com/style.css"
+      ],
+      "errors": [
+        "Error loading link rel=prefetch",
+        "Error loading link rel=preload"
+      ],
+      "cdpExternalRequests": [],
+      "osNewTcpConnections": [
+        {
+          "OwningProcess": 33280,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 10230,
+          "RemoteAddress": "117.29.142.179",
+          "RemotePort": 62733,
+          "State": 3
+        },
+        {
+          "OwningProcess": 33280,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 10228,
+          "RemoteAddress": "182.220.68.125",
+          "RemotePort": 34592,
+          "State": 3
+        },
+        {
+          "OwningProcess": 33280,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 10225,
+          "RemoteAddress": "211.235.75.159",
+          "RemotePort": 6890,
+          "State": 3
+        }
+      ]
+    },
+    "beacon": {
+      "beaconResult": {
+        "noFrame": true
+      },
+      "eventsourceResult": {
+        "noFrame": true
+      },
+      "cdpExternalRequests": [],
+      "osNewTcpConnections": [
+        {
+          "OwningProcess": 33280,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 10085,
+          "RemoteAddress": "114.43.23.113",
+          "RemotePort": 9548,
+          "State": 3
+        },
+        {
+          "OwningProcess": 33280,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 10083,
+          "RemoteAddress": "175.182.28.80",
+          "RemotePort": 52156,
+          "State": 3
+        },
+        {
+          "OwningProcess": 33280,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 10080,
+          "RemoteAddress": "186.247.39.94",
+          "RemotePort": 16550,
+          "State": 3
+        },
+        {
+          "OwningProcess": 33280,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 10079,
+          "RemoteAddress": "210.6.204.18",
+          "RemotePort": 6881,
+          "State": 3
+        },
+        {
+          "OwningProcess": 33280,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 10078,
+          "RemoteAddress": "211.244.58.91",
+          "RemotePort": 6881,
+          "State": 3
+        },
+        {
+          "OwningProcess": 18548,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 10076,
+          "RemoteAddress": "104.18.6.151",
+          "RemotePort": 443,
+          "State": 5
+        },
+        {
+          "OwningProcess": 33280,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 10074,
+          "RemoteAddress": "183.95.22.19",
+          "RemotePort": 15000,
+          "State": 3
+        }
+      ]
+    }
+  },
+  "c7_security_settings": {
+    "appInlineBlocked": {
+      "x": null,
+      "violation": "script-src-elem"
+    },
+    "appCsp": null,
+    "frame": {
+      "src": "http://preview1.localhost/p19",
+      "sandbox": "allow-scripts",
+      "csp": "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'; webrtc 'block'"
+    },
+    "frameCspHeader": "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'; webrtc 'block'"
+  },
+  "c8_plain_theme_and_tab": {
+    "oneDark": {
+      "frame": {
+        "text": "rgb(220, 224, 229)",
+        "link": "rgb(116, 173, 232)",
+        "docBg": "rgba(0, 0, 0, 0)",
+        "bodyBg": "rgba(0, 0, 0, 0)",
+        "scheme": "dark"
+      },
+      "iframeBg": "rgb(40, 44, 51)"
+    },
+    "oneLight": {
+      "frame": {
+        "text": "rgb(36, 37, 41)",
+        "link": "rgb(92, 120, 226)",
+        "docBg": "rgba(0, 0, 0, 0)",
+        "bodyBg": "rgba(0, 0, 0, 0)",
+        "scheme": "light"
+      },
+      "iframeBg": "rgb(250, 250, 250)"
+    },
+    "tabNavigation": [
+      {
+        "main": "IFRAME",
+        "frame": {
+          "noFrame": true
+        }
+      },
+      {
+        "main": "BUTTON",
+        "frame": {
+          "noFrame": true
+        }
+      },
+      {
+        "main": "BUTTON",
+        "frame": {
+          "noFrame": true
+        }
+      },
+      {
+        "main": "BUTTON",
+        "frame": {
+          "noFrame": true
+        }
+      }
+    ]
+  }
+}

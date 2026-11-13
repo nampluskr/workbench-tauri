@@ -1,0 +1,15 @@
+{
+ "types": "42828 workbench-tauri.exe  \r\n45756 msedgewebview2.exe  \r\n45404 msedgewebview2.exe  \r\n42752 msedgewebview2.exe  \r\n40416 msedgewebview2.exe  \r\n39284 msedgewebview2.exe  \r\n27712 msedgewebview2.exe  \r\n41360 msedgewebview2.exe",
+ "paths": {
+  "srcdoc": {
+   "host": "preview1",
+   "text": "srcdoc | srcdoc pc created\n || function || delete window.RTCPeerConnection;delete window.webkitRTCPeerConnection; / const o=document.getElementById(\"o\");function out(s){o.textContent+=s+String.fromCharCode(10)};const f=document.createElement(\"iframe\");f.srcdoc='<script>try{const pc=new RTCPeerConnection({iceServers:[{urls:\"stun:192.168.219.101:3478\"}]});pc.onicecandidate=e=>{if(e.candidate)parent.postMessage({c:e.candidate.candidate},\"*\")}",
+   "newUdp": [
+    "40416::::54085",
+    "40416:0.0.0.0:54084",
+    "40416:0.0.0.0:5353"
+   ]
+  }
+ },
+ "typesDuring": "42828  \r\n45756  \r\n45404 --type=crashpad-handler \r\n42752 --type=gpu-process \r\n40416 --type=utility --utility-sub-type=network.mojom.NetworkService\r\n39284 --type=utility --utility-sub-type=storage.mojom.StorageService\r\n27712 --type=renderer \r\n41360 --type=renderer \r\n"
+}

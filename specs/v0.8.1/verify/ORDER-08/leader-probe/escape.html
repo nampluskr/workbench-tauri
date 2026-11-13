@@ -1,0 +1,8 @@
+<!DOCTYPE html><html><head><title>esc</title></head><body><pre id="o"></pre><script>
+const o=document.getElementById("o");const log=(s)=>o.textContent+=s+"\n";
+for (const n of ["RTCPeerConnection","webkitRTCPeerConnection","RTCDataChannel","RTCIceCandidate"]) { try { delete window[n]; } catch(e){} }
+log("parent RTCPeerConnection: "+typeof window.RTCPeerConnection);
+try { const f=document.createElement("iframe"); document.body.append(f); const W=f.contentWindow; log("child doc: "+(W&&W.document?W.location.href:"none")); log("child RTCPeerConnection: "+typeof W.RTCPeerConnection);
+ const pc=new W.RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"}]}); pc.onicecandidate=e=>{ if(e.candidate) log("cand "+e.candidate.candidate.split(" ").slice(4,8).join(" ")); else log("done"); };
+ pc.createDataChannel("x"); pc.createOffer().then(x=>pc.setLocalDescription(x)).catch(e=>log("err "+e)); } catch(e){ log("child err "+e); }
+</script></body></html>

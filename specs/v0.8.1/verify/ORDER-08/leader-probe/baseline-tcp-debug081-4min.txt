@@ -1,0 +1,3 @@
+tag=debug081-4min exe=D:\projects\workbench-tauri\src-tauri\target\debug\workbench-tauri.exe external TCP remotes: 2
+  23.55.51.144:80  t=50s pid=39308 msedgewebview2.exe --type=utility state=Established
+  150.171.27.11:443  t=50s pid=39308 msedgewebview2.exe --type=utility state=Established

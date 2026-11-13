@@ -65,9 +65,18 @@ async fn open_settings(app: tauri::AppHandle) -> Result<(), String> {
     // shortcut: one capture at 100%; remeasure for other DPI and fonts.
     const SETTINGS_WIDTH: f64 = 900.0;
     const SETTINGS_HEIGHT: f64 = 750.0;
-    let window = tauri::WebviewWindowBuilder::new(&app, "settings", tauri::WebviewUrl::App("index.html?window=settings".into()))
+    let mut builder = tauri::WebviewWindowBuilder::new(&app, "settings", tauri::WebviewUrl::App("index.html?window=settings".into()))
         .title("Settings").inner_size(SETTINGS_WIDTH, SETTINGS_HEIGHT)
-        .decorations(false).shadow(true).visible(false).build().map_err(|error| error.to_string())?;
+        .decorations(false).shadow(true).visible(false);
+    // I-15: the browser args come from the main window's config (tauri.conf.json), so both windows share one WebView2
+    // environment; different args would fail this window's creation. They are wry's defaults (replaced when args are given)
+    // plus `--webrtc-ip-handling-policy=disable_non_proxied_udp`: a preview page's `srcdoc` child frame gets a fresh
+    // `RTCPeerConnection` that no script can remove (leader-probe probe5), so WebRTC UDP is turned off for the whole browser.
+    // The `--force-webrtc-ip-handling-policy` form has no effect in WebView2 (leader-probe probe5b). The app uses no WebRTC. Removing it in the frame (editor/html.ts NO_WEBRTC) and CSP `webrtc 'block'` stay as further layers.
+    if let Some(args) = app.config().app.windows.iter().find(|w| w.label == "main").and_then(|w| w.additional_browser_args.as_deref()) {
+        builder = builder.additional_browser_args(args);
+    }
+    let window = builder.build().map_err(|error| error.to_string())?;
     let caption_window = window.clone();
     window.run_on_main_thread(move || {
         match caption_window.hwnd() {
@@ -177,15 +186,22 @@ fn compensated_min_size(
     )
 }
 
+fn preview_scheme(ctx: tauri::UriSchemeContext<'_, tauri::Wry>, request: tauri::http::Request<Vec<u8>>) -> tauri::http::Response<Vec<u8>> {
+    preview::respond(&ctx.app_handle().state::<preview::PreviewDocs>(), request.uri().path())
+}
+
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .manage(folder_watch::FolderWatch::default())
         .manage(preview::PreviewDocs::default())
-        .register_uri_scheme_protocol("preview", |ctx, request| {
-            preview::respond(&ctx.app_handle().state::<preview::PreviewDocs>(), request.uri().path())
-        })
+        .register_uri_scheme_protocol("preview", preview_scheme)
+        // I-14: a second site for the same documents. WebView2 gives it its own renderer process, so a page stuck in a loop on one
+        // host does not hold the next preview drawn on the other (markdown-preview.ts, previewHost).
+        .register_uri_scheme_protocol("preview1", preview_scheme)
+        // I-14: a third site, only for previews once stuck, so a page that loops again does not stop an ordinary host.
+        .register_uri_scheme_protocol("preview2", preview_scheme)
         .setup(|app| {
             let main = app.get_webview_window("main").ok_or("main window missing")?;
             let handle = app.handle().clone();

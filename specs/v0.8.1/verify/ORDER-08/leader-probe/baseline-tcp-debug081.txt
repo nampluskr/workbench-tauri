@@ -1,0 +1,1 @@
+tag=debug081 exe=D:\projects\workbench-tauri\src-tauri\target\debug\workbench-tauri.exe external TCP remotes: 0

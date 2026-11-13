@@ -1,0 +1,815 @@
+{
+  "exe": "D:\\projects\\workbench-tauri\\src-tauri\\target\\debug\\workbench-tauri.exe",
+  "startedAt": "2026-11-13T04:22:10.509Z",
+  "item3_csp_and_load": {
+    "candidateC": {
+      "url": "http://preview.localhost/csp-test-c",
+      "blocked": false,
+      "violations": [],
+      "title": "Loaded: Normal Page C1",
+      "href": "http://preview.localhost/csp-test-c",
+      "rendered": true,
+      "iframeTargets": [
+        {
+          "id": "A888A5BCC6E54885FB2A4C05CDEF5AB3",
+          "url": "http://preview.localhost/csp-test-c",
+          "title": "http://preview.localhost/csp-test-c"
+        }
+      ]
+    },
+    "candidateD": {
+      "url": "http://preview1.localhost/csp-test-d",
+      "blocked": false,
+      "violations": [],
+      "title": "Loaded: Normal Page D1",
+      "href": "http://preview1.localhost/csp-test-d",
+      "rendered": true,
+      "iframeTargets": [
+        {
+          "id": "3443B5CC26CDCA04F80F55F5DFC3DDE1",
+          "url": "http://preview1.localhost/csp-test-d",
+          "title": "http://preview1.localhost/csp-test-d"
+        }
+      ]
+    }
+  },
+  "item1_process_isolation": {
+    "systemInfoProcessInfo": {
+      "unsupported": true,
+      "error": "{\"code\":-32000,\"message\":\"SystemInfo.getProcessInfo is only supported on the browser target\"}"
+    },
+    "case1_twoC": {
+      "c1": {
+        "url": "http://preview.localhost/docC1",
+        "eval": {
+          "success": true,
+          "timeout": false,
+          "targetId": "7854BAA7A3BBD356D9E56E5C04947A01",
+          "url": "http://preview.localhost/docC1",
+          "value": "Loaded: Normal Page C1",
+          "rendered": true
+        },
+        "newPids": [],
+        "targets": [
+          {
+            "id": "7854BAA7A3BBD356D9E56E5C04947A01",
+            "url": "http://preview.localhost/docC1",
+            "title": "http://preview.localhost/docC1"
+          }
+        ]
+      },
+      "c2": {
+        "url": "http://preview.localhost/docC2",
+        "eval": {
+          "success": true,
+          "timeout": false,
+          "targetId": "81B3857F3413C31ABFCEFBC86A1C082B",
+          "url": "http://preview.localhost/docC2",
+          "value": "Loaded: Normal Page C2",
+          "rendered": true
+        },
+        "newPids": [],
+        "targets": [
+          {
+            "id": "7854BAA7A3BBD356D9E56E5C04947A01",
+            "url": "http://preview.localhost/docC1",
+            "title": "http://preview.localhost/docC1"
+          },
+          {
+            "id": "81B3857F3413C31ABFCEFBC86A1C082B",
+            "url": "http://preview.localhost/docC2",
+            "title": "http://preview.localhost/docC2"
+          }
+        ]
+      },
+      "separateProcess": false,
+      "allProcsAfter": [
+        {
+          "id": 15056,
+          "cpu": 6.97
+        },
+        {
+          "id": 9848,
+          "cpu": 4.09
+        },
+        {
+          "id": 28696,
+          "cpu": 184.77
+        },
+        {
+          "id": 38468,
+          "cpu": 0.5
+        },
+        {
+          "id": 46028,
+          "cpu": 0.19
+        },
+        {
+          "id": 33704,
+          "cpu": 0.23
+        }
+      ]
+    },
+    "case2_twoD": {
+      "d1": {
+        "url": "http://preview1.localhost/docD1",
+        "eval": {
+          "success": true,
+          "timeout": false,
+          "targetId": "865C202F896095DF6AC0EB45AB4806D8",
+          "url": "http://preview1.localhost/docD1",
+          "value": "Loaded: Normal Page D1",
+          "rendered": true
+        },
+        "newPids": [
+          43644
+        ],
+        "targets": [
+          {
+            "id": "865C202F896095DF6AC0EB45AB4806D8",
+            "url": "http://preview1.localhost/docD1",
+            "title": "http://preview1.localhost/docD1"
+          }
+        ]
+      },
+      "d2": {
+        "url": "http://preview1.localhost/docD2",
+        "eval": {
+          "success": true,
+          "timeout": false,
+          "targetId": "A468A5EB5D1F5E7B81370A894388B98E",
+          "url": "http://preview1.localhost/docD2",
+          "value": "Loaded: Normal Page D2",
+          "rendered": true
+        },
+        "newPids": [],
+        "targets": [
+          {
+            "id": "865C202F896095DF6AC0EB45AB4806D8",
+            "url": "http://preview1.localhost/docD1",
+            "title": "http://preview1.localhost/docD1"
+          },
+          {
+            "id": "A468A5EB5D1F5E7B81370A894388B98E",
+            "url": "http://preview1.localhost/docD2",
+            "title": "http://preview1.localhost/docD2"
+          }
+        ]
+      },
+      "separateProcess": false,
+      "allProcsAfter": [
+        {
+          "id": 15056,
+          "cpu": 6.97
+        },
+        {
+          "id": 9848,
+          "cpu": 4.09
+        },
+        {
+          "id": 28696,
+          "cpu": 184.77
+        },
+        {
+          "id": 38468,
+          "cpu": 0.73
+        },
+        {
+          "id": 46028,
+          "cpu": 0.19
+        },
+        {
+          "id": 43644,
+          "cpu": 0.12
+        }
+      ]
+    },
+    "case3_pairCandD": {
+      "c": {
+        "url": "http://preview.localhost/docC_pair",
+        "eval": {
+          "success": true,
+          "timeout": false,
+          "targetId": "C25A03B3A22E7EE93C3F04E18B511BDC",
+          "url": "http://preview.localhost/docC_pair",
+          "value": "Loaded: Normal Page C1",
+          "rendered": true
+        },
+        "newPids": [
+          30216
+        ],
+        "targets": [
+          {
+            "id": "C25A03B3A22E7EE93C3F04E18B511BDC",
+            "url": "http://preview.localhost/docC_pair",
+            "title": "http://preview.localhost/docC_pair"
+          }
+        ]
+      },
+      "d": {
+        "url": "http://preview1.localhost/docD_pair",
+        "eval": {
+          "success": true,
+          "timeout": false,
+          "targetId": "3C47730C5421461CC2C2006DAAE99B3B",
+          "url": "http://preview1.localhost/docD_pair",
+          "value": "Loaded: Normal Page D1",
+          "rendered": true
+        },
+        "newPids": [],
+        "targets": [
+          {
+            "id": "C25A03B3A22E7EE93C3F04E18B511BDC",
+            "url": "http://preview.localhost/docC_pair",
+            "title": "http://preview.localhost/docC_pair"
+          },
+          {
+            "id": "3C47730C5421461CC2C2006DAAE99B3B",
+            "url": "http://preview1.localhost/docD_pair",
+            "title": "http://preview1.localhost/docD_pair"
+          }
+        ]
+      },
+      "separateProcess": false,
+      "allProcsAfter": [
+        {
+          "id": 15056,
+          "cpu": 6.97
+        },
+        {
+          "id": 9848,
+          "cpu": 4.09
+        },
+        {
+          "id": 28696,
+          "cpu": 184.78
+        },
+        {
+          "id": 38468,
+          "cpu": 0.78
+        },
+        {
+          "id": 43644,
+          "cpu": 0.12
+        },
+        {
+          "id": 30216,
+          "cpu": 0.19
+        }
+      ]
+    }
+  },
+  "item2_loop_c": {
+    "loopUrl": "http://preview.localhost/loopDocC",
+    "loopPid": 30216,
+    "loopDeltaCpu2_5s": 3.62,
+    "loopCpuPerSec": 1.43,
+    "targetsDuringLoop": [
+      {
+        "id": "9239746E87E8287209AEAC0A2694FEC2",
+        "url": "http://preview.localhost/loopDocC",
+        "title": "http://preview.localhost/loopDocC"
+      }
+    ],
+    "renderWhileLoopRunning": {
+      "onC": {
+        "url": "http://preview.localhost/normWhileLoopC",
+        "evalResult": {
+          "noTarget": true,
+          "timeout": false,
+          "rendered": false,
+          "availableTargets": [
+            {
+              "type": "page",
+              "url": "http://tauri.localhost/",
+              "title": "workbench-tauri"
+            },
+            {
+              "type": "iframe",
+              "url": "http://preview.localhost/loopDocC",
+              "title": "http://preview.localhost/loopDocC"
+            }
+          ]
+        },
+        "rendered": false,
+        "targets": [
+          {
+            "id": "9239746E87E8287209AEAC0A2694FEC2",
+            "url": "http://preview.localhost/loopDocC",
+            "title": "http://preview.localhost/loopDocC"
+          }
+        ]
+      },
+      "onD": {
+        "url": "http://preview1.localhost/normWhileLoopD",
+        "evalResult": {
+          "success": true,
+          "timeout": false,
+          "targetId": "CE604F60A06F885EC973F4009317B4AF",
+          "url": "http://preview1.localhost/normWhileLoopD",
+          "value": "Loaded: Normal Page D1",
+          "rendered": true
+        },
+        "rendered": true,
+        "targets": [
+          {
+            "id": "9239746E87E8287209AEAC0A2694FEC2",
+            "url": "http://preview.localhost/loopDocC",
+            "title": "http://preview.localhost/loopDocC"
+          },
+          {
+            "id": "CE604F60A06F885EC973F4009317B4AF",
+            "url": "http://preview1.localhost/normWhileLoopD",
+            "title": "http://preview1.localhost/normWhileLoopD"
+          }
+        ]
+      }
+    },
+    "cpuTimeline": [
+      {
+        "second": 0,
+        "pid": 30216,
+        "alive": true,
+        "cpu": 9.09,
+        "iframeTargets": [],
+        "allRenderers": [
+          {
+            "id": 15056,
+            "cpu": 6.97
+          },
+          {
+            "id": 9848,
+            "cpu": 4.09
+          },
+          {
+            "id": 28696,
+            "cpu": 184.78
+          },
+          {
+            "id": 38468,
+            "cpu": 0.8
+          },
+          {
+            "id": 43644,
+            "cpu": 0.17
+          },
+          {
+            "id": 30216,
+            "cpu": 9.09
+          }
+        ]
+      },
+      {
+        "second": 5,
+        "pid": 30216,
+        "alive": true,
+        "cpu": 15.23,
+        "iframeTargets": [],
+        "allRenderers": [
+          {
+            "id": 15056,
+            "cpu": 6.97
+          },
+          {
+            "id": 9848,
+            "cpu": 4.09
+          },
+          {
+            "id": 28696,
+            "cpu": 184.78
+          },
+          {
+            "id": 38468,
+            "cpu": 0.8
+          },
+          {
+            "id": 43644,
+            "cpu": 0.17
+          },
+          {
+            "id": 30216,
+            "cpu": 15.23
+          }
+        ]
+      },
+      {
+        "second": 10,
+        "pid": 30216,
+        "alive": false,
+        "cpu": null,
+        "iframeTargets": [],
+        "allRenderers": [
+          {
+            "id": 15056,
+            "cpu": 6.97
+          },
+          {
+            "id": 9848,
+            "cpu": 4.09
+          },
+          {
+            "id": 28696,
+            "cpu": 184.78
+          },
+          {
+            "id": 38468,
+            "cpu": 0.8
+          }
+        ]
+      },
+      {
+        "second": 20,
+        "pid": 30216,
+        "alive": false,
+        "cpu": null,
+        "iframeTargets": [],
+        "allRenderers": [
+          {
+            "id": 15056,
+            "cpu": 6.97
+          },
+          {
+            "id": 9848,
+            "cpu": 4.09
+          },
+          {
+            "id": 28696,
+            "cpu": 184.78
+          },
+          {
+            "id": 38468,
+            "cpu": 0.8
+          }
+        ]
+      },
+      {
+        "second": 30,
+        "pid": 30216,
+        "alive": false,
+        "cpu": null,
+        "iframeTargets": [],
+        "allRenderers": [
+          {
+            "id": 15056,
+            "cpu": 6.97
+          },
+          {
+            "id": 9848,
+            "cpu": 4.09
+          },
+          {
+            "id": 28696,
+            "cpu": 184.83
+          },
+          {
+            "id": 38468,
+            "cpu": 0.8
+          }
+        ]
+      },
+      {
+        "second": 40,
+        "pid": 30216,
+        "alive": false,
+        "cpu": null,
+        "iframeTargets": [],
+        "allRenderers": [
+          {
+            "id": 15056,
+            "cpu": 6.97
+          },
+          {
+            "id": 9848,
+            "cpu": 4.09
+          },
+          {
+            "id": 28696,
+            "cpu": 185.16
+          },
+          {
+            "id": 38468,
+            "cpu": 0.81
+          }
+        ]
+      }
+    ],
+    "stillConsumingCpuAt40s": false,
+    "renderAfterLoopRemoved": {
+      "onC": {
+        "url": "http://preview.localhost/afterLoopC",
+        "evalResult": {
+          "success": true,
+          "timeout": false,
+          "targetId": "81707D4B356D244BA441C0B190669221",
+          "url": "http://preview.localhost/afterLoopC",
+          "value": "Loaded: After Loop Document",
+          "rendered": true
+        },
+        "rendered": true,
+        "targets": [
+          {
+            "id": "81707D4B356D244BA441C0B190669221",
+            "url": "http://preview.localhost/afterLoopC",
+            "title": "http://preview.localhost/afterLoopC"
+          }
+        ]
+      },
+      "onD": {
+        "url": "http://preview1.localhost/afterLoopD",
+        "evalResult": {
+          "success": true,
+          "timeout": false,
+          "targetId": "EF6D90898FFEF0FA9EFF22A78E268713",
+          "url": "http://preview1.localhost/afterLoopD",
+          "value": "Loaded: Normal Page D2",
+          "rendered": true
+        },
+        "rendered": true,
+        "targets": [
+          {
+            "id": "EF6D90898FFEF0FA9EFF22A78E268713",
+            "url": "http://preview1.localhost/afterLoopD",
+            "title": "http://preview1.localhost/afterLoopD"
+          }
+        ]
+      }
+    }
+  },
+  "item2_loop_d": {
+    "loopUrl": "http://preview1.localhost/loopDocD",
+    "loopPid": 33708,
+    "loopDeltaCpu2_5s": 3.5999999999999996,
+    "loopCpuPerSec": 1.42,
+    "targetsDuringLoop": [
+      {
+        "id": "3167C55120F720CFA4A9E70CE9A3C272",
+        "url": "http://preview1.localhost/loopDocD",
+        "title": "http://preview1.localhost/loopDocD"
+      }
+    ],
+    "renderWhileLoopRunning": {
+      "onD": {
+        "url": "http://preview1.localhost/normWhileLoopD2",
+        "evalResult": {
+          "noTarget": true,
+          "timeout": false,
+          "rendered": false,
+          "availableTargets": [
+            {
+              "type": "page",
+              "url": "http://tauri.localhost/",
+              "title": "workbench-tauri"
+            },
+            {
+              "type": "iframe",
+              "url": "http://preview1.localhost/loopDocD",
+              "title": "http://preview1.localhost/loopDocD"
+            }
+          ]
+        },
+        "rendered": false,
+        "targets": [
+          {
+            "id": "3167C55120F720CFA4A9E70CE9A3C272",
+            "url": "http://preview1.localhost/loopDocD",
+            "title": "http://preview1.localhost/loopDocD"
+          }
+        ]
+      },
+      "onC": {
+        "url": "http://preview.localhost/normWhileLoopC2",
+        "evalResult": {
+          "success": true,
+          "timeout": false,
+          "targetId": "24AB942CEE176B495D695F640C2C4EDC",
+          "url": "http://preview.localhost/normWhileLoopC2",
+          "value": "Loaded: Normal Page C1",
+          "rendered": true
+        },
+        "rendered": true,
+        "targets": [
+          {
+            "id": "3167C55120F720CFA4A9E70CE9A3C272",
+            "url": "http://preview1.localhost/loopDocD",
+            "title": "http://preview1.localhost/loopDocD"
+          },
+          {
+            "id": "24AB942CEE176B495D695F640C2C4EDC",
+            "url": "http://preview.localhost/normWhileLoopC2",
+            "title": "http://preview.localhost/normWhileLoopC2"
+          }
+        ]
+      }
+    },
+    "cpuTimeline": [
+      {
+        "second": 0,
+        "pid": 33708,
+        "alive": true,
+        "cpu": 9.08,
+        "iframeTargets": [],
+        "allRenderers": [
+          {
+            "id": 15056,
+            "cpu": 6.97
+          },
+          {
+            "id": 9848,
+            "cpu": 4.09
+          },
+          {
+            "id": 28696,
+            "cpu": 185.22
+          },
+          {
+            "id": 38468,
+            "cpu": 0.86
+          },
+          {
+            "id": 37404,
+            "cpu": 0.27
+          },
+          {
+            "id": 33708,
+            "cpu": 9.08
+          }
+        ]
+      },
+      {
+        "second": 5,
+        "pid": 33708,
+        "alive": true,
+        "cpu": 15.23,
+        "iframeTargets": [],
+        "allRenderers": [
+          {
+            "id": 15056,
+            "cpu": 6.97
+          },
+          {
+            "id": 9848,
+            "cpu": 4.09
+          },
+          {
+            "id": 28696,
+            "cpu": 185.22
+          },
+          {
+            "id": 38468,
+            "cpu": 0.86
+          },
+          {
+            "id": 37404,
+            "cpu": 0.27
+          },
+          {
+            "id": 33708,
+            "cpu": 15.23
+          }
+        ]
+      },
+      {
+        "second": 10,
+        "pid": 33708,
+        "alive": false,
+        "cpu": null,
+        "iframeTargets": [],
+        "allRenderers": [
+          {
+            "id": 15056,
+            "cpu": 6.97
+          },
+          {
+            "id": 9848,
+            "cpu": 4.09
+          },
+          {
+            "id": 28696,
+            "cpu": 185.22
+          },
+          {
+            "id": 38468,
+            "cpu": 0.86
+          }
+        ]
+      },
+      {
+        "second": 20,
+        "pid": 33708,
+        "alive": false,
+        "cpu": null,
+        "iframeTargets": [],
+        "allRenderers": [
+          {
+            "id": 15056,
+            "cpu": 6.97
+          },
+          {
+            "id": 9848,
+            "cpu": 4.09
+          },
+          {
+            "id": 28696,
+            "cpu": 185.22
+          },
+          {
+            "id": 38468,
+            "cpu": 0.86
+          }
+        ]
+      },
+      {
+        "second": 30,
+        "pid": 33708,
+        "alive": false,
+        "cpu": null,
+        "iframeTargets": [],
+        "allRenderers": [
+          {
+            "id": 15056,
+            "cpu": 6.97
+          },
+          {
+            "id": 9848,
+            "cpu": 4.09
+          },
+          {
+            "id": 28696,
+            "cpu": 185.22
+          },
+          {
+            "id": 38468,
+            "cpu": 0.86
+          }
+        ]
+      },
+      {
+        "second": 40,
+        "pid": 33708,
+        "alive": false,
+        "cpu": null,
+        "iframeTargets": [],
+        "allRenderers": [
+          {
+            "id": 15056,
+            "cpu": 6.98
+          },
+          {
+            "id": 9848,
+            "cpu": 4.09
+          },
+          {
+            "id": 28696,
+            "cpu": 185.59
+          },
+          {
+            "id": 38468,
+            "cpu": 0.86
+          }
+        ]
+      }
+    ],
+    "stillConsumingCpuAt40s": false,
+    "renderAfterLoopRemoved": {
+      "onD": {
+        "url": "http://preview1.localhost/afterLoopD2",
+        "evalResult": {
+          "success": true,
+          "timeout": false,
+          "targetId": "1960D5CC96E9CE806C4A9D7C62F8BA22",
+          "url": "http://preview1.localhost/afterLoopD2",
+          "value": "Loaded: After Loop Document",
+          "rendered": true
+        },
+        "rendered": true,
+        "targets": [
+          {
+            "id": "1960D5CC96E9CE806C4A9D7C62F8BA22",
+            "url": "http://preview1.localhost/afterLoopD2",
+            "title": "http://preview1.localhost/afterLoopD2"
+          }
+        ]
+      },
+      "onC": {
+        "url": "http://preview.localhost/afterLoopC2",
+        "evalResult": {
+          "success": true,
+          "timeout": false,
+          "targetId": "110F0F54A1233C38C20E39316153F586",
+          "url": "http://preview.localhost/afterLoopC2",
+          "value": "Loaded: Normal Page C2",
+          "rendered": true
+        },
+        "rendered": true,
+        "targets": [
+          {
+            "id": "110F0F54A1233C38C20E39316153F586",
+            "url": "http://preview.localhost/afterLoopC2",
+            "title": "http://preview.localhost/afterLoopC2"
+          }
+        ]
+      }
+    }
+  },
+  "completedAt": "2026-11-13T04:24:55.133Z"
+}

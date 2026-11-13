@@ -2,7 +2,7 @@ import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import DOMPurify from "dompurify";
 import { csvTable } from "../editor/csv.ts";
 import { blockAt, classifyLink, localImagePath, renderMarkdown, type LinkTarget } from "../editor/markdown.ts";
-import { htmlPreviewDoc, PREVIEW_CSP, recordRecovery } from "../editor/html.ts";
+import { htmlPreviewDoc, PREVIEW_CSP, PREVIEW_HANG_MS, PREVIEW_HOST_AVOID_MS, PREVIEW_PING_MS, previewHost, recordRecovery, type PreviewHost } from "../editor/html.ts";
 import { NOTEBOOK_HTML_FORBID_ATTR, NOTEBOOK_HTML_FORBID_TAGS, parseNotebook, type NotebookOutput } from "../editor/notebook.ts";
 import { svgElement } from "../editor/svg.ts";
 import type { PreviewKind } from "../editor/preview-kind.ts";
@@ -177,6 +177,7 @@ function notebookNodes(text: string, sourcePath: string): HTMLElement[] {
 export type Preview = { element: HTMLElement; changed: () => void; cursor: (line: number) => void; reveal: (line: number, heading?: number) => void; find: (action: string) => boolean; dispose: () => void };
 
 let previewFrames = 0; // ids of HTML preview documents (src-tauri preview.rs)
+const hostAvoidUntil: Record<PreviewHost, number> = { preview: 0, preview1: 0, preview2: 0 }; // I-14: until when each host's renderer is taken as stuck
 
 export function createPreview(hooks: PreviewHooks): Preview {
   const element = document.createElement("div");
@@ -190,15 +191,21 @@ export function createPreview(hooks: PreviewHooks): Preview {
   // allow-scripts only: an opaque origin, no form, popup, modal or top navigation (M-12). Never allow-same-origin with it.
   const frame = document.createElement("iframe");
   const frameId = `p${++previewFrames}`;
-  const frameUrl = convertFileSrc(frameId, "preview");
+  let frameUrl = convertFileSrc(frameId, "preview"); // every host serves the same documents: the host is picked at each render
   let frameScroll = 0; // reported by the frame document (headStart)
   let ours = false; // the frame's current document is the preview's own: it said so (headStart) before its load
   let recoveries: number[] = []; // times this render's document was shown again after a navigation
   let stopped = false;
-  const showFrame = () => { frame.src = frameUrl; };
+  let host: PreviewHost = "preview";
+  let pingSince = 0; // I-14: when the first ping still unanswered was sent, 0 for none
+  let hung = false; // the frame was taken out for a stuck renderer, until the next render
+  let wasStuck = false; // I-14: once stuck, this preview draws on preview2 only (previewHost)
+  let waitTimer = 0; // a render waiting for preview2's avoidance to end
+  const showFrame = () => { pingSince = 0; frame.src = frameUrl; };
   const onFrameMessage = (e: MessageEvent) => {
     if (e.source !== frame.contentWindow) return;
     if (e.data?.previewReady === true) ours = true;
+    if (e.data?.previewPong === true) pingSince = 0;
     const y: unknown = e.data?.previewScrollY;
     if (typeof y === "number") frameScroll = y;
   };
@@ -213,6 +220,7 @@ export function createPreview(hooks: PreviewHooks): Preview {
     // A load of the preview's own document is never a navigation away: a render, a page reload, or the frame being loaded again
     // because the tab view was taken out of the DOM and put back (Pane.tsx). Only those documents send previewReady.
     frame.addEventListener("load", () => {
+      pingSince = 0; // a new document (a render, or the tab view put back): its answers start now, so a quick tab switch is no hang
       const own = ours;
       ours = false;
       if (own || !frame.src || stopped) return;
@@ -224,11 +232,46 @@ export function createPreview(hooks: PreviewHooks): Preview {
     window.addEventListener("message", onFrameMessage);
     body.append(frame);
   }
+  // I-14: a shown frame is pinged; a page stuck in a loop never answers. Its frame is taken out, so its renderer can end, and
+  // its host is avoided by the previews drawn next (previewHost): a new frame on that host would join the stuck process.
+  // Other previews on the same host are stuck with it and each finds it by its own ping.
+  // Only while the app window has focus (hasFocus is true with focus inside the frame too): a frame of a window behind others
+  // answers late enough to raise a false notice (v3.json c6); a loop is still found within PREVIEW_HANG_MS of coming back.
+  const pinger = hooks.kind !== "html" ? 0 : window.setInterval(() => {
+    if (stopped || !frame.isConnected || document.visibilityState !== "visible" || !document.hasFocus()) { pingSince = 0; return; }
+    const now = performance.now();
+    if (pingSince && now - pingSince >= PREVIEW_HANG_MS) {
+      hung = true;
+      wasStuck = true;
+      hostAvoidUntil[host] = now + PREVIEW_HOST_AVOID_MS;
+      const note = document.createElement("p");
+      note.textContent = "This HTML page is not responding. Its preview stops until the file or the theme changes.";
+      body.replaceChildren(note);
+      return;
+    }
+    if (!pingSince) pingSince = now;
+    frame.contentWindow?.postMessage({ previewPing: true }, "*");
+  }, PREVIEW_PING_MS);
   // core v0.8.1 I-9: find only where the preview is text of the app's own (not HTML, SVG or a Mermaid file).
   const search = ["markdown", "ipynb", "csv", "tsv"].includes(hooks.kind) ? createPreviewSearch(element, body) : null;
   let timer = 0;
   let lastLine = -1;
   let generation = 0;
+
+  // The HTML frame after preview_set: on the host previewHost picks, or, for a once-stuck preview while preview2 is avoided,
+  // once that ends (the notice stays until then; a frame put on preview2 now would keep its stuck process alive).
+  const show = (id: number) => {
+    clearTimeout(waitTimer);
+    if (id !== generation) return; // disposed, or a newer render is on its way
+    const pick = previewHost(performance.now(), hostAvoidUntil, wasStuck);
+    if (typeof pick === "number") { waitTimer = window.setTimeout(() => show(id), pick); return; }
+    recoveries = [];
+    stopped = false;
+    host = pick;
+    frameUrl = convertFileSrc(frameId, host);
+    if (hung) { hung = false; body.replaceChildren(frame); }
+    showFrame();
+  };
 
   const render = () => {
     const text = hooks.text();
@@ -237,10 +280,7 @@ export function createPreview(hooks: PreviewHooks): Preview {
       const html = htmlPreviewDoc(text, hooks.sourcePath(), convertFileSrc, { ...previewColors, appearance: previewAppearance }, frameScroll);
       const id = ++generation;
       invoke("preview_set", { id: frameId, html }).then(() => {
-        if (id !== generation) return; // disposed, or a newer render is on its way
-        recoveries = [];
-        stopped = false;
-        showFrame();
+        show(id);
       }, (error) => notify(["Failed to show the HTML preview", String(error)]));
       return;
     }
@@ -353,7 +393,7 @@ export function createPreview(hooks: PreviewHooks): Preview {
     },
     find: (action) => search?.run(action) ?? false,
     dispose: () => {
-      search?.dispose(); stopTheme(); clearTimeout(timer); generation++;
+      search?.dispose(); stopTheme(); clearTimeout(timer); clearTimeout(waitTimer); clearInterval(pinger); generation++;
       if (hooks.kind !== "html") return;
       // I-7: the frame's document goes with the tab, so its timers stop.
       window.removeEventListener("message", onFrameMessage);

@@ -45,8 +45,15 @@ export function rewriteSrcset(value: string, sourcePath: string, convert: Conver
  * The frame document's policy, as its first `<meta>` and as the frame's `csp` attribute (the response must accept it, so the
  * frame cannot be navigated to an asset URL, which has no policy). No connect, frame or worker source and no internet source:
  * scripts, styles, images, fonts and media come inline or from local files only.
+ * I-15: `webrtc 'block'` because WebRTC ICE/STUN traffic is not governed by connect-src; it blocks it in engines that honour
+ * the directive (WebView2 does not: NO_WEBRTC).
  */
-export const PREVIEW_CSP = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'";
+export const PREVIEW_CSP = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'; webrtc 'block'";
+
+// I-15: WebView2 ignores the CSP `webrtc` directive (STUN went out, verify/ORDER-08/leader-probe), so the frame document's first
+// script deletes these from `window`. A page cannot get them back from an about:blank child: that one is another opaque origin.
+// A `srcdoc` child has them anew and no script can cover it, so WebRTC UDP is also off browser-wide (src-tauri lib.rs, I-15).
+const NO_WEBRTC = ["RTCPeerConnection", "webkitRTCPeerConnection"];
 
 const DROP_TAGS = "base, iframe, frame, frameset, embed, object, applet";
 const URL_ATTRS = new Set(["src", "href", "xlink:href", "poster", "data", "background", "action", "formaction"]);
@@ -67,6 +74,34 @@ export const PREVIEW_RECOVER_WINDOW_MS = 5000;
 export function recordRecovery(times: readonly number[], now: number): number[] | null {
   const recent = times.filter((t) => now - t < PREVIEW_RECOVER_WINDOW_MS);
   return recent.length >= PREVIEW_RECOVER_LIMIT ? null : [...recent, now];
+}
+
+// I-14, not Zed values (K-08b, tauri decision): the parent pings a shown HTML frame every PREVIEW_PING_MS; no answer for
+// PREVIEW_HANG_MS since the first unanswered ping means its renderer is stuck. The stuck host is then avoided for
+// PREVIEW_HOST_AVOID_MS, twice the 5-10 s a renderer took to end after its frame was removed (verify/ORDER-08/m-host.json).
+export const PREVIEW_PING_MS = 1000;
+export const PREVIEW_HANG_MS = 5000;
+export const PREVIEW_HOST_AVOID_MS = 20000;
+
+/**
+ * The preview scheme's hosts (src-tauri lib.rs): each is its own site, so its own renderer process. `preview` and `preview1`
+ * draw ordinary previews; `preview2` only previews that were once stuck, so a page that loops again on its next render does not
+ * take an ordinary host (and every ordinary preview drawn there) with it.
+ */
+export const PREVIEW_HOSTS = ["preview", "preview1", "preview2"] as const;
+export type PreviewHost = (typeof PREVIEW_HOSTS)[number];
+const ORDINARY_HOSTS = ["preview", "preview1"] as const;
+
+/**
+ * The host a preview is drawn on now, or the ms to wait before drawing it. An ordinary preview takes the first ordinary host
+ * not avoided, or, when both are, the one whose avoidance ends first. A preview once stuck (`wasStuck`) draws on `preview2`
+ * only, after its avoidance ends.
+ * shortcut: ordinary previews stuck together on one host all become once-stuck and share `preview2`; two different looping pages
+ * stuck on both ordinary hosts within PREVIEW_HOST_AVOID_MS cannot be avoided. Add schemes if that must work.
+ */
+export function previewHost(now: number, avoidUntil: Readonly<Record<PreviewHost, number>>, wasStuck: boolean): PreviewHost | number {
+  if (wasStuck) return avoidUntil.preview2 <= now ? "preview2" : avoidUntil.preview2 - now;
+  return ORDINARY_HOSTS.find((h) => avoidUntil[h] <= now) ?? ORDINARY_HOSTS.reduce((a, b) => (avoidUntil[b] < avoidUntil[a] ? b : a));
 }
 
 /** What an attribute becomes: its new value, null to drop it, undefined to keep it as it is (event handlers too: scripts run, I-7). */
@@ -95,12 +130,13 @@ export function defaultStyle({ appearance, text, accent }: PreviewLook): string 
  * What goes first in the frame's `<head>`: the policy, the I-11 defaults, and a script that keeps the scroll across re-renders
  * (the parent cannot read a cross-origin frame's scroll: the frame reports it, and the next document starts at `scrollY`).
  * The script first tells the parent this is the preview's own document (previewReady), so its load is not taken for a
- * navigation away; an error page or the scheme's empty 204 document has no such script.
+ * navigation away; an error page or the scheme's empty 204 document has no such script. It answers the parent's ping (I-14),
+ * so a page stuck in a loop is found by its silence. Before all that it removes WebRTC (NO_WEBRTC).
  */
 export function headStart(look: PreviewLook, scrollY: number): string {
   const top = Number.isFinite(scrollY) && scrollY > 0 ? Math.round(scrollY) : 0;
   return `<meta http-equiv="Content-Security-Policy" content="${PREVIEW_CSP}"><style>${defaultStyle(look)}</style>`
-    + `<script>parent.postMessage({previewReady:true},"*");addEventListener("load",()=>scrollTo(0,${top}));addEventListener("scroll",()=>parent.postMessage({previewScrollY:scrollY},"*"),{passive:true})</script>`;
+    + `<script>${NO_WEBRTC.map((name) => `delete window.${name};`).join("")}parent.postMessage({previewReady:true},"*");addEventListener("message",e=>{if(e.source===parent&&e.data?.previewPing===true)parent.postMessage({previewPong:true},"*")});addEventListener("load",()=>scrollTo(0,${top}));addEventListener("scroll",()=>parent.postMessage({previewScrollY:scrollY},"*"),{passive:true})</script>`;
 }
 
 /** `serialized` (an `outerHTML` of a parsed document) with `html` as the first children of `<head>`, ahead of every page element. */

@@ -1,0 +1,3 @@
+tag=rel080-2min exe=C:\Users\nampl\AppData\Local\Temp\v081-app\workbench-tauri-0.8.0-v08end.exe external TCP remotes: 2
+  150.171.28.11:443  t=50s pid=38224 msedgewebview2.exe --type=utility state=Established
+  146.75.114.172:80  t=50s pid=38224 msedgewebview2.exe --type=utility state=Established

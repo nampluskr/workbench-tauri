@@ -1,0 +1,1471 @@
+{
+  "exe": "debug",
+  "appPid": 13088,
+  "initialAppTreePids": [
+    13088,
+    31792,
+    30940,
+    41844,
+    42608,
+    40824,
+    31096
+  ],
+  "c3_c4_hang_and_cpu": {
+    "openTime": 1794552408569,
+    "appAliveDuringLoop": 41,
+    "appAliveMs": 1,
+    "loopRendererPid": 45708,
+    "loopRendererInitialCpuDelta": 7.17,
+    "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+    "hangNoticeDetectedAtSec": 5,
+    "frameCountAfterHang": 0,
+    "cpuTimeline": {
+      "0s": {
+        "pid": 45708,
+        "isAlive": true,
+        "cpu": 8.77
+      },
+      "10s": {
+        "pid": 45708,
+        "isAlive": false,
+        "cpu": null
+      },
+      "20s": {
+        "pid": 45708,
+        "isAlive": false,
+        "cpu": null
+      },
+      "30s": {
+        "pid": 45708,
+        "isAlive": false,
+        "cpu": null
+      }
+    },
+    "loopRendererAfterClose": {
+      "pid": 45708,
+      "isAlive": false,
+      "cpu": null
+    }
+  },
+  "c2_recovery_and_panes": {
+    "page": {
+      "frameSrc": "http://preview.localhost/p2",
+      "ran": "ran",
+      "frame": {
+        "src": "http://preview.localhost/p2",
+        "sandbox": "allow-scripts",
+        "csp": "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'; webrtc 'block'",
+        "rect": {
+          "x": 440,
+          "y": 65,
+          "w": 1000,
+          "h": 756
+        }
+      }
+    },
+    "mockup": {
+      "frameSrc": "http://preview.localhost/p3",
+      "designs": 6,
+      "title": "Outline 시안 5안",
+      "frame": {
+        "src": "http://preview.localhost/p3",
+        "sandbox": "allow-scripts",
+        "csp": "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'; webrtc 'block'",
+        "rect": {
+          "x": 440,
+          "y": 65,
+          "w": 1000,
+          "h": 756
+        }
+      }
+    },
+    "noticeBeforeEdit": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+    "tabDirtyBeforeWrite": false,
+    "bufferContainsFixed": null,
+    "fixedRedraw": {
+      "frameSrc": "http://preview2.localhost/p4",
+      "fixedText": "recovered successfully",
+      "title": "",
+      "hasNotice": false
+    },
+    "splitPane": {
+      "panes": 2,
+      "loopNoticeBeforeSplit": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+      "pageFrameSrc": "http://preview.localhost/p6",
+      "pageRanInitial": "ran",
+      "pageRanAfterLoopTouch": {
+        "ran": "ran",
+        "math": 4,
+        "time": 1794552515998
+      },
+      "iframesBeforeTouch": [
+        {
+          "src": "http://preview.localhost/p6",
+          "sandbox": "allow-scripts",
+          "csp": "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'; webrtc 'block'",
+          "rect": {
+            "x": 941,
+            "y": 65,
+            "w": 500,
+            "h": 756
+          }
+        }
+      ],
+      "iframesAfterTouch": [
+        {
+          "src": "http://preview.localhost/p6",
+          "sandbox": "allow-scripts",
+          "csp": "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'; webrtc 'block'",
+          "rect": {
+            "x": 941,
+            "y": 65,
+            "w": 500,
+            "h": 756
+          }
+        }
+      ]
+    }
+  },
+  "c3_no_false_positive": {
+    "normalPage10s": {
+      "frameSrc": "http://preview.localhost/p7",
+      "ran": "ran",
+      "notice": null
+    },
+    "fastTabSwitches": {
+      "switches": 10,
+      "frameSrc": "http://preview.localhost/p8",
+      "notice": null,
+      "toasts": []
+    }
+  },
+  "c3_background_window_test": {
+    "normalPage": {
+      "notepadPid": 41048,
+      "foregroundDuringBg": {
+        "pid": 22812,
+        "name": "Code",
+        "title": "�� [������]final-project-lab.ipynb - edu-ai-rag-agent - Visual Studio Code"
+      },
+      "noticesDuringBg15s": [],
+      "hadNoticeDuringBg": false,
+      "foregroundAfterReturn": {
+        "pid": 13088,
+        "name": "workbench-tauri",
+        "title": "workbench-tauri"
+      },
+      "noticesAfterReturn10s": [],
+      "hadNoticeAfterReturn": false,
+      "passed": true
+    },
+    "loopPage": {
+      "notepadPid": 35612,
+      "foregroundDuringBg": {
+        "pid": 31852,
+        "name": "workbench-tauri-0.8.1-v081end",
+        "title": "workbench-tauri"
+      },
+      "foregroundAfterReturn": {
+        "pid": 22812,
+        "name": "Code",
+        "title": "�� [������]final-project-lab.ipynb - edu-ai-rag-agent - Visual Studio Code"
+      },
+      "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+      "hangNoticeDetectedAtSec": 3.8,
+      "triggeredWithin5to7s": false,
+      "passed": false
+    }
+  },
+  "c5_order07_regression": {
+    "isolation": {
+      "frameSrc": "http://preview.localhost/p11",
+      "frame": {
+        "src": "http://preview.localhost/p11",
+        "sandbox": "allow-scripts",
+        "csp": "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'; webrtc 'block'",
+        "rect": {
+          "x": 440,
+          "y": 65,
+          "w": 1000,
+          "h": 756
+        }
+      },
+      "ran": "inline script ran",
+      "localjs": "local.js ran",
+      "cssBorder": "dashed",
+      "img": {
+        "complete": true,
+        "w": 32
+      },
+      "table": [
+        "window.parent.document | blocked | SecurityError: Failed to read a named property 'document' from 'Window': Blocked a frame with origin \"null\" from accessing a cross-origin frame.",
+        "window.top.document | blocked | SecurityError: Failed to read a named property 'document' from 'Window': Blocked a frame with origin \"null\" from accessing a cross-origin frame.",
+        "window.parent.location.href | blocked | SecurityError: Failed to read a named property 'href' from 'Location': Blocked a frame with origin \"null\" from accessing a cross-origin frame.",
+        "localStorage | blocked | SecurityError: Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
+        "sessionStorage | blocked | SecurityError: Failed to read the 'sessionStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
+        "indexedDB.open | blocked | SecurityError: Failed to execute 'open' on 'IDBFactory': access to the Indexed Database API is denied in this context.",
+        "document.cookie (write and read) | blocked | SecurityError: Failed to set the 'cookie' property on 'Document': The document is sandboxed and lacks the 'allow-same-origin' flag.",
+        "window.__TAURI__ | blocked | undefined",
+        "window.__TAURI_INTERNALS__ (present) | REACHED | object",
+        "window.ipc (present) | REACHED | object",
+        "window.chrome.webview (present) | REACHED | object",
+        "chrome.webview.postMessage | blocked | Error: sent, no answer channel (check the app log)",
+        "fetch ipc://localhost/about_info | blocked | TypeError: Failed to fetch",
+        "fetch http://ipc.localhost/about_info | blocked | TypeError: Failed to fetch",
+        "__TAURI_INTERNALS__.invoke('about_info') | blocked | Error: no answer in 3 s"
+      ],
+      "redrawAfterEdit": "edited marker"
+    },
+    "network": {
+      "frameSrc": "http://preview.localhost/p12",
+      "table": [
+        "fetch https://example.com | blocked | TypeError: Failed to fetch",
+        "FontFace https://… | blocked | NetworkError: A network error occurred.",
+        "XHR https://example.com | blocked | error event",
+        "WebSocket wss://echo.websocket.org | blocked | error event",
+        "script-built <script src=https://…> | blocked | error event",
+        "script-built <img src=https://…> | blocked | error event",
+        "markup <script src=https://…> | blocked | window._ is undefined",
+        "markup <img src=https://…> | blocked | src attribute: (removed)"
+      ],
+      "internetRequests": []
+    },
+    "navigate": {
+      "frameSrc": "http://preview.localhost/p13",
+      "start": {
+        "title": "navigate",
+        "started": "오후 3:50:57",
+        "count": "5",
+        "appUrl": "http://tauri.localhost/"
+      },
+      "clicks": {
+        "location.href = https://…": {
+          "title": "navigate",
+          "started": "오후 3:51:02",
+          "count": "2",
+          "appUrl": "http://tauri.localhost/"
+        },
+        "location.href = refresh.html": {
+          "title": "navigate",
+          "started": "오후 3:51:05",
+          "count": "2",
+          "appUrl": "http://tauri.localhost/"
+        },
+        "location = asset URL": {
+          "title": "navigate",
+          "started": "오후 3:51:08",
+          "count": "2",
+          "appUrl": "http://tauri.localhost/"
+        },
+        "window.open": {
+          "title": "navigate",
+          "started": "오후 3:51:08",
+          "count": "5",
+          "appUrl": "http://tauri.localhost/"
+        },
+        "form.submit()": {
+          "title": "navigate",
+          "started": "오후 3:51:08",
+          "count": "7",
+          "appUrl": "http://tauri.localhost/"
+        },
+        "top.location": {
+          "title": "navigate",
+          "started": "오후 3:51:08",
+          "count": "10",
+          "appUrl": "http://tauri.localhost/"
+        }
+      }
+    },
+    "refresh": {
+      "frameSrc": "http://preview.localhost/p14",
+      "title": "refresh",
+      "body": "I-7 meta refresh\n\nStarted at: 오후 3:51:29. The source has a markup <meta refresh> (to https://example",
+      "src": "http://preview.localhost/p14"
+    },
+    "loopnav": {
+      "frameSrc": "http://preview.localhost/p15",
+      "title": {
+        "error": "noFrame: http://preview.localhost/p15"
+      },
+      "src": "http://preview.localhost/p15",
+      "toasts": [
+        "This HTML page keeps navigating away.\nIts preview stops until the file or the theme changes."
+      ],
+      "appAnswer": 2
+    },
+    "alternate_host": {
+      "frameSrc": "http://preview1.localhost/p17",
+      "isAlternateHost": true,
+      "ran": "inline script ran",
+      "localjs": "local.js ran"
+    }
+  },
+  "c6_leak_tests": {
+    "webrtc_direct_local": {
+      "visibilityState": "visible",
+      "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+      "noticeInfo": {
+        "detectedAt": "2026-11-13T06:53:05.208Z",
+        "visibilityState": "visible",
+        "foreground": {
+          "pid": 13088,
+          "name": "workbench-tauri",
+          "title": "workbench-tauri"
+        }
+      },
+      "foregroundAtRead": {
+        "pid": 13088,
+        "name": "workbench-tauri",
+        "title": "workbench-tauri"
+      },
+      "isUndetermined": true,
+      "verdict": "판정 불가 (undetermined)",
+      "outputRaw": {
+        "error": "noFrame: undefined"
+      },
+      "outputLines": [],
+      "isOpen": false,
+      "candidateCounts": {
+        "host": 0,
+        "srflx": 0,
+        "relay": 0,
+        "total": 0
+      },
+      "candidateLines": [],
+      "hasError": false,
+      "hits": null,
+      "localStunHits": 0,
+      "localStunPackets": [],
+      "networkServiceUdpStatus": "없음 (closed)",
+      "cdpExternalRequests": [],
+      "appTreeNewTcpConnections": [],
+      "appTreeNewUdpEndpoints": [],
+      "mDnsUdpEndpoints": [],
+      "newUdpAllCount": 0,
+      "newUdpExcludingMdnsCount": 0,
+      "processDetails": {},
+      "treeProcessTypes": [
+        "13088",
+        "31792",
+        "30940 --type=crashpad-handler",
+        "41844 --type=utility --utility-sub-type=network.mojom.NetworkService",
+        "42608 --type=gpu-process",
+        "40824 --type=utility --utility-sub-type=storage.mojom.StorageService",
+        "31096 --type=renderer",
+        "43876 --type=renderer"
+      ],
+      "otherAppsNewTcpCount": 0
+    },
+    "webrtc_blank_local": {
+      "visibilityState": "visible",
+      "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+      "noticeInfo": {
+        "detectedAt": "2026-11-13T06:53:33.666Z",
+        "visibilityState": "visible",
+        "foreground": {
+          "pid": 13088,
+          "name": "workbench-tauri",
+          "title": "workbench-tauri"
+        }
+      },
+      "foregroundAtRead": {
+        "pid": 13088,
+        "name": "workbench-tauri",
+        "title": "workbench-tauri"
+      },
+      "isUndetermined": true,
+      "verdict": "판정 불가 (undetermined)",
+      "outputRaw": {
+        "error": "noFrame: undefined"
+      },
+      "outputLines": [],
+      "isOpen": false,
+      "candidateCounts": {
+        "host": 0,
+        "srflx": 0,
+        "relay": 0,
+        "total": 0
+      },
+      "candidateLines": [],
+      "hasError": false,
+      "hits": null,
+      "localStunHits": 0,
+      "localStunPackets": [],
+      "networkServiceUdpStatus": "없음 (closed)",
+      "cdpExternalRequests": [],
+      "appTreeNewTcpConnections": [],
+      "appTreeNewUdpEndpoints": [],
+      "mDnsUdpEndpoints": [],
+      "newUdpAllCount": 0,
+      "newUdpExcludingMdnsCount": 0,
+      "processDetails": {},
+      "treeProcessTypes": [
+        "13088",
+        "31792",
+        "30940 --type=crashpad-handler",
+        "41844 --type=utility --utility-sub-type=network.mojom.NetworkService",
+        "42608 --type=gpu-process",
+        "40824 --type=utility --utility-sub-type=storage.mojom.StorageService",
+        "31096 --type=renderer",
+        "43876 --type=renderer"
+      ],
+      "otherAppsNewTcpCount": 0
+    },
+    "webrtc_srcdoc_local": {
+      "visibilityState": "visible",
+      "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+      "noticeInfo": {
+        "detectedAt": "2026-11-13T06:54:01.932Z",
+        "visibilityState": "visible",
+        "foreground": {
+          "pid": 13088,
+          "name": "workbench-tauri",
+          "title": "workbench-tauri"
+        }
+      },
+      "foregroundAtRead": {
+        "pid": 13088,
+        "name": "workbench-tauri",
+        "title": "workbench-tauri"
+      },
+      "isUndetermined": true,
+      "verdict": "판정 불가 (undetermined)",
+      "outputRaw": {
+        "error": "noFrame: undefined"
+      },
+      "outputLines": [],
+      "isOpen": false,
+      "candidateCounts": {
+        "host": 0,
+        "srflx": 0,
+        "relay": 0,
+        "total": 0
+      },
+      "candidateLines": [],
+      "hasError": false,
+      "hits": null,
+      "localStunHits": 0,
+      "localStunPackets": [],
+      "networkServiceUdpStatus": "없음 (closed)",
+      "cdpExternalRequests": [],
+      "appTreeNewTcpConnections": [],
+      "appTreeNewUdpEndpoints": [],
+      "mDnsUdpEndpoints": [],
+      "newUdpAllCount": 0,
+      "newUdpExcludingMdnsCount": 0,
+      "processDetails": {},
+      "treeProcessTypes": [
+        "13088",
+        "31792",
+        "30940 --type=crashpad-handler",
+        "41844 --type=utility --utility-sub-type=network.mojom.NetworkService",
+        "42608 --type=gpu-process",
+        "40824 --type=utility --utility-sub-type=storage.mojom.StorageService",
+        "31096 --type=renderer",
+        "43876 --type=renderer"
+      ],
+      "otherAppsNewTcpCount": 2
+    },
+    "webrtc_open_local": {
+      "frameSrc": "http://preview.localhost/p21",
+      "visibilityState": "visible",
+      "hangNotice": null,
+      "noticeInfo": null,
+      "foregroundAtRead": {
+        "pid": 13088,
+        "name": "workbench-tauri",
+        "title": "workbench-tauri"
+      },
+      "isUndetermined": true,
+      "verdict": "판정 불가 (undetermined)",
+      "outputRaw": {
+        "error": "noFrame: http://preview.localhost/p21"
+      },
+      "outputLines": [],
+      "isOpen": false,
+      "candidateCounts": {
+        "host": 0,
+        "srflx": 0,
+        "relay": 0,
+        "total": 0
+      },
+      "candidateLines": [],
+      "hasError": false,
+      "hits": null,
+      "localStunHits": 0,
+      "localStunPackets": [],
+      "networkServiceUdpStatus": "없음 (closed)",
+      "cdpExternalRequests": [],
+      "appTreeNewTcpConnections": [
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 1305,
+          "RemoteAddress": "40.99.67.226",
+          "RemotePort": 443,
+          "State": 3
+        },
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 1304,
+          "RemoteAddress": "40.99.67.226",
+          "RemotePort": 443,
+          "State": 3
+        }
+      ],
+      "appTreeNewUdpEndpoints": [],
+      "mDnsUdpEndpoints": [],
+      "newUdpAllCount": 0,
+      "newUdpExcludingMdnsCount": 0,
+      "processDetails": {
+        "31792": {
+          "pid": 31792,
+          "type": "browser",
+          "utilitySubType": null,
+          "commandLine": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\157.0.4341.46\\msedgewebview2.exe\" --embedded-browser-webview=1 --webview-exe-name=workbench-tauri.exe --webview-exe-version=0.8.1 --user-data-dir=\"C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-o8\\webview8\\EBWebView\" --noerrdialogs --embedded-browser-webview-dpi-awareness=2 --disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --remote-debugging-port=9222 --webrtc-ip-handling-policy=disable_non_proxied_udp --lang=ko-KR --mojo-named-platform-channel-pipe=13088.36780.12180213785558755571 /pfhostedapp:2664eff09407cd33aaf71da6653a06e9016e0a86"
+        }
+      },
+      "treeProcessTypes": [
+        "13088",
+        "31792",
+        "30940 --type=crashpad-handler",
+        "41844 --type=utility --utility-sub-type=network.mojom.NetworkService",
+        "42608 --type=gpu-process",
+        "40824 --type=utility --utility-sub-type=storage.mojom.StorageService",
+        "31096 --type=renderer",
+        "43876 --type=renderer"
+      ],
+      "otherAppsNewTcpCount": 3
+    },
+    "webrtc_worker_local": {
+      "visibilityState": "visible",
+      "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+      "noticeInfo": {
+        "detectedAt": "2026-11-13T06:55:06.318Z",
+        "visibilityState": "visible",
+        "foreground": {
+          "pid": 31852,
+          "name": "workbench-tauri-0.8.1-v081end",
+          "title": "workbench-tauri"
+        }
+      },
+      "foregroundAtRead": {
+        "pid": 31852,
+        "name": "workbench-tauri-0.8.1-v081end",
+        "title": "workbench-tauri"
+      },
+      "isUndetermined": true,
+      "verdict": "판정 불가 (undetermined)",
+      "outputRaw": {
+        "error": "noFrame: undefined"
+      },
+      "outputLines": [],
+      "isOpen": false,
+      "candidateCounts": {
+        "host": 0,
+        "srflx": 0,
+        "relay": 0,
+        "total": 0
+      },
+      "candidateLines": [],
+      "hasError": false,
+      "hits": null,
+      "localStunHits": 0,
+      "localStunPackets": [],
+      "networkServiceUdpStatus": "없음 (closed)",
+      "cdpExternalRequests": [],
+      "appTreeNewTcpConnections": [
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 1336,
+          "RemoteAddress": "40.104.69.66",
+          "RemotePort": 443,
+          "State": 3
+        },
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 1335,
+          "RemoteAddress": "40.104.69.66",
+          "RemotePort": 443,
+          "State": 3
+        }
+      ],
+      "appTreeNewUdpEndpoints": [],
+      "mDnsUdpEndpoints": [],
+      "newUdpAllCount": 0,
+      "newUdpExcludingMdnsCount": 0,
+      "processDetails": {
+        "31792": {
+          "pid": 31792,
+          "type": "browser",
+          "utilitySubType": null,
+          "commandLine": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\157.0.4341.46\\msedgewebview2.exe\" --embedded-browser-webview=1 --webview-exe-name=workbench-tauri.exe --webview-exe-version=0.8.1 --user-data-dir=\"C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-o8\\webview8\\EBWebView\" --noerrdialogs --embedded-browser-webview-dpi-awareness=2 --disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --remote-debugging-port=9222 --webrtc-ip-handling-policy=disable_non_proxied_udp --lang=ko-KR --mojo-named-platform-channel-pipe=13088.36780.12180213785558755571 /pfhostedapp:2664eff09407cd33aaf71da6653a06e9016e0a86"
+        }
+      },
+      "treeProcessTypes": [
+        "13088",
+        "31792",
+        "30940 --type=crashpad-handler",
+        "41844 --type=utility --utility-sub-type=network.mojom.NetworkService",
+        "42608 --type=gpu-process",
+        "40824 --type=utility --utility-sub-type=storage.mojom.StorageService",
+        "31096 --type=renderer",
+        "43876 --type=renderer"
+      ],
+      "otherAppsNewTcpCount": 5
+    },
+    "webrtc_proto_local": {
+      "visibilityState": "visible",
+      "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+      "noticeInfo": {
+        "detectedAt": "2026-11-13T06:55:37.071Z",
+        "visibilityState": "visible",
+        "foreground": {
+          "pid": 13088,
+          "name": "workbench-tauri",
+          "title": "workbench-tauri"
+        }
+      },
+      "foregroundAtRead": {
+        "pid": 13088,
+        "name": "workbench-tauri",
+        "title": "workbench-tauri"
+      },
+      "isUndetermined": true,
+      "verdict": "판정 불가 (undetermined)",
+      "outputRaw": {
+        "error": "noFrame: undefined"
+      },
+      "outputLines": [],
+      "isOpen": false,
+      "candidateCounts": {
+        "host": 0,
+        "srflx": 0,
+        "relay": 0,
+        "total": 0
+      },
+      "candidateLines": [],
+      "hasError": false,
+      "hits": null,
+      "localStunHits": 0,
+      "localStunPackets": [],
+      "networkServiceUdpStatus": "없음 (closed)",
+      "cdpExternalRequests": [],
+      "appTreeNewTcpConnections": [
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 11942,
+          "RemoteAddress": "52.98.51.178",
+          "RemotePort": 443,
+          "State": 3
+        },
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 11941,
+          "RemoteAddress": "52.98.51.178",
+          "RemotePort": 443,
+          "State": 3
+        }
+      ],
+      "appTreeNewUdpEndpoints": [],
+      "mDnsUdpEndpoints": [],
+      "newUdpAllCount": 0,
+      "newUdpExcludingMdnsCount": 0,
+      "processDetails": {
+        "31792": {
+          "pid": 31792,
+          "type": "browser",
+          "utilitySubType": null,
+          "commandLine": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\157.0.4341.46\\msedgewebview2.exe\" --embedded-browser-webview=1 --webview-exe-name=workbench-tauri.exe --webview-exe-version=0.8.1 --user-data-dir=\"C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-o8\\webview8\\EBWebView\" --noerrdialogs --embedded-browser-webview-dpi-awareness=2 --disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --remote-debugging-port=9222 --webrtc-ip-handling-policy=disable_non_proxied_udp --lang=ko-KR --mojo-named-platform-channel-pipe=13088.36780.12180213785558755571 /pfhostedapp:2664eff09407cd33aaf71da6653a06e9016e0a86"
+        }
+      },
+      "treeProcessTypes": [
+        "13088",
+        "31792",
+        "30940 --type=crashpad-handler",
+        "41844 --type=utility --utility-sub-type=network.mojom.NetworkService",
+        "42608 --type=gpu-process",
+        "40824 --type=utility --utility-sub-type=storage.mojom.StorageService",
+        "31096 --type=renderer",
+        "43876 --type=renderer"
+      ],
+      "otherAppsNewTcpCount": 0
+    },
+    "webrtc_direct_google": {
+      "visibilityState": "visible",
+      "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+      "noticeInfo": {
+        "detectedAt": "2026-11-13T06:56:08.182Z",
+        "visibilityState": "visible",
+        "foreground": {
+          "pid": 13088,
+          "name": "workbench-tauri",
+          "title": "workbench-tauri"
+        }
+      },
+      "foregroundAtRead": {
+        "pid": 13088,
+        "name": "workbench-tauri",
+        "title": "workbench-tauri"
+      },
+      "isUndetermined": true,
+      "verdict": "판정 불가 (undetermined)",
+      "outputRaw": {
+        "error": "noFrame: undefined"
+      },
+      "outputLines": [],
+      "isOpen": false,
+      "candidateCounts": {
+        "host": 0,
+        "srflx": 0,
+        "relay": 0,
+        "total": 0
+      },
+      "candidateLines": [],
+      "hasError": false,
+      "hits": null,
+      "localStunHits": 0,
+      "localStunPackets": [],
+      "networkServiceUdpStatus": "없음 (closed)",
+      "cdpExternalRequests": [],
+      "appTreeNewTcpConnections": [
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 11984,
+          "RemoteAddress": "52.97.118.98",
+          "RemotePort": 443,
+          "State": 3
+        },
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 11983,
+          "RemoteAddress": "52.97.118.98",
+          "RemotePort": 443,
+          "State": 3
+        }
+      ],
+      "appTreeNewUdpEndpoints": [],
+      "mDnsUdpEndpoints": [],
+      "newUdpAllCount": 0,
+      "newUdpExcludingMdnsCount": 0,
+      "processDetails": {
+        "31792": {
+          "pid": 31792,
+          "type": "browser",
+          "utilitySubType": null,
+          "commandLine": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\157.0.4341.46\\msedgewebview2.exe\" --embedded-browser-webview=1 --webview-exe-name=workbench-tauri.exe --webview-exe-version=0.8.1 --user-data-dir=\"C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-o8\\webview8\\EBWebView\" --noerrdialogs --embedded-browser-webview-dpi-awareness=2 --disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --remote-debugging-port=9222 --webrtc-ip-handling-policy=disable_non_proxied_udp --lang=ko-KR --mojo-named-platform-channel-pipe=13088.36780.12180213785558755571 /pfhostedapp:2664eff09407cd33aaf71da6653a06e9016e0a86"
+        }
+      },
+      "treeProcessTypes": [
+        "13088",
+        "31792",
+        "30940 --type=crashpad-handler",
+        "41844 --type=utility --utility-sub-type=network.mojom.NetworkService",
+        "42608 --type=gpu-process",
+        "40824 --type=utility --utility-sub-type=storage.mojom.StorageService",
+        "31096 --type=renderer",
+        "43876 --type=renderer"
+      ],
+      "otherAppsNewTcpCount": 4
+    },
+    "webrtc_blank_google": {
+      "visibilityState": "visible",
+      "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+      "noticeInfo": {
+        "detectedAt": "2026-11-13T06:56:38.468Z",
+        "visibilityState": "visible",
+        "foreground": {
+          "pid": 13088,
+          "name": "workbench-tauri",
+          "title": "workbench-tauri"
+        }
+      },
+      "foregroundAtRead": {
+        "pid": 13088,
+        "name": "workbench-tauri",
+        "title": "workbench-tauri"
+      },
+      "isUndetermined": true,
+      "verdict": "판정 불가 (undetermined)",
+      "outputRaw": {
+        "error": "noFrame: undefined"
+      },
+      "outputLines": [],
+      "isOpen": false,
+      "candidateCounts": {
+        "host": 0,
+        "srflx": 0,
+        "relay": 0,
+        "total": 0
+      },
+      "candidateLines": [],
+      "hasError": false,
+      "hits": null,
+      "localStunHits": 0,
+      "localStunPackets": [],
+      "networkServiceUdpStatus": "없음 (closed)",
+      "cdpExternalRequests": [],
+      "appTreeNewTcpConnections": [
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 8739,
+          "RemoteAddress": "40.104.69.18",
+          "RemotePort": 443,
+          "State": 3
+        },
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 8738,
+          "RemoteAddress": "40.104.69.18",
+          "RemotePort": 443,
+          "State": 3
+        }
+      ],
+      "appTreeNewUdpEndpoints": [],
+      "mDnsUdpEndpoints": [],
+      "newUdpAllCount": 0,
+      "newUdpExcludingMdnsCount": 0,
+      "processDetails": {
+        "31792": {
+          "pid": 31792,
+          "type": "browser",
+          "utilitySubType": null,
+          "commandLine": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\157.0.4341.46\\msedgewebview2.exe\" --embedded-browser-webview=1 --webview-exe-name=workbench-tauri.exe --webview-exe-version=0.8.1 --user-data-dir=\"C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-o8\\webview8\\EBWebView\" --noerrdialogs --embedded-browser-webview-dpi-awareness=2 --disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --remote-debugging-port=9222 --webrtc-ip-handling-policy=disable_non_proxied_udp --lang=ko-KR --mojo-named-platform-channel-pipe=13088.36780.12180213785558755571 /pfhostedapp:2664eff09407cd33aaf71da6653a06e9016e0a86"
+        }
+      },
+      "treeProcessTypes": [
+        "13088",
+        "31792",
+        "30940 --type=crashpad-handler",
+        "41844 --type=utility --utility-sub-type=network.mojom.NetworkService",
+        "42608 --type=gpu-process",
+        "40824 --type=utility --utility-sub-type=storage.mojom.StorageService",
+        "31096 --type=renderer",
+        "43876 --type=renderer"
+      ],
+      "otherAppsNewTcpCount": 4
+    },
+    "webrtc_srcdoc_google": {
+      "frameSrc": "http://preview.localhost/p26",
+      "visibilityState": "visible",
+      "hangNotice": null,
+      "noticeInfo": null,
+      "foregroundAtRead": {
+        "pid": 13088,
+        "name": "workbench-tauri",
+        "title": "workbench-tauri"
+      },
+      "isUndetermined": true,
+      "verdict": "판정 불가 (undetermined)",
+      "outputRaw": {
+        "error": "noFrame: http://preview.localhost/p26"
+      },
+      "outputLines": [],
+      "isOpen": false,
+      "candidateCounts": {
+        "host": 0,
+        "srflx": 0,
+        "relay": 0,
+        "total": 0
+      },
+      "candidateLines": [],
+      "hasError": false,
+      "hits": null,
+      "localStunHits": 0,
+      "localStunPackets": [],
+      "networkServiceUdpStatus": "없음 (closed)",
+      "cdpExternalRequests": [],
+      "appTreeNewTcpConnections": [
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 8778,
+          "RemoteAddress": "40.99.67.178",
+          "RemotePort": 443,
+          "State": 3
+        },
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 8777,
+          "RemoteAddress": "40.99.67.178",
+          "RemotePort": 443,
+          "State": 3
+        }
+      ],
+      "appTreeNewUdpEndpoints": [],
+      "mDnsUdpEndpoints": [],
+      "newUdpAllCount": 0,
+      "newUdpExcludingMdnsCount": 0,
+      "processDetails": {
+        "31792": {
+          "pid": 31792,
+          "type": "browser",
+          "utilitySubType": null,
+          "commandLine": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\157.0.4341.46\\msedgewebview2.exe\" --embedded-browser-webview=1 --webview-exe-name=workbench-tauri.exe --webview-exe-version=0.8.1 --user-data-dir=\"C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-o8\\webview8\\EBWebView\" --noerrdialogs --embedded-browser-webview-dpi-awareness=2 --disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --remote-debugging-port=9222 --webrtc-ip-handling-policy=disable_non_proxied_udp --lang=ko-KR --mojo-named-platform-channel-pipe=13088.36780.12180213785558755571 /pfhostedapp:2664eff09407cd33aaf71da6653a06e9016e0a86"
+        }
+      },
+      "treeProcessTypes": [
+        "13088",
+        "31792",
+        "30940 --type=crashpad-handler",
+        "41844 --type=utility --utility-sub-type=network.mojom.NetworkService",
+        "42608 --type=gpu-process",
+        "40824 --type=utility --utility-sub-type=storage.mojom.StorageService",
+        "31096 --type=renderer",
+        "43876 --type=renderer"
+      ],
+      "otherAppsNewTcpCount": 1
+    },
+    "webrtc_open_google": {
+      "frameSrc": "http://preview1.localhost/p27",
+      "visibilityState": "visible",
+      "hangNotice": null,
+      "noticeInfo": null,
+      "foregroundAtRead": {
+        "pid": 13088,
+        "name": "workbench-tauri",
+        "title": "workbench-tauri"
+      },
+      "isUndetermined": false,
+      "verdict": "정상 판정",
+      "outputRaw": "open | null\n",
+      "outputLines": [
+        "open | null"
+      ],
+      "isOpen": false,
+      "candidateCounts": {
+        "host": 0,
+        "srflx": 0,
+        "relay": 0,
+        "total": 0
+      },
+      "candidateLines": [],
+      "hasError": false,
+      "hits": null,
+      "localStunHits": 0,
+      "localStunPackets": [],
+      "networkServiceUdpStatus": "없음 (closed)",
+      "cdpExternalRequests": [],
+      "appTreeNewTcpConnections": [
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 8603,
+          "RemoteAddress": "40.104.69.66",
+          "RemotePort": 443,
+          "State": 3
+        },
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 8602,
+          "RemoteAddress": "40.104.69.66",
+          "RemotePort": 443,
+          "State": 3
+        }
+      ],
+      "appTreeNewUdpEndpoints": [],
+      "mDnsUdpEndpoints": [],
+      "newUdpAllCount": 0,
+      "newUdpExcludingMdnsCount": 0,
+      "processDetails": {
+        "31792": {
+          "pid": 31792,
+          "type": "browser",
+          "utilitySubType": null,
+          "commandLine": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\157.0.4341.46\\msedgewebview2.exe\" --embedded-browser-webview=1 --webview-exe-name=workbench-tauri.exe --webview-exe-version=0.8.1 --user-data-dir=\"C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-o8\\webview8\\EBWebView\" --noerrdialogs --embedded-browser-webview-dpi-awareness=2 --disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --remote-debugging-port=9222 --webrtc-ip-handling-policy=disable_non_proxied_udp --lang=ko-KR --mojo-named-platform-channel-pipe=13088.36780.12180213785558755571 /pfhostedapp:2664eff09407cd33aaf71da6653a06e9016e0a86"
+        }
+      },
+      "treeProcessTypes": [
+        "13088",
+        "31792",
+        "30940 --type=crashpad-handler",
+        "41844 --type=utility --utility-sub-type=network.mojom.NetworkService",
+        "42608 --type=gpu-process",
+        "40824 --type=utility --utility-sub-type=storage.mojom.StorageService",
+        "31096 --type=renderer",
+        "43876 --type=renderer",
+        "18828 --type=renderer"
+      ],
+      "otherAppsNewTcpCount": 0
+    },
+    "webrtc_worker_google": {
+      "visibilityState": "visible",
+      "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+      "noticeInfo": {
+        "detectedAt": "2026-11-13T06:58:13.436Z",
+        "visibilityState": "visible",
+        "foreground": {
+          "pid": 13088,
+          "name": "workbench-tauri",
+          "title": "workbench-tauri"
+        }
+      },
+      "foregroundAtRead": {
+        "pid": 13088,
+        "name": "workbench-tauri",
+        "title": "workbench-tauri"
+      },
+      "isUndetermined": true,
+      "verdict": "판정 불가 (undetermined)",
+      "outputRaw": {
+        "error": "noFrame: undefined"
+      },
+      "outputLines": [],
+      "isOpen": false,
+      "candidateCounts": {
+        "host": 0,
+        "srflx": 0,
+        "relay": 0,
+        "total": 0
+      },
+      "candidateLines": [],
+      "hasError": false,
+      "hits": null,
+      "localStunHits": 0,
+      "localStunPackets": [],
+      "networkServiceUdpStatus": "없음 (closed)",
+      "cdpExternalRequests": [],
+      "appTreeNewTcpConnections": [
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 8637,
+          "RemoteAddress": "40.104.69.2",
+          "RemotePort": 443,
+          "State": 3
+        },
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 8636,
+          "RemoteAddress": "40.104.69.2",
+          "RemotePort": 443,
+          "State": 3
+        }
+      ],
+      "appTreeNewUdpEndpoints": [],
+      "mDnsUdpEndpoints": [],
+      "newUdpAllCount": 0,
+      "newUdpExcludingMdnsCount": 0,
+      "processDetails": {
+        "31792": {
+          "pid": 31792,
+          "type": "browser",
+          "utilitySubType": null,
+          "commandLine": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\157.0.4341.46\\msedgewebview2.exe\" --embedded-browser-webview=1 --webview-exe-name=workbench-tauri.exe --webview-exe-version=0.8.1 --user-data-dir=\"C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-o8\\webview8\\EBWebView\" --noerrdialogs --embedded-browser-webview-dpi-awareness=2 --disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --remote-debugging-port=9222 --webrtc-ip-handling-policy=disable_non_proxied_udp --lang=ko-KR --mojo-named-platform-channel-pipe=13088.36780.12180213785558755571 /pfhostedapp:2664eff09407cd33aaf71da6653a06e9016e0a86"
+        }
+      },
+      "treeProcessTypes": [
+        "13088",
+        "31792",
+        "30940 --type=crashpad-handler",
+        "41844 --type=utility --utility-sub-type=network.mojom.NetworkService",
+        "42608 --type=gpu-process",
+        "40824 --type=utility --utility-sub-type=storage.mojom.StorageService",
+        "31096 --type=renderer",
+        "43876 --type=renderer"
+      ],
+      "otherAppsNewTcpCount": 0
+    },
+    "webrtc_proto_google": {
+      "visibilityState": "visible",
+      "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+      "noticeInfo": {
+        "detectedAt": "2026-11-13T06:58:43.758Z",
+        "visibilityState": "visible",
+        "foreground": {
+          "pid": 13088,
+          "name": "workbench-tauri",
+          "title": "workbench-tauri"
+        }
+      },
+      "foregroundAtRead": {
+        "pid": 13088,
+        "name": "workbench-tauri",
+        "title": "workbench-tauri"
+      },
+      "isUndetermined": true,
+      "verdict": "판정 불가 (undetermined)",
+      "outputRaw": {
+        "error": "noFrame: undefined"
+      },
+      "outputLines": [],
+      "isOpen": false,
+      "candidateCounts": {
+        "host": 0,
+        "srflx": 0,
+        "relay": 0,
+        "total": 0
+      },
+      "candidateLines": [],
+      "hasError": false,
+      "hits": null,
+      "localStunHits": 0,
+      "localStunPackets": [],
+      "networkServiceUdpStatus": "없음 (closed)",
+      "cdpExternalRequests": [],
+      "appTreeNewTcpConnections": [
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 6243,
+          "RemoteAddress": "52.97.118.98",
+          "RemotePort": 443,
+          "State": 3
+        },
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 6242,
+          "RemoteAddress": "52.97.118.98",
+          "RemotePort": 443,
+          "State": 3
+        }
+      ],
+      "appTreeNewUdpEndpoints": [],
+      "mDnsUdpEndpoints": [],
+      "newUdpAllCount": 0,
+      "newUdpExcludingMdnsCount": 0,
+      "processDetails": {
+        "31792": {
+          "pid": 31792,
+          "type": "browser",
+          "utilitySubType": null,
+          "commandLine": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\157.0.4341.46\\msedgewebview2.exe\" --embedded-browser-webview=1 --webview-exe-name=workbench-tauri.exe --webview-exe-version=0.8.1 --user-data-dir=\"C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-o8\\webview8\\EBWebView\" --noerrdialogs --embedded-browser-webview-dpi-awareness=2 --disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --remote-debugging-port=9222 --webrtc-ip-handling-policy=disable_non_proxied_udp --lang=ko-KR --mojo-named-platform-channel-pipe=13088.36780.12180213785558755571 /pfhostedapp:2664eff09407cd33aaf71da6653a06e9016e0a86"
+        }
+      },
+      "treeProcessTypes": [
+        "13088",
+        "31792",
+        "30940 --type=crashpad-handler",
+        "41844 --type=utility --utility-sub-type=network.mojom.NetworkService",
+        "42608 --type=gpu-process",
+        "40824 --type=utility --utility-sub-type=storage.mojom.StorageService",
+        "31096 --type=renderer",
+        "43876 --type=renderer"
+      ],
+      "otherAppsNewTcpCount": 3
+    },
+    "links": {
+      "visibilityState": "visible",
+      "hangNotice": null,
+      "noticeInfo": null,
+      "foregroundAtRead": {
+        "pid": 13088,
+        "name": "workbench-tauri",
+        "title": "workbench-tauri"
+      },
+      "isUndetermined": true,
+      "verdict": "판정 불가 (undetermined)",
+      "created": {
+        "error": "noFrame: undefined"
+      },
+      "errors": {
+        "error": "noFrame: undefined"
+      },
+      "localStunHits": 0,
+      "localStunPackets": [],
+      "networkServiceUdpStatus": "없음 (closed)",
+      "cdpExternalRequests": [],
+      "appTreeNewTcpConnections": [
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 6271,
+          "RemoteAddress": "40.104.69.50",
+          "RemotePort": 443,
+          "State": 3
+        },
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 6270,
+          "RemoteAddress": "40.104.69.50",
+          "RemotePort": 443,
+          "State": 3
+        }
+      ],
+      "appTreeNewUdpEndpoints": [],
+      "mDnsUdpEndpoints": [],
+      "newUdpAllCount": 0,
+      "newUdpExcludingMdnsCount": 0,
+      "processDetails": {
+        "31792": {
+          "pid": 31792,
+          "type": "browser",
+          "utilitySubType": null,
+          "commandLine": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\157.0.4341.46\\msedgewebview2.exe\" --embedded-browser-webview=1 --webview-exe-name=workbench-tauri.exe --webview-exe-version=0.8.1 --user-data-dir=\"C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-o8\\webview8\\EBWebView\" --noerrdialogs --embedded-browser-webview-dpi-awareness=2 --disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --remote-debugging-port=9222 --webrtc-ip-handling-policy=disable_non_proxied_udp --lang=ko-KR --mojo-named-platform-channel-pipe=13088.36780.12180213785558755571 /pfhostedapp:2664eff09407cd33aaf71da6653a06e9016e0a86"
+        }
+      },
+      "treeProcessTypes": [
+        "13088",
+        "31792",
+        "30940 --type=crashpad-handler",
+        "41844 --type=utility --utility-sub-type=network.mojom.NetworkService",
+        "42608 --type=gpu-process",
+        "40824 --type=utility --utility-sub-type=storage.mojom.StorageService",
+        "31096 --type=renderer",
+        "43876 --type=renderer"
+      ],
+      "otherAppsNewTcpCount": 0
+    },
+    "beacon": {
+      "visibilityState": "visible",
+      "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+      "noticeInfo": {
+        "detectedAt": "2026-11-13T06:59:42.697Z",
+        "visibilityState": "visible",
+        "foreground": {
+          "pid": 13088,
+          "name": "workbench-tauri",
+          "title": "workbench-tauri"
+        }
+      },
+      "foregroundAtRead": {
+        "pid": 13088,
+        "name": "workbench-tauri",
+        "title": "workbench-tauri"
+      },
+      "isUndetermined": true,
+      "verdict": "판정 불가 (undetermined)",
+      "beaconResult": {
+        "error": "noFrame: undefined"
+      },
+      "eventsourceResult": {
+        "error": "noFrame: undefined"
+      },
+      "localStunHits": 0,
+      "localStunPackets": [],
+      "networkServiceUdpStatus": "없음 (closed)",
+      "cdpExternalRequests": [],
+      "appTreeNewTcpConnections": [
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 14301,
+          "RemoteAddress": "40.104.69.18",
+          "RemotePort": 443,
+          "State": 3
+        },
+        {
+          "OwningProcess": 31792,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 14300,
+          "RemoteAddress": "40.104.69.18",
+          "RemotePort": 443,
+          "State": 3
+        }
+      ],
+      "appTreeNewUdpEndpoints": [],
+      "mDnsUdpEndpoints": [],
+      "newUdpAllCount": 0,
+      "newUdpExcludingMdnsCount": 0,
+      "processDetails": {
+        "31792": {
+          "pid": 31792,
+          "type": "browser",
+          "utilitySubType": null,
+          "commandLine": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\157.0.4341.46\\msedgewebview2.exe\" --embedded-browser-webview=1 --webview-exe-name=workbench-tauri.exe --webview-exe-version=0.8.1 --user-data-dir=\"C:\\Users\\nampl\\AppData\\Local\\Temp\\v081-o8\\webview8\\EBWebView\" --noerrdialogs --embedded-browser-webview-dpi-awareness=2 --disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --remote-debugging-port=9222 --webrtc-ip-handling-policy=disable_non_proxied_udp --lang=ko-KR --mojo-named-platform-channel-pipe=13088.36780.12180213785558755571 /pfhostedapp:2664eff09407cd33aaf71da6653a06e9016e0a86"
+        }
+      },
+      "treeProcessTypes": [
+        "13088",
+        "31792",
+        "30940 --type=crashpad-handler",
+        "41844 --type=utility --utility-sub-type=network.mojom.NetworkService",
+        "42608 --type=gpu-process",
+        "40824 --type=utility --utility-sub-type=storage.mojom.StorageService",
+        "31096 --type=renderer",
+        "43876 --type=renderer"
+      ],
+      "otherAppsNewTcpCount": 0
+    },
+    "summary": {
+      "lanIp": "192.168.219.101",
+      "totalLocalStunHits": 0,
+      "allLocalStunHitsZero": true,
+      "totalPaths": 12,
+      "determinedCount": 1,
+      "undeterminedCount": 11,
+      "undeterminedAvenues": [
+        {
+          "verdict": "판정 불가 (undetermined)",
+          "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+          "foreground": {
+            "pid": 13088,
+            "name": "workbench-tauri",
+            "title": "workbench-tauri"
+          }
+        },
+        {
+          "verdict": "판정 불가 (undetermined)",
+          "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+          "foreground": {
+            "pid": 13088,
+            "name": "workbench-tauri",
+            "title": "workbench-tauri"
+          }
+        },
+        {
+          "verdict": "판정 불가 (undetermined)",
+          "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+          "foreground": {
+            "pid": 13088,
+            "name": "workbench-tauri",
+            "title": "workbench-tauri"
+          }
+        },
+        {
+          "verdict": "판정 불가 (undetermined)",
+          "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+          "foreground": {
+            "pid": 13088,
+            "name": "workbench-tauri",
+            "title": "workbench-tauri"
+          }
+        },
+        {
+          "verdict": "판정 불가 (undetermined)",
+          "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+          "foreground": {
+            "pid": 13088,
+            "name": "workbench-tauri",
+            "title": "workbench-tauri"
+          }
+        },
+        {
+          "src": "http://preview.localhost/p26",
+          "verdict": "판정 불가 (undetermined)",
+          "hangNotice": null,
+          "foreground": {
+            "pid": 13088,
+            "name": "workbench-tauri",
+            "title": "workbench-tauri"
+          }
+        },
+        {
+          "src": "http://preview.localhost/p21",
+          "verdict": "판정 불가 (undetermined)",
+          "hangNotice": null,
+          "foreground": {
+            "pid": 13088,
+            "name": "workbench-tauri",
+            "title": "workbench-tauri"
+          }
+        },
+        {
+          "verdict": "판정 불가 (undetermined)",
+          "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+          "foreground": {
+            "pid": 31852,
+            "name": "workbench-tauri-0.8.1-v081end",
+            "title": "workbench-tauri"
+          }
+        },
+        {
+          "verdict": "판정 불가 (undetermined)",
+          "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+          "foreground": {
+            "pid": 13088,
+            "name": "workbench-tauri",
+            "title": "workbench-tauri"
+          }
+        },
+        {
+          "verdict": "판정 불가 (undetermined)",
+          "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+          "foreground": {
+            "pid": 13088,
+            "name": "workbench-tauri",
+            "title": "workbench-tauri"
+          }
+        },
+        {
+          "verdict": "판정 불가 (undetermined)",
+          "hangNotice": "This HTML page is not responding. Its preview stops until the file or the theme changes.",
+          "foreground": {
+            "pid": 13088,
+            "name": "workbench-tauri",
+            "title": "workbench-tauri"
+          }
+        }
+      ],
+      "allSrflxZero": true,
+      "allHostZero": true,
+      "allCdpExternalZero": true,
+      "candidateEvidenceNote": "11 undetermined avenues (noFrame/hangNotice) excluded from candidate 0 evidence; verified from 1 determined avenues"
+    }
+  },
+  "c7_security_settings": {
+    "appInlineBlocked": {
+      "x": null,
+      "violation": "script-src-elem"
+    },
+    "appCsp": "default-src 'self' ipc: http://ipc.localhost; frame-src asset: http://asset.localhost preview: http://preview.localhost preview1: http://preview1.localhost preview2: http://preview2.localhost; style-src 'self' 'unsafe-inline' asset: http://asset.localhost; connect-src 'self' ipc: http://ipc.localhost; script-src 'self' 'wasm-unsafe-eval' 'sha256-+PV9MmDa2lbRLgXXDH2UFmqq0KUUinsANBCFfr63on0=' 'sha256-+eKkyKa6JAOymRfKUtizdAMHdK0zb0sRU9K58iWZl4M=' 'sha256-+i/vr/rGBVblbrX6stF3dg5zz9pM1+Y/O3t6rgXJdE8=' 'sha256-/ATmqCWg+Aq+byN8JYJS+uTUU2WjXP3OmPVDYK5J3+4=' 'sha256-/I8e/C1Uv8IVkpozQVVeD3mCAcUs1Uv9OahGcUnTIdU=' 'sha256-/g4FxLNEoID975/l7f+IfaZ4E1ziOD/N2GEDBFGYnjA=' 'sha256-/gzqo9BGuAcEy7HKYORIhR+D6RUPAhEa3UklVP98lNQ=' 'sha256-/zJJxd0AG1UQZI7TcdyQ+GH2mmW5Hw0LrRkTVAJVDIw=' 'sha256-0GKq87eH2R7/isIfYnzXb5IMmGzr9mSzP76kqlxjqvM=' 'sha256-0RdUgMkMTzLigVYmtk7l1NIOfu3Tfkx/63sPA8ZJasY=' 'sha256-0cczE03NHzX7C8rHeOdALBaq3PX42bJFIZCQK3SlyM4=' 'sha256-0mq8RnRrXSVElMvw1/LU9SWRbTD+JNoc0nGFymfGo90=' 'sha256-1IZ89xro3AIeK/GIEzNgGtvTKtA/KfNw3BMXgd1uAsM=' 'sha256-1aDxDx71Gpy8d3qjJjgkWs73QPOljx9wZas0wdh1QfY=' 'sha256-1dA1vE6JfKp192BnpSKITdvBxbn1u/zw+UtW+Sx14WQ=' 'sha256-1fzqpfmMyrv6+/LX0fvssw9ds9eO37K2NQNRrwrNn9E=' 'sha256-2+A2qHcZZX3MLsORP+tUKe1Q2/nv+f+bgSpjva8nRV0=' 'sha256-21tP2cxbdMnkof2rapf2Aj23qlb1PksupAETtBtdXYY=' 'sha256-29QdFY1ZOFCPumVDbnUXJzHG3WgnI9KxmVhBsMVP7fM=' 'sha256-29praaqYPT0OIpfJmKYalHIQkEO2CkE25Bvou6rBIB0=' 'sha256-2AWcR65BoOQTkqVJVpDRnOmyrsTHor1MibHKF5q3H2c=' 'sha256-2RIUoYJ3eSVbl8a2tg8iZ7DWfGfwQC+lZKEFgw+vJec=' 'sha256-2kdbYR1WFn34DRnpYomSyDCLXUTXNV389DtzudEMjsc=' 'sha256-2yY/CxHTEe7T67EPC0FlADr9WlmdO+0mHf+L33ABKxQ=' 'sha256-44O89e2nY6n2IJqDPQeemrRGrhaFJVWWzaEF9g8KtJQ=' 'sha256-4LE4+Z8pzkWMY8SRx2T+fqoR0y3mBsfYgjEnHsm20jE=' 'sha256-4MGM8kKg5kXYJWf09MQpJrYnFtcXr4sDTDe8JpJGtNE=' 'sha256-4TJMSKf+877BUWJxhMr1N8N+Am2XaBgQ7GmyXA+mtWE=' 'sha256-4VuXh1JODjlunW185x8CpMZN+3C+UWri+aMjwYBU16Q=' 'sha256-5UX+dm+E4MsPH1+NR/7ISdZf+CeZM9zhH6zJhScDH38=' 'sha256-5fELOLgY0PU0qj9BEH4Ct3Fwe9BqU/XaiJrcJtKBRIM=' 'sha256-6K6UZJO/5ElATWZIy+ABN/oGVEO2tQlGYG1VxFAEffY=' 'sha256-70BcXqozFsdUKPY+xpjjmZO9zC2jWNvH69NV0YkB9j8=' 'sha256-7lK/IYS62puUwD3iOBcnmwypuhA4HPkkETFcsES5vGQ=' 'sha256-B/Rl/Y+TWnxJHwaWmxYHaFJr+bfpr+Mpe9BDFi2N7ZQ=' 'sha256-BKIY0XHE6WlIA1ElQGBbOjL3l5vRf5yEj5dJnhO+6p0=' 'sha256-BUfo8GgeU6v761+Ey8JfWZZ09Qf4p7q0kQMEu1aJTlY=' 'sha256-BYJNkzCMkf8n4TVUqXeehdzVRoFkAYS6Lr5+uw9Ctec=' 'sha256-Biqy2/bu5nggQ1oymvyJ3mlARs+D25EfafqIoCdhFFM=' 'sha256-BsUYfBUUlvcxTh0mrO5EBCJ7vh6Y4F19IQkW/wyyo3w=' 'sha256-C6MKn5aH+zUHg9LQ/6P2uqBkJx4DWCihIYu8S6AF6TM=' 'sha256-CITumttATxIubQaI00bis3xFThLh9LrIh4JeLnIPFxs=' 'sha256-CdGpsewwrIrGUQObdzCjqqdCvuh7fEtJ99TwnQBWRoo=' 'sha256-CriAG7npRWkQx5HzI9WcjiKcAmOm5skKZyZ3Vb8WfPI=' 'sha256-DQe50FfNzJ1AXVh+1GdC4MPJ/yT8sI/rn3Cm8noUH/I=' 'sha256-Dw1RtL+oogN9uMsnxp0zFBik/H1Sh29tAuG18g63E7M=' 'sha256-Dwx/PkNdXtEzP5IOMNbsM5LyZtBqL2TrX5G+UR6laPc=' 'sha256-E+Pp/bCL7IZQvjlz7GrvC80tPryYLHal0FntDOEaMOY=' 'sha256-E65V3+i5Ar1+X25ZJzwCk+oiA+8PtZWwP78zS7/vDKo=' 'sha256-E6fmzcs93+IIxVSKMABykkRnaWtzMsjzwaL6SBJWxh4=' 'sha256-EeVr6vJSbnMEA20ntOCD7WjO1gBm+t7Q5oMRXaPfoJk=' 'sha256-ExgXEXZXlyfo4EEsLKGVmx9YJRnEweBc8Cw1pJaL2IM=' 'sha256-F05+mBBbAhOL7ptMYt/IoBmA2zlfnmyRbbmZwJERVWI=' 'sha256-FW+wr0US1BrO0f9o2NYgMRFUcrmbeUCVO+QPHQxzcJA=' 'sha256-FWUMs4JZXUmb6cAPGGHKQgJYaBk8uk7tt5+ZdE32Ieg=' 'sha256-FtKUG4gzB4ePiJnT7BjfCikphyb+zlxomwr26wiI/8k=' 'sha256-FxP+oGJgVB25rThvl2LMuAUeFNgE3VqMTQdxlv9A6dI=' 'sha256-GAPqxNmOu613iivNRV/POwSQ4jFnH0KgQ2qgboEGC60=' 'sha256-GJU/HBUbO/VMzePFg41se/MdTwsXLtwyhLa4bjaZDXY=' 'sha256-GJg+Ek69GGn1RuBVT5P/nf8Uq1p/1CD7xsBwPOLwvQY=' 'sha256-GS9z9t5EXHIcCuaM6gRYUllw2Ru6aXlyU/CTAxyclbA=' 'sha256-GeedWI6vrZm1V6srQ7TR+JjPAn3Jm4nYLAvkHNpmmos=' 'sha256-HgTEwLUk+xpRTIl6AiBTu71O0mzvGJ55g0u3s0L9+Ak=' 'sha256-HgTEwLUk+xpRTIl6AiBTu71O0mzvGJ55g0u3s0L9+Ak=' 'sha256-Hhz5TcKNgXq9Phrz1aFRJVRPcUdshQqc2r9tukHIFMg=' 'sha256-HnOKX/fh/W5OhB9M4/zNlotqkGpQMUj9nLZNrME1kIo=' 'sha256-ICZ1swq0KcxjtY8ho0PR6az1TI08CRw98ZKBawWcG/c=' 'sha256-IbPCpQHC0fIgr34pFwtCI/iLip7h38oXJEIx6NI6ZbM=' 'sha256-IlENt5v0JnRl+UMf9BYg1s3R83eBebBAKBnJ917btug=' 'sha256-JyIPb33K6DLYgQ3tMpR7FBQK4/PcfBPY0P8ze+uyhSU=' 'sha256-LHPl+CWlQlJJuGrQn0/pw2ex/dINOirkH1TU6c8ESFQ=' 'sha256-LNT6irmc3U5zl4ARuZC85kLp7GaLo8MWwJm0JyADY4c=' 'sha256-LvLF49wzzVRPO5x3Be0E87rs5cnGphnIC1lZtfBr0EE=' 'sha256-M66Fj7tESYndEnRh4CvoYnAeiVge2KBur5E4HwBcOZo=' 'sha256-MfOAPoZdPvb1jJrrBfAxe7EQkMkk1NXCe6ocJB7SYLI=' 'sha256-MfgwS1Z3M/HM1Vj4ONtIluPtM7XIVU8DFuR4VPsqhpg=' 'sha256-MgXib6WIuD2wA7H9LiqMH9IpXh005B3kA3TmV/LmA2s=' 'sha256-MpHlfJ4H1roocXoweNq/DnPsp9UzlvbS8z0Jf2jMmS4=' 'sha256-MsHwCrwhOC3EnefG5rWnZOeABdLGaV+tTs0Ry2rCH+g=' 'sha256-NFWkN0E0sQpBYzvFIYgn2Zrnj1RcsmmQIX5bUCUjjMQ=' 'sha256-NcTJWUtHViVTMZMNyfEXp2lQcEPVGSD9TtULxXqrZ1g=' 'sha256-Nvq4SS1hAkXFlOLLIGjtAZJDAxNgDD0bik5Q7eLciPc=' 'sha256-O3tyMzMZBAaKwmwHwBWV+7yH+LrZSMsOoltZI2wD3Jk=' 'sha256-OFRTFsaYHSdstYkIZtJNksytRNyPCUqNdFylF8112l8=' 'sha256-OFRTFsaYHSdstYkIZtJNksytRNyPCUqNdFylF8112l8=' 'sha256-OHuF8zRzFHDwQEgBXuM4AAcLxXKyEc8lmdiR42s29bU=' 'sha256-ONHMFKAUuA4k5pF2t5sU7MFs0AZCdYRcXakH42vzidg=' 'sha256-OWgivHwd2GBt47I+W8Lm7lJTeJMWkMRYfQkUh//gSyQ=' 'sha256-Oe4jzGQTqqqJGq/O5XFPa/nwPZOFo9tgOLFQEzx0RRo=' 'sha256-P54ER+2wSntYQKB7qun0tmbvZABhLtwGT/ECOxMXSAY=' 'sha256-PEzvt/3JfOm6TCOUsg2FOi7oJkpsMrNtYYcKsdZDsRE=' 'sha256-PEzwOFh8OjY7C08jYYnOcsKeoUMsb7D2slt5jLueECI=' 'sha256-PEzwOFh8OjY7C08jYYnOcsKeoUMsb7D2slt5jLueECI=' 'sha256-PEzwOFh8OjY7C08jYYnOcsKeoUMsb7D2slt5jLueECI=' 'sha256-PEzwOFh8OjY7C08jYYnOcsKeoUMsb7D2slt5jLueECI=' 'sha256-PEzwOFh8OjY7C08jYYnOcsKeoUMsb7D2slt5jLueECI=' 'sha256-PEzwOFh8OjY7C08jYYnOcsKeoUMsb7D2slt5jLueECI=' 'sha256-PEzwOFh8OjY7C08jYYnOcsKeoUMsb7D2slt5jLueECI=' 'sha256-PEzwOFh8OjY7C08jYYnOcsKeoUMsb7D2slt5jLueECI=' 'sha256-PEzwOFh8OjY7C08jYYnOcsKeoUMsb7D2slt5jLueECI=' 'sha256-PEzwOFh8OjY7C08jYYnOcsKeoUMsb7D2slt5jLueECI=' 'sha256-PEzwOFh8OjY7C08jYYnOcsKeoUMsb7D2slt5jLueECI=' 'sha256-PEzwOFh8OjY7C08jYYnOcsKeoUMsb7D2slt5jLueECI=' 'sha256-PdAWxzwxH46uz2yzmD0FZDsE3GE479dzkgo4VO8eWjI=' 'sha256-Q82p2vpxeJTeXAezljGdCdhwTFNPHKTFKXNuSwO/JrU=' 'sha256-QpmjSwceXboQhtlAwsgoPodP7e1eg6f+AZLz9o3UL6k=' 'sha256-RLSlypzZZFC/Mb91kbaGv7uaqJGHhxoKzOvuGtC5+Hw=' 'sha256-S1JJUpUw7YEey/8Is2bk+4OCd3Jhte4/P4zBrcttsPc=' 'sha256-SYDOsiNU1Umo2JSG0sItMC1SYx5nmrdphhjUmQ/UFUw=' 'sha256-SbMoDa4FYcMz1g/EHh4F0wMuHDWfz7k0hJBf3TmNBS8=' 'sha256-TimJCRKpYSCVhLezadUJrLeabaaQAczp3bvlU8Pund4=' 'sha256-Tpauenhy8ntk/AcdPmPQ4Hrcokm/okotoh8q6omcfCQ=' 'sha256-TxAGgJ9ViIsTwagBnq7eZlg4DCLHPM2V/pGgXdgwFgw=' 'sha256-UfIfFRpGKEfeaHv5P58uKX4sCFz5addzi6RXm1BGWcw=' 'sha256-V+eI4lj7MB0Zn+7booEpIe7sWwetQyZcJGc90jeEZXw=' 'sha256-V+qA0aG41o1Bdzrn0mOnKvMKrput6ephxlV+tAReevo=' 'sha256-V0fbUWD3BXL7x9rEOncWPtM2VfiCd76+59UObuB4DgM=' 'sha256-V2MX9uMgf+mqNDTk7RS1TnPxRY6I/bmplhAl/beGfEI=' 'sha256-VdwlFXiG9y8FgawiTgZjsscoywFAJbRzTJ/zanouBmY=' 'sha256-W1HhBmHnNxk9A8TUx2EG9XBs6NfGmkKyFVhPrcTyeCs=' 'sha256-WyV1OriKFpAuKEHYWYJfkhJ/BC/7ni0BIH/fz5lEh1M=' 'sha256-X2/mE5ZMozjsssUuT3GHrnd0UpzsJje5I1ZL/4o9o+w=' 'sha256-XJqp8blRvKOaNiQ+wFVyV01D6EcZ2A4sNXD5xqEwhWg=' 'sha256-XLuaXEYd481kzMcoOkj/M8P/mtSYxA5KUhOxPJG7ACY=' 'sha256-Y0jsX7+pHzDxYowrrdF93SaDdb7Pq2R2NSoxbXKixKE=' 'sha256-YBUTcxZ6BRxc1++8ALii5F/HEPICqIQtTheUIwEe9ow=' 'sha256-YJ+3DhV8j/6ogyurgwj/Mvk05S3aMOirb1f++lcaGpg=' 'sha256-YiHWwk/QxSGzy0TEgvbfN2IAtey41mXe++N7wf3QdQs=' 'sha256-YuKNpn2FdNbdw9yRR5JBLYV5kIgmYy9iacOdivV2Gvo=' 'sha256-Z13Wy67qO/CRumr7OXz0w96/a2bMe+5tEV2H+oMeBfw=' 'sha256-ZPFsZ1IuWolXJ6skT2ni/nCJwH6Ftlod980+XJfvI4c=' 'sha256-Zm6e9Hr4BcZZZBs/FmtRSYTTYomHO+hfP+IM5a8szwQ=' 'sha256-ZzJwofAv7Gj34IHEyU0XRuH0f5UjJsdcdH41HEX3xfE=' 'sha256-a/nNJ7t5RjWlDap/SBB37NHDMVGu9N6jpP9DkU/0IO8=' 'sha256-aEUpeJOPWSa0Jea/dWCAe4d+LNbnCRP5P8YeaZ9kM5g=' 'sha256-alIqvsATIwiatcpVfUYDFEQuqpJZUeU9lRs0s9LzdVg=' 'sha256-avzoHVTxhIIPrV7QyfotxCrMbgzQ/Y+8sFaNr8LMerc=' 'sha256-b16r0caATmANeL9jntgIiJprTecSb6OVhFtdWuje/nk=' 'sha256-b1WoyloiUs8vCMCrhHm/PgWntvgXv+ZAYLIY4R5IQ40=' 'sha256-b1mpPZVZzCCZcUUUZoztTu1VqXHOlzGTM5w5vpMn7i8=' 'sha256-bJEKpCUqUXzr7HBGBBtS+/JiUXk67L+giH5SdM4/rHc=' 'sha256-cAMD9Hb6tkZITPWrgzck5PYEhUL49kJ1J+0CP+r7a9k=' 'sha256-cPHsQOc4SD3IDOcLJo0aCgAczX9swuNsnM1CAuXsK0w=' 'sha256-cZGTECmFgEOU6JJVMSEjdz1rm4L0cMm6FpNSPDhNxXk=' 'sha256-dl8rjIP0eBBfEEta9+xDMsdXFodr3uulG7kKMK21u/E=' 'sha256-e0CDUdgBq378O7c3353nForn33AP2bdkUs0cATIhAiM=' 'sha256-eNOeRId/Wl4MRki3Ebuq13IaJvbVIb6dtsszPpquZxI=' 'sha256-emwmGFtQdDvlGNt0yH8cBKGSC1mlt6YpkHy2hnfEWUQ=' 'sha256-eo/CFzEJUMVp5nSEpqd3nOZpN1TmILEVDQXS/MMyF6E=' 'sha256-eqM/6nogQJeRG+YY2451C8a/wDVvxZWEJWKzhNKgMpU=' 'sha256-f3v3nSoGH54vChkDOEQN0oRBT6agrA7J2mtKFJmEgZU=' 'sha256-fE1C71xfz6Fn0UJ1qqfJ7rxbRBkeLgsbXDugmVRSQYM=' 'sha256-fryFyeWvn566SZUfU6a/CIKtRs5Z5MtX6E82b444glw=' 'sha256-gFErgemc93RFuccex+tRc5jZzcmsU8qu8q6VQFeirjc=' 'sha256-iasypP1l4J1C2tUvrYaE5JgO2JvpvFGiivQHlmpH5w4=' 'sha256-jY53nMGl9PbEKzUcenPYRHVS5nDdKRiRz7NZl73iFwM=' 'sha256-jdm89aqxpDdXjX/Abpk0h9Z7MNgdb35n6sSXsMAJqGc=' 'sha256-kAs8sKQ1q2/wl3Y2dNJyw9+Zlc856NwjsVcEqZTRNLg=' 'sha256-kGbS8ZHmu7wEE4fPyGjsMRPRWWKLV480n2fkfxxh6+4=' 'sha256-kHYZI5c+3xfUZjyNfkATbaGGPj9FzS9TnHZemMTEesU=' 'sha256-kr8Ea3FDDDf3xHvPSUX88G/HZPw0B1tHg6zIbiaV0Zg=' 'sha256-l+LRJUjuMUdFUmiUM3ht+c0Jw0wQ3W9GJgvnVkQaNZs=' 'sha256-lJDNe0JjA0BrYUDToN1e3CL6tbus9HTyIJP9WoSNAgY=' 'sha256-lLEQAKVQN2XnyQL7u0f6oI8VcVIlWSdWyPVXU0VGVz8=' 'sha256-lmvatatfEvzb6CzT+WtBjHCpeVPd8awwE5trkF9YJIs=' 'sha256-nuRQZkSVjiSPEndvy7b7tBQFQDFaH5JNKUthMXL2+LY=' 'sha256-nvLcPqwc/Ox5rMni0htUazAHSC9vZ5U0kudnEKuyunE=' 'sha256-o4fiMA9wt1mgP8K2aXG5up99Kpwi6aRitYz7KgUhCz0=' 'sha256-oD+PRWSTmbpCZcwygn5+nHYaMpJIo4xyHQJw+31KFBE=' 'sha256-oDOEBE/GPrHKA99GwHyxShwXxv/KfX997QVXbq2a4oA=' 'sha256-oZSv5T5w1xCui13bjHzpa5rYz/7TPHxC3pTziDsTxhE=' 'sha256-ovLnWKSllKsRYFwxZjxDpKwxrw+7VoNEq/PE0EUPeLQ=' 'sha256-p042afNWrQ1nzFIy8eD2L/RUT9uOcFfPmlABoOpvwsw=' 'sha256-pM+g5TB1BxOMXUutf/Zx8F7y53XDcHMcEsz/BESR9RE=' 'sha256-pcq5AU4N5rOwIDKBQmnFYGcMpQBWC0+YhLCOZ7EXleM=' 'sha256-q5P5lXNHbX6iHzuVC5PkHPmwDBqoeRbt6QxVTwklhg8=' 'sha256-qIIY3+SYUvQWPm9n2UbpOO1yeAzte/LvFzqtcUNEk6Q=' 'sha256-qLleShjcxuRFGB7FW4dUl9jErnrfGYXiy9JM7t2VLB8=' 'sha256-qPiXn4FCGLpMc+6Qe1+nr/EC+kUP+lUBz1F93AT6+OM=' 'sha256-qYTjsBFadcTtkcbxsmJmqQ1QbHMa6zf4ycMhzNVhIpY=' 'sha256-qy2z9Y0EFDdRJFV5+/ZXRz9QENnKK6L1fg4+/Fex3jM=' 'sha256-r22uiKsquSh6zpgBEFfxy8RKzEY5dkGTJ2su/oXG8ds=' 'sha256-sBBA83k6H4svCW4SEwp4JrI84zZlwHiAk2pwr/a0Pt8=' 'sha256-skIYwZy+5P9/AOt3eQbf7Mmg5Ft4YiEcRKCxdkiCv2g=' 'sha256-srSzJnjSD+8AfpWgTSShbKQ0n9Xd+8yIzBCYTERuhMg=' 'sha256-tH6pvCrCqaK/YI3dcbbn2XFmF64UqsFICkgi8owqA3Y=' 'sha256-tb9kS5SnxB8YJ5Z5Bdq0R7Xdew9Ov5K9zQvs/BuyMLs=' 'sha256-teRfzbMWk7bIKRDtFCVuIexrVaKRLppfZjWnlYE0sAI=' 'sha256-uV5e2ulk4Gwdjq+TfzZy/Xo8VZ2UCRHSejo5w+2YWos=' 'sha256-vRYptDC+kA6TqDHw9xakckh0Ysk8zfAWbkiajcJ9hAA=' 'sha256-vVu8Kk8uv3TvmXVgaf9un/n6bQhEhv39Ip9SIFp4XM0=' 'sha256-wBDK99OrG+lKG7oHMu5LkZ+52dEVgVjsFllsPwWEzYY=' 'sha256-waBkk4AuyrDYJIdcDcCwVuBMwZVRTvN3KWeppOD4qnA=' 'sha256-weVTIKkfYpkHiAUDgdhzggCQp5qpucuM0GobVJ/SGk4=' 'sha256-wjrctymhaSB8Gr1GlyoYtUOdlCPCOw0a/cNY+qLWHDA=' 'sha256-wxYAOnj5J3twf5iUBDM8W0VzjzMH95zg/Qmzr2uDpLc=' 'sha256-xW7T9evbqb/ygYlHjnvq2RrFWrGEaddjZlSGBnwu4vg=' 'sha256-xn05+yGsStwoLiG7EGzYs1XV8O+HRN0OFgWB1FSB3KU=' 'sha256-ymcUHIsbjyC0JZFSEjnG8NQ4SktpO54PQmg3F4W9H6U=' 'sha256-yzb8aEvZw3vygKrmNH9W0vEdK311UFJbbWoUV/EcusU=' 'sha256-z40HhbbjyE8tdUeoQFmMdZ76QN9hfzGDHp8JsaBpCWo=' 'sha256-z40HhbbjyE8tdUeoQFmMdZ76QN9hfzGDHp8JsaBpCWo=' 'sha256-zXNT6yzCAbVoUBjpFM1+egzZkls7esNgfQI6gTVYYnw=' 'sha256-zufJj5hECx+/BUi3VtQhCXZCx4RUe4NVFfESS5zdQ1E=' 'sha256-zzSHkqV9mL5shssOT54SOVPiSGdy1f/AwKX5Zlqpd38='; img-src 'self' data: asset: http://asset.localhost",
+    "frame": {
+      "src": "http://preview1.localhost/p31",
+      "sandbox": "allow-scripts",
+      "csp": "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'; webrtc 'block'",
+      "rect": {
+        "x": 440,
+        "y": 65,
+        "w": 1000,
+        "h": 756
+      }
+    },
+    "frameCspHeader": "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost; style-src 'unsafe-inline' asset: http://asset.localhost; img-src data: blob: asset: http://asset.localhost; font-src data: asset: http://asset.localhost; media-src asset: http://asset.localhost; connect-src 'none'; form-action 'none'; base-uri 'none'; webrtc 'block'"
+  },
+  "c8_plain_theme_and_tab": {
+    "frameSrc": "http://preview.localhost/p32",
+    "oneDark": {
+      "frame": {
+        "error": "noFrame: http://preview.localhost/p32"
+      },
+      "iframeBg": null
+    },
+    "oneLight": {
+      "frame": {
+        "error": "noFrame: http://preview.localhost/p32"
+      },
+      "iframeBg": "rgb(250, 250, 250)"
+    },
+    "tabNavigation": [
+      {
+        "main": "IFRAME",
+        "frame": {
+          "error": "noFrame: http://preview.localhost/p32"
+        }
+      },
+      {
+        "main": "BUTTON",
+        "frame": {
+          "error": "noFrame: http://preview.localhost/p32"
+        }
+      },
+      {
+        "main": "BUTTON",
+        "frame": {
+          "error": "noFrame: http://preview.localhost/p32"
+        }
+      },
+      {
+        "main": "BUTTON",
+        "frame": {
+          "error": "noFrame: http://preview.localhost/p32"
+        }
+      }
+    ]
+  }
+}

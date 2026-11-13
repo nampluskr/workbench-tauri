@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>webrtc-direct</title>
+</head>
+<body>
+  <pre id="o"></pre>
+  <script>
+    const o = document.getElementById("o");
+    function out(s) { o.textContent += s + "\n"; }
+    (function(W, tag) {
+      try {
+        const C = W.RTCPeerConnection || W.webkitRTCPeerConnection;
+        if (!C) { out(tag + " | none | " + typeof C); return; }
+        const pc = new C({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }] });
+        let n = 0;
+        pc.onicecandidate = (e) => {
+          if (e.candidate) {
+            n++;
+            out(tag + " | OPEN cand | " + e.candidate.candidate.split(" ").slice(4, 8).join(" "));
+          }
+        };
+        pc.createDataChannel("x");
+        pc.createOffer()
+          .then((offer) => pc.setLocalDescription(offer))
+          .then(() => out(tag + " | offer set"), (err) => out(tag + " | offer err | " + err));
+      } catch (e) {
+        out(tag + " | err | " + e);
+      }
+    })(window, "direct");
+  </script>
+</body>
+</html>

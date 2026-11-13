@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>webrtc-worker</title>
+</head>
+<body>
+  <pre id="o"></pre>
+  <script>
+    const o = document.getElementById("o");
+    function out(s) { o.textContent += s + "\n"; }
+    try {
+      const w = new Worker(URL.createObjectURL(new Blob(["postMessage(typeof RTCPeerConnection)"])));
+      w.onmessage = (e) => out("worker blob | " + e.data);
+      w.onerror = (e) => out("worker blob | onerror");
+    } catch (e) {
+      out("worker blob | err | " + e);
+    }
+    try {
+      const w2 = new Worker("data:application/javascript," + encodeURIComponent("postMessage(typeof RTCPeerConnection)"));
+      w2.onmessage = (e) => out("worker data | " + e.data);
+      w2.onerror = (e) => out("worker data | onerror");
+    } catch (e) {
+      out("worker data | err | " + e);
+    }
+  </script>
+</body>
+</html>

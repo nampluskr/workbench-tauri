@@ -1,0 +1,86 @@
+{
+ "lan": "100.87.213.81",
+ "out": {
+  "webrtc-direct-lan": {
+   "src": "http://preview.localhost/p1",
+   "pong": 8,
+   "notice": false,
+   "focus": true,
+   "vis": "visible",
+   "text": "direct | none | undefined\n",
+   "stunHits": 0
+  },
+  "webrtc-blank-lan": {
+   "src": "http://preview.localhost/p2",
+   "pong": 6,
+   "notice": false,
+   "focus": true,
+   "vis": "visible",
+   "text": "blank | err | SecurityError: Failed to read a named property 'RTCPeerConnection' from 'Window': Blocked a frame with origin \"null\" from accessing a cross-origin frame.\n",
+   "stunHits": 0
+  },
+  "webrtc-srcdoc-lan": {
+   "src": "http://preview.localhost/p3",
+   "pong": 8,
+   "notice": false,
+   "focus": true,
+   "vis": "visible",
+   "text": "srcdoc | srcdoc pc created\n",
+   "stunHits": 0
+  },
+  "webrtc-open-lan": {
+   "src": "http://preview.localhost/p4",
+   "pong": 8,
+   "notice": false,
+   "focus": true,
+   "vis": "visible",
+   "text": "open | null\n",
+   "stunHits": 0
+  },
+  "webrtc-worker-lan": {
+   "src": "http://preview.localhost/p5",
+   "pong": 8,
+   "notice": false,
+   "focus": true,
+   "vis": "visible",
+   "text": "worker blob | onerror\nworker data | onerror\n",
+   "stunHits": 0
+  },
+  "webrtc-proto-lan": {
+   "src": "http://preview.localhost/p6",
+   "pong": 2,
+   "notice": false,
+   "focus": true,
+   "vis": "visible",
+   "text": "proto | globals | RTCTrackEvent,RTCStatsReport,RTCSessionDescription,RTCSctpTransport,RTCRtpTransceiver,RTCRtpSender,RTCRtpReceiver,RTCPeerConnectionIceEvent,RTCPeerConnectionIceErrorEvent,RTCIceTransport,RTCIceCandidate,RTCErrorEvent,RTCError,RTCEncodedVideoFrame,RTCEncodedAudioFrame,RTCDtlsTransport,RTCDataChannelEvent,RTCDTMFToneChangeEvent,RTCDTMFSender,RTCCertificate,RTCDataChannel,RTCRtpScriptTransform\nproto | hits | 0\n",
+   "stunHits": 0
+  },
+  "webrtc-srcdoc": {
+   "src": "http://preview.localhost/p7",
+   "pong": 8,
+   "notice": false,
+   "focus": true,
+   "vis": "visible",
+   "text": "srcdoc | srcdoc pc created\n",
+   "stunHits": 0
+  },
+  "links": {
+   "src": "http://preview.localhost/p7",
+   "pong": 10,
+   "notice": false,
+   "focus": true,
+   "vis": "visible",
+   "text": "srcdoc | srcdoc pc created\n",
+   "stunHits": 0
+  },
+  "beacon": {
+   "src": "http://preview.localhost/p8",
+   "pong": 8,
+   "notice": false,
+   "focus": true,
+   "vis": "visible",
+   "text": "Beacon and EventSource Leak Test\nsendBeacon returned: true\nEventSource error (blocked)",
+   "stunHits": 0
+  }
+ }
+}

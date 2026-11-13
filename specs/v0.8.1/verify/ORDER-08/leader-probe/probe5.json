@@ -1,0 +1,46 @@
+{
+ "types": "16020 workbench-tauri.exe  \r\n33500 msedgewebview2.exe  \r\n32864 msedgewebview2.exe  \r\n32984 msedgewebview2.exe  \r\n33028 msedgewebview2.exe  \r\n1048 msedgewebview2.exe  \r\n45316 msedgewebview2.exe  \r\n27700 msedgewebview2.exe",
+ "paths": {
+  "none": {
+   "host": "preview1",
+   "text": "baseline\n || function || delete window.RTCPeerConnection;delete window.webkitRTCPeerConnection; / const o=document.getElementById(\"o\");function out(s){o.textContent+=s+String.fromCharCode(10)};out(\"baseline\")",
+   "newUdp": []
+  },
+  "direct": {
+   "host": "preview2",
+   "text": "direct | none | undefined\n || function || delete window.RTCPeerConnection;delete window.webkitRTCPeerConnection; / const o=document.getElementById(\"o\");function out(s){o.textContent+=s+String.fromCharCode(10)};(function(W,tag){try{const C=W.RTCPeerConnection||W.webkitRTCPeerConnection;if(!C){out(tag+\" | none | \"+typeof C);return}const pc=new C({iceServers:[{urls:\"stun:stun.l.google.com:19302\"}]});let n=0;pc.onicecandidate=e=>{if(e.candida",
+   "newUdp": []
+  },
+  "blank": {
+   "host": "preview",
+   "text": "blank | err | SecurityError: Failed to read a named property 'RTCPeerConnection' from 'Window': Blocked a frame with origin \"null\" from accessing a cross-origin frame.\n || function || delete window.RTCPeerConnection;delete window.webkitRTCPeerConnection; / const o=document.getElementById(\"o\");function out(s){o.textContent+=s+String.fromCharCode(10)};const f=document.createElement(\"iframe\");document.body.append(f);try{(function(W,tag){try{const C=W.RTCPeerConnection||W.webkitRTCPeerConnection;if(!C){out(tag+\" | none | \"+typeof C);return}const pc=new C({iceServers:[{urls:\"stun:st",
+   "newUdp": []
+  },
+  "srcdoc": {
+   "host": "preview1",
+   "text": "srcdoc | srcdoc pc created\nsrcdoc | OPEN cand | faec0cd8-bfb7-43eb-bee0-efb01da1a1ba.local 56739 typ host\nsrcdoc | OPEN cand | 182.220.68.125 56739 typ srflx\n || function || delete window.RTCPeerConnection;delete window.webkitRTCPeerConnection; / const o=document.getElementById(\"o\");function out(s){o.textContent+=s+String.fromCharCode(10)};const f=document.createElement(\"iframe\");f.srcdoc='<script>try{const pc=new RTCPeerConnection({iceServers:[{urls:\"stun:stun.l.google.com:19302\"}]});pc.onicecandidate=e=>{if(e.candidate)parent.postMessage({c:e.candidate.candidate},\"*",
+   "newUdp": [
+    "33028::::56740",
+    "33028:0.0.0.0:56739"
+   ]
+  },
+  "open": {
+   "host": "preview2",
+   "text": "open | null\n || function || delete window.RTCPeerConnection;delete window.webkitRTCPeerConnection; / const o=document.getElementById(\"o\");function out(s){o.textContent+=s+String.fromCharCode(10)};try{const w=window.open(\"about:blank\");out(\"open | \"+(w===null?\"null\":\"window\"));if(w){(function(W,tag){try{const C=W.RTCPeerConnection||W.webkitRTCPeerConnection;if(!C){out(tag+\" | none | \"+typeof C);return}const pc=new C({iceServe",
+   "newUdp": []
+  },
+  "worker": {
+   "host": "preview",
+   "text": "worker | onerror\n || function || delete window.RTCPeerConnection;delete window.webkitRTCPeerConnection; / const o=document.getElementById(\"o\");function out(s){o.textContent+=s+String.fromCharCode(10)};try{const w=new Worker(URL.createObjectURL(new Blob([\"postMessage(typeof RTCPeerConnection)\"])));w.onmessage=e=>out(\"worker | \"+e.data);w.onerror=e=>out(\"worker | onerror\")}catch(e){out(\"worker | err | \"+e)}",
+   "newUdp": []
+  },
+  "proto": {
+   "host": "preview1",
+   "text": "proto | globals | RTCTrackEvent,RTCStatsReport,RTCSessionDescription,RTCSctpTransport,RTCRtpTransceiver,RTCRtpSender,RTCRtpReceiver,RTCPeerConnectionIceEvent,RTCPeerConnectionIceErrorEvent,RTCIceTransport,RTCIceCandidate,RTCErrorEvent,RTCError,RTCEncodedVideoFrame,RTCEncodedAudioFrame,RTCDtlsTransport,RTCDataChannelEvent,RTCDTMFToneChangeEvent,RTCDTMFSender,RTCCertificate,RTCDataChannel,RTCRtpScriptTransform\nproto | hits | 0\n || function || delete window.RTCPeerConnection;delete window.webkitRTCPeerConnection; / const o=document.getElementById(\"o\");function out(s){o.textContent+=s+String.fromCharCode(10)};const names=Object.getOwnPropertyNames(window).filter(n=>/^RTC|^webkitRTC/.test(n));out(\"proto | globals | \"+names.join(\",\"));let hit=0;for(const n of names){try{let p=window[n]&&window[n].prototype;while(p){const c=p.constructor;if",
+   "newUdp": [
+    "33028::::5353"
+   ]
+  }
+ },
+ "typesDuring": "16020 workbench-tauri.exe  \r\n33500 msedgewebview2.exe  \r\n32864 msedgewebview2.exe  \r\n32984 msedgewebview2.exe  \r\n33028 msedgewebview2.exe  \r\n1048 msedgewebview2.exe  \r\n45316 msedgewebview2.exe  \r\n42556 msedgewebview2.exe  \r\n32092 msedgewebview2.exe"
+}

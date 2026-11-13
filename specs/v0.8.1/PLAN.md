@@ -109,3 +109,29 @@
 | ORDER-07-R1 | C-13 재측정 — tauri-leader. 무한 루프 뒤 새 HTML 미리보기가 빈 화면 → [BLOCKED] #8 | I-7 |
 | K-07d | `docs/BUILD.md` 7절 알려진 제약에 무한 루프 한계 한 줄 | I-7 |
 | W-09 | PROGRESS(ORDER-07 마무리)·PLAN(이 표) | ORDER-07 |
+
+### Phase 8 작업 카드
+
+| 카드 | 할 일 | core 항목 |
+|---|---|---|
+| W-11 | checker 모델 글(`HERDR-SETUP.md`·루트 `AGENTS.md`)을 agy `gemini-3.8-flash-high`로 맞춤(core ORDER-08 3.3, 커밋 `2f6b7ba`) | ORDER-08 3.3 |
+| K-08a | 프레임 CSP에 `webrtc 'block'` | I-15 |
+| C-14 | 측정 먼저 스크립트(`verify/ORDER-08/measure-host.mjs`): 호스트별 렌더러 프로세스, 루프 뒤 CPU, frame-src | I-14 |
+| C-14-R1 | 1회 실행 무효 고치기(CSP 우회 뒤 다시 불러오기, 후보 A·B 루프 측정) | I-14 |
+| K-08p | 측정용 시제품: 같은 처리기로 scheme `preview1` 하나 더, 앱 `frame-src`에 `preview1`만 | I-14 |
+| C-14-R2 | 후보 A·B를 빼고 C·D(`preview1`)를 CSP 우회 없이 재는 스크립트 | I-14 |
+| K-08b | 1초 ping·5초 pong 없음 → 프레임 빼고 문단 알림, 멈춘 호스트 20초 피함, 호스트 `preview`/`preview1` | I-14 |
+| C-15 | V3 스크립트(`measure-v3.mjs`)와 유출 시험 HTML(webrtc·links·beacon) | I-14 · I-15 |
+| K-08b-R1 | 호스트 셋: 보통 `preview`·`preview1`, 멈춘 적 있는 미리보기는 `preview2` 전용(피함 중이면 미룸) | I-14 |
+| C-15-R1 | 1회차 판정 불가 항목 고치기(프레임 target, 앱 트리 네트워크, 루프 렌더러 CPU, 앱 CSP, 프레임 호스트, c6 전 대기) | I-14 · I-15 |
+| K-08c | 프레임 머리 스크립트에서 `RTCPeerConnection`·`webkitRTCPeerConnection` 지움(WebView2가 CSP `webrtc`를 지키지 않음) | I-15 |
+| C-15-R2 | c6 거짓 알림 원인 제거(콘솔 창 숨김, 전경 확인, 프레임 값 먼저), `webrtc-escape.html` | I-14 · I-15 |
+| C-15-R3 | WebRTC 되살리기 길 시험(about:blank·srcdoc·window.open·Worker·프로토타입 체인) | I-15 |
+| K-08d | WebView2 브라우저 인자로 WebRTC 비프록시 UDP 끄기(main·settings 창 같은 값, wry 기본 인자 함께) | I-15 |
+| C-15-R4 | 4회차 무효 고치기(pane 정리, 프레임 값만, fixedRedraw), 길마다 시험 HTML 하나 | I-14 · I-15 |
+| K-08d-R1 | 인자 이름을 `--webrtc-ip-handling-policy=disable_non_proxied_udp`로(`--force-` 형은 효과 없음) | I-15 |
+| C-15-R5 | c6에 로컬 STUN 수신기(`0.0.0.0:3478`)와 LAN STUN판 시험 HTML | I-15 |
+| K-08e | 앱 창에 포커스가 없으면 ping을 멈춤(뒤 창 거짓 알림) | I-14 |
+| C-15-R6 | 5회차 남은 무효 항목(c6 전경·판정 불가 분리, c2 splitPane, c8), 뒤 창 시험 | I-14 · I-15 |
+| C-16 | ORDER-08 코드 리뷰·전체 검증(커밋 직전) — tauri-checker | I-14 · I-15 |
+| W-12 | PROGRESS(ORDER-08 기록)·PLAN(이 표) | ORDER-08 |

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Beacon and EventSource Leak Test</title>
+</head>
+<body>
+  <h1>Beacon and EventSource Leak Test</h1>
+  <div id="beacon-result">testing</div>
+  <div id="eventsource-result">testing</div>
+  <script>
+    (() => {
+      const bEl = document.getElementById("beacon-result");
+      const esEl = document.getElementById("eventsource-result");
+
+      // 1. sendBeacon
+      try {
+        if (typeof navigator.sendBeacon === "function") {
+          const res = navigator.sendBeacon("https://sendbeacon-leak-test.example.com/beacon", "test-data");
+          bEl.textContent = "sendBeacon returned: " + res;
+        } else {
+          bEl.textContent = "sendBeacon not supported";
+        }
+      } catch (e) {
+        bEl.textContent = "sendBeacon exception: " + e.message;
+      }
+
+      // 2. EventSource
+      try {
+        if (typeof EventSource !== "undefined") {
+          const es = new EventSource("https://eventsource-leak-test.example.com/events");
+          es.onopen = () => { esEl.textContent = "EventSource connected"; es.close(); };
+          es.onerror = (e) => { esEl.textContent = "EventSource error (blocked)"; es.close(); };
+        } else {
+          esEl.textContent = "EventSource not supported";
+        }
+      } catch (e) {
+        esEl.textContent = "EventSource exception: " + e.message;
+      }
+    })();
+  </script>
+</body>
+</html>

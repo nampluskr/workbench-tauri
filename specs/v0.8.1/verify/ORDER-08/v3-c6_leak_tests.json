@@ -1,0 +1,86 @@
+{
+  "exe": "debug",
+  "appPid": 42120,
+  "initialAppTreePids": [
+    42120,
+    36784,
+    21060,
+    38920,
+    45416,
+    29832,
+    43720
+  ],
+  "c6_leak_tests": {
+    "webrtc": {
+      "frameSrc": "http://preview.localhost/p1",
+      "status": "ICE Gathering Complete",
+      "candidates": "candidate:427662365 1 udp 2113937151 a46020e1-05ca-4ddd-9e53-4157ee293f88.local 63355 typ host generation 0 ufrag D/sC network-cost 999\ncandidate:3968612670 1 udp 1677729535 182.220.68.125 63355 typ srflx raddr 0.0.0.0 rport 0 generation 0 ufrag D/sC network-cost 999",
+      "errors": "ICE Error: 701 STUN host lookup received error. (stun:stun.l.google.com:19302)",
+      "cdpExternalRequests": [],
+      "appTreeNewTcpConnections": [],
+      "appTreeNewUdpEndpoints": [
+        {
+          "OwningProcess": 45416,
+          "LocalAddress": "::",
+          "LocalPort": 63356
+        },
+        {
+          "OwningProcess": 45416,
+          "LocalAddress": "0.0.0.0",
+          "LocalPort": 63355
+        }
+      ],
+      "otherAppsNewTcpCount": 0
+    },
+    "links": {
+      "frameSrc": "http://preview.localhost/p2",
+      "created": [
+        "Created link rel=dns-prefetch href=https://dns-leak-test.example.com",
+        "Created link rel=preconnect href=https://preconnect-leak-test.example.com",
+        "Created link rel=prefetch href=https://prefetch-leak-test.example.com/asset.js",
+        "Created link rel=preload href=https://preload-leak-test.example.com/style.css"
+      ],
+      "errors": [
+        "Error loading link rel=prefetch",
+        "Error loading link rel=preload"
+      ],
+      "cdpExternalRequests": [],
+      "appTreeNewTcpConnections": [
+        {
+          "OwningProcess": 45416,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 5719,
+          "RemoteAddress": "199.232.162.172",
+          "RemotePort": 80,
+          "State": 5
+        },
+        {
+          "OwningProcess": 45416,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 3171,
+          "RemoteAddress": "150.171.27.11",
+          "RemotePort": 443,
+          "State": 5
+        }
+      ],
+      "otherAppsNewTcpCount": 2
+    },
+    "beacon": {
+      "frameSrc": "http://preview.localhost/p3",
+      "beaconResult": "sendBeacon returned: true",
+      "eventsourceResult": "EventSource error (blocked)",
+      "cdpExternalRequests": [],
+      "appTreeNewTcpConnections": [
+        {
+          "OwningProcess": 45416,
+          "LocalAddress": "192.168.219.101",
+          "LocalPort": 5016,
+          "RemoteAddress": "150.171.27.11",
+          "RemotePort": 443,
+          "State": 5
+        }
+      ],
+      "otherAppsNewTcpCount": 0
+    }
+  }
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>webrtc-proto</title>
+</head>
+<body>
+  <pre id="o"></pre>
+  <script>
+    const o = document.getElementById("o");
+    function out(s) { o.textContent += s + "\n"; }
+    const names = Object.getOwnPropertyNames(window).filter((n) => /^RTC|^webkitRTC/.test(n));
+    out("proto | globals | " + names.join(","));
+    let hit = 0;
+    for (const n of names) {
+      try {
+        let p = window[n] && window[n].prototype;
+        while (p) {
+          const c = p.constructor;
+          if (c && (c.name === "RTCPeerConnection" || c.name === "webkitRTCPeerConnection")) {
+            hit++;
+            out("proto | OPEN | " + n + " -> " + c.name);
+          }
+          p = Object.getPrototypeOf(p);
+        }
+      } catch (e) {}
+    }
+    out("proto | hits | " + hit);
+  </script>
+</body>
+</html>

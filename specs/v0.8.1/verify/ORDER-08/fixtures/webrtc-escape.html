@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>WebRTC Escape Avenues Test</title>
+</head>
+<body>
+  <h1>WebRTC Escape Avenues Test</h1>
+  <div id="status">Running tests...</div>
+  <h3>Escape Avenues Result (#r):</h3>
+  <pre id="r"></pre>
+  <h3>Gathered ICE Candidates:</h3>
+  <pre id="candidates"></pre>
+  <h3>Errors:</h3>
+  <pre id="errors"></pre>
+
+  <script>
+    (async () => {
+      const rows = [];
+      const allCandidates = [];
+      const errors = [];
+      const statusEl = document.getElementById("status");
+      const rEl = document.getElementById("r");
+      const candEl = document.getElementById("candidates");
+      const errEl = document.getElementById("errors");
+
+      function record(way, status, detail) {
+        const line = `${way} | ${status} | ${detail}`;
+        rows.push(line);
+        rEl.textContent = rows.join("\n");
+      }
+
+      // ----------------------------------------------------------------------
+      // Avenue 1: Child about:blank iframe contentWindow
+      // ----------------------------------------------------------------------
+      try {
+        const f = document.createElement("iframe");
+        f.src = "about:blank";
+        document.body.appendChild(f);
+        const win = f.contentWindow;
+
+        if (!win) {
+          record("child about:blank", "BLOCKED", "contentWindow is null");
+        } else {
+          let rtc = null;
+          let webkitRtc = null;
+          let dataChannel = null;
+          try {
+            rtc = win.RTCPeerConnection;
+            webkitRtc = win.webkitRTCPeerConnection;
+            dataChannel = win.RTCDataChannel;
+          } catch (accessErr) {
+            record("child about:blank", "BLOCKED", `${accessErr.name}: ${accessErr.message}`);
+          }
+
+          if (rtc || webkitRtc) {
+            const Ctor = rtc || webkitRtc;
+            try {
+              const pc = new Ctor({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }] });
+              pc.onicecandidate = (e) => {
+                if (e.candidate) {
+                  allCandidates.push(e.candidate.candidate);
+                  candEl.textContent = allCandidates.join("\n");
+                  record("child about:blank candidate", "OPEN", `candidate: ${e.candidate.candidate}`);
+                }
+              };
+              pc.createDataChannel("ab");
+              const offer = await pc.createOffer();
+              await pc.setLocalDescription(offer);
+              record("child about:blank", "OPEN", "peer connection created in about:blank");
+            } catch (createErr) {
+              record("child about:blank", "BLOCKED", `constructor failed: ${createErr.name}: ${createErr.message}`);
+            }
+          } else {
+            record("child about:blank", "BLOCKED", "RTCPeerConnection, webkitRTCPeerConnection, RTCDataChannel undefined or inaccessible");
+          }
+        }
+      } catch (e) {
+        record("child about:blank", "BLOCKED", `${e.name}: ${e.message}`);
+      }
+
+      // ----------------------------------------------------------------------
+      // Avenue 2: Child srcdoc iframe (<script> inside + parent contentWindow access)
+      // ----------------------------------------------------------------------
+      await new Promise((resolve) => {
+        let done = false;
+        const finish = (status, detail) => {
+          if (done) return;
+          done = true;
+          window.removeEventListener("message", onMsg);
+          record("child srcdoc", status, detail);
+          resolve();
+        };
+
+        const timer = setTimeout(() => {
+          finish("BLOCKED", "timeout waiting for srcdoc message");
+        }, 2000);
+
+        const onMsg = (ev) => {
+          if (ev.data && ev.data.kind === "srcdoc_rtc") {
+            clearTimeout(timer);
+            if (ev.data.cand) {
+              allCandidates.push(ev.data.cand);
+              candEl.textContent = allCandidates.join("\n");
+              finish("OPEN", `candidate: ${ev.data.cand}`);
+            } else if (ev.data.open) {
+              finish("OPEN", "peer connection created inside srcdoc");
+            } else {
+              finish("BLOCKED", ev.data.err || "blocked inside srcdoc");
+            }
+          }
+        };
+        window.addEventListener("message", onMsg);
+
+        try {
+          const f = document.createElement("iframe");
+          f.srcdoc = `<!DOCTYPE html><html><body><script>
+            try {
+              const Ctor = window.RTCPeerConnection || window.webkitRTCPeerConnection;
+              if (!Ctor) {
+                parent.postMessage({ kind: "srcdoc_rtc", err: "RTCPeerConnection undefined inside srcdoc" }, "*");
+              } else {
+                const pc = new Ctor({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }] });
+                pc.onicecandidate = (e) => {
+                  if (e.candidate) parent.postMessage({ kind: "srcdoc_rtc", cand: e.candidate.candidate }, "*");
+                };
+                pc.createDataChannel("sd");
+                pc.createOffer().then(o => pc.setLocalDescription(o))
+                  .then(() => parent.postMessage({ kind: "srcdoc_rtc", open: true }, "*"))
+                  .catch(err => parent.postMessage({ kind: "srcdoc_rtc", err: err.name + ": " + err.message }, "*"));
+              }
+            } catch (e) {
+              parent.postMessage({ kind: "srcdoc_rtc", err: e.name + ": " + e.message }, "*");
+            }
+          <\/script></body></html>`;
+          document.body.appendChild(f);
+
+          // Parent-side attempt to access srcdoc contentWindow
+          try {
+            const win = f.contentWindow;
+            const rtc = win ? (win.RTCPeerConnection || win.webkitRTCPeerConnection) : null;
+            if (rtc) {
+              finish("OPEN", "parent accessed srcdoc.contentWindow.RTCPeerConnection");
+            }
+          } catch (parentErr) {
+            // Expected SecurityError across null origins
+          }
+        } catch (e) {
+          clearTimeout(timer);
+          finish("BLOCKED", `${e.name}: ${e.message}`);
+        }
+      });
+
+      // ----------------------------------------------------------------------
+      // Avenue 3: window.open("about:blank")
+      // ----------------------------------------------------------------------
+      try {
+        let w = null;
+        try {
+          w = window.open("about:blank", "_blank");
+        } catch (openErr) {
+          record("window.open", "BLOCKED", `${openErr.name}: ${openErr.message}`);
+          w = null;
+        }
+
+        if (w === null) {
+          record("window.open", "BLOCKED", "returned null (sandbox lacks allow-popups)");
+        } else {
+          try {
+            const rtc = w.RTCPeerConnection || w.webkitRTCPeerConnection;
+            if (!rtc) {
+              record("window.open", "BLOCKED", "RTCPeerConnection undefined in popup");
+            } else {
+              record("window.open", "OPEN", "accessible in popup window");
+            }
+            try { w.close(); } catch {}
+          } catch (accessErr) {
+            record("window.open", "BLOCKED", `${accessErr.name}: ${accessErr.message}`);
+            try { w.close(); } catch {}
+          }
+        }
+      } catch (e) {
+        record("window.open", "BLOCKED", `${e.name}: ${e.message}`);
+      }
+
+      // ----------------------------------------------------------------------
+      // Avenue 4: Web Worker (Blob URL & Data URL)
+      // ----------------------------------------------------------------------
+      // 4a. Blob Worker
+      await new Promise((resolve) => {
+        try {
+          const code = `
+            try {
+              const has = typeof RTCPeerConnection !== 'undefined';
+              postMessage({ ok: true, has });
+            } catch (e) {
+              postMessage({ ok: false, err: e.name + ': ' + e.message });
+            }
+          `;
+          const blob = new Blob([code], { type: "application/javascript" });
+          const url = URL.createObjectURL(blob);
+          const worker = new Worker(url);
+
+          const timer = setTimeout(() => {
+            try { worker.terminate(); } catch {}
+            record("worker blob", "BLOCKED", "worker load timed out or blocked by CSP");
+            resolve();
+          }, 1500);
+
+          worker.onmessage = (e) => {
+            clearTimeout(timer);
+            try { worker.terminate(); } catch {}
+            if (e.data?.has) {
+              record("worker blob", "OPEN", "RTCPeerConnection available in worker");
+            } else {
+              record("worker blob", "BLOCKED", e.data?.err || "RTCPeerConnection undefined in worker");
+            }
+            resolve();
+          };
+
+          worker.onerror = (e) => {
+            clearTimeout(timer);
+            try { worker.terminate(); } catch {}
+            record("worker blob", "BLOCKED", `CSP violation or worker error: ${e.message || "error event"}`);
+            resolve();
+          };
+        } catch (e) {
+          record("worker blob", "BLOCKED", `${e.name}: ${e.message}`);
+          resolve();
+        }
+      });
+
+      // 4b. Data Worker
+      await new Promise((resolve) => {
+        try {
+          const dataCode = "postMessage({has: typeof RTCPeerConnection !== 'undefined'})";
+          const dataUrl = "data:application/javascript," + encodeURIComponent(dataCode);
+          const worker = new Worker(dataUrl);
+
+          const timer = setTimeout(() => {
+            try { worker.terminate(); } catch {}
+            record("worker data", "BLOCKED", "data worker timed out or blocked by CSP");
+            resolve();
+          }, 1500);
+
+          worker.onmessage = (e) => {
+            clearTimeout(timer);
+            try { worker.terminate(); } catch {}
+            if (e.data?.has) {
+              record("worker data", "OPEN", "RTCPeerConnection available in data worker");
+            } else {
+              record("worker data", "BLOCKED", "RTCPeerConnection undefined in data worker");
+            }
+            resolve();
+          };
+
+          worker.onerror = (e) => {
+            clearTimeout(timer);
+            try { worker.terminate(); } catch {}
+            record("worker data", "BLOCKED", `CSP violation: ${e.message || "error event"}`);
+            resolve();
+          };
+        } catch (e) {
+          record("worker data", "BLOCKED", `${e.name}: ${e.message}`);
+          resolve();
+        }
+      });
+
+      // ----------------------------------------------------------------------
+      // Avenue 5: Prototype Chain Walk from other WebRTC globals
+      // ----------------------------------------------------------------------
+      try {
+        const rtcNames = [
+          "RTCSessionDescription",
+          "RTCIceCandidate",
+          "RTCRtpSender",
+          "RTCRtpReceiver",
+          "RTCRtpTransceiver",
+          "RTCDataChannel",
+          "RTCCertificate",
+          "RTCDtlsTransport",
+          "RTCSctpTransport",
+          "MediaStreamTrack"
+        ];
+        let found = null;
+        const inspected = [];
+
+        for (const name of rtcNames) {
+          const ctor = window[name];
+          if (!ctor) continue;
+          inspected.push(name);
+
+          // Check static constructor properties
+          for (const prop of Object.getOwnPropertyNames(ctor)) {
+            try {
+              const val = ctor[prop];
+              if (typeof val === "function" && (val.name === "RTCPeerConnection" || val.name === "webkitRTCPeerConnection")) {
+                found = `${name}.${prop}`;
+                break;
+              }
+            } catch {}
+          }
+          if (found) break;
+
+          // Check prototype properties
+          if (ctor.prototype) {
+            for (const prop of Object.getOwnPropertyNames(ctor.prototype)) {
+              try {
+                const val = ctor.prototype[prop];
+                if (typeof val === "function" && (val.name === "RTCPeerConnection" || val.name === "webkitRTCPeerConnection")) {
+                  found = `${name}.prototype.${prop}`;
+                  break;
+                }
+              } catch {}
+            }
+          }
+          if (found) break;
+        }
+
+        if (found) {
+          record("prototype chain", "OPEN", `reached RTCPeerConnection via ${found}`);
+        } else {
+          record("prototype chain", "BLOCKED", `inspected [${inspected.join(", ")}], no constructor reachable`);
+        }
+      } catch (e) {
+        record("prototype chain", "BLOCKED", `${e.name}: ${e.message}`);
+      }
+
+      // ----------------------------------------------------------------------
+      // Overall Status
+      // ----------------------------------------------------------------------
+      const hasOpen = rows.some((line) => line.includes("| OPEN |"));
+      statusEl.textContent = hasOpen ? "FAILED: Some avenues OPEN" : "ALL BLOCKED";
+    })();
+  </script>
+</body>
+</html>

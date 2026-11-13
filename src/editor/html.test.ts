@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { attributeValue, defaultStyle, headStart, navigates, PREVIEW_CSP, PREVIEW_RECOVER_LIMIT, PREVIEW_RECOVER_WINDOW_MS, recordRecovery, resourceUrl, rewriteCss, rewriteSrcset, withHead } from "./html.ts";
+import { attributeValue, defaultStyle, headStart, navigates, PREVIEW_CSP, PREVIEW_RECOVER_LIMIT, PREVIEW_RECOVER_WINDOW_MS, previewHost, recordRecovery, resourceUrl, rewriteCss, rewriteSrcset, withHead } from "./html.ts";
 import { renderMarkdown } from "./markdown.ts";
 import { hasPreview, previewKind } from "./preview-kind.ts";
 
@@ -47,6 +47,7 @@ test("I-7: preview CSP allows inline scripts and local sources only", () => {
   assert.deepEqual(policy.get("connect-src"), ["'none'"]);
   assert.deepEqual(policy.get("form-action"), ["'none'"]);
   assert.deepEqual(policy.get("base-uri"), ["'none'"]);
+  assert.deepEqual(policy.get("webrtc"), ["'block'"]); // I-15
   assert.ok(policy.get("script-src")?.includes("'unsafe-inline'"));
   for (const name of ["frame-src", "child-src", "worker-src", "object-src"]) assert.equal(policy.get(name), undefined, name); // falls back to 'none'
   for (const values of policy.values()) for (const v of values) assert.ok(v.startsWith("'") || ["asset:", "http://asset.localhost", "data:", "blob:"].includes(v), v);
@@ -54,8 +55,21 @@ test("I-7: preview CSP allows inline scripts and local sources only", () => {
   assert.ok(head.startsWith(`<meta http-equiv="Content-Security-Policy" content="${PREVIEW_CSP}">`)); // before any page element
   assert.ok(head.includes("scrollTo(0,120)"));
   // K-07a-R2: the document announces itself first, before its load, so a re-attached frame's load is not a navigation.
-  assert.ok(head.includes('<script>parent.postMessage({previewReady:true},"*");'));
+  // I-15: WebRTC is removed before any page script runs.
+  assert.ok(head.includes('<script>delete window.RTCPeerConnection;delete window.webkitRTCPeerConnection;parent.postMessage({previewReady:true},"*");'));
+  // I-14: it answers the parent's ping, and only the parent's.
+  assert.ok(head.includes('addEventListener("message",e=>{if(e.source===parent&&e.data?.previewPing===true)parent.postMessage({previewPong:true},"*")})'));
   assert.ok(headStart({ appearance: "dark", text: "#fff", accent: "#00f" }, Number.NaN).includes("scrollTo(0,0)"));
+});
+
+test("I-14: a preview is drawn on a host that is not avoided, else the one free first; a once-stuck one on preview2 only", () => {
+  assert.equal(previewHost(100, { preview: 0, preview1: 0, preview2: 0 }, false), "preview");
+  assert.equal(previewHost(100, { preview: 100, preview1: 0, preview2: 0 }, false), "preview"); // its avoidance has ended
+  assert.equal(previewHost(100, { preview: 200, preview1: 0, preview2: 0 }, false), "preview1");
+  assert.equal(previewHost(100, { preview: 200, preview1: 300, preview2: 0 }, false), "preview"); // never preview2
+  assert.equal(previewHost(100, { preview: 300, preview1: 200, preview2: 0 }, false), "preview1");
+  assert.equal(previewHost(100, { preview: 0, preview1: 0, preview2: 0 }, true), "preview2");
+  assert.equal(previewHost(100, { preview: 0, preview1: 0, preview2: 350 }, true), 250); // waits, never an ordinary host
 });
 
 test("internet, scripted and empty resources are dropped", () => {

@@ -708,3 +708,79 @@
   - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-09-report.md`).
   - 특이사항: 없음.
 - **상태**: Phase 1~7 끝(ORDER-01~07 모두 [PUSH], ORDER-07은 #8만 BLOCKED — 무한 루프 뒤 HTML 미리보기 빈 화면, 사용자 확인 대기), origin/master `e9ae9aa`. 2026-11-13 ORDER-08(Phase 8, 사용자 확인 뒤 더함, core `specs/v0.8.1/orders/ORDER-08.md`, ITEMS I-14·I-15, USER-TEST #7a·#7b) 시작 전: tauri-leader 컨텍스트가 절반을 넘어 정리한 뒤 시작한다. checker는 agy Gemini 3.8 Flash High로 바뀜(ORDER-08 3.3).
+
+### Phase 8 — ORDER-08 (I-14·I-15): HTML 미리보기 안정·보안
+
+근거 경로는 `specs/v0.8.1/verify/ORDER-08/`(이하 `v/`)다. 이 Phase에서 커밋된 것은 W-11(`2f6b7ba`)뿐이고, 나머지는 작업 트리(커밋 전)다.
+
+- **W-11 checker 모델 글 맞추기 (core ORDER-08 3.3)** (2026-11-13, writer, 커밋 `2f6b7ba`)
+  - 무엇을 했나: `tauri-checker`가 사용자 요청으로 agy `/model`에서 Claude Sonnet 5.5 (High) → Gemini 3.8 Flash (High)로 바뀐 것(다시 띄우지 않음, `--settings` 그대로)을 `specs/v0.8.1/HERDR-SETUP.md`(0장, 1장 표 checker 행 모델·실행 명령 `agy --model gemini-3.8-flash-high --settings …`, 25행 경위, 27행 리뷰 독립성, 2장 레이아웃)와 루트 `AGENTS.md` 10행에 적었다.
+  - 결과: 리뷰 독립성 문장을 "writer·coder(Claude Opus 5.5)와 checker(Gemini 3.8 Flash, agy)는 다른 모델·다른 도구"로 고쳤다("넷 모두 같은 Claude 계열" 문장 지움). 머리 인용 블록에는 checker 모델 글이 없어 고치지 않았다.
+  - 검증: V0(명령 없음). `git grep -n "sonnet-5-5\|Sonnet 5.5" -- AGENTS.md specs/v0.8.1/HERDR-SETUP.md` 결과 3곳(AGENTS.md:10, HERDR-SETUP.md:9·25)이 모두 바꾼 이력 설명뿐(보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-11-report.md`).
+  - 특이사항: 없음.
+- **측정 먼저: 호스트별 렌더러, 루프 뒤 CPU, frame-src (C-14·C-14-R1·C-14-R2·K-08p, core ORDER-08 3.1 측정 1~3)** (2026-11-13, checker 스크립트·coder 시제품·leader 실행)
+  - 무엇을 했나: checker가 `v/measure-host.mjs`와 `v/fixtures/`(normal-a1~d2, loop, after-loop)를 쓰고, leader가 화면 차례 안에서 돌렸다. 1회 실행은 `setBypassCSP(true)` 뒤 다시 불러오지 않아 앱 CSP가 후보 A·B를 그대로 막아 무효였다 → C-14-R1(우회 뒤 `Page.reload`, 후보 A·B 둘 다 루프 측정, 루프 PID는 2.5초 CPU 증가가 가장 큰 렌더러). 그 결과가 `v/m-host-r1.json`이다. leader probe(`v/leader-probe/probe.mjs`)로 A·B가 처리기에 들어오지 않는 것을 확인한 뒤, coder가 시제품 K-08p(같은 처리기 `preview::respond`·같은 `PreviewDocs`로 scheme `preview1`을 하나 더 등록, 앱 CSP `csp`·`devCsp` `frame-src`에 `preview1: http://preview1.localhost`만 더함)를 만들고, checker가 C-14-R2로 CSP 우회 없이 후보 C·D를 재는 스크립트로 바꿨다. 결과 `v/m-host.json`.
+  - 결과:
+    - 후보 A `http://preview.localhost:<port>/<id>`와 B `http://preview.p<n>.localhost/<id>`는 CSP를 우회하고 다시 불러와도 preview 처리기에 들어오지 않고 프레임이 `chrome-error://chromewebdata/`(origin "null")가 된다 → 쓸 수 없다(`m-host-r1.json`, `leader-probe/probe.mjs`).
+    - 후보 D(scheme을 하나 더 등록, `http://preview1.localhost/<id>`)는 처리기에 들어오고 **다른 렌더러 프로세스**다(D 첫 프레임에서 새 PID, C+D를 함께 띄우면 각자). 같은 호스트의 프레임끼리는 한 프로세스다(`m-host.json` item1).
+    - 루프 뒤 CPU(40초): C에 루프를 띄우면 2.5초에 CPU 3.62s 증가(1코어). 루프를 연 채 같은 호스트 C의 새 프레임은 3초 응답 없음, D의 프레임은 그려진다. 루프 iframe을 DOM에서 빼면 그 렌더러는 **5~10초 사이에 끝난다**(0s·5s 살아 있음, 10~40s 없음). 그 뒤 C·D 모두 다시 그려진다. D에 루프도 대칭(`m-host.json` item2). → ORDER-07 R1의 막힘은 닫은 직후(프로세스가 끝나기 전) 같은 호스트에 새 미리보기를 붙여 그 프레임이 바쁜 프로세스를 붙잡은 것으로 본다.
+    - frame-src: CSP host-source의 `*`는 맨 왼쪽 라벨에만 되므로 B는 `http://*.localhost`(모든 localhost 호스트)로만 허용할 수 있어 한정되지 않는다. A는 `http://preview.localhost:*`로 한정되나 위에서 쓸 수 없다. D는 호스트마다 `previewN: http://previewN.localhost`를 하나씩 더하므로 미리보기 호스트로 한정된다. 지금 앱 CSP는 A·B를 막는다(`securitypolicyviolation`, `m-host-r1.json` item3).
+  - 검증: 스크립트는 V3 준비(`node --check` 오류 0). K-08p는 V1(`cargo clippy -- -D warnings` 0, `cargo test` 24, debug 빌드 성공). 측정 실행은 leader(보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-14-report.md`·`-C-14-R1-report.md`·`-C-14-R2-report.md`·`-K-08p-report.md`).
+  - 특이사항: 루프 시험 페이지는 previewReady를 보낸 뒤 50ms에 멈추므로 로드 때 한 번의 신호로는 멈춤을 잡을 수 없다(K-08b의 ping 방식 근거).
+- **I-14 응답 없음 알림·호스트 셋 (K-08b·K-08b-R1·K-08e)** (2026-11-13, coder, 커밋 전)
+  - 무엇을 했나: `src/editor/html.ts`·`html.test.ts`, `src/shell/markdown-preview.ts`, `src-tauri/src/lib.rs`, `src-tauri/tauri.conf.json`. 기존 `preview::respond`·`PreviewDocs`, `showFrame`·`load` 처리, `recordRecovery`·`previewReady` 판정, SVG 알림과 같은 body 안 문단을 재사용했다.
+  - 결과:
+    - 응답 확인(K-08b): 부모가 HTML 미리보기 프레임에 1초(`PREVIEW_PING_MS`)마다 ping을 `postMessage`로 보내고, `headStart` 스크립트가 부모에만(`e.source === parent`) pong으로 답한다. 계속 이동 알림으로 멈춘 상태가 아니고, 프레임이 DOM에 붙어 있고, `document.visibilityState === "visible"`일 때만 보낸다. 아니면 대기 상태를 0으로 돌리고, pong·프레임 `load`·`showFrame`에서도 0으로 돌려 탭 전환으로 다시 붙은 프레임이 거짓 알림을 받지 않게 했다. 첫 미응답 ping부터 5초(`PREVIEW_HANG_MS`)면 멈춤: iframe을 빼고(렌더러가 끝날 수 있게) 문단 알림 "This HTML page is not responding. Its preview stops until the file or the theme changes."를 보이고, 그 호스트를 20초(`PREVIEW_HOST_AVOID_MS`, 측정 5~10초의 두 배) 피한다. 다음 렌더(파일·테마 바뀜)에서 그때 고른 호스트로 프레임을 다시 붙인다. 값은 스펙 값이 아닌 tauri 결정(코드 주석). 스크립트 끄기 설정·프로세스 kill은 하지 않는다.
+    - 호스트 셋(K-08b-R1): K-08b의 두 호스트(`preview`/`preview1`)에서는 멈춘 루프 미리보기가 다시 렌더될 때 피함 규칙대로 `preview1`로 옮겨 가 그 호스트도 멈추고, 옆 pane `page.html`도 같은 `preview1`로 가서 빈칸이 됐다(V3 1회차 `v/v3-r0.json`, `c2-split-pane-loop-and-page.png`). 그래서 scheme을 셋으로 했다: `preview`·`preview1`은 보통 미리보기(피하지 않는 첫 호스트, 둘 다 피함이면 피함이 먼저 끝나는 쪽), `preview2`는 한 번 멈춘 미리보기(`wasStuck`, 그 탭이 닫힐 때까지) 전용. `preview2`가 피함 중이면 남은 ms 뒤 다시 그리도록 미룬다(`waitTimer`, 그동안 알림 그대로). 새 렌더·dispose는 generation과 `clearTimeout`으로 기다리던 것을 버린다. 호스트 고르기는 순수 함수 `previewHost(now, avoidUntil, wasStuck)`(호스트 또는 기다릴 ms) 하나다.
+    - 거짓 알림(K-08e): 앱이 다른 창(Notepad, VS Code) 뒤에 있는 동안 루프가 없는 보통 페이지에도 알림이 떴다(`visibilityState`는 "visible", V3 5회차 `v/v3-r3.json` c6). 앱을 앞에 둔 같은 순서(`leader-probe/probe6.mjs`)는 pong 10/10, 알림 없음, 루프 렌더러는 탭을 닫고 3초 안에 끝나 호스트 오염이 아니었다. 뒤에 있는 창의 프레임은 답이 5초 넘게 늦어지는 것으로 보고, ping을 `document.hasFocus()`(포커스가 프레임 안이어도 true)일 때만 보내게 했다. 루프는 창으로 돌아오면 5초 안에 잡힌다.
+    - 앱 CSP `csp`·`devCsp`: `frame-src`에 `preview1: http://preview1.localhost preview2: http://preview2.localhost`만 더했다. `script-src`·`connect-src`·capability·asset 범위는 그대로. 프레임 CSP·sandbox·iframe `csp` 속성·`Allow-CSP-From`은 세 호스트에 같다(같은 처리기·같은 속성). iframe `src`만 `http://preview.localhost/<id>` 하나에서 렌더마다 고른 `http://preview{,1,2}.localhost/<id>`(처음은 `preview`)가 됐다.
+    - 테스트: `previewHost` 테스트 1개(보통 5단언 + 멈춘 적 있음 2단언: `preview2`, 기다릴 250ms), headStart pong 단언 1줄.
+  - 검증: V1. K-08b·K-08b-R1: `npm.cmd run typecheck` 0, `npm.cmd run test` 310/310, `cargo test` 24, `cargo clippy -- -D warnings` 0, debug 빌드 성공. K-08e: typecheck 0, test 310/310, debug 빌드 성공(Rust 안 바뀜). 앱은 실행하지 않았다(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-08b-report.md`·`-K-08b-R1-report.md`·`-K-08e-report.md`).
+  - 특이사항:
+    - `shortcut:` 주석: 함께 멈춘 보통 미리보기도 "멈춘 적 있음"이 되어 `preview2`를 함께 쓴다. 서로 다른 루프 페이지 둘이 20초 안에 보통 호스트 둘을 다 멈추면 피하지 못한다(scheme을 늘리면 됨).
+    - 실제 페이지가 파싱 중 5초 넘게 스크립트를 돌리면 같은 알림이 뜬다(그동안은 실제로 응답이 없다).
+    - 앱이 포커스 없이 뒤에 있는 동안에는 루프 페이지 렌더러가 잡히지 않고 계속 돈다. 앱으로 돌아와야 잡혀 프레임이 빠진다.
+    - 알림 문단이 미리보기 왼쪽 위 가장자리에 붙는다(`.html-preview` padding 0). 여백 값은 스펙 ID가 없어 넣지 않았다 → 사용자 확인 후보.
+- **I-15 WebRTC 막기 (K-08a·K-08c·K-08d·K-08d-R1)** (2026-11-13, coder, 커밋 전)
+  - 무엇을 했나: `src/editor/html.ts`·`html.test.ts`, `src-tauri/tauri.conf.json`, `src-tauri/src/lib.rs`. leader probe(`v/leader-probe/probe2.mjs`·`probe4.mjs`·`escape.html`·`probe5.mjs`·`probe5b.mjs`·`argcheck.ps1`·`tree-types.ps1`)로 한 겹씩 확인하며 더했다.
+  - 결과:
+    - K-08a: 프레임 CSP(`PREVIEW_CSP`, meta와 iframe `csp` 속성) 끝에 `; webrtc 'block'`(WebRTC ICE/STUN은 `connect-src`로 막히지 않음). 그러나 **WebView2는 CSP `webrtc`를 지키지 않는다**: `new RTCPeerConnection({iceServers:[stun:stun.l.google.com:19302]})`가 host(mDNS `.local`) 후보와 **srflx(공인 IP)** 후보를 모았다(STUN 나감, `probe2.mjs`, V3 3회차 `v/v3-c6_leak_tests.json`). `webrtc 'block'`은 지키는 엔진을 위해 그대로 둔다.
+    - K-08c: `headStart` 스크립트 맨 앞(previewReady·페이지 스크립트보다 앞)에서 `delete window.RTCPeerConnection;delete window.webkitRTCPeerConnection;`(상수 `NO_WEBRTC`). `about:blank` 자식 iframe의 `contentWindow`로 되살리기는 `SecurityError`(자식이 다른 opaque origin)로 막힌다(`escape.html`).
+    - 그러나 **`srcdoc` 자식 프레임으로 되살아난다**: srcdoc 새 창에는 지우는 코드가 없고(프레임 CSP를 물려받아 인라인 스크립트가 돈다) host·srflx 후보를 모으며, 앱 트리 msedgewebview2 하나(네트워크 서비스)에 후보와 같은 포트의 UDP 끝점이 열렸다(`probe5.mjs`·`probe5.json`). `window.open`(null)·Worker(오류)·프로토타입 체인(생성자 없음)은 막혔다. 스크립트로는 자식 문서(srcdoc, innerHTML, shadow DOM 등)를 다 덮을 수 없다.
+    - K-08d: WebView2 브라우저 인자로 막기. wry 기본 인자(`--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection`, `wry-0.57.1/src/webview2/mod.rs:308-335`)는 `additionalBrowserArgs`를 주면 대체되므로 함께 넣었다. 같은 WebView2 환경의 창은 같은 인자여야 하므로 main 창 `tauri.conf.json` `additionalBrowserArgs`에만 값을 두고 settings 창(`open_settings`의 `WebviewWindowBuilder`)은 `app.config()`의 main 창 값을 읽어 `.additional_browser_args(...)`로 준다.
+    - K-08d-R1: `--force-webrtc-ip-handling-policy=disable_non_proxied_udp`는 브라우저 프로세스 명령줄에 들어가지만(평소 실행·CDP 실행 둘 다, CDP 환경변수 `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS`와 합쳐짐, `argcheck.ps1`) **효과가 없었다**: srcdoc 자식에서 host·srflx 후보, 로컬 STUN 수신기에 STUN 6개 도착(`probe5b.mjs`·`probe5b.json`). **`--webrtc-ip-handling-policy=disable_non_proxied_udp`는 효과가 있었다**: 후보 0, 로컬 STUN 수신기 0개. 네트워크 서비스가 UDP 끝점 한 쌍(`0.0.0.0`·`::`)을 열지만 STUN은 보내지 않는다. 그래서 인자 이름을 바꿨다.
+    - 바뀐 설정 앞뒤: main·settings 창 `additionalBrowserArgs` 앞은 없음(wry 기본값), 뒤는 `--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --webrtc-ip-handling-policy=disable_non_proxied_udp`. 앱 CSP·iframe 속성·capability는 이 카드들로 바뀌지 않았다. 세 겹(CSP `webrtc 'block'`, `NO_WEBRTC` 지우기, 브라우저 인자)을 모두 둔다. 앱은 WebRTC를 쓰지 않는다.
+  - 검증: V1. K-08a: typecheck 0, test 309/309. K-08c: typecheck 0, test 310/310, debug 빌드(Rust 안 바뀌어 cargo 생략). K-08d: typecheck 0, test 310/310, `cargo test` 24, clippy 0, debug 빌드. K-08d-R1: V0 + 빌드(clippy 0, debug 빌드). 앱은 실행하지 않았다(보고 `C:\Users\nampl\AppData\Local\Temp\v081-K-08a-report.md`·`-K-08c-report.md`·`-K-08d-report.md`·`-K-08d-R1-report.md`).
+  - 특이사항: 두 창 값이 같다는 테스트는 두지 않았다(값이 config 한 곳에서 나옴). `RTCDataChannel`·`RTCSessionDescription` 등은 지우지 않았다(연결을 여는 입구는 RTCPeerConnection뿐).
+- **V3 측정 스크립트와 회차 (C-15·C-15-R1~R6, leader 실행·probe)** (2026-11-13, checker 스크립트·leader 실행)
+  - 무엇을 했나: checker가 `v/measure-v3.mjs`와 시험 HTML(`loop-immediate`·`webrtc`·`links`·`beacon`, R2 `webrtc-escape`, R4 길별 `webrtc-{direct,blank,srcdoc,open,worker,proto}`, R5 그 LAN STUN판 `webrtc-*-localstun`)을 쓰고, leader가 debug exe로 화면 차례 안에서 돌렸다. 1920×1080 100%, 창 1440×852, One Dark(c8은 One Light도). 회차마다 앞 결과를 이름 바꿔 남겼다.
+  - 결과(회차별):
+    - 1회차 `v/v3-r0.json`(K-08b exe) — 무효: `preview1` 프레임 target을 못 찾아 c2 split pane·c6·c8 Tab이 `noFrame`, OS 네트워크가 시스템 전체라 다른 앱 연결이 섞임, CPU가 시스템 전체 목록, c7 `appCsp` null. split pane에서 옆 pane `page.html`이 `preview1`에서 빈칸(두 사이트 오염) → K-08b-R1, C-15-R1(iframe 실제 `src`로 target 찾기, 앱 프로세스 트리만 TCP/UDP, 루프 렌더러 PID CPU, CSP를 응답 헤더·`originalPolicy`로, 단계마다 프레임 호스트, c6 전 25초 대기).
+    - 2회차 `v/v3-r1.json`(K-08b-R1 exe) — 대부분 확인: c2 루프 알림 뒤 `page.html`·시안(Outline 시안 5안, designs 6)이 `preview.localhost`에, 루프 탭을 고친 뒤 `preview2`에 그려짐, 루프를 연 채 옆 pane `page.html`이 `preview`에서 그려지고 루프 탭을 다시 렌더한 뒤에도 응답(`pageRanAfterLoopTouch`). c3 알림 5초, 보통 페이지 10초·빠른 탭 전환 10번에서 알림·토스트 없음. c3_c4 루프 중 앱 응답 2ms, 루프 렌더러(PID 43964)는 알림으로 프레임이 빠진 뒤 10초 안에 끝남(0s 살아 있음 CPU 9.0s, 10·20·30s 없음). c5 ORDER-07과 같음(`preview1`에서도 isolation 스크립트·local.js 동작). c6 webrtc·beacon에 거짓 알림이 떠 프레임 값을 못 읽음(같은 앱 UI로 직접 열면 pong 10/10·알림 없음, `leader-probe/probe3.mjs`) → C-15-R2(`windowsHide`·`-ExecutionPolicy Bypass`, 단계마다 전경 확인, 프레임 값을 OS 스냅숏보다 먼저, 알림 때 전경 창 기록, `webrtc-escape.html`). c8 Tab 들고 나기는 프레임 값 noFrame.
+    - 3회차 `v/v3-c6_leak_tests.json`(c6만) — WebRTC 유출 확인: host 후보와 srflx(공인 IP) 후보, 앱 트리 UDP 끝점 둘. links·beacon 때 앱 트리 TCP가 `150.171.27.11:443`·`199.232.162.172:80`로 잡힘(아래 기준선에서 WebView2 자체 연결로 확인).
+    - 4회차 `v/v3-r2.json`(K-08c exe) — 무효: c2 split pane 뒤 오른쪽 pane이 남아 그 뒤 모든 단계의 프레임이 `page.html`(p6)로 읽힘, 프레임 값이 CDP 원문(`{"result":{"type":"undefined"}}`), c2 fixedRedraw는 `loop.html` 탭이 수정됨(●)이라 디스크 내용이 버퍼에 안 들어감 → C-15-R3(되살리기 길 한 페이지 시험)에 이어 C-15-R4(pane·iframe 0개 단계 시작 확인, 활성 pane의 보이는 프레임만, `result.value`만, 길마다 시험 HTML 하나·앞뒤 앱 트리 끝점과 소유 프로세스 종류, 프로토 판정은 생성자 이름이 정확히 같을 때만 OPEN), C-15-R5(node `dgram` `0.0.0.0:3478` 로컬 STUN 수신기, LAN STUN판 여섯과 원본 google판 여섯, 요약 블록).
+    - 5회차 `v/v3-r3.json`(K-08d-R1 exe) — c6 길 12개 중 11개에 거짓 "응답 없음"(그때 전경 창이 사용자가 쓰던 Notepad·VS Code), c2 splitPane `noFrame`(옆 pane은 활성 pane이 아님), c8 `getComputedStyle` 오류 → K-08e, C-15-R6(길마다 열기 직전·읽기 직전 앱 전경, 못 읽은 길은 "판정 불가"로 후보 0 근거에서 뺌, splitPane은 src로 프레임 찾기, c8 요소 대기·항목별 오류 값, 뒤 창 시험 `c3_background_window_test`). 요약은 로컬 STUN 수신 0, srflx·host 0, CDP 외부 0이었으나 못 읽은 길이 대부분이라 근거로 쓰지 않는다.
+    - 6회차 `v/v3.json`(K-08e exe):
+      - c3_c4: 루프 중 앱 응답 1ms, 알림 5초, 알림 뒤 프레임 0, 루프 렌더러(PID 45708) 0s 살아 있음(CPU 8.77s) → 10·20·30s 없음.
+      - c2: 루프 알림 뒤 `page.html`(ran)·시안(designs 6)이 `preview.localhost`, 루프를 고친 뒤 `preview2`에서 "recovered successfully", split pane 옆 `page.html`(`preview`)이 처음과 루프 탭 다시 렌더 뒤 모두 응답.
+      - c3: 보통 페이지 10초·빠른 탭 전환 10번 알림·토스트 없음. 뒤 창 시험 보통 페이지 PASS(뒤 15초·돌아온 뒤 10초 알림 없음). 루프 페이지는 FAIL로 적혔으나 조건이 어긋났다: 뒤에 둔 동안 전경 창이 스크립트의 notepad가 아니라 다른 `workbench-tauri-0.8.1-v081end` 프로세스였고, 돌아온 뒤 전경이 VS Code였으며, 알림은 3.8초에 잡혀 5~7초 범위 밖.
+      - c5: ORDER-07 fixture 다섯 결과 같음(loopnav 5번 뒤 토스트), `preview1`(alternate host)에서 isolation 인라인 스크립트·local.js 동작.
+      - c6: 길 14개 중 13개가 판정 불가(앱이 전경인데도 알림, 또는 프레임 못 읽음), 판정된 것은 `webrtc_open_google`("open | null")뿐. 전체 로컬 STUN 수신 0, CDP 외부 요청 0. 앱 트리 TCP 2개(`40.99.67.226:443`·`40.104.69.66:443`, 앱 트리 msedgewebview2 PID 31792)는 WebView2 자체 연결로 본다(기준선).
+      - c7: 앱 창 인라인 스크립트 막힘(`script-src-elem` 위반), 앱 CSP 덤프(`frame-src … preview: … preview1: … preview2: …`).
+      - c8: 프레임 값 `noFrame`(One Light iframe 배경 rgb(250,250,250)만 읽힘). 2회차의 테마 값(One Dark 글자 rgb(220,224,229)·배경 rgb(40,44,51), One Light rgb(36,37,41)·rgb(250,250,250))이 근거로 남는다.
+    - leader probe6(`v/leader-probe/probe6.mjs`): `preview`에서 루프 미리보기가 멈추고 그 탭을 닫은 뒤 같은 `preview`의 보통 미리보기가 답하는지 — 앱을 앞에 두면 pong 10/10, 알림 없음, 루프 렌더러는 탭을 닫고 3초 안에 끝남(K-08e 근거).
+    - leader probe7(`v/leader-probe/probe7.mjs`·`probe7.json`, K-08e exe): 유출 시험 HTML을 앱을 앞에 두고 UI로 하나씩 열어 페이지 결과·pong·알림·로컬 STUN 수신을 읽었다. 모든 길에서 알림 없음·포커스 true·visible, pong 2~10. LAN STUN판 direct "none | undefined", blank SecurityError, srcdoc "srcdoc pc created", open null, worker blob·data onerror, proto hits 0 — **모든 길 STUN 수신 0**. google srcdoc도 수신 0. beacon: sendBeacon `true`, EventSource 오류(막힘). links 행은 앞 srcdoc 프레임(p7)을 그대로 읽어 판정 불가.
+  - 검증: 스크립트는 V3 준비(`node --check` 오류 0, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-C-15-report.md`·`-C-15-R1-report.md`~`-C-15-R6-report.md`). 측정은 V3(leader). 판정은 ORDER-08 보고에서 한다.
+  - 특이사항: 6회차 c6의 "앱 전경인데도 거짓 알림"은 probe7(같은 exe, 앱 앞)에서는 재현되지 않았다. 측정 스크립트 쪽 원인인지는 닫히지 않았다.
+- **WebView2 자체 외부 TCP 기준선** (2026-11-13, tauri-leader)
+  - 무엇을 했나: 미리보기를 열지 않은 빈 앱의 앱 트리 TCP 연결을 5초마다 기록했다(`v/leader-probe/baseline-tcp.ps1`, 결과 `baseline-tcp-*.txt`). 0.8.1 debug exe와 0.8.0 release exe(`workbench-tauri-0.8.0-v08end.exe`) 각각 40초와 2·4분.
+  - 결과: 40초 실행은 두 exe 모두 외부 연결 0. 길게 두면 두 exe 모두 **약 50초에** msedgewebview2 `--type=utility`가 Microsoft·CDN 주소로 연결한다(0.8.1 debug: `23.55.51.144:80`·`150.171.27.11:443`, 0.8.0 release: `150.171.28.11:443`·`146.75.114.172:80`). 미리보기 페이지와 상관없는 WebView2 자체 연결이고, ORDER-08 전(0.8.0)부터 있었다.
+  - 검증: V3(측정).
+  - 특이사항: c6의 "앱 트리 새 TCP"는 이 기준선을 빼고 읽는다.
+- **C-16 코드 리뷰·전체 검증** (2026-11-13, checker, 진행 중): 대상 `git diff HEAD -- src src-tauri`(K-08a·K-08b·K-08b-R1·K-08c·K-08d·K-08d-R1·K-08e). 정확성(호스트 고르기, ping/pong·멈춤·피함·`wasStuck`·`waitTimer`·dispose, generation과 타이머 경합, `hasFocus`, recordRecovery·previewReady), 보안(바뀐 것이 프레임 CSP `webrtc 'block'`, 머리 스크립트 pong·지우기, `frame-src` 두 호스트, scheme 등록 둘, `additionalBrowserArgs`뿐인지), 테스트, ponytail. 전체 검증 1회(typecheck·test·cargo test·clippy).
+- **W-12 ORDER-08 PROGRESS·PLAN 기록** (2026-11-13, writer)
+  - 무엇을 했나: 위 Phase 8 항목을 W-11~C-15-R6 카드·보고 파일, `C:\Users\nampl\AppData\Local\Temp\v081-ORDER-08-interim.md`, `v/`의 측정 결과(`m-host*.json`, `v3*.json`, `leader-probe/*`)에서 옮겨 적고, `PLAN.md`에 Phase 8 작업 카드 표를 더했다.
+  - 결과: 문서만 바뀌었다.
+  - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-12-report.md`).
+  - 특이사항: 없음.
+- **상태**: Phase 8 진행 중(ORDER-08 보고 전).

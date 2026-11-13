@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dynamic Link Leak Test</title>
+</head>
+<body>
+  <h1>Dynamic Link Leak Test</h1>
+  <ul id="created"></ul>
+  <ul id="errors"></ul>
+  <script>
+    (() => {
+      const createdEl = document.getElementById("created");
+      const errorsEl = document.getElementById("errors");
+      const tests = [
+        { rel: "dns-prefetch", href: "https://dns-leak-test.example.com" },
+        { rel: "preconnect", href: "https://preconnect-leak-test.example.com" },
+        { rel: "prefetch", href: "https://prefetch-leak-test.example.com/asset.js" },
+        { rel: "preload", href: "https://preload-leak-test.example.com/style.css", as: "style" }
+      ];
+
+      for (const t of tests) {
+        try {
+          const l = document.createElement("link");
+          l.rel = t.rel;
+          l.href = t.href;
+          if (t.as) l.as = t.as;
+          l.onerror = () => {
+            const li = document.createElement("li");
+            li.textContent = `Error loading link rel=${t.rel}`;
+            errorsEl.appendChild(li);
+          };
+          document.head.appendChild(l);
+          const li = document.createElement("li");
+          li.textContent = `Created link rel=${t.rel} href=${t.href}`;
+          createdEl.appendChild(li);
+        } catch (e) {
+          const li = document.createElement("li");
+          li.textContent = `Exception on rel=${t.rel}: ${e.message}`;
+          errorsEl.appendChild(li);
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
