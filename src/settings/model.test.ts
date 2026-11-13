@@ -73,6 +73,24 @@ test("I-5 ~ I-8, I-10: the five editor view settings read, validate and write", 
   assert.throws(() => updateSetting("{}", "editor_line_numbers", "no", THEMES));
 });
 
+test("core v0.8.2 I-21 / I-23: the preview code line height (1.0 to 3.0, 0.05 steps) and code line numbers read, validate and write", () => {
+  const read = (json: string) => parseSettings(json, THEMES);
+  assert.deepEqual([DEFAULTS.preview_code_line_height, DEFAULTS.preview_code_line_numbers], [1.45, false]);
+  for (const value of [1, 1.45, 2.05, 3]) assert.equal(read(`{"preview_code_line_height":${value}}`).preview_code_line_height, value);
+  for (const value of [0.95, 3.05, 1.42, '"1.5"', "null"]) assert.equal(read(`{"preview_code_line_height":${value}}`).preview_code_line_height, 1.45, String(value));
+  for (const value of ['"yes"', "1", "null"]) assert.equal(read(`{"preview_code_line_numbers":${value}}`).preview_code_line_numbers, false, value);
+  assert.deepEqual([settingNumber("preview_code_line_height", 1.45 + settingStep("preview_code_line_height")), settingNumber("preview_code_line_height", 1.45 - settingStep("preview_code_line_height"))], [1.5, 1.4]);
+  assert.deepEqual([settingNumber("preview_code_line_height", 4), settingNumber("preview_code_line_height", 0.5), settingNumber("preview_code_line_height", 1.62)], [3, 1, 1.6]);
+  // core v0.8.2 I-17: a code size saved before (85) stays.
+  assert.equal(read('{"preview_code_font_size":85}').preview_code_font_size, 85);
+  // Saved the usual way: comments and unknown keys stay.
+  const written = updateSettings('{\n  // keep\n  "x": 1\n}', { preview_code_line_height: 1.3, preview_code_line_numbers: true }, THEMES);
+  assert.ok(written.includes("// keep") && written.includes('"x": 1'));
+  assert.deepEqual([read(written).preview_code_line_height, read(written).preview_code_line_numbers], [1.3, true]);
+  assert.throws(() => updateSetting("{}", "preview_code_line_height", 1.42, THEMES));
+  assert.deepEqual(categoryKeys("Preview").filter((key) => key.startsWith("preview_code_line")), ["preview_code_line_height", "preview_code_line_numbers"]);
+});
+
 test("I-9 / v0.8.2 I-26: the four preview gaps are quarter pixels 0 to 48; a file value outside that reads as the default", () => {
   const keys = ["preview_paragraph_line_spacing", "preview_paragraph_spacing", "preview_list_line_spacing", "preview_list_spacing"] as const;
   const read = (json: string) => parseSettings(json, THEMES);
@@ -114,25 +132,25 @@ test("v0.8.2 I-26: 0.8.1 gap keys read as the same drawn px, and the next write 
 
 test("settings search includes the category title, name and description", () => {
   const keys = (query: string) => filterSettings(query).map((r) => r.key);
-  assert.deepEqual(keys("preview"), ["preview_theme", "preview_font_size", "preview_code_font_family", "preview_code_font_size", "preview_paragraph_line_spacing", "preview_paragraph_spacing", "preview_list_line_spacing", "preview_list_spacing"]);
+  assert.deepEqual(keys("preview"), ["preview_theme", "preview_font_size", "preview_code_font_family", "preview_code_font_size", "preview_code_line_height", "preview_code_line_numbers", "preview_paragraph_line_spacing", "preview_paragraph_spacing", "preview_list_line_spacing", "preview_list_spacing"]);
   assert.deepEqual(keys("EDITOR"), ["editor_theme", "buffer_font_family", "buffer_font_size", "editor_line_height", "editor_line_numbers", "editor_word_wrap", "editor_indent_guides", "editor_render_whitespace"]);
   assert.deepEqual(keys("ui"), ["theme", "icon_theme", "ui_font_size", "editor_indent_guides"]); // "guides" holds "ui"
   assert.deepEqual(keys("ui font size"), ["ui_font_size"]);
   assert.equal(keys("theme").length, 4);
-  assert.equal(keys("font size").length, 5); // the Line Height and Code Font Size descriptions name the font size
+  assert.equal(keys("font size").length, 6); // the Line Height, Code Font Size and Code Line Height descriptions name the font size
   assert.equal(keys("missing").length, 0);
 });
 
 test("core v0.8.1 I-10: code fonts come from the bundled list, the code block size is a whole percent 50 to 150; anything else reads as the default", () => {
   const read = (json: string) => parseSettings(json, THEMES);
-  assert.deepEqual([DEFAULTS.buffer_font_family, DEFAULTS.preview_code_font_family, DEFAULTS.preview_code_font_size], ["JetBrains Mono", "JetBrains Mono", 85]);
+  assert.deepEqual([DEFAULTS.buffer_font_family, DEFAULTS.preview_code_font_family, DEFAULTS.preview_code_font_size], ["JetBrains Mono", "JetBrains Mono", 86]); // core v0.8.2 I-17
   for (const key of ["buffer_font_family", "preview_code_font_family"] as const) {
     for (const name of CODE_FONTS) assert.equal(read(`{"${key}":"${name}"}`)[key], name);
     for (const value of ['"Consolas"', '"jetbrains mono"', "1", "null"]) assert.equal(read(`{"${key}":${value}}`)[key], "JetBrains Mono", `${key} ${value}`);
     assert.deepEqual(settingMenu(key, "Hack", () => {}, THEMES).map((item) => [item.label, item.checked]), CODE_FONTS.map((name) => [name, name === "Hack"]));
   }
   for (const value of [50, 100, 150]) assert.equal(read(`{"preview_code_font_size":${value}}`).preview_code_font_size, value);
-  for (const value of [49, 151, 85.5, '"85"', "null"]) assert.equal(read(`{"preview_code_font_size":${value}}`).preview_code_font_size, 85, String(value));
+  for (const value of [49, 151, 85.5, '"85"', "null"]) assert.equal(read(`{"preview_code_font_size":${value}}`).preview_code_font_size, 86, String(value));
   assert.deepEqual([settingNumber("preview_code_font_size", 200), settingNumber("preview_code_font_size", 10), settingNumber("preview_code_font_size", 85.6)], [150, 50, 86]);
   // Saved the usual way: comments and unknown keys stay.
   const text = '{\n  // mine\n  "unknown": 1\n}\n';

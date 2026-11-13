@@ -1,6 +1,7 @@
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import DOMPurify from "dompurify";
 import { csvTable } from "../editor/csv.ts";
+import { codeBlockParts } from "../editor/code-block.ts";
 import { blockAt, classifyLink, headingSlugs, localImagePath, renderMarkdown, type LinkTarget } from "../editor/markdown.ts";
 import { classifyHtmlLink, htmlPreviewDoc, PREVIEW_CSP, PREVIEW_HANG_MS, PREVIEW_HOST_AVOID_MS, PREVIEW_PING_MS, previewHost, recordRecovery, type PreviewHost } from "../editor/html.ts";
 import { NOTEBOOK_HTML_FORBID_ATTR, NOTEBOOK_HTML_FORBID_TAGS, parseNotebook, type NotebookOutput } from "../editor/notebook.ts";
@@ -59,6 +60,12 @@ function markdownTree(text: string, sourcePath: string): DocumentFragment {
     if (path) image.setAttribute("src", convertFileSrc(path));
     else image.remove();
   }
+  // core v0.8.2 I-16: a table fills the body; a wider one (many columns) scrolls sideways in this box, the body keeps its width.
+  for (const table of tree.querySelectorAll("table")) {
+    const wrap = makeNode("div", "table-wrap");
+    table.replaceWith(wrap);
+    wrap.append(table);
+  }
   return tree;
 }
 
@@ -71,8 +78,10 @@ const makeNode = (tag: string, className: string, text?: string): HTMLElement =>
 
 /**
  * core v0.8.1 I-12: each code block (fenced, indented, ipynb code cell; not a mermaid block, the frontmatter or an output) goes in a
- * box under a header row: the language (empty when none is given) and a Copy button for the block's text as it is. The box takes
+ * box under a header row: the language (empty when none is given) and a Copy button for the block's text. The box takes
  * the block's source lines (markdown-it puts them on the code of a fence, on the pre of an indented block) for the position link.
+ * core v0.8.2 I-22: the blank lines at the start and end are neither drawn nor copied. I-23: the line numbers sit beside the pre,
+ * shown by the Settings (a CSS variable) and drawn from an attribute (codeBlockParts), so they are never text.
  */
 function addCodeHeaders(body: HTMLElement): void {
   for (const code of body.querySelectorAll<HTMLElement>("pre:not(.frontmatter-raw) > code:not(.language-mermaid)")) {
@@ -84,7 +93,8 @@ function addCodeHeaders(body: HTMLElement): void {
       box.setAttribute(name, value);
       el.removeAttribute(name);
     }
-    const text = code.textContent ?? "";
+    const { text, numbers } = codeBlockParts(code.textContent ?? "");
+    if (text !== code.textContent) code.textContent = text;
     const label = "Copy Code";
     const button = makeNode("button", "icon-button code-block-copy");
     button.setAttribute("type", "button");
@@ -103,8 +113,11 @@ function addCodeHeaders(body: HTMLElement): void {
     });
     const header = makeNode("div", "code-block-header");
     header.append(makeNode("span", "code-block-language", /(?:^|\s)language-(\S+)/.exec(code.className)?.[1] ?? ""), button);
+    const gutter = makeNode("div", "code-line-numbers");
+    gutter.setAttribute("aria-hidden", "true");
+    gutter.dataset.lines = numbers;
     pre.replaceWith(box);
-    box.append(header, pre);
+    box.append(header, gutter, pre);
   }
 }
 
@@ -161,7 +174,7 @@ function notebookNodes(text: string, sourcePath: string): HTMLElement[] {
     } else if (cell.type === "raw") {
       box.append(makeNode("pre", "nb-raw", cell.source));
     } else {
-      if (cell.count !== null) box.append(makeNode("div", "nb-count", `[${cell.count}]`));
+      box.append(makeNode("div", "nb-count", `[${cell.count ?? " "}]`)); // core v0.8.2 I-15: in the left margin, [ ] when never run
       const pre = box.appendChild(document.createElement("pre"));
       pre.append(makeNode("code", `language-${notebook.language.replace(/\s+/g, "")}`, cell.source));
       for (const output of cell.outputs) {
@@ -186,6 +199,7 @@ export function createPreview(hooks: PreviewHooks): Preview {
   element.dataset.keymapContext = "MarkdownPreview"; // I-045 / I-086
   const body = document.createElement("div");
   body.className = "markdown-body";
+  if (hooks.kind === "markdown" || hooks.kind === "ipynb") body.classList.add("left-margin"); // core v0.8.2 I-15
   element.append(body);
   // I-1 / v0.8.1 I-7: an HTML file is one frame filling the tab, its document served by the preview scheme (editor/html.ts).
   // allow-scripts only: an opaque origin, no form, popup, modal or top navigation (M-12). Never allow-same-origin with it.

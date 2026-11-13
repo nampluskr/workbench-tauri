@@ -22,7 +22,8 @@ let previewFontSize: number | null = null;
 const temporary: Record<ToggleOption, boolean | null> = { lineNumbers: null, wordWrap: null };
 
 const previewGaps = (s: Settings): PreviewGaps => ({ paragraphLine: s.preview_paragraph_line_spacing, paragraph: s.preview_paragraph_spacing, listLine: s.preview_list_line_spacing, list: s.preview_list_spacing });
-const codeFonts = (s: Settings): CodeFonts => ({ editor: s.buffer_font_family, preview: s.preview_code_font_family, previewPercent: s.preview_code_font_size });
+const codeFonts = (s: Settings): CodeFonts => ({ editor: s.buffer_font_family, preview: s.preview_code_font_family, previewPercent: s.preview_code_font_size,
+  previewLineHeight: s.preview_code_line_height, previewLineNumbers: s.preview_code_line_numbers });
 
 async function reload(): Promise<void> {
   let next = settings();

@@ -146,11 +146,7 @@ const METRICS: Record<string, string> = {
   // shortcut: gutter padding measured at Lilex 15, remeasure if the buffer font or size changes.
   "editor.gutter.padding_left": "22px", // I-14: Zed measured 2026-11-07, replaces E-003 3ch
   "editor.gutter.padding_right": "29px", // I-14: Zed measured 2026-11-07, replaces E-004 4ch
-  // I-27: with the line numbers hidden the text starts at VS Code's contentLeft = glyph margin (one lane, one line height) + lineDecorationsWidth + folding gutter.
-  // VS Code workbench.desktop.main.js EditorLayoutInfoComputer.computeLayout, defaults glyphMargin true, folding true, showFoldingControls "mouseover" (+16), lineDecorationsWidth 10, lineNumbers off (width 0).
-  "editor.no_line_numbers.line_decorations_width": "10px",
-  "editor.no_line_numbers.folding_width": "16px",
-  "editor.line_height.comfortable_multiplier": "1.618", // E-010; the editor body now uses --editor-line-height-multiplier (core v0.7 I-8), the preview code block still this
+  "editor.line_height.comfortable_multiplier": "1.618", // E-010; the editor body uses --editor-line-height-multiplier (core v0.7 I-8), the preview code --preview-code-line-height (core v0.8.2 I-21)
   "editor.indent_guide.width": "1px", // E-020
   "editor.indent_guide.active_width": "1px", // E-020
   "editor.cursor_width": rem(2), // E-012
@@ -230,6 +226,9 @@ const METRICS: Record<string, string> = {
   "toolbar.quick_actions_gap": rem(1), // E-038
   "markdown_preview.max_width": prem(800), // L-101
   "markdown_preview.container_padding": prem(16), // L-102
+  // core v0.8.2 I-15, tauri's choice (not in the toml): the left margin outside the body width, for a notebook's [n]. JupyterLab's
+  // --jp-cell-prompt-width 64px (theme-light-extension variables.css), here 64px at the 14px preview font and scaling with it.
+  "markdown_preview.left_margin": `calc(${64 / PREVIEW_BASE_FONT_SIZE} * var(--typography-preview-font-size))`,
   "markdown_preview.body.font_size": prem(16), // L-103
   "markdown_preview.body.line_height_multiplier": "1.5", // L-103
   "markdown_preview.paragraph_gap": prem(16), // L-103
@@ -417,8 +416,8 @@ const UI_FONT_FAMILY = '"IBM Plex Sans", "Malgun Gothic", sans-serif';
 // core v0.8.1 I-10: the breadcrumbs, search result names and Settings section titles keep Lilex; the editor and preview code take the setting.
 const BUFFER_FONT_FAMILY = '"Lilex", "Malgun Gothic", monospace';
 const codeFontFamily = (name: string) => `"${name}", "Malgun Gothic", monospace`; // a font without Hangul falls back to Malgun Gothic (Zed, VS Code)
-/** core v0.8.1 I-10: the Settings code fonts and the preview code block size in % of the preview font size. */
-export type CodeFonts = { editor: string; preview: string; previewPercent: number };
+/** core v0.8.1 I-10: the Settings code fonts and the preview code block size in % of the preview font size. core v0.8.2 I-21 / I-23: the preview code line height and line numbers. */
+export type CodeFonts = { editor: string; preview: string; previewPercent: number; previewLineHeight: number; previewLineNumbers: boolean };
 const FONT_WEIGHT = 400; // I-14: default UI and buffer weight
 const UI_FONT_FEATURE_SETTINGS = '"calt" 0'; // I-14: disable UI contextual alternates
 
@@ -429,7 +428,7 @@ let metricsSheet: CSSStyleSheet | undefined;
 export type PreviewGaps = { paragraphLine: number; paragraph: number; listLine: number; list: number };
 const scaledGap = (px: number, previewFontSize: number): number => px * previewFontSize / PREVIEW_BASE_FONT_SIZE;
 export async function applyMetrics(uiFontSize = 16, bufferFontSize = 14, editorFontSize = bufferFontSize, previewFontSize = PREVIEW_BASE_FONT_SIZE, editorLineHeight = 1.6,
-  gaps: PreviewGaps = { paragraphLine: 7, paragraph: 14, listLine: 5.25, list: 3.5 }, code: CodeFonts = { editor: "JetBrains Mono", preview: "JetBrains Mono", previewPercent: 85 }): Promise<void> {
+  gaps: PreviewGaps = { paragraphLine: 7, paragraph: 14, listLine: 5.25, list: 3.5 }, code: CodeFonts = { editor: "JetBrains Mono", preview: "JetBrains Mono", previewPercent: 86, previewLineHeight: 1.45, previewLineNumbers: false }): Promise<void> {
   const bufferSize = `${bufferFontSize}px`;
   const editorSize = `${editorFontSize}px`;
   const vars = Object.entries(METRICS).map(
@@ -446,6 +445,7 @@ export async function applyMetrics(uiFontSize = 16, bufferFontSize = 14, editorF
   vars.push(`--editor-gutter-margin: ${descent}px;`);
   vars.push(`--buffer-font-family: ${BUFFER_FONT_FAMILY};`);
   vars.push(`--editor-font-family: ${editorFamily}; --preview-code-font-family: ${codeFontFamily(code.preview)}; --preview-code-font-size: ${previewFontSize * code.previewPercent / 100}px;`);
+  vars.push(`--preview-code-line-height: ${code.previewLineHeight}; --preview-code-line-numbers: ${code.previewLineNumbers ? "block" : "none"};`);
   vars.push(`--editor-line-height-multiplier: ${editorLineHeight};`); // core v0.7 I-8: the Settings editor_line_height
   vars.push(`--preview-paragraph-line-gap: ${scaledGap(gaps.paragraphLine, previewFontSize)}px; --preview-paragraph-gap: ${scaledGap(gaps.paragraph, previewFontSize)}px; --preview-list-line-gap: ${scaledGap(gaps.listLine, previewFontSize)}px; --preview-list-gap: ${scaledGap(gaps.list, previewFontSize)}px;`);
   vars.push(`--ui-font-family: ${UI_FONT_FAMILY};`);

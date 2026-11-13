@@ -782,6 +782,8 @@ button, input, select, textarea {
   font-size: var(--markdown-preview-body-font-size); /* L-103 */
   line-height: var(--markdown-preview-body-line-height-multiplier);
 }
+/* core v0.8.2 I-15: Markdown and notebook bodies get a left margin outside the body width (centred together when wider); a notebook's [n] sits in it. */
+.markdown-body.left-margin { padding-left: var(--markdown-preview-left-margin); }
 /* core v0.8 I-1: an HTML preview is a sandboxed frame filling the tab. I-11: its text colour, link colour and color-scheme are weakest-priority defaults inside the frame document (editor/html.ts defaultStyle), from the Preview theme. */
 .markdown-preview.html-preview { padding: 0; overflow: hidden; }
 /* core v0.8.1 I-9: the preview find bar is the editor's (.document-search) as a full-width row over the scrolled content, pushing it down as the CM top panel does. */
@@ -840,6 +842,11 @@ button, input, select, textarea {
   border-radius: var(--markdown-preview-table-corner-radius);
   overflow: hidden;
 }
+/* core v0.8.2 I-17: a table (not a CSV / TSV file's) is at the code block size. I-16: a Markdown table (markdownTree wraps it) fills the body;
+   a wider one scrolls sideways inside the body width. The margin moves to the wrapper so the scroll box spaces as the table did. */
+.markdown-body table:not(.csv-table) { font-size: var(--preview-code-font-size); }
+.markdown-body .table-wrap { overflow-x: auto; margin: 0 0 var(--markdown-preview-paragraph-gap); }
+.markdown-body .table-wrap > table { width: 100%; margin: 0; }
 .markdown-body :is(th, td) { padding: var(--markdown-preview-table-cell-padding-y) var(--markdown-preview-table-cell-padding-x); text-align: left; }
 .markdown-body .csv-table :is(th, td) { white-space: pre-wrap; } /* core v0.8 I-7: a line break inside a cell shows as a break */
 .markdown-body > svg { max-width: 100%; height: auto; } /* core v0.8 I-6: shrink to fit, never enlarge */
@@ -867,7 +874,7 @@ button, input, select, textarea {
   font-family: var(--preview-code-font-family);
   font-size: var(--preview-code-font-size);
   font-weight: var(--font-weight-default);
-  line-height: var(--editor-line-height-comfortable-multiplier);
+  line-height: var(--preview-code-line-height); /* core v0.8.2 I-21: the Settings value; code blocks, code cells and outputs */
   font-feature-settings: normal;
   margin: var(--markdown-preview-code-block-margin-y) 0;
   padding: var(--markdown-preview-code-block-padding);
@@ -879,7 +886,19 @@ button, input, select, textarea {
 /* core v0.8.1 I-12: a code block (fenced, indented, ipynb code cell) is the header row (language, Copy) over its pre, in one shaded box. */
 .markdown-body :where(.code-block) { margin: var(--markdown-preview-code-block-margin-y) 0; background: var(--panel-background); border: var(--markdown-preview-code-block-border) solid var(--border-variant); border-radius: var(--markdown-preview-code-block-corner-radius); } /* :where: the first-child margin-top 0 above still wins */
 /* I-19: one border around the header and the code; no line between them (the header is part of the same box). */
-.markdown-body .code-block > pre { margin: 0; padding-top: 0; background: none; border: 0; border-radius: 0; }
+.markdown-body .code-block > pre { margin: 0; padding-top: 0; background: none; border: 0; border-radius: 0; grid-column: 2; /* its own column also when the numbers are hidden */ }
+/* core v0.8.2 I-23: the header row over [line numbers][code]; the numbers column is empty (display none) unless the Settings turn them on.
+   The numbers are the attribute drawn by ::before: no text, so find, Copy and a mouse selection never take them. */
+.markdown-body .code-block { display: grid; grid-template-columns: auto minmax(0, 1fr); }
+.code-block > .code-block-header { grid-column: 1 / -1; }
+.code-line-numbers {
+  display: var(--preview-code-line-numbers);
+  padding: 0 0 var(--markdown-preview-code-block-padding) var(--markdown-preview-code-block-padding);
+  color: var(--editor-line-number); /* the editor's line number colour (extensions.ts .cm-gutters) */
+  font-family: var(--preview-code-font-family); font-size: var(--preview-code-font-size); line-height: var(--preview-code-line-height);
+  text-align: right; white-space: pre; user-select: none;
+}
+.code-line-numbers::before { content: attr(data-lines); }
 .code-block-header { display: flex; user-select: none; /* a drag selection or copy across the block leaves the language out */ align-items: center; justify-content: space-between; padding: 0 0 0 var(--markdown-preview-code-block-padding); color: var(--text-muted); font-family: var(--ui-font-family); font-size: var(--typography-size-small); --icon-size: var(--icons-size-small); }
 .code-block-copy { border-radius: var(--markdown-preview-code-block-corner-radius); }
 .markdown-body pre code { font-size: inherit; background: none; }
@@ -895,7 +914,13 @@ button, input, select, textarea {
 .markdown-body .fm-key:nth-child(n + 3), .markdown-body .fm-value:nth-child(n + 3) { border-top: var(--markdown-preview-frontmatter-row-border-top) solid var(--border); }
 .markdown-body img { max-width: 100%; height: auto; } /* core v0.8 I-3: shrink to fit, never enlarge */
 /* core v0.8 I-2: ipynb cells reuse the Markdown preview's code block (pre) and table rules; only what they lack is here. */
-.markdown-body .nb-count { color: var(--text-muted); font-family: var(--preview-code-font-family); font-size: var(--preview-code-font-size); }
+/* core v0.8.2 I-15: [n] in the left margin, right-aligned to the code cell and level with its first code line (below the box's margin, border and header row). */
+.markdown-body .nb-code { position: relative; }
+.markdown-body .nb-count {
+  position: absolute; right: 100%; top: calc(var(--markdown-preview-code-block-margin-y) + var(--markdown-preview-code-block-border) + var(--buttons-height-default));
+  box-sizing: border-box; width: var(--markdown-preview-left-margin); padding-right: var(--markdown-preview-code-block-padding); text-align: right; white-space: pre;
+  color: var(--text-muted); font-family: var(--preview-code-font-family); font-size: var(--preview-code-font-size); line-height: var(--preview-code-line-height); user-select: none;
+}
 .markdown-body div.nb-output { margin: var(--markdown-preview-code-block-margin-y) 0; overflow-x: auto; }
 .markdown-body :is(.nb-stderr, .nb-error) { color: var(--error); }
 .markdown-body .nb-error-title { font-family: var(--preview-code-font-family); font-size: var(--preview-code-font-size); }

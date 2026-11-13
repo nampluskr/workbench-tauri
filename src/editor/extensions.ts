@@ -42,9 +42,9 @@ const zedEditorTheme = EditorView.theme({
   // E-005: margin between gutter and text. It sits inside the line so that the
   // active-line rectangle (E-011) covers it.
   ".cm-line": { padding: "0 0 0 var(--editor-gutter-margin)" },
-  // I-27: no line numbers -> the text starts where VS Code's does: a line-height wide glyph margin, then 10px and the 16px folding gutter (metrics.ts).
+  // core v0.8.2 I-13: no line numbers -> the text starts at the preview's fixed left margin (its padding + the I-15 left margin), not where a wide preview centres it.
   "&.cm-no-line-numbers .cm-line": {
-    paddingLeft: `calc(${lineHeight} + var(--editor-no-line-numbers-line-decorations-width) + var(--editor-no-line-numbers-folding-width))`,
+    paddingLeft: "calc(var(--markdown-preview-container-padding) + var(--markdown-preview-left-margin))",
   },
   ".cm-gutters": {
     backgroundColor: "var(--editor-gutter-background)",

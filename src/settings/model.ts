@@ -14,7 +14,10 @@ export const DEFAULTS = { theme: DEFAULT_THEME as string, icon_theme: "Zed (Defa
   // I-5 ~ I-8, I-10: the editor body's view settings.
   editor_line_height: 1.6, editor_line_numbers: true, editor_word_wrap: true, editor_indent_guides: true, editor_render_whitespace: false,
   // core v0.8.1 I-10: the editor and preview code fonts (one list, CODE_FONTS) and the code block size in % of the preview font size.
-  buffer_font_family: "JetBrains Mono", preview_code_font_family: "JetBrains Mono", preview_code_font_size: 85 };
+  // core v0.8.2 I-17: 86% is 12.04px at the 14px preview font (was 85). A saved value stays as it is.
+  buffer_font_family: "JetBrains Mono", preview_code_font_family: "JetBrains Mono", preview_code_font_size: 86,
+  // core v0.8.2 I-21 / I-23: the preview code line height (GitHub's 1.45) and the preview code line numbers (off: the 0.8.1 look).
+  preview_code_line_height: 1.45, preview_code_line_numbers: false };
 export type Settings = typeof DEFAULTS;
 export type SettingKey = keyof Settings;
 export type SettingValue = string | number | boolean;
@@ -26,10 +29,13 @@ export const isGapKey = (key: SettingKey): boolean => key.startsWith("preview_")
 export const nearestGap = (value: number): number => Math.min(48, Math.max(0, Math.round(value * 4) / 4));
 // core v0.8.1 I-10: whole percents, 50 to 150, for the preview code block size. Same handling as the line height.
 export const nearestPercent = (value: number): number => Math.min(150, Math.max(50, Math.round(value)));
-export const settingStep = (key: SettingKey): number => key === "editor_line_height" ? 0.1 : 1;
+// core v0.8.2 I-21: the editor Line Height's range (1.0 to 3.0) in 0.05 steps, since the 1.45 default is not a 0.1 step. Same handling as the line height.
+export const nearestCodeLineHeight = (value: number): number => Math.min(3, Math.max(1, Math.round(value * 20) / 20));
+export const settingStep = (key: SettingKey): number => key === "editor_line_height" ? 0.1 : key === "preview_code_line_height" ? 0.05 : 1;
 /** The number a Settings stepper or input saves: a step away from `current`, or the typed value, kept to the key's own range. */
 export const settingNumber = (key: SettingKey, value: number): number =>
-  key === "editor_line_height" ? nearestLineHeight(value) : isGapKey(key) ? nearestGap(value) : key === "preview_code_font_size" ? nearestPercent(value) : value;
+  key === "editor_line_height" ? nearestLineHeight(value) : key === "preview_code_line_height" ? nearestCodeLineHeight(value)
+    : isGapKey(key) ? nearestGap(value) : key === "preview_code_font_size" ? nearestPercent(value) : value;
 export const THEME_KEYS = ["theme", "editor_theme", "preview_theme"] as const;
 // core v0.8.1 I-10: the bundled code fonts (public/fonts), the first is the default. A name outside the list is invalid.
 export const CODE_FONTS = ["JetBrains Mono", "Hack", "Ubuntu Mono", "D2Coding", "Lilex"] as const;
@@ -55,6 +61,8 @@ export const ROWS: { key: SettingKey; name: string; description: string; categor
   { key: "preview_font_size", name: "Font Size", description: "Controls the font size in pixels used in the Markdown preview.", category: "Preview" },
   { key: "preview_code_font_family", name: "Code Font Family", description: "Controls the font family of code blocks and inline code in the Markdown preview.", category: "Preview" },
   { key: "preview_code_font_size", name: "Code Font Size", description: "Controls the font size of code blocks as a percentage of the preview font size.", category: "Preview" },
+  { key: "preview_code_line_height", name: "Code Line Height", description: "Controls the line height of code blocks as a multiple of the code font size.", category: "Preview" },
+  { key: "preview_code_line_numbers", name: "Code Line Numbers", description: "Controls the display of line numbers in code blocks.", category: "Preview" },
   { key: "preview_paragraph_line_spacing", name: "Paragraph Line Spacing", description: "Controls the space in pixels between wrapped lines of a paragraph.", category: "Preview" },
   { key: "preview_paragraph_spacing", name: "Paragraph Spacing", description: "Controls the space in pixels between paragraphs.", category: "Preview" },
   { key: "preview_list_line_spacing", name: "List Line Spacing", description: "Controls the space in pixels between wrapped lines of a list item.", category: "Preview" },
@@ -74,6 +82,7 @@ export function validSetting(key: SettingKey, value: unknown, choices: Choices):
   if (isChoiceKey(key)) return typeof value === "string" && choiceList(key, choices).includes(value);
   if (isToggleKey(key)) return typeof value === "boolean";
   if (key === "editor_line_height") return typeof value === "number" && value === nearestLineHeight(value);
+  if (key === "preview_code_line_height") return typeof value === "number" && value === nearestCodeLineHeight(value);
   if (isGapKey(key)) return typeof value === "number" && value === nearestGap(value);
   if (key === "preview_code_font_size") return typeof value === "number" && value === nearestPercent(value);
   return typeof value === "number" && Number.isFinite(value) && value > 0;
