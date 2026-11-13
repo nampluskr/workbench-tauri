@@ -51,6 +51,7 @@ import { hasPreview } from "../editor/preview-kind.ts";
 import { editorContext } from "../workspace/store.ts";
 import { isOpen as menuOpen, openContextMenu } from "./AppMenu.tsx";
 import Icon, { IconButton } from "./Icon.tsx";
+import { keepScroll, restoreScroll } from "./view-scroll.ts";
 import { tooltip } from "./tooltip.ts";
 import { notify } from "./toast.ts";
 
@@ -431,13 +432,15 @@ function TabList(props: { ctx: FolderContext; pane: PaneState }) {
 }
 
 function PaneBody(props: { pane: PaneState | null }) {
-  // The view of a tab is made once and moved in and out of the DOM, so scroll and selection stay. The effect is made in the
-  // ref callback: a `let` ref is only set after the component body has run, and a render effect runs at once.
+  // The view of a tab is made once and moved in and out of the DOM, so its state and selection stay. Its scroll offsets do not
+  // (Chromium resets them on removal): they are recorded from the scroll events and put back when it is shown (I-12). The
+  // effect is made in the ref callback: a `let` ref is only set after the component body has run, and a render effect runs at once.
   return (
     <div class="pane-body">
       <div
         class="pane-item"
-        ref={(item) =>
+        ref={(item) => {
+          item.addEventListener("scroll", keepScroll, { capture: true, passive: true });
           createRenderEffect(() => {
             const file = props.pane && activeTabOf(props.pane)?.file;
             const dom = file?.view?.dom ?? file?.element;
@@ -445,12 +448,13 @@ function PaneBody(props: { pane: PaneState | null }) {
             // the same editor out and back in drops its focus mid-typing.
             if (!(dom ? item.firstChild !== dom || item.childNodes.length > 1 : item.firstChild)) return;
             item.replaceChildren(...(dom ? [dom] : []));
+            restoreScroll(file?.view?.scrollDOM ?? file?.element);
             // 03-tauri R-01: CM6 keeps the last DOM selection it read, also one read while it was out of focus. Moved and
             // focused in one go (a tab dropped on another Pane), it took that copy for the selection still being there and
             // then read the browser's caret at the document start as a new selection. Its blur handler drops the copy.
             file?.view?.contentDOM.dispatchEvent(new FocusEvent("blur"));
-          })
-        }
+          });
+        }}
       />
       <Show when={overlayOn(props.pane)}>{(side) => <div class={`drop-overlay ${side()}`} />}</Show>
     </div>

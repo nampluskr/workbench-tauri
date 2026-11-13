@@ -13,10 +13,10 @@ test("settings defaults, invalid values and supported values", () => {
   assert.equal(parseSettings('{"icon_theme":"Missing"}', THEMES).icon_theme, "Zed (Default)");
   assert.equal(parseSettings('{"icon_theme":"Catppuccin Mocha"}', { ...THEMES, icon_theme: [] }).icon_theme, "Zed (Default)");
   assert.deepEqual(parseSettings('{"theme":"One Light","ui_font_size":18.5,"buffer_font_size":20}', THEMES), { ...DEFAULTS, theme: "One Light", editor_theme: "One Light", preview_theme: "One Light", ui_font_size: 18.5, buffer_font_size: 20 });
-  // I-2: a v0.6 file (four keys) reads preview_font_size as 16; a valid value is kept, an invalid one falls back.
-  assert.equal(parseSettings('{"theme":"One Light","icon_theme":"Zed (Default)","ui_font_size":16,"buffer_font_size":15}', THEMES).preview_font_size, 16);
+  // I-2: a v0.6 file (four keys) reads preview_font_size as the default (core v0.8.2 I-26: 14); a valid value is kept, an invalid one falls back.
+  assert.equal(parseSettings('{"theme":"One Light","icon_theme":"Zed (Default)","ui_font_size":16,"buffer_font_size":15}', THEMES).preview_font_size, 14);
   assert.equal(parseSettings('{"preview_font_size":20}', THEMES).preview_font_size, 20);
-  assert.equal(parseSettings('{"preview_font_size":"20"}', THEMES).preview_font_size, 16);
+  assert.equal(parseSettings('{"preview_font_size":"20"}', THEMES).preview_font_size, 14);
   assert.equal(parseSettings(updateSetting('{\n  // keep\n  "theme": "One Light"\n}\n', "preview_font_size", 18, THEMES), THEMES).preview_font_size, 18);
 });
 
@@ -73,28 +73,48 @@ test("I-5 ~ I-8, I-10: the five editor view settings read, validate and write", 
   assert.throws(() => updateSetting("{}", "editor_line_numbers", "no", THEMES));
 });
 
-test("I-9: the four preview gaps are whole pixels 0 to 48; a file value outside that reads as the default", () => {
-  const keys = ["preview_paragraph_line_gap", "preview_paragraph_gap", "preview_list_line_gap", "preview_list_gap"] as const;
+test("I-9 / v0.8.2 I-26: the four preview gaps are quarter pixels 0 to 48; a file value outside that reads as the default", () => {
+  const keys = ["preview_paragraph_line_spacing", "preview_paragraph_spacing", "preview_list_line_spacing", "preview_list_spacing"] as const;
   const read = (json: string) => parseSettings(json, THEMES);
-  assert.deepEqual(keys.map((k) => DEFAULTS[k]), [8, 16, 6, 4]); // core v0.8.1 I-8: the list defaults follow Zed
-  // A value already in the user file is kept, also the old defaults.
-  assert.deepEqual([read(`{"preview_list_line_gap":8,"preview_list_gap":12}`).preview_list_line_gap, read(`{"preview_list_gap":12}`).preview_list_gap, read("{}").preview_list_gap], [8, 12, 4]);
+  assert.deepEqual(keys.map((k) => DEFAULTS[k]), [7, 14, 5.25, 3.5]); // core v0.8.1 I-8 Zed 8, 16, 6, 4 at 16px, times 14/16
   for (const key of keys) {
-    for (const value of [0, 1, 48]) assert.equal(read(`{"${key}":${value}}`)[key], value);
-    for (const value of [-1, 49, 8.5, "\"8\"", "null"]) assert.equal(read(`{"${key}":${value}}`)[key], DEFAULTS[key], `${key} ${value}`);
+    for (const value of [0, 1, 5.25, 48]) assert.equal(read(`{"${key}":${value}}`)[key], value);
+    for (const value of [-1, 49, 8.3, "\"8\"", "null"]) assert.equal(read(`{"${key}":${value}}`)[key], DEFAULTS[key], `${key} ${value}`);
   }
-  // The Settings screen moves a step or typed value to the nearest allowed whole pixel.
-  assert.equal(settingNumber("preview_list_gap", 12 + settingStep("preview_list_gap")), 13);
-  assert.equal(settingNumber("preview_list_gap", 60), 48);
-  assert.equal(settingNumber("preview_list_gap", -3), 0);
-  assert.equal(settingNumber("preview_list_gap", 8.6), 9);
-  assert.equal(read(updateSetting("{}", "preview_paragraph_gap", 20, THEMES)).preview_paragraph_gap, 20);
-  assert.throws(() => updateSetting("{}", "preview_paragraph_gap", 49, THEMES));
+  // The Settings screen moves a step or typed value to the nearest allowed quarter pixel.
+  assert.equal(settingNumber("preview_list_spacing", 3.5 + settingStep("preview_list_spacing")), 4.5);
+  assert.equal(settingNumber("preview_list_spacing", 60), 48);
+  assert.equal(settingNumber("preview_list_spacing", -3), 0);
+  assert.equal(settingNumber("preview_list_spacing", 8.6), 8.5);
+  assert.equal(read(updateSetting("{}", "preview_paragraph_spacing", 20, THEMES)).preview_paragraph_spacing, 20);
+  assert.throws(() => updateSetting("{}", "preview_paragraph_spacing", 49, THEMES));
+});
+
+test("v0.8.2 I-26: 0.8.1 gap keys read as the same drawn px, and the next write keeps them in the new keys", () => {
+  const read = (json: string) => parseSettings(json, THEMES);
+  const gaps = (s: ReturnType<typeof read>) => [s.preview_paragraph_line_spacing, s.preview_paragraph_spacing, s.preview_list_line_spacing, s.preview_list_spacing];
+  const old = `"preview_paragraph_line_gap": 10, "preview_paragraph_gap": 20, "preview_list_line_gap": 8, "preview_list_gap": 12`;
+  // No font size in the file: 0.8.1 drew all four at 16px as the value; the new default 14px draws the setting as is.
+  assert.deepEqual(gaps(read(`{${old}}`)), [10, 20, 8, 12]);
+  // Font size 18: 0.8.1 drew 10, 20 (fixed) and 9, 13.5 (8, 12 x 18/16); the new settings draw x 18/14, so they are those x 14/18.
+  const s = read(`{${old}, "preview_font_size": 18}`);
+  assert.deepEqual(gaps(s), [7.75, 15.5, 7, 10.5]);
+  gaps(s).forEach((v, i) => assert.ok(Math.abs(v * 18 / 14 - [10, 20, 9, 13.5][i]) <= 0.125 * 18 / 14)); // drawn within a rounding step
+  // A valid new key wins; an invalid old value is the default.
+  assert.equal(read(`{"preview_paragraph_gap": 20, "preview_paragraph_spacing": 3}`).preview_paragraph_spacing, 3);
+  assert.equal(read(`{"preview_paragraph_gap": 8.5}`).preview_paragraph_spacing, DEFAULTS.preview_paragraph_spacing);
+  // Changing the font size writes the old gaps in the new keys first, as drawn before the change; comments and old keys stay.
+  const file = `{\n  // keep\n  ${old.replace(/, /g, ",\n  ")},\n  "preview_font_size": 18\n}\n`;
+  const written = updateSettings(file, { preview_font_size: 20 }, THEMES);
+  assert.ok(written.includes("// keep") && written.includes('"preview_paragraph_gap": 20'));
+  assert.deepEqual([...gaps(read(written)), read(written).preview_font_size], [7.75, 15.5, 7, 10.5, 20]);
+  // Load Defaults of Preview takes the old keys too, so they do not come back.
+  assert.deepEqual(gaps(read(removeSettings(written, categoryKeys("Preview")))), gaps(DEFAULTS));
 });
 
 test("settings search includes the category title, name and description", () => {
   const keys = (query: string) => filterSettings(query).map((r) => r.key);
-  assert.deepEqual(keys("preview"), ["preview_theme", "preview_font_size", "preview_code_font_family", "preview_code_font_size", "preview_paragraph_line_gap", "preview_paragraph_gap", "preview_list_line_gap", "preview_list_gap"]);
+  assert.deepEqual(keys("preview"), ["preview_theme", "preview_font_size", "preview_code_font_family", "preview_code_font_size", "preview_paragraph_line_spacing", "preview_paragraph_spacing", "preview_list_line_spacing", "preview_list_spacing"]);
   assert.deepEqual(keys("EDITOR"), ["editor_theme", "buffer_font_family", "buffer_font_size", "editor_line_height", "editor_line_numbers", "editor_word_wrap", "editor_indent_guides", "editor_render_whitespace"]);
   assert.deepEqual(keys("ui"), ["theme", "icon_theme", "ui_font_size", "editor_indent_guides"]); // "guides" holds "ui"
   assert.deepEqual(keys("ui font size"), ["ui_font_size"]);

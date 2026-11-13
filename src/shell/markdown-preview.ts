@@ -229,6 +229,9 @@ export function createPreview(hooks: PreviewHooks): Preview {
       pingSince = 0; // a new document (a render, or the tab view put back): its answers start now, so a quick tab switch is no hang
       const own = ours;
       ours = false;
+      // core v0.8.2 I-12: the document scrolls to the render's position at its load (headStart); a tab view put back reloads it,
+      // so it is sent the last position it reported. After a render this is the same or a newer one.
+      if (own) frame.contentWindow?.postMessage({ previewScrollTo: frameScroll }, "*");
       if (own || !frame.src || stopped) return;
       const next = recordRecovery(recoveries, performance.now());
       if (next) { recoveries = next; showFrame(); return; }

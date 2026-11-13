@@ -3,8 +3,11 @@
 const REM_SIZE = 16; // units.rem_size (L-01)
 /** L-02: px -> rem is px / rem_size. The only place that converts. */
 const rem = (px: number) => `${px / REM_SIZE}rem`;
-/** I-2: the Markdown preview lengths are rem-like units of the preview font size (`preview_font_size`), not of the UI font size. */
+/** I-2: the Markdown preview lengths are rem-like units of the preview font size (`preview_font_size`), not of the UI font size.
+ * The toml values are Zed's at a 16px rem; core v0.8.2 I-26 keeps the ratio, so at the 14px default prem(800) is 700px and prem(16) 14px. */
 const prem = (px: number) => `calc(${px / REM_SIZE} * var(--typography-preview-font-size))`;
+/** core v0.8.2 I-26: the default preview (and editor) font size, which the preview gap settings are px at. */
+export const PREVIEW_BASE_FONT_SIZE = 14;
 
 export const PROJECT_PANEL_ITEM_HEIGHT = 26; // project_panel.item.height (L-36); script needs it for the virtual window
 export const PROJECT_PANEL_DEFAULT_WIDTH = 240; // project_panel.default_width (L-32)
@@ -421,12 +424,12 @@ const UI_FONT_FEATURE_SETTINGS = '"calt" 0'; // I-14: disable UI contextual alte
 
 /** Publish the metrics as CSS variables on :root (constructable sheet, no inline style). */
 let metricsSheet: CSSStyleSheet | undefined;
-/** core v0.7 I-9: the four preview gaps in px. L-103 paragraph_gap (below) still spaces the non-paragraph blocks. core v0.8.1 I-23: the two list
- * gaps are px at a 16px preview font and scale with it (Zed rems(0.25), relative(1.5)); the paragraph gaps stay px. */
+/** core v0.7 I-9: the four preview gaps in px. L-103 paragraph_gap (below) still spaces the non-paragraph blocks. core v0.8.2 I-26: all four
+ * are px at the 14px preview font and scale with it (Zed rems(0.25), relative(1.5) for the list gaps; the paragraph gaps were fixed px before). */
 export type PreviewGaps = { paragraphLine: number; paragraph: number; listLine: number; list: number };
-const scaledListGap = (px: number, previewFontSize: number): number => px * previewFontSize / REM_SIZE;
-export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15, editorFontSize = bufferFontSize, previewFontSize = 16, editorLineHeight = 1.6,
-  gaps: PreviewGaps = { paragraphLine: 8, paragraph: 16, listLine: 8, list: 12 }, code: CodeFonts = { editor: "JetBrains Mono", preview: "JetBrains Mono", previewPercent: 85 }): Promise<void> {
+const scaledGap = (px: number, previewFontSize: number): number => px * previewFontSize / PREVIEW_BASE_FONT_SIZE;
+export async function applyMetrics(uiFontSize = 16, bufferFontSize = 14, editorFontSize = bufferFontSize, previewFontSize = PREVIEW_BASE_FONT_SIZE, editorLineHeight = 1.6,
+  gaps: PreviewGaps = { paragraphLine: 7, paragraph: 14, listLine: 5.25, list: 3.5 }, code: CodeFonts = { editor: "JetBrains Mono", preview: "JetBrains Mono", previewPercent: 85 }): Promise<void> {
   const bufferSize = `${bufferFontSize}px`;
   const editorSize = `${editorFontSize}px`;
   const vars = Object.entries(METRICS).map(
@@ -444,7 +447,7 @@ export async function applyMetrics(uiFontSize = 16, bufferFontSize = 15, editorF
   vars.push(`--buffer-font-family: ${BUFFER_FONT_FAMILY};`);
   vars.push(`--editor-font-family: ${editorFamily}; --preview-code-font-family: ${codeFontFamily(code.preview)}; --preview-code-font-size: ${previewFontSize * code.previewPercent / 100}px;`);
   vars.push(`--editor-line-height-multiplier: ${editorLineHeight};`); // core v0.7 I-8: the Settings editor_line_height
-  vars.push(`--preview-paragraph-line-gap: ${gaps.paragraphLine}px; --preview-paragraph-gap: ${gaps.paragraph}px; --preview-list-line-gap: ${scaledListGap(gaps.listLine, previewFontSize)}px; --preview-list-gap: ${scaledListGap(gaps.list, previewFontSize)}px;`);
+  vars.push(`--preview-paragraph-line-gap: ${scaledGap(gaps.paragraphLine, previewFontSize)}px; --preview-paragraph-gap: ${scaledGap(gaps.paragraph, previewFontSize)}px; --preview-list-line-gap: ${scaledGap(gaps.listLine, previewFontSize)}px; --preview-list-gap: ${scaledGap(gaps.list, previewFontSize)}px;`);
   vars.push(`--ui-font-family: ${UI_FONT_FAMILY};`);
   vars.push(`--font-weight-default: ${FONT_WEIGHT};`);
   vars.push(`--ui-font-feature-settings: ${UI_FONT_FEATURE_SETTINGS};`);

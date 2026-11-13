@@ -57,8 +57,8 @@ test("I-7: preview CSP allows inline scripts and local sources only", () => {
   // K-07a-R2: the document announces itself first, before its load, so a re-attached frame's load is not a navigation.
   // I-15: WebRTC is removed before any page script runs.
   assert.ok(head.includes('<script>delete window.RTCPeerConnection;delete window.webkitRTCPeerConnection;parent.postMessage({previewReady:true},"*");'));
-  // I-14: it answers the parent's ping, and only the parent's.
-  assert.ok(head.includes('addEventListener("message",e=>{if(e.source===parent&&e.data?.previewPing===true)parent.postMessage({previewPong:true},"*")})'));
+  // I-14: it answers the parent's ping, and only the parent's. core v0.8.2 I-12: it scrolls to a position only the parent sends.
+  assert.ok(head.includes('addEventListener("message",e=>{if(e.source!==parent)return;if(e.data?.previewPing===true)parent.postMessage({previewPong:true},"*");if(typeof e.data?.previewScrollTo==="number")scrollTo(0,e.data.previewScrollTo)})'));
   assert.ok(headStart({ appearance: "dark", text: "#fff", accent: "#00f" }, Number.NaN, "tok").includes("scrollTo(0,0)"));
   // I-24: the link script removes itself (the token stays in its closure), listens first in the capture phase, cancels every
   // link click and reports trusted ones only, through built-ins kept before any page script runs.

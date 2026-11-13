@@ -21,7 +21,7 @@ let previewFontSize: number | null = null;
 // I-6 / I-7: the Ctrl+Alt+L and Alt+Z values, in memory only like the sizes above. null follows the editor_line_numbers / editor_word_wrap setting.
 const temporary: Record<ToggleOption, boolean | null> = { lineNumbers: null, wordWrap: null };
 
-const previewGaps = (s: Settings): PreviewGaps => ({ paragraphLine: s.preview_paragraph_line_gap, paragraph: s.preview_paragraph_gap, listLine: s.preview_list_line_gap, list: s.preview_list_gap });
+const previewGaps = (s: Settings): PreviewGaps => ({ paragraphLine: s.preview_paragraph_line_spacing, paragraph: s.preview_paragraph_spacing, listLine: s.preview_list_line_spacing, list: s.preview_list_spacing });
 const codeFonts = (s: Settings): CodeFonts => ({ editor: s.buffer_font_family, preview: s.preview_code_font_family, previewPercent: s.preview_code_font_size });
 
 async function reload(): Promise<void> {
@@ -96,7 +96,7 @@ export async function saveSettings(values: Partial<Record<SettingKey, SettingVal
 }
 
 /** I-17 Load Defaults: delete the keys from the file in one write (the same read, edit, write with `expected` as saveSettings). */
-export async function resetSettings(keys: readonly SettingKey[]): Promise<void> {
+export async function resetSettings(keys: readonly string[]): Promise<void> {
   const expected = await invoke<string | null>("read_user_settings");
   await invoke("write_user_settings", { expected, json: removeSettings(expected, keys) });
   await loadSettings();
