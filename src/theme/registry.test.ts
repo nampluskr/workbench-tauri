@@ -17,10 +17,11 @@ test("registry: dark first then light, each by string order; broken files and th
   assert.deepEqual(list.map((t) => t.name), ["Alpha", "Beta", "Frappé", "Frappé - No Italics", "Alpha Light", "Zed Light"]);
 });
 
-test("registry: no files gives an empty list; an unknown or missing name picks One Dark", () => {
+test("registry: no files gives an empty list; an unknown or missing name picks One Light (core v0.8.2 I-2)", () => {
   assert.deepEqual(buildRegistry({}), []);
-  const list = buildRegistry({ "one.json": file(theme(DEFAULT_THEME), theme("One Light", "light")) });
-  assert.equal(pickTheme(list, "One Light").name, "One Light");
+  const list = buildRegistry({ "one.json": file(theme("One Dark"), theme("One Light", "light")) });
+  assert.equal(DEFAULT_THEME, "One Light");
+  assert.equal(pickTheme(list, "One Dark").name, "One Dark");
   for (const name of ["Missing", undefined]) assert.equal(pickTheme(list, name).name, DEFAULT_THEME);
   assert.throws(() => pickTheme([], "x"));
 });

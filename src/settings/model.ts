@@ -1,13 +1,20 @@
 import { stripJsonc } from "../keymap/user.ts";
 import type { KeymapSection } from "../keymap/engine.ts";
 import type { MenuItem } from "../shell/menu.ts";
-import { DEFAULT_THEME } from "../theme/registry.ts";
+import { BASE_THEME } from "../theme/registry.ts";
 import { PREVIEW_BASE_FONT_SIZE } from "../spec/metrics.ts";
 
 export const SETTINGS_BINDINGS: KeymapSection[] = [{ context: "Workspace", bindings: { "ctrl-,": "zed::OpenSettings" } }];
 
-// I-3: editor_theme and preview_theme follow theme until set (parseSettings), so the defaults repeat its default.
-export const DEFAULTS = { theme: DEFAULT_THEME as string, icon_theme: "Zed (Default)", editor_theme: DEFAULT_THEME as string, preview_theme: DEFAULT_THEME as string, ui_font_size: 16, buffer_font_size: 14, preview_font_size: PREVIEW_BASE_FONT_SIZE, // core v0.8.2 I-26
+export type Appearance = "dark" | "light";
+/** core v0.8.2 I-2: the three themed areas (UI, editor, preview). Each has `<area>_dark`, `<area>_light` and `<area>_mode`; the names are also the 0.8.1 keys (oldThemes). */
+export const THEME_AREAS = ["theme", "editor_theme", "preview_theme"] as const;
+export type ThemeArea = (typeof THEME_AREAS)[number];
+// core v0.8.2 I-2: every area starts light (One Light). The mode is the status bar button's state (no Settings row).
+export const DEFAULTS = { theme_dark: BASE_THEME.dark as string, theme_light: BASE_THEME.light as string, theme_mode: "light" as Appearance,
+  editor_theme_dark: BASE_THEME.dark as string, editor_theme_light: BASE_THEME.light as string, editor_theme_mode: "light" as Appearance,
+  preview_theme_dark: BASE_THEME.dark as string, preview_theme_light: BASE_THEME.light as string, preview_theme_mode: "light" as Appearance,
+  icon_theme: "Zed (Default)", ui_font_size: 16, buffer_font_size: 14, preview_font_size: PREVIEW_BASE_FONT_SIZE, // core v0.8.2 I-26
   // core v0.8.2 I-26: the preview's line and block gaps in px at the 14px preview font, scaling with it: Zed 1.27.0 measured at 16px
   // (core v0.8.1 I-8: 8, 16, 6, 4) times 14/16. New key names, so the 0.8.1 *_gap values in a file are read apart (oldGaps).
   preview_paragraph_line_spacing: 7, preview_paragraph_spacing: 14, preview_list_line_spacing: 5.25, preview_list_spacing: 3.5,
@@ -38,20 +45,32 @@ export const settingStep = (key: SettingKey): number => key === "editor_line_hei
 export const settingNumber = (key: SettingKey, value: number): number =>
   key === "editor_line_height" ? nearestLineHeight(value) : key === "preview_code_line_height" ? nearestCodeLineHeight(value)
     : isGapKey(key) ? nearestGap(value) : key === "preview_code_font_size" ? nearestPercent(value) : value;
-export const THEME_KEYS = ["theme", "editor_theme", "preview_theme"] as const;
+/** The theme an area shows: its dark or light setting, by its mode. */
+export const areaTheme = (s: Settings, area: ThemeArea): string => s[`${area}_${s[`${area}_mode`]}`];
+/** core v0.8.2 I-2: the status bar button's write: that area's mode only. */
+export const toggleThemeMode = (s: Settings, area: ThemeArea): Partial<Record<SettingKey, SettingValue>> => ({ [`${area}_mode`]: s[`${area}_mode`] === "dark" ? "light" : "dark" });
+/** core v0.8.2 I-2: the Themes… selector's write: the theme into all three areas' setting of its appearance, and all three to that mode. */
+export const themeForAll = (name: string, appearance: Appearance): Partial<Record<SettingKey, SettingValue>> =>
+  Object.fromEntries(THEME_AREAS.flatMap((area) => [[`${area}_${appearance}`, name], [`${area}_mode`, appearance]]));
+type ThemeKey = `${ThemeArea}_${Appearance}`;
+const isThemeKey = (key: string): key is ThemeKey => key.endsWith("theme_dark") || key.endsWith("theme_light");
+const isModeKey = (key: string): boolean => key.endsWith("theme_mode");
 // core v0.8.1 I-10: the bundled code fonts (public/fonts), the first is the default. A name outside the list is invalid.
 export const CODE_FONTS = ["JetBrains Mono", "Hack", "Ubuntu Mono", "D2Coding", "Lilex"] as const;
 const FONT_KEYS: readonly string[] = ["buffer_font_family", "preview_code_font_family"];
-export type ChoiceKey = (typeof THEME_KEYS)[number] | "icon_theme" | "buffer_font_family" | "preview_code_font_family";
-export const isChoiceKey = (key: SettingKey): key is ChoiceKey => key === "icon_theme" || FONT_KEYS.includes(key) || (THEME_KEYS as readonly string[]).includes(key);
-const choiceList = (key: ChoiceKey, choices: Choices): readonly string[] => key === "icon_theme" ? choices.icon_theme : FONT_KEYS.includes(key) ? CODE_FONTS : choices.theme;
+export type ChoiceKey = ThemeKey | "icon_theme" | "buffer_font_family" | "preview_code_font_family";
+export const isChoiceKey = (key: SettingKey): key is ChoiceKey => key === "icon_theme" || FONT_KEYS.includes(key) || isThemeKey(key);
+const choiceList = (key: ChoiceKey, choices: Choices): readonly string[] =>
+  key === "icon_theme" ? choices.icon_theme : FONT_KEYS.includes(key) ? CODE_FONTS : key.endsWith("_dark") ? choices.dark_theme : choices.light_theme;
 // I-4: three categories. Labels follow Zed's settings UI; descriptions follow VS Code's setting descriptions (Zed page_data.rs words them differently).
 export const CATEGORIES = ["UI", "Editor", "Preview"] as const;
 export const ROWS: { key: SettingKey; name: string; description: string; category: (typeof CATEGORIES)[number] }[] = [
-  { key: "theme", name: "Theme", description: "Specifies the color theme used in the workbench.", category: "UI" },
+  { key: "theme_dark", name: "Dark Theme", description: "Specifies the color theme used in the workbench when it is dark.", category: "UI" },
+  { key: "theme_light", name: "Light Theme", description: "Specifies the color theme used in the workbench when it is light.", category: "UI" },
   { key: "icon_theme", name: "Icon Theme", description: "Specifies the file icon theme used in the workbench.", category: "UI" },
   { key: "ui_font_size", name: "Font Size", description: "Controls the font size in pixels used in the UI.", category: "UI" },
-  { key: "editor_theme", name: "Theme", description: "Specifies the color theme used in the editor.", category: "Editor" },
+  { key: "editor_theme_dark", name: "Dark Theme", description: "Specifies the color theme used in the editor when it is dark.", category: "Editor" },
+  { key: "editor_theme_light", name: "Light Theme", description: "Specifies the color theme used in the editor when it is light.", category: "Editor" },
   { key: "buffer_font_family", name: "Font Family", description: "Controls the font family.", category: "Editor" },
   { key: "buffer_font_size", name: "Font Size", description: "Controls the font size in pixels.", category: "Editor" },
   { key: "editor_line_height", name: "Line Height", description: "Controls the line height as a multiple of the font size.", category: "Editor" },
@@ -59,7 +78,8 @@ export const ROWS: { key: SettingKey; name: string; description: string; categor
   { key: "editor_word_wrap", name: "Word Wrap", description: "Controls whether long lines wrap in Markdown files. Code files never wrap.", category: "Editor" },
   { key: "editor_indent_guides", name: "Indent Guides", description: "Controls whether the editor should render indent guides.", category: "Editor" },
   { key: "editor_render_whitespace", name: "Render Whitespace", description: "Controls whether the editor renders spaces, tabs and line breaks as symbols.", category: "Editor" },
-  { key: "preview_theme", name: "Theme", description: "Specifies the color theme used in the Markdown preview.", category: "Preview" },
+  { key: "preview_theme_dark", name: "Dark Theme", description: "Specifies the color theme used in the Markdown preview when it is dark.", category: "Preview" },
+  { key: "preview_theme_light", name: "Light Theme", description: "Specifies the color theme used in the Markdown preview when it is light.", category: "Preview" },
   { key: "preview_font_size", name: "Font Size", description: "Controls the font size in pixels used in the Markdown preview.", category: "Preview" },
   { key: "preview_code_font_family", name: "Code Font Family", description: "Controls the font family of code blocks and inline code in the Markdown preview.", category: "Preview" },
   { key: "preview_code_font_size", name: "Code Font Size", description: "Controls the font size of code blocks as a percentage of the preview font size.", category: "Preview" },
@@ -77,12 +97,13 @@ function object(text: string): Record<string, unknown> {
   return value as Record<string, unknown>;
 }
 
-/** The names a theme or icon theme setting may take: the registries in src/theme (a name outside them is invalid). */
-export type Choices = { theme: readonly string[]; icon_theme: readonly string[] };
+/** The names a theme or icon theme setting may take: the registries in src/theme (a name outside them is invalid). A dark theme setting takes dark themes only, a light one light themes only. */
+export type Choices = { dark_theme: readonly string[]; light_theme: readonly string[]; icon_theme: readonly string[] };
 
 export function validSetting(key: SettingKey, value: unknown, choices: Choices): boolean {
   if (isChoiceKey(key)) return typeof value === "string" && choiceList(key, choices).includes(value);
   if (isToggleKey(key)) return typeof value === "boolean";
+  if (isModeKey(key)) return value === "dark" || value === "light";
   if (key === "editor_line_height") return typeof value === "number" && value === nearestLineHeight(value);
   if (key === "preview_code_line_height") return typeof value === "number" && value === nearestCodeLineHeight(value);
   if (isGapKey(key)) return typeof value === "number" && value === nearestGap(value);
@@ -94,11 +115,26 @@ export function parseSettings(text: string | null, choices: Choices): Settings {
   let raw: Record<string, unknown> = {};
   try { if (text?.trim()) raw = object(text); } catch { /* Invalid files use defaults without rewriting them. */ }
   const out: Record<string, unknown> = {};
-  for (const [key, fallback] of Object.entries(DEFAULTS)) {
-    const own = key === "editor_theme" || key === "preview_theme" ? out.theme : fallback; // theme comes first in DEFAULTS
-    out[key] = validSetting(key as SettingKey, raw[key], choices) ? raw[key] : own;
+  for (const [key, fallback] of Object.entries(DEFAULTS)) out[key] = validSetting(key as SettingKey, raw[key], choices) ? raw[key] : fallback;
+  return { ...out, ...oldGaps(raw, choices), ...oldThemes(raw, choices) } as Settings;
+}
+
+/**
+ * core v0.8.2 I-2: the 0.8.1 `theme`, `editor_theme` and `preview_theme` (the last two followed `theme` until set), read where a file
+ * has no valid new key: the area starts in that theme's appearance, with the theme as its setting of that appearance. A file that
+ * names no listed theme gives nothing (the defaults: One Light).
+ */
+function oldThemes(raw: Record<string, unknown>, choices: Choices): Partial<Settings> {
+  const named = (key: string): [Appearance, unknown] | undefined =>
+    choices.dark_theme.includes(raw[key] as string) ? ["dark", raw[key]] : choices.light_theme.includes(raw[key] as string) ? ["light", raw[key]] : undefined;
+  const out: Record<string, unknown> = {};
+  for (const area of THEME_AREAS) {
+    const [mode, name] = named(area) ?? named("theme") ?? [];
+    if (!mode) continue;
+    if (!validSetting(`${area}_mode`, raw[`${area}_mode`], choices)) out[`${area}_mode`] = mode;
+    if (!validSetting(`${area}_${mode}`, raw[`${area}_${mode}`], choices)) out[`${area}_${mode}`] = name;
   }
-  return { ...out, ...oldGaps(raw, choices) } as Settings;
+  return out as Partial<Settings>;
 }
 
 /** core v0.8.2 I-26: the 0.8.1 gap keys, read where a file has no valid new key. */
@@ -121,9 +157,20 @@ function oldGaps(raw: Record<string, unknown>, choices: Choices): Partial<Settin
   return out as Partial<Settings>;
 }
 
-/** I-17: the keys of every row in a category, which Load Defaults deletes (with their 0.8.1 names); other categories and unknown keys are not in it. */
+/**
+ * I-17: the keys of every row in a category, which Load Defaults deletes (with their 0.8.1 gap names, and a theme area's mode);
+ * other categories and unknown keys are not in it.
+ */
 export const categoryKeys = (category: (typeof CATEGORIES)[number]): string[] =>
-  ROWS.filter((row) => row.category === category).flatMap((row) => [row.key, ...(OLD_GAP_KEYS[row.key] ? [OLD_GAP_KEYS[row.key]!] : [])]);
+  ROWS.filter((row) => row.category === category).flatMap((row) => [row.key, ...(OLD_GAP_KEYS[row.key] ? [OLD_GAP_KEYS[row.key]!] : []),
+    ...(row.key.endsWith("theme_dark") ? [`${row.key.slice(0, -5)}_mode`] : [])]);
+
+/**
+ * I-17 Load Defaults as one edit of the file. core v0.8.2 I-2: the 0.8.1 values are first written in their new keys (updateSettings) and
+ * the three 0.8.1 theme keys deleted, so the category gets the new defaults (not the 0.8.1 `theme` again) and the other areas stay as they are.
+ */
+export const loadDefaults = (text: string | null, category: (typeof CATEGORIES)[number], choices: Choices): string =>
+  removeSettings(updateSettings(text, {}, choices), [...categoryKeys(category), ...THEME_AREAS]);
 
 export const filterSettings = (query: string) => ROWS.filter((row) =>
   query.toLowerCase().trim().split(/\s+/).every((term) => `${row.category} ${row.name} ${row.description}`.toLowerCase().includes(term)));
@@ -134,11 +181,12 @@ export const settingMenu = (key: ChoiceKey, current: string, change: (value: str
 /**
  * Several keys in one write, so the file watcher never reads a half-changed state. core v0.8.2 I-26: the first write also puts in the
  * new keys of the 0.8.1 gaps as read from the file before it (oldGaps), so from then on they scale with a changed font size.
+ * core v0.8.2 I-2: and the new keys of the 0.8.1 themes (oldThemes); the 0.8.1 keys stay in the file until a Load Defaults.
  */
 export function updateSettings(text: string | null, values: Partial<Record<SettingKey, SettingValue>>, choices: Choices): string {
   let raw: Record<string, unknown> = {};
   try { if (stripJsonc(text ?? "").replace(/^﻿/, "").trim()) raw = object(text!); } catch { /* updateSetting refuses a malformed file */ }
-  return Object.entries({ ...oldGaps(raw, choices), ...values }).reduce<string | null>((acc, [key, value]) => updateSetting(acc, key as SettingKey, value, choices), text) ?? "";
+  return Object.entries({ ...oldGaps(raw, choices), ...oldThemes(raw, choices), ...values }).reduce<string | null>((acc, [key, value]) => updateSetting(acc, key as SettingKey, value, choices), text) ?? "";
 }
 
 const TOKEN = /"(?:\\.|[^"\\])*"|\/\*[\s\S]*?\*\/|\/\/[^\r\n]*|[{}\[\],:]|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|true|false|null/g;

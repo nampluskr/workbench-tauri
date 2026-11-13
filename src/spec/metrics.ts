@@ -299,6 +299,20 @@ const METRICS: Record<string, string> = {
   "statusbar.cursor_position.font_size": rem(12), // L-97
   "statusbar.left_divider.width": rem(1), // measured Zed 4304dec 2026-11-07
   "statusbar.left_divider.height": rem(16), // measured Zed 4304dec 2026-11-07
+  // core v0.8.2 I-1 / I-2: the user's pick in core specs/v0.8.2/mockups/statusbar/index.html (E pressed cell, B sun/moon + text); not in the toml.
+  // The cell is statusbar.button_height square; its colours are editor.background, border (hover border.focused) and text.accent.
+  "statusbar.toggled.corner_radius": rem(4),
+  "statusbar.toggled.border_width": rem(1),
+  "statusbar.toggled.shadow.offset_y": rem(1),
+  "statusbar.toggled.shadow.blur": rem(2),
+  "statusbar.toggled.shadow.color": "#000000",
+  "statusbar.toggled.shadow.alpha_dark": "0.4",
+  "statusbar.toggled.shadow.alpha_light": "0.2",
+  "statusbar.theme_button.padding_left": rem(4),
+  "statusbar.theme_button.padding_right": rem(5),
+  "statusbar.theme_button.gap": rem(3),
+  "statusbar.theme_button.font_size": rem(11),
+  "statusbar.theme_button.font_weight": "600",
   "tooltip.transparent_margin_left": rem(8), // L-209
   "tooltip.transparent_margin_top": rem(10), // L-209
   "tooltip.corner_radius": rem(8), // L-211

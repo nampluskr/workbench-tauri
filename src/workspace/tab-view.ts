@@ -15,6 +15,8 @@ export function tabTooltip(tab: { path: string; tool?: boolean; title?: string; 
 /** core I-6: every DeploySearch opens its own Search tab, so each gets a path of its own (openTool finds tool tabs by path). */
 export const searchPath = (n: number): string => `Search:${n}`;
 const isSearchPath = (path: string): boolean => path.startsWith("Search:");
+/** core v0.8.2 I-1: the status bar's Search button is on while any of the folder's tabs is a Search tab. */
+export const hasSearchTab = (tabs: readonly { path: string; tool?: boolean }[]): boolean => tabs.some((tab) => !!tab.tool && isSearchPath(tab.path));
 /** core I-6: a Search tab is titled with the query it last searched, "Search" before that. */
 export const searchTitle = (searched: string): string => searched || "Search";
 

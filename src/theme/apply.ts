@@ -30,7 +30,7 @@ function resolve(name?: string) {
 }
 
 /**
- * Apply the UI, editor and preview themes (unknown or unset -> One Dark, D-8), retaining the V3 `?theme=` override,
+ * Apply the UI, editor and preview themes (unknown or unset -> One Light, core v0.8.2 I-2), retaining the V3 `?theme=` override,
  * which covers all three. Variables live in one constructable sheet.
  */
 export async function applyTheme(ui?: string, editor = ui, preview = ui): Promise<void> {

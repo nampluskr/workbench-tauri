@@ -4,6 +4,8 @@
 export type PickerConfig = {
   placeholder: string;
   items: readonly string[];
+  /** A dividing line is drawn above this item while the list is unfiltered, unless it is the first one (core v0.8.2 I-2: dark themes | light themes). */
+  divideBefore?: string;
   /** The item that carries the check mark and is selected on open. */
   checked: string;
   /** Install button in the footer, right-aligned (P-010). */

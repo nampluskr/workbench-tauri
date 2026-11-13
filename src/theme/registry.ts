@@ -5,7 +5,7 @@ export type RegisteredTheme = ReturnType<typeof findTheme>;
 
 /** Missing tokens are taken from the One theme of the same appearance (Zed refines its fallback One-like theme). */
 export const BASE_THEME = { dark: "One Dark", light: "One Light" } as const;
-export const DEFAULT_THEME = BASE_THEME.dark;
+export const DEFAULT_THEME = BASE_THEME.light; // core v0.8.2 I-2 (was One Dark)
 
 /**
  * Every valid theme of every file: broken JSON, nameless or malformed themes and repeated names are skipped.
@@ -34,7 +34,7 @@ export function selectorOrder<T extends { name: string; appearance: string }>(li
   return list.sort((a, b) => rank(a) - rank(b) || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 }
 
-/** The named theme, or the default One Dark when the name is not in the list. */
+/** The named theme, or the default One Light when the name is not in the list. */
 export function pickTheme(list: RegisteredTheme[], name: string | undefined): RegisteredTheme {
   const theme = list.find((t) => t.name === name) ?? list.find((t) => t.name === DEFAULT_THEME);
   if (!theme) throw new Error(`default theme missing: ${DEFAULT_THEME}`);

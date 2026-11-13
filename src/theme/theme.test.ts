@@ -2,7 +2,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { BASE_THEME, buildRegistry, pickTheme } from "./registry.ts";
-import { over, panelFocusedBorder, parseColor, resolveTokens, syntaxCss, themeCss } from "./theme.ts";
+import { headingColorsCss, over, panelFocusedBorder, parseColor, resolveTokens, syntaxCss, themeCss } from "./theme.ts";
+import { areaTheme, parseSettings, THEME_AREAS, toggleThemeMode, updateSettings, type ThemeArea } from "../settings/model.ts";
+import { themeButtons } from "../shell/status.ts";
 
 // Every theme JSON under assets/ (committed one/ plus the .gitignore copies when present).
 const assets = new URL("./assets/", import.meta.url);
@@ -125,4 +127,30 @@ test("I-14: One Dark and One Light get Zed's default guide colors; other themes 
   assert.deepEqual([resolveTokens(one, one)["editor.indent_guide"], resolveTokens(one, one)["editor.indent_guide_active"]], ["#3b3d45ff", "#1b1d23ff"]);
   const own = { ...one, "editor.indent_guide": "#112233", "editor.indent_guide_active": "#445566" };
   assert.deepEqual([resolveTokens(own, one, "One Dark")["editor.indent_guide"], resolveTokens(own, one, "One Dark")["editor.indent_guide_active"]], ["#112233ff", "#445566ff"]);
+});
+
+test("core v0.8.2 I-2: a status bar theme button turns its own area only and the file keeps it; no settings is One Light; heading colours follow the area's theme", () => {
+  const named = (appearance: string) => registry.filter((t) => t.appearance === appearance).map((t) => t.name);
+  const choices = { dark_theme: named("dark"), light_theme: named("light"), icon_theme: [] };
+  const read = (text: string | null) => parseSettings(text, choices);
+  const themes = (text: string | null) => THEME_AREAS.map((area) => areaTheme(read(text), area));
+  const press = (text: string | null, area: ThemeArea) => updateSettings(text, toggleThemeMode(read(text), area), choices);
+  // What applyTheme puts in the sheet for the heading colours (core v0.8.2 I-11): the UI theme on :root, the preview theme on its body.
+  const headings = (text: string | null) => [headingColorsCss(pickTheme(registry, areaTheme(read(text), "theme")).style), headingColorsCss(pickTheme(registry, areaTheme(read(text), "preview_theme")).style, ".markdown-preview")];
+  assert.deepEqual(themes(null), ["One Light", "One Light", "One Light"]); // no settings yet
+  assert.deepEqual(themeButtons(read(null)).map((b) => [b.text, b.name, b.label]), [["UI", "sun", "UI: Light Theme"], ["Edit", "sun", "Editor: Light Theme"], ["View", "sun", "Preview: Light Theme"]]);
+
+  const view = press("// mine\n", "preview_theme");
+  assert.ok(view.startsWith("// mine\n"));
+  assert.deepEqual(themes(view), ["One Light", "One Light", "One Dark"]); // read again from the file: kept over a restart
+  assert.deepEqual(themeButtons(read(view)).map((b) => [b.area, b.name]), [["theme", "sun"], ["editor_theme", "sun"], ["preview_theme", "moon"]]);
+  assert.equal(headings(view)[0], headings(null)[0]); // the Outline's heading colours stay with the UI theme
+  assert.equal(headings(view)[1], headingColorsCss(pickTheme(registry, "One Dark").style, ".markdown-preview"));
+  assert.notEqual(headings(view)[1], headings(null)[1]);
+
+  const ui = press(view, "theme");
+  assert.deepEqual(themes(ui), ["One Dark", "One Light", "One Dark"]);
+  assert.equal(headings(ui)[0], headingColorsCss(pickTheme(registry, "One Dark").style));
+  assert.deepEqual(themes(press(ui, "editor_theme")), ["One Dark", "One Dark", "One Dark"]);
+  assert.deepEqual(themes(press(press(ui, "theme"), "preview_theme")), ["One Light", "One Light", "One Light"]);
 });

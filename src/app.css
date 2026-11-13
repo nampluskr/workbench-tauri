@@ -306,7 +306,28 @@ button, input, select, textarea {
 }
 .group { display: flex; gap: var(--statusbar-item-gap); }
 .status-items { align-items: center; font-size: var(--statusbar-cursor-position-font-size); white-space: nowrap; }
-.status-bar .icon-button[aria-pressed="true"] { color: var(--text-accent); } /* I-19: Zed IconButton Color::Selected. */
+/* core v0.8.2 I-1: a button that is on is a pressed-in cell (mockup E): the editor background, an inner shadow and a 1px inner border. */
+.status-bar .icon-button { border-radius: var(--statusbar-toggled-corner-radius); }
+.status-bar .icon-button[aria-pressed="true"] {
+  --toggled-border: var(--border);
+  --toggled-shadow-alpha: var(--statusbar-toggled-shadow-alpha-dark);
+  background: var(--editor-background);
+  color: var(--text-accent); /* I-19: Zed IconButton Color::Selected. */
+  box-shadow:
+    inset 0 var(--statusbar-toggled-shadow-offset-y) var(--statusbar-toggled-shadow-blur)
+      color-mix(in srgb, var(--statusbar-toggled-shadow-color) calc(var(--toggled-shadow-alpha) * 100%), transparent),
+    inset 0 0 0 var(--statusbar-toggled-border-width) var(--toggled-border);
+}
+:root[data-appearance="light"] .status-bar .icon-button[aria-pressed="true"] { --toggled-shadow-alpha: var(--statusbar-toggled-shadow-alpha-light); }
+.status-bar .icon-button[aria-pressed="true"]:hover { --toggled-border: var(--border-focused); background: var(--editor-background); }
+/* core v0.8.2 I-2: UI | Edit | View at the right end (mockup B): sun or moon and the area's name, as wide as its text; never a pressed cell. */
+.status-bar .icon-button.labelled {
+  width: auto;
+  gap: var(--statusbar-theme-button-gap);
+  padding: 0 var(--statusbar-theme-button-padding-right) 0 var(--statusbar-theme-button-padding-left);
+  font-size: var(--statusbar-theme-button-font-size);
+  font-weight: var(--statusbar-theme-button-font-weight);
+}
 .status-divider { flex: none; align-self: center; width: var(--statusbar-left-divider-width); height: var(--statusbar-left-divider-height); background: var(--border); }
 .status-divider.toggle { margin-left: calc(var(--statusbar-toggle-gap) - var(--statusbar-item-gap)); } /* Zed: toggle + divider sit in their own gap_0p5 row. */
 .sidebar-footer .group { gap: var(--sidebar-footer-gap); }

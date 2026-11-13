@@ -95,7 +95,9 @@ export function PickerHost() {
         </div>
         <div class="picker-list" id="picker-list" role="listbox" ref={list}>
           <Show when={matches().length} fallback={<div class="picker-empty">No matches</div>}>
-            <For each={matches()}>{(match, i) =>
+            <For each={matches()}>{(match, i) => <>
+              {/* core v0.8.2 I-2: only the unfiltered list is in dark-then-light order */}
+              <Show when={!query() && i() > 0 && match.item === config().divideBefore}><div class="picker-divider" role="separator" /></Show>
               <div
                 class="picker-item"
                 id={`picker-item-${i()}`}
@@ -111,7 +113,7 @@ export function PickerHost() {
                 </span>
                 <Show when={match.item === config().checked}><span class="picker-check"><Icon name="check" /></span></Show>
               </div>
-            }</For>
+            </>}</For>
           </Show>
         </div>
         <div class="picker-footer">

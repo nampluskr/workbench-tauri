@@ -10,7 +10,7 @@ import { notify } from "../shell/toast.ts";
 import { remeasureForFont } from "../editor/extensions.ts";
 import { eachView, setViewOptions, type ToggleOption } from "../editor/view-options.ts";
 import { stepEditorFontSize, type FontTarget } from "../editor/font-size.ts";
-import { DEFAULTS, parseSettings, removeSettings, updateSettings, type SettingKey, type SettingValue, type Settings } from "./model.ts";
+import { areaTheme, DEFAULTS, loadDefaults, parseSettings, toggleThemeMode, updateSettings, type SettingKey, type SettingValue, type Settings, type ThemeArea } from "./model.ts";
 
 export const [settings, setSettings] = createSignal({ ...DEFAULTS });
 let queue = Promise.resolve();
@@ -39,7 +39,7 @@ async function reload(): Promise<void> {
     // I-8 / core v0.8.1 I-10: the line height map, the gutter and the character width are measured, not read from the variables
     if (next.editor_line_height !== settings().editor_line_height || next.buffer_font_family !== settings().buffer_font_family) remeasureEditors();
     showViewOptions(next);
-    await showTheme(next.theme, next.editor_theme, next.preview_theme);
+    await showAreaThemes(next);
     setAppliedIconTheme(next.icon_theme);
     document.documentElement.classList.toggle("heading-colors", next.outline_heading_colors); // core v0.8.2 I-11 (app.css)
     setSettings(next);
@@ -55,6 +55,9 @@ export async function showTheme(ui: string, editor = ui, preview = ui): Promise<
     view?.requestMeasure();
   });
 }
+
+/** core v0.8.2 I-2: each area in the theme of its mode (also the Select Theme revert). */
+export const showAreaThemes = (s: Settings = settings()) => showTheme(areaTheme(s, "theme"), areaTheme(s, "editor_theme"), areaTheme(s, "preview_theme"));
 
 const remeasureEditors = () => eachView(remeasureForFont);
 
@@ -97,11 +100,13 @@ export async function saveSettings(values: Partial<Record<SettingKey, SettingVal
   await loadSettings();
 }
 
-/** I-17 Load Defaults: delete the keys from the file in one write (the same read, edit, write with `expected` as saveSettings). */
-export async function resetSettings(keys: readonly string[]): Promise<void> {
+/** I-17 Load Defaults: delete the category's keys from the file in one write (the same read, edit, write with `expected` as saveSettings). */
+export async function resetSettings(category: Parameters<typeof loadDefaults>[1]): Promise<void> {
   const expected = await invoke<string | null>("read_user_settings");
-  await invoke("write_user_settings", { expected, json: removeSettings(expected, keys) });
+  await invoke("write_user_settings", { expected, json: loadDefaults(expected, category, choices) });
   await loadSettings();
 }
 
 export const saveSetting = (key: SettingKey, value: SettingValue) => saveSettings({ [key]: value });
+/** core v0.8.2 I-2: a status bar UI / Edit / View button: that area to its other mode, saved. */
+export const toggleAreaTheme = (area: ThemeArea) => saveSettings(toggleThemeMode(settings(), area));

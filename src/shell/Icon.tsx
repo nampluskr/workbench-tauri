@@ -11,12 +11,18 @@ export type IconName =
   | "split" | "plus" | "maximize" | "arrow_left" | "arrow_right" | "menu" | "close" | "pin" | "minimize" | "eye" | "file_doc"
   | "file" | "check" | "chevron_down" | "chevron_right" | "chevron_up" | "chevron_up_down" | "magnifying_glass" | "search" | "pencil" | "github"
   | "chevron_down_up" | "zed_assistant" | "arrow_circle" | "warning" | "chevron_left" | "expand_up" | "expand_down"
-  | "case_sensitive" | "whole_word" | "regex" | "replace" | "replace_next" | "replace_all" | "select_all" | "list_selection" | "list_tree";
+  | "case_sensitive" | "whole_word" | "regex" | "replace" | "replace_next" | "replace_all" | "select_all" | "list_selection" | "list_tree" | "sun" | "moon";
 
 for (const [path, svg] of Object.entries(svgs)) iconMarkup[path.slice(path.lastIndexOf("/") + 1, -4)] = svg;
 // I-32: only the two find toggles that were cut; the other viewBox-less copies keep the look the earlier V3 runs measured.
 for (const name of ["case_sensitive", "whole_word"]) iconMarkup[name] = scalable(iconMarkup[name]) ?? "";
 Object.assign(iconMarkup, { search: searchSvg, list_selection: listSelectionSvg }); // codicons override same-named Zed copies
+// core v0.8.2 I-2: the light / dark marks of the status bar's UI | Edit | View buttons; drawn here (the pinned Zed set has neither).
+const ray = (turn: number) => `<path d="M8 1.6V3.2" transform="rotate(${turn * 45} 8 8)" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`;
+Object.assign(iconMarkup, {
+  sun: `<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="2.6" stroke="currentColor" stroke-width="1.2"/>${[0, 1, 2, 3, 4, 5, 6, 7].map(ray).join("")}</svg>`,
+  moon: `<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 9.4A5.4 5.4 0 1 1 6.6 3A4.3 4.3 0 0 0 13 9.4Z" fill="currentColor"/></svg>`,
+});
 
 /** Missing Zed copies leave an empty slot with the existing spec dimensions. */
 export default function Icon(props: { name: IconName }) {
@@ -25,12 +31,13 @@ export default function Icon(props: { name: IconName }) {
 
 /**
  * Icon button: disabled until it gets an `onClick` (the tab bar end buttons stay that way, R-10). It has its
- * tooltip either way (8.1): the label with the shortcut of `action`, or the given rows.
+ * tooltip either way (8.1): the label with the shortcut of `action`, or the given rows. `text` is drawn after the icon.
  */
-export function IconButton(props: { name: IconName; label: string; action?: string; tips?: Tip[]; toggled?: boolean; onClick?: () => void }) {
+export function IconButton(props: { name: IconName; label: string; text?: string; action?: string; tips?: Tip[]; toggled?: boolean; onClick?: () => void }) {
   return (
     <button
       class="icon-button"
+      classList={{ labelled: !!props.text }}
       aria-label={props.label}
       aria-pressed={props.toggled}
       disabled={!props.onClick}
@@ -38,6 +45,7 @@ export function IconButton(props: { name: IconName; label: string; action?: stri
       ref={(el) => tooltip(el, () => props.tips ?? { title: props.label, action: props.action })}
     >
       <Icon name={props.name} />
+      {props.text}
     </button>
   );
 }

@@ -8,10 +8,12 @@ import { PaneArea } from "./shell/Pane.tsx";
 import { resizeHandle } from "./shell/dock.ts";
 import { dockOpen, sidebarOpen, toggleSidebar } from "./shell/panels.ts";
 import { addFolder, editorContext, outlineOpen, sidebarWidth, resizeSidebar, toggleLockPreview } from "./workspace/store.ts";
-import { activeTabOf, lockPreview } from "./workspace/context.ts";
-import { statusButtons, statusItems } from "./shell/status.ts";
+import { activeTabOf, allTabs, lockPreview } from "./workspace/context.ts";
+import { hasSearchTab } from "./workspace/tab-view.ts";
+import { statusButtons, statusItems, themeButtons } from "./shell/status.ts";
 import { commands, focusStack } from "./keymap/keyboard.ts";
-import { adjustFontSize, toggleViewOption } from "./settings/load.ts";
+import { adjustFontSize, settings, toggleAreaTheme, toggleViewOption } from "./settings/load.ts";
+import { notify } from "./shell/toast.ts";
 import { fontTarget } from "./editor/font-size.ts";
 import { toggleApplies, type ToggleOption } from "./editor/view-options.ts";
 import { PickerHost } from "./shell/Picker.tsx";
@@ -67,10 +69,10 @@ export default function App() {
           {/* L-15 / D-8: the active folder's split tree of Panes (R-26, R-9). */}
           <PaneArea />
         </div>
-        {/* I-22: the closed sidebar's toggle precedes the project panel, then the Outline (core v0.8.1 I-4) and search. */}
+        {/* I-22: the sidebar's toggle precedes the project panel, then the Outline (core v0.8.1 I-4) and search. core v0.8.2 I-2: the three theme buttons end the bar. */}
         <footer class="status-bar">
           <div class="group grow">
-            <For each={statusButtons(sidebarOpen(), dockOpen(), lockPreview(), outlineOpen())}>{(button) => (<>
+            <For each={statusButtons(sidebarOpen(), dockOpen(), lockPreview(), outlineOpen(), hasSearchTab(allTabs(editorContext())))}>{(button) => (<>
               <IconButton {...button} onClick={() => commands.get(button.action)?.()} />
               <Show when={button.dividerAfter}><span class={button.dividerAfter === "toggle" ? "status-divider toggle" : "status-divider"} aria-hidden="true" /></Show>
             </>)}</For>
@@ -81,6 +83,12 @@ export default function App() {
               <Show when={items().filetype}><span>{items().filetype}</span></Show>
             </div>
           )}</Show>
+          <Show when={status()}><span class="status-divider" aria-hidden="true" /></Show>
+          <div class="group">
+            <For each={themeButtons(settings())}>{(button) =>
+              <IconButton name={button.name} label={button.label} text={button.text} onClick={() => void toggleAreaTheme(button.area).catch((error) => notify([String(error)]))} />
+            }</For>
+          </div>
         </footer>
       </div>
       <PickerHost />

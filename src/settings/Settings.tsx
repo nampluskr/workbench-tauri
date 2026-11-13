@@ -6,7 +6,7 @@ import AppMenu, { isContextMenuOpen, openContextMenu } from "../shell/AppMenu.ts
 import { commands } from "../keymap/keyboard.ts";
 import { SETTINGS_DROPDOWN_OFFSET_Y } from "../spec/metrics.ts";
 import { choices } from "./choices.ts";
-import { CATEGORIES, categoryKeys, filterSettings, isChoiceKey, isToggleKey, settingMenu, settingNumber, settingStep, type ChoiceKey, type SettingKey, type SettingValue } from "./model.ts";
+import { CATEGORIES, filterSettings, isChoiceKey, isToggleKey, settingMenu, settingNumber, settingStep, type ChoiceKey, type SettingKey, type SettingValue } from "./model.ts";
 import { resetSettings, saveSettings, settings } from "./load.ts";
 import "./settings.css";
 
@@ -86,7 +86,7 @@ export default function SettingsWindow() {
       <h2 id="confirm-title">Restore all {restoring()} settings to their defaults?</h2>
       <p id="confirm-detail">This cannot be undone.</p>
       <div class="settings-confirm-buttons">
-        <button onClick={() => { confirm.close(); void writeFile(() => resetSettings(categoryKeys(restoring()))); }}>Load Defaults</button>
+        <button onClick={() => { confirm.close(); void writeFile(() => resetSettings(restoring())); }}>Load Defaults</button>
         <button autofocus onClick={() => confirm.close()}>Cancel</button>
       </div>
     </dialog>

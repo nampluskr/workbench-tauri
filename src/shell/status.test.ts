@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createSignal } from "solid-js";
 import { statusButtons, statusItems } from "./status.ts";
+import { hasSearchTab, searchPath } from "../workspace/tab-view.ts";
 import { commands, keymap } from "../keymap/keyboard.ts";
 import { shortcutFor } from "../keymap/display.ts";
 import type { Tab } from "../workspace/context.ts";
@@ -9,20 +10,20 @@ import type { Tab } from "../workspace/context.ts";
 test("I-22 / I-19: status buttons retain Zed's order, state, labels and tooltip shortcuts", () => {
   const stack = [new Set(["Workspace"]), new Set(["Pane"]), new Set(["Editor"])];
   for (const sidebar of [false, true]) for (const dock of [false, true]) for (const locked of [false, true]) for (const outline of [false, true]) {
-    const buttons = statusButtons(sidebar, dock, locked, outline);
+    const buttons = statusButtons(sidebar, dock, locked, outline, false);
     assert.deepEqual(buttons.flatMap((button) => [button.name, ...(button.dividerAfter ? ["divider"] : [])]), [
-      ...(!sidebar ? ["threads_sidebar_left_closed", "divider"] : []),
+      sidebar ? "threads_sidebar_left_open" : "threads_sidebar_left_closed", "divider",
       "file_tree", "divider", "list_tree", "divider", "magnifying_glass", "eye",
     ]);
     assert.deepEqual(buttons.map((button) => [button.name, button.label, button.toggled]), [
-      ...(!sidebar ? [["threads_sidebar_left_closed", "Open Folder Sidebar", undefined]] : []),
+      sidebar ? ["threads_sidebar_left_open", "Close Folder Sidebar", true] : ["threads_sidebar_left_closed", "Open Folder Sidebar", false],
       ["file_tree", dock ? "Close Left Dock" : "Project Panel", dock],
       ["list_tree", outline ? "Close Outline" : "Outline", outline],
-      ["magnifying_glass", "Search", undefined],
+      ["magnifying_glass", "Search", false],
       ["eye", "Lock Preview", locked],
     ]);
     assert.deepEqual(buttons.map((button) => shortcutFor(keymap, button.action, stack)?.join(" ")), [
-      ...(!sidebar ? ["Ctrl-Alt-J"] : []), dock ? "Ctrl-B" : "Ctrl-Shift-E", undefined, "Ctrl-Shift-F", undefined,
+      "Ctrl-Alt-J", dock ? "Ctrl-B" : "Ctrl-Shift-E", undefined, "Ctrl-Shift-F", undefined,
     ]);
   }
   for (const [stroke, action] of [["ctrl-shift-f", "pane::DeploySearch"]]) {
@@ -31,6 +32,26 @@ test("I-22 / I-19: status buttons retain Zed's order, state, labels and tooltip 
     assert.doesNotThrow(() => commands.get(action)!());
   }
   assert.deepEqual(keymap.dispatch(["ctrl-shift-m"], stack), { type: "none" });
+});
+
+test("core v0.8.2 I-1: each of the five left buttons is on by its own condition; Search by a Search tab in any pane of the folder", () => {
+  const on = (...args: Parameters<typeof statusButtons>) => statusButtons(...args).map((button) => button.toggled);
+  assert.deepEqual(on(false, false, false, false, false), [false, false, false, false, false]);
+  assert.deepEqual(on(true, false, false, false, false), [true, false, false, false, false]); // folder sidebar open
+  assert.deepEqual(on(false, true, false, false, false), [false, true, false, false, false]); // left dock open
+  assert.deepEqual(on(false, false, false, true, false), [false, false, true, false, false]); // Outline open
+  assert.deepEqual(on(false, false, false, false, true), [false, false, false, true, false]); // a Search tab exists
+  assert.deepEqual(on(false, false, true, false, false), [false, false, false, false, true]); // Lock Preview
+  assert.deepEqual(on(true, true, true, true, true), [true, true, true, true, true]);
+  // The sidebar button stays in both states, with its own icon; the Search button's click is the same either way.
+  assert.deepEqual([true, false].map((open) => statusButtons(open, false, false, false, false)[0].name), ["threads_sidebar_left_open", "threads_sidebar_left_closed"]);
+  assert.deepEqual([true, false].map((open) => statusButtons(false, false, false, false, open)[3].action), ["pane::DeploySearch", "pane::DeploySearch"]);
+  // `tabs` is every tab of the folder's panes (allTabs): a Search tab anywhere counts, other tool tabs and files do not.
+  const file = { path: "C:\\p\\Search:1.md" }, image = { path: "C:\\p\\a.png", tool: true }, search = { path: searchPath(3), tool: true };
+  assert.equal(hasSearchTab([]), false);
+  assert.equal(hasSearchTab([file, image, { path: "Search:1" }]), false);
+  assert.equal(hasSearchTab([file, image, search]), true);
+  assert.equal(hasSearchTab([file, image]), false); // the last Search tab closed
 });
 
 test("I-5: active editor and preview status follows each tab; tools, loading editors and no tab hide both items", () => {

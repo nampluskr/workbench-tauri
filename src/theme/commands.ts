@@ -1,27 +1,30 @@
 import { commands } from "../keymap/keyboard.ts";
 import { setCategory } from "../extensions/state.ts";
 import type { Category } from "../extensions/model.ts";
-import { saveSetting, saveSettings, settings, showTheme } from "../settings/load.ts";
+import { saveSetting, saveSettings, settings, showAreaThemes, showTheme } from "../settings/load.ts";
+import { areaTheme } from "../settings/model.ts";
 import { closePicker, isPickerOpen, openPicker } from "../shell/Picker.tsx";
 import { notify } from "../shell/toast.ts";
 import { iconThemeNames, setAppliedIconTheme } from "./icons.ts";
 import { iconThemeSelector, themeSelector } from "./selector.ts";
-import { themeNames } from "./themes.ts";
+import { registry, themeNames } from "./themes.ts";
+import { pickTheme } from "./registry.ts";
 
 const report = (error: unknown) => notify([String(error)]);
 const openExtensions = (category: Category) => { setCategory(category); commands.get("zed::Extensions")?.(); };
 
 // I-4: "v" > Themes… and Ctrl-K Ctrl-T. The same key again closes the modal and undoes the preview (P-001).
-// I-3: one choice sets the UI, editor and preview themes together; closing without a choice restores the three opening values.
+// core v0.8.2 I-2: one choice goes into all three areas' dark (or light) theme setting and turns all three that way; closing without a
+// choice restores the three opening themes. The list is dark themes, a line, light themes (themeNames is in that order).
 commands.set("theme_selector::Toggle", () => {
   if (isPickerOpen()) return closePicker();
-  const { theme, editor_theme, preview_theme } = settings();
   openPicker(themeSelector({
     themes: themeNames,
-    current: theme,
+    current: areaTheme(settings(), "theme"),
+    appearance: (name) => pickTheme(registry, name).appearance,
     preview: (name) => void showTheme(name).catch(report),
-    revert: () => void showTheme(theme, editor_theme, preview_theme).catch(report),
-    save: (name) => saveSettings({ theme: name, editor_theme: name, preview_theme: name }),
+    revert: () => void showAreaThemes().catch(report),
+    saveAll: saveSettings,
     fail: report,
     viewThemes: () => openExtensions("Themes"),
   }));
