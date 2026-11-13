@@ -110,3 +110,19 @@
   - checker(agy) 카드에는 core 파일 경로를 주지 않고 필요한 내용을 `%TEMP%` 카드 안에 옮겨 적는다 — core 파일 읽기 확인 창을 auto mode가 승인하지 못한다(leader-core 2026-11-14). Phase 3 메모의 "checker(agy)는 core 파일을 읽을 때 Allow access ... send-keys enter로 승인한다" 줄은 지난 사실로 두고 이 줄이 대신한다.
   - ORDER-07로 넘긴 것(더함): ORDER-04 6절 #1·#2·#4·#6·#8 V3, 보고 "미정"의 Phase 7 볼 것(꺾쇠가 여백 안·제목 첫 줄 높이에 맞는지, 긴 번호 줄 모양, 접힌 ipynb의 빈 markdown 셀 틈, 접힌 섹션 안 mermaid가 뒤늦게 그려져도 숨는지).
   - 마지막 서브 카드 ID: W-08, K-04, C-04.
+
+### Phase 5 — ORDER-05 (I-1·I-2·I-3): 상태 표시줄 켜짐 표시, 영역별 다크/라이트, Welcome 화면
+
+- **시작** (2026-11-14, leader-core → tauri-leader): 카드 core `D:\projects\workbench-core\specs\v0.8.2\orders\ORDER-05.md`, 항목 I-1·I-2·I-3. 3.3 Welcome은 사용자 2026-11-14 Zed 방식으로 바뀜. 8절이 더해짐(화면 측정은 Phase 7로, #1은 CSS↔시안 대조 표). 서브 에이전트 컨텍스트를 비우고 시작했다. Claude 5h 한도 때문에 구현을 K-05·K-06 둘로 나눠 단위마다 커밋했다(leader-core 지시).
+- **K-05 I-1·I-2 (ORDER-05)** (2026-11-14, coder, 커밋 `38ceb0a`): 상태 표시줄 버튼 다섯의 켜짐 표시(눌린 칸, `statusbar.toggled.*`), Open Folder Sidebar 늘 보임(열림 툴팁 `Close Folder Sidebar`), Search는 Search 탭이 있는 동안(`hasSearchTab`). 맨 오른쪽 `UI`·`Edit`·`View` 다크/라이트 버튼(명령 없이 저장 함수 호출, 해·달 아이콘 새로 그림), 설정 키 9개(`theme_dark`·`theme_light`·`theme_mode`, `editor_theme_*`, `preview_theme_*`), 옛 `theme`·`editor_theme`·`preview_theme` 옮기기(`oldThemes`, 첫 쓰기 때 새 키로, Load Defaults는 옛 세 키 지움), Themes… 다크·라이트 나눔, 기본 One Light. 검증 V1: `npm.cmd run test` 330/330, typecheck 0, 보안 설정 diff 없음, 앱 안 띄움(보고 `C:\Users\nampl\AppData\Local\Temp\v082-K-05-report.md`).
+- **K-06 I-3 (ORDER-05)** (2026-11-14, coder, 커밋 `da10b4b`): Welcome 화면(Zed 방식, 폴더 0개이고 그 pane에 탭이 없을 때 가운데, GET STARTED·RECENT PROJECTS, 단축키 글자는 키맵에서, `menu` 키로 줄 이동·Enter), 최근 폴더 5개(상태 파일 `windows[0].recent_folders`, 없어진 폴더는 시작 때 `paths_exist`로 빼고 열기 실패 때 알림 뒤 뺌), `Ctrl-1`~`Ctrl-5`(키 컨텍스트 `Welcome`), left dock "No File"(`.outline-empty`). 치수는 `welcome.*`(`src/spec/metrics.ts`, Zed `main`에서 읽은 값). 새 파일 `src/shell/Welcome.tsx`, `src/workspace/recent.ts`·`recent.test.ts`. 검증 V1: `npm.cmd run test` 332/332, typecheck 0, 보안 설정 diff 없음, 앱 안 띄움(보고 `C:\Users\nampl\AppData\Local\Temp\v082-K-06-report.md`).
+- **바뀐 동작** (K-05·K-06): 기본 테마 One Dark → One Light(옛 `theme` 키 없이 쓰던 파일 포함). 영역별 `Theme` 항목 → Dark Theme·Light Theme. left dock 안내 문구·[Open Project] 버튼 → "No File". 새 명령 `welcome::OpenRecentProject1`~`5`.
+- **C-05 checker 리뷰(K-05)** [PASS] (2026-11-14): diff 리뷰만(켜짐 조건 다섯과 Search 탭 판정, 옛 테마 옮기기·새 키 우선·주석·알 수 없는 키·CRLF 보존·Load Defaults, 보안 설정 불변). 테스트는 다시 돌리지 않았다(core COMMON 8절). 검증 V0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-C-05-report.md`).
+- **C-06 checker 리뷰(K-06)** [PASS] (2026-11-14): diff 리뷰만(Welcome 보이는 조건, 최근 폴더 맨 위·중복 없음·개수 제한·저장·없어진 폴더, `Welcome` 컨텍스트 단축키, 보안 설정 불변). 검증 V0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-C-06-report.md`). C-05·C-06 카드에는 core 경로를 주지 않고 내용을 옮겨 적어, 확인 창 없이 끝났다.
+- **보고** (2026-11-14, tauri-leader): `specs/v0.8.2/reports/ORDER-05.md` `[DONE]`. V3 줄(6절 #1·#3·#6·#7·#8·#9)은 Phase 7. 미정 — (1) Welcome 치수(Zed `main`에서 읽음)가 고정 커밋 `4304dec732`와 같은지 Phase 7 캡처 대조 때 leader-core가 봄, (2) 사용자 확인 목록 후보(leader-core): 해·달 아이콘 모양, 눌린 칸 안쪽 그림자 느낌, Welcome 앱 아이콘 45px 선명도, 사이드 바 열림 때 토글 버튼 두 군데, 0.8.1에서 쓰던 폴더는 한 번 열어야 최근 목록에 생김.
+- **W-09 ORDER-05 기록** (2026-11-14, writer): 위 시작·K-05·K-06·C-05·C-06·보고 항목, 운영 메모, ITEMS-MAP I-1·I-2·I-3 상태를 적었다. 검증 V0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-W-09-report.md`).
+- **상태**: Phase 5 보고 보냄, `[PUSH] ORDER-05` 기다림.
+- **운영 메모**(Phase 4 절 운영 메모에 이어서)
+  - ORDER-07로 넘긴 것(더함): ORDER-05 6절 #1·#3·#6·#7·#8·#9 V3, Welcome 치수의 고정 커밋 `4304dec732` 대조.
+  - 측정부터는 측정 조건에 테마를 적는다(기본이 One Light로 바뀜).
+  - 마지막 서브 카드 ID: W-09, K-06, C-06.
