@@ -924,3 +924,25 @@
   - 결과: 문서만 바뀌었다. 루트 `AGENTS.md` 1장 "현재 상태"는 바꾸지 않았다.
   - 검증: V0(명령 없음, 보고 `C:\Users\nampl\AppData\Local\Temp\v081-W-14-report.md`).
   - 특이사항: 없음.
+- **ORDER-09 보고** (2026-11-13, tauri-leader): `specs/v0.8.1/reports/ORDER-09.md` [DONE], 커밋 `9a27d12`·`56c3b66`(코드)·`d3a8878`(문서·측정)·`fe34c94`(보고). 미정: 회귀 #8 탐색기 OLE 놓기 측정 불가, REP-I3 루트 파일 끌기 측정 환경 한계, `verify/ORDER-02/drag-src.ps1`·`ext-drop.ps1`을 checker가 고친 것, I-19 머리 줄·코드 사이 선 없는 모양(V4).
+- **[PUSH] ORDER-09** (2026-11-13): origin/master `fe34c94`. 이 [PUSH]는 보고를 보내기 전에 왔다.
+
+## 버전 종료
+
+- 사용자 종료 판단(2026-11-13): "v0.8.1 을 마무리 해주세요." — v0.8.1을 끝낸다(core `specs/v0.8.1/PROGRESS.md` "버전 종료" 절, core 커밋 `7bee4ea`, leader-core [INFO] 전달).
+- 한 것:
+  - core ITEMS I-1~I-24를 카드 아홉(ORDER-01~09, Phase 1~9)으로 모두 판정 충족으로 끝냈다. ORDER-07 #8 BLOCKED(무한 루프 뒤 HTML 미리보기)는 사용자 확인 뒤 I-14(ORDER-08)로 풀었다. 남은 BLOCKED 없음(core 판단).
+  - 사용자 확인: ❓ 결정은 사용자 위임으로 검토(core USER-TEST), 👤 "다" 3줄(#14·#21·#24)은 사용자가 직접 보고 이상 없음(core 판단).
+  - origin/master `fe34c94`. 앱 버전 0.8.1, 설치 파일 `src-tauri/target/release/bundle/nsis/workbench-tauri_0.8.1_x64-setup.exe`(10,579,833 B, `56c3b66` 빌드, 2026-11-13 17:27:30).
+- 남은 것(core 버전 종료 절 중 tauri에 걸린 것):
+  - core USER-TEST의 `[ ]` 줄 40개는 사용자가 따로 체크하지 않은 채 종료했다. 근거는 에이전트 측정(카드마다 V3, ORDER-09 release exe 전체 회귀)이다. 측정으로 닫히지 않은 것: #8 탐색기에서 트리로 끌어 놓기(release 회귀 측정 불가), 루트 파일 → 옆 루트 폴더 끌기(CDP로 대상 표시가 안 생김, 앞 빌드도 같음), V4 모양(I-19 머리 줄과 코드 사이 선 없음, I-14 알림 문단 위치·문구).
+  - 알려진 한계·다음 버전 재료: #4c 큰 단일 노드 파일에서 Outline이 열린 채 입력할 때 130ms대 멈춤. #7c 스크립트가 만든 상대 경로 이미지·`type="module"` 로컬 스크립트. #7d 1초보다 느리게 계속 이동하는 HTML. ORDER-08의 (a)~(d)(srcdoc 자식의 UDP 끝점 한 쌍, 루프 페이지 둘이 20초 안에 보통 호스트 둘을 멈추면 못 피함, 5초 넘게 도는 페이지의 알림, WebView2 런타임 자체 외부 연결). I-24에서 페이지가 `mousedown`에서 대상을 바꾸거나 투명 링크를 두는 것. 실행 인자가 다른 옛 빌드가 떠 있으면 새 빌드가 오류 창 없이 꺼짐(exit 101).
+  - 측정 도구: ORDER-08 하네스 c6의 거짓 "응답 없음" 원인(확정 못 함), ORDER-09 OLE 끌기 도우미 창.
+  - 실행 중인 것(사용자가 정함): 사용자 앱 0.8.1 PID 40860(새 빌드)·31852(앞 빌드, WebRTC 유출이 남은 빌드 — core가 닫기를 권함). tauri herdr 에이전트 넷이 떠 있다.
+- 남은 것(tauri 쪽, ORDER-09 보고 "미정"):
+  - 회귀 #8(탐색기 OLE 놓기): 도우미 창이 커서 아래로 오지 않아 측정 불가. 사람이 탐색기에서 한 번 끌어 보거나 다음 측정에서 도우미 창 방식을 고쳐야 한다.
+  - REP-I3(루트 파일 → 옆 루트 폴더 끌기): CDP 입력으로는 drop-target이 생기지 않는다. 앞 0.8.1 빌드도 같아 이번 변경 탓이 아니다(`verify/ORDER-09/leader-probe/probe-i17.mjs`). 하위 폴더 파일 끌기(#4)는 PASS. ORDER-07 회귀에서는 같은 길이 `moved true`였다 — 닫히지 않음.
+  - `verify/ORDER-02/drag-src.ps1`·`ext-drop.ps1`은 checker가 지난 카드 폴더에서 직접 고쳤다(C-20-R2·R4). 되돌릴지는 정하지 않았다.
+  - I-19 머리 줄과 코드 사이에 선이 없는 모양(사용자 확인 V4).
+- 다음 버전: 버전 번호는 사람이 정한다. leader-core는 v0.8.2 예정(`specs/v0.8.2/`, core-planner가 ITEMS를 적는 중)이라고 알렸다. 이 PROGRESS가 다음 버전 INTENT의 재료다.
+- **상태**: v0.8.1 종료(2026-11-13, 사용자 결정). origin/master `fe34c94`에 push됨. 다음 카드는 v0.8.2에서.
