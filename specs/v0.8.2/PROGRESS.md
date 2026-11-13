@@ -1,4 +1,4 @@
-> 버전: v0.8.2 · 작성일: 2026-11-13 · 상태: ORDER-02 끝([PUSH] 8f64e36), ORDER-03 진행 중(2026-11-14)
+> 버전: v0.8.2 · 작성일: 2026-11-13 · 상태: Phase 1~3 끝(ORDER-01~03 [PUSH], origin/master 70656d5), ORDER-04 시작 전(2026-11-14)
 >
 > 실제로 한 일과 검증 결과를 적는다. core I-n ↔ Phase ↔ tauri 카드 대응은 `ITEMS-MAP.md`에, 요구와 판정 방법은 core `specs/v0.8.2/ITEMS.md`와 카드 4절에, 에이전트 운영은 `HERDR-SETUP.md`에, core 보고는 `specs/v0.8.2/reports/`에 있다.
 
@@ -85,3 +85,13 @@
 - **C-03 checker 리뷰(K-03)** [PASS] (2026-11-14): diff 리뷰만(정화 규칙 중심 — 위험 태그·속성 없음, 노트북 출력 규칙보다 엄격, `innerHTML` 우회 없음, 보안 설정·프레임 쪽 diff 없음). 테스트는 다시 돌리지 않았다(core COMMON 8절). 검증 V0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-C-03-report.md`).
 - **보고** (2026-11-14, tauri-leader): `specs/v0.8.2/reports/ORDER-03.md` `[DONE]`. #6과 #1 V3는 Phase 7. 미정: 정화를 실제 DOMPurify로 돌린 결과는 확인하지 않았다(`node --test`에 DOM 없음) — ORDER-07 V3에서 정화된 DOM 덤프 한 번을 제안했고 leader-core가 정한다.
 - **W-06 ORDER-03 기록** (2026-11-14, writer): 위 K-03·바뀐 동작·C-03·보고 항목과 ITEMS-MAP I-24·I-20 상태를 적었다. 검증 V0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-W-06-report.md`).
+- **leader-core 판정·[PUSH]** (2026-11-14): `8f64e36..70656d5` push. #1~#5·#7~#9 충족, #6과 #1 V3는 Phase 7. 정화 허용 목록(태그 64·속성 27)과 이미지·링크 규칙을 받아들임. 미정 1(실제 DOMPurify 결과)은 ORDER-07 V3에서 정화된 DOM 덤프로 확인한다(leader-core가 ORDER-07에 더함). 문단·표 칸 안의 인라인 제목이 Outline에 안 나오는 것은 알려진 한계로 둔다.
+- **상태**: Phase 1~3 끝(ORDER-01~03 모두 [PUSH]), origin/master `70656d5`. 2026-11-14 ORDER-04(Phase 4, core `D:\projects\workbench-core\specs\v0.8.2\orders\ORDER-04.md`) 시작 전: tauri-leader 컨텍스트가 절반을 넘어 정리한 뒤 시작한다. 서브 에이전트 컨텍스트는 ORDER-04 시작 때 비운다.
+- **이어 쓸 사람을 위한 운영 메모**
+  - 화면 측정은 Phase 7(ORDER-07)로 모은다(core COMMON 8절). ORDER-02~06은 앱을 띄우지 않고, checker는 diff 리뷰만 한다(테스트 재실행 없음, coder 출력이 근거).
+  - ORDER-07로 넘긴 것: ORDER-02 #1~#6·#8 V3, ORDER-03 #1·#6 V3와 정화된 DOM 덤프. ORDER-01 #8은 ORDER-02 #12에서 쟀다(충족).
+  - 남은 미정: HTML 프레임 순서 문제 (가)·(나)(ORDER-02 보고, 위치를 0으로 만들지는 않음, leader-core 결정 대기).
+  - 화면 측정 도구: leader 프로브 `specs/v0.8.2/verify/ORDER-02/leader-probe/probe.mjs`(클릭 전 `elementFromPoint` 확인, 탭은 적게, 격리 APPDATA·WebView2, 0.8.1 exe 사본 `%TEMP%\v082-exe081\`). checker에게 측정 스크립트를 쓰게 하지 않는다(leader-core 지시).
+  - checker(agy)는 core 파일을 읽을 때 "Allow access" 확인이 뜬다 — leader가 `herdr agent send-keys tauri-checker enter`로 승인한다.
+  - 카드·보고 파일은 `%TEMP%\v082-<ID>-card.md`·`-report.md`. 마지막 서브 카드 ID: W-07, K-03, C-03.
+- **W-07 ORDER-03 끝·ORDER-04 시작 전 상태 기록** (2026-11-14, writer): 위 판정·[PUSH], 상태, 운영 메모와 상태 줄을 적었다. 검증 V0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-W-07-report.md`).
