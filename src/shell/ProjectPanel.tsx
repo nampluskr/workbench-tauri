@@ -1,5 +1,5 @@
 import { createMemo, Show } from "solid-js";
-import { activeFolder, addFolder, contextOf, folders, missingIds, removeFolder } from "../workspace/store.ts";
+import { activeFolder, contextOf, folders, missingIds, removeFolder } from "../workspace/store.ts";
 import ProjectTree from "./ProjectTree.tsx";
 
 // The left Dock's content: the active folder's tree (R-18), or the states without one (R-16).
@@ -20,12 +20,8 @@ export default function ProjectPanel() {
       <Show when={tree()} keyed>
         {(ctx) => <ProjectTree ctx={ctx} />}
       </Show>
-      <Show when={folders().length === 0}>
-        <p>Choose one of the options below to use the Project Panel</p>
-        <button class="panel-button" onClick={() => void addFolder()}>
-          Open Project
-        </button>
-      </Show>
+      {/* core v0.8.2 I-3: one line, drawn as the Outline's "No outline"; folders are opened from the Welcome screen, the menu or the key */}
+      <Show when={folders().length === 0}><div class="outline-empty">No File</div></Show>
       <Show when={gone()}>
         {(folder) => (
           <>

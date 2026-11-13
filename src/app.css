@@ -397,6 +397,30 @@ button, input, select, textarea {
 .tab-bar-edge.end { border-left: var(--tab-end-buttons-area-border-end-left) solid var(--border); }
 .pane-body { flex: 1; min-height: 0; position: relative; }
 .pane-item, .pane-item > .cm-editor { position: absolute; inset: 0; }
+/* core v0.8.2 I-3: the Welcome screen fills the Pane body; its column is in the middle both ways (margin auto, so a small Pane scrolls from the top). */
+.welcome { position: absolute; inset: 0; z-index: 1; display: flex; overflow-y: auto; outline: none; background: var(--editor-background); color: var(--text); user-select: none; }
+.welcome-content { box-sizing: border-box; display: flex; flex-direction: column; gap: var(--welcome-gap); width: 100%; max-width: var(--welcome-max-width); margin: auto; padding: var(--welcome-padding); }
+.welcome-header { display: flex; align-items: center; justify-content: center; gap: var(--welcome-header-gap); margin-bottom: var(--welcome-header-margin-bottom); }
+.welcome-logo { width: var(--welcome-logo-size); height: var(--welcome-logo-size); }
+.welcome-header h1 { margin: 0; font: inherit; font-size: var(--welcome-title-font-size); line-height: var(--welcome-title-line-height); }
+.welcome-header p { margin: 0; color: var(--text-muted); font-size: var(--typography-size-small); font-style: italic; }
+.welcome-section-header {
+  display: flex; align-items: center; gap: var(--welcome-section-header-gap);
+  margin-bottom: var(--welcome-section-header-margin-bottom); padding: 0 var(--welcome-section-header-padding-x);
+  color: var(--text-muted); font-family: var(--buffer-font-family); font-size: var(--welcome-section-header-font-size); text-transform: uppercase; white-space: nowrap;
+}
+.welcome-rule { flex: 1; height: var(--welcome-section-header-rule-height); background: var(--border-variant); }
+.welcome-row {
+  display: flex; align-items: center; gap: var(--welcome-row-gap); box-sizing: border-box; width: 100%; height: var(--welcome-row-height);
+  padding: 0 var(--welcome-row-padding-x); border: 0; border-radius: var(--settings-control-corner-radius); outline: none;
+  background: none; color: var(--text); font: inherit; font-size: var(--typography-size-default); text-align: left;
+  --icon-size: var(--icons-size-small);
+}
+.welcome-row:hover, .welcome-row.selected { background: var(--ghost-element-hover); } /* Zed: a focused Subtle button takes the hover background */
+.welcome-row:active { background: var(--ghost-element-active); }
+.welcome-row .icon { flex: none; color: var(--icon-muted); }
+.welcome-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.welcome-row .tooltip-shortcut { flex: none; font-size: var(--welcome-keys-font-size); }
 /* I-714: the body overlay, all of it for the center, the directional_drop_overlay_ratio share of one side for a split. */
 .drop-overlay { position: absolute; z-index: 1; inset: 0; background: var(--drop-target-background); pointer-events: none; }
 .drop-overlay.up { bottom: auto; height: calc(var(--pane-directional-drop-overlay-ratio) * 100%); }
@@ -678,6 +702,7 @@ button, input, select, textarea {
 .outline-doc { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
 .outline-list { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; padding-top: var(--outline-list-padding-top); user-select: none; outline: none; }
 .outline-list:focus .tree-row.selected { border-color: var(--border-focused); } /* core v0.8.1 I-18: the tree's focus ring */
+.project-panel:has(> .outline-empty) { box-sizing: border-box; padding-top: var(--outline-list-padding-top); } /* core v0.8.2 I-3: "No File" sits as "No outline" does in its list */
 .outline-empty { padding-inline: var(--project-panel-item-padding-x); color: var(--text-muted); font-size: var(--typography-size-default); }
 .outline-toggle { display: flex; flex-shrink: 0; color: var(--icon-muted); }
 .outline-badge-slot { align-items: center; justify-content: center; }

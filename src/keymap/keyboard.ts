@@ -6,6 +6,7 @@ import { THEME_SELECTOR_BINDINGS } from "../theme/selector.ts";
 import { STATUS_BINDINGS } from "../shell/status.ts";
 import { TAB_BINDINGS } from "../shell/tab-menu.ts";
 import { NAV_BINDINGS } from "../workspace/nav-history.ts";
+import { WELCOME_BINDINGS } from "../workspace/recent.ts";
 import { Keymap, strokeOf, type ContextNode } from "./engine.ts";
 import { rememberImeShortcut } from "../editor/ime.ts";
 
@@ -29,10 +30,11 @@ keymap.addSections("default", THEME_SELECTOR_BINDINGS);
 keymap.addSections("default", STATUS_BINDINGS);
 keymap.addSections("default", NAV_BINDINGS);
 keymap.addSections("default", TAB_BINDINGS);
+keymap.addSections("default", WELCOME_BINDINGS);
 /** Action name -> handler. Its keys are the actions keymap.json may name (K-085). */
 export const commands = new Map<string, () => void>();
 // Actions whose behavior arrives in a later Phase are registered as no-ops; that Phase replaces them with commands.set.
-for (const { bindings } of [...BUILTIN, ...EDITOR_BINDINGS, ...KEYMAP_EDITOR_BINDINGS, ...EXTENSIONS_BINDINGS, ...THEME_SELECTOR_BINDINGS, ...STATUS_BINDINGS, ...NAV_BINDINGS, ...TAB_BINDINGS]) for (const action of Object.values(bindings)) if (typeof action === "string") commands.set(action, () => {});
+for (const { bindings } of [...BUILTIN, ...EDITOR_BINDINGS, ...KEYMAP_EDITOR_BINDINGS, ...EXTENSIONS_BINDINGS, ...THEME_SELECTOR_BINDINGS, ...STATUS_BINDINGS, ...NAV_BINDINGS, ...TAB_BINDINGS, ...WELCOME_BINDINGS]) for (const action of Object.values(bindings)) if (typeof action === "string") commands.set(action, () => {});
 
 /** An open menu takes over a matched action here (I-520). Return true when it handled the action. */
 export const hooks: { beforeCommand: ((action: string) => boolean) | null; context: (() => ContextNode[] | null) | null } = { beforeCommand: null, context: null };

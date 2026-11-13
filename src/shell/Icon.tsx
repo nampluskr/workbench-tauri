@@ -11,7 +11,7 @@ export type IconName =
   | "split" | "plus" | "maximize" | "arrow_left" | "arrow_right" | "menu" | "close" | "pin" | "minimize" | "eye" | "file_doc"
   | "file" | "check" | "chevron_down" | "chevron_right" | "chevron_up" | "chevron_up_down" | "magnifying_glass" | "search" | "pencil" | "github"
   | "chevron_down_up" | "zed_assistant" | "arrow_circle" | "warning" | "chevron_left" | "expand_up" | "expand_down"
-  | "case_sensitive" | "whole_word" | "regex" | "replace" | "replace_next" | "replace_all" | "select_all" | "list_selection" | "list_tree" | "sun" | "moon";
+  | "case_sensitive" | "whole_word" | "regex" | "replace" | "replace_next" | "replace_all" | "select_all" | "list_selection" | "list_tree" | "sun" | "moon" | "settings";
 
 for (const [path, svg] of Object.entries(svgs)) iconMarkup[path.slice(path.lastIndexOf("/") + 1, -4)] = svg;
 // I-32: only the two find toggles that were cut; the other viewBox-less copies keep the look the earlier V3 runs measured.

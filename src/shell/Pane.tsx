@@ -1,3 +1,5 @@
+import Welcome from "./Welcome.tsx";
+import { showWelcome } from "../workspace/recent.ts";
 import { createEffect, createMemo, createRenderEffect, createSignal, For, onCleanup, Show } from "solid-js";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { addCursorAbove, addCursorBelow, redo, selectAll, selectLine, toggleBlockComment, toggleComment, undo } from "@codemirror/commands";
@@ -48,7 +50,7 @@ import { setDockOpen } from "./panels.ts";
 import { startNew } from "../workspace/actions.ts";
 import { pathCrumb } from "../editor/breadcrumbs.ts";
 import { hasPreview } from "../editor/preview-kind.ts";
-import { editorContext } from "../workspace/store.ts";
+import { editorContext, folders } from "../workspace/store.ts";
 import { isOpen as menuOpen, openContextMenu } from "./AppMenu.tsx";
 import Icon, { IconButton } from "./Icon.tsx";
 import { keepScroll, restoreScroll } from "./view-scroll.ts";
@@ -437,6 +439,8 @@ function PaneBody(props: { pane: PaneState | null }) {
   // effect is made in the ref callback: a `let` ref is only set after the component body has run, and a render effect runs at once.
   return (
     <div class="pane-body">
+      {/* core v0.8.2 I-3: only with no folder open, and under a tab of the folderless Pane */}
+      <Show when={showWelcome(folders().length, !!(props.pane && activeTabOf(props.pane)))}><Welcome /></Show>
       <div
         class="pane-item"
         ref={(item) => {

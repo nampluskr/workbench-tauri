@@ -313,6 +313,24 @@ const METRICS: Record<string, string> = {
   "statusbar.theme_button.gap": rem(3),
   "statusbar.theme_button.font_size": rem(11),
   "statusbar.theme_button.font_weight": "600",
+  // core v0.8.2 I-3: the Welcome screen, Zed main 2026-11-14 crates/workspace/src/welcome.rs (WelcomePage::render, SectionHeader, SectionButton); not in the toml.
+  "welcome.padding": rem(32), // p_8
+  "welcome.max_width": rem(512), // max_w_128
+  "welcome.gap": rem(24), // gap_6 between the header and the sections
+  "welcome.header.gap": rem(16), // gap_4
+  "welcome.header.margin_bottom": rem(16), // mb_4
+  "welcome.logo_size": rem(45), // Vector::square(ZedLogo, rems_from_px(45.))
+  "welcome.title.font_size": rem(18), // Headline, HeadlineSize::Medium rems(1.125) (ui/src/styles/typography.rs)
+  "welcome.title.line_height": "1.6", // HeadlineSize::line_height
+  "welcome.section_header.padding_x": rem(4), // px_1
+  "welcome.section_header.margin_bottom": rem(8), // mb_2
+  "welcome.section_header.gap": rem(8), // gap_2
+  "welcome.section_header.font_size": rem(10), // LabelSize::XSmall
+  "welcome.section_header.rule_height": rem(1), // Divider::horizontal
+  "welcome.row.height": rem(28), // ButtonSize::Medium (ui/src/components/button/button_like.rs)
+  "welcome.row.padding_x": rem(8), // ButtonLike Medium: DynamicSpacing::Base08
+  "welcome.row.gap": rem(8), // gap_2
+  "welcome.keys.font_size": rem(12), // KeyBinding size rems_from_px(12.)
   "tooltip.transparent_margin_left": rem(8), // L-209
   "tooltip.transparent_margin_top": rem(10), // L-209
   "tooltip.corner_radius": rem(8), // L-211

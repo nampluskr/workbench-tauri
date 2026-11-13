@@ -9,6 +9,7 @@ import { askWarning, closingTabs, disposeContext, lockPreview, setLockPreview, n
 import { confirmClose } from "./closing.ts";
 import { folderName, normalizePath } from "./paths.ts";
 import { OUTLINE_DEFAULT, parseState, serializeState, type Outline } from "./state-file.ts";
+import { addRecent, dropMissing, removeRecent } from "./recent.ts";
 
 // The registered folders and the state.json that keeps them (R-11~R-16, R-29, D-8, D-11). Folders, their order and
 // the active one are saved; the keyboard cursor and the existing-path marks are not.
@@ -21,7 +22,8 @@ const [cursorId, setCursorId] = createSignal<string | null>(null); // keyboard c
 const [missingIds, setMissingIds] = createSignal<ReadonlySet<string>>(new Set()); // folders whose path is gone (A-16.2)
 const [sidebarWidth, setSidebarWidth] = createSignal(SIDEBAR_WIDTH.default);
 const [outline, setOutline] = createSignal<Outline>(OUTLINE_DEFAULT); // core v0.8.1 I-4
-export { folders, activeId, cursorId, missingIds, sidebarWidth };
+const [recentFolders, setRecentFolders] = createSignal<string[]>([]); // core v0.8.2 I-3: paths, newest first
+export { folders, activeId, cursorId, missingIds, sidebarWidth, recentFolders };
 export const outlineOpen = () => outline().open;
 export const outlineWidth = () => outline().width;
 
@@ -58,7 +60,7 @@ function write(): Promise<void> {
     if (!dirty || !canWrite) return;
     dirty = false;
     try {
-      await invoke("write_state", { json: serializeState(raw, { folders: folders(), activeId: activeId(), sidebarWidth: sidebarWidth(), lockPreview: lockPreview(), outline: outline() }) });
+      await invoke("write_state", { json: serializeState(raw, { folders: folders(), activeId: activeId(), sidebarWidth: sidebarWidth(), lockPreview: lockPreview(), outline: outline(), recent: recentFolders() }) });
     } catch (reason) {
       dirty = true; // memory keeps the state; the next change writes it again from the start (A-24.4)
       notify([String(reason)]);
@@ -127,8 +129,12 @@ export async function loadWorkspace(): Promise<void> {
       setSidebarWidth(loaded.sidebarWidth);
       setLockPreview(loaded.lockPreview);
       setOutline(loaded.outline);
+      setRecentFolders(loaded.recent);
     });
     await markMissing(loaded.folders);
+    // core v0.8.2 I-3: a recent folder that is gone leaves the list (as Zed's does); a failed check keeps them all.
+    const exists = await invoke<boolean[]>("paths_exist", { paths: loaded.recent }).catch((): boolean[] => []);
+    if (exists.includes(false)) { setRecentFolders(dropMissing(loaded.recent, exists)); changed(); }
   } catch {
     notify([READ_ERROR]); // no state to build on, so nothing is written either
   }
@@ -158,11 +164,18 @@ export async function addFolder(): Promise<void> {
     return notify([CANNOT_OPEN]);
   }
   if (chosen === null) return; // cancelled (A-13.8)
+  await openFolder(chosen);
+}
+
+/** The rest of R-11 for a known path: the dialog's choice, or a row of the Welcome screen's recent folders (core v0.8.2 I-3). */
+export async function openFolder(chosen: string): Promise<void> {
   const path = normalizePath(chosen);
   try {
     if (path === null) throw new Error("not an absolute path");
     await invoke("check_folder", { path });
   } catch {
+    // A recent folder that cannot be opened any more leaves the list.
+    if (removeRecent(recentFolders(), chosen).length !== recentFolders().length) { setRecentFolders(removeRecent(recentFolders(), chosen)); changed(); }
     return notify([CANNOT_OPEN]);
   }
   const next = addOrActivate(folders(), path, () => ({ id: crypto.randomUUID(), path, added_at: new Date().toISOString() }));
@@ -170,6 +183,7 @@ export async function addFolder(): Promise<void> {
     setFolders(next.folders);
     setActiveId(next.activeId);
     setCursorId(next.activeId);
+    setRecentFolders(addRecent(recentFolders(), path)); // core v0.8.2 I-3: opened last, so first
   });
   changed();
   void markMissing(next.folders.filter((f) => f.id === next.activeId));
