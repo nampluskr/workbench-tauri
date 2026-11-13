@@ -461,7 +461,8 @@ let metricsSheet: CSSStyleSheet | undefined;
 export type PreviewGaps = { paragraphLine: number; paragraph: number; listLine: number; list: number };
 const scaledGap = (px: number, previewFontSize: number): number => px * previewFontSize / PREVIEW_BASE_FONT_SIZE;
 export async function applyMetrics(uiFontSize = 16, bufferFontSize = 14, editorFontSize = bufferFontSize, previewFontSize = PREVIEW_BASE_FONT_SIZE, editorLineHeight = 1.6,
-  gaps: PreviewGaps = { paragraphLine: 7, paragraph: 14, listLine: 5.25, list: 3.5 }, code: CodeFonts = { editor: "JetBrains Mono", preview: "JetBrains Mono", previewPercent: 86, previewLineHeight: 1.45, previewLineNumbers: false }): Promise<void> {
+  gaps: PreviewGaps = { paragraphLine: 7, paragraph: 14, listLine: 5.25, list: 3.5 }, code: CodeFonts = { editor: "JetBrains Mono", preview: "JetBrains Mono", previewPercent: 86, previewLineHeight: 1.45, previewLineNumbers: false },
+  previewSettingSize = previewFontSize): Promise<void> {
   const bufferSize = `${bufferFontSize}px`;
   const editorSize = `${editorFontSize}px`;
   const vars = Object.entries(METRICS).map(
@@ -477,17 +478,21 @@ export async function applyMetrics(uiFontSize = 16, bufferFontSize = 14, editorF
   const descent = Math.abs(ctx.measureText("0").fontBoundingBoxDescent);
   vars.push(`--editor-gutter-margin: ${descent}px;`);
   vars.push(`--buffer-font-family: ${BUFFER_FONT_FAMILY};`);
-  vars.push(`--editor-font-family: ${editorFamily}; --preview-code-font-family: ${codeFontFamily(code.preview)}; --preview-code-font-size: ${previewFontSize * code.previewPercent / 100}px;`);
+  vars.push(`--editor-font-family: ${editorFamily}; --preview-code-font-family: ${codeFontFamily(code.preview)};`);
   vars.push(`--preview-code-line-height: ${code.previewLineHeight}; --preview-code-line-numbers: ${code.previewLineNumbers ? "block" : "none"};`);
   vars.push(`--editor-line-height-multiplier: ${editorLineHeight};`); // core v0.7 I-8: the Settings editor_line_height
-  vars.push(`--preview-paragraph-line-gap: ${scaledGap(gaps.paragraphLine, previewFontSize)}px; --preview-paragraph-gap: ${scaledGap(gaps.paragraph, previewFontSize)}px; --preview-list-line-gap: ${scaledGap(gaps.listLine, previewFontSize)}px; --preview-list-gap: ${scaledGap(gaps.list, previewFontSize)}px;`);
   vars.push(`--ui-font-family: ${UI_FONT_FAMILY};`);
   vars.push(`--font-weight-default: ${FONT_WEIGHT};`);
   vars.push(`--ui-font-feature-settings: ${UI_FONT_FEATURE_SETTINGS};`);
 
-  vars.push(`--units-rem-size: ${uiFontSize}px; --typography-ui-font-size: ${uiFontSize}px; --typography-buffer-font-size: ${bufferSize}; --editor-buffer-font-size: ${editorSize}; --typography-preview-font-size: ${previewFontSize}px;`); // U-17: the editor has its own variable; the setting value stays in --typography-buffer-font-size
+  vars.push(`--units-rem-size: ${uiFontSize}px; --typography-ui-font-size: ${uiFontSize}px; --typography-buffer-font-size: ${bufferSize}; --editor-buffer-font-size: ${editorSize};`); // U-17: the editor has its own variable; the setting value stays in --typography-buffer-font-size
   metricsSheet ??= new CSSStyleSheet();
-  metricsSheet.replaceSync(`:root { font-size: var(--units-rem-size); ${vars.join(" ")} }`);
+  // What follows the preview font size. core v0.8.2 I-19: an element of `.preview-setting-size` has every variable anew with the
+  // Settings size in place of the Ctrl+= one (the variables made from it are worked out again there): the HTML preview reads its
+  // frame's look from one (shell/markdown-preview.ts frameLook), as the frame is zoomed by the ratio of the two.
+  const sized = (size: number) => `--typography-preview-font-size: ${size}px; --preview-code-font-size: ${size * code.previewPercent / 100}px; `
+    + `--preview-paragraph-line-gap: ${scaledGap(gaps.paragraphLine, size)}px; --preview-paragraph-gap: ${scaledGap(gaps.paragraph, size)}px; --preview-list-line-gap: ${scaledGap(gaps.listLine, size)}px; --preview-list-gap: ${scaledGap(gaps.list, size)}px;`;
+  metricsSheet.replaceSync(`:root { font-size: var(--units-rem-size); } :root, .preview-setting-size { ${vars.join(" ")} ${sized(previewFontSize)} } .preview-setting-size { ${sized(previewSettingSize)} }`);
   if (!document.adoptedStyleSheets.includes(metricsSheet)) document.adoptedStyleSheets = [...document.adoptedStyleSheets, metricsSheet];
 }
 

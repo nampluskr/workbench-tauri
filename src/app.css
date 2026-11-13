@@ -842,7 +842,7 @@ button, input, select, textarea {
 /* core v0.8.2 I-15: Markdown and notebook bodies get a left margin outside the body width (centred together when wider); a notebook's [n] sits in it. */
 .markdown-body.left-margin { padding-left: var(--markdown-preview-left-margin); }
 /* core v0.8 I-1: an HTML preview is a sandboxed frame filling the tab. I-11: its text colour, link colour and color-scheme are weakest-priority defaults inside the frame document (editor/html.ts defaultStyle), from the Preview theme. */
-.markdown-preview.html-preview { padding: 0; overflow: hidden; }
+.markdown-preview.html-preview { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
 /* core v0.8.1 I-9: the preview find bar is the editor's (.document-search) as a full-width row over the scrolled content, pushing it down as the CM top panel does. */
 .preview-search {
   position: sticky; top: calc(-1 * var(--markdown-preview-container-padding)); left: calc(-1 * var(--markdown-preview-container-padding)); z-index: 1;
@@ -854,7 +854,9 @@ button, input, select, textarea {
 /* As the editor's marks: other matches light, the current one in the selection colour. */
 ::highlight(preview-find) { background-color: var(--ghost-element-selected); }
 ::highlight(preview-find-current) { background-color: var(--players-0-selection); }
-.html-preview .markdown-body { max-width: none; height: 100%; margin: 0; }
+/* core v0.8.2 I-25: over an HTML preview the find bar is a row above the frame (the frame scrolls, not the tab). */
+.html-preview > .preview-search { position: static; flex: none; margin: 0; }
+.html-preview .markdown-body { flex: 1; min-height: 0; max-width: none; margin: 0; }
 /* The default background is the frame element's (a page `body { background }` then reaches the transparent canvas); the element's color-scheme equals the frame document root's, else Chromium paints an opaque canvas. */
 .html-frame { display: block; width: 100%; height: 100%; border: 0; background: var(--editor-background); color-scheme: var(--preview-color-scheme); }
 .markdown-body > :first-child, .markdown-body .nb-markdown > :first-child { margin-top: 0; } /* a notebook markdown cell starts as a document does */

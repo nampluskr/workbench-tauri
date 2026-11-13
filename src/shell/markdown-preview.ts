@@ -3,7 +3,7 @@ import DOMPurify from "dompurify";
 import { csvTable } from "../editor/csv.ts";
 import { codeBlockParts, codeLanguage, trimBlankLinesIn } from "../editor/code-block.ts";
 import { blockAt, classifyLink, headingSlugs, localImagePath, MARKDOWN_HTML_ATTR, MARKDOWN_HTML_TAGS, renderMarkdown, type Heading, type LinkTarget } from "../editor/markdown.ts";
-import { classifyHtmlLink, copyRequest, frameBaseStyle, htmlPreviewDoc, PREVIEW_CSP, PREVIEW_HANG_MS, PREVIEW_HOST_AVOID_MS, PREVIEW_PING_MS, previewHost, recordRecovery, type PreviewHost } from "../editor/html.ts";
+import { classifyHtmlLink, copyRequest, frameBaseStyle, frameMessage, frameRequest, htmlPreviewDoc, PREVIEW_CSP, PREVIEW_HANG_MS, PREVIEW_HOST_AVOID_MS, PREVIEW_PING_MS, previewHost, recordRecovery, type PreviewHost } from "../editor/html.ts";
 import { NOTEBOOK_HTML_FORBID_ATTR, NOTEBOOK_HTML_FORBID_TAGS, parseNotebook, type NotebookOutput } from "../editor/notebook.ts";
 import { svgElement } from "../editor/svg.ts";
 import type { PreviewKind } from "../editor/preview-kind.ts";
@@ -15,7 +15,8 @@ import { onPreviewThemeChange, previewAppearance, previewColors, previewSyntaxKe
 import { syntaxClass } from "../theme/theme.ts";
 import { drawMath, drawMermaid } from "./rich-blocks.ts";
 import { iconElement } from "./icon-svg.ts";
-import { createPreviewSearch } from "./preview-search.ts";
+import { adjustFontSize, previewZoom } from "../settings/load.ts";
+import { createPreviewSearch, domFind, type FindTarget } from "./preview-search.ts";
 import { notify } from "./toast.ts";
 import { tooltip } from "./tooltip.ts";
 
@@ -33,7 +34,7 @@ export type PreviewHooks = {
   line: (line: number) => void;
   /** I-085 */
   link: (target: LinkTarget) => void;
-  /** core v0.8.2 I-7: a click in a notebook preview: the number of the heading whose section holds the clicked block (-1: before the first). */
+  /** core v0.8.2 I-7: a click in a notebook or HTML preview: the number of the heading whose section holds the clicked block (-1: before the first). */
   heading: (heading: number) => void;
   /** core v0.8.2 I-18: the folded sections of the document, as Outline keys (the Outline's own folds), and a fold or unfold of some. */
   folded: () => ReadonlySet<string>;
@@ -179,7 +180,8 @@ async function frameBlocks(doc: Document): Promise<void> {
 }
 
 // core v0.8.2 I-14: the app's rules an HTML frame gets (frameBaseStyle): the Markdown body's, the code block's and its icons', the Preview theme's syntax colours.
-const FRAME_RULE = /\.markdown-body|^\.markdown-preview \.cm-syntax-|^\.(code-|icon\b)/;
+// core v0.8.2 I-25: and the find marks' colours.
+const FRAME_RULE = /\.markdown-body|^\.markdown-preview \.cm-syntax-|^\.(code-|icon\b)|^::highlight\(preview-find/;
 
 /** I-14: the frame's base look as it is now: the live rules, with the variables' values at a preview (Preview theme, Settings), and the font families those name. */
 function frameLook(): { css: string; families: string[] } {
@@ -189,7 +191,9 @@ function frameLook(): { css: string; families: string[] } {
     if (!(rule instanceof CSSStyleRule) || !FRAME_RULE.test(rule.selectorText) || rule.selectorText.includes(".html-preview")) continue;
     if (headingColors || !rule.selectorText.includes(".heading-colors")) rules.push(rule.cssText);
   }
-  const probe = document.body.appendChild(makeNode("div", "markdown-preview")); // the preview itself may not be in the document yet
+  // The preview itself may not be in the document yet. core v0.8.2 I-19: the sizes are the Settings' (spec/metrics.ts), not the
+  // Ctrl+= ones: the frame document is zoomed by that ratio as a whole, so a change of it needs no new document.
+  const probe = document.body.appendChild(makeNode("div", "markdown-preview preview-setting-size"));
   const style = getComputedStyle(probe);
   const value = (name: string) => style.getPropertyValue(name).trim();
   const css = frameBaseStyle(rules.join(""), value);
@@ -323,8 +327,30 @@ export function createPreview(hooks: PreviewHooks): Preview {
   const linkToken = crypto.randomUUID(); // I-24: only the frame's head script knows it (headStart)
   let shownLook = ""; // I-14: the look the last render put in the frame document
   const lookKey = (css: string) => css + previewAppearance + previewColors.text + previewColors.accent;
+  // core v0.8.2 I-6 / I-19 / I-25: every message to the frame is one of frameMessage's (none carries linkToken: a page script reads them).
+  const post = (message: ReturnType<(typeof frameMessage)[keyof typeof frameMessage]>) => frame.contentWindow?.postMessage(message, "*");
+  // core v0.8.2 I-25: the find bar looks through the frame's text: the frame hands it over, the app finds (the bar's own rules) and sends the marks back.
+  let findDone: ((text: string) => void) | null = null; // the bar's last read, until the frame answers
+  let findChanged: (() => void) | null = null;
+  let findSent: unknown = null; // the matches the frame has marked
+  const frameFind: FindTarget = {
+    read: (done) => { findDone = done; post(frameMessage.findRead()); },
+    mark: (found, index, scroll) => {
+      post(frameMessage.find(found === findSent ? null : found.flatMap(({ from, to }) => [from, to]), index, scroll)); // a step sends the index only
+      findSent = found;
+    },
+    seed: () => "", // shortcut: a selection inside the frame is not read; let the frame send it with its key if the bar should start with it
+    watch: (changed) => { findChanged = changed; },
+  };
   const onFrameMessage = (e: MessageEvent) => {
     if (e.source !== frame.contentWindow) return;
+    // core v0.8.2 I-7 / I-19 / I-25: one of the frame's fixed requests. A key runs its own entry here, never a name the frame sent.
+    const request = frameRequest(e, frame.contentWindow, linkToken);
+    if (request && "key" in request) {
+      if (request.key === "zoomIn" || request.key === "zoomOut" || request.key === "zoomReset") adjustFontSize("preview", request.key === "zoomIn" ? 1 : request.key === "zoomOut" ? -1 : 0);
+      else search?.run({ find: "editor::Find", findNext: "editor::FindNext", findPrevious: "editor::FindPrevious", cancel: "editor::Cancel" }[request.key]);
+    } else if (request && "heading" in request) hooks.heading(request.heading);
+    else if (request) { const done = findDone; findDone = null; done?.(request.text); }
     const link: unknown = e.data?.previewLink;
     if (link && typeof link === "object" && "token" in link && link.token === linkToken && "href" in link && typeof link.href === "string") {
       const target = classifyHtmlLink(link.href, hooks.sourcePath(), "alt" in link && link.alt === true);
@@ -353,7 +379,8 @@ export function createPreview(hooks: PreviewHooks): Preview {
       ours = false;
       // core v0.8.2 I-12: the document scrolls to the render's position at its load (headStart); a tab view put back reloads it,
       // so it is sent the last position it reported. After a render this is the same or a newer one.
-      if (own) frame.contentWindow?.postMessage({ previewScrollTo: frameScroll }, "*");
+      // core v0.8.2 I-19 / I-25: it is zoomed as the previews are now, and an open find bar looks through the new document.
+      if (own) { post(frameMessage.scrollTo(frameScroll)); post(frameMessage.zoom(previewZoom())); findSent = null; findChanged?.(); }
       if (own || !frame.src || stopped) return;
       const next = recordRecovery(recoveries, performance.now());
       if (next) { recoveries = next; showFrame(); return; }
@@ -381,10 +408,11 @@ export function createPreview(hooks: PreviewHooks): Preview {
       return;
     }
     if (!pingSince) pingSince = now;
-    frame.contentWindow?.postMessage({ previewPing: true }, "*");
+    post(frameMessage.ping());
   }, PREVIEW_PING_MS);
-  // core v0.8.1 I-9: find only where the preview is text of the app's own (not HTML, SVG or a Mermaid file).
-  const search = ["markdown", "ipynb", "csv", "tsv"].includes(hooks.kind) ? createPreviewSearch(element, body, (node) => unfold(node)) : null;
+  // core v0.8.1 I-9: find where the preview is text of the app's own; core v0.8.2 I-25: and in an HTML page, through its frame (not SVG or a Mermaid file).
+  const search = ["markdown", "ipynb", "csv", "tsv"].includes(hooks.kind) ? createPreviewSearch(element, domFind(element, body, (node) => unfold(node)))
+    : hooks.kind === "html" ? createPreviewSearch(element, frameFind) : null;
   // core v0.8.2 I-18: the sections of a Markdown or notebook preview fold at their headings. What is kept from a render is one entry
   // per numbered heading (markdownHeadings); a fold change then only walks the blocks.
   let sections: Section[] = [];
@@ -417,7 +445,7 @@ export function createPreview(hooks: PreviewHooks): Preview {
     if (hooks.kind === "html") {
       const id = ++generation;
       const { css, families } = frameLook();
-      const look = { ...previewColors, appearance: previewAppearance };
+      const look = { ...previewColors, appearance: previewAppearance, zoom: previewZoom() }; // I-19
       const scroll = frameScroll;
       shownLook = lookKey(css);
       frameFonts(families)
@@ -573,7 +601,8 @@ export function createPreview(hooks: PreviewHooks): Preview {
   render();
   // I-11 / core v0.8.2 I-14: the frame does not inherit CSS variables, so a Preview theme or Settings change that gives it another
   // look re-renders it (the same debounced path as an edit).
-  const stopTheme = hooks.kind === "html" ? onPreviewThemeChange(() => { if (lookKey(frameLook().css) !== shownLook) preview.changed(); }) : () => {};
+  // core v0.8.2 I-19: a Ctrl+= size is the frame's zoom alone (the look is the Settings'), so it is sent, not rendered.
+  const stopTheme = hooks.kind === "html" ? onPreviewThemeChange(() => { if (lookKey(frameLook().css) !== shownLook) preview.changed(); post(frameMessage.zoom(previewZoom())); }) : () => {};
   const preview: Preview = {
     element,
     // I-082: a change re-renders after the parse debounce; one already waiting is not scheduled again.
@@ -586,6 +615,8 @@ export function createPreview(hooks: PreviewHooks): Preview {
     },
     cursor: (line) => highlight(line, true),
     reveal: (line, heading) => {
+      // core v0.8.2 I-6: an HTML page's headings are in its frame, by their number in the source.
+      if (hooks.kind === "html") { if (heading !== undefined) post(frameMessage.reveal(heading)); return; }
       if (heading === undefined) highlight(line, false); // the block mark of I-083, as a click on the block gives
       const target = heading === undefined ? body.querySelector<HTMLElement>(".active-block")
         : body.querySelector<HTMLElement>(`.nb-markdown :is(h1, h2, h3, h4, h5, h6)[data-heading="${heading}"]`); // the number renderMarkdown gave it

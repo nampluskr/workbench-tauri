@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { SearchQuery } from "@codemirror/search";
 import { repaint, textMatches } from "./preview-find.ts";
+import { frameMessage, frameRequest } from "./html.ts";
 import { wholeWordTest } from "./search.ts";
 import { Keymap } from "../keymap/engine.ts";
 import { EDITOR_BINDINGS } from "../keymap/builtin.ts";
@@ -41,4 +42,23 @@ test("core v0.8.1 I-9 (K-06-R1): a new search, a move and closing leave only thi
   assert.deepEqual([[...others], [...current]], [["other preview", "b"], ["a"]]);
   repaint(others, current, painted, [], -1); // closed
   assert.deepEqual([[...others], [...current]], [["other preview"], []]);
+});
+
+// core v0.8.2 ORDER-07 #4: an HTML preview's find is the same bar and the same rules over the text its frame hands over.
+test("core v0.8.2 I-25: a frame's text is searched by the preview find's rules; the marks go back in document order", () => {
+  const frame = {};
+  const request = frameRequest({ source: frame, data: { previewAct: { token: "tok", text } } }, frame, "tok");
+  assert.ok(request && "text" in request);
+  const marks = (spec: ConstructorParameters<typeof SearchQuery>[0]) => textMatches(request.text, new SearchQuery({ literal: true, ...spec }))?.flatMap(({ from, to }) => [from, to]) ?? null;
+  assert.equal(marks({ search: "read" })!.length / 2, 4);
+  assert.equal(marks({ search: "read", caseSensitive: true })!.length / 2, 2);
+  assert.equal(marks({ search: "read", test: wholeWordTest })!.length / 2, 3);
+  assert.equal(marks({ search: "re.d", regexp: true })!.length / 2, 4);
+  assert.equal(marks({ search: "(", regexp: true }), null); // "Invalid regex": nothing to mark
+  const all = marks({ search: "read" })!;
+  assert.deepEqual(all, [...all].sort((a, b) => a - b)); // Next and Previous step through them as they stand in the page
+  assert.deepEqual(all.slice(0, 4), [0, 4, 9, 13]);
+  assert.deepEqual(frameMessage.find(all, 0, true), { previewFind: { marks: all, at: 0, scroll: true } }); // a new query: the first match, scrolled to
+  assert.deepEqual(frameMessage.find(null, 1, true), { previewFind: { at: 1, scroll: true } }); // Next: the index alone
+  assert.deepEqual(frameMessage.find([], -1, false), { previewFind: { marks: [], at: -1, scroll: false } }); // closed: the marks go
 });

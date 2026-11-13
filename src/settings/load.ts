@@ -35,7 +35,7 @@ async function reload(): Promise<void> {
     if (next.preview_font_size !== settings().preview_font_size) previewFontSize = null;
     if (next.editor_line_numbers !== settings().editor_line_numbers) temporary.lineNumbers = null;
     if (next.editor_word_wrap !== settings().editor_word_wrap) temporary.wordWrap = null;
-    await applyMetrics(next.ui_font_size, next.buffer_font_size, editorFontSize ?? next.buffer_font_size, previewFontSize ?? next.preview_font_size, next.editor_line_height, previewGaps(next), codeFonts(next));
+    await applyMetrics(next.ui_font_size, next.buffer_font_size, editorFontSize ?? next.buffer_font_size, previewFontSize ?? next.preview_font_size, next.editor_line_height, previewGaps(next), codeFonts(next), next.preview_font_size);
     // I-8 / core v0.8.1 I-10: the line height map, the gutter and the character width are measured, not read from the variables
     if (next.editor_line_height !== settings().editor_line_height || next.buffer_font_family !== settings().buffer_font_family) remeasureEditors();
     showViewOptions(next);
@@ -79,12 +79,15 @@ export function adjustFontSize(target: FontTarget, direction: -1 | 0 | 1): void 
     if (target === "editor") editorFontSize = direction === 0 ? null : stepEditorFontSize(editorFontSize ?? buffer_font_size, direction, buffer_font_size);
     else previewFontSize = direction === 0 ? null : stepEditorFontSize(previewFontSize ?? preview_font_size, direction, preview_font_size);
     try {
-      await applyMetrics(ui_font_size, buffer_font_size, editorFontSize ?? buffer_font_size, previewFontSize ?? preview_font_size, settings().editor_line_height, previewGaps(settings()), codeFonts(settings()));
+      await applyMetrics(ui_font_size, buffer_font_size, editorFontSize ?? buffer_font_size, previewFontSize ?? preview_font_size, settings().editor_line_height, previewGaps(settings()), codeFonts(settings()), preview_font_size);
       previewLookChanged();
       if (target === "editor") remeasureEditors(); // line height and character width changed; the gutter, find highlights and cursors are redrawn from them
     } catch (error) { notify([String(error)]); }
   });
 }
+
+/** core v0.8.2 I-19: the Ctrl+= preview size over the Settings size: what an HTML preview's frame document is zoomed by. */
+export const previewZoom = (): number => (previewFontSize ?? settings().preview_font_size) / settings().preview_font_size;
 
 export function loadSettings(): Promise<void> {
   queue = queue.then(reload);

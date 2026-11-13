@@ -142,7 +142,7 @@ export function htmlOutline(elements: OutlineItem[], text: (element: OutlineItem
   return nestSections(flat(elements).flatMap((item): OutlineItem[] => {
     const level = /^h([1-6])$/i.exec(item.name)?.[1];
     return level ? [{ ...item, name: tidy(text(item)), kind: "heading", level: Number(level) }] : [];
-  }), length);
+  }).map((item, i) => ({ ...item, heading: i })), length); // I-6 / I-7: its number, as the HTML preview's frame document has it (editor/html.ts PREVIEW_HEADING_ATTR)
 }
 
 /**

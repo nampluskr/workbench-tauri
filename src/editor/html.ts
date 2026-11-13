@@ -1,4 +1,5 @@
 import { classifyLink, localImagePath, type LinkTarget } from "./markdown.ts";
+import { FIND_BLOCKS, FIND_SKIP } from "./preview-find.ts";
 import { CODE_BLOCK_COPIED_MS } from "../spec/metrics.ts";
 
 // core v0.8 I-1 / v0.8.1 I-7: HTML preview. The page is its own document at `http://preview.localhost/<id>` (src-tauri
@@ -117,6 +118,9 @@ export function classifyHtmlLink(href: string, sourcePath: string, alt: boolean)
 /** I-24: where a link's own target is kept in the frame document; its `href` becomes `#`, so the frame itself never navigates to it. */
 export const PREVIEW_LINK_ATTR = "data-preview-href";
 
+/** core v0.8.2 I-6: where a source heading's number is kept in the frame document: h1~h6 in document order, the Outline's count (syntax/outline.ts htmlOutline). */
+export const PREVIEW_HEADING_ATTR = "data-preview-heading";
+
 /** What an attribute becomes: its new value, null to drop it, undefined to keep it as it is (event handlers too: scripts run, I-7). */
 export function attributeValue(tag: string, name: string, value: string, sourcePath: string, convert: Convert): string | null | undefined {
   if (name === "ping") return null;
@@ -127,7 +131,8 @@ export function attributeValue(tag: string, name: string, value: string, sourceP
 }
 
 /** The applied Preview theme as the HTML preview needs it: the same tokens as the Markdown preview (text, L-108 link colour). */
-export type PreviewLook = { appearance: "light" | "dark"; text: string; accent: string; /** core v0.8.2 I-14: the base look (frameBaseStyle, fonts), put after the defaults */ base?: string };
+export type PreviewLook = { appearance: "light" | "dark"; text: string; accent: string; /** core v0.8.2 I-14: the base look (frameBaseStyle, fonts), put after the defaults */ base?: string;
+  /** core v0.8.2 I-19: the page zoom the document starts with (the Ctrl+= size over the Settings size) */ zoom?: number };
 
 // core v0.8.2 I-14: what the Markdown preview gets from its containers and not from a `.markdown-body` rule, by the same variables:
 // the container padding (L-102), the app's text font (app.css body), and which icon the Copy button shows (the head script sets data-copied).
@@ -170,6 +175,108 @@ export function copyRequest(e: { source: unknown; data: unknown }, frameWindow: 
   return copy && typeof copy === "object" && "token" in copy && copy.token === token && "text" in copy && typeof copy.text === "string" ? copy.text : null;
 }
 
+// core v0.8.2 I-6 / I-7 / I-19 / I-25 (ORDER-07): the Outline, the font size keys and the find bar cross the frame's border by
+// messages only. The frame asks for one of a fixed few things (frameRequest); the app tells it where to scroll, how far to zoom
+// and what to mark (frameMessage).
+
+/** The fixed things a key pressed inside the frame asks of the app. Nothing else is run for a frame: never an action by a name it sends. */
+export const FRAME_KEYS = ["zoomIn", "zoomOut", "zoomReset", "find", "findNext", "findPrevious", "cancel"] as const;
+export type FrameKey = (typeof FRAME_KEYS)[number];
+
+/**
+ * In the frame (put there by its source text, so it uses nothing outside itself): what a key press asks, by the physical key, or
+ * null. The app's default keys for these (shell/status.ts, keymap/builtin.ts).
+ * shortcut: a keymap.json rebinding of them does not reach inside the frame; send the app's bindings to the frame if that is wanted.
+ */
+export function frameKey(code: string, ctrl: boolean, shift: boolean, other: boolean): FrameKey | null {
+  if (other) return null; // with Alt or the Windows key
+  if (!ctrl) return code === "F3" ? (shift ? "findPrevious" : "findNext") : code === "Escape" && !shift ? "cancel" : null;
+  if (code === "KeyF") return shift ? null : "find";
+  return code === "Equal" || code === "NumpadAdd" ? "zoomIn" : code === "Minus" || code === "NumpadSubtract" ? "zoomOut" : code === "Digit0" || code === "Numpad0" ? "zoomReset" : null;
+}
+
+/**
+ * In the frame (by its source text, as frameKey): the last of `count` things in document order that `atOrBefore` holds for, by
+ * halving; -1 when it holds for none. The heading a click is under (I-7), the text node an offset is in (I-25).
+ */
+export function lastAtOrBefore(count: number, atOrBefore: (index: number) => boolean): number {
+  let lo = -1, hi = count - 1;
+  while (lo < hi) {
+    const mid = (lo + hi + 1) >> 1;
+    if (atOrBefore(mid)) lo = mid; else hi = mid - 1;
+  }
+  return lo;
+}
+
+// Not a Zed value (K-08, tauri decision): the most text a frame hands over for the find bar; the app looks at no more than this.
+export const PREVIEW_FIND_MAX_CHARS = 5_000_000;
+
+/** What a frame may ask (frameRequest): a key's fixed action, the source heading a click was under (-1: before the first), or its text for the find bar. */
+export type FrameRequest = { key: FrameKey } | { heading: number } | { text: string };
+
+/**
+ * A frame's request, or null: not from this preview's frame, without the preview's token (only the head script has it, and it
+ * sends on what the user did or the app asked), or not exactly one of the three shapes. A request made up all the same can at
+ * most change the preview font size, open or step or close this preview's find bar, move this preview's Outline mark, or change
+ * the find bar's count.
+ */
+export function frameRequest(e: { source: unknown; data: unknown }, frameWindow: unknown, token: string): FrameRequest | null {
+  if (!frameWindow || e.source !== frameWindow) return null;
+  const act: unknown = (e.data as { previewAct?: unknown } | null | undefined)?.previewAct;
+  if (!act || typeof act !== "object" || !("token" in act) || act.token !== token || Object.keys(act).length !== 2) return null;
+  const { key, heading, text } = act as { key?: unknown; heading?: unknown; text?: unknown };
+  if (typeof key === "string") return (FRAME_KEYS as readonly string[]).includes(key) ? { key: key as FrameKey } : null;
+  if (typeof heading === "number") return Number.isInteger(heading) && heading >= -1 ? { heading } : null;
+  return typeof text === "string" ? { text: text.slice(0, PREVIEW_FIND_MAX_CHARS) } : null;
+}
+
+/**
+ * Every message the app sends its frame. A page script reads them all, so none carries the preview's token (I-24: the token is
+ * what makes a link click the user's). `find`: `marks` is from-to pairs over the text the frame last handed over (null: as they
+ * were), `at` the current pair (-1: none), brought into view with `scroll`.
+ */
+export const frameMessage = {
+  ping: () => ({ previewPing: true }),
+  scrollTo: (y: number) => ({ previewScrollTo: y }),
+  zoom: (factor: number) => ({ previewZoom: factor }),
+  reveal: (heading: number) => ({ previewReveal: heading }),
+  findRead: () => ({ previewFindRead: true }),
+  find: (marks: number[] | null, at: number, scroll: boolean) => ({ previewFind: marks ? { marks, at, scroll } : { at, scroll } }),
+};
+
+/**
+ * The frame's side of those messages, a script of its own ahead of the link script. As that one it keeps the built-ins the token
+ * passes through, removes itself, and listens in the capture phase to what the user did only (`isTrusted`).
+ * - I-19 / I-25: the keys of frameKey are taken from the page (so WebView2's own find box does not open) and sent; Escape is sent
+ *   and left to the page. The zoom is the root's `zoom`, so a page with font sizes of its own grows too.
+ * - I-7: a click that is not on a link or a Copy button sends the source heading it is under (PREVIEW_HEADING_ATTR; a heading a
+ *   page script made has no number and counts as text).
+ * - I-6: previewReveal scrolls to the source heading of that number, when the page still has it.
+ * - I-25: previewFindRead hands over the shown text (text nodes that are drawn, blocks on lines of their own, as the app's
+ *   preview find reads its own); previewFind marks ranges of it with the CSS Custom Highlight API (the page's DOM is not changed).
+ *   shortcut: text in a shadow tree, a canvas, a form field or generated content is not found; the marks follow the text as it
+ *   was read, so text a script draws later is found on the next change of the query.
+ */
+function frameScript(token: string, zoom: number): string {
+  return `<script>(()=>{const T=${JSON.stringify(token)},U=parent,A=Reflect.apply,P=U.postMessage,O=Object.getOwnPropertyDescriptor,D=Event.prototype.preventDefault,R=O(Event.prototype,"target").get,`
+    + `[KC,KS,KH,KA,KM]=["code","ctrlKey","shiftKey","altKey","metaKey"].map(n=>O(KeyboardEvent.prototype,n).get),send=(k,v)=>A(P,U,[{previewAct:{token:T,[k]:v}},"*"]),`
+    + `key=(${frameKey}),last=(${lastAtOrBefore}),Z=z=>{if(typeof z==="number"&&z>0)document.documentElement.style.zoom=z};document.currentScript.remove();Z(${Number.isFinite(zoom) ? zoom : 1});`
+    + `addEventListener("keydown",e=>{if(!e.isTrusted)return;const k=key(A(KC,e,[]),A(KS,e,[]),A(KH,e,[]),A(KA,e,[])||A(KM,e,[]));if(!k)return;if(k!=="cancel")A(D,e,[]);send("key",k)},true);`
+    + `addEventListener("click",e=>{if(!e.isTrusted)return;const t=A(R,e,[]);if(!(t instanceof Element)||t.closest("a,area,button.code-block-copy"))return;`
+    + `const h=document.querySelectorAll("[${PREVIEW_HEADING_ATTR}]"),i=last(h.length,i=>h[i]===t||!!(h[i].compareDocumentPosition(t)&4));send("heading",i<0?-1:Number(h[i].getAttribute("${PREVIEW_HEADING_ATTR}")))},true);`
+    + `let segs=[],marks=[];const H=[new Highlight,new Highlight];H[1].priority=1;CSS.highlights.set("preview-find",H[0]);CSS.highlights.set("preview-find-current",H[1]);`
+    + `const read=()=>{segs=[];let text="",block;const w=document.createTreeWalker(document.documentElement,4);for(let n=w.nextNode();n&&text.length<${PREVIEW_FIND_MAX_CHARS};n=w.nextNode()){`
+    + `const p=n.parentElement;if(!n.data||!p||p.closest(${JSON.stringify(FIND_SKIP)})||!p.checkVisibility({visibilityProperty:true}))continue;`
+    + `const at=p.closest(${JSON.stringify(FIND_BLOCKS)});if(text&&at!==block)text+="\\n";block=at;segs.push([n,text.length]);text+=n.data.replace(/\\r/g," ")}return text},`
+    + `range=(from,to)=>{const r=new Range,s=segs[last(segs.length,i=>segs[i][1]<=from)],e=segs[last(segs.length,i=>segs[i][1]<to)];r.setStart(s[0],from-s[1]);r.setEnd(e[0],Math.min(to-e[1],e[0].length));return r};`
+    + `addEventListener("message",e=>{const d=e.data;if(e.source!==U||!d||typeof d!=="object")return;if("previewZoom" in d)Z(d.previewZoom);`
+    + `if(Number.isInteger(d.previewReveal))document.querySelector('[${PREVIEW_HEADING_ATTR}="'+d.previewReveal+'"]')?.scrollIntoView({block:"start"});`
+    + `if(d.previewFindRead===true)send("text",read());const f=d.previewFind;if(!f)return;`
+    + `try{if(f.marks){marks=[];for(let i=0;i+1<f.marks.length;i+=2)marks.push(range(f.marks[i],f.marks[i+1]))}}catch{marks=[]}`
+    + `H[0].clear();H[1].clear();marks.forEach((r,i)=>H[i===f.at?1:0].add(r));const r=f.scroll&&marks[f.at];if(!r)return;const b=r.getBoundingClientRect();`
+    + `if(b.top<0||b.bottom>innerHeight)scrollBy(0,(b.top+b.bottom-innerHeight)/2);if(b.left<0||b.right>innerWidth)scrollBy((b.left+b.right-innerWidth)/2,0)})})()</script>`;
+}
+
 /**
  * core v0.8 I-11: page defaults from the Preview theme. Every selector is `:where()` (specificity 0), so any rule, `<link>`,
  * `<style>` or `style=` of the page wins (M-7); only the page's own absence of a value shows these. The background is not here:
@@ -197,6 +304,7 @@ export function headStart(look: PreviewLook, scrollY: number, token: string): st
   const top = Number.isFinite(scrollY) && scrollY > 0 ? Math.round(scrollY) : 0;
   return `<meta http-equiv="Content-Security-Policy" content="${PREVIEW_CSP}"><style>${defaultStyle(look)}</style>${look.base ? `<style>${look.base}</style>` : ""}`
     + `<script>${NO_WEBRTC.map((name) => `delete window.${name};`).join("")}parent.postMessage({previewReady:true},"*");addEventListener("message",e=>{if(e.source!==parent)return;if(e.data?.previewPing===true)parent.postMessage({previewPong:true},"*");if(typeof e.data?.previewScrollTo==="number")scrollTo(0,e.data.previewScrollTo)});addEventListener("load",()=>scrollTo(0,${top}));addEventListener("scroll",()=>parent.postMessage({previewScrollY:scrollY},"*"),{passive:true})</script>`
+    + frameScript(token, look.zoom ?? 1) // core v0.8.2 I-6 / I-7 / I-19 / I-25
     + `<script>(()=>{const T=${JSON.stringify(token)},U=parent,A=Reflect.apply,P=U.postMessage,E=Element.prototype,S=String.prototype,C=E.closest,G=E.getAttribute,M=S.trim,W=S.startsWith,D=Event.prototype.preventDefault,O=Object.getOwnPropertyDescriptor,R=O(Event.prototype,"target").get,K=O(MouseEvent.prototype,"altKey").get;`
     + `document.currentScript.remove();addEventListener("click",e=>{let a=null;try{a=A(C,A(R,e,[]),["a,area"])}catch{}if(!a)return;`
     + `const d=A(G,a,["${PREVIEW_LINK_ATTR}"]),h=d===null?A(G,a,["href"]):d;if(h===null||d===null&&A(W,A(M,h,[]),["#"]))return;`
@@ -224,6 +332,13 @@ export function withHead(serialized: string, html: string): string {
 export async function htmlPreviewDoc(text: string, sourcePath: string, convert: Convert, look: PreviewLook, scrollY: number, token: string,
   decorate?: (doc: Document) => Promise<void>): Promise<string> {
   const doc = new DOMParser().parseFromString(text, "text/html");
+  // core v0.8.2 I-6: the source's h1~h6 get their numbers before anything is dropped, so they count as the Outline counts them
+  // (every heading element of the text, a <template>'s too). A number the page wrote itself goes first.
+  // shortcut: where the HTML parser and the Outline's grammar read broken markup differently, the numbers part from the Outline's
+  // from there on; number them from the Outline's own offsets if such pages show it.
+  for (const el of doc.querySelectorAll(`[${PREVIEW_HEADING_ATTR}]`)) el.removeAttribute(PREVIEW_HEADING_ATTR);
+  const headings = (root: ParentNode): Element[] => [...root.querySelectorAll("h1, h2, h3, h4, h5, h6, template")].flatMap((el) => el instanceof HTMLTemplateElement ? headings(el.content) : [el]);
+  headings(doc).forEach((el, i) => el.setAttribute(PREVIEW_HEADING_ATTR, String(i)));
   for (const el of doc.querySelectorAll(DROP_TAGS)) el.remove();
   for (const el of doc.querySelectorAll('meta[http-equiv="refresh" i]')) el.remove();
   for (const link of doc.querySelectorAll("link")) {

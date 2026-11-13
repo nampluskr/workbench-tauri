@@ -1,5 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { FRAME_KEYS, frameKey, frameMessage, frameRequest, PREVIEW_FIND_MAX_CHARS, type FrameKey, type FrameRequest } from "./html.ts";
 import { attributeValue, classifyHtmlLink, copyRequest, defaultStyle, frameBaseStyle, headStart, navigates, PREVIEW_CSP, PREVIEW_RECOVER_LIMIT, PREVIEW_RECOVER_WINDOW_MS, previewHost, recordRecovery, resourceUrl, rewriteCss, rewriteSrcset, withHead } from "./html.ts";
 import { MARKDOWN_HTML_ATTR, renderMarkdown } from "./markdown.ts";
 import { codeBlockParts, codeLanguage } from "./code-block.ts";
@@ -190,4 +192,80 @@ test("I-14: a copy request is taken only from the preview's frame, with its toke
   assert.equal(copyRequest({ source: null, data: good }, null, "tok"), null); // the frame is gone
   for (const data of [null, "x", {}, { previewCopy: "a" }, { previewCopy: { text: "a" } }, { previewCopy: { token: "other", text: "a" } }, { previewCopy: { token: "tok", text: 1 } }, { previewCopy: { token: "tok" } }])
     assert.equal(copyRequest({ source: frame, data }, frame, "tok"), null, JSON.stringify(data));
+});
+
+// core v0.8.2 ORDER-07 #5 (I-7, I-19, I-25): what a frame may ask is a fixed few things; a made-up message is not taken.
+test("ORDER-07: a frame request is one of the fixed few, from the preview's frame with its token", () => {
+  const frame = {};
+  type Message = { source: unknown; data: unknown };
+  const act = (fields: object): Message => ({ source: frame, data: { previewAct: { token: "tok", ...fields } } });
+  const table: [string, Message, FrameRequest | null][] = [
+    ...FRAME_KEYS.map((key): [string, Message, FrameRequest] => [`key ${key}`, act({ key }), { key }]),
+    ["heading", act({ heading: 3 }), { heading: 3 }],
+    ["before the first heading", act({ heading: -1 }), { heading: -1 }],
+    ["text", act({ text: "abc" }), { text: "abc" }],
+    ["an app action's name", act({ key: "workspace::Save" }), null],
+    ["a find action's name", act({ key: "editor::Find" }), null],
+    ["an inherited name", act({ key: "constructor" }), null],
+    ["a key that is not a string", act({ key: 1 }), null],
+    ["a heading that is not a whole number", act({ heading: 1.5 }), null],
+    ["a heading below -1", act({ heading: -2 }), null],
+    ["a heading NaN", act({ heading: Number.NaN }), null],
+    ["a heading as text", act({ heading: "3" }), null],
+    ["text that is not a string", act({ text: ["a"] }), null],
+    ["two at once", act({ key: "find", heading: 1 }), null],
+    ["a field too many", act({ key: "find", action: "workspace::Save" }), null],
+    ["nothing asked", act({}), null],
+    ["another window", { source: {}, data: act({ key: "find" }).data }, null],
+    ["no token", { source: frame, data: { previewAct: { key: "find" } } }, null],
+    ["another token", { source: frame, data: { previewAct: { token: "other", key: "find" } } }, null],
+    ["not an object", { source: frame, data: { previewAct: "find" } }, null],
+    ["a bare action", { source: frame, data: { key: "find", token: "tok" } }, null],
+    ["no data", { source: frame, data: null }, null],
+    ["text data", { source: frame, data: "find" }, null],
+  ];
+  for (const [name, e, want] of table) assert.deepEqual(frameRequest(e, frame, "tok"), want, name);
+  assert.equal(frameRequest({ source: null, data: act({ key: "find" }).data }, null, "tok"), null); // the frame is gone
+  const long = frameRequest(act({ text: "a".repeat(PREVIEW_FIND_MAX_CHARS + 5) }), frame, "tok");
+  assert.ok(long && "text" in long && long.text.length === PREVIEW_FIND_MAX_CHARS);
+
+  // Inside the frame a key press becomes one of the same names, by the physical key (code, ctrl, shift, alt or win).
+  const keys: [string, boolean, boolean, boolean, FrameKey | null][] = [
+    ["Equal", true, false, false, "zoomIn"], ["Equal", true, true, false, "zoomIn"], ["NumpadAdd", true, false, false, "zoomIn"],
+    ["Minus", true, false, false, "zoomOut"], ["NumpadSubtract", true, false, false, "zoomOut"], ["Digit0", true, false, false, "zoomReset"], ["Numpad0", true, false, false, "zoomReset"],
+    ["KeyF", true, false, false, "find"], ["F3", false, false, false, "findNext"], ["F3", false, true, false, "findPrevious"], ["Escape", false, false, false, "cancel"],
+    ["KeyF", true, true, false, null], ["KeyF", false, false, false, null], ["KeyF", true, false, true, null], ["Equal", false, false, false, null], ["KeyS", true, false, false, null], ["KeyP", true, false, false, null],
+  ];
+  for (const [code, ctrl, shift, other, want] of keys) assert.equal(frameKey(code, ctrl, shift, other), want, `${code} ${ctrl} ${shift} ${other}`);
+
+  // The frame's script: ahead of the link script, it removes itself before it listens, takes only what the user did, and the
+  // token leaves only through the built-ins kept at its start.
+  const scripts = headStart({ appearance: "light", text: "#111", accent: "#00f", zoom: 1.25 }, 0, "tok").split("<script>").map((part) => part.split("</script>")[0]);
+  const script = scripts.at(-2)!;
+  assert.doesNotThrow(() => new Function(script)); // the functions put in by their source text parse
+  assert.ok(script.startsWith('(()=>{const T="tok",U=parent,A=Reflect.apply,P=U.postMessage,'));
+  assert.ok(script.includes('send=(k,v)=>A(P,U,[{previewAct:{token:T,[k]:v}},"*"])'));
+  assert.equal(script.split(/[^A-Za-z]T[^A-Za-z]/).length, 3); // the token: set once, sent in one place
+  assert.ok(script.indexOf("document.currentScript.remove();") < script.indexOf("addEventListener"));
+  assert.ok(script.includes("Z(1.25);")); // I-19: the document starts at the previews' zoom
+  for (const listener of ['addEventListener("keydown",e=>{if(!e.isTrusted)return;', 'addEventListener("click",e=>{if(!e.isTrusted)return;']) assert.ok(script.includes(listener), listener);
+  assert.ok(script.includes('if(k!=="cancel")A(D,e,[]);send("key",k)},true)')); // the key is taken from the page and WebView2 (its find box), Escape is not
+  assert.ok(script.includes('t.closest("a,area,button.code-block-copy"))return;')); // a link or Copy click moves no Outline mark
+  assert.ok(script.includes('addEventListener("message",e=>{const d=e.data;if(e.source!==U||'));
+});
+
+// core v0.8.2 ORDER-07 #6: a page script reads what the app sends its frame, so the token (I-24: what makes a click the user's) never rides along.
+test("ORDER-07: no message to the frame carries the preview's token", () => {
+  const sent: Record<keyof typeof frameMessage, unknown[]> = {
+    ping: [frameMessage.ping()], scrollTo: [frameMessage.scrollTo(12)], zoom: [frameMessage.zoom(1.25)], reveal: [frameMessage.reveal(3)],
+    findRead: [frameMessage.findRead()], find: [frameMessage.find([0, 4, 9, 13], 1, true), frameMessage.find(null, 0, false)],
+  };
+  assert.deepEqual(Object.keys(sent).sort(), Object.keys(frameMessage).sort());
+  for (const make of Object.values(frameMessage)) assert.ok(!/token/i.test(String(make)));
+  for (const message of Object.values(sent).flat()) assert.ok(!/token/i.test(JSON.stringify(message)), JSON.stringify(message));
+  assert.deepEqual(sent.find, [{ previewFind: { marks: [0, 4, 9, 13], at: 1, scroll: true } }, { previewFind: { at: 0, scroll: false } }]);
+  // The preview posts to its frame in one place, and only these messages.
+  const source = readFileSync(new URL("../shell/markdown-preview.ts", import.meta.url), "utf8");
+  assert.deepEqual(source.match(/postMessage\([^)]*\)/g), ['postMessage(message, "*")']);
+  assert.equal(source.match(/\bpost\((?!frameMessage\.)/g), null);
 });

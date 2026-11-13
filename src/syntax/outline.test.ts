@@ -7,6 +7,7 @@ import { languageConfigs } from "./catalog.ts";
 import { compileQuery, loadLanguage } from "./grammar.ts";
 import { codeOutline, foldedBlocks, headingNumbers, headingOfBlock, headingSections, htmlOutline, initialCollapsed, itemAt, itemOfHeading, notebookOutline, outlineRows, outlineStep, unfoldKeys, withHtmlHeadings, type OutlineItem } from "./outline.ts";
 import { htmlHeadingText, markdownHeadings, renderMarkdown } from "../editor/markdown.ts";
+import { frameMessage, frameRequest, headStart, lastAtOrBefore, PREVIEW_HEADING_ATTR } from "../editor/html.ts";
 
 const root = new URL("../assets/zed-grammars/", import.meta.url);
 const available = existsSync(new URL("manifest.json", root));
@@ -183,6 +184,29 @@ test("core v0.8.2 I-6: an HTML file's Outline is its h1~h6 as sections, not its 
   assert.equal(source.split("\n")[last.line], "<h2>Part B</h2>"); // a click puts the cursor on the heading's line
   assert.ok(source.slice(last.at).startsWith("h2>Part B"));
   assert.deepEqual(itemAt(items, source.indexOf("Deep")).map((item) => item.name), ["Top bold & more", "Part A", "Deep"]);
+});
+
+// core v0.8.2 ORDER-07 #1, #2: the Outline and the HTML preview's frame name a heading by one number: its place among the source's h1~h6.
+test("core v0.8.2 I-6 / I-7: an HTML heading's number gives the frame its scroll target and a click its Outline row", { skip: !available }, async () => {
+  const source = "<body>\n<p>intro</p>\n<h1>Top</h1>\n<p>text</p>\n<div><h2>Part A</h2></div>\n<h3>Deep</h3>\n<p>deep text</p>\n<h2>Part B</h2>\n</body>\n";
+  const items = htmlOutline(await outline("html", source), (item) => htmlHeadingText(source.slice(item.at + item.name.length, item.to)), source.length);
+  const rows = outlineRows(items, new Set()).map((row) => row.item);
+  assert.deepEqual(rows.map((item) => [item.name, item.heading]), [["Top", 0], ["Part A", 1], ["Deep", 2], ["Part B", 3]]); // document order, as htmlPreviewDoc numbers them
+  // An Outline click: the frame is sent the number and scrolls to the source heading that has it.
+  assert.deepEqual(frameMessage.reveal(rows[2].heading!), { previewReveal: 2 });
+  const head = headStart({ appearance: "light", text: "#111", accent: "#00f" }, 0, "tok");
+  assert.ok(head.includes(`if(Number.isInteger(d.previewReveal))document.querySelector('[${PREVIEW_HEADING_ATTR}="'+d.previewReveal+'"]')?.scrollIntoView({block:"start"})`));
+  // A click in the frame: the last numbered heading at or before the clicked node (here by source offset), -1 before the first.
+  const at = rows.map((item) => item.at);
+  const under = (text: string) => lastAtOrBefore(at.length, (i) => at[i] <= source.indexOf(text));
+  assert.deepEqual(["intro", "Top", "text", "Part A", "deep text", "Part B"].map(under), [-1, 0, 0, 1, 2, 3]);
+  assert.equal(lastAtOrBefore(0, () => true), -1);
+  // The app takes the number from the frame's request and marks that heading's row (its path, so folded parents open).
+  const frame = {};
+  assert.deepEqual(frameRequest({ source: frame, data: { previewAct: { token: "tok", heading: under("deep text") } } }, frame, "tok"), { heading: 2 });
+  assert.deepEqual(itemOfHeading(items, 2).map((item) => item.name), ["Top", "Part A", "Deep"]);
+  // Out of step with the page (a heading a script made or removed, a number past the end): no row is marked.
+  for (const none of [-1, 4, 99]) assert.deepEqual(itemOfHeading(items, none), [], String(none));
 });
 
 test("core v0.8.2 I-8: heading numbers: none for H1, one more part per level, again from 1 under each H1, 0 for a skipped level", { skip: !available }, () => {

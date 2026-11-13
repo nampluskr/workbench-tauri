@@ -42,7 +42,7 @@ type Source = { tab: Tab; view: EditorView; notebook: boolean; headings: boolean
 function sourceOf(tab: Tab | undefined): Source | null {
   if (!tab || tab.tool) return null;
   const kind = previewKind(tab.path);
-  if (tab.markdown && kind !== "markdown" && kind !== "ipynb") return null; // a CSV, SVG, HTML or Mermaid preview
+  if (tab.markdown && kind !== "markdown" && kind !== "ipynb" && kind !== "html") return null; // a CSV, SVG or Mermaid preview
   const view = tab.file.view ?? historyView(tab.file); // a preview reads the view of its source
   if (!view) return null;
   if (kind === "ipynb") return { tab, view, notebook: true, headings: true };
@@ -181,8 +181,8 @@ export default function OutlineBar() {
     const doc = src.view.state.doc;
     return line >= 1 && line <= doc.lines ? doc.line(line).from : -1;
   });
-  /** core v0.8.2 I-7: a notebook preview has no source line: its place is the heading of the clicked block or Outline row. */
-  const heading = () => { const src = source(); return src?.notebook ? src.tab.file.heading : undefined; };
+  /** core v0.8.2 I-7: a notebook or HTML preview has no source line: its place is the heading of the clicked block or Outline row. */
+  const heading = () => { const src = source(); return src && (src.notebook || (src.tab.markdown && previewKind(src.tab.path) === "html")) ? src.tab.file.heading : undefined; };
   const cursorPath = createMemo(() => { const at = heading(); return at ? itemOfHeading(items(), at()) : itemAt(items(), cursor()); });
   // I-7: a new place inside folded items opens them, so its own row shows (as VS Code's Outline follows the cursor). A fold made
   // after that stays until the place changes again.
