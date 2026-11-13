@@ -80,3 +80,8 @@
 ### Phase 3 — ORDER-03 (I-24·I-20): 본문 HTML 태그, 로컬 문서 링크
 
 - **시작** (2026-11-14, leader-core → tauri-leader): 카드 core `D:\projects\workbench-core\specs\v0.8.2\orders\ORDER-03.md`, 항목 I-24·I-20. 8절이 더해짐(화면 측정은 Phase 7로, #9 `<pre><code>` 안쪽 태그와 빈 줄 자르기). 사용자가 Phase 7까지 leader-core에 위임했다(2026-11-14). checker는 diff 리뷰만 한다.
+- **K-03 I-24·I-20 (ORDER-03)** (2026-11-14, coder, 커밋 `c85b317`): 본문 HTML 정화를 허용 목록으로(`src/editor/markdown.ts`·`src/shell/markdown-preview.ts`), 본문 HTML 제목 `data-heading`·Outline(`src/syntax/outline.ts`·`src/shell/Outline.tsx`), 링크 분류 `classifyLink`(`src/editor/html.ts`·`src/workspace/context.ts`), `<pre><code>` 안쪽 태그 보존 `trimBlankLinesIn`(`src/editor/code-block.ts`)과 테스트. 검증 V1: `npm.cmd run test` 321/321, typecheck 0, 앱 안 띄움(보고 `C:\Users\nampl\AppData\Local\Temp\v082-K-03-report.md`).
+- **바뀐 동작 둘** (K-03): md·ipynb 미리보기의 `mailto:`·`file://` 링크가 이제 열리지 않는다(전에는 열기 시도 → 권한 거부 알림, 이제 HTML 미리보기와 같이 http(s)만).
+- **C-03 checker 리뷰(K-03)** [PASS] (2026-11-14): diff 리뷰만(정화 규칙 중심 — 위험 태그·속성 없음, 노트북 출력 규칙보다 엄격, `innerHTML` 우회 없음, 보안 설정·프레임 쪽 diff 없음). 테스트는 다시 돌리지 않았다(core COMMON 8절). 검증 V0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-C-03-report.md`).
+- **보고** (2026-11-14, tauri-leader): `specs/v0.8.2/reports/ORDER-03.md` `[DONE]`. #6과 #1 V3는 Phase 7. 미정: 정화를 실제 DOMPurify로 돌린 결과는 확인하지 않았다(`node --test`에 DOM 없음) — ORDER-07 V3에서 정화된 DOM 덤프 한 번을 제안했고 leader-core가 정한다.
+- **W-06 ORDER-03 기록** (2026-11-14, writer): 위 K-03·바뀐 동작·C-03·보고 항목과 ITEMS-MAP I-24·I-20 상태를 적었다. 검증 V0(보고 `C:\Users\nampl\AppData\Local\Temp\v082-W-06-report.md`).
