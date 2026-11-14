@@ -45,4 +45,29 @@
   - I-2: UI 글자 15px, 좌우 분할 50:50에서 창 너비 짝수·홀수일 때 pane 구분선 1px, 상하 분할도 같음. 상태 표시줄 왼쪽 선·테마 선택기 가로선이 보임.
   - I-13: 같은 라이트 미리보기 둘 사이 본문 구간이 라이트 테두리 색, 다크 편집 + 라이트 미리보기 사이는 UI 색(픽셀 색). 탭 줄 구간 경계가 탭 줄 높이와 맞음.
   - I-15: 마크다운·ipynb·HTML 미리보기와 편집 탭의 위치 글자, Outline 지금 위치 표시.
-- **상태**: ORDER-01 보고 보냄, leader-core `[PUSH]` 대기.
+- **상태**: 충족(leader-core 판정 6/6)·push 끝 `dbd269e`.
+
+### Phase 2 — ORDER-02 (I-9·I-10·I-11·I-12): 본문 왼쪽 여백, 탭 줄 화살표 간격, 줄 번호 글꼴과 시작선
+
+- **K-02 I-9·I-10·I-11·I-12 (ORDER-02)** (2026-11-14, coder, 커밋 `056d606`)
+  - 무엇을 했나:
+    - I-9: `markdown_preview.left_margin` 64 → 44(미리보기 글자 14px 기준 비례), 바깥 14 그대로라 본문 시작 58px. 줄 번호 끈 에디터(`extensions.ts` `bodyStart`)와 HTML 미리보기(`html.ts:154`)가 같은 두 변수를 따른다. ipynb 실행 번호 `.nb-count`는 `width` → `min-width`(긴 번호는 왼쪽 바깥 여백으로 자라고 본문은 안 움직임).
+    - I-9 카드 밖 값: `markdown_preview.notebook_count_gap` 7px(미리보기 글자 14px 기준 비례, `[n]`과 코드 칸 사이). 전의 코드 블록 안쪽 여백 10.5px이면 `[10000]`(50.6px)이 58px를 넘어 3px 잘린다. 7px이면 `[999]` 43.1 ≤ 44, `[10000]` 57.6 ≤ 58로 안 잘린다. ITEMS "약 8px"보다 1px 작다(8이면 `[10000]`이 0.6px 넘음). `.nb-count`에만 쓴다. tauri가 고른 값으로 보고한다.
+    - I-10: `tab.end_buttons_area.gap` 4 → 0, `padding_x` 6 → 4. 버튼·경계선 값은 그대로.
+    - I-11: 설정 키 `editor_line_number_font_size`(Editor 분류 "Line Number Font Size", 기본 12). 키 이름은 에디터 보기 설정의 `editor_` 접두사와 글자 크기 키의 `_font_size` 끝을 따랐다. 그리는 크기 = min(설정, `buffer_font_size`) × (Ctrl+= 크기 ÷ `buffer_font_size`). 파일 값 8 미만·숫자 아님은 무효(기본 12), 에디터 글자보다 큰 파일 값은 그대로 두고 그릴 때 맞춘다. Settings 화면 ±·입력은 8~에디터 글자 크기로 맞춰 저장. 밑선은 번호 칸에 에디터 글자 크기의 빈 인라인 상자(`::before`, 폭 0)로 본문과 맞춘다. 미리보기 코드 블록 줄 번호는 안 건드림.
+    - I-12: `.cm-gutters` `min-width` = 본문 여백. 번호 칸 = 왼쪽 10px + 자릿수×1ch(최소 4) + 오른쪽 최소 8px(`editor.gutter.padding_right`), 남는 폭은 빈 채움 칸 `gutter({class:"cm-gutter-fill"})`(flex-grow 1, 활성 줄에만 요소)이 가져간다. `.cm-line`의 하강 여백 `--editor-gutter-margin`과 그 canvas 측정은 지웠다.
+    - I-12 최소 여백 8px: 기본 설정에서 다섯 자리(10+36+8=54px)는 58px 안이라 밀리지 않고 여섯 자리부터 밀린다(10만 줄 61.2px). ITEMS의 "다섯 자리 이상"과 다르다 — 다섯 자리부터 밀리려면 최소 여백이 12px를 넘어야 한다. 보고에서 결정을 묻는다(미정).
+  - 결과: 고친 기존 테스트 — `model.test.ts` Editor 검색 키 목록과 "font size" 검색 개수 6 → 7(새 행), `metrics.test.ts`의 `--editor-gutter-margin` 단언 → 줄 번호 글꼴 변수 단언. 시작선 테스트는 `metrics.test.ts` 안에 넣었고 CSS 배치를 실행하지 않고 `applyMetrics`가 내는 변수 값으로 네 경우(기본 58/58, 줄 번호 16 58/58, 미리보기 글자 18 74.57/74.57, 10만 줄 58/61.2)를 계산한다 — 값 변경은 잡지만 CSS 규칙이 틀린 것은 못 잡는다(화면은 ORDER-05). 보안 설정 diff는 `tauri.conf.json` 버전 한 줄뿐(`git diff d8f9438`). 미리보기 코드 글꼴을 100% 넘게 키우면 `[10000]`이 58px를 넘을 수 있다(범위 밖).
+  - 검증: V1 + V0. `node --test src/spec/metrics.test.ts src/settings/model.test.ts src/editor/extensions.test.ts src/editor/indent-guides.test.ts` 27/27, `npm.cmd run typecheck` 0(출력 `C:\Users\nampl\AppData\Local\Temp\v083-K-02-tests.txt`, 보고 `...\v083-K-02-report.md`). Rust를 건드리지 않아 `cargo`는 돌리지 않았다. 앱은 띄우지 않았다.
+  - 특이사항: 없음.
+- **C-02 checker 리뷰(K-02)** [PASS] (2026-11-14, checker)
+  - 무엇을 했나: K-02 diff를 리뷰했다(I-9 58px와 `.nb-count`, I-10 값, I-11 검증·맞춤·Ctrl+= 비율·밑선 `::before`, I-12 `min-width`·채움 칸이 활성 줄 모양을 안 바꾸는지, 지운 `--editor-gutter-margin`·canvas 측정의 남은 호출부, `notebook_count_gap` 필요성과 영향 범위, 바꾼 테스트 기대값의 정당성, 금지 사항).
+  - 결과: PASS. `--editor-gutter-margin`은 `src/`에 남지 않았다(지난 버전 측정 스크립트에만). `notebook_count_gap`은 `.nb-count`에만 쓰여 다른 화면에 영향이 없다.
+  - 검증: V0 코드 리뷰(앱 실행·테스트 재실행 없음, coder 출력 근거)(보고 `C:\Users\nampl\AppData\Local\Temp\v083-C-02-report.md`).
+  - 특이사항: 없음.
+- **화면으로 잴 것 (ORDER-05로 넘김, core COMMON 8절)**
+  - I-9: 미리보기 셋(마크다운·ipynb·HTML) 본문 시작 58px, ipynb `[999]`(44px 안)·`[10000]`(58px 안, 안 잘림).
+  - I-10: 탭 줄 양쪽 버튼 영역 너비(간격 0, 여백 4).
+  - I-11: 줄 번호 12px와 본문 글자와 같은 밑선.
+  - I-12: 편집 탭(줄 번호 켬·끔)과 미리보기 탭의 글자 시작선 58px, 활성 줄 배경이 번호 칸~채움 칸~본문 사이에 끊기지 않는지.
+- **상태**: ORDER-02 보고 보냄, leader-core `[PUSH]` 대기.
