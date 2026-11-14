@@ -2,6 +2,8 @@ import { createSignal } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { commands } from "../keymap/keyboard.ts";
 import { notify } from "./toast.ts";
+import { closeAppMenu, isOpen as menuOpen } from "./AppMenu.tsx"; // also orders the modules: its app_menu::Toggle is set before the chain below
+import { chain } from "./chain.ts";
 import { focusPane } from "../workspace/context.ts";
 import { editorContext, outlineOpen, setOutlineOpen } from "../workspace/store.ts";
 
@@ -76,9 +78,12 @@ export const [zenMode, setZenMode] = createSignal(false);
 /** The `data-tauri-drag-region` of a tab bar part: in Zen Mode a press on the part itself (not on a tab or a button in it) drags the window, a double press maximizes. */
 export const zenDragRegion = (): "" | undefined => (zenMode() ? "" : undefined);
 commands.set("workspace::ToggleZenMode", () => {
+  closeAppMenu(); // I-31: not open and hidden in Zen Mode
   setZenMode(!zenMode());
   void invoke("caption_set_visible", { visible: !zenMode() }).catch((error) => notify([String(error)]));
 });
+// core v0.8.3 I-31: in Zen Mode F10 opens nothing (the bar is hidden, so an open menu would take the keys unseen); it still closes an open right-click menu.
+chain("app_menu::Toggle", () => zenMode() && !menuOpen(), () => {});
 commands.set("multi_workspace::ToggleWorkspaceSidebar", toggleSidebar);
 commands.set("multi_workspace::FocusWorkspaceSidebar", toggleSidebarFocus);
 commands.set("workspace::ToggleLeftDock", toggleDock);

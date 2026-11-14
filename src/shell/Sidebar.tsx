@@ -170,6 +170,8 @@ export default function FolderList() {
           }}><Icon name="close" /></button>
         </div>;
       }}</For>
+      {/* core v0.8.3 I-32: the Tree Sidebar's line (ProjectPanel); no folder open, not a search with no match */}
+      <Show when={folders().length === 0}><div class="outline-empty">No Folder</div></Show>
     </div>
   </>;
 }

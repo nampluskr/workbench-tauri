@@ -596,6 +596,7 @@ button, input, select, textarea {
 .list-table td { box-sizing: border-box; height: var(--list-table-row-height); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   border-block: var(--keymap-editor-row-border-width) solid transparent; }
 .list-table tbody tr:nth-child(even) { background: var(--element-background); }
+.list-table tbody tr:hover { background: var(--element-hover); } /* core v0.8.3 I-30: after the even rule (same specificity), so it wins on an even row too */
 .list-table tbody tr:focus { outline: var(--keymap-editor-row-border-width) solid var(--border-focused); outline-offset: calc(0px - var(--keymap-editor-row-border-width)); }
 
 /* R-8 / R-9 menu. left/top come from an adopted sheet (src/shell/AppMenu.tsx); the popup is fixed to the window. */
@@ -749,7 +750,7 @@ button, input, select, textarea {
 .outline-doc { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
 .outline-list { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; padding-top: var(--outline-list-padding-top); user-select: none; outline: none; }
 .outline-list:focus .tree-row.selected { border-color: var(--border-focused); } /* core v0.8.1 I-18: the tree's focus ring */
-.project-panel:has(> .outline-empty) { box-sizing: border-box; padding-top: var(--outline-list-padding-top); } /* core v0.8.2 I-3: "No Folder" sits as "No outline" does in its list */
+:is(.project-panel, .sidebar-list):has(> .outline-empty) { box-sizing: border-box; padding-top: var(--outline-list-padding-top); } /* core v0.8.2 I-3, v0.8.3 I-32: "No Folder" sits as "No outline" does in its list */
 .outline-empty { padding-inline: var(--project-panel-item-padding-x); color: var(--text-muted); font-size: var(--typography-size-default); }
 .outline-toggle { display: flex; flex-shrink: 0; color: var(--icon-muted); }
 .outline-badge-slot { align-items: center; justify-content: center; }

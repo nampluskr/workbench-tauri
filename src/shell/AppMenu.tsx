@@ -95,6 +95,9 @@ function closeMenu(refocus: boolean): void {
   restore = null;
 }
 
+/** core v0.8.3 I-31: Zen Mode hides the title bar menu, so it does not stay open there; a right-click menu is still shown, so it stays. */
+export const closeAppMenu = (): void => { if (open() !== null) closeMenu(true); };
+
 function openChild(index: number): void {
   const entry = rootEntries()[index];
   if (!entry || entry === "separator" || entry.disabled || !entry.children) return;
