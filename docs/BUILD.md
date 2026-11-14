@@ -2,7 +2,7 @@
 
 - 작성일: 2026-11-11
 - 기준 커밋: `2866205`(ORDER-06 코드)
-- 고친 날: 2026-11-13(0.8.1 release 빌드, [4A절](#4a-081-결과-파일), 기준 커밋 `267cfa5`; 같은 날 ORDER-09로 다시 빌드, 기준 커밋 `56c3b66`), 2026-11-14(0.8.2 release 빌드, [4B절](#4b-082-결과-파일), 기준 커밋 `1f9bd3a`; 0.8.3 release 빌드, [4C절](#4c-083-결과-파일), 기준 커밋 `8505c9f`; 같은 날 ORDER-06으로 다시 빌드, 기준 커밋 `b50d51d`)
+- 고친 날: 2026-11-13(0.8.1 release 빌드, [4A절](#4a-081-결과-파일), 기준 커밋 `267cfa5`; 같은 날 ORDER-09로 다시 빌드, 기준 커밋 `56c3b66`), 2026-11-14(0.8.2 release 빌드, [4B절](#4b-082-결과-파일), 기준 커밋 `1f9bd3a`; 0.8.3 release 빌드, [4C절](#4c-083-결과-파일), 기준 커밋 `8505c9f`; 같은 날 ORDER-06으로 다시 빌드, 기준 커밋 `b50d51d`; 같은 날 ORDER-07로 다시 빌드, 기준 커밋 `61f1626`)
 
 배포본(release exe·NSIS 설치 파일)을 만드는 과정이다. 2026-11-11 0.8.0 release 빌드에 성공했고, 같은 날 ORDER-06(I-11)으로 다시 빌드했다. 도구·기존 측정은 각 절의 날짜를 따른다.
 
@@ -173,13 +173,15 @@ npm run tauri build             # release exe + NSIS 설치 파일
 
 2026-11-14 tauri-coder(K-06, ORDER-05)의 0.8.3 release 빌드 결과다. 기준 커밋 `8505c9f`(ORDER-05 K-05: I-1 세로 스크롤바 자동 숨김, I-14 Zen Mode `F11`; 앞 ORDER-03·04의 I-4 Sidebar 키 `Ctrl+Alt+1/2/3`, I-16 세 Sidebar 제목 줄, I-17 Panel Layout Left/Right Sidebars 등 포함). 앱 버전은 `tauri.conf.json`의 0.8.3 그대로다. 빌드 직전 `workbench-tauri` 프로세스는 0개였다(`Get-Process workbench-tauri`).
 
-2026-11-14 ORDER-06(core I-18~I-29, 기준 커밋 `b50d51d`) 뒤 다시 빌드했다(K-08, 버전 0.8.3 그대로, 빌드 직전 프로세스 0개). 아래 표는 그 결과다. ORDER-05 빌드 대비 설치 파일 10,590,767 → 10,591,231 B(+464 B), 앱 exe 21,558,272 → 21,535,232 B(−23,040 B), `dist/` 31,225,457 → 31,227,143 B(+1,686 B).
+2026-11-14 ORDER-07(core I-30~I-32, 기준 커밋 `61f1626`) 뒤 다시 빌드했다(K-10, 버전 0.8.3 그대로). 아래 표는 그 결과다. ORDER-06 빌드 대비 설치 파일 10,591,231 → 10,592,019 B(+788 B), 앱 exe 21,535,232 → 21,535,232 B(같음), `dist/` 31,227,143 → 31,227,526 B(+383 B). 빌드 직전 프로세스는 `%TEMP%`의 복사본 exe 하나였고 `target\release`를 쓰지 않아 닫지 않고 빌드했다.
+
+2026-11-14 ORDER-06(core I-18~I-29, 기준 커밋 `b50d51d`) 뒤 다시 빌드했다(K-08, 버전 0.8.3 그대로, 빌드 직전 프로세스 0개). ORDER-05 빌드 대비 설치 파일 10,590,767 → 10,591,231 B(+464 B), 앱 exe 21,558,272 → 21,535,232 B(−23,040 B), `dist/` 31,225,457 → 31,227,143 B(+1,686 B).
 
 | 파일 | 경로 | 크기·버전 |
 |---|---|---|
-| NSIS 설치 파일 | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.8.3_x64-setup.exe` | 10,591,231 바이트(수정 시각 2026-11-14 21:55:11); ProductVersion `0.8.3`, FileVersion `0.8.3` |
-| 앱 exe | `src-tauri\target\release\workbench-tauri.exe` | 21,535,232 바이트(수정 시각 2026-11-14 21:55:11); ProductVersion `0.8.3`, FileVersion `0.8.3` |
-| 참고: 프런트엔드 `dist/` | exe 안에 압축돼 들어감 | 31,227,143 바이트, 파일 4,998개, JS 청크 205개 |
+| NSIS 설치 파일 | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.8.3_x64-setup.exe` | 10,592,019 바이트(수정 시각 2026-11-14 22:45:11); ProductVersion `0.8.3`, FileVersion `0.8.3` |
+| 앱 exe | `src-tauri\target\release\workbench-tauri.exe` | 21,535,232 바이트(수정 시각 2026-11-14 22:45:11); ProductVersion `0.8.3`, FileVersion `0.8.3` |
+| 참고: 프런트엔드 `dist/` | exe 안에 압축돼 들어감 | 31,227,526 바이트, 파일 4,998개, JS 청크 205개 |
 
 - 버전은 `(Get-Item …).VersionInfo`로 읽었다.
 
@@ -187,16 +189,16 @@ npm run tauri build             # release exe + NSIS 설치 파일
 
 | 파일 | 0.8.2 | 0.8.3 | 증가 |
 |---|---|---|---|
-| NSIS 설치 파일 | 10,589,344 B | 10,591,231 B | +1,887 B (+0.02%) |
+| NSIS 설치 파일 | 10,589,344 B | 10,592,019 B | +2,675 B (+0.03%) |
 | 앱 exe | 21,532,160 B | 21,535,232 B | +3,072 B (+0.01%) |
-| `dist/` | 31,216,009 B | 31,227,143 B | +11,134 B |
+| `dist/` | 31,216,009 B | 31,227,526 B | +11,517 B |
 
-- 이유: 새 의존성·글꼴·문법은 없고 앱 코드만 늘었다. `index` 청크가 4,630.68 → 4,640.06 kB다(ORDER-05 빌드는 4,638.61 kB; 파일 수와 JS 청크 수는 같다).
+- 이유: 새 의존성·글꼴·문법은 없고 앱 코드만 늘었다. `index` 청크가 4,630.68 → 4,640.36 kB다(ORDER-05 빌드는 4,638.61 kB, ORDER-06 빌드는 4,640.06 kB; 파일 수와 JS 청크 수는 같다).
 
 ### 빌드 시간·경고
 
-- `npm.cmd run tauri build`(NSIS 켬, ORDER-06 다시 빌드): 전체 77초(21:53:54 → 21:55:11), vite 8.07초, cargo release 54.64초, NSIS 포함. ORDER-05 빌드도 77초였다(vite 7.33초, cargo 55.63초).
-- 경고는 기존과 같은 종류다: Vite 500 kB 넘는 chunk(`index` 4,640.06 kB, `elk` 1,462.86 kB, `chunk-NGNAAXSQ` 629.04 kB), web-tree-sitter direct eval(`[EVAL]` 2건). Rust 경고 없음.
+- `npm.cmd run tauri build`(NSIS 켬, ORDER-07 다시 빌드): 전체 73초(22:43:58 → 22:45:11), vite 7.84초, cargo release 50.80초, NSIS 포함. ORDER-06 빌드는 77초(vite 8.07초, cargo 54.64초), ORDER-05 빌드도 77초였다(vite 7.33초, cargo 55.63초).
+- 경고는 기존과 같은 종류다: Vite 500 kB 넘는 chunk(`index` 4,640.36 kB, `elk` 1,462.86 kB, `chunk-NGNAAXSQ` 629.04 kB), web-tree-sitter direct eval(`[EVAL]` 2건). Rust 경고 없음.
 
 ## 5. 걸린 시간(이 PC)
 
