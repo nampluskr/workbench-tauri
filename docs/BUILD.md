@@ -72,7 +72,7 @@ npm run tauri build             # release exe + NSIS 설치 파일
 ```
 
 - `beforeBuildCommand`가 `npm run build`(vite)를 먼저 돌리고 `dist/`를 exe 안에 넣는다.
-- 설치 파일은 `src-tauri/tauri.conf.json` `bundle.active=true`, `targets=["nsis"]`(K-59, 커밋 `f1231dc`)라서 함께 나온다. 설치 파일 아이콘은 `bundle.windows.nsis.installerIcon`(`icons/icon.ico`)으로 정한다(없으면 NSIS 기본 아이콘). WebView2 설치 방식은 기본값 `downloadBootstrapper`.
+- 설치 파일은 `src-tauri/tauri.conf.json` `bundle.active=true`, `targets=["nsis"]`(K-59, 커밋 `f1231dc`)라서 함께 나온다. 설치 파일 아이콘은 `bundle.windows.nsis.installerIcon`(`icons/icon.ico`)으로 정한다(없으면 NSIS 기본 아이콘). 설치 화면 언어는 `bundle.windows.nsis.languages` `["Korean"]`이다(2026-11-15, [4D절](#4d-083-새-환경-빌드)). WebView2 설치 방식은 기본값 `downloadBootstrapper`.
 - exe만 필요하면 `npm run tauri build -- --no-bundle`.
 - 디버그 빌드: `npm run tauri build -- --debug --no-bundle`.
 
@@ -239,6 +239,15 @@ npm run tauri build             # release exe + NSIS 설치 파일
   - 다시 빌드 결과: exit 0, 325초(vite 1분 35초, cargo release 3분 17초). 설치 파일 10,590,508 B, exe 21,535,232 B, 둘 다 2026-11-15 01:05:05, ProductVersion 0.8.3.
   - 경고는 4C절과 같은 종류다. Vite 500 kB 넘는 chunk(`index` 4,639.57 kB, `elk` 1,462.86 kB, `chunk-NGNAAXSQ` 629.04 kB), web-tree-sitter direct eval(`[EVAL]` 2건). Rust 경고 없음. Node 24 때문에 새로 생긴 경고는 없다.
   - vite·cargo가 4C절(7.84초·50.80초)보다 훨씬 오래 걸린 까닭은 확인하지 않았다.
+
+### 한국어 설치 파일과 GitHub Draft release (2026-11-15)
+
+- 설치 언어: `src-tauri/tauri.conf.json` `bundle.windows.nsis.languages`를 `["Korean"]`으로 했다(사용자 요청). 기본값은 `["English"]`이다. 목록에 OS 언어가 없으면 첫 언어를 쓰고, `displayLanguageSelector`는 기본값 false 그대로다.
+  - 확인: 생성된 `src-tauri\target\release\nsis\x64\installer.nsi`에 `!insertmacro MUI_LANGUAGE "Korean"`이 있었다.
+  - 사용자가 이 PC에 설치·실행해 확인했다.
+- 빌드: `npm.cmd run tauri build`, exit 0, 299초(로그 `%TEMP%\wt-083-build-ko-20261115.txt`). 경고는 위와 같은 종류다.
+- 설치 파일 `workbench-tauri_0.8.3_x64-setup.exe`: 10,593,637 B, 2026-11-15 01:17:15, ProductVersion 0.8.3, SHA256 `E85F2945BCC8298DBF2854EB2BB8D93802FEFAF7F1DDBBCF9D7C7A8268CD0BF5`.
+- GitHub: 태그 `v0.8.3`(이 설정을 넣은 커밋)에 **Draft release**로 설치 파일을 올렸다(`gh release create v0.8.3 --draft`). 레포는 PUBLIC이지만 draft는 레포 권한자만 보고 받을 수 있다. 그래서 8절의 배포 범위(개인 용도, core I-3)는 그대로다. 공개(publish)로 바꾸는 것은 배포 범위를 바꾸는 결정이라 라이선스 정리(8절)가 먼저다(미정, 사용자가 정함).
 - 빌드 직전 `workbench-tauri` 프로세스는 0개였다. 앱은 실행하지 않았다(About·Licenses 화면은 사용자 확인 필요).
 
 ## 5. 걸린 시간(이 PC)

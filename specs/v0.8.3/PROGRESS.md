@@ -266,3 +266,12 @@
 - **katex 0.18.11 deprecated → core에 넘김** (2026-11-15, 사용자 결정)
   - npm 경고는 "Accidentally published with breaking changes. Use 0.19.0 instead."이다. 의존성 변경이라 이 레포에서는 고치지 않았다(AGENTS 9장).
   - 메모 `C:\Users\nampl\AppData\Local\Temp\v083-katex-memo.md`를 써서 사용자 승인으로 workbench-core v0.8.4 ITEMS에 후보로 넣었다.
+- **한국어 설치 파일, GitHub Draft release** (2026-11-15, 사용자 요청)
+  - 무엇을 했나:
+    - `src-tauri/tauri.conf.json`에 `bundle.windows.nsis.languages: ["Korean"]`을 넣었다. 키 이름은 `@tauri-apps/cli` `config.schema.json` NsisConfig에서 확인했다.
+    - `npm.cmd run tauri build`(299초)를 실행했다.
+    - 태그 `v0.8.3`를 달고 `gh release create --draft`로 설치 파일을 올렸다.
+    - 공개 범위는 사용자가 Draft로 정했다. 레포가 PUBLIC이고, core I-3 배포 범위가 개인 용도이며, 라이선스 정리를 하지 않았기 때문이다.
+  - 결과: 설치 파일 10,593,637 B, ProductVersion 0.8.3, SHA256 `E85F2945…D0BF5`. 생성 `installer.nsi`에 `MUI_LANGUAGE "Korean"`이 있다. `docs/BUILD.md` 3절·4D절에 적었다.
+  - 검증: 빌드 exit 0. 사용자가 이 PC에 설치·실행해 확인했다("잘 설치되어 실행이 잘 됩니다"). 앱 코드는 바뀌지 않았다.
+  - 미정: Draft를 공개로 바꿀지. 배포 범위를 바꾸는 결정이라 라이선스 정리(BUILD 8절)가 먼저이고, 사용자·core가 정한다.
