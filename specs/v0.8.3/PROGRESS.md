@@ -227,3 +227,28 @@
 - **알릴 것**: 빌드 직전 떠 있던 사용자 테스트 앱 PID 35052(`%TEMP%\v083-app\workbench-tauri-0.8.3-order06.exe` 복사본)가 빌드 뒤 없어졌다. coder는 종료 명령(`Stop-Process`·`taskkill`)을 쓰지 않았고 원인은 모른다. leader-core에 알림.
 - **사용자 확인 필요**: I-30 마우스 올림 색이 짝수 줄 위에서 충분히 눈에 띄는지(One Light 두 색 차이가 작음).
 - **상태**: ORDER-07 보고 보냄, leader-core `[PUSH]` 대기.
+
+### 사용자 요청 작업 — 새 PC 환경 0.8.3 빌드 (2026-11-15)
+
+사용자 요청 작업: 계획 밖 작업이다. 다른 PC(새 환경)에서 원격을 받아 0.8.3 release를 처음부터 빌드하고, 그 과정과 버전을 기록했다(Herdr 워크스페이스 wH의 리더 Claude Code가 직접 했다. 명령은 사용자가 보는 우측 패널에서 실행).
+
+- **새 PC 0.8.3 빌드** (2026-11-15, 기준 커밋 `63ed24e`)
+  - 무엇을 했나:
+    - `git pull`로 커밋 318개를 fast-forward했다(로컬 변경 없음).
+    - 도구 버전을 확인하고, fetch 3개로 복사본 7개 폴더를 채웠다.
+    - `npm.cmd ci`를 실행했다.
+    - 줄바꿈을 고쳤다: 이 레포에만 `core.autocrlf=false`, index를 다시 만든 뒤 `checkout-index`로 추적 파일을 LF로 다시 꺼냈다.
+    - `typecheck`·`test`를 돌리고 `npm.cmd run tauri build`를 실행했다.
+    - 과정과 버전은 `docs/BUILD.md` 4D절에, 줄바꿈 제약은 7절과 0절 메모에 적었다.
+  - 결과:
+    - 설치 파일 `workbench-tauri_0.8.3_x64-setup.exe` 10,590,095 B(4C 대비 −1,924 B)
+    - exe 21,535,232 B(4C와 같음)
+    - 둘 다 2026-11-15 00:48:34, ProductVersion·FileVersion 0.8.3
+    - `dist/` 31,226,730 B, 파일 4,998개, JS 205개
+    - 빌드 947초(처음 빌드, NSIS 도구 첫 내려받기 포함)
+  - 검증: typecheck 0, test 347/347 통과(줄바꿈 수정 전에는 I-25·I-29 실패), 빌드 exit 0, `VersionInfo` 0.8.3. 앱은 실행하지 않았다.
+  - 특이사항:
+    - Node는 v24.19.0을 썼다(BUILD 1절 기준은 22.x).
+    - 빌드 경고는 터미널을 지워 확인하지 못했다.
+- **미정**: 레포에 `.gitattributes`(`* text=auto eol=lf`)를 더할지. 사람이 정한다.
+- **사용자 확인 필요**: 새 빌드 앱의 About·Licenses 화면 Rust 목록·개수가 맞는지(줄바꿈 수정이 들어갔는지).

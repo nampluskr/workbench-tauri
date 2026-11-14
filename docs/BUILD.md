@@ -2,7 +2,7 @@
 
 - 작성일: 2026-11-11
 - 기준 커밋: `2866205`(ORDER-06 코드)
-- 고친 날: 2026-11-13(0.8.1 release 빌드, [4A절](#4a-081-결과-파일), 기준 커밋 `267cfa5`; 같은 날 ORDER-09로 다시 빌드, 기준 커밋 `56c3b66`), 2026-11-14(0.8.2 release 빌드, [4B절](#4b-082-결과-파일), 기준 커밋 `1f9bd3a`; 0.8.3 release 빌드, [4C절](#4c-083-결과-파일), 기준 커밋 `8505c9f`; 같은 날 ORDER-06으로 다시 빌드, 기준 커밋 `b50d51d`; 같은 날 ORDER-07로 다시 빌드, 기준 커밋 `61f1626`)
+- 고친 날: 2026-11-13(0.8.1 release 빌드, [4A절](#4a-081-결과-파일), 기준 커밋 `267cfa5`; 같은 날 ORDER-09로 다시 빌드, 기준 커밋 `56c3b66`), 2026-11-14(0.8.2 release 빌드, [4B절](#4b-082-결과-파일), 기준 커밋 `1f9bd3a`; 0.8.3 release 빌드, [4C절](#4c-083-결과-파일), 기준 커밋 `8505c9f`; 같은 날 ORDER-06으로 다시 빌드, 기준 커밋 `b50d51d`; 같은 날 ORDER-07로 다시 빌드, 기준 커밋 `61f1626`), 2026-11-15(새 PC 환경에서 0.8.3 처음부터 빌드, [4D절](#4d-083-새-환경-빌드), 기준 커밋 `63ed24e`)
 
 배포본(release exe·NSIS 설치 파일)을 만드는 과정이다. 2026-11-11 0.8.0 release 빌드에 성공했고, 같은 날 ORDER-06(I-11)으로 다시 빌드했다. 도구·기존 측정은 각 절의 날짜를 따른다.
 
@@ -16,6 +16,7 @@
    git clone https://github.com/nampluskr/workbench-tauri
    cd workbench-tauri
    ```
+   - 먼저 `git config core.autocrlf`를 본다. `true`(Git for Windows 기본)면 작업 파일이 CRLF로 풀려 테스트·Licenses 화면이 깨진다. [7절](#7-알려진-제약)의 줄바꿈 항목대로 LF로 다시 꺼낸다.
 3. 복사본 채우기([2절](#2-복사본-채우기gitignore된-폴더)): `pwsh tools/fetch-zed-icons.ps1` → `pwsh tools/fetch-zed-themes.ps1` → `pwsh tools/fetch-zed-grammars.ps1`
 4. `npm ci`(lockfile 그대로 설치. 안 되면 `npm install`). PowerShell 실행 정책에 막히면 `npm.cmd ci`
 5. `npm run tauri build`([3절](#3-빌드-명령)) → 결과는 [4절](#4-결과-파일) 경로
@@ -200,6 +201,43 @@ npm run tauri build             # release exe + NSIS 설치 파일
 - `npm.cmd run tauri build`(NSIS 켬, ORDER-07 다시 빌드): 전체 73초(22:43:58 → 22:45:11), vite 7.84초, cargo release 50.80초, NSIS 포함. ORDER-06 빌드는 77초(vite 8.07초, cargo 54.64초), ORDER-05 빌드도 77초였다(vite 7.33초, cargo 55.63초).
 - 경고는 기존과 같은 종류다: Vite 500 kB 넘는 chunk(`index` 4,640.36 kB, `elk` 1,462.86 kB, `chunk-NGNAAXSQ` 629.04 kB), web-tree-sitter direct eval(`[EVAL]` 2건). Rust 경고 없음.
 
+## 4D. 0.8.3 새 환경 빌드
+
+2026-11-15 다른 PC(새 환경)에서 pull한 HEAD `63ed24e`(README 0.8.3, 코드는 4C절 ORDER-07 빌드와 같음)로 0.8.3 release를 처음부터 빌드했다(사용자 요청). 이 PC에는 `target\release`·복사본 폴더가 없었고, `node_modules`는 pull 전 것이었다. 명령은 모두 레포 루트의 PowerShell 7에서 실행했다.
+
+### 도구 버전
+
+| 도구 | 이 PC | 1절 기준과 비교 |
+|---|---|---|
+| Git | 2.55.0.windows.3 | 더 새 버전. 시스템 `core.autocrlf=true`(아래 줄바꿈) |
+| PowerShell 7 | 7.7.0 | 더 새 버전 |
+| Node.js / npm | **v24.19.0 / 11.17.0** | **1절은 22.x.** 24에서도 typecheck·test·빌드가 통과했다 |
+| Rust | rustc·cargo 1.99.1, `stable-x86_64-pc-windows-msvc` | 같음 |
+| Visual Studio Build Tools 2022 (C++) | 설치됨(`vswhere` VC.Tools.x86.x64) | 같음 |
+| WebView2 런타임 | 157.0.4341.46 | 더 새 버전 |
+
+### 단계와 결과
+
+| 단계 | 명령 | 결과 | 시간 |
+|---|---|---|---|
+| 1. 복사본 채우기 | `pwsh tools/fetch-zed-icons.ps1` → `fetch-zed-themes.ps1` → `fetch-zed-grammars.ps1` | exit 0. 문법 언어 29, wasm 25 | 288초(셋 합) |
+| 2. 의존성 | `npm.cmd ci` | 패키지 219개, 취약점 0. `katex@0.18.11` deprecated 경고만 | 251초 |
+| 3. 줄바꿈 | `git config core.autocrlf false` → `Remove-Item .git\index` → `git reset -q` → `git checkout-index -f -a` | `git ls-files --eol`이 `i/lf w/lf`, 작업 폴더 깨끗 | — |
+| 4. 검사 | `npm.cmd run typecheck`, `npm.cmd run test` | typecheck 0, test 347/347 통과. 3단계 전에는 I-25·I-29 두 개가 실패([7절](#7-알려진-제약) 줄바꿈) | 7초 |
+| 5. 빌드 | `npm.cmd run tauri build` | exit 0. Rust 크레이트 441개 처음 컴파일, NSIS 3.13·`nsis_tauri_utils` v0.5.3 처음 내려받음 | 947초 |
+
+### 결과 파일
+
+| 파일 | 크기·버전 | 4C절 대비 |
+|---|---|---|
+| `src-tauri\target\release\bundle\nsis\workbench-tauri_0.8.3_x64-setup.exe` | 10,590,095 바이트(수정 시각 2026-11-15 00:48:34); ProductVersion·FileVersion `0.8.3` | −1,924 B |
+| `src-tauri\target\release\workbench-tauri.exe` | 21,535,232 바이트(수정 시각 2026-11-15 00:48:34); ProductVersion·FileVersion `0.8.3` | 같음 |
+| 참고: `dist/` | 31,226,730 바이트, 파일 4,998개, JS 청크 205개 | −796 B(파일·청크 수 같음) |
+
+- 버전은 `(Get-Item …).VersionInfo`로 읽었다. `dist/`·설치 파일의 작은 차이는 Node 버전(22 → 24)이나 압축 차이로 보이며, 원인은 확인하지 않았다.
+- 빌드 경고는 터미널을 지운 뒤라 확인하지 못했다.
+- 빌드 직전 `workbench-tauri` 프로세스는 0개였다. 앱은 실행하지 않았다(About·Licenses 화면은 사용자 확인 필요).
+
 ## 5. 걸린 시간(이 PC)
 
 - 처음부터 release 빌드(`--no-bundle` 상태, 2026-11-08): 전체 200초, 그중 Rust 컴파일 3분 5초.
@@ -225,6 +263,7 @@ npm run tauri build             # release exe + NSIS 설치 파일
 - 런타임: WebView2 필요. 없는 PC는 설치할 때 인터넷이 필요하다(오프라인 설치는 `offlineInstaller`/`embedBootstrapper`, 지금 안 켬). exe만 옮기면 WebView2를 설치해 주지 않는다.
 - 콘솔 창: release 빌드는 뜨지 않는다(`src-tauri/src/main.rs`의 `windows_subsystem = "windows"`). 그래서 release exe의 `eprintln!` 로그는 보이지 않는다. 디버그 빌드는 콘솔 창이 뜬다.
 - Windows x64만.
+- 줄바꿈(2026-11-15 확인): 레포에 `.gitattributes`가 없다. 그래서 Git `core.autocrlf=true`(Git for Windows 시스템 기본)인 PC에서는 작업 파일이 CRLF로 풀린다. 그러면 `src/licenses/rust-dependencies.txt`·`src-tauri/Cargo.lock`을 `\n`으로 나누는 코드가 깨진다. `npm run test`의 I-25(`tools/rust-licenses.test.mjs`)·I-29(`src/shell/about.test.ts`)가 실패하고, 앱의 About·Licenses 화면(`src/shell/about.ts`)의 Rust 목록·개수도 틀릴 수 있다. 확인은 `git ls-files --eol src/licenses/rust-dependencies.txt`로 하고, `w/crlf`면 이 레포에서 `git config core.autocrlf false` → `Remove-Item .git\index` → `git reset -q` → `git checkout-index -f -a`로 LF로 다시 꺼낸다. 추적 파일만 다시 쓰며, 복사본 폴더·`node_modules`는 건드리지 않는다. `.gitattributes`(`* text=auto eol=lf`)를 더할지는 사람이 정한다(미정).
 - 앱 버전은 `src-tauri/tauri.conf.json`의 `version` 한 곳에서만 정한다. 버전을 끝낼 때마다 그 번호로 올린다(v0.8.1이면 `0.8.1`). Tauri가 이 값을 설치 파일 이름과 exe·설치 파일의 제품/파일 버전에 쓴다. private npm 패키지에는 `version`이 없고, Cargo 패키지는 생략 기본값을 쓴다. Help 메뉴의 "About workbench-tauri"가 `tauri.conf.json` 버전을 보인다.
 - 빌드 경고(기존과 같은 종류, 0.8.0): Vite 500 kB 넘는 chunk(`index` 4,557.41 kB, 0.7.0은 3,863.55 kB; Mermaid 쪽 `elk` 1,462.86 kB·`chunk-NGNAAXSQ` 629.04 kB 등은 지연 로딩), web-tree-sitter direct eval. Rust 경고 없음.
 - `cargo test`: `folder_watch::tests::missing_root_is_watched_after_creation_and_recreation`가 0.8.0 빌드 확인(K-05c)에서 1회 실패했다(`expected filesystem event: Timeout`). 코드 변경 없이 다시 돌리면 통과(3회 모두)해서 간헐 실패로 본다. 원인은 조사하지 않았다.
