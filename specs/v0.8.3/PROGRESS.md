@@ -161,4 +161,42 @@
   - 검증: V3(측정 결과 위 파일).
   - 특이사항: 측정 불가 줄은 사용자 확인 때 직접 본다(leader-core 지시).
 - **ORDER-05 보고** (2026-11-14, tauri-leader·writer): `specs/v0.8.3/reports/ORDER-05.md`. 완료 기준 6개 — I-1 충족(테스트)·화면 일부, I-14 충족(코드·화면 일부), release 충족, 앞 Phase 화면 일부, 시안 대조 산출물만, 회귀 충족. 미정 셋: HTML 미리보기 프레임 안 F11(프레임 키 허용 목록, 보안 설정), 화면 측정 불가 줄(사용자 확인 때), R-2 손잡이 겹침.
-- **상태**: ORDER-05 보고 보냄, leader-core `[PUSH]` 대기.
+- **상태**: leader-core 판정 — #1(I-1)·#2(I-14)·#3(release)·#6(회귀) 충족, #4(앞 Phase 화면)·#5(시안 대조) 일부. 열린 셋(HTML 미리보기 프레임 안 F11, 화면 측정 불가 줄, R-2 손잡이 겹침)은 USER-TEST로 넘겼다. `[PUSH]` 받아 push 끝 `5d03ce8`.
+
+### Phase 6 — ORDER-06 (I-18~I-29): USER-TEST 고칠 점
+
+사용자 요청 작업: core Phase 6은 USER-TEST 중·뒤에 사용자가 알린 고칠 점이다(core ORDER-06 2절, 사용자 2026-11-14). 이 카드는 화면을 재지 않는다 — 화면은 사용자 확인(USER-TEST)으로 본다(core ORDER-06 1절).
+
+- **K-07 I-18~I-29 (ORDER-06)** (2026-11-14, coder, 커밋 `b50d51d`)
+  - 무엇을 했나(항목별 한 줄, 근거는 보고 `C:\Users\nampl\AppData\Local\Temp\v083-K-07-report.md`):
+    - I-18: 원인 — `.code-block` 위 여백이 `.nb-code`와 겹쳐(margin collapse) 옛 `top` 식이 위 여백을 한 번 더 더함. `.nb-count`를 `top: 테두리`, 높이 머리줄(`--buttons-height-default`)로 두고 세로 가운데 맞춤 — 언어 이름과 같은 띠(`app.css`).
+    - I-19: 원인 — 폴더를 바꾸면 Pane이 새로 만들어지고 `restoreScroll`이 문서에 붙기 전 요소에 들어감. 붙어 있으면 바로, 아니면 `queueMicrotask`로 되돌림(`Pane.tsx`). Pane 분할 때도 함께 남음(코드 근거).
+    - I-20: `folderToggle(sidebarOpen)` 정의 하나를 상태 표시줄(닫힘)과 Folder Sidebar 바닥 줄 맨 왼쪽(열림)이 같이 씀. 구분선은 버튼과 함께 빠짐(`status.ts`·`App.tsx`).
+    - I-21: 미리보기 탭 아이콘 `eye`, 제목은 파일 이름만(24자 자르기 그대로). `Preview` 글자는 탭 제목 한 곳에서만 만들었음(`Pane.tsx`).
+    - I-22: 탭 왼쪽 21px → 10px(테두리 1 + 여백 0 + 칸 9 + 틈 0). `tab.start_slot.width` 12 → 9, `tab.indicator_size` 10 → 6 — `spec/zed-metrics.toml`(L-25·L-65)과 달라지는 core 값이라 `metrics.ts` 주석, `spec/`은 그대로.
+    - I-23·I-24: Zen에서 `.sidebar.zen`의 검색 줄·바닥 줄 `display: none`, 위 선 1px을 줘 세 제목 줄·탭 줄이 y=1~33. Zen 동안 검색어는 쓰지 않고(지우지 않음) 포커스는 목록으로.
+    - I-25: Keymap 표 규칙을 `.list-table`로 옮겨 Search와 같이 씀(줄 높이 28px 새 값 `list_table.row.height`, 짝수 줄 음영, 포커스 줄 선). Search 줄 상자·올림 배경과 안 쓰게 된 값 다섯 지움.
+    - I-26: Search를 표 Name | Path | Size | Modified로(`Search.tsx`), 순수 함수 `entryDir`·`sizeText`·`modifiedText`(`entries.ts`). Rust `search_names`가 `size`·`modified`를 함께 보냄(`DirEntry::metadata()`, 명령·capability·의존성 그대로).
+    - I-27: `.keymap-search:focus { outline: none; }`.
+    - I-28: 원인 — Zen에서 타이틀바 `display: none`이라 그 안 `#context-menu`가 그려지지 않고 메뉴 키만 가로챔. 타이틀바를 높이 0으로 비우고 `#context-menu`만 남김(CSS만, `AppMenu.tsx` 그대로). About 창도 함께 보임(코드 근거).
+    - I-29: 원인 — CodeMirror 기본 커서 `margin-left: -0.6px`이 줄 번호 칸(`z-index: 200`) 밑으로 들어감. `.cm-cursor` `margin-left: 0`(`extensions.ts`). 글자 시작선(I-12)·선택·현재 줄은 그대로.
+  - 결과: 새 테스트 `src/search/entries.test.ts`(I-26 크기·날짜·Path), 고친 테스트 `status.test.ts`(닫힘 다섯·열림 넷, 바닥 줄 버튼). 바꾼 파일 15개. 보안 설정 diff 없음(`git diff 5d03ce8 --stat -- src-tauri/tauri.conf.json src-tauri/capabilities` 빈 결과).
+  - 검증: V1 + V0. `node --test` 4개 파일 9/9, `npm.cmd run typecheck` 0, `cargo check`·`cargo clippy -- -D warnings` 0, `cargo test name_search` 3 pass(출력 `C:\Users\nampl\AppData\Local\Temp\v083-K-07-tests.txt`). 앱은 띄우지 않았다 — 화면은 모두 "코드 확인".
+  - 특이사항: 생략 — Search 제목 줄 정렬, Search 줄 화살표 키 이동(Tab으로 고름), GB 단위(1 GB 넘으면 `5000.0 MB`처럼), 앱 재시작 스크롤 위치.
+- **C-07 checker 리뷰(K-07)** [PASS] (2026-11-14, checker)
+  - 무엇을 했나: K-07 diff 15개 파일을 항목별로 리뷰했다(I-18 margin collapse 원인·새 식, I-19 `queueMicrotask` 분기와 "나중에 이김", I-20 단일 정의, I-22 계산, I-23 y=1 맞춤, I-26 Rust 메타데이터·키 동작, I-28 높이 0 타이틀바와 `position: fixed`, I-29 커서 당김, 금지 사항).
+  - 결과: PASS. 보안 설정·의존성·명령 ID·`spec/` 변경 없음, 하드코딩 수치 없음. 의견 넷(I-18 밑선 미세 차이, I-22 6px 점, I-23 Zen 검색어, I-25 올림 배경 생략)은 고치지 않아도 된다고 봤다.
+  - 검증: V0 코드 리뷰(테스트 재실행·앱 실행 없음, coder 출력 근거)(보고 `C:\Users\nampl\AppData\Local\Temp\v083-C-07-report.md`).
+  - 특이사항: 없음.
+- **[BUILD-OK]** (2026-11-14, leader-core): ORDER-06 release 다시 빌드 허락. 빌드 직전 workbench-tauri 프로세스 0개.
+- **K-08 0.8.3 release 다시 빌드·BUILD** (2026-11-14, coder, 커밋 `5667616`)
+  - 무엇을 했나: 기준 커밋 `b50d51d`(작업 폴더 깨끗)에서 `npm.cmd run tauri build` 한 번(exit 0, 77초). `docs/BUILD.md` 머리 "고친 날"과 4C절(다시 빌드 한 줄, ORDER-05 대비, 표 크기·시각, 빌드 시간·경고). README는 파일 이름이 같아 그대로.
+  - 결과: 설치 파일 `workbench-tauri_0.8.3_x64-setup.exe` 10,591,231 B, exe 21,535,232 B, 둘 다 2026-11-14 21:55:11, ProductVersion·FileVersion 0.8.3. ORDER-05 빌드 대비 설치 파일 +464 B, exe −23,040 B(줄어든 이유는 확인하지 않음). 경고는 기존과 같은 종류(Vite 500 kB 넘는 chunk 3개, `[EVAL]` 2건), Rust 경고 없음.
+  - 검증: V0 + release 빌드 한 번(요약 `%TEMP%\v083-K-08-build.txt`, 보고 `...\v083-K-08-report.md`).
+  - 특이사항: 없음.
+- **남은 위험 (USER-TEST에서 볼 것, K-07 보고 끝 절)**
+  - 모두 화면 확인 없이 코드 근거다. 특히 I-18(여백 겹침을 계산으로만 확인, 번호와 "python" 밑선은 글꼴 차이만큼 어긋날 수 있음), I-28(높이 0 타이틀바의 고정 위치 메뉴), I-23(위 선 1px 맞춤), I-22(6px 점의 보임새), I-26 칸 너비.
+  - I-19 "분할 때도 남음", I-28 "About 창도 보임"은 항목 밖에서 같은 원인으로 함께 바뀐 동작이다.
+  - I-25: Search 줄 마우스 올림 배경이 없어졌다(Keymap 방식). 어색하면 두 표에 함께 넣을지 정해야 한다.
+- **미정**: Zen Mode에서 `F10` — 앱 메뉴가 열린 상태가 되지만 보이지 않고, 화살표·Enter가 보이지 않는 메뉴로 간다(고치기 전과 같음). 어떻게 보일지는 사용자가 정한다.
+- **상태**: ORDER-06 보고 보냄, leader-core `[PUSH]` 대기.
