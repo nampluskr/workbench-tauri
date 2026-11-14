@@ -12,6 +12,7 @@
   {"name": "JavaScript", "path_suffixes": ["js", "jsx", "mjs", "cjs"]},
   {"name": "JSON", "path_suffixes": ["json", "flake.lock", "geojson", "topojson", "prettierrc", "json.dist", "deno.lock"]},
   {"name": "JSONC", "path_suffixes": ["jsonc", "bun.lock", "devcontainer.json", "pyrightconfig.json", "tsconfig.json", "luaurc", "swcrc", "babelrc", "eslintrc", "stylelintrc", "jshintrc"]},
+  {"name": "Jupyter Notebook", "path_suffixes": ["ipynb"]},
   {"name": "Markdown", "path_suffixes": ["md", "mdx", "mdwn", "mdc", "markdown", "MD"]},
   {"name": "Python", "path_suffixes": ["py", "pyi", "mpy"]},
   {"name": "Rust", "path_suffixes": ["rs"]},

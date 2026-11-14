@@ -6,7 +6,8 @@ import filetypes from "./filetypes.json" with { type: "json" };
 import { filetype } from "./filetype.ts";
 
 test("I-5: every pinned Zed suffix maps to its original name", () => {
-  assert.equal(filetypes.length, 19);
+  assert.equal(filetypes.length, 20); // 19 of Zed's + Jupyter Notebook (core v0.8.3 I-15)
+  assert.equal(filetype("C:\\project\\a.ipynb"), "Jupyter Notebook");
   for (const language of filetypes) {
     for (const suffix of language.path_suffixes) {
       assert.equal(filetype(`C:\\project\\${suffix}`), language.name, suffix);

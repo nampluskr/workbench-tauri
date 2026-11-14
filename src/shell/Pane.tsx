@@ -55,6 +55,7 @@ import { isOpen as menuOpen, openContextMenu } from "./AppMenu.tsx";
 import Icon, { IconButton } from "./Icon.tsx";
 import { keepScroll, restoreScroll } from "./view-scroll.ts";
 import { tooltip } from "./tooltip.ts";
+import { splitLineAreas, type Area } from "./split-line.ts";
 import { notify } from "./toast.ts";
 
 // The active folder's center area (R-26, R-8, R-9, A-15.1): its split tree of Panes, each a tab bar and the active tab's
@@ -611,6 +612,16 @@ function startResize(e: PointerEvent, group: Group<PaneState>, index: number): v
   handle.addEventListener("lostpointercapture", end);
 }
 
+/**
+ * core v0.8.3 I-13: the theme area of what a child of a split shows: an editor or a preview; null for a UI screen (a tool tab, Welcome).
+ * shortcut: a nested split counts as no document Pane, so the line beside it keeps the UI colour (its tab bars are not on one row);
+ * walk its Panes along the line if such a line must take the theme colour too.
+ */
+function areaOf(node: Node<PaneState>): Area | null {
+  const tab = isGroup(node) ? undefined : activeTabOf(node);
+  return !tab || tab.tool ? null : tab.markdown ? "view" : "edit";
+}
+
 function GroupView(props: { ctx: FolderContext; group: Group<PaneState> }) {
   return (
     <div class="pane-group" classList={{ h: props.group.axis === "h", v: props.group.axis === "v" }} data-group-id={props.group.id}>
@@ -621,6 +632,7 @@ function GroupView(props: { ctx: FolderContext; group: Group<PaneState> }) {
               <div
                 class="split-handle"
                 classList={{ h: props.group.axis === "h", v: props.group.axis === "v" }}
+                data-areas={splitLineAreas(areaOf(props.group.children[k() - 1]), areaOf(child))}
                 onPointerDown={(e) => e.button === 0 && startResize(e, props.group, k() - 1)}
                 onDblClick={() => {
                   props.group.flex = props.group.children.map(() => 1);

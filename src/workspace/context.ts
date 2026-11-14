@@ -497,11 +497,11 @@ export function openPreview(ctx: FolderContext, from: PaneState, path: string, s
     const holder = source ? twinOf(ctx, source.file) : newFile(ctx, path);
     hidden.add(holder);
     if (!source) void holder.doc.read();
-    const [position, setPosition] = createSignal("1:1");
+    const [position, setPosition] = createSignal("1"); // core v0.8.3 I-15: a preview shows its line only (a click resolves to a block start)
     const [heading, setHeading] = createSignal(-1); // core v0.8.2 I-7: a notebook preview's place, for the Outline
     const reveal = (line: number, number?: number) => {
       preview.reveal(line, number);
-      if (number === undefined) { setPosition(`${line + 1}:1`); selectSourceLine(holder.doc, line); } // as a click on the block (I-084)
+      if (number === undefined) { setPosition(`${line + 1}`); selectSourceLine(holder.doc, line); } // as a click on the block (I-084)
       else setHeading(number);
     };
     const preview = createPreview({
@@ -509,8 +509,7 @@ export function openPreview(ctx: FolderContext, from: PaneState, path: string, s
       text: () => liveView(holder.doc)?.state.doc.toString() ?? null,
       sourcePath: () => holder.doc.path,
       line: (line) => {
-        // shortcut: preview clicks resolve to block starts; add token offsets if exact columns are required.
-        setPosition(`${line + 1}:1`);
+        setPosition(`${line + 1}`);
         selectSourceLine(holder.doc, line);
       },
       link: (target) => followLink(ctx, pane, target),

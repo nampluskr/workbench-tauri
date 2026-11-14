@@ -53,7 +53,7 @@
 .picker-item.selected { background: var(--ghost-element-selected); } /* hover selects, so one state covers both */
 .picker-item:active { background: var(--ghost-element-active); }
 /* core v0.8.2 I-2: the line between the dark and the light themes; the P-003 input divider's width and colour. */
-.picker-divider { height: var(--picker-input-divider-width); margin: var(--picker-list-padding-y) 0; background: var(--border-variant); }
+.picker-divider { height: max(1px, var(--picker-input-divider-width)); /* core v0.8.3 I-2 */ margin: var(--picker-list-padding-y) 0; background: var(--border-variant); }
 .picker-label .match { color: var(--text-accent); }
 .picker-check { display: flex; color: var(--icon-muted); --icon-size: var(--picker-theme-selector-check-icon-size); }
 .picker-empty {

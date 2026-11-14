@@ -328,7 +328,7 @@ button, input, select, textarea {
   font-size: var(--statusbar-theme-button-font-size);
   font-weight: var(--statusbar-theme-button-font-weight);
 }
-.status-divider { flex: none; align-self: center; width: var(--statusbar-left-divider-width); height: var(--statusbar-left-divider-height); background: var(--border); }
+.status-divider { flex: none; align-self: center; width: max(1px, var(--statusbar-left-divider-width)); /* core v0.8.3 I-2 */ height: var(--statusbar-left-divider-height); background: var(--border); }
 .status-divider.toggle { margin-left: calc(var(--statusbar-toggle-gap) - var(--statusbar-item-gap)); } /* Zed: toggle + divider sit in their own gap_0p5 row. */
 .sidebar-footer .group { gap: var(--sidebar-footer-gap); }
 .grow { flex: 1; }
@@ -367,12 +367,19 @@ button, input, select, textarea {
 .pane-group.v { flex-direction: column; }
 .pane-group-child { flex-basis: 0; }
 /* I-725: a line of split_line_thickness in pane_group.border; the grab area is split_line_mouse_hitbox, centred on it. */
-.split-handle { position: relative; flex: none; background: var(--pane-group-border); }
-.split-handle.h { width: var(--pane-split-line-thickness); cursor: col-resize; }
-.split-handle.v { height: var(--pane-split-line-thickness); cursor: row-resize; }
+/* core v0.8.3 I-2: never thinner than 1px (rem(1) is 0.9375px at a 15px UI font and can round to no pixel). */
+.split-handle { position: relative; flex: none; background: var(--pane-group-border); --split-line: max(1px, var(--pane-split-line-thickness)); }
+/* core v0.8.3 I-13: between two document Panes whose themes have one border colour, the line below the tab bars is in that colour
+   (theme/apply.ts gives the three variables; shell/split-line.ts is the rule). Everything else stays pane_group.border of the UI theme. */
+.split-handle.h[data-areas="edit-edit"] { --split-line-body: var(--split-line-edit-edit); }
+.split-handle.h[data-areas="edit-view"] { --split-line-body: var(--split-line-edit-view); }
+.split-handle.h[data-areas="view-view"] { --split-line-body: var(--split-line-view-view); }
+.split-handle.h[data-areas] { background: linear-gradient(var(--pane-group-border) var(--tab-bar-height), var(--split-line-body) 0); }
+.split-handle.h { width: var(--split-line); cursor: col-resize; }
+.split-handle.v { height: var(--split-line); cursor: row-resize; }
 .split-handle::before { content: ""; position: absolute; z-index: 1; }
-.split-handle.h::before { top: 0; bottom: 0; left: calc((var(--pane-split-line-thickness) - var(--pane-split-line-mouse-hitbox)) / 2); width: var(--pane-split-line-mouse-hitbox); }
-.split-handle.v::before { left: 0; right: 0; top: calc((var(--pane-split-line-thickness) - var(--pane-split-line-mouse-hitbox)) / 2); height: var(--pane-split-line-mouse-hitbox); }
+.split-handle.h::before { top: 0; bottom: 0; left: calc((var(--split-line) - var(--pane-split-line-mouse-hitbox)) / 2); width: var(--pane-split-line-mouse-hitbox); }
+.split-handle.v::before { left: 0; right: 0; top: calc((var(--split-line) - var(--pane-split-line-mouse-hitbox)) / 2); height: var(--pane-split-line-mouse-hitbox); }
 /* L-17 / I-730: the zoomed Pane covers the body with zoomed_padding around it and a zoomed_border line. */
 .workspace-body { position: relative; }
 .pane.zoomed { position: absolute; z-index: 2; inset: var(--pane-zoomed-padding); border: var(--pane-zoomed-border) solid var(--border); }

@@ -64,8 +64,8 @@ test("I-5: active editor and preview status follows each tab; tools, loading edi
   assert.equal(statusItems({ ...tab, tool: true }), undefined);
   assert.deepEqual(statusItems({ ...tab, tool: true, file: { ...tab.file, toolPosition: () => "45:35 (8 characters)" } }), { position: "45:35 (8 characters)", filetype: "" });
   assert.equal(statusItems({ ...tab, file: { ...tab.file, position: undefined } }), undefined);
-  const preview = { ...tab, markdown: true, file: { ...tab.file, position: () => "8:1" } };
-  assert.deepEqual(statusItems(preview), { position: "8:1", filetype: "Python" }); // the preview tab shows its file's own kind
+  const preview = { ...tab, markdown: true, file: { ...tab.file, position: () => "8" } }; // core v0.8.3 I-15: a preview's position is its line only
+  assert.deepEqual(statusItems(preview), { position: "8", filetype: "Python" }); // the preview tab shows its file's own kind
   assert.equal(statusItems({ ...preview, path: "C:\\project\\a.csv" })?.filetype, "Plain Text"); // no CSV kind exists; a CSV preview shows what its editor tab shows
   assert.deepEqual(statusItems(tab), { position: "5:28 (5 characters)", filetype: "Python" });
 });
