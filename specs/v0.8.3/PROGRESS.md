@@ -70,4 +70,32 @@
   - I-10: 탭 줄 양쪽 버튼 영역 너비(간격 0, 여백 4).
   - I-11: 줄 번호 12px와 본문 글자와 같은 밑선.
   - I-12: 편집 탭(줄 번호 켬·끔)과 미리보기 탭의 글자 시작선 58px, 활성 줄 배경이 번호 칸~채움 칸~본문 사이에 끊기지 않는지.
-- **상태**: ORDER-02 보고 보냄, leader-core `[PUSH]` 대기.
+- **상태**: 충족(leader-core 판정 5/5)·push 끝 `7445d30`. 미정 둘(I-12 최소 여백 8px — 여섯 자리부터 밀림, I-9 `[n]` 틈 `notebook_count_gap` 7px)은 leader-core가 받아들였다.
+
+### Phase 3 — ORDER-03 (I-8·I-4·I-5·I-3): 이름 통일, Sidebar 단축키, 상태 표시줄 툴팁, Folder Sidebar 안 토글 버튼
+
+- **K-03 I-8·I-4·I-5·I-3 (ORDER-03)** (2026-11-14, coder, 커밋 `a35322e`)
+  - 무엇을 했나:
+    - I-8: core ORDER-03 3.1 표의 화면 글자를 모두 새 글자로 바꿨다(Open Folder, RECENT FOLDERS, Tree 루트 우클릭 "Open Folder..."·"Close Folder", "Search files...", "Reveal in Tree Sidebar", View 메뉴 "Toggle Tree Sidebar", 빈 폴더 "No Folder"). View 메뉴에 "Toggle Outline Sidebar"(`outline_panel::Toggle`)를 더했다. **화면 글자만 바꿨다** — 명령 ID(`project_panel::*`·`workspace::ToggleLeftDock` 등)·keymap context `ProjectPanel`·상태 파일 키(`state-file.ts` `recent`)·CSS 클래스(`.project-panel`·`.dock-left`)는 그대로다(`app.css`·`state-file.ts`는 주석 한 줄씩만).
+    - I-4: `builtin.ts` Workspace에서 `ctrl-b`·`ctrl-shift-e`·`ctrl-alt-j`·`ctrl-alt-;`를 없애고 `ctrl-alt-1`(Folder)·`ctrl-alt-2`(Tree)·`ctrl-alt-3`(Outline)을 더했다. `Pane`의 `ctrl-shift-e`(Reveal, `tab-menu.ts:22`)는 그대로. View 메뉴에서 "Focus Folder Sidebar"·"Project Panel"을 뺐다. **포커스 명령 둘(`project_panel::ToggleFocus`·`multi_workspace::FocusWorkspaceSidebar`)은 `panels.ts:67,69`에 명령으로 남아** 사용자 `keymap.json`으로 묶을 수 있다. 상태 표시줄 Tree 버튼은 늘 `workspace::ToggleLeftDock`(`status.ts:31`).
+    - I-5: 상태 표시줄 세 버튼 글자 "Toggle Folder"·"Toggle Tree"·"Toggle Outline"(열림·닫힘 같음), 툴팁은 `IconButton` 기본(글자 + 키). 아이콘·`toggled`·순서·구분선 그대로.
+    - I-3: Folder Sidebar 바닥 줄 왼쪽 토글 버튼과 두 줄 툴팁을 없앴다. 빈 `.group.grow`를 남겨 Open Folder는 오른쪽 끝 그대로(CSS 안 고침). 이 버튼만 쓰던 `toggleSidebar` import와 `IconButton`의 `tips` prop·`Tip` import를 정리했다.
+  - I-4 겹침 확인(tauri가 고른 것):
+    - 기본 키 겹침 없음 — 모든 context의 기본 키에서 `ctrl-alt-<숫자>`는 새 셋뿐이고, WebView2 브라우저 단축키·Windows 전역 키에도 없다.
+    - AltGr(= Ctrl+Alt)가 **ASCII 밖 글자**를 내는 자판(독일어 AltGr+2 `²`·AltGr+3 `³` 등)에서는 편집기에서 글자 대신 Sidebar가 여닫힌다(`keymap/engine.ts:32-34`가 ASCII 밖 글자를 물리 키로 읽음). ASCII 글자를 내는 자판(스페인어·프랑스어)과 한국어·미국 자판은 문제없다. 옛 `ctrl-alt-j`·`ctrl-alt-;`·지금 있는 `ctrl-alt-l`도 같은 성질이다.
+    - `<input>`에 포커스가 있으면 Ctrl+Alt 조합은 AltGr 글자 입력으로 넘겨(`keymap/keyboard.ts:81`) 새 키가 동작하지 않는다. 옛 `Ctrl+B`는 입력 칸(Folder 찾기, Tree 이름 바꾸기, 파일 찾기, Settings)에서도 Tree를 여닫았다. 편집기(CodeMirror)에서는 동작한다.
+    - 둘 다 고치지 않고 보고에 미정으로 올렸다(판단은 leader-core).
+  - 결과: 새 테스트 없음(카드 지시). 기존 테스트 여덟(`app-menus`·`status`·`tab-menu`·`recent`·keymap `builtin`·`display`·`user`·`keyboard`)을 새 값으로 고쳤다 — `builtin.test.ts`는 v0.4 고정 표에서 없앤 넷을 빼고 더한 셋을 넣어 대조, `keyboard.test.ts`는 안 묶인 `ctrl-b` 예시를 `ctrl-w`로(같은 규칙). `git grep`으로 `src/`·`index.html`에 옛 화면 글자 0건. 보안 설정 diff는 `tauri.conf.json` 버전 한 줄뿐(`git diff d8f9438`), 이 카드의 `src-tauri` diff 없음.
+  - 검증: V1 + V0. `node --test` 9개 파일 32/32, `npm.cmd run typecheck` 0(출력 `C:\Users\nampl\AppData\Local\Temp\v083-K-03-tests.txt`, 보고 `...\v083-K-03-report.md`). Rust를 건드리지 않아 `cargo`는 돌리지 않았다. 앱은 띄우지 않았다.
+  - 특이사항: I-4 겹침 둘(AltGr 자판, 입력 칸) 미정.
+- **C-03 checker 리뷰(K-03)** [PASS] (2026-11-14, checker)
+  - 무엇을 했나: K-03 diff 20개 파일을 리뷰했다(I-8 글자 대조, I-4 없앤 넷·더한 셋·`Pane` `ctrl-shift-e`·포커스 명령 등록, I-5 세 글자와 툴팁 키, I-3 바닥 줄 flex 배치, 옛 글자 남은 곳, `tips` prop 제거 영향, 바꾼 테스트 기대값, 명령 ID·상태 키·CSS 클래스 그대로인지, 다음 Phase 선작업 없음).
+  - 결과: PASS. 화면 글자로 남은 옛 문자열 0건, `tips=` 사용처 0건.
+  - 검증: V0 코드 리뷰(앱 실행·테스트 재실행 없음, coder 출력 근거)(보고 `C:\Users\nampl\AppData\Local\Temp\v083-C-03-report.md`).
+  - 특이사항: 없음.
+- **화면으로 잴 것 (ORDER-05로 넘김, core ORDER-03 6절)**
+  - I-8: Welcome "RECENT FOLDERS", View 메뉴, Tree 루트·탭 우클릭 메뉴, 파일 찾기 창, 폴더 없을 때 "No Folder".
+  - I-4: `Ctrl+Alt+1·2·3`이 세 Sidebar를 여닫음, `Ctrl+B`·`Ctrl+Alt+J`가 아무 일 안 함, 탭 영역 `Ctrl+Shift+E`는 Reveal.
+  - I-5: 세 버튼에 마우스를 올린 툴팁(시안 02절과 대조).
+  - I-3: Folder Sidebar 바닥 줄(시안 01절과 대조), Open Folder가 오른쪽 끝 그대로인지.
+- **상태**: ORDER-03 보고 보냄, leader-core `[PUSH]` 대기.

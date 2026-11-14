@@ -13,16 +13,16 @@
 |---|---|---|---|---|---|
 | I-1 | 스크롤바를 마우스·키보드 입력이 있을 때만 보이기 (모든 영역) | G-4 | 5 | ORDER-05 | 대기 |
 | I-2 | pane 구분선이 창 너비에 따라 사라짐 (같은 두께의 선 둘 포함) | G-3 | 1 | ORDER-01 | ORDER-01 충족(leader-core 판정), 화면은 Phase 5 |
-| I-3 | Folder Sidebar 안의 토글 아이콘 없애기 | G-1 | 3 | ORDER-03 | 대기 |
-| I-4 | Sidebar 단축키 — 포커스 키 없애기, 토글 키 다시 정하기 | G-1 | 3 | ORDER-03 | 대기 |
-| I-5 | 상태 표시줄 Sidebar 버튼의 툴팁 | G-1 | 3 | ORDER-03 | 대기 |
+| I-3 | Folder Sidebar 안의 토글 아이콘 없애기 | G-1 | 3 | ORDER-03 | 구현·테스트 충족(코드 근거), 화면은 Phase 5 |
+| I-4 | Sidebar 단축키 — 포커스 키 없애기, 토글 키 다시 정하기 | G-1 | 3 | ORDER-03 | 구현·테스트 충족(코드 근거), 화면은 Phase 5 |
+| I-5 | 상태 표시줄 Sidebar 버튼의 툴팁 | G-1 | 3 | ORDER-03 | 구현·테스트 충족(코드 근거), 화면은 Phase 5 |
 | I-6 | Folder Sidebar 정렬 아이콘 둘 | G-1 | 4 | ORDER-04 | 대기 |
 | I-7 | Folder Sidebar 우클릭 메뉴 | G-1 | 4 | ORDER-04 | 대기 |
-| I-8 | 이름 통일 — Folder, 그리고 Folder Sidebar / Tree Sidebar / Outline Sidebar | G-1 | 3 | ORDER-03 | 대기 |
-| I-9 | 본문 왼쪽 여백 줄이기 — 미리보기와 줄 번호를 끈 에디터 | G-2 | 2 | ORDER-02 | 구현·테스트 충족(코드 근거), 화면은 Phase 5 |
-| I-10 | 탭 줄 Go Back / Go Forward 영역의 간격 줄이기 | G-2 | 2 | ORDER-02 | 구현·테스트 충족(코드 근거), 화면은 Phase 5 |
-| I-11 | 줄 번호 글꼴 크기를 따로 — Settings에 설정 추가 | G-2 | 2 | ORDER-02 | 구현·테스트 충족(코드 근거), 화면은 Phase 5 |
-| I-12 | 줄 번호를 켠 에디터의 글자 시작선을 본문 여백과 맞추기 | G-2 | 2 | ORDER-02 | 구현·테스트 충족(코드 근거), 화면은 Phase 5 |
+| I-8 | 이름 통일 — Folder, 그리고 Folder Sidebar / Tree Sidebar / Outline Sidebar | G-1 | 3 | ORDER-03 | 구현·테스트 충족(코드 근거), 화면은 Phase 5 |
+| I-9 | 본문 왼쪽 여백 줄이기 — 미리보기와 줄 번호를 끈 에디터 | G-2 | 2 | ORDER-02 | ORDER-02 충족(leader-core 판정), 화면은 Phase 5 |
+| I-10 | 탭 줄 Go Back / Go Forward 영역의 간격 줄이기 | G-2 | 2 | ORDER-02 | ORDER-02 충족(leader-core 판정), 화면은 Phase 5 |
+| I-11 | 줄 번호 글꼴 크기를 따로 — Settings에 설정 추가 | G-2 | 2 | ORDER-02 | ORDER-02 충족(leader-core 판정), 화면은 Phase 5 |
+| I-12 | 줄 번호를 켠 에디터의 글자 시작선을 본문 여백과 맞추기 | G-2 | 2 | ORDER-02 | ORDER-02 충족(leader-core 판정), 화면은 Phase 5 |
 | I-13 | pane 구분선의 색 — 탭 줄 구간은 UI 테마, 본문 구간은 그 창의 테마 | G-3 | 1 | ORDER-01 | ORDER-01 충족(leader-core 판정), 화면은 Phase 5 |
 | I-14 | Zen Mode — 타이틀바와 상태 표시줄을 숨기는 모드 | G-5 | 5 | ORDER-05 | 대기 |
 | I-15 | 미리보기 창에서는 위치를 줄 번호만 표시 | G-5 | 1 | ORDER-01 | ORDER-01 충족(leader-core 판정), 화면은 Phase 5 |
