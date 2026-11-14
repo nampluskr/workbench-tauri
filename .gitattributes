@@ -1,0 +1,4 @@
+# Check out text files with LF on every PC, whatever core.autocrlf says.
+# Code splits src/licenses/*.txt and Cargo.lock on "\n" (docs/BUILD.md section 7).
+# test-fixtures/encoding/.gitattributes keeps its CRLF fixture as -text.
+* text=auto eol=lf

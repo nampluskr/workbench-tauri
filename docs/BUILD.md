@@ -16,7 +16,7 @@
    git clone https://github.com/nampluskr/workbench-tauri
    cd workbench-tauri
    ```
-   - 먼저 `git config core.autocrlf`를 본다. `true`(Git for Windows 기본)면 작업 파일이 CRLF로 풀려 테스트·Licenses 화면이 깨진다. [7절](#7-알려진-제약)의 줄바꿈 항목대로 LF로 다시 꺼낸다.
+   - 줄바꿈: 루트 `.gitattributes`(`* text=auto eol=lf`, 2026-11-15)가 있어 `core.autocrlf`와 상관없이 LF로 풀린다. 그 전에 받은 작업 폴더는 [7절](#7-알려진-제약)의 줄바꿈 항목을 본다.
 3. 복사본 채우기([2절](#2-복사본-채우기gitignore된-폴더)): `pwsh tools/fetch-zed-icons.ps1` → `pwsh tools/fetch-zed-themes.ps1` → `pwsh tools/fetch-zed-grammars.ps1`
 4. `npm ci`(lockfile 그대로 설치. 안 되면 `npm install`). PowerShell 실행 정책에 막히면 `npm.cmd ci`
 5. `npm run tauri build`([3절](#3-빌드-명령)) → 결과는 [4절](#4-결과-파일) 경로
@@ -263,7 +263,7 @@ npm run tauri build             # release exe + NSIS 설치 파일
 - 런타임: WebView2 필요. 없는 PC는 설치할 때 인터넷이 필요하다(오프라인 설치는 `offlineInstaller`/`embedBootstrapper`, 지금 안 켬). exe만 옮기면 WebView2를 설치해 주지 않는다.
 - 콘솔 창: release 빌드는 뜨지 않는다(`src-tauri/src/main.rs`의 `windows_subsystem = "windows"`). 그래서 release exe의 `eprintln!` 로그는 보이지 않는다. 디버그 빌드는 콘솔 창이 뜬다.
 - Windows x64만.
-- 줄바꿈(2026-11-15 확인): 레포에 `.gitattributes`가 없다. 그래서 Git `core.autocrlf=true`(Git for Windows 시스템 기본)인 PC에서는 작업 파일이 CRLF로 풀린다. 그러면 `src/licenses/rust-dependencies.txt`·`src-tauri/Cargo.lock`을 `\n`으로 나누는 코드가 깨진다. `npm run test`의 I-25(`tools/rust-licenses.test.mjs`)·I-29(`src/shell/about.test.ts`)가 실패하고, 앱의 About·Licenses 화면(`src/shell/about.ts`)의 Rust 목록·개수도 틀릴 수 있다. 확인은 `git ls-files --eol src/licenses/rust-dependencies.txt`로 하고, `w/crlf`면 이 레포에서 `git config core.autocrlf false` → `Remove-Item .git\index` → `git reset -q` → `git checkout-index -f -a`로 LF로 다시 꺼낸다. 추적 파일만 다시 쓰며, 복사본 폴더·`node_modules`는 건드리지 않는다. `.gitattributes`(`* text=auto eol=lf`)를 더할지는 사람이 정한다(미정).
+- 줄바꿈(2026-11-15 확인, 같은 날 루트 `.gitattributes` `* text=auto eol=lf`를 더해 새 clone·checkout은 LF로 풀린다): `.gitattributes`가 없던 때 Git `core.autocrlf=true`(Git for Windows 시스템 기본)인 PC에서는 작업 파일이 CRLF로 풀렸다. 그러면 `src/licenses/rust-dependencies.txt`·`src-tauri/Cargo.lock`을 `\n`으로 나누는 코드가 깨진다. `npm run test`의 I-25(`tools/rust-licenses.test.mjs`)·I-29(`src/shell/about.test.ts`)가 실패하고, 앱의 About·Licenses 화면(`src/shell/about.ts`)의 Rust 목록·개수도 틀릴 수 있다. 확인은 `git ls-files --eol src/licenses/rust-dependencies.txt`로 하고, `w/crlf`면 이 레포에서 `git config core.autocrlf false` → `Remove-Item .git\index` → `git reset -q` → `git checkout-index -f -a`로 LF로 다시 꺼낸다. 추적 파일만 다시 쓰며, 복사본 폴더·`node_modules`는 건드리지 않는다. `.gitattributes`를 더한 뒤로는 `.gitattributes`가 들어간 커밋을 받은 작업 폴더에서 `Remove-Item .git\index` → `git reset -q` → `git checkout-index -f -a`만 해도 LF가 된다. 더할 때 `git add --renormalize .`로 바뀐 추적 파일은 0개였다. `test-fixtures/encoding/utf8-crlf.txt`는 그 폴더의 `.gitattributes`(`-text`)로 CRLF 그대로다.
 - 앱 버전은 `src-tauri/tauri.conf.json`의 `version` 한 곳에서만 정한다. 버전을 끝낼 때마다 그 번호로 올린다(v0.8.1이면 `0.8.1`). Tauri가 이 값을 설치 파일 이름과 exe·설치 파일의 제품/파일 버전에 쓴다. private npm 패키지에는 `version`이 없고, Cargo 패키지는 생략 기본값을 쓴다. Help 메뉴의 "About workbench-tauri"가 `tauri.conf.json` 버전을 보인다.
 - 빌드 경고(기존과 같은 종류, 0.8.0): Vite 500 kB 넘는 chunk(`index` 4,557.41 kB, 0.7.0은 3,863.55 kB; Mermaid 쪽 `elk` 1,462.86 kB·`chunk-NGNAAXSQ` 629.04 kB 등은 지연 로딩), web-tree-sitter direct eval. Rust 경고 없음.
 - `cargo test`: `folder_watch::tests::missing_root_is_watched_after_creation_and_recreation`가 0.8.0 빌드 확인(K-05c)에서 1회 실패했다(`expected filesystem event: Timeout`). 코드 변경 없이 다시 돌리면 통과(3회 모두)해서 간헐 실패로 본다. 원인은 조사하지 않았다.

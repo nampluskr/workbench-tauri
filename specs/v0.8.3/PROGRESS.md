@@ -250,5 +250,8 @@
   - 특이사항:
     - Node는 v24.19.0을 썼다(BUILD 1절 기준은 22.x).
     - 빌드 경고는 터미널을 지워 확인하지 못했다.
-- **미정**: 레포에 `.gitattributes`(`* text=auto eol=lf`)를 더할지. 사람이 정한다.
-- **사용자 확인 필요**: 새 빌드 앱의 About·Licenses 화면 Rust 목록·개수가 맞는지(줄바꿈 수정이 들어갔는지).
+- **사용자 확인** (2026-11-15, 사용자): 새 빌드 앱의 About 화면에 Tauri 2.12.5 줄(Rust 목록에서 읽음)과 "192 Rust crates"가 보였다(`rust-dependencies.txt` 목록 192개와 같음). 줄바꿈 수정이 들어간 것을 확인했다.
+- **`.gitattributes` 추가** (2026-11-15, 사용자 결정)
+  - 무엇을 했나: 루트 `.gitattributes`에 `* text=auto eol=lf`를 더했다(주석 3줄). `docs/BUILD.md` 0절 메모와 7절 줄바꿈 항목을 이에 맞게 고쳤다.
+  - 결과: `git add --renormalize .`로 바뀐 추적 파일 0개(이미 LF 751개, 바이너리 1,004개). `test-fixtures/encoding/utf8-crlf.txt`는 하위 `.gitattributes`(`-text`)가 이겨 `text: unset` 그대로.
+  - 검증: `git check-attr text eol`(rust-dependencies.txt `auto`/`lf`, CRLF fixture `unset`). 문서·설정만 바뀌어 테스트는 다시 돌리지 않았다(V0).
