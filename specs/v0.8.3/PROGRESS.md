@@ -98,4 +98,27 @@
   - I-4: `Ctrl+Alt+1·2·3`이 세 Sidebar를 여닫음, `Ctrl+B`·`Ctrl+Alt+J`가 아무 일 안 함, 탭 영역 `Ctrl+Shift+E`는 Reveal.
   - I-5: 세 버튼에 마우스를 올린 툴팁(시안 02절과 대조).
   - I-3: Folder Sidebar 바닥 줄(시안 01절과 대조), Open Folder가 오른쪽 끝 그대로인지.
-- **상태**: ORDER-03 보고 보냄, leader-core `[PUSH]` 대기.
+- **상태**: 충족(leader-core 판정 7/7)·push 끝 `c809a75`. 미정 둘(I-4 AltGr 자판, 입력 칸에서 `Ctrl+Alt+1·2·3`)은 leader-core가 지금 규칙 그대로 받아들였다(사용자 확인 때 본다).
+
+### Phase 4 — ORDER-04 (I-6·I-7·I-16·I-17): Folder Sidebar 정렬·우클릭 메뉴, 세 Sidebar 제목 줄, Panel Layout
+
+- **K-04 I-6·I-7·I-16·I-17 (ORDER-04)** (2026-11-14, coder, 커밋 `5bc2015`)
+  - 무엇을 했나:
+    - I-6: 정렬 아이콘 둘(`sort_name_asc`·`sort_name_desc`, 시안 statusbar 03절 C안 path, `Icon.tsx`)을 Folder Sidebar 바닥 줄 Open Folder 앞에 두었다(툴팁 "Sort by Name (A to Z)"·"(Z to A)", 키 없음). 정렬·판정은 `folders.ts` `sortFolders`·`isSorted`(이름 = `folderLabel`, 비교 = `naturalCmp`), 누르면 `store.ts` `sortFolderList`가 한 번 정렬해 상태 파일 `folders` 순서로 저장한다. 고른 정렬은 저장하지 않고, 눌린 칸은 목록 순서에서 매번 계산한다(끌기·새 폴더로 어긋나면 풀림). 눌린 칸 CSS 선택자를 `:is(.status-bar, .sidebar-footer)`로 넓혔다(값 그대로).
+    - I-7: 폴더 줄 메뉴(Close / Close Others(1개면 흐림) / Close All / Rename / Copy Path / Reveal in File Explorer)와 빈 곳 메뉴(Open Folder... / Close All / Sort by Name 둘 / Sort by Date Added 둘, 정렬 줄은 `isSorted`로 체크)를 `Sidebar.tsx`에 더했다. 키 표시 없음(`run`만). **`removeFolder`가 닫았는지 boolean을 돌려준다**(취소 = false). `closeFolders` → `closing.ts` `closeEach`가 목록 순서로 하나씩 닫고 첫 취소에서 멈춘다. 추가 순은 `added_at` 글자 비교.
+    - I-16: 공통 부품 **`src/shell/SidebarTitle.tsx`**(Outline 제목 줄을 옮김, 클래스 `.outline-header` 그대로)를 세 Sidebar가 같이 쓴다 — Folder "Folder"(`threads_sidebar_left_open`), Tree "Tree · 폴더 이름"(폴더 없으면 "Tree", `file_tree`), Outline "Outline · 파일 이름"(`list_tree`). 마우스 올림에 배경 `ghost-element-hover`·글자 `--text`·×(툴팁 없음). × = `toggleSidebar`/`toggleDock`/`toggleOutline`, 다른 곳 클릭 = 그 목록에 포커스. mousedown `preventDefault`로 직전 포커스 기억(`sidebarFrom`·`panelFrom`)을 그대로 둔다. Tree에 제목 줄이 들어가 **`.dock-left`를 세로 flex로** 바꿨다.
+    - I-17: View 메뉴 Panel Layout을 "Left Sidebars"·"Right Sidebars"(지금 쪽 체크) 두 줄로 바꾸고 "Custom" 줄·너비 되돌리기를 지웠다(**`src/shell/layout.ts` 지움**). **명령 ID: Left = 옛 `workspace::UseClassicLayout` 그대로(이제 왼쪽으로만, Tree 열기·너비 되돌리기 없음), Right = 새 `workspace::UseRightSidebars`.** 기본 키맵에는 둘 다 키가 없다. 상태 파일 **`windows[0].panel_layout`** = `"left"`|`"right"`(`"right"`가 아니면 Left, 알 수 없는 키 보존). **Right 배치는 CSS `order`로만**(DOM 순서 그대로): 탭·문서 │ Outline │ Tree, Folder Sidebar는 늘 왼쪽 끝. Right에서 경계선·손잡이는 왼쪽, 끌 때 너비는 오른쪽 끝에서 잰다(`dock.ts`). 열림·닫힘·너비·상태 표시줄은 그대로.
+  - 결과: 새 테스트 — `workspace.test.ts` 정렬·판정(Rename 이름, 대소문자, `v2`<`v10`, 한글·영문, `added_at`, 끌기·새 폴더 뒤, 같은 이름)과 Panel Layout 저장·읽기·키 보존, `closing.test.ts` 여러 폴더 닫기 순서·취소에서 멈춤. 고친 테스트 — `app-menus.test.ts` Panel Layout 두 줄·체크·명령 ID. 메뉴 목록·제목 글자는 테스트 없이 코드 근거. 보안 설정 diff는 `tauri.conf.json` 버전 한 줄뿐(`git diff d8f9438`), `src-tauri` diff 없음. I-17 확인 요청(경계선 색 I-13, 제목 줄 I-16, 탭 끌어 놓기·pane 분할, Zen Mode 창 끌기)은 코드로 걸리는 것 없음.
+  - 검증: V1 + V0. `node --test` 6개 파일 46/46, `npm.cmd run typecheck` 0(출력 `C:\Users\nampl\AppData\Local\Temp\v083-K-04-tests.txt`, 보고 `...\v083-K-04-report.md`). Rust를 건드리지 않아 `cargo`는 돌리지 않았다. 앱은 띄우지 않았다.
+  - 특이사항: 미정 하나 — **폴더 0·1개(또는 이름이 모두 같음)일 때 정렬 표시 둘 다 켜짐**(아이콘 둘 눌린 칸, 메뉴 정렬 줄 모두 체크). ITEMS 글 그대로 두었고, 2개부터만 표시하려면 `isSorted` 한 줄. 그 밖에 tauri가 고른 것: Tree 제목의 폴더 이름은 `folderLabel`(Rename 이름 우선), 빈 곳 메뉴 "Close All"은 폴더가 없어도 흐리게 하지 않음.
+- **C-04 checker 리뷰(K-04)** [PASS] (2026-11-14, checker)
+  - 무엇을 했나: K-04 diff를 리뷰했다(I-6 아이콘·정렬·눌린 칸 계산, I-7 두 메뉴 줄 순서·흐림·순차 닫기, I-16 공통 부품·올림·×·포커스 흐름, I-17 메뉴·명령 ID·상태 파일·`order` 배치·손잡이 너비 계산, `layout.ts` 남은 참조, `removeFolder` 호출부 다섯, `.dock-left` 세로 flex 영향, 금지 사항, 테스트).
+  - 결과: PASS. `layout.ts`·`resetDockWidth`·`isClassicLayout` 남은 참조 0건, `removeFolder` 호출부는 반환값을 무시하거나 `closeEach`로만 써서 영향 없음. **CSS `order` 배치는 Tab·스크린 리더 순서가 DOM 순서라 화면 순서와 다르지만** 편집기는 Sidebar 전환을 Tab이 아닌 단축키로 하고, DOM을 옮기면 에디터·스크롤 상태를 잃으므로 타당하다고 판정했다. `.dock-left` 세로 flex에서 `.project-panel`이 제목 줄 아래 남은 높이를 차지하고 스크롤된다고 코드로 봤다. 폴더 0·1개 정렬 표시는 결함이 아닌 정책 선택으로 사용자 확인에 올렸다.
+  - 검증: V0 코드 리뷰(앱 실행·테스트 재실행 없음, coder 출력 근거)(보고 `C:\Users\nampl\AppData\Local\Temp\v083-C-04-report.md`).
+  - 특이사항: 없음.
+- **화면으로 잴 것 (ORDER-05로 넘김, core COMMON 8절)**
+  - I-6: 정렬 아이콘 네 상태(오름·내림 × 눌림·안 눌림)와 누른 뒤 순서.
+  - I-7: 두 우클릭 메뉴 줄·흐림·정렬 체크.
+  - I-16: 세 제목 줄 평소·올림·×·제목 누른 뒤 포커스, **Tree 목록이 제목 줄 아래에서 끝까지 차고 스크롤되는지**.
+  - I-17: Right Sidebars 배치·손잡이 끌기·다시 켠 뒤 남음, **Right에서 Outline 손잡이(왼쪽 가장자리, 폭의 절반)가 본문 세로 스크롤바·탭 줄 끝 버튼과 겹치는 정도**.
+- **상태**: ORDER-04 보고 보냄, leader-core `[PUSH]` 대기.
