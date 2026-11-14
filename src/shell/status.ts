@@ -23,12 +23,13 @@ type StatusButton = { name: IconName; label: string; action: string; toggled?: b
  * I-22; core v0.8.1 I-4: sidebar | tree | Outline | Search and Lock Preview, a divider after each of the first three.
  * core v0.8.2 I-1: all five are toggles (`toggled` draws the pressed cell): the sidebar button is always there and on while the folder
  * sidebar is open, Search is on while the folder has a Search tab in any pane (`searchOpen`).
+ * core v0.8.3 I-4 / I-5: the first three only toggle, under one label in both states.
  */
 export function statusButtons(sidebarOpen: boolean, dockOpen: boolean, lockPreview: boolean, outlineOpen: boolean, searchOpen: boolean): StatusButton[] {
   return [
-    { name: sidebarOpen ? "threads_sidebar_left_open" : "threads_sidebar_left_closed", label: sidebarOpen ? "Close Folder Sidebar" : "Open Folder Sidebar", action: "multi_workspace::ToggleWorkspaceSidebar", toggled: sidebarOpen, dividerAfter: "toggle" },
-    { name: "file_tree", label: dockOpen ? "Close Left Dock" : "Project Panel", action: dockOpen ? "workspace::ToggleLeftDock" : "project_panel::ToggleFocus", toggled: dockOpen, dividerAfter: true },
-    { name: "list_tree", label: outlineOpen ? "Close Outline" : "Outline", action: "outline_panel::Toggle", toggled: outlineOpen, dividerAfter: true },
+    { name: sidebarOpen ? "threads_sidebar_left_open" : "threads_sidebar_left_closed", label: "Toggle Folder", action: "multi_workspace::ToggleWorkspaceSidebar", toggled: sidebarOpen, dividerAfter: "toggle" },
+    { name: "file_tree", label: "Toggle Tree", action: "workspace::ToggleLeftDock", toggled: dockOpen, dividerAfter: true },
+    { name: "list_tree", label: "Toggle Outline", action: "outline_panel::Toggle", toggled: outlineOpen, dividerAfter: true },
     { name: "magnifying_glass", label: "Search", action: "pane::DeploySearch", toggled: searchOpen },
     { name: "eye", label: "Lock Preview", action: "markdown::ToggleLockPreview", toggled: lockPreview },
   ];

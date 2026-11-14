@@ -709,7 +709,7 @@ button, input, select, textarea {
 .outline-doc { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
 .outline-list { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; padding-top: var(--outline-list-padding-top); user-select: none; outline: none; }
 .outline-list:focus .tree-row.selected { border-color: var(--border-focused); } /* core v0.8.1 I-18: the tree's focus ring */
-.project-panel:has(> .outline-empty) { box-sizing: border-box; padding-top: var(--outline-list-padding-top); } /* core v0.8.2 I-3: "No File" sits as "No outline" does in its list */
+.project-panel:has(> .outline-empty) { box-sizing: border-box; padding-top: var(--outline-list-padding-top); } /* core v0.8.2 I-3: "No Folder" sits as "No outline" does in its list */
 .outline-empty { padding-inline: var(--project-panel-item-padding-x); color: var(--text-muted); font-size: var(--typography-size-default); }
 .outline-toggle { display: flex; flex-shrink: 0; color: var(--icon-muted); }
 .outline-badge-slot { align-items: center; justify-content: center; }

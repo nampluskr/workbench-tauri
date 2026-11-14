@@ -68,8 +68,8 @@ function groups(ctx: FolderContext, target: string): MenuItem[][] {
     [item("Copy Path", () => void copyPaths(ctx, false), "workspace::CopyPath"), item("Copy Relative Path", () => void copyPaths(ctx, true), "workspace::CopyRelativePath")],
     isRoot
       ? [
-          item("Add Folders to Project…", () => void addFolder()),
-          item("Remove from Project", () => activeId() && removeFolder(activeId()!)), // I-555: same as the sidebar's Remove
+          item("Open Folder...", () => void addFolder()),
+          item("Close Folder", () => activeId() && removeFolder(activeId()!)), // I-555: same as the sidebar's Remove
         ]
       : [
           item("Rename", () => startRename(ctx), "project_panel::Rename"),

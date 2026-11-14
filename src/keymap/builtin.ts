@@ -75,10 +75,10 @@ export const BUILTIN: KeymapSection[] = [
   {
     context: "Workspace",
     bindings: {
-      "ctrl-b": "workspace::ToggleLeftDock",
-      "ctrl-shift-e": "project_panel::ToggleFocus",
-      "ctrl-alt-j": "multi_workspace::ToggleWorkspaceSidebar",
-      "ctrl-alt-;": "multi_workspace::FocusWorkspaceSidebar",
+      // core v0.8.3 I-4: one toggle key per Sidebar (Folder, Tree, Outline); the focus actions keep no default key.
+      "ctrl-alt-1": "multi_workspace::ToggleWorkspaceSidebar",
+      "ctrl-alt-2": "workspace::ToggleLeftDock",
+      "ctrl-alt-3": "outline_panel::Toggle",
       "ctrl-k ctrl-o": "workspace::Open",
       "f10": "app_menu::Toggle",
       "ctrl-s": "workspace::Save", // I-005

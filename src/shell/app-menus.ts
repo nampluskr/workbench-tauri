@@ -36,9 +36,9 @@ export function appMenus(previewDisabled: () => boolean): Menu[] {
       { label: "Add Cursor Below", action: "editor::AddCursorBelow" },
     ] satisfies MenuEntry[]).map((entry): MenuEntry => entry === "separator" ? entry : { ...entry, shortcutStyle: "vscode" }) },
     { name: "View", entries: [
-      { label: "Toggle Left Dock", action: "workspace::ToggleLeftDock" },
+      { label: "Toggle Tree Sidebar", action: "workspace::ToggleLeftDock" },
       { label: "Toggle Folder Sidebar", action: "multi_workspace::ToggleWorkspaceSidebar" },
-      { label: "Focus Folder Sidebar", action: "multi_workspace::FocusWorkspaceSidebar" },
+      { label: "Toggle Outline Sidebar", action: "outline_panel::Toggle" },
       { label: "Editor Layout", children: [
         { label: "Split Up", action: "pane::SplitUp" },
         { label: "Split Down", action: "pane::SplitDown" },
@@ -47,7 +47,6 @@ export function appMenus(previewDisabled: () => boolean): Menu[] {
       ] },
       { label: "Maximize Pane", action: "workspace::ToggleZoom" },
       "separator",
-      { label: "Project Panel", action: "project_panel::ToggleFocus" },
       previewItem("Open Preview", "markdown::OpenPreview"),
       previewItem("Open Preview to the Side", "markdown::OpenPreviewToTheSide"),
     ] },

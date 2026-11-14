@@ -26,12 +26,12 @@ export const showWelcome = (folderCount: number, hasTab: boolean): boolean => fo
 export type WelcomeRow = { icon: IconName; label: string; action: string; keys?: string[] };
 export type WelcomeSection = { title: string; rows: WelcomeRow[] };
 
-/** GET STARTED, and RECENT PROJECTS when there are any. `keysFor` reads the keymap, so a user binding shows. */
+/** GET STARTED, and RECENT FOLDERS when there are any. `keysFor` reads the keymap, so a user binding shows. */
 export function welcomeSections(recent: readonly string[], keysFor: (action: string) => string[] | undefined): WelcomeSection[] {
   const row = (icon: IconName, label: string, action: string): WelcomeRow => ({ icon, label, action, keys: keysFor(action) });
   return [
     { title: "Get Started", rows: [row("folder_open", "Open Folder", "workspace::Open"), row("settings", "Open Settings", "zed::OpenSettings")] },
-    ...(recent.length ? [{ title: "Recent Projects", rows: recent.slice(0, RECENT_MAX).map((path, i) => row("folder", folderName(path), recentAction(i))) }] : []),
+    ...(recent.length ? [{ title: "Recent Folders", rows: recent.slice(0, RECENT_MAX).map((path, i) => row("folder", folderName(path), recentAction(i))) }] : []),
   ];
 }
 

@@ -3,7 +3,7 @@ const svgs = import.meta.glob<string>("../assets/zed-icons/*.svg", { query: "?ra
 import searchSvg from "../assets/codicons/search.svg?raw";
 import listSelectionSvg from "../assets/codicons/list-selection.svg?raw";
 
-import { tooltip, type Tip } from "./tooltip.ts";
+import { tooltip } from "./tooltip.ts";
 import { iconMarkup, scalable, themedSvg } from "./icon-svg.ts";
 
 export type IconName =
@@ -31,9 +31,9 @@ export default function Icon(props: { name: IconName }) {
 
 /**
  * Icon button: disabled until it gets an `onClick` (the tab bar end buttons stay that way, R-10). It has its
- * tooltip either way (8.1): the label with the shortcut of `action`, or the given rows. `text` is drawn after the icon.
+ * tooltip either way (8.1): the label with the shortcut of `action`. `text` is drawn after the icon.
  */
-export function IconButton(props: { name: IconName; label: string; text?: string; action?: string; tips?: Tip[]; toggled?: boolean; onClick?: () => void }) {
+export function IconButton(props: { name: IconName; label: string; text?: string; action?: string; toggled?: boolean; onClick?: () => void }) {
   return (
     <button
       class="icon-button"
@@ -42,7 +42,7 @@ export function IconButton(props: { name: IconName; label: string; text?: string
       aria-pressed={props.toggled}
       disabled={!props.onClick}
       onClick={() => props.onClick?.()}
-      ref={(el) => tooltip(el, () => props.tips ?? { title: props.label, action: props.action })}
+      ref={(el) => tooltip(el, () => ({ title: props.label, action: props.action }))}
     >
       <Icon name={props.name} />
       {props.text}

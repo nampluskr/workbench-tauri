@@ -21,11 +21,11 @@ test("D-4: JSONC comments and trailing commas go; // and /* inside strings stay"
 
 test("R-2: user binding overrides the built-in one at the same depth; a null unbinds it", () => {
   const km = loaded();
-  assert.deepEqual(km.dispatch(["ctrl-b"], stack), { type: "match", action: "workspace::ToggleLeftDock" });
-  const errors = applyUserKeymap(km, `[{ "context": "Workspace", "bindings": { "ctrl-b": "known::mine", "ctrl-shift-e": null } }]`, known);
+  assert.deepEqual(km.dispatch(["ctrl-alt-2"], stack), { type: "match", action: "workspace::ToggleLeftDock" });
+  const errors = applyUserKeymap(km, `[{ "context": "Workspace", "bindings": { "ctrl-alt-2": "known::mine", "ctrl-alt-1": null } }]`, known);
   assert.deepEqual(errors, []);
-  assert.deepEqual(km.dispatch(["ctrl-b"], stack), { type: "match", action: "known::mine" });
-  assert.deepEqual(km.dispatch(["ctrl-shift-e"], stack), { type: "none" });
+  assert.deepEqual(km.dispatch(["ctrl-alt-2"], stack), { type: "match", action: "known::mine" });
+  assert.deepEqual(km.dispatch(["ctrl-alt-1"], stack), { type: "none" });
 });
 
 test("D-14: unknown actions and malformed items give one line each; the rest still applies", () => {

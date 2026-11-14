@@ -19,6 +19,12 @@ test("R-1: built-in keymap equals the PROGRESS expected table (key, context, act
   // v0.8.1 I-3 (leader-core 2026-11-13, K-02b): Zed's ProjectPanel Undo/Redo keys, added after the pinned v0.4 table.
   expected.add(row("ctrl-z", "ProjectPanel", "project_panel::Undo"));
   expected.add(row("ctrl-shift-z", "ProjectPanel", "project_panel::Redo"));
+  // core v0.8.3 I-4: the Sidebar keys changed after the pinned v0.4 table; the focus actions keep no default key.
+  for (const [keys, action] of [["ctrl-b", "workspace::ToggleLeftDock"], ["ctrl-shift-e", "project_panel::ToggleFocus"], ["ctrl-alt-j", "multi_workspace::ToggleWorkspaceSidebar"], ["ctrl-alt-;", "multi_workspace::FocusWorkspaceSidebar"]])
+    assert.ok(expected.delete(row(keys, "Workspace", action)), keys);
+  expected.add(row("ctrl-alt-1", "Workspace", "multi_workspace::ToggleWorkspaceSidebar"));
+  expected.add(row("ctrl-alt-2", "Workspace", "workspace::ToggleLeftDock"));
+  expected.add(row("ctrl-alt-3", "Workspace", "outline_panel::Toggle"));
   // v0.8 M-5: the preview keys match every previewable extension, not only md; the pinned v0.4 table (a past version, read only) names md.
   const previewContext = /^Editor && \(extension == md \|\|[^)]*\)$/;
   const actual = new Set(BUILTIN.flatMap(({ context, bindings }) =>

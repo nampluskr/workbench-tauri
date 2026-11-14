@@ -79,13 +79,13 @@ test("K-15: input editing stays local while modified Workspace/global bindings d
     });
   }
   const calls: string[] = [];
-  for (const action of ["zed::OpenSettings", "zed::OpenKeymap", "zed::Extensions", "workspace::ToggleLeftDock", "test::local", "test::global"]) {
+  for (const action of ["zed::OpenSettings", "zed::OpenKeymap", "zed::Extensions", "pane::CloseActiveItem", "test::local", "test::global"]) {
     const previous = commands.get(action);
     commands.set(action, () => { calls.push(action); });
     t.after(() => { if (previous) commands.set(action, previous); else commands.delete(action); });
   }
   keymap.addSections("user", [
-    { context: "ProjectPanel", bindings: { "ctrl-b": "test::local", "alt-n": "test::local" } },
+    { context: "ProjectPanel", bindings: { "ctrl-w": "test::local", "alt-n": "test::local" } },
     { bindings: { "ctrl-g": "test::global", "ctrl-a": "test::global", "ctrl-z": "test::global", "a": "test::global", "enter": "test::global", "ctrl-alt-q": "test::global" } },
   ]);
   t.after(() => keymap.clear("user"));
@@ -103,11 +103,11 @@ test("K-15: input editing stays local while modified Workspace/global bindings d
   for (const dataset of [{ textInput: "" }, {}]) {
     input.dataset = dataset;
     calls.length = 0;
-    for (const key of [",", "b", "g"]) assert.ok(press(input, key, { ctrlKey: true }));
+    for (const key of [",", "w", "g"]) assert.ok(press(input, key, { ctrlKey: true }));
     assert.ok(press(input, "k", { ctrlKey: true }));
     assert.ok(press(input, "s", { ctrlKey: true }));
     assert.ok(press(input, "x", { ctrlKey: true, shiftKey: true }));
-    assert.deepEqual(calls, ["zed::OpenSettings", "workspace::ToggleLeftDock", "test::global", "zed::OpenKeymap", "zed::Extensions"]);
+    assert.deepEqual(calls, ["zed::OpenSettings", "pane::CloseActiveItem", "test::global", "zed::OpenKeymap", "zed::Extensions"]);
     calls.length = 0;
     for (const key of ["a", "Backspace", "Delete", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End", "PageUp", "PageDown", "Enter", "Escape", "Tab"]) {
       assert.equal(press(input, key), false, key);
@@ -134,7 +134,7 @@ test("K-15: input editing stays local while modified Workspace/global bindings d
   assert.equal(press(input, "w", { ctrlKey: true }), false);
   assert.deepEqual(calls, []);
   // Non-input contexts keep their deeper bindings.
-  assert.ok(press(parent, "b", { ctrlKey: true }));
+  assert.ok(press(parent, "w", { ctrlKey: true }));
   assert.deepEqual(calls, ["test::local"]);
 });
 

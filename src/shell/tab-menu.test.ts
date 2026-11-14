@@ -12,7 +12,7 @@ const close = ["Close", "Close Others", "|", "Close Left", "Close Right", "|", "
 
 test("I-9: preview, Markdown editor, code editor and tool menu groups match the approved order", () => {
   assert.deepEqual(labels([tab({ markdown: true })]), [...close, "|", "Make Tab Read-Only", "|", "Pin Tab", "|", "Show Source"]);
-  const file = [...close, "|", "Make Tab Read-Only", "|", "Pin Tab", "|", "Copy Path", "Copy Relative Path", "|", "Reveal in File Explorer", "Reveal In Project Panel"];
+  const file = [...close, "|", "Make Tab Read-Only", "|", "Pin Tab", "|", "Copy Path", "Copy Relative Path", "|", "Reveal in File Explorer", "Reveal in Tree Sidebar"];
   assert.deepEqual(labels([tab()]), [...file, "|", "Open Preview"]);
   assert.deepEqual(labels([tab({ path: "D:\\w\\a.py" })]), file);
   assert.deepEqual(labels([tab({ tool: true })]), [...close, "|", "Pin Tab"]);

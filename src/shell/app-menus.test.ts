@@ -25,9 +25,9 @@ test("K-13: menu shortcuts match Zed Windows primary keys without changing Close
     Cut: "Ctrl+X", Copy: "Ctrl+C", Paste: "Ctrl+V", Find: "Ctrl+F", Replace: "Ctrl+H",
     "Toggle Line Comment": "Ctrl+/", "Toggle Block Comment": "Shift+Alt+A", "Select All": "Ctrl+A",
     "Add Next Occurrence": "Ctrl+D", "Add Cursor Above": "Ctrl+Alt+Up", "Add Cursor Below": "Ctrl+Alt+Down",
-    "Toggle Left Dock": "Ctrl-B", "Toggle Folder Sidebar": "Ctrl-Alt-J", "Focus Folder Sidebar": "Ctrl-Alt-;",
+    "Toggle Tree Sidebar": "Ctrl-Alt-2", "Toggle Folder Sidebar": "Ctrl-Alt-1", "Toggle Outline Sidebar": "Ctrl-Alt-3",
     "Split Up": "Ctrl-K Up", "Split Down": "Ctrl-K Down", "Split Left": "Ctrl-K Left", "Split Right": "Ctrl-\\",
-    "Maximize Pane": "Shift-Escape", "Project Panel": "Ctrl-Shift-E",
+    "Maximize Pane": "Shift-Escape",
     "Open Preview": "Ctrl-Shift-V", "Open Preview to the Side": "Ctrl-K V",
     About: undefined,
   });
@@ -48,7 +48,7 @@ test("K-10: menus start with File, end File with Quit and retain the other entri
   assert.deepEqual(menus[0].entries.at(-1), { label: "Quit", action: "zed::Quit" });
   assert.deepEqual(labels(menus[1].entries), ["Undo", "Redo", "---", "Cut", "Copy", "Paste", "---", "Find", "Replace", "---", "Toggle Line Comment", "Toggle Block Comment", "---", "Select All", "Add Next Occurrence", "Add Cursor Above", "Add Cursor Below"]);
   assert.deepEqual(menus[1].entries.flatMap((e) => e !== "separator" && e.disabled ? [e.label] : []), []);
-  assert.deepEqual(labels(menus[2].entries), ["Toggle Left Dock", "Toggle Folder Sidebar", "Focus Folder Sidebar", "Editor Layout", "Maximize Pane", "---", "Project Panel", "Open Preview", "Open Preview to the Side"]);
+  assert.deepEqual(labels(menus[2].entries), ["Toggle Tree Sidebar", "Toggle Folder Sidebar", "Toggle Outline Sidebar", "Editor Layout", "Maximize Pane", "---", "Open Preview", "Open Preview to the Side"]);
   const layout = menus[2].entries[3];
   assert.notEqual(layout, "separator");
   if (layout !== "separator") assert.deepEqual(labels(layout.children!), ["Split Up", "Split Down", "Split Left", "Split Right"]);

@@ -16,14 +16,15 @@ test("I-22 / I-19: status buttons retain Zed's order, state, labels and tooltip 
       "file_tree", "divider", "list_tree", "divider", "magnifying_glass", "eye",
     ]);
     assert.deepEqual(buttons.map((button) => [button.name, button.label, button.toggled]), [
-      sidebar ? ["threads_sidebar_left_open", "Close Folder Sidebar", true] : ["threads_sidebar_left_closed", "Open Folder Sidebar", false],
-      ["file_tree", dock ? "Close Left Dock" : "Project Panel", dock],
-      ["list_tree", outline ? "Close Outline" : "Outline", outline],
+      sidebar ? ["threads_sidebar_left_open", "Toggle Folder", true] : ["threads_sidebar_left_closed", "Toggle Folder", false],
+      ["file_tree", "Toggle Tree", dock],
+      ["list_tree", "Toggle Outline", outline],
       ["magnifying_glass", "Search", false],
       ["eye", "Lock Preview", locked],
     ]);
+    assert.deepEqual(buttons.slice(0, 3).map((button) => button.action), ["multi_workspace::ToggleWorkspaceSidebar", "workspace::ToggleLeftDock", "outline_panel::Toggle"]);
     assert.deepEqual(buttons.map((button) => shortcutFor(keymap, button.action, stack)?.join(" ")), [
-      "Ctrl-Alt-J", dock ? "Ctrl-B" : "Ctrl-Shift-E", undefined, "Ctrl-Shift-F", undefined,
+      "Ctrl-Alt-1", "Ctrl-Alt-2", "Ctrl-Alt-3", "Ctrl-Shift-F", undefined,
     ]);
   }
   for (const [stroke, action] of [["ctrl-shift-f", "pane::DeploySearch"]]) {

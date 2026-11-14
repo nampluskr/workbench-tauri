@@ -12,7 +12,7 @@ test("core v0.8.2 I-3: Welcome shows only with no folder open; its rows, with ke
   assert.deepEqual([showWelcome(0, false), showWelcome(1, false), showWelcome(0, true), showWelcome(2, true)], [true, false, false, false]);
 
   const bare = welcomeSections([], keysFor);
-  assert.deepEqual(bare.map((s) => s.title), ["Get Started"]); // no RECENT PROJECTS section
+  assert.deepEqual(bare.map((s) => s.title), ["Get Started"]); // no RECENT FOLDERS section
   assert.deepEqual(bare[0].rows, [
     { icon: "folder_open", label: "Open Folder", action: "workspace::Open", keys: ["Ctrl-K", "Ctrl-O"] },
     { icon: "settings", label: "Open Settings", action: "zed::OpenSettings", keys: ["Ctrl-,"] },
@@ -24,7 +24,7 @@ test("core v0.8.2 I-3: Welcome shows only with no folder open; its rows, with ke
 
   const paths = ["D:\\projects\\workbench-core", "D:\\tmp\\v081-zed-i16-ws", "D:\\projects"];
   const [, recent] = welcomeSections(paths, keysFor);
-  assert.equal(recent.title, "Recent Projects");
+  assert.equal(recent.title, "Recent Folders");
   assert.deepEqual(recent.rows.map((r) => [r.icon, r.label, r.action, r.keys]), [
     ["folder", "workbench-core", "welcome::OpenRecentProject1", ["Ctrl-1"]],
     ["folder", "v081-zed-i16-ws", "welcome::OpenRecentProject2", ["Ctrl-2"]],

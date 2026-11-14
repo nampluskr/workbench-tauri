@@ -20,7 +20,7 @@ export type Loaded = {
   sidebarWidth: number;
   lockPreview: boolean;
   outline: Outline;
-  recent: string[]; // core v0.8.2 I-3: the folders opened last, newest first (the Welcome screen's RECENT PROJECTS)
+  recent: string[]; // core v0.8.2 I-3: the folders opened last, newest first (the Welcome screen's RECENT FOLDERS)
   readOnly: boolean; // A-24.7: written by a newer app, never write it back
   invalid: boolean; // text that is not a JSON object
 };

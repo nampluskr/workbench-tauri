@@ -6,7 +6,7 @@ import ProjectPanel from "./shell/ProjectPanel.tsx";
 import OutlineBar from "./shell/Outline.tsx";
 import { PaneArea } from "./shell/Pane.tsx";
 import { resizeHandle } from "./shell/dock.ts";
-import { dockOpen, sidebarOpen, toggleSidebar } from "./shell/panels.ts";
+import { dockOpen, sidebarOpen } from "./shell/panels.ts";
 import { addFolder, editorContext, outlineOpen, sidebarWidth, resizeSidebar, toggleLockPreview } from "./workspace/store.ts";
 import { activeTabOf, allTabs, lockPreview } from "./workspace/context.ts";
 import { hasSearchTab } from "./workspace/tab-view.ts";
@@ -38,22 +38,11 @@ export default function App() {
       <aside class="sidebar" hidden={!sidebarOpen()} data-keymap-context="Sidebar">
         <div class="dock-resize-handle" ref={(el) => resizeHandle(el, { width: sidebarWidth, setWidth: resizeSidebar })} />
         <FolderList />
-        {/* A-11.8 (sidebar open): toggle on the left, Add Project at the right end. */}
+        {/* core v0.8.3 I-3: no toggle here (the status bar has it); Open Folder at the right end. */}
         <div class="sidebar-footer">
-          <div class="group grow">
-            {/* L-232: two rows, Toggle Sidebar and Focus Sidebar, each with its key. */}
-            <IconButton
-              name="threads_sidebar_left_open"
-              label="Toggle Sidebar"
-              onClick={toggleSidebar}
-              tips={[
-                { title: "Toggle Sidebar", action: "multi_workspace::ToggleWorkspaceSidebar" },
-                { title: "Focus Sidebar", action: "multi_workspace::FocusWorkspaceSidebar" },
-              ]}
-            />
-          </div>
+          <div class="group grow" />
           <div class="group">
-            <IconButton name="folder_add" label="Add Project" action="workspace::Open" onClick={() => void addFolder()} />
+            <IconButton name="folder_add" label="Open Folder" action="workspace::Open" onClick={() => void addFolder()} />
           </div>
         </div>
       </aside>

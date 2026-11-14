@@ -21,7 +21,7 @@ test("R-5 / I-704: shortcut is the last unshadowed binding in the focus context,
   const km = new Keymap();
   km.addSections("default", BUILTIN);
   const workspace = [node("Workspace")];
-  assert.deepEqual(shortcutFor(km, "workspace::ToggleLeftDock", workspace), ["Ctrl-B"]);
+  assert.deepEqual(shortcutFor(km, "workspace::ToggleLeftDock", workspace), ["Ctrl-Alt-2"]);
   assert.deepEqual(shortcutFor(km, "workspace::Open", workspace), ["Ctrl-K", "Ctrl-O"]);
   // Project panel actions are not bound in the Workspace context: the window-wide fallback finds the last one (02 11.2).
   for (const [action, key] of [["Copy", "Ctrl-C"], ["Paste", "Ctrl-V"], ["Trash", "Delete"], ["Delete", "Ctrl-Delete"]]) assert.deepEqual(shortcutFor(km, `project_panel::${action}`, workspace), [key]);
@@ -30,19 +30,19 @@ test("R-5 / I-704: shortcut is the last unshadowed binding in the focus context,
   km.addSections("user", [{ context: "Workspace", bindings: { "ctrl-shift-b": "workspace::ToggleLeftDock" } }]);
   assert.deepEqual(shortcutFor(km, "workspace::ToggleLeftDock", workspace), ["Ctrl-Shift-B"]);
   km.addSections("user", [{ context: "Workspace", bindings: { "ctrl-shift-b": "other::Action" } }]);
-  assert.deepEqual(shortcutFor(km, "workspace::ToggleLeftDock", workspace), ["Ctrl-B"]); // shadowed key is skipped
+  assert.deepEqual(shortcutFor(km, "workspace::ToggleLeftDock", workspace), ["Ctrl-Alt-2"]); // shadowed key is skipped
   km.clear("user");
-  assert.deepEqual(shortcutFor(km, "workspace::ToggleLeftDock", workspace), ["Ctrl-B"]);
+  assert.deepEqual(shortcutFor(km, "workspace::ToggleLeftDock", workspace), ["Ctrl-Alt-2"]);
 });
 
 test("I-704: a key shadowed by another action is not shown, not even by the window-wide fallback", () => {
   const km = new Keymap();
   km.addSections("default", BUILTIN);
   const workspace = [node("Workspace")];
-  // The user gives Ctrl-B to another action in the Workspace context: ToggleLeftDock has no visible key left.
-  km.addSections("user", [{ context: "Workspace", bindings: { "ctrl-b": "app_menu::Toggle" } }]);
+  // The user gives Ctrl-Alt-2 to another action in the Workspace context: ToggleLeftDock has no visible key left.
+  km.addSections("user", [{ context: "Workspace", bindings: { "ctrl-alt-2": "app_menu::Toggle" } }]);
   assert.equal(shortcutFor(km, "workspace::ToggleLeftDock", workspace), undefined);
-  assert.deepEqual(shortcutFor(km, "app_menu::Toggle", workspace), ["Ctrl-B"]);
+  assert.deepEqual(shortcutFor(km, "app_menu::Toggle", workspace), ["Ctrl-Alt-2"]);
   // The fallback judges a ProjectPanel key in its own context: Ctrl-Insert is taken there, so Copy shows Ctrl-C.
   km.addSections("user", [{ context: "ProjectPanel", bindings: { "ctrl-insert": "other::Action" } }]);
   assert.deepEqual(shortcutFor(km, "project_panel::Copy", workspace), ["Ctrl-C"]);

@@ -99,7 +99,7 @@ export function FileFinderHost() {
             aria-expanded="true"
             aria-controls="file-finder-list"
             aria-activedescendant={rows()[selected()] ? `file-finder-item-${selected()}` : undefined}
-            placeholder="Search project files..."
+            placeholder="Search files..."
             value={query()}
             onInput={(e) => {
               setQuery(e.currentTarget.value);

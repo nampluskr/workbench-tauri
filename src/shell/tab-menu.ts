@@ -40,7 +40,7 @@ export function tabMenu(tabs: MenuTab[], index: number): MenuEntry[] {
   else if (!tab.tool) {
     groups.push(
       [item("Copy Path", "workspace::CopyPath"), { ...item("Copy Relative Path", "workspace::CopyRelativePath"), shortcut: "" }],
-      [item("Reveal in File Explorer", "editor::RevealInFileManager"), item("Reveal In Project Panel", "pane::RevealInProjectPanel")],
+      [item("Reveal in File Explorer", "editor::RevealInFileManager"), item("Reveal in Tree Sidebar", "pane::RevealInProjectPanel")],
     );
     if (hasPreview(tab.path)) groups.push([item("Open Preview", "markdown::OpenPreview")]);
   }

@@ -21,7 +21,7 @@ export default function ProjectPanel() {
         {(ctx) => <ProjectTree ctx={ctx} />}
       </Show>
       {/* core v0.8.2 I-3: one line, drawn as the Outline's "No outline"; folders are opened from the Welcome screen, the menu or the key */}
-      <Show when={folders().length === 0}><div class="outline-empty">No File</div></Show>
+      <Show when={folders().length === 0}><div class="outline-empty">No Folder</div></Show>
       <Show when={gone()}>
         {(folder) => (
           <>
