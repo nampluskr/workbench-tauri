@@ -121,4 +121,44 @@
   - I-7: 두 우클릭 메뉴 줄·흐림·정렬 체크.
   - I-16: 세 제목 줄 평소·올림·×·제목 누른 뒤 포커스, **Tree 목록이 제목 줄 아래에서 끝까지 차고 스크롤되는지**.
   - I-17: Right Sidebars 배치·손잡이 끌기·다시 켠 뒤 남음, **Right에서 Outline 손잡이(왼쪽 가장자리, 폭의 절반)가 본문 세로 스크롤바·탭 줄 끝 버튼과 겹치는 정도**.
-- **상태**: ORDER-04 보고 보냄, leader-core `[PUSH]` 대기.
+- **상태**: 충족(leader-core 판정 5/5)·push 끝 `d17ea8a`. 미정 하나(폴더 0·1개일 때 정렬 표시 둘 다 켜짐)는 leader-core가 항목 글 그대로 받아들였다.
+
+### Phase 5 — ORDER-05 (I-1·I-14 + 0.8.3 release·화면 측정): 스크롤바 자동 숨김, Zen Mode, release 빌드, 이 버전 화면 측정
+
+이 버전의 마지막 Phase다.
+
+- **K-05 I-1·I-14 (ORDER-05)** (2026-11-14, coder, 커밋 `8505c9f`)
+  - 무엇을 했나:
+    - I-1: 세로 스크롤바 자동 숨김 `src/shell/scrollbar-hide.ts`(새). 영역은 목록을 두지 않고 이벤트 대상에서 위로 올라가며 세로로 넘치고 `overflow-y`가 auto/scroll인 첫 요소로 찾는다(모든 범위 영역에 같은 코드). 입력(마우스 움직임·휠·키)이 난 영역은 `data-scrollbar="on"`(바로 보임), 대기 시간 뒤 `"off"`(0.3초에 흐려짐, `src/spec/metrics.ts` `scrollbar.hide.fade_duration`, ITEMS 값). 세로 홈·손잡이 색을 등록한 속성 `--scrollbar-opacity`로 섞고 자리 너비는 그대로(`src/app.css`). 가로 스크롤바·모서리·HTML 미리보기 프레임 안은 손대지 않는다. 스크롤바 자리 위 마우스는 숨지 않는다. 프로그램이 굴린 스크롤만으로는 보이지 않는다. 설정 `scrollbar_hide_delay`(UI 분류, 정수 0~10, 기본 3, 0 = 늘 보임, `src/settings/model.ts`·`load.ts`). 선택기 목록의 hover 때만 보이는 스크롤바 예외를 지웠다. shortcut: 보이는 영역 안에 다시 세로 스크롤 영역이 있으면 함께 보인다(`app.css` 주석).
+    - I-14: 명령 `workspace::ToggleZenMode`·키 `f11`(`src/keymap/builtin.ts:84`). 상태는 저장 안 하는 신호(`src/shell/panels.ts:75`). `.workspace.zen`에서 `.title-bar`·`.status-bar`만 `display: none`(`src/App.tsx:53`, `src/app.css:455`), 창 API 호출 없음. 창 끌기는 Zen일 때만 `.tab-bar`·`.tab-bar-edge` 둘·`.tab-bar-drop`에 `data-tauri-drag-region`(이미 허용된 `start-dragging`·`internal-toggle-maximize`). 입력 칸에 포커스가 있어도 F11만 넘긴다(`src/keymap/keyboard.ts:87`). Rust `caption.rs`에 숨김 상태와 명령 `caption_set_visible`(Zen 동안 창 버튼 구멍을 없애고 그리지 않으며 `HTMAXBUTTON`을 답하지 않음).
+  - 결과: 새 테스트 `scrollbar-hide.test.ts`(영역별, 대기 시간, 0 = 늘 보임, 스크롤바 자리 위 마우스), `model.test.ts`에 `scrollbar_hide_delay`, `builtin.test.ts`에 `f11`. 보안 설정 diff는 `tauri.conf.json` 버전 한 줄뿐(`git diff d8f9438`), `capabilities` 변화 없음.
+  - 검증: V1 + V0. `node --test` 5개 파일 29/29, `npm.cmd run typecheck` 0, `cargo check`·`cargo clippy -- -D warnings` 경고 0(출력 `C:\Users\nampl\AppData\Local\Temp\v083-K-05-tests.txt`, 보고 `...\v083-K-05-report.md`). 앱은 띄우지 않았다.
+  - 특이사항: I-14 확인 요청 다섯은 ORDER-05 보고 "tauri가 고른 것"에 적었다. HTML 미리보기 프레임 안 F11은 먹지 않는다(`FRAME_KEYS`, 보안 설정이라 넓히지 않음) — 미정.
+- **C-05 checker 리뷰(K-05)와 전체 테스트** [PASS] (2026-11-14, checker)
+  - 무엇을 했나: K-05 diff를 리뷰했다(I-1 영역 찾기·흐려짐 CSS·타이머, Zen 끌기 자리, `caption.rs` 숨김과 `caption_set_visible`, 보안 설정 diff). release 빌드 전 전체 테스트·typecheck를 이 버전에서 한 번 돌렸다.
+  - 결과: PASS. `npm.cmd run test` 346/346, `npm.cmd run typecheck` 0. 보안 설정·의존성 변경 없음.
+  - 검증: V0 리뷰 + 전체 테스트 1회(보고 `C:\Users\nampl\AppData\Local\Temp\v083-C-05-report.md`).
+  - 특이사항: 없음.
+- **[BUILD-OK]** (2026-11-14, leader-core): release 빌드 허락. 빌드 직전 workbench-tauri 프로세스 0개.
+- **K-06 0.8.3 release 빌드·README·BUILD** (2026-11-14, coder, 커밋 `a12fc4e`)
+  - 무엇을 했나: `npm.cmd run tauri build` 한 번(exit 0, 77초). `docs/BUILD.md` 머리 "고친 날"에 0.8.3 줄과 "4C. 0.8.3 결과 파일" 절(4A·4B절 그대로), README 실행 절(설치 파일 이름 0.8.3, 4C절 링크).
+  - 결과: 설치 파일 `src-tauri\target\release\bundle\nsis\workbench-tauri_0.8.3_x64-setup.exe` 10,590,767 B, `src-tauri\target\release\workbench-tauri.exe` 21,558,272 B, 둘 다 2026-11-14 16:27:56, ProductVersion·FileVersion 0.8.3. 0.8.2 대비 설치 파일 +1,423 B, exe +26,112 B. 경고는 기존과 같은 종류(Vite 500 kB 넘는 chunk 3개, `[EVAL]` 2건), Rust 경고 없음.
+  - 검증: V0 + release 빌드 한 번(빌드 요약 `%TEMP%\v083-K-06-build.txt`, 보고 `...\v083-K-06-report.md`).
+  - 특이사항: 없음.
+- **C-06 화면 측정 프로브** (2026-11-14, checker)
+  - 무엇을 했나: `specs/v0.8.3/verify/ORDER-05/probe.mjs`를 썼다(`specs/v0.8.2/verify/ORDER-07/probe.mjs`·`tools/cdp-lib.mjs`·`tools/win-input.ps1`·`tools/png.mjs` 재사용). C-06은 O1~O4·R·M 섹션, C-06-R1은 S(I-1, S-1~S-7)·Z(I-14, Z-1~Z-7) 섹션과 시안 대조 `05 Zen Mode`, C-06-R2는 1차 실행에서 막힌 곳(`closeAll` 탭 닫기, 섹션 사이 상태 격리·복원 `endSession`·`restartApp`, O4-3 선택자 `SyntaxError`, R-1 판정)을 고쳤다.
+  - 결과: 앱을 띄우지 않고 `node --check`만 통과.
+  - 검증: V0(보고 `C:\Users\nampl\AppData\Local\Temp\v083-C-06-report.md`·`v083-C-06-R1-report.md`·`v083-C-06-R2-report.md`).
+  - 특이사항: 없음.
+- **[SCREEN-OK]~[SCREEN-DONE] 화면 측정 네 번** (2026-11-14, tauri-leader)
+  - 무엇을 했나: release exe 사본 `%TEMP%\v083-exe083\workbench-tauri.exe`, 격리 APPDATA·WebView2, 창 1440×852, 1920×1080 100%, One Light(시안 대조만 One Dark도)에서 프로브를 네 번 돌렸다(1차 전부, 2·3·4차는 남은 줄만). 결과 `specs/v0.8.3/verify/ORDER-05/out/result.json`(줄마다 마지막 실행 값), 로그 `%TEMP%\v083-probe-run1.log`~`run4.log`. 끝난 뒤 남은 측정 앱 하나(1차, PID 25916, 경로 확인)만 닫았다 — 지금 workbench-tauri 프로세스 0개.
+  - 2·3차 사이 tauri-leader가 프로브 세 군데를 고쳤다(앱 코드 아님): JS 식을 선택자로 읽던 `pt`, 탭 닫기를 Ctrl+W로, Zen 켜짐 확인 가드(가드가 없을 때 2차 Z-4가 보통 모드에서 창 닫기 단추를 눌러 측정 앱을 닫았다).
+  - 결과(ORDER-05 보고 "화면 측정 표"):
+    - 통과: O1-1 About 0.8.3, O1-2 세 선 ≥ 1px(창 1440·1441), O1-4 위치 글자·ipynb 종류·Outline, O2-1 실행 번호(`[999]`·`[10000]` 안 잘림), O2-2 탭 줄 버튼 영역(계산 대조 — 프로브가 UI 글자 16px에서 재 53px, 15px이면 49.7px), O2-3 줄 번호 12px, O3-2 Ctrl+Alt+1·2·3·옛 키 무변화·Reveal, O3-3 세 버튼 툴팁, O3-4 Folder 바닥 줄 토글 없음, O4-1 정렬 아이콘 네 상태, O4-2 두 우클릭 메뉴, O4-3 세 제목 줄 ×·포커스, S-3 가로 스크롤바 그대로, Z-1 DOM(두 줄만 숨김), Z-2 맨 위·아래 hover에 안 나타남, Z-4 Zen 동안 오른쪽 위 클릭이 최대화 안 함.
+    - 문제 1(확인 필요): R-2 — Right Sidebars에서 Outline 손잡이 잡는 영역이 탭 줄 끝 버튼 영역과 약 2px 겹침, 스크롤바와 0px. 사각형 값이 기록되지 않아 근거가 약하다.
+    - 측정 불가: 프로브 선택자·상태 문제 — O1-3·R-1(I-13 색, 같은 테마 미리보기 둘을 못 만듦), O2-1 본문 시작·O2-4(I-9·I-12 시작선, 글자 시작이 아닌 상자 왼쪽을 잼), O2-3 기준선(숨은 자리 잡기 요소와 비교), O3-1(I-8 화면 글자, 폴더 없는 세션에서 Tree 줄 누름 실패), R-3(I-16 Tree 스크롤, 내용 요소를 잼 — 캡처에는 스크롤바가 dock 안에 있음), S-4~S-7(탭 정리 실패), Z-5(편집기 요소 못 찾음). 입력 도구 문제 — `win-input` 전경 창 가져오기 실패·창을 잃음: O4-4(Right Sidebars 손잡이·다시 켠 뒤, 배치 자체는 캡처에 보임), S-1·S-2, Z-1 창 사각형, Z-3, Z-6·Z-7.
+    - 시안 대조: 산출물만 `specs/v0.8.3/verify/ORDER-05/out/mockup-pairs.md`(6쌍, 대조 판정 없음). 앱 쪽 캡처는 장면 상태를 다 만들지 못한 것이 많다.
+  - 검증: V3(측정 결과 위 파일).
+  - 특이사항: 측정 불가 줄은 사용자 확인 때 직접 본다(leader-core 지시).
+- **ORDER-05 보고** (2026-11-14, tauri-leader·writer): `specs/v0.8.3/reports/ORDER-05.md`. 완료 기준 6개 — I-1 충족(테스트)·화면 일부, I-14 충족(코드·화면 일부), release 충족, 앞 Phase 화면 일부, 시안 대조 산출물만, 회귀 충족. 미정 셋: HTML 미리보기 프레임 안 F11(프레임 키 허용 목록, 보안 설정), 화면 측정 불가 줄(사용자 확인 때), R-2 손잡이 겹침.
+- **상태**: ORDER-05 보고 보냄, leader-core `[PUSH]` 대기.
