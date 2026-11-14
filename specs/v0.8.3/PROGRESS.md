@@ -199,4 +199,31 @@
   - I-19 "분할 때도 남음", I-28 "About 창도 보임"은 항목 밖에서 같은 원인으로 함께 바뀐 동작이다.
   - I-25: Search 줄 마우스 올림 배경이 없어졌다(Keymap 방식). 어색하면 두 표에 함께 넣을지 정해야 한다.
 - **미정**: Zen Mode에서 `F10` — 앱 메뉴가 열린 상태가 되지만 보이지 않고, 화살표·Enter가 보이지 않는 메뉴로 간다(고치기 전과 같음). 어떻게 보일지는 사용자가 정한다.
-- **상태**: ORDER-06 보고 보냄, leader-core `[PUSH]` 대기.
+- **상태**: leader-core 판정 — 완료 기준 1~10 충족. 미정 둘(Zen Mode `F10`, I-25 Search 줄 마우스 올림 배경)은 사용자 확인으로 넘겨 사용자가 I-31·I-30으로 정했다(core ORDER-07). `[PUSH]` 받아 push 끝 `6347c11`.
+
+### Phase 7 — ORDER-07 (I-30~I-32): Phase 6 USER-TEST 고칠 점
+
+사용자 요청 작업: core Phase 7은 Phase 6 사용자 확인(USER-TEST) 뒤에 사용자가 알린 고칠 점 셋이다(core ORDER-07, 사용자 2026-11-14). 이 카드는 화면을 재지 않는다 — 화면은 사용자 확인(USER-TEST)으로 본다.
+
+- **K-09 I-30~I-32 (ORDER-07)** (2026-11-14, coder, 커밋 `61f1626`)
+  - 무엇을 했나(항목별 한 줄, 근거는 보고 `C:\Users\nampl\AppData\Local\Temp\v083-K-09-report.md`):
+    - I-30: `.list-table tbody tr:hover { background: var(--element-hover); }` 한 줄(`app.css`) — Search·Keymap 두 표 공통, `th` 제외, 포커스 테두리(`outline`) 그대로. One Light 마우스 올림 `element.hover` `#dfdfe0` / 짝수 줄 `element.background` `#ebebec` — 차이가 작아 사용자 확인(One Dark `#363c46` / `#2e343e`).
+    - I-31: Zen Mode에서 메뉴가 닫혀 있으면 `app_menu::Toggle`(`F10`)이 아무것도 하지 않음 — `chain("app_menu::Toggle", () => zenMode() && !menuOpen(), () => {})`(`panels.ts`). 보통 모드·열린 우클릭 메뉴 닫기·Settings 창은 그대로. leader 덧붙임: 앱 메뉴를 연 채 `F11`로 Zen을 켜면 메뉴가 열린 채 숨던 경로를 막음 — `closeAppMenu`(`AppMenu.tsx`, 제목 줄 메뉴만 닫음, 우클릭 메뉴는 닫지 않음)를 `workspace::ToggleZenMode` 첫 줄에서 부름.
+    - I-32: 열린 폴더가 0개면 Folder Sidebar 목록에 "No Folder" — Tree Sidebar의 `.outline-empty`를 재사용(`Sidebar.tsx`), 위 여백 선택자를 `:is(.project-panel, .sidebar-list)`로 넓힘(`app.css`). 검색 결과 0개는 그대로(표시 없음), 글자 위 우클릭은 빈 곳 메뉴.
+  - 결과: 바꾼 파일 4개(`src/app.css`·`src/shell/Sidebar.tsx`·`src/shell/panels.ts`·`src/shell/AppMenu.tsx`). 새 테스트 없음. Rust·의존성·명령 ID·버전 변경 없음, 보안 설정 diff 없음(`git diff 6347c11 --stat -- src-tauri/tauri.conf.json src-tauri/capabilities` 빈 결과).
+  - 검증: V0 + V1. `npm.cmd run typecheck` 0(덧붙임 뒤 다시 0), 고친 소스에 닿는 테스트 파일 없음 — `node --test`는 돌리지 않음(출력 `C:\Users\nampl\AppData\Local\Temp\v083-K-09-tests.txt`). 앱은 띄우지 않았다 — 화면은 모두 "코드 확인".
+  - 특이사항: 생략 — Zen Mode 새 메뉴 모양·안내, 검색 결과 0개 표시.
+- **C-08 checker 리뷰(K-09)** [PASS] (2026-11-14, checker)
+  - 무엇을 했나: K-09 diff 4개 파일을 항목별로 리뷰했다(I-30 특이도·순서·`th` 제외·포커스, I-31 `chain` 등록 순서·우클릭 메뉴·Settings 창·순환 import·`closeAppMenu` 조건, I-32 `folders().length` 조건·우클릭·위 여백·Zen).
+  - 결과: PASS. 보안 설정·의존성·명령 ID·앱 버전·`spec/` 변경 없음, 하드코딩 수치 없음.
+  - 검증: V0 코드 리뷰(테스트 재실행·앱 실행 없음, coder 출력 근거)(보고 `C:\Users\nampl\AppData\Local\Temp\v083-C-08-report.md`).
+  - 특이사항: 없음.
+- **[BUILD-OK]** (2026-11-14, leader-core): ORDER-07 release 다시 빌드 허락.
+- **K-10 0.8.3 release 다시 빌드·BUILD** (2026-11-14, coder, 커밋 `7ec013b`)
+  - 무엇을 했나: 기준 커밋 `61f1626`(작업 폴더 깨끗)에서 `npm.cmd run tauri build` 한 번(exit 0, 73.3초). `docs/BUILD.md` 머리 "고친 날"과 4C절(ORDER-07 다시 빌드 문단·표). README는 파일 이름이 같아 그대로.
+  - 결과: 설치 파일 `workbench-tauri_0.8.3_x64-setup.exe` 10,592,019 B(ORDER-06 대비 +788 B), exe 21,535,232 B(같음), 둘 다 2026-11-14 22:45:11, ProductVersion·FileVersion 0.8.3. 경고는 기존과 같은 종류(Vite 500 kB 넘는 chunk 3개, `[EVAL]` 2건), Rust 경고 없음.
+  - 검증: V0 + release 빌드 한 번(요약 `%TEMP%\v083-K-10-build.txt`, 보고 `C:\Users\nampl\AppData\Local\Temp\v083-K-10-report.md`).
+  - 특이사항: exe 크기가 ORDER-06과 바이트까지 같다 — `dist/`·설치 파일은 달라져 새 프런트엔드가 들어간 것으로 봄(추정, exe 내용 대조 안 함).
+- **알릴 것**: 빌드 직전 떠 있던 사용자 테스트 앱 PID 35052(`%TEMP%\v083-app\workbench-tauri-0.8.3-order06.exe` 복사본)가 빌드 뒤 없어졌다. coder는 종료 명령(`Stop-Process`·`taskkill`)을 쓰지 않았고 원인은 모른다. leader-core에 알림.
+- **사용자 확인 필요**: I-30 마우스 올림 색이 짝수 줄 위에서 충분히 눈에 띄는지(One Light 두 색 차이가 작음).
+- **상태**: ORDER-07 보고 보냄, leader-core `[PUSH]` 대기.
