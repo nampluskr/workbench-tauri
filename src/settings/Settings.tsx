@@ -54,9 +54,9 @@ export default function SettingsWindow() {
             <Show when={isChoiceKey(row.key)} fallback={
               <Show when={isToggleKey(row.key)} fallback={
                 <div class="settings-number">
-                  <button aria-label={`Decrease ${row.category} ${row.name}`} disabled={saving()} onClick={() => void save(row.key, settingNumber(row.key, Number(settings()[row.key]) - settingStep(row.key)))}>−</button>
-                  <input id={`setting-${row.key}`} aria-describedby={`description-${row.key}`} type="number" step="any" value={settings()[row.key] as number} disabled={saving()} onChange={(e) => void save(row.key, settingNumber(row.key, e.currentTarget.valueAsNumber))} />
-                  <button aria-label={`Increase ${row.category} ${row.name}`} disabled={saving()} onClick={() => void save(row.key, settingNumber(row.key, Number(settings()[row.key]) + settingStep(row.key)))}>+</button>
+                  <button aria-label={`Decrease ${row.category} ${row.name}`} disabled={saving()} onClick={() => void save(row.key, settingNumber(row.key, Number(settings()[row.key]) - settingStep(row.key), settings().buffer_font_size))}>−</button>
+                  <input id={`setting-${row.key}`} aria-describedby={`description-${row.key}`} type="number" step="any" value={settings()[row.key] as number} disabled={saving()} onChange={(e) => void save(row.key, settingNumber(row.key, e.currentTarget.valueAsNumber, settings().buffer_font_size))} />
+                  <button aria-label={`Increase ${row.category} ${row.name}`} disabled={saving()} onClick={() => void save(row.key, settingNumber(row.key, Number(settings()[row.key]) + settingStep(row.key), settings().buffer_font_size))}>+</button>
                 </div>
               }>
                 <input id={`setting-${row.key}`} class="settings-toggle" type="checkbox" aria-describedby={`description-${row.key}`} checked={settings()[row.key] as boolean} disabled={saving()} onChange={(e) => void save(row.key, e.currentTarget.checked)} />

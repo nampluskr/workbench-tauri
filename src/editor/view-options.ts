@@ -1,5 +1,5 @@
 import { Compartment, Facet, type Extension } from "@codemirror/state";
-import { EditorView, ViewPlugin, highlightActiveLineGutter, lineNumbers } from "@codemirror/view";
+import { EditorView, ViewPlugin, gutter, highlightActiveLineGutter, lineNumbers } from "@codemirror/view";
 import type { ContextNode } from "../keymap/engine.ts";
 import { DEFAULTS } from "../settings/model.ts";
 import { indentGuides } from "./indent-guides.ts";
@@ -13,7 +13,8 @@ let options: ViewOptions = { lineNumbers: DEFAULTS.editor_line_numbers, wordWrap
 const markdown = Facet.define<boolean, boolean>({ combine: (values) => values.some(Boolean) });
 const section = new Compartment();
 const parts = (isMarkdown: boolean, o: ViewOptions): Extension => [
-  o.lineNumbers ? [lineNumbers(), highlightActiveLineGutter()] : EditorView.editorAttributes.of({ class: "cm-no-line-numbers" }), // I-27 inset: extensions.ts
+  // core v0.8.3 I-12: the empty gutter fills up to the text start (extensions.ts); it draws the active line's element only
+  o.lineNumbers ? [lineNumbers(), highlightActiveLineGutter(), gutter({ class: "cm-gutter-fill" })] : EditorView.editorAttributes.of({ class: "cm-no-line-numbers" }), // I-27 inset: extensions.ts
   isMarkdown && o.wordWrap ? EditorView.lineWrapping : [], // I-7: code never wraps
   o.indentGuides ? indentGuides : [],
   o.renderWhitespace ? renderWhitespace : [],

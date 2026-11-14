@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { CODE_FONTS, DEFAULTS, THEME_AREAS, areaTheme, categoryKeys, filterSettings, loadDefaults, parseSettings, removeSettings, settingMenu, type SettingKey, settingNumber, settingStep, updateSetting, updateSettings } from "./model.ts";
 const THEMES = { dark_theme: ["One Dark", "Catppuccin Mocha"], light_theme: ["One Light", "Catppuccin Latte"], icon_theme: ["Zed (Default)", "Catppuccin Mocha"] };
 import { stripJsonc } from "../keymap/user.ts";
+import { lineNumberFontSize } from "../spec/metrics.ts";
 
 test("settings defaults, invalid values and supported values", () => {
   for (const text of [null, "{}", "{broken", "[]", '{"theme":"unknown","ui_font_size":0,"buffer_font_size":"20"}']) assert.deepEqual(parseSettings(text, THEMES), DEFAULTS);
@@ -97,6 +98,23 @@ test("I-5 ~ I-8, I-10: the five editor view settings read, validate and write", 
   assert.throws(() => updateSetting("{}", "editor_line_numbers", "no", THEMES));
 });
 
+test("core v0.8.3 I-11: the line number font size (px, 8 up to the editor font size) reads, validates and writes", () => {
+  const read = (json: string) => parseSettings(json, THEMES).editor_line_number_font_size;
+  assert.equal(DEFAULTS.editor_line_number_font_size, 12);
+  for (const value of [8, 10.5, 12, 20]) assert.equal(read(`{"editor_line_number_font_size":${value}}`), value); // 20 is kept, drawn at the editor font size
+  for (const value of [7.9, 0, -3, '"12"', "null"]) assert.equal(read(`{"editor_line_number_font_size":${value}}`), 12, String(value));
+  // The Settings screen: under 8 becomes 8, over the editor font size becomes that size.
+  assert.deepEqual([settingNumber("editor_line_number_font_size", 7, 14), settingNumber("editor_line_number_font_size", 13, 14), settingNumber("editor_line_number_font_size", 15, 14)], [8, 13, 14]);
+  // Drawn: no larger than the editor font setting, and by the Ctrl+= ratio (14 -> 21 draws 12 as 18).
+  assert.deepEqual([lineNumberFontSize(12, 14), lineNumberFontSize(20, 14), lineNumberFontSize(12, 10), lineNumberFontSize(12, 14, 21)], [12, 14, 10, 18]);
+  // Saved the usual way: comments and unknown keys stay.
+  const written = updateSettings('{\n  // keep\n  "x": 1\n}', { editor_line_number_font_size: 10 }, THEMES);
+  assert.ok(written.includes("// keep") && written.includes('"x": 1'));
+  assert.equal(read(written), 10);
+  assert.throws(() => updateSetting("{}", "editor_line_number_font_size", 7, THEMES));
+  assert.ok(categoryKeys("Editor").includes("editor_line_number_font_size")); // Load Defaults deletes it
+});
+
 test("core v0.8.2 I-21 / I-23: the preview code line height (1.0 to 3.0, 0.05 steps) and code line numbers read, validate and write", () => {
   const read = (json: string) => parseSettings(json, THEMES);
   assert.deepEqual([DEFAULTS.preview_code_line_height, DEFAULTS.preview_code_line_numbers], [1.45, false]);
@@ -157,12 +175,12 @@ test("v0.8.2 I-26: 0.8.1 gap keys read as the same drawn px, and the next write 
 test("settings search includes the category title, name and description", () => {
   const keys = (query: string) => filterSettings(query).map((r) => r.key);
   assert.deepEqual(keys("preview"), ["preview_theme_dark", "preview_theme_light", "preview_font_size", "preview_code_font_family", "preview_code_font_size", "preview_code_line_height", "preview_code_line_numbers", "preview_paragraph_line_spacing", "preview_paragraph_spacing", "preview_list_line_spacing", "preview_list_spacing"]);
-  assert.deepEqual(keys("EDITOR"), ["editor_theme_dark", "editor_theme_light", "buffer_font_family", "buffer_font_size", "editor_line_height", "editor_line_numbers", "editor_word_wrap", "editor_indent_guides", "editor_render_whitespace"]);
+  assert.deepEqual(keys("EDITOR"), ["editor_theme_dark", "editor_theme_light", "buffer_font_family", "buffer_font_size", "editor_line_height", "editor_line_numbers", "editor_line_number_font_size", "editor_word_wrap", "editor_indent_guides", "editor_render_whitespace"]);
   assert.deepEqual(keys("ui"), ["theme_dark", "theme_light", "icon_theme", "ui_font_size", "editor_indent_guides"]); // "guides" holds "ui"
   assert.deepEqual(keys("ui font size"), ["ui_font_size"]);
   assert.equal(keys("theme").length, 7); // core v0.8.2 I-2: Dark Theme and Light Theme in each category, and Icon Theme
   assert.deepEqual(filterSettings("dark theme").map((r) => [r.category, r.name]), [["UI", "Dark Theme"], ["Editor", "Dark Theme"], ["Preview", "Dark Theme"]]);
-  assert.equal(keys("font size").length, 6); // the Line Height, Code Font Size and Code Line Height descriptions name the font size
+  assert.equal(keys("font size").length, 7); // the Line Height, Code Font Size and Code Line Height descriptions name the font size; core v0.8.3 I-11: Line Number Font Size
   assert.equal(keys("missing").length, 0);
 });
 

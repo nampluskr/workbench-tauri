@@ -23,7 +23,7 @@ const temporary: Record<ToggleOption, boolean | null> = { lineNumbers: null, wor
 
 const previewGaps = (s: Settings): PreviewGaps => ({ paragraphLine: s.preview_paragraph_line_spacing, paragraph: s.preview_paragraph_spacing, listLine: s.preview_list_line_spacing, list: s.preview_list_spacing });
 const codeFonts = (s: Settings): CodeFonts => ({ editor: s.buffer_font_family, preview: s.preview_code_font_family, previewPercent: s.preview_code_font_size,
-  previewLineHeight: s.preview_code_line_height, previewLineNumbers: s.preview_code_line_numbers });
+  previewLineHeight: s.preview_code_line_height, previewLineNumbers: s.preview_code_line_numbers, lineNumberSize: s.editor_line_number_font_size });
 
 async function reload(): Promise<void> {
   let next = settings();
@@ -37,7 +37,8 @@ async function reload(): Promise<void> {
     if (next.editor_word_wrap !== settings().editor_word_wrap) temporary.wordWrap = null;
     await applyMetrics(next.ui_font_size, next.buffer_font_size, editorFontSize ?? next.buffer_font_size, previewFontSize ?? next.preview_font_size, next.editor_line_height, previewGaps(next), codeFonts(next), next.preview_font_size);
     // I-8 / core v0.8.1 I-10: the line height map, the gutter and the character width are measured, not read from the variables
-    if (next.editor_line_height !== settings().editor_line_height || next.buffer_font_family !== settings().buffer_font_family) remeasureEditors();
+    if (next.editor_line_height !== settings().editor_line_height || next.buffer_font_family !== settings().buffer_font_family
+      || next.editor_line_number_font_size !== settings().editor_line_number_font_size) remeasureEditors(); // core v0.8.3 I-11: the gutter width
     showViewOptions(next);
     await showAreaThemes(next);
     setAppliedIconTheme(next.icon_theme);

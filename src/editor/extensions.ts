@@ -24,6 +24,9 @@ import { viewOptionExtensions } from "./view-options.ts";
 const lineHeight =
   "calc(var(--editor-buffer-font-size) * var(--editor-line-height-multiplier))";
 
+// core v0.8.2 I-13 / v0.8.3 I-9: where the preview body starts (its padding + the left margin). The editor text starts there too.
+const bodyStart = "calc(var(--markdown-preview-container-padding) + var(--markdown-preview-left-margin))";
+
 const zedEditorTheme = EditorView.theme({
   "&": {
     height: "100%",
@@ -39,19 +42,23 @@ const zedEditorTheme = EditorView.theme({
     lineHeight, // core v0.7 I-8 (was E-010)
   },
   ".cm-content": { padding: 0 },
-  // E-005: margin between gutter and text. It sits inside the line so that the
-  // active-line rectangle (E-011) covers it.
-  ".cm-line": { padding: "0 0 0 var(--editor-gutter-margin)" },
-  // core v0.8.2 I-13: no line numbers -> the text starts at the preview's fixed left margin (its padding + the I-15 left margin), not where a wide preview centres it.
-  "&.cm-no-line-numbers .cm-line": {
-    paddingLeft: "calc(var(--markdown-preview-container-padding) + var(--markdown-preview-left-margin))",
-  },
+  // core v0.8.3 I-12: the space between number and text is the gutter's (below), so the text starts where the gutters end.
+  ".cm-line": { padding: 0 },
+  // core v0.8.2 I-13: no line numbers -> the text starts at the preview's fixed left margin, not where a wide preview centres it.
+  "&.cm-no-line-numbers .cm-line": { paddingLeft: bodyStart },
+  // core v0.8.3 I-12: with line numbers the gutters end at that same line. The number gutter keeps its own width (left padding,
+  // digits, least right padding) and the fill gutter (view-options.ts) takes what is left; a number gutter wider than this pushes the text.
   ".cm-gutters": {
+    minWidth: bodyStart,
     backgroundColor: "var(--editor-gutter-background)",
     color: "var(--editor-line-number)",
     "&.cm-gutters-before": { borderRightWidth: 0 },
   },
-  // E-002: number width = max(digits, min digits) * ch; I-14: measured Zed padding.
+  ".cm-gutter-fill": { flexGrow: 1 },
+  ".cm-lineNumbers": { fontSize: "var(--editor-line-number-font-size)" }, // core v0.8.3 I-11; the Ctrl+= ratio is in the variable
+  // core v0.8.3 I-11: an empty inline box of the editor font puts the smaller number on the text's baseline (same line height).
+  ".cm-lineNumbers .cm-gutterElement::before": { content: "\"\\200b\"", fontSize: "var(--editor-buffer-font-size)" },
+  // E-002: number width = max(digits, min digits) * ch of the line number font; core v0.8.3 I-12 padding.
   ".cm-lineNumbers .cm-gutterElement": {
     boxSizing: "content-box",
     minWidth: "calc(var(--editor-gutter-min-line-number-digits) * 1ch)",

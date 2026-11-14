@@ -19,7 +19,7 @@ export const DEFAULTS = { theme_dark: BASE_THEME.dark as string, theme_light: BA
   // (core v0.8.1 I-8: 8, 16, 6, 4) times 14/16. New key names, so the 0.8.1 *_gap values in a file are read apart (oldGaps).
   preview_paragraph_line_spacing: 7, preview_paragraph_spacing: 14, preview_list_line_spacing: 5.25, preview_list_spacing: 3.5,
   // I-5 ~ I-8, I-10: the editor body's view settings.
-  editor_line_height: 1.6, editor_line_numbers: true, editor_word_wrap: true, editor_indent_guides: true, editor_render_whitespace: false,
+  editor_line_height: 1.6, editor_line_numbers: true, editor_line_number_font_size: 12 /* core v0.8.3 I-11 */, editor_word_wrap: true, editor_indent_guides: true, editor_render_whitespace: false,
   // core v0.8.1 I-10: the editor and preview code fonts (one list, CODE_FONTS) and the code block size in % of the preview font size.
   // core v0.8.2 I-17: 86% is 12.04px at the 14px preview font (was 85). A saved value stays as it is.
   buffer_font_family: "JetBrains Mono", preview_code_font_family: "JetBrains Mono", preview_code_font_size: 86,
@@ -40,10 +40,13 @@ export const nearestGap = (value: number): number => Math.min(48, Math.max(0, Ma
 export const nearestPercent = (value: number): number => Math.min(150, Math.max(50, Math.round(value)));
 // core v0.8.2 I-21: the editor Line Height's range (1.0 to 3.0) in 0.05 steps, since the 1.45 default is not a 0.1 step. Same handling as the line height.
 export const nearestCodeLineHeight = (value: number): number => Math.min(3, Math.max(1, Math.round(value * 20) / 20));
+// core v0.8.3 I-11: px, 8 up to the editor font size. A file value under 8 is invalid (the default); one over the editor font size is
+// kept and drawn at the editor font size (spec/metrics.ts lineNumberFontSize), as that size can change later.
+export const nearestLineNumberSize = (value: number, bufferFontSize: number): number => Math.min(bufferFontSize, Math.max(8, value));
 export const settingStep = (key: SettingKey): number => key === "editor_line_height" ? 0.1 : key === "preview_code_line_height" ? 0.05 : 1;
 /** The number a Settings stepper or input saves: a step away from `current`, or the typed value, kept to the key's own range. */
-export const settingNumber = (key: SettingKey, value: number): number =>
-  key === "editor_line_height" ? nearestLineHeight(value) : key === "preview_code_line_height" ? nearestCodeLineHeight(value)
+export const settingNumber = (key: SettingKey, value: number, bufferFontSize = Infinity): number =>
+  key === "editor_line_number_font_size" ? nearestLineNumberSize(value, bufferFontSize) : key === "editor_line_height" ? nearestLineHeight(value) : key === "preview_code_line_height" ? nearestCodeLineHeight(value)
     : isGapKey(key) ? nearestGap(value) : key === "preview_code_font_size" ? nearestPercent(value) : value;
 /** The theme an area shows: its dark or light setting, by its mode. */
 export const areaTheme = (s: Settings, area: ThemeArea): string => s[`${area}_${s[`${area}_mode`]}`];
@@ -75,6 +78,7 @@ export const ROWS: { key: SettingKey; name: string; description: string; categor
   { key: "buffer_font_size", name: "Font Size", description: "Controls the font size in pixels.", category: "Editor" },
   { key: "editor_line_height", name: "Line Height", description: "Controls the line height as a multiple of the font size.", category: "Editor" },
   { key: "editor_line_numbers", name: "Line Numbers", description: "Controls the display of line numbers.", category: "Editor" },
+  { key: "editor_line_number_font_size", name: "Line Number Font Size", description: "Controls the font size in pixels of the line numbers. No larger than the editor font size.", category: "Editor" },
   { key: "editor_word_wrap", name: "Word Wrap", description: "Controls whether long lines wrap in Markdown files. Code files never wrap.", category: "Editor" },
   { key: "editor_indent_guides", name: "Indent Guides", description: "Controls whether the editor should render indent guides.", category: "Editor" },
   { key: "editor_render_whitespace", name: "Render Whitespace", description: "Controls whether the editor renders spaces, tabs and line breaks as symbols.", category: "Editor" },
@@ -108,6 +112,7 @@ export function validSetting(key: SettingKey, value: unknown, choices: Choices):
   if (key === "preview_code_line_height") return typeof value === "number" && value === nearestCodeLineHeight(value);
   if (isGapKey(key)) return typeof value === "number" && value === nearestGap(value);
   if (key === "preview_code_font_size") return typeof value === "number" && value === nearestPercent(value);
+  if (key === "editor_line_number_font_size") return typeof value === "number" && Number.isFinite(value) && value >= 8;
   return typeof value === "number" && Number.isFinite(value) && value > 0;
 }
 

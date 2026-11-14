@@ -995,7 +995,8 @@ button, input, select, textarea {
 .markdown-body .nb-code { position: relative; }
 .markdown-body .nb-count {
   position: absolute; right: 100%; top: calc(var(--markdown-preview-code-block-margin-y) + var(--markdown-preview-code-block-border) + var(--buttons-height-default));
-  box-sizing: border-box; width: var(--markdown-preview-left-margin); padding-right: var(--markdown-preview-code-block-padding); text-align: right; white-space: pre;
+  /* core v0.8.3 I-9: at least the margin wide; a longer [n] grows left into the container padding and the body does not move */
+  box-sizing: border-box; min-width: var(--markdown-preview-left-margin); padding-right: var(--markdown-preview-notebook-count-gap); text-align: right; white-space: pre;
   color: var(--text-muted); font-family: var(--preview-code-font-family); font-size: var(--preview-code-font-size); line-height: var(--preview-code-line-height); user-select: none;
 }
 .markdown-body div.nb-output { margin: var(--markdown-preview-code-block-margin-y) 0; overflow-x: auto; }

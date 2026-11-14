@@ -143,9 +143,10 @@ const METRICS: Record<string, string> = {
   "editor.search_results_count.font_size": rem(12), // E-067
   "editor.search_results_count.margin_left": rem(8), // E-067
   "editor.search_results_count.min_width": rem(40), // E-067
-  // shortcut: gutter padding measured at Lilex 15, remeasure if the buffer font or size changes.
-  "editor.gutter.padding_left": "22px", // I-14: Zed measured 2026-11-07, replaces E-003 3ch
-  "editor.gutter.padding_right": "29px", // I-14: Zed measured 2026-11-07, replaces E-004 4ch
+  // core v0.8.3 I-12 (replaces the Zed 22px / 29px): left of the number, and the least space right of it. The space right of it
+  // grows until the text starts at the preview body's left (editor/extensions.ts); the 8px is tauri's choice.
+  "editor.gutter.padding_left": "10px",
+  "editor.gutter.padding_right": "8px",
   "editor.line_height.comfortable_multiplier": "1.618", // E-010; the editor body uses --editor-line-height-multiplier (core v0.7 I-8), the preview code --preview-code-line-height (core v0.8.2 I-21)
   "editor.indent_guide.width": "1px", // E-020
   "editor.indent_guide.active_width": "1px", // E-020
@@ -195,8 +196,8 @@ const METRICS: Record<string, string> = {
   "dock.resize_handle_width": rem(6), // L-30
   "dock.min_width": rem(6), // L-31
   "tab.bar_height": rem(32), // L-22
-  "tab.end_buttons_area.gap": rem(4), // L-27
-  "tab.end_buttons_area.padding_x": rem(6), // L-27
+  "tab.end_buttons_area.gap": rem(0), // core v0.8.3 I-10 (was L-27 4)
+  "tab.end_buttons_area.padding_x": rem(4), // core v0.8.3 I-10 (was L-27 6)
   "tab.end_buttons_area.border_bottom": rem(1), // L-27
   "tab.end_buttons_area.border_start_right": rem(1), // L-27
   "tab.end_buttons_area.border_end_left": rem(1), // L-27
@@ -227,8 +228,11 @@ const METRICS: Record<string, string> = {
   "markdown_preview.max_width": prem(800), // L-101
   "markdown_preview.container_padding": prem(16), // L-102
   // core v0.8.2 I-15, tauri's choice (not in the toml): the left margin outside the body width, for a notebook's [n]. JupyterLab's
-  // --jp-cell-prompt-width 64px (theme-light-extension variables.css), here 64px at the 14px preview font and scaling with it.
-  "markdown_preview.left_margin": `calc(${64 / PREVIEW_BASE_FONT_SIZE} * var(--typography-preview-font-size))`,
+  // core v0.8.3 I-9: 44px at the 14px preview font and scaling with it (was JupyterLab's 64px), so the body starts at 14 + 44 = 58px.
+  "markdown_preview.left_margin": `calc(${44 / PREVIEW_BASE_FONT_SIZE} * var(--typography-preview-font-size))`,
+  // core v0.8.3 I-9, tauri's choice: the space between [n] and the code cell, 7px at the 14px preview font. [999] (36.1px) stays
+  // inside the 44px margin and [10000] (50.6px) inside margin + container padding (58px).
+  "markdown_preview.notebook_count_gap": `calc(${7 / PREVIEW_BASE_FONT_SIZE} * var(--typography-preview-font-size))`,
   "markdown_preview.sublist_indent": "2em", // core v0.8.2 I-14 (not in the toml): a nested list's indent, 28px at the 14px body (GitHub's)
   "markdown_preview.body.font_size": prem(16), // L-103
   "markdown_preview.body.line_height_multiplier": "1.5", // L-103
@@ -449,8 +453,10 @@ const UI_FONT_FAMILY = '"IBM Plex Sans", "Malgun Gothic", sans-serif';
 // core v0.8.1 I-10: the breadcrumbs, search result names and Settings section titles keep Lilex; the editor and preview code take the setting.
 const BUFFER_FONT_FAMILY = '"Lilex", "Malgun Gothic", monospace';
 const codeFontFamily = (name: string) => `"${name}", "Malgun Gothic", monospace`; // a font without Hangul falls back to Malgun Gothic (Zed, VS Code)
-/** core v0.8.1 I-10: the Settings code fonts and the preview code block size in % of the preview font size. core v0.8.2 I-21 / I-23: the preview code line height and line numbers. */
-export type CodeFonts = { editor: string; preview: string; previewPercent: number; previewLineHeight: number; previewLineNumbers: boolean };
+/** core v0.8.1 I-10: the Settings code fonts and the preview code block size in % of the preview font size. core v0.8.2 I-21 / I-23: the preview code line height and line numbers. core v0.8.3 I-11: the line number size setting. */
+export type CodeFonts = { editor: string; preview: string; previewPercent: number; previewLineHeight: number; previewLineNumbers: boolean; lineNumberSize: number };
+/** core v0.8.3 I-11: the px the line numbers are drawn at: the setting, no larger than the editor font setting, times the Ctrl+= ratio. */
+export const lineNumberFontSize = (setting: number, bufferFontSize: number, editorFontSize = bufferFontSize): number => Math.min(setting, bufferFontSize) * editorFontSize / bufferFontSize;
 const FONT_WEIGHT = 400; // I-14: default UI and buffer weight
 const UI_FONT_FEATURE_SETTINGS = '"calt" 0'; // I-14: disable UI contextual alternates
 
@@ -461,7 +467,7 @@ let metricsSheet: CSSStyleSheet | undefined;
 export type PreviewGaps = { paragraphLine: number; paragraph: number; listLine: number; list: number };
 const scaledGap = (px: number, previewFontSize: number): number => px * previewFontSize / PREVIEW_BASE_FONT_SIZE;
 export async function applyMetrics(uiFontSize = 16, bufferFontSize = 14, editorFontSize = bufferFontSize, previewFontSize = PREVIEW_BASE_FONT_SIZE, editorLineHeight = 1.6,
-  gaps: PreviewGaps = { paragraphLine: 7, paragraph: 14, listLine: 5.25, list: 3.5 }, code: CodeFonts = { editor: "JetBrains Mono", preview: "JetBrains Mono", previewPercent: 86, previewLineHeight: 1.45, previewLineNumbers: false },
+  gaps: PreviewGaps = { paragraphLine: 7, paragraph: 14, listLine: 5.25, list: 3.5 }, code: CodeFonts = { editor: "JetBrains Mono", preview: "JetBrains Mono", previewPercent: 86, previewLineHeight: 1.45, previewLineNumbers: false, lineNumberSize: 12 },
   previewSettingSize = previewFontSize): Promise<void> {
   const bufferSize = `${bufferFontSize}px`;
   const editorSize = `${editorFontSize}px`;
@@ -469,14 +475,10 @@ export async function applyMetrics(uiFontSize = 16, bufferFontSize = 14, editorF
     ([id, value]) => `--${id.replace(/[._]/g, "-")}: ${value};`,
   );
 
-  // E-005: gutter margin = |descent| of the editor font. CSS cannot read it. The font file is loaded first, so neither this nor
-  // CM's line measure (the variable below changes only after the load) sees the fallback font.
+  // The font file is loaded first, so CM's line measure (the variables below change only after the load) does not see the fallback font.
   const editorFamily = codeFontFamily(code.editor);
   await document.fonts.load(`${FONT_WEIGHT} ${editorSize} ${editorFamily}`);
-  const ctx = document.createElement("canvas").getContext("2d")!;
-  ctx.font = `${editorSize} ${editorFamily}`; // the gutter margin belongs to the editor text, so it follows the Ctrl+= size
-  const descent = Math.abs(ctx.measureText("0").fontBoundingBoxDescent);
-  vars.push(`--editor-gutter-margin: ${descent}px;`);
+  vars.push(`--editor-line-number-font-size: ${lineNumberFontSize(code.lineNumberSize, bufferFontSize, editorFontSize)}px;`); // core v0.8.3 I-11
   vars.push(`--buffer-font-family: ${BUFFER_FONT_FAMILY};`);
   vars.push(`--editor-font-family: ${editorFamily}; --preview-code-font-family: ${codeFontFamily(code.preview)};`);
   vars.push(`--preview-code-line-height: ${code.previewLineHeight}; --preview-code-line-numbers: ${code.previewLineNumbers ? "block" : "none"};`);
