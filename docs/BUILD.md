@@ -30,7 +30,7 @@
 | Windows | 11 x64 | Windows 전용 앱 |
 | Git | 2.52.0.windows.1 | `winget install -e --id Git.Git` |
 | PowerShell 7 | 7.6.9 | `winget install -e --id Microsoft.PowerShell` (fetch 스크립트는 `pwsh`로 실행. Windows PowerShell 5.1로는 안 됨: `#Requires -Version 7.0`) |
-| Node.js 22 | v22.22.3 (npm 10.9.8) | `winget install -e --id OpenJS.NodeJS.22` (`OpenJS.NodeJS.LTS`는 지금 26.x라 쓰지 않음. 22.x면 됨) |
+| Node.js 24 | v24.19.0 (npm 11.17.0) — 2026-11-15 새 PC([4D절](#4d-083-새-환경-빌드)). 그 전 PC는 v22.22.3 (npm 10.9.8) | [nodejs.org](https://nodejs.org)의 v24 Windows 설치 파일. winget에는 24 전용 ID가 없다(2026-11-15 `winget search --id OpenJS.NodeJS` 확인: 22·23·LTS 26.x만 있음). `OpenJS.NodeJS.LTS`(26.x)는 쓰지 않는다. 사용자 결정(2026-11-15)으로 기준을 22에서 24로 바꿨다. 0.8.3까지는 22.x로도 빌드됐다(`winget install -e --id OpenJS.NodeJS.22`) |
 | Visual Studio Build Tools 2022 (C++) | — | `winget install -e --id Microsoft.VisualStudio.2022.BuildTools --override "--wait --passive --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"` (MSVC 링커·Windows SDK. Rust MSVC 툴체인에 필요) |
 | Rust | 1.99.1 `x86_64-pc-windows-msvc` | `winget install -e --id Rustlang.Rustup` 뒤 새 터미널에서 `rustup default stable`(최소 1.90, `Cargo.toml` `rust-version`). 같은 버전을 원하면 `rustup default 1.99.1` |
 | WebView2 런타임 | 157.0.4341.42 | Windows 11 기본 포함. 없으면 `winget install -e --id Microsoft.EdgeWebView2Runtime` |
@@ -211,7 +211,7 @@ npm run tauri build             # release exe + NSIS 설치 파일
 |---|---|---|
 | Git | 2.55.0.windows.3 | 더 새 버전. 시스템 `core.autocrlf=true`(아래 줄바꿈) |
 | PowerShell 7 | 7.7.0 | 더 새 버전 |
-| Node.js / npm | **v24.19.0 / 11.17.0** | **1절은 22.x.** 24에서도 typecheck·test·빌드가 통과했다 |
+| Node.js / npm | **v24.19.0 / 11.17.0** | 그때 1절 기준은 22.x였다. 24에서도 typecheck·test·빌드가 통과해 1절 기준을 24로 바꿨다(사용자 2026-11-15) |
 | Rust | rustc·cargo 1.99.1, `stable-x86_64-pc-windows-msvc` | 같음 |
 | Visual Studio Build Tools 2022 (C++) | 설치됨(`vswhere` VC.Tools.x86.x64) | 같음 |
 | WebView2 런타임 | 157.0.4341.46 | 더 새 버전 |
@@ -235,7 +235,10 @@ npm run tauri build             # release exe + NSIS 설치 파일
 | 참고: `dist/` | 31,226,730 바이트, 파일 4,998개, JS 청크 205개 | −796 B(파일·청크 수 같음) |
 
 - 버전은 `(Get-Item …).VersionInfo`로 읽었다. `dist/`·설치 파일의 작은 차이는 Node 버전(22 → 24)이나 압축 차이로 보이며, 원인은 확인하지 않았다.
-- 빌드 경고는 터미널을 지운 뒤라 확인하지 못했다.
+- 빌드 경고: 첫 빌드 때는 터미널을 지워 놓쳐서, 같은 코드(`5efa25c`, 문서·`.gitattributes`만 바뀜)로 다시 빌드하며 로그를 남겼다(`npm.cmd run tauri build 2>&1 | Tee-Object`).
+  - 다시 빌드 결과: exit 0, 325초(vite 1분 35초, cargo release 3분 17초). 설치 파일 10,590,508 B, exe 21,535,232 B, 둘 다 2026-11-15 01:05:05, ProductVersion 0.8.3.
+  - 경고는 4C절과 같은 종류다. Vite 500 kB 넘는 chunk(`index` 4,639.57 kB, `elk` 1,462.86 kB, `chunk-NGNAAXSQ` 629.04 kB), web-tree-sitter direct eval(`[EVAL]` 2건). Rust 경고 없음. Node 24 때문에 새로 생긴 경고는 없다.
+  - vite·cargo가 4C절(7.84초·50.80초)보다 훨씬 오래 걸린 까닭은 확인하지 않았다.
 - 빌드 직전 `workbench-tauri` 프로세스는 0개였다. 앱은 실행하지 않았다(About·Licenses 화면은 사용자 확인 필요).
 
 ## 5. 걸린 시간(이 PC)

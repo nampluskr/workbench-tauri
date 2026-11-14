@@ -255,3 +255,14 @@
   - 무엇을 했나: 루트 `.gitattributes`에 `* text=auto eol=lf`를 더했다(주석 3줄). `docs/BUILD.md` 0절 메모와 7절 줄바꿈 항목을 이에 맞게 고쳤다.
   - 결과: `git add --renormalize .`로 바뀐 추적 파일 0개(이미 LF 751개, 바이너리 1,004개). `test-fixtures/encoding/utf8-crlf.txt`는 하위 `.gitattributes`(`-text`)가 이겨 `text: unset` 그대로.
   - 검증: `git check-attr text eol`(rust-dependencies.txt `auto`/`lf`, CRLF fixture `unset`). 문서·설정만 바뀌어 테스트는 다시 돌리지 않았다(V0).
+  - push: 사용자 승인 뒤 `63ed24e..5efa25c`.
+- **빌드 경고 다시 기록** (2026-11-15, 사용자 요청)
+  - 무엇을 했나: `5efa25c`에서 `npm.cmd run tauri build 2>&1 | Tee-Object`로 다시 빌드했다(로그 `%TEMP%\wt-083-build-20261115.txt`). `docs/BUILD.md` 4D절에 보충했다.
+  - 결과: exit 0, 325초. 설치 파일 10,590,508 B, exe 21,535,232 B. 경고는 4C절과 같은 종류(Vite chunk 3개, `index` 4,639.57 kB; `[EVAL]` 2건). Rust 경고 없음.
+  - 검증: 로그에서 경고 줄을 뽑아 4C절과 비교했다.
+- **Node 기준 22 → 24** (2026-11-15, 사용자 결정)
+  - 무엇을 했나: `docs/BUILD.md` 1절 Node 줄과 README 빠른 시작을 Node.js 24로 바꿨다. winget에는 24 전용 ID가 없어(`winget search --id OpenJS.NodeJS`) nodejs.org 설치 파일로 적었다.
+  - 검증: 문서만 바뀜(V0). 24로 typecheck·test 347/347·빌드가 통과한 것은 위 항목대로.
+- **katex 0.18.11 deprecated → core에 넘김** (2026-11-15, 사용자 결정)
+  - npm 경고는 "Accidentally published with breaking changes. Use 0.19.0 instead."이다. 의존성 변경이라 이 레포에서는 고치지 않았다(AGENTS 9장).
+  - 메모 `C:\Users\nampl\AppData\Local\Temp\v083-katex-memo.md`를 써서 사용자 승인으로 workbench-core v0.8.4 ITEMS에 후보로 넣었다.

@@ -9,7 +9,7 @@ Zed의 기본 편집기 기능을 바탕으로 Tauri 2로 만든 Windows 전용 
 
 [docs/BUILD.md 0절](docs/BUILD.md#0-노트북에서-처음부터)을 줄인 것이다. 모든 단계에 인터넷이 필요하다.
 
-1. 도구 설치: [docs/BUILD.md 1절](docs/BUILD.md#1-필요한-도구와-버전)(Git, PowerShell 7, Node.js 22, VS Build Tools 2022 C++, Rust, WebView2)
+1. 도구 설치: [docs/BUILD.md 1절](docs/BUILD.md#1-필요한-도구와-버전)(Git, PowerShell 7, Node.js 24, VS Build Tools 2022 C++, Rust, WebView2)
 2. 레포 받기:
    ```powershell
    git clone https://github.com/nampluskr/workbench-tauri
