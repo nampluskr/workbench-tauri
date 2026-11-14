@@ -84,7 +84,10 @@ const zedEditorTheme = EditorView.theme({
     color: "var(--editor-active-line-number)",
   },
   // E-012: cursor width (drawSelection draws the cursor as a left border).
-  ".cm-cursor": { borderLeftWidth: "var(--editor-cursor-width)" },
+  // core v0.8.3 I-29: CM's base theme pulls the cursor 0.6px left (margin-left), half of its own 1.2px line. With line numbers the
+  // text starts where the gutters end (I-12) and the gutters are drawn over the cursor layer, so that part of a column 0 cursor was
+  // under them. No pull: every cursor starts at its character's left edge and is whole; the text itself does not move.
+  ".cm-cursor": { borderLeftWidth: "var(--editor-cursor-width)", marginLeft: 0 },
   // U-15: CM draws a 1px dotted outline around a focused editor; Zed shows no focus ring on the editor body.
   "&.cm-focused": { outline: "none" },
   // E-015: selection color and corner radius = line height * multiplier.

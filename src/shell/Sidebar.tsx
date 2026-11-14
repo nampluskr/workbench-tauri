@@ -11,7 +11,7 @@ import {
 import { openContextMenu } from "./AppMenu.tsx";
 import Icon from "./Icon.tsx";
 import type { MenuEntry } from "./menu.ts";
-import { focusSidebar, toggleSidebar } from "./panels.ts";
+import { focusSidebar, toggleSidebar, zenMode } from "./panels.ts";
 import SidebarTitle from "./SidebarTitle.tsx";
 
 const listFocused = () => document.activeElement === document.querySelector(".sidebar-list");
@@ -78,12 +78,15 @@ export default function FolderList() {
   const [query, setQuery] = createSignal("");
   const [editing, setEditing] = createSignal<string | null>(null);
   const [target, setTarget] = createSignal<string | null>(null);
-  const visible = createMemo(() => filterFolders(folders(), query()));
+  // core v0.8.3 I-23: Zen Mode hides the search row, so its text filters nothing meanwhile (it is back, with its filter, when Zen Mode ends).
+  const shownQuery = () => (zenMode() ? "" : query());
+  createEffect(() => { if (zenMode() && document.activeElement === search) list.focus(); }); // focus does not stay in the hidden input
+  const visible = createMemo(() => filterFolders(folders(), shownQuery()));
   const names = createMemo(() => displayNames(folders().map((f) => f.path), folders().map(folderLabel)));
   chain("menu::SelectNext", () => moveCursor(1, visible()));
   chain("menu::SelectPrevious", () => moveCursor(-1, visible()));
   createEffect(() => {
-    cursorId(); query();
+    cursorId(); shownQuery();
     list.querySelector(".cursor")?.scrollIntoView({ block: "nearest" });
   });
   const finishRename = () => { setEditing(null); list.focus(); };
@@ -157,7 +160,7 @@ export default function FolderList() {
           }}>
           <Icon name="folder" />
           <Show when={editing() === folder.id} fallback={<span class="sidebar-item-name">
-            <For each={folderNameParts(name().name, query())}>{(part) => <span classList={{ "sidebar-match": part.match }}>{part.text}</span>}</For><Show when={name().parent}><span class="sidebar-item-parent"> · {name().parent}</span></Show>
+            <For each={folderNameParts(name().name, shownQuery())}>{(part) => <span classList={{ "sidebar-match": part.match }}>{part.text}</span>}</For><Show when={name().parent}><span class="sidebar-item-parent"> · {name().parent}</span></Show>
           </span>}>
             <NameInput name={folderLabel(folder)} cancel={finishRename}
               commit={(value) => { renameFolder(folder.id, value); finishRename(); }} />

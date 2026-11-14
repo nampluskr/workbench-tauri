@@ -6,13 +6,19 @@
 .project-search-toolbar.main { flex-wrap: nowrap; padding: var(--toolbar-padding-y) var(--toolbar-padding-x); border-bottom-color: var(--border-variant); background: var(--toolbar-background); }
 .project-search-input { display: flex; flex: 0 1 var(--editor-search-input-max-width); align-items: center; min-width: 0; min-height: var(--editor-search-input-min-height); box-sizing: border-box; padding: 0 var(--editor-search-input-padding-right) 0 var(--editor-search-input-padding-left); border: var(--editor-search-input-border) solid var(--border); border-radius: var(--editor-search-input-corner-radius); background: var(--editor-background); }
 .project-search input { flex: 1; min-width: 0; padding: 0; background: transparent; color: var(--text); border: 0; outline: none; font-size: var(--editor-search-input-font-size); } /* transparent: a square input background would cover the rounded field border corners */
-.project-search-results { display: flex; flex-direction: column; overflow-x: hidden; overflow-y: auto; flex: 1; }
-.project-search .search-file-header { display: flex; flex: none; align-items: center; gap: var(--search-results-header-gap); box-sizing: border-box; margin: var(--search-results-header-margin-y) var(--search-results-header-padding); height: var(--project-panel-item-height); padding: 0 var(--search-results-header-padding-right) 0 var(--search-results-header-padding-left); border: var(--picker-border-width) solid var(--border); border-radius: var(--search-results-header-radius); background: var(--editor-subheader-background); cursor: pointer; }
-.search-file-header { text-align: left; }
-.search-file-header:hover { background: var(--element-hover); }
-.project-search .search-file-name { padding: 0; font-family: var(--buffer-font-family); font-size: var(--typography-buffer-font-size); }
-.project-search .search-file-name:hover:not(:disabled) { background: transparent; }
-.search-file-dir { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--text-muted); font-family: var(--buffer-font-family); font-size: var(--typography-buffer-font-size); }
+.project-search-results { overflow-x: hidden; overflow-y: auto; flex: 1; }
+/* core v0.8.3 I-25 / I-26: the results are a .list-table (app.css, the Keymap Editor's look): Name | Path | Size | Modified.
+   Size and Modified keep their width; Name and Path share the rest, so a narrow pane cuts those two (with an ellipsis). */
+.search-table :is(th, td) { padding-inline: var(--search-results-header-gap); }
+.search-col-name { width: calc((100% - var(--search-results-column-size-width) - var(--search-results-column-modified-width)) * var(--search-results-column-name-ratio)); }
+.search-col-size { width: var(--search-results-column-size-width); }
+.search-col-modified { width: var(--search-results-column-modified-width); }
+.search-table :is(th, td):nth-child(3) { text-align: right; }
+.search-table td:not(:first-child) { color: var(--text-muted); }
+.search-table tbody tr { cursor: pointer; }
+.search-file-name { display: flex; align-items: center; gap: var(--search-results-header-gap); }
+.search-file-name > .icon { flex: none; }
+.search-file-name > span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 /* U-8: Aa / wd / .* sit inside the input on its right (E-062, E-065); the result count follows it (E-067). */
 .project-search-input { gap: var(--editor-search-input-options-gap); }
 .project-search-input .icon-button { --button-size: calc(var(--icons-size-small) + 2 * var(--editor-search-input-options-gap)); --icon-size: var(--icons-size-small); color: var(--text-muted); }

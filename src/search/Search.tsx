@@ -4,13 +4,12 @@ import { commands } from "../keymap/keyboard.ts";
 import { openTool } from "../workspace/context.ts";
 import { activeId, editorContext, folders } from "../workspace/store.ts";
 import { searchRoots } from "../workspace/folders.ts";
-import { pathCrumb } from "../editor/breadcrumbs.ts";
 import { baseName } from "../workspace/paths.ts";
 import { searchPath, searchTitle } from "../workspace/tab-view.ts";
 import FileIcon from "../shell/FileIcon.tsx";
 import { IconButton } from "../shell/Icon.tsx";
 import { nameRegExp } from "./name-regexp.ts";
-import type { SearchEntry, SearchEvent } from "./entries.ts";
+import { entryDir, modifiedText, sizeText, type SearchEntry, type SearchEvent } from "./entries.ts";
 import { openEntry, searchNames } from "./names.ts";
 import "./search.css";
 
@@ -81,11 +80,18 @@ function Search(props: { searched: (query: string) => void }) {
     </div>
     <Show when={busy() || message()}><p class="search-message" role="status">{busy() ? "Searching…" : message()}</p></Show>
     <div class="project-search-results">
-      <For each={entries()}>{(entry) => <button class="search-file-header" onClick={() => openEntry(root(), entry)}>
-        <FileIcon name={baseName(entry.path)} dir={entry.isDir} />
-        <span class="search-file-name">{baseName(entry.path)}</span>
-        <span class="search-file-dir">{pathCrumb(root(), entry.path)}</span>
-      </button>}</For>
+      {/* core v0.8.3 I-25 / I-26: the Keymap Editor's table look; a row opens by a click, or focused (Tab) by Enter or Space. */}
+      <Show when={entries().length}>
+        <table class="list-table search-table">
+          <colgroup><col class="search-col-name" /><col /><col class="search-col-size" /><col class="search-col-modified" /></colgroup>
+          <thead><tr><th>Name</th><th>Path</th><th>Size</th><th>Modified</th></tr></thead>
+          <tbody><For each={entries()}>{(entry) => <tr tabindex="0" onClick={() => openEntry(root(), entry)}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openEntry(root(), entry); } }}>
+            <td><span class="search-file-name"><FileIcon name={baseName(entry.path)} dir={entry.isDir} /><span>{baseName(entry.path)}</span></span></td>
+            <td>{entryDir(root(), entry.path)}</td><td>{sizeText(entry)}</td><td>{modifiedText(entry.modified)}</td>
+          </tr>}</For></tbody>
+        </table>
+      </Show>
     </div>
   </section>;
 }

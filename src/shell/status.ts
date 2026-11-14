@@ -19,15 +19,20 @@ import type { Appearance, Settings, ThemeArea } from "../settings/model.ts";
 
 type StatusButton = { name: IconName; label: string; action: string; toggled?: boolean; dividerAfter?: boolean | "toggle" };
 
+/** The Toggle Folder button, the same in the status bar (closed) and in the Folder Sidebar's footer (open). */
+export const folderToggle = (sidebarOpen: boolean): StatusButton => (
+  { name: sidebarOpen ? "threads_sidebar_left_open" : "threads_sidebar_left_closed", label: "Toggle Folder", action: "multi_workspace::ToggleWorkspaceSidebar", toggled: sidebarOpen, dividerAfter: "toggle" });
+
 /**
  * I-22; core v0.8.1 I-4: sidebar | tree | Outline | Search and Lock Preview, a divider after each of the first three.
- * core v0.8.2 I-1: all five are toggles (`toggled` draws the pressed cell): the sidebar button is always there and on while the folder
- * sidebar is open, Search is on while the folder has a Search tab in any pane (`searchOpen`).
+ * core v0.8.2 I-1: all five are toggles (`toggled` draws the pressed cell): Search is on while the folder has a Search tab in any
+ * pane (`searchOpen`).
  * core v0.8.3 I-4 / I-5: the first three only toggle, under one label in both states.
+ * core v0.8.3 I-20: the sidebar button is here only while the Folder Sidebar is closed; open, the Sidebar's footer has it (App.tsx).
  */
 export function statusButtons(sidebarOpen: boolean, dockOpen: boolean, lockPreview: boolean, outlineOpen: boolean, searchOpen: boolean): StatusButton[] {
   return [
-    { name: sidebarOpen ? "threads_sidebar_left_open" : "threads_sidebar_left_closed", label: "Toggle Folder", action: "multi_workspace::ToggleWorkspaceSidebar", toggled: sidebarOpen, dividerAfter: "toggle" },
+    ...(sidebarOpen ? [] : [folderToggle(false)]),
     { name: "file_tree", label: "Toggle Tree", action: "workspace::ToggleLeftDock", toggled: dockOpen, dividerAfter: true },
     { name: "list_tree", label: "Toggle Outline", action: "outline_panel::Toggle", toggled: outlineOpen, dividerAfter: true },
     { name: "magnifying_glass", label: "Search", action: "pane::DeploySearch", toggled: searchOpen },

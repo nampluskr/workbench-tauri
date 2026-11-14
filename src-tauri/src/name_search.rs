@@ -89,7 +89,10 @@ fn search(roots: &[PathBuf], query: &str, filter: Filter, mut emit: impl FnMut(V
             if entry.depth() == 0 || !(kind.is_file() || kind.is_dir()) || !name_matches(&entry.file_name().to_string_lossy(), &query, filter) { continue; }
             let path = safe_path(entry.path(), roots)?;
             if !seen.insert(path.to_string_lossy().to_lowercase()) { continue; }
-            if !emit(json!({"kind":"entry", "entry":{"path":path.to_string_lossy(), "isDir":kind.is_dir()}})) { return Ok(()); }
+            // core v0.8.3 I-26: size and time for the result table. Only for a match, from the metadata the directory read already gave (Windows).
+            let meta = entry.metadata().ok();
+            let modified = meta.as_ref().and_then(|meta| meta.modified().ok()).and_then(|time| time.duration_since(std::time::UNIX_EPOCH).ok()).map(|since| since.as_millis() as u64);
+            if !emit(json!({"kind":"entry", "entry":{"path":path.to_string_lossy(), "isDir":kind.is_dir(), "size":meta.map_or(0, |meta| meta.len()), "modified":modified}})) { return Ok(()); }
             count += 1;
             if count >= limit { emit(json!({"kind":"limit"})); return Ok(()); }
         }

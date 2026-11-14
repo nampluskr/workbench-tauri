@@ -97,7 +97,7 @@ function KeymapEditor() {
     </div>
     <Show when={loaded().error}><div role="alert">{loaded().error}</div></Show>
     <div class="keymap-table-scroll">
-      <table class="keymap-table">
+      <table class="list-table keymap-table">
         <colgroup><col class="keymap-col-icon" /><col class="keymap-col-action" /><col class="keymap-col-arguments" /><col class="keymap-col-keys" /><col class="keymap-col-context" /><col class="keymap-col-source" /></colgroup>
         <thead><tr><th aria-label="Edit" /><th>Action</th><th>Arguments</th><th>Keystrokes</th><th>Context</th><th>Source</th></tr></thead>
         <tbody><For each={rows()}>{(row) => <tr tabindex="0" onDblClick={() => begin(row)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); begin(row); } }}>

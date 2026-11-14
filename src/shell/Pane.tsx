@@ -386,15 +386,15 @@ function TabList(props: { ctx: FolderContext; pane: PaneState }) {
               <span class="tab-slot-start">
                 <span class="tab-indicator" classList={{ dirty: status().dirty, conflict: status().conflict }} />
               </span>
-              {/* L-69 / I-080: a preview tab always has the FileDoc icon and "Preview {file name}", cut at 24 characters. */}
+              {/* core v0.8.3 I-21 (was L-69 / I-080): a preview tab has the eye icon and its file's name, cut at 24 characters. */}
               <Show when={tab.markdown}>
                 <span class="tab-icon">
-                  <Icon name="file_doc" />
+                  <Icon name="eye" />
                 </span>
               </Show>
               <Show when={tab.file.icon}>{(name) => <span class="tab-icon" classList={{ "tab-icon-success": tab.file.iconSuccess }}><Icon name={name()} /></span>}</Show>
               <span class="tab-title" classList={{ deleted: status().deleted }}>
-                {truncateName(tab.file.title?.() ?? (tab.markdown ? `Preview ${baseName(tab.path)}` : baseName(tab.path)), TAB_MAX_TITLE_CHARS)}
+                {truncateName(tab.file.title?.() ?? baseName(tab.path), TAB_MAX_TITLE_CHARS)}
               </span>
               {/* I-073 / L-66: right side, shown on hover; it asks like every other close. A pinned tab has the Pin button
                   instead, which unpins (L-241). L-240 / L-241: the key only on the active tab. */}
@@ -453,7 +453,11 @@ function PaneBody(props: { pane: PaneState | null }) {
             // the same editor out and back in drops its focus mid-typing.
             if (!(dom ? item.firstChild !== dom || item.childNodes.length > 1 : item.firstChild)) return;
             item.replaceChildren(...(dom ? [dom] : []));
-            restoreScroll(file?.view?.scrollDOM ?? file?.element);
+            // core v0.8.3 I-19: a Pane made anew (its folder is shown again, a split) runs this before it is in the document, where
+            // an element has no scroll offsets to set; put them back once it is.
+            const scroller = file?.view?.scrollDOM ?? file?.element;
+            if (item.isConnected) restoreScroll(scroller);
+            else queueMicrotask(() => restoreScroll(scroller));
             // 03-tauri R-01: CM6 keeps the last DOM selection it read, also one read while it was out of focus. Moved and
             // focused in one go (a tab dropped on another Pane), it took that copy for the selection still being there and
             // then read the browser's caret at the document start as a new selection. Its blur handler drops the copy.

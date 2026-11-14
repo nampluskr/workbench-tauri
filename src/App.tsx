@@ -11,7 +11,7 @@ import { addFolder, editorContext, folders, outlineOpen, panelLayout, sidebarWid
 import { isSorted } from "./workspace/folders.ts";
 import { activeTabOf, allTabs, lockPreview } from "./workspace/context.ts";
 import { hasSearchTab } from "./workspace/tab-view.ts";
-import { statusButtons, statusItems, themeButtons } from "./shell/status.ts";
+import { folderToggle, statusButtons, statusItems, themeButtons } from "./shell/status.ts";
 import { commands, focusStack } from "./keymap/keyboard.ts";
 import { adjustFontSize, settings, toggleAreaTheme, toggleViewOption } from "./settings/load.ts";
 import { notify } from "./shell/toast.ts";
@@ -36,12 +36,15 @@ export default function App() {
   const status = createMemo(() => statusItems(activeTabOf(editorContext().pane())));
   return (
     <>
-      <aside class="sidebar" hidden={!sidebarOpen()} data-keymap-context="Sidebar">
+      {/* core v0.8.3 I-23 / I-24: in Zen Mode only the title row and the list stay (app.css). */}
+      <aside class="sidebar" classList={{ zen: zenMode() }} hidden={!sidebarOpen()} data-keymap-context="Sidebar">
         <div class="dock-resize-handle" ref={(el) => resizeHandle(el, { width: sidebarWidth, setWidth: resizeSidebar })} />
         <FolderList />
-        {/* core v0.8.3 I-3: no toggle here (the status bar has it); Open Folder at the right end. */}
+        {/* core v0.8.3 I-20: Toggle Folder at the left end while the Sidebar is open (closed: the status bar has it); Open Folder at the right end. */}
         <div class="sidebar-footer">
-          <div class="group grow" />
+          <div class="group grow">
+            <IconButton {...folderToggle(true)} onClick={() => commands.get(folderToggle(true).action)?.()} />
+          </div>
           <div class="group">
             {/* core v0.8.3 I-6: sort once by the shown name; pressed only while the list is in that order. */}
             <IconButton name="sort_name_asc" label="Sort by Name (A to Z)" toggled={isSorted(folders(), "name")} onClick={() => sortFolderList("name")} />
@@ -63,7 +66,7 @@ export default function App() {
           {/* L-15 / D-8: the active folder's split tree of Panes (R-26, R-9). */}
           <PaneArea />
         </div>
-        {/* I-22: the sidebar's toggle precedes the project panel, then the Outline (core v0.8.1 I-4) and search. core v0.8.2 I-2: the three theme buttons end the bar. */}
+        {/* I-22: the sidebar's toggle (only while it is closed, core v0.8.3 I-20) precedes the project panel, then the Outline (core v0.8.1 I-4) and search. core v0.8.2 I-2: the three theme buttons end the bar. */}
         <footer class="status-bar">
           <div class="group grow">
             <For each={statusButtons(sidebarOpen(), dockOpen(), lockPreview(), outlineOpen(), hasSearchTab(allTabs(editorContext())))}>{(button) => (<>

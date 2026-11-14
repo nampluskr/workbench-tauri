@@ -121,12 +121,14 @@ const METRICS: Record<string, string> = {
   "editor.search_bar.gap": rem(8), // E-061
   // Project Search (K-32): toml IDs (`editor.search_input.max_width`, `[search_results]`), sources are in the toml.
   "editor.search_input.max_width": rem(1200), // toml; Zed ui/src/utils/search_input.rs MAX_WIDTH
-  "search_results.header.padding": rem(4), // toml; editor.rs:303 BUFFER_HEADER_PADDING
-  "search_results.header.padding_left": rem(4), // toml; header.rs `.pl_1()`
-  "search_results.header.padding_right": rem(8), // toml; header.rs `.pr_2()`
-  "search_results.header.gap": rem(6), // toml; header.rs `.gap_1p5()`
-  "search_results.header.radius": rem(2), // toml; header.rs `.rounded_sm()`
-  "search_results.header.margin_y": rem(2), // user decision (ORDER-14 U-10, user 2026-11-10); not in toml, replaces the 4px header.padding above/below a result
+  "search_results.header.gap": rem(6), // toml; header.rs `.gap_1p5()`: icon to name, and each side of a cell
+  // core v0.8.3 I-25 / I-26 (not in the toml; the boxed result rows and their header.padding* / radius / margin_y are gone): one row
+  // height for the Keymap table and the Search results, and the Search columns. tauri's choice: Size fits "9999.9 MB", Modified
+  // "YYYY-MM-DD HH:mm"; Name takes this share of the rest and Path what is left.
+  "list_table.row.height": rem(28),
+  "search_results.column.name_ratio": "0.4",
+  "search_results.column.size_width": rem(92),
+  "search_results.column.modified_width": rem(140),
   "editor.search_input.min_height": rem(32), // E-062
   "editor.search_input.padding_left": rem(8), // E-062
   "editor.search_input.padding_right": rem(4), // E-062
@@ -287,11 +289,13 @@ const METRICS: Record<string, string> = {
   "markdown_preview.frontmatter.key_cell_font_weight": "600", // L-111
   "markdown_preview.frontmatter.value_border_left": prem(1), // L-111
   "markdown_preview.frontmatter.row_border_top": prem(1), // L-111
-  "tab.start_slot.width": rem(12), // L-25 (modified dot)
+  // core v0.8.3 I-22 (was L-25 12 and L-65 10): the slot is all the space between the tab's left border and its title (the tab has no
+  // left padding and no gap after the slot, app.css), so the title starts 1 + 9 = 10px in; the 6px dot sits in its middle.
+  "tab.start_slot.width": rem(9),
   "tab.start_slot.height": rem(12), // L-25
   "tab.end_slot.width": rem(14), // L-25 (close button)
   "tab.end_slot.height": rem(14), // L-25
-  "tab.indicator_size": rem(10), // L-65
+  "tab.indicator_size": rem(6),
   "icons.size.small": rem(14), // L-06 (tab close icon, L-66)
   "icons.size.xsmall": rem(12), // L-06 (Project Search excerpt expand arrows)
   "statusbar.height": rem(30), // L-28

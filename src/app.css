@@ -452,7 +452,17 @@ button, input, select, textarea {
 .tab-bar-drop { flex: 1 0 var(--pane-tab-bar-end-drop-min-width); height: var(--tab-bar-height); }
 .tab-bar-drop.drop { background: var(--drop-target-background); }
 /* core v0.8.3 I-14 Zen Mode: only the title bar and the status bar go; the window, the tab bars and the Sidebars stay. */
-.workspace.zen > .title-bar, .workspace.zen > .status-bar { display: none; }
+.workspace.zen > .status-bar { display: none; }
+/* core v0.8.3 I-28: every right-click menu is drawn inside the title bar's app menu, so the bar is emptied and flattened, not removed
+   (in a display:none bar the menu had no box). The fixed-position #context-menu and its sub-menu draw as in the normal mode; the
+   F10 menu's own bar and popup stay hidden, as before. */
+.workspace.zen > .title-bar { height: 0; padding: 0; }
+.workspace.zen > .title-bar > :not(.title-left),
+.workspace.zen .app-menu > :is(.icon-button, .menu-bar, .menu-root:not(#context-menu), .menu-root:not(#context-menu) ~ .menu-child) { display: none; }
+/* core v0.8.3 I-23 / I-24: the Folder Sidebar keeps its title row and its list only. Its top line continues the one over the
+   workspace body, so the Folder, Tree and Outline title rows (and the tab bars) start at the same height. */
+.sidebar.zen > :is(.sidebar-header, .sidebar-footer) { display: none; }
+.sidebar.zen { border-top: var(--window-border-workspace-top) solid var(--border); }
 /* I-715: the tab dropped on: background, and a tab_drop_line_width line on the side the tab goes. */
 .tab.drop-left, .tab.drop-right { background: var(--drop-target-background); }
 .tab.drop-left::after, .tab.drop-right::after { content: ""; position: absolute; top: 0; bottom: 0; width: var(--pane-tab-drop-line-width); background: var(--drop-target-border); }
@@ -469,7 +479,7 @@ button, input, select, textarea {
   align-items: center;
   box-sizing: border-box;
   height: var(--tab-bar-height);
-  padding-inline: var(--tab-padding-x); /* L-24 */
+  padding-inline: 0 var(--tab-padding-x); /* L-24 on the close side; core v0.8.3 I-22: the start slot is all the space left of the title */
   gap: var(--tab-gap);
   border: solid transparent;
   border-width: 0 var(--tab-border-width) var(--tab-border-width); /* a side without a line keeps its 1px as padding */
@@ -485,7 +495,8 @@ button, input, select, textarea {
 .tab.preview .tab-title { font-style: italic; } /* I-064 */
 .tab-title.deleted { text-decoration: line-through; } /* E-087 */
 /* L-25 slots. L-65 / I-071: Accent dot when modified, Warning on a conflict, nothing when clean. */
-.tab-slot-start { flex: none; display: flex; align-items: center; justify-content: center; width: var(--tab-start-slot-width); height: var(--tab-start-slot-height); }
+/* core v0.8.3 I-22: border + slot = 10px from the tab's left edge to its title (was border + padding + slot + gap = 21px); no gap after the slot. */
+.tab-slot-start { flex: none; display: flex; align-items: center; justify-content: center; width: var(--tab-start-slot-width); height: var(--tab-start-slot-height); margin-right: calc(0px - var(--tab-gap)); }
 .tab-indicator { display: none; width: var(--tab-indicator-size); height: var(--tab-indicator-size); border-radius: 50%; }
 .tab-indicator.dirty { display: block; background: var(--text-accent); }
 .tab-indicator.conflict { background: var(--warning); }
@@ -577,6 +588,15 @@ button, input, select, textarea {
   padding-top: var(--tooltip-multi-separator-padding-top);
   border-top: var(--tooltip-multi-separator-border-width) solid var(--border-variant);
 }
+
+/* core v0.8.3 I-25: the one table look of the Keymap Editor and the Search results: the UI font at the default size, rows of one
+   height, no boxes, every other row shaded, a focused row outlined. Each table adds its own columns and muted cells. */
+.list-table { width: 100%; table-layout: fixed; border-collapse: collapse; font-family: var(--ui-font-family); font-size: var(--typography-size-default); }
+.list-table th { font-weight: inherit; text-align: left; border-bottom: var(--keymap-editor-search-input-border) solid var(--border-variant); }
+.list-table td { box-sizing: border-box; height: var(--list-table-row-height); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  border-block: var(--keymap-editor-row-border-width) solid transparent; }
+.list-table tbody tr:nth-child(even) { background: var(--element-background); }
+.list-table tbody tr:focus { outline: var(--keymap-editor-row-border-width) solid var(--border-focused); outline-offset: calc(0px - var(--keymap-editor-row-border-width)); }
 
 /* R-8 / R-9 menu. left/top come from an adopted sheet (src/shell/AppMenu.tsx); the popup is fixed to the window. */
 .app-menu { display: flex; align-items: center; --icon-size: var(--menu-app-menu-button-icon-size); }
@@ -1011,10 +1031,13 @@ button, input, select, textarea {
 .markdown-body .fm-key:nth-child(n + 3), .markdown-body .fm-value:nth-child(n + 3) { border-top: var(--markdown-preview-frontmatter-row-border-top) solid var(--border); }
 .markdown-body img { max-width: 100%; height: auto; } /* core v0.8 I-3: shrink to fit, never enlarge */
 /* core v0.8 I-2: ipynb cells reuse the Markdown preview's code block (pre) and table rules; only what they lack is here. */
-/* core v0.8.2 I-15: [n] in the left margin, right-aligned to the code cell and level with its first code line (below the box's margin, border and header row). */
+/* core v0.8.2 I-15: [n] in the left margin, right-aligned to the code cell. core v0.8.3 I-18: level with the box's header row: centred
+   in the row's band (the Copy button's height, under the box border), as the language name is. The box's top margin collapses
+   through .nb-code, so the band starts at .nb-code's own top (the v0.8.2 offset counted that margin and put [n] a margin too low). */
 .markdown-body .nb-code { position: relative; }
 .markdown-body .nb-count {
-  position: absolute; right: 100%; top: calc(var(--markdown-preview-code-block-margin-y) + var(--markdown-preview-code-block-border) + var(--buttons-height-default));
+  position: absolute; right: 100%; top: var(--markdown-preview-code-block-border); height: var(--buttons-height-default);
+  display: flex; align-items: center; justify-content: flex-end;
   /* core v0.8.3 I-9: at least the margin wide; a longer [n] grows left into the container padding and the body does not move */
   box-sizing: border-box; min-width: var(--markdown-preview-left-margin); padding-right: var(--markdown-preview-notebook-count-gap); text-align: right; white-space: pre;
   color: var(--text-muted); font-family: var(--preview-code-font-family); font-size: var(--preview-code-font-size); line-height: var(--preview-code-line-height); user-select: none;
