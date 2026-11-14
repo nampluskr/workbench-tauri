@@ -1,6 +1,9 @@
 import { createMemo, Show } from "solid-js";
 import { activeFolder, contextOf, folders, missingIds, removeFolder } from "../workspace/store.ts";
+import { folderLabel } from "../workspace/folders.ts";
+import { focusPanel, toggleDock } from "./panels.ts";
 import ProjectTree from "./ProjectTree.tsx";
+import SidebarTitle from "./SidebarTitle.tsx";
 
 // The left Dock's content: the active folder's tree (R-18), or the states without one (R-16).
 export default function ProjectPanel() {
@@ -15,7 +18,9 @@ export default function ProjectPanel() {
   });
   const editing = () => !!tree()?.edit();
   // I-030: the panel is a `menu` context too, so Up / Down / Home / End are the menu actions (P-022: editing / not_editing).
-  return (
+  return (<>
+    {/* core v0.8.3 I-16: "Tree · folder name" (the name the Folder Sidebar shows), "Tree" with no folder. */}
+    <SidebarTitle icon="file_tree" title="Tree" detail={activeFolder() ? folderLabel(activeFolder()!) : ""} focus={focusPanel} close={toggleDock} />
     <div class="project-panel" tabindex="-1" data-keymap-context={`ProjectPanel menu ${editing() ? "editing" : "not_editing"}`}>
       <Show when={tree()} keyed>
         {(ctx) => <ProjectTree ctx={ctx} />}
@@ -33,5 +38,5 @@ export default function ProjectPanel() {
         )}
       </Show>
     </div>
-  );
+  </>);
 }

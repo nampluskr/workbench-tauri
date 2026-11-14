@@ -1,8 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { appMenus, userMenu } from "./app-menus.ts";
-import { isClassicLayout } from "./layout.ts";
-import { PROJECT_PANEL_DEFAULT_WIDTH } from "../spec/metrics.ts";
 import { first, shortcutForEntry, type MenuEntry } from "./menu.ts";
 import { FONT_LICENSES, licenseText } from "./licenses.ts";
 import { displayChunks } from "../keymap/display.ts";
@@ -67,9 +65,9 @@ test("I-29: Help is About alone; I-28: there is no Go menu", () => {
   assert.deepEqual(menus.at(-1)!.entries, [{ label: "About", action: "zed::About" }]);
 });
 
-test("K-10-R1: Settings, Keymap and Classic are active; custom layout is checked and disabled", () => {
-  let classic = true;
-  const USER_MENU = userMenu(() => classic);
+test("K-10-R1: Settings and Keymap are active; Panel Layout picks Left or Right Sidebars", () => {
+  let side: "left" | "right" = "left";
+  const USER_MENU = userMenu(() => side);
   assert.deepEqual(labels(USER_MENU), ["Settings", "Keymap", "Themes…", "Icon Themes…", "Extensions", "---", "Panel Layout"]);
   assert.deepEqual(USER_MENU.slice(0, 5).map((e) => e !== "separator" && e.shortcut ? displayChunks(e.shortcut) : []), [[], [], [], [], []]);
   const keymap = USER_MENU[1];
@@ -94,15 +92,12 @@ test("K-10-R1: Settings, Keymap and Classic are active; custom layout is checked
   assert.equal(settings.action, "zed::OpenSettings");
   const panel = USER_MENU[6];
   if (panel === "separator") assert.fail();
-  assert.deepEqual(labels(panel.children!), ["Classic"]);
+  // core v0.8.3 I-17: two rows, the side in use checked; no "Custom" row. Left keeps Classic's command ID.
+  const rows = () => panel.children!.map((item) => item === "separator" ? null : [item.label, item.action, item.checked, !!item.disabled]);
+  assert.deepEqual(rows(), [["Left Sidebars", "workspace::UseClassicLayout", true, false], ["Right Sidebars", "workspace::UseRightSidebars", false, false]]);
   assert.equal(first(panel.children!), 0);
-  assert.equal(panel.children![0] !== "separator" && panel.children![0].checked, true);
-  classic = false;
-  assert.deepEqual(labels(panel.children!), ["Classic", "Custom"]);
-  assert.deepEqual(panel.children!.map((item) => item === "separator" ? null : [item.checked, !!item.disabled]), [[false, false], [true, true]]);
-  assert.ok(isClassicLayout(true, PROJECT_PANEL_DEFAULT_WIDTH));
-  assert.ok(!isClassicLayout(false, PROJECT_PANEL_DEFAULT_WIDTH));
-  assert.ok(!isClassicLayout(true, PROJECT_PANEL_DEFAULT_WIDTH + 1));
+  side = "right";
+  assert.deepEqual(rows(), [["Left Sidebars", "workspace::UseClassicLayout", false, false], ["Right Sidebars", "workspace::UseRightSidebars", true, false]]);
 });
 
 test("K-09: license notices retain available text when a copy is missing", async () => {

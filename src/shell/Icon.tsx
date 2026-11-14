@@ -11,7 +11,8 @@ export type IconName =
   | "split" | "plus" | "maximize" | "arrow_left" | "arrow_right" | "menu" | "close" | "pin" | "minimize" | "eye" | "file_doc"
   | "file" | "check" | "chevron_down" | "chevron_right" | "chevron_up" | "chevron_up_down" | "magnifying_glass" | "search" | "pencil" | "github"
   | "chevron_down_up" | "zed_assistant" | "arrow_circle" | "warning" | "chevron_left" | "expand_up" | "expand_down"
-  | "case_sensitive" | "whole_word" | "regex" | "replace" | "replace_next" | "replace_all" | "select_all" | "list_selection" | "list_tree" | "sun" | "moon" | "settings";
+  | "case_sensitive" | "whole_word" | "regex" | "replace" | "replace_next" | "replace_all" | "select_all" | "list_selection" | "list_tree" | "sun" | "moon" | "settings"
+  | "sort_name_asc" | "sort_name_desc";
 
 for (const [path, svg] of Object.entries(svgs)) iconMarkup[path.slice(path.lastIndexOf("/") + 1, -4)] = svg;
 // I-32: only the two find toggles that were cut; the other viewBox-less copies keep the look the earlier V3 runs measured.
@@ -22,6 +23,12 @@ const ray = (turn: number) => `<path d="M8 1.6V3.2" transform="rotate(${turn * 4
 Object.assign(iconMarkup, {
   sun: `<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="2.6" stroke="currentColor" stroke-width="1.2"/>${[0, 1, 2, 3, 4, 5, 6, 7].map(ray).join("")}</svg>`,
   moon: `<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 9.4A5.4 5.4 0 1 1 6.6 3A4.3 4.3 0 0 0 13 9.4Z" fill="currentColor"/></svg>`,
+});
+// core v0.8.3 I-6: the Folder Sidebar's name sort (mockup statusbar 03, variant C: lines of different length and an arrow); not in the Zed set either.
+const sort = (d: string) => `<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="${d}" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+Object.assign(iconMarkup, {
+  sort_name_asc: sort("M2 4H5M2 8H7M2 12H8M12 12V3M9.5 5.5L12 3L14.5 5.5"),
+  sort_name_desc: sort("M2 4H8M2 8H7M2 12H5M12 3V12M9.5 9.5L12 12L14.5 9.5"),
 });
 
 /** Missing Zed copies leave an empty slot with the existing spec dimensions. */

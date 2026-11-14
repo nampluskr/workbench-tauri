@@ -56,7 +56,8 @@ export function appMenus(previewDisabled: () => boolean): Menu[] {
 }
 
 // Phase 6: implemented screens use actions; later screens keep their disabled shortcuts.
-export const userMenu = (classic: () => boolean): MenuEntry[] => [
+// core v0.8.3 I-17: Panel Layout picks the side of the Tree and Outline Sidebars; the side in use is checked.
+export const userMenu = (side: () => "left" | "right"): MenuEntry[] => [
   { label: "Settings", action: "zed::OpenSettings" },
   { label: "Keymap", action: "zed::OpenKeymap" },
   { label: "Themes…", action: "theme_selector::Toggle" },
@@ -64,7 +65,7 @@ export const userMenu = (classic: () => boolean): MenuEntry[] => [
   { label: "Extensions", action: "zed::Extensions" },
   "separator",
   { label: "Panel Layout", get children() { return [
-    { label: "Classic", action: "workspace::UseClassicLayout", checked: classic() },
-    ...(!classic() ? [{ label: "Custom", checked: true, disabled: true }] : []),
+    { label: "Left Sidebars", action: "workspace::UseClassicLayout", checked: side() === "left" },
+    { label: "Right Sidebars", action: "workspace::UseRightSidebars", checked: side() === "right" },
   ]; } },
 ];

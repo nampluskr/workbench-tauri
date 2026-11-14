@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { addOrActivate, displayNames, filterFolders, folderLabel, folderNameParts, searchRoots, move, moveCursor, remove, rename, type Folder } from "./folders.ts";
+import { addOrActivate, displayNames, filterFolders, folderLabel, folderNameParts, isSorted, searchRoots, move, moveCursor, remove, rename, sortFolders, type Folder } from "./folders.ts";
+import { sortChildren } from "./tree.ts";
 import { folderName, normalizePath, parentName, pathKey, truncateName } from "./paths.ts";
 import { OUTLINE_DEFAULT, parseState, serializeState, STATE_VERSION } from "./state-file.ts";
 
@@ -146,6 +147,44 @@ test("R-10, R-19: display names, order and width round trip; search uses renamed
   assert.equal(loaded.activeId, "b");
   assert.equal(loaded.sidebarWidth, 900);
   assert.deepEqual(displayNames(renamed.map((f) => f.path), renamed.map(folderLabel)).map((n) => n.name), ["a", "Research", "c"]);
+});
+
+test("core v0.8.3 I-6 / I-7: folders sort by the shown name as the tree sorts names, or by the time added; the mark follows the order alone", () => {
+  const names = ["v10", "한글", "Beta", "v2", "alpha", "가나", "Zeta"];
+  const list: Folder[] = names.map((name, i) => ({ id: name, path: `D:\\${name}`, added_at: `2026-11-${String(20 - i).padStart(2, "0")}T00:00:00.000Z` }));
+  list[2] = { ...list[2], path: "D:\\zzz", name: "Beta" }; // a renamed folder sorts by the name shown, not by its path
+  const asTree = sortChildren(names.map((name) => ({ name, is_dir: true }))).map((c) => c.name);
+  assert.deepEqual(asTree, ["alpha", "Beta", "v2", "v10", "Zeta", "가나", "한글"]);
+  assert.deepEqual(sortFolders(list, "name").map(folderLabel), asTree);
+  assert.deepEqual(sortFolders(list, "name-desc").map(folderLabel), [...asTree].reverse());
+  assert.deepEqual(sortFolders(list, "added").map((f) => f.id), [...names].reverse()); // the last one was added first
+  assert.deepEqual(sortFolders(list, "added-desc").map((f) => f.id), names);
+  assert.deepEqual(list.map((f) => f.id), names); // the list given is not changed
+
+  const sorted = sortFolders(list, "name");
+  assert.deepEqual((["name", "name-desc", "added", "added-desc"] as const).map((by) => isSorted(sorted, by)), [true, false, false, false]);
+  assert.ok(isSorted(list, "added-desc") && !isSorted(list, "name"));
+  assert.ok(!isSorted(move(sorted, "alpha", "v2"), "name")); // a drop breaks the order
+  assert.ok(!isSorted([...sorted, folder("new", "D:\\beta2")], "name")); // so does a new folder at the end, unless it sorts last
+  assert.ok(isSorted([...sorted, folder("new", "D:\\힣")], "name"));
+  const twins = [folder("x", "D:\\1\\same"), folder("y", "D:\\2\\same")]; // equal names (and times) are in order either way
+  assert.ok(isSorted(twins, "name") && isSorted([...twins].reverse(), "name") && isSorted(twins, "name-desc") && isSorted(twins, "added"));
+});
+
+test("core v0.8.3 I-17: the Panel Layout side round trips beside unknown keys; an old or malformed value is Left", () => {
+  const mem = { folders: abc, activeId: "a", sidebarWidth: 300, lockPreview: false, outline: OUTLINE_DEFAULT, recent: [] };
+  for (const panelLayout of ["left", "right"] as const) {
+    const saved = serializeState({ unknown: 7, windows: [{ id: "w7", later: { x: 1 }, outline: { open: true, width: 320 } }] }, { ...mem, outline: { open: true, width: 320 }, panelLayout });
+    const loaded = parseState(saved);
+    assert.equal(loaded.panelLayout, panelLayout);
+    assert.deepEqual(loaded.outline, { open: true, width: 320 }); // what is open and how wide does not depend on the side
+    assert.equal(loaded.raw.unknown, 7);
+    assert.deepEqual(JSON.parse(saved).windows[0].later, { x: 1 });
+    assert.equal(JSON.parse(saved).windows[0].panel_layout, panelLayout);
+  }
+  assert.equal(parseState(null).panelLayout, "left");
+  for (const value of [undefined, null, "Right", "classic", 1, true])
+    assert.equal(parseState(JSON.stringify({ windows: [{ panel_layout: value }] })).panelLayout, "left");
 });
 
 test("R-18: preview lock round trips both states; old or malformed values default to off", () => {

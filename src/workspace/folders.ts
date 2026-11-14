@@ -1,4 +1,5 @@
 import { folderName, parentName, pathKey } from "./paths.ts";
+import { naturalCmp } from "./tree.ts";
 
 /** One registered folder. Unknown keys belong to a newer app version and are kept as they are (A-20). */
 export type Folder = { id: string; path: string; added_at: string; name?: string; [extra: string]: unknown };
@@ -60,6 +61,22 @@ export function move(folders: Folder[], id: string, target: string): Folder[] {
   const next = [...folders];
   next.splice(to, 0, ...next.splice(from, 1));
   return next;
+}
+
+/** core v0.8.3 I-6 / I-7: the one-time sorts of the list: the shown name (as the tree sorts file names) or the time added. */
+export type FolderSort = "name" | "name-desc" | "added" | "added-desc";
+const addedAt = (folder: Folder): string => (typeof folder.added_at === "string" ? folder.added_at : ""); // ISO text sorts as time
+function sortCmp(by: FolderSort): (a: Folder, b: Folder) => number {
+  const cmp = by.startsWith("name")
+    ? (a: Folder, b: Folder) => naturalCmp(folderLabel(a), folderLabel(b))
+    : (a: Folder, b: Folder) => (addedAt(a) < addedAt(b) ? -1 : addedAt(a) > addedAt(b) ? 1 : 0);
+  return by.endsWith("-desc") ? (a, b) => cmp(b, a) : cmp;
+}
+export const sortFolders = (folders: Folder[], by: FolderSort): Folder[] => [...folders].sort(sortCmp(by));
+/** Is the list in that order now (equal neighbours in any order)? The pressed icon and the menu's check ask this each time; no chosen sort is kept. */
+export function isSorted(folders: Folder[], by: FolderSort): boolean {
+  const cmp = sortCmp(by);
+  return folders.every((f, i) => i === 0 || cmp(folders[i - 1], f) <= 0);
 }
 
 /** A-17.3: the keyboard cursor stops at the ends; from no cursor Down goes to the first and Up to the last. */

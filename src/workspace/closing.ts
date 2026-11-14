@@ -50,6 +50,11 @@ export async function saveDoc(doc: Doc, ask: Ask): Promise<Saved> {
   return result.ok ? "saved" : { failed: result.error };
 }
 
+/** core v0.8.3 I-7: Close Others / Close All close folder by folder, each asking as it does alone; the first one kept (Cancel) stops, so the ones after it stay too. */
+export async function closeEach<T>(items: T[], close: (item: T) => Promise<boolean>): Promise<void> {
+  for (const item of items) if (!(await close(item))) return;
+}
+
 const timeout = (ms: number) => new Promise<"timeout">((resolve) => setTimeout(() => resolve("timeout"), ms));
 
 /**

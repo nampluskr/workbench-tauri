@@ -7,7 +7,8 @@ import OutlineBar from "./shell/Outline.tsx";
 import { PaneArea } from "./shell/Pane.tsx";
 import { resizeHandle } from "./shell/dock.ts";
 import { dockOpen, sidebarOpen } from "./shell/panels.ts";
-import { addFolder, editorContext, outlineOpen, sidebarWidth, resizeSidebar, toggleLockPreview } from "./workspace/store.ts";
+import { addFolder, editorContext, folders, outlineOpen, panelLayout, sidebarWidth, sortFolderList, resizeSidebar, toggleLockPreview } from "./workspace/store.ts";
+import { isSorted } from "./workspace/folders.ts";
 import { activeTabOf, allTabs, lockPreview } from "./workspace/context.ts";
 import { hasSearchTab } from "./workspace/tab-view.ts";
 import { statusButtons, statusItems, themeButtons } from "./shell/status.ts";
@@ -42,13 +43,17 @@ export default function App() {
         <div class="sidebar-footer">
           <div class="group grow" />
           <div class="group">
+            {/* core v0.8.3 I-6: sort once by the shown name; pressed only while the list is in that order. */}
+            <IconButton name="sort_name_asc" label="Sort by Name (A to Z)" toggled={isSorted(folders(), "name")} onClick={() => sortFolderList("name")} />
+            <IconButton name="sort_name_desc" label="Sort by Name (Z to A)" toggled={isSorted(folders(), "name-desc")} onClick={() => sortFolderList("name-desc")} />
             <IconButton name="folder_add" label="Open Folder" action="workspace::Open" onClick={() => void addFolder()} />
           </div>
         </div>
       </aside>
       <div class="workspace">
         <TitleBar />
-        <div class="workspace-body">
+        {/* core v0.8.3 I-17: Right Sidebars draws Panes | Outline | Tree from the same elements (app.css). */}
+        <div class="workspace-body" classList={{ "sidebars-right": panelLayout() === "right" }}>
           <aside class="dock-left" hidden={!dockOpen()}>
             <div class="dock-resize-handle" ref={resizeHandle} />
             <ProjectPanel />

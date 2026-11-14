@@ -2,11 +2,8 @@ import { batch, createEffect, createSignal, For, onCleanup, onMount, Show } from
 import { commands, focusStack, hooks, keymap, onKeyDown } from "../keymap/keyboard.ts";
 import { MENU_POPUP_OFFSET, MENU_SHORTCUT_ACTIVATE_DELAY_MS, USER_MENU_POPUP_OFFSET } from "../spec/metrics.ts";
 import { appMenus, userMenu } from "./app-menus.ts";
-import { dockOpen, setDockOpen } from "./panels.ts";
-import { dockWidth, resetDockWidth } from "./dock.ts";
-import { isClassicLayout } from "./layout.ts";
 import { activeTabOf, closeTab, openTool } from "../workspace/context.ts";
-import { editorContext as activeContext } from "../workspace/store.ts";
+import { editorContext as activeContext, panelLayout, setPanelLayout } from "../workspace/store.ts";
 import { licenseSources, licenseText } from "./licenses.ts";
 import { createFileView } from "../editor/file-view.ts";
 import { hasPreview } from "../editor/preview-kind.ts";
@@ -151,8 +148,10 @@ commands.set("menu::SelectChild", () => {
 commands.set("menu::SelectParent", () => child() ? closeChild() : open() !== null && openMenu(cycle(MENUS.length, open()!, -1)));
 commands.set("app_menu::Toggle", () => (isOpen() ? closeMenu(true) : openMenu(0)));
 
-const USER_MENU = userMenu(() => isClassicLayout(dockOpen(), dockWidth()));
-commands.set("workspace::UseClassicLayout", () => { setDockOpen(true); resetDockWidth(); });
+const USER_MENU = userMenu(panelLayout);
+// core v0.8.3 I-17: "Classic" became "Left Sidebars" under its old ID (user keymaps keep working); it no longer opens the Tree or resets its width.
+commands.set("workspace::UseClassicLayout", () => setPanelLayout("left"));
+commands.set("workspace::UseRightSidebars", () => setPanelLayout("right"));
 const appWindow = getCurrentWindow();
 commands.set("zed::Quit", () => void appWindow.close()); // Main-window destruction also closes Settings after the save guard.
 commands.set("workspace::CloseWindow", () => void appWindow.close());

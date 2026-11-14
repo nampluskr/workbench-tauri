@@ -1,15 +1,18 @@
 import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 import { commands } from "../keymap/keyboard.ts";
 import { chain as chainWhen } from "./chain.ts";
-import { displayNames, filterFolders, folderLabel, folderNameParts } from "../workspace/folders.ts";
+import { revealItemInDir } from "@tauri-apps/plugin-opener";
+import { displayNames, filterFolders, folderLabel, folderNameParts, isSorted, type Folder, type FolderSort } from "../workspace/folders.ts";
 import { inputKeyAction } from "../workspace/names.ts";
 import {
-  activateFolder, activeId, addFolder, cursorId, folders, missingIds, moveCursor,
-  moveFolder, removeFolder, renameFolder, setCursor,
+  activateFolder, activeId, addFolder, closeFolders, cursorId, folders, missingIds, moveCursor,
+  moveFolder, removeFolder, renameFolder, setCursor, sortFolderList,
 } from "../workspace/store.ts";
 import { openContextMenu } from "./AppMenu.tsx";
 import Icon from "./Icon.tsx";
 import type { MenuEntry } from "./menu.ts";
+import { focusSidebar, toggleSidebar } from "./panels.ts";
+import SidebarTitle from "./SidebarTitle.tsx";
 
 const listFocused = () => document.activeElement === document.querySelector(".sidebar-list");
 const chain = (name: string, handler: () => void) => chainWhen(name, listFocused, handler);
@@ -17,8 +20,35 @@ chain("menu::Confirm", () => cursorId() && activateFolder(cursorId()!));
 chain("project_panel::RemoveFromProject", () => cursorId() && removeFolder(cursorId()!));
 commands.set("workspace::Open", () => void addFolder());
 
-function menuFor(rename: () => void): MenuEntry[] {
-  return [{ label: "Rename", run: rename }];
+// core v0.8.3 I-7: the two right-click menus. Every row runs a function, so none shows a key: Copy Path and Reveal act on the
+// folder, not on the open file their keys act on.
+function folderMenu(folder: Folder, rename: () => void): MenuEntry[] {
+  const ids = folders().map((f) => f.id);
+  return [
+    { label: "Close", run: () => void removeFolder(folder.id) },
+    { label: "Close Others", disabled: ids.length < 2, run: () => void closeFolders(ids.filter((id) => id !== folder.id)) },
+    { label: "Close All", run: () => void closeFolders(ids) },
+    "separator",
+    { label: "Rename", run: rename },
+    "separator",
+    { label: "Copy Path", run: () => void navigator.clipboard.writeText(folder.path).catch(() => {}) },
+    { label: "Reveal in File Explorer", run: () => void revealItemInDir(folder.path).catch(() => {}) },
+  ];
+}
+
+function listMenu(): MenuEntry[] {
+  // Sorted once, as the footer's two buttons do; checked only while the list is in that order.
+  const sort = (label: string, by: FolderSort): MenuEntry => ({ label, checked: isSorted(folders(), by), run: () => sortFolderList(by) });
+  return [
+    { label: "Open Folder...", run: () => void addFolder() },
+    { label: "Close All", run: () => void closeFolders(folders().map((f) => f.id)) },
+    "separator",
+    sort("Sort by Name (A to Z)", "name"),
+    sort("Sort by Name (Z to A)", "name-desc"),
+    "separator",
+    sort("Sort by Date Added (Oldest First)", "added"),
+    sort("Sort by Date Added (Newest First)", "added-desc"),
+  ];
 }
 
 /** Reuse ProjectTree's inline input and IME handling; only the saved display name changes. */
@@ -109,7 +139,9 @@ export default function FolderList() {
         </Show>
       </div>
     </div>
-    <div class="sidebar-list" ref={list} tabindex="0" role="listbox" aria-label="Folders">
+    <SidebarTitle icon="threads_sidebar_left_open" title="Folder" focus={focusSidebar} close={toggleSidebar} />
+    <div class="sidebar-list" ref={list} tabindex="0" role="listbox" aria-label="Folders"
+      onContextMenu={(e) => openContextMenu({ x: e.clientX, y: e.clientY }, listMenu())}>
       <For each={visible()}>{(folder) => {
         const name = () => names()[folders().findIndex((f) => f.id === folder.id)];
         return <div class="sidebar-item" data-folder-id={folder.id}
@@ -120,7 +152,8 @@ export default function FolderList() {
           onClick={(e) => { if (!dragEnded && !(e.target as Element).closest("button, input")) { list.focus(); activateFolder(folder.id); } }}
           onContextMenu={(e) => {
             setCursor(folder.id);
-            openContextMenu({ x: e.clientX, y: e.clientY }, menuFor(() => setEditing(folder.id)));
+            e.stopPropagation(); // not the list's menu too
+            openContextMenu({ x: e.clientX, y: e.clientY }, folderMenu(folder, () => setEditing(folder.id)));
           }}>
           <Icon name="folder" />
           <Show when={editing() === folder.id} fallback={<span class="sidebar-item-name">

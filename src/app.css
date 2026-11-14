@@ -307,8 +307,9 @@ button, input, select, textarea {
 .group { display: flex; gap: var(--statusbar-item-gap); }
 .status-items { align-items: center; font-size: var(--statusbar-cursor-position-font-size); white-space: nowrap; }
 /* core v0.8.2 I-1: a button that is on is a pressed-in cell (mockup E): the editor background, an inner shadow and a 1px inner border. */
-.status-bar .icon-button { border-radius: var(--statusbar-toggled-corner-radius); }
-.status-bar .icon-button[aria-pressed="true"] {
+/* core v0.8.3 I-6: the same cell for the Folder Sidebar's two sort buttons (its buttons are the same 22px square). */
+:is(.status-bar, .sidebar-footer) .icon-button { border-radius: var(--statusbar-toggled-corner-radius); }
+:is(.status-bar, .sidebar-footer) .icon-button[aria-pressed="true"] {
   --toggled-border: var(--border);
   --toggled-shadow-alpha: var(--statusbar-toggled-shadow-alpha-dark);
   background: var(--editor-background);
@@ -318,8 +319,8 @@ button, input, select, textarea {
       color-mix(in srgb, var(--statusbar-toggled-shadow-color) calc(var(--toggled-shadow-alpha) * 100%), transparent),
     inset 0 0 0 var(--statusbar-toggled-border-width) var(--toggled-border);
 }
-:root[data-appearance="light"] .status-bar .icon-button[aria-pressed="true"] { --toggled-shadow-alpha: var(--statusbar-toggled-shadow-alpha-light); }
-.status-bar .icon-button[aria-pressed="true"]:hover { --toggled-border: var(--border-focused); background: var(--editor-background); }
+:root[data-appearance="light"] :is(.status-bar, .sidebar-footer) .icon-button[aria-pressed="true"] { --toggled-shadow-alpha: var(--statusbar-toggled-shadow-alpha-light); }
+:is(.status-bar, .sidebar-footer) .icon-button[aria-pressed="true"]:hover { --toggled-border: var(--border-focused); background: var(--editor-background); }
 /* core v0.8.2 I-2: UI | Edit | View at the right end (mockup B): sun or moon and the area's name, as wide as its text; never a pressed cell. */
 .status-bar .icon-button.labelled {
   width: auto;
@@ -358,6 +359,12 @@ button, input, select, textarea {
   width: var(--dock-resize-handle-width);
   cursor: col-resize;
 }
+/* core v0.8.3 I-17 Right Sidebars: Panes | Outline | Tree. The elements keep their place in the document (so nothing is made again
+   and the two max-width rules above still pair them); only the drawn order, the bordered edge and the handle's edge mirror. */
+.sidebars-right > .outline-bar { order: 1; }
+.sidebars-right > .dock-left { order: 2; }
+.sidebars-right > :is(.dock-left, .outline-bar) { border-right: 0; border-left: var(--window-border-dock-left) solid var(--border); }
+.sidebars-right > :is(.dock-left, .outline-bar) > .dock-resize-handle { right: auto; left: calc(var(--dock-resize-handle-width) / -2); }
 
 /* L-15: Pane = tab bar + active item. */
 .pane { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; background: var(--background); }
@@ -689,7 +696,7 @@ button, input, select, textarea {
 .tree-guide.last::before { bottom: var(--project-panel-indent-guide-padding-y); }
 
 /* core v0.8.1 I-4 (mockup F): header "Outline · file", then the project tree's rows. Badge numbers: outline.* in metrics.ts. */
-.outline-bar { display: flex; flex-direction: column; }
+.dock-left, .outline-bar { display: flex; flex-direction: column; } /* core v0.8.3 I-16: the Tree Sidebar has the title row too */
 .outline-header {
   flex: none;
   display: flex;
@@ -705,7 +712,11 @@ button, input, select, textarea {
   overflow: hidden;
   --icon-size: var(--tab-bar-icon-size);
 }
-.outline-header .icon { flex-shrink: 0; color: var(--icon-muted); }
+.outline-header > .icon { flex-shrink: 0; color: var(--icon-muted); }
+/* core v0.8.3 I-16: hovered, the row takes the list rows' hover background, the title the default text color, and the x shows. */
+.outline-header:hover { background: var(--ghost-element-hover); color: var(--text); }
+.sidebar-title-close { margin-left: auto; color: var(--text); visibility: hidden; }
+.outline-header:hover .sidebar-title-close { visibility: visible; }
 .outline-doc { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
 .outline-list { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; padding-top: var(--outline-list-padding-top); user-select: none; outline: none; }
 .outline-list:focus .tree-row.selected { border-color: var(--border-focused); } /* core v0.8.1 I-18: the tree's focus ring */

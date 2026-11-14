@@ -6,6 +6,8 @@ import { openContextMenu } from "./AppMenu.tsx";
 import Icon from "./Icon.tsx";
 import { chain } from "./chain.ts";
 import { resizeHandle } from "./dock.ts";
+import { toggleOutline } from "./panels.ts";
+import SidebarTitle from "./SidebarTitle.tsx";
 import type { MenuEntry } from "./menu.ts";
 import { notify } from "./toast.ts";
 import { MARKDOWN_PREVIEW_PARSE_DEBOUNCE_MS } from "../spec/metrics.ts";
@@ -264,11 +266,7 @@ export default function OutlineBar() {
     <aside class="outline-bar" hidden={!outlineOpen()}>
       <div class="dock-resize-handle" ref={(el) => resizeHandle(el, { width: outlineWidth, setWidth: resizeOutline, selector: ".outline-bar" })} />
       {/* Mockup F: "Outline · file name". */}
-      <div class="outline-header">
-        <Icon name="list_tree" />
-        <span>Outline</span>
-        <Show when={name()}><span>·</span><span class="outline-doc">{name()}</span></Show>
-      </div>
+      <SidebarTitle icon="list_tree" title="Outline" detail={name()} focus={() => list.focus()} close={toggleOutline} />
       <div class="outline-list" ref={list} role="tree" tabindex="0" data-keymap-context="OutlinePanel menu" onContextMenu={openMenu}
         onFocusOut={(e) => { if (!list.contains(e.relatedTarget as Node | null)) setPicked(null); }}>
         <Show when={rows().length} fallback={<div class="outline-empty">No outline</div>}>

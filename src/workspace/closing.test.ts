@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { confirmClose, saveDoc, shortPath, type Ask } from "./closing.ts";
+import { closeEach, confirmClose, saveDoc, shortPath, type Ask } from "./closing.ts";
 import type { Doc, SaveError } from "./doc.ts";
 
 /** A Doc as the questions use it: state plus a write that the test scripts. */
@@ -103,4 +103,13 @@ test("R-4: a clean tab is not written; R-7: conflict asks E-084, deleted asks E-
   assert.equal(q2.asked[0].main, "This file has been deleted on disk since you started editing it. Do you want to recreate it?");
   assert.equal(await saveDoc(fake({ disk: "deleted" }), asker(1).ask), "close");
   assert.equal(await saveDoc(fake({ disk: "deleted" }), asker(2).ask), "cancelled");
+});
+
+test("core v0.8.3 I-7: closing several folders asks folder by folder in order; Cancel keeps that folder and the ones after it", async () => {
+  const folders = ["a", "b", "c", "d"].map((id) => ({ id, tabs: id === "b" ? [] : [{ doc: fake({ dirty: true }), label: `${id}.txt` }] }));
+  const { ask, asked } = asker(1, 2); // a: Don't Save; b has nothing modified; c: Cancel
+  const closed: string[] = [];
+  await closeEach(folders, async (folder) => (await confirmClose(folder.tabs, ask)) && (closed.push(folder.id), true));
+  assert.deepEqual(closed, ["a", "b"]);
+  assert.deepEqual(asked.map((q) => q.main), ["`a.txt` contains unsaved edits. Do you want to save it?", "`c.txt` contains unsaved edits. Do you want to save it?"]); // d is never asked
 });

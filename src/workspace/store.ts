@@ -4,11 +4,11 @@ import { open } from "@tauri-apps/plugin-dialog";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { notify } from "../shell/toast.ts";
 import { SIDEBAR_WIDTH, STATE_SAVE_DEBOUNCE_MS } from "../spec/metrics.ts";
-import { addOrActivate, move, moveCursor as nextCursor, remove, rename, type Folder } from "./folders.ts";
+import { addOrActivate, isSorted, move, moveCursor as nextCursor, remove, rename, sortFolders, type Folder, type FolderSort } from "./folders.ts";
 import { askWarning, closingTabs, disposeContext, lockPreview, setLockPreview, newContext, type FolderContext } from "./context.ts";
-import { confirmClose } from "./closing.ts";
+import { closeEach, confirmClose } from "./closing.ts";
 import { folderName, normalizePath } from "./paths.ts";
-import { OUTLINE_DEFAULT, parseState, serializeState, type Outline } from "./state-file.ts";
+import { OUTLINE_DEFAULT, parseState, serializeState, type Outline, type PanelLayout } from "./state-file.ts";
 import { addRecent, dropMissing, removeRecent } from "./recent.ts";
 
 // The registered folders and the state.json that keeps them (R-11~R-16, R-29, D-8, D-11). Folders, their order and
@@ -23,7 +23,8 @@ const [missingIds, setMissingIds] = createSignal<ReadonlySet<string>>(new Set())
 const [sidebarWidth, setSidebarWidth] = createSignal(SIDEBAR_WIDTH.default);
 const [outline, setOutline] = createSignal<Outline>(OUTLINE_DEFAULT); // core v0.8.1 I-4
 const [recentFolders, setRecentFolders] = createSignal<string[]>([]); // core v0.8.2 I-3: paths, newest first
-export { folders, activeId, cursorId, missingIds, sidebarWidth, recentFolders };
+const [panelLayout, setLayout] = createSignal<PanelLayout>("left"); // core v0.8.3 I-17
+export { folders, activeId, cursorId, missingIds, sidebarWidth, recentFolders, panelLayout };
 export const outlineOpen = () => outline().open;
 export const outlineWidth = () => outline().width;
 
@@ -60,7 +61,7 @@ function write(): Promise<void> {
     if (!dirty || !canWrite) return;
     dirty = false;
     try {
-      await invoke("write_state", { json: serializeState(raw, { folders: folders(), activeId: activeId(), sidebarWidth: sidebarWidth(), lockPreview: lockPreview(), outline: outline(), recent: recentFolders() }) });
+      await invoke("write_state", { json: serializeState(raw, { folders: folders(), activeId: activeId(), sidebarWidth: sidebarWidth(), lockPreview: lockPreview(), outline: outline(), panelLayout: panelLayout(), recent: recentFolders() }) });
     } catch (reason) {
       dirty = true; // memory keeps the state; the next change writes it again from the start (A-24.4)
       notify([String(reason)]);
@@ -129,6 +130,7 @@ export async function loadWorkspace(): Promise<void> {
       setSidebarWidth(loaded.sidebarWidth);
       setLockPreview(loaded.lockPreview);
       setOutline(loaded.outline);
+      setLayout(loaded.panelLayout);
       setRecentFolders(loaded.recent);
     });
     await markMissing(loaded.folders);
@@ -191,13 +193,13 @@ export async function openFolder(chosen: string): Promise<void> {
 
 /**
  * R-14: take a folder off the list; the disk is not touched. Its tabs go with it, so modified ones are asked about first
- * like closing them (R-6, E-081 / E-082); Cancel keeps the folder.
+ * like closing them (R-6, E-081 / E-082); Cancel keeps the folder (false).
  */
-export async function removeFolder(id: string): Promise<void> {
+export async function removeFolder(id: string): Promise<boolean> {
   const ctx = contexts.get(id);
-  if (ctx && !(await confirmClose(closingTabs(ctx), askWarning))) return;
+  if (ctx && !(await confirmClose(closingTabs(ctx), askWarning))) return false;
   const next = remove(folders(), id, activeId());
-  if (next.folders === folders()) return;
+  if (next.folders === folders()) return true;
   const index = folders().findIndex((f) => f.id === id);
   batch(() => {
     setFolders(next.folders);
@@ -210,7 +212,11 @@ export async function removeFolder(id: string): Promise<void> {
   if (gone) disposeContext(gone); // its tabs go with it (A-14, R-14)
   contexts.delete(id);
   changed();
+  return true;
 }
+
+/** core v0.8.3 I-7: Close Others / Close All, in list order. */
+export const closeFolders = (ids: string[]): Promise<void> => closeEach(ids, removeFolder);
 
 export function renameFolder(id: string, name: string): void {
   setFolders(rename(folders(), id, name));
@@ -242,6 +248,20 @@ export function moveFolder(id: string, target: string): void {
   const next = move(folders(), id, target);
   if (next === folders()) return;
   setFolders(next);
+  changed();
+}
+
+/** core v0.8.3 I-6 / I-7: sort once and save the order; later drops and new folders are not sorted again. */
+export function sortFolderList(by: FolderSort): void {
+  if (isSorted(folders(), by)) return;
+  setFolders(sortFolders(folders(), by));
+  changed();
+}
+
+/** core v0.8.3 I-17: only the side changes; what is open and how wide stays. */
+export function setPanelLayout(side: PanelLayout): void {
+  if (side === panelLayout()) return;
+  setLayout(side);
   changed();
 }
 

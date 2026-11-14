@@ -51,7 +51,12 @@ export function toggleDock(): void {
 /** Ctrl+Shift+E: from outside open the Dock and focus the panel; from inside go back to the Pane, panel stays. */
 export function togglePanelFocus(): void {
   if (dockOpen() && holds(panelEl())) return back(panelFrom);
-  panelFrom = here();
+  focusPanel();
+}
+
+/** The focus half of Ctrl+Shift+E; also a click on the Tree Sidebar's title (core v0.8.3 I-16). */
+export function focusPanel(): void {
+  if (!holds(panelEl())) panelFrom = here();
   setDockOpen(true);
   panelEl()?.focus();
 }

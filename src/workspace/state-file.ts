@@ -13,6 +13,9 @@ const isObject = (v: unknown): v is Json => typeof v === "object" && v !== null 
 export type Outline = { open: boolean; width: number };
 export const OUTLINE_DEFAULT: Outline = { open: false, width: PROJECT_PANEL_DEFAULT_WIDTH };
 
+/** core v0.8.3 I-17: the side of the Panes the Tree and Outline Sidebars sit on. */
+export type PanelLayout = "left" | "right";
+
 export type Loaded = {
   raw: Json; // everything read, unknown keys included
   folders: Folder[];
@@ -20,13 +23,14 @@ export type Loaded = {
   sidebarWidth: number;
   lockPreview: boolean;
   outline: Outline;
+  panelLayout: PanelLayout;
   recent: string[]; // core v0.8.2 I-3: the folders opened last, newest first (the Welcome screen's RECENT FOLDERS)
   readOnly: boolean; // A-24.7: written by a newer app, never write it back
   invalid: boolean; // text that is not a JSON object
 };
 
 export function parseState(json: string | null): Loaded {
-  const empty: Loaded = { raw: {}, folders: [], activeId: null, sidebarWidth: SIDEBAR_WIDTH.default, lockPreview: false, outline: OUTLINE_DEFAULT, recent: [], readOnly: false, invalid: false };
+  const empty: Loaded = { raw: {}, folders: [], activeId: null, sidebarWidth: SIDEBAR_WIDTH.default, lockPreview: false, outline: OUTLINE_DEFAULT, panelLayout: "left", recent: [], readOnly: false, invalid: false };
   if (json === null) return empty;
   let value: unknown;
   try {
@@ -54,6 +58,7 @@ export function parseState(json: string | null): Loaded {
     sidebarWidth: validWidth(width) ? width : SIDEBAR_WIDTH.default,
     lockPreview: window.lock_preview === true,
     outline: { open: outline.open === true, width: validWidth(outline.width) ? outline.width : OUTLINE_DEFAULT.width },
+    panelLayout: window.panel_layout === "right" ? "right" : "left", // anything else (an older file) is the layout there was
     recent: (Array.isArray(window.recent_folders) ? window.recent_folders : []).filter((p): p is string => typeof p === "string").slice(0, RECENT_MAX),
     readOnly: typeof value.version === "number" && value.version > STATE_VERSION,
     invalid: false,
@@ -61,7 +66,7 @@ export function parseState(json: string | null): Loaded {
 }
 
 /** The text to write: the parsed object with our fields laid over it. */
-export function serializeState(raw: Json, mem: { folders: Folder[]; activeId: string | null; sidebarWidth: number; lockPreview: boolean; outline: Outline; recent: string[] }): string {
+export function serializeState(raw: Json, mem: { folders: Folder[]; activeId: string | null; sidebarWidth: number; lockPreview: boolean; outline: Outline; panelLayout: PanelLayout; recent: string[] }): string {
   const out = structuredClone(raw);
   out.version ??= STATE_VERSION;
   const windows = Array.isArray(out.windows) ? out.windows : (out.windows = []);
@@ -72,6 +77,7 @@ export function serializeState(raw: Json, mem: { folders: Folder[]; activeId: st
   window.lock_preview = mem.lockPreview;
   window.sidebar = { ...(isObject(window.sidebar) ? window.sidebar : {}), width: mem.sidebarWidth };
   window.outline = { ...(isObject(window.outline) ? window.outline : {}), ...mem.outline };
+  window.panel_layout = mem.panelLayout;
   window.recent_folders = mem.recent;
   return JSON.stringify(out, null, 2);
 }
