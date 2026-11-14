@@ -160,6 +160,7 @@ const METRICS: Record<string, string> = {
   "scrollbar.thumb.min_length": rem(48), // :23 MIN_THUMB_SIZE; painted length excludes both insets (:1225)
   // gpui-component-0.8.1/src/theme/mod.rs:422,433,443,774 sets radius 6; Base clamps to half the painted width (:40-43).
   "scrollbar.thumb.radius": rem(6),
+  "scrollbar.hide.fade_duration": "0.3s", // core v0.8.3 I-1 (not a Zed value): hiding fades, showing is at once
   "titlebar.height": "32px", // L-21: Windows caption stays fixed when UI font size changes.
   "titlebar.window_button.width": "36px", // L-39 / A-32.2
   "titlebar.window_button.height": "32px", // L-39 / A-32.2

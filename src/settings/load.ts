@@ -10,6 +10,7 @@ import { notify } from "../shell/toast.ts";
 import { remeasureForFont } from "../editor/extensions.ts";
 import { eachView, setViewOptions, type ToggleOption } from "../editor/view-options.ts";
 import { stepEditorFontSize, type FontTarget } from "../editor/font-size.ts";
+import { autoHides } from "../shell/scrollbar-hide.ts";
 import { areaTheme, DEFAULTS, loadDefaults, parseSettings, toggleThemeMode, updateSettings, type SettingKey, type SettingValue, type Settings, type ThemeArea } from "./model.ts";
 
 export const [settings, setSettings] = createSignal({ ...DEFAULTS });
@@ -43,6 +44,7 @@ async function reload(): Promise<void> {
     await showAreaThemes(next);
     setAppliedIconTheme(next.icon_theme);
     document.documentElement.classList.toggle("heading-colors", next.outline_heading_colors); // core v0.8.2 I-11 (app.css)
+    document.documentElement.toggleAttribute("data-scrollbar-autohide", autoHides(next.scrollbar_hide_delay)); // core v0.8.3 I-1 (app.css)
     previewLookChanged(); // core v0.8.2 I-14: an open HTML preview carries these values in its frame document
     setSettings(next);
   } catch (error) { notify([String(error)]); }

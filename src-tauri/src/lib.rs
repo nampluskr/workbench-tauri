@@ -124,6 +124,16 @@ fn caption_set_colors(window: tauri::WebviewWindow, colors: [String; 5]) -> Resu
     caption::set_colors(window.hwnd().map_err(|e| e.to_string())?, &colors)
 }
 
+/// core v0.8.3 I-14: Zen Mode hides the title bar, so the native maximize button over it goes and comes back with it.
+#[tauri::command]
+fn caption_set_visible(window: tauri::WebviewWindow, visible: bool) -> Result<(), String> {
+    let target = window.clone();
+    window.run_on_main_thread(move || match target.hwnd() {
+        Ok(hwnd) => caption::set_visible(hwnd, visible),
+        Err(error) => eprintln!("Failed to show or hide the caption button: {error}"),
+    }).map_err(|error| error.to_string())
+}
+
 #[tauri::command]
 async fn check_folder(path: String) -> Result<(), String> {
     tauri::async_runtime::spawn_blocking(move || {
@@ -243,7 +253,7 @@ pub fn run() {
             }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![caption_set_colors, clipboard::read_clipboard_text, clipboard::write_clipboard_text, about_info, read_user_settings, write_user_settings, ensure_user_settings, edit_user_settings, open_settings, read_user_keymap, write_user_keymap, ensure_user_keymap, check_folder, paths_exist, read_state, write_state, files::list_dir, files::read_file, files::create_file, files::create_dir, files::rename_path, files::trash_paths, files::trash_for_undo, files::restore_trashed, files::delete_paths, files::confirm, files::confirm_buttons, files::paste_paths, files::duplicate_path, folder_watch::watch_folder, text_io::save_text, name_search::search_names, preview::preview_set, preview::preview_drop])
+        .invoke_handler(tauri::generate_handler![caption_set_colors, caption_set_visible, clipboard::read_clipboard_text, clipboard::write_clipboard_text, about_info, read_user_settings, write_user_settings, ensure_user_settings, edit_user_settings, open_settings, read_user_keymap, write_user_keymap, ensure_user_keymap, check_folder, paths_exist, read_state, write_state, files::list_dir, files::read_file, files::create_file, files::create_dir, files::rename_path, files::trash_paths, files::trash_for_undo, files::restore_trashed, files::delete_paths, files::confirm, files::confirm_buttons, files::paste_paths, files::duplicate_path, folder_watch::watch_folder, text_io::save_text, name_search::search_names, preview::preview_set, preview::preview_drop])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

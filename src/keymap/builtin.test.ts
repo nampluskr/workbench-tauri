@@ -25,6 +25,7 @@ test("R-1: built-in keymap equals the PROGRESS expected table (key, context, act
   expected.add(row("ctrl-alt-1", "Workspace", "multi_workspace::ToggleWorkspaceSidebar"));
   expected.add(row("ctrl-alt-2", "Workspace", "workspace::ToggleLeftDock"));
   expected.add(row("ctrl-alt-3", "Workspace", "outline_panel::Toggle"));
+  expected.add(row("f11", "Workspace", "workspace::ToggleZenMode")); // core v0.8.3 I-14
   // v0.8 M-5: the preview keys match every previewable extension, not only md; the pinned v0.4 table (a past version, read only) names md.
   const previewContext = /^Editor && \(extension == md \|\|[^)]*\)$/;
   const actual = new Set(BUILTIN.flatMap(({ context, bindings }) =>

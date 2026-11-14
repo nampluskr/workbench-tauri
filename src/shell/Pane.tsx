@@ -46,7 +46,7 @@ import { baseName, truncateName } from "../workspace/paths.ts";
 import { relativePath } from "../workspace/ops.ts";
 import { CLOSE_ACTIONS, tabMenu } from "./tab-menu.ts";
 import { chain } from "./chain.ts";
-import { setDockOpen } from "./panels.ts";
+import { setDockOpen, zenDragRegion } from "./panels.ts";
 import { startNew } from "../workspace/actions.ts";
 import { pathCrumb } from "../editor/breadcrumbs.ts";
 import { hasPreview } from "../editor/preview-kind.ts";
@@ -429,7 +429,7 @@ function TabList(props: { ctx: FolderContext; pane: PaneState }) {
           );
         }}
       </For>
-      <div class="tab-bar-drop" classList={{ drop: drag()?.target?.pane === props.pane && drag()?.target?.where.kind === "end" }} />
+      <div class="tab-bar-drop" data-tauri-drag-region={zenDragRegion()} classList={{ drop: drag()?.target?.pane === props.pane && drag()?.target?.where.kind === "end" }} />
     </div>
   );
 }
@@ -535,8 +535,9 @@ function PaneView(props: { ctx: FolderContext | null; pane: PaneState | null }) 
       data-pane-id={props.pane?.id}
       onFocusIn={() => props.ctx && props.pane && activatePane(props.ctx, props.pane)}
     >
-      <div class="tab-bar">
-        <div class="tab-bar-edge start">
+      {/* core v0.8.3 I-14: in Zen Mode the bar, its two button areas and the empty rest of the tab row (TabList) move the window. */}
+      <div class="tab-bar" data-tauri-drag-region={zenDragRegion()}>
+        <div class="tab-bar-edge start" data-tauri-drag-region={zenDragRegion()}>
           <button class="icon-button" aria-label="Go Back" disabled={!canGo(props.pane)} onClick={() => props.ctx && props.pane && goThroughHistory(props.ctx, props.pane, "back")} ref={(el) => tooltip(el, () => ({ title: "Go Back", action: "pane::GoBack" }))}>
             <Icon name="arrow_left" />
           </button>
@@ -548,7 +549,7 @@ function PaneView(props: { ctx: FolderContext | null; pane: PaneState | null }) 
           <TabList ctx={props.ctx!} pane={props.pane!} />
         </Show>
         <Show when={props.ctx && props.pane && focusedPane() === props.pane.id}>
-          <div class="tab-bar-edge end">
+          <div class="tab-bar-edge end" data-tauri-drag-region={zenDragRegion()}>
             <button class="icon-button" aria-label="New…" onClick={(e) => openNewMenu(props.ctx!, e.currentTarget)} ref={(el) => tooltip(el, () => (menuOpen() ? null : { title: "New…" }))}>
               <Icon name="plus" />
             </button>

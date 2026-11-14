@@ -150,6 +150,15 @@ button, input, select, textarea {
 }
 ::-webkit-scrollbar-button { display: none; }
 ::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: var(--scrollbar-track-background); }
+/* core v0.8.3 I-1: the vertical track and thumb are drawn at the scroll area's --scrollbar-opacity; the gutter keeps its width.
+   The area with input is "on" (at once), then "off" (fades) after the Scrollbar Hide Delay (shell/scrollbar-hide.ts). The
+   property is registered so it can be animated, and inherited so the scrollbar parts read their area's value.
+   shortcut: a vertical scroll area nested inside a shown one shows with it; give those their own value if one appears. */
+@property --scrollbar-opacity { syntax: "<percentage>"; inherits: true; initial-value: 100%; }
+:root[data-scrollbar-autohide] { --scrollbar-opacity: 0%; }
+[data-scrollbar="on"] { --scrollbar-opacity: 100%; }
+[data-scrollbar="off"] { transition: --scrollbar-opacity var(--scrollbar-hide-fade-duration); }
+::-webkit-scrollbar-track:vertical { background-color: color-mix(in srgb, var(--scrollbar-track-background) var(--scrollbar-opacity), transparent); }
 ::-webkit-scrollbar-thumb {
   --scrollbar-thumb-size: var(--scrollbar-width-ui);
   background: var(--scrollbar-thumb-background);
@@ -159,6 +168,7 @@ button, input, select, textarea {
 }
 ::-webkit-scrollbar-thumb:vertical {
   min-height: var(--scrollbar-thumb-min-length);
+  background-color: color-mix(in srgb, var(--scrollbar-thumb-background) var(--scrollbar-opacity), transparent); /* core v0.8.3 I-1 */
   border-left-width: calc(var(--scrollbar-width-editor) - var(--scrollbar-padding) - var(--scrollbar-thumb-size));
 }
 ::-webkit-scrollbar-thumb:horizontal {
@@ -169,9 +179,6 @@ button, input, select, textarea {
   --scrollbar-thumb-size: var(--scrollbar-thumb-active-width);
   background-color: var(--scrollbar-thumb-hover-background);
 }
-/* P-004: preserve the picker's hover-only visibility while sharing the scrollbar geometry and colors. */
-.picker-list:not(:hover)::-webkit-scrollbar-track,
-.picker-list:not(:hover)::-webkit-scrollbar-thumb { background-color: transparent; }
 
 /* L-11: [left sidebar] -> [Workspace]. L-12: the sidebar spans the full window height. */
 .sidebar {
@@ -444,6 +451,8 @@ button, input, select, textarea {
 /* I-716: the rest of the tab bar takes a drop at the end; at least tab_bar_end_drop_min_width wide, tab height. */
 .tab-bar-drop { flex: 1 0 var(--pane-tab-bar-end-drop-min-width); height: var(--tab-bar-height); }
 .tab-bar-drop.drop { background: var(--drop-target-background); }
+/* core v0.8.3 I-14 Zen Mode: only the title bar and the status bar go; the window, the tab bars and the Sidebars stay. */
+.workspace.zen > .title-bar, .workspace.zen > .status-bar { display: none; }
 /* I-715: the tab dropped on: background, and a tab_drop_line_width line on the side the tab goes. */
 .tab.drop-left, .tab.drop-right { background: var(--drop-target-background); }
 .tab.drop-left::after, .tab.drop-right::after { content: ""; position: absolute; top: 0; bottom: 0; width: var(--pane-tab-drop-line-width); background: var(--drop-target-border); }

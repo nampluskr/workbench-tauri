@@ -81,6 +81,7 @@ export const BUILTIN: KeymapSection[] = [
       "ctrl-alt-3": "outline_panel::Toggle",
       "ctrl-k ctrl-o": "workspace::Open",
       "f10": "app_menu::Toggle",
+      "f11": "workspace::ToggleZenMode", // core v0.8.3 I-14
       "ctrl-s": "workspace::Save", // I-005
       // I-008: several keys for one action show the last one (I-704), Ctrl-W (L-240).
       "ctrl-f4": "pane::CloseActiveItem",

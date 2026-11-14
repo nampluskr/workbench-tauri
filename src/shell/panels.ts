@@ -1,5 +1,7 @@
 import { createSignal } from "solid-js";
+import { invoke } from "@tauri-apps/api/core";
 import { commands } from "../keymap/keyboard.ts";
+import { notify } from "./toast.ts";
 import { focusPane } from "../workspace/context.ts";
 import { editorContext, outlineOpen, setOutlineOpen } from "../workspace/store.ts";
 
@@ -68,6 +70,15 @@ export function toggleOutline(): void {
   if (inside) focusActivePane();
 }
 
+// core v0.8.3 I-14 Zen Mode: F11 only, in memory only (a new window starts without it). The title bar is gone while it is on,
+// so the native maximize button over its place goes too (src-tauri/src/caption.rs) and the tab bars move the window instead.
+export const [zenMode, setZenMode] = createSignal(false);
+/** The `data-tauri-drag-region` of a tab bar part: in Zen Mode a press on the part itself (not on a tab or a button in it) drags the window, a double press maximizes. */
+export const zenDragRegion = (): "" | undefined => (zenMode() ? "" : undefined);
+commands.set("workspace::ToggleZenMode", () => {
+  setZenMode(!zenMode());
+  void invoke("caption_set_visible", { visible: !zenMode() }).catch((error) => notify([String(error)]));
+});
 commands.set("multi_workspace::ToggleWorkspaceSidebar", toggleSidebar);
 commands.set("multi_workspace::FocusWorkspaceSidebar", toggleSidebarFocus);
 commands.set("workspace::ToggleLeftDock", toggleDock);

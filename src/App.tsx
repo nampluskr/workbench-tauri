@@ -6,7 +6,7 @@ import ProjectPanel from "./shell/ProjectPanel.tsx";
 import OutlineBar from "./shell/Outline.tsx";
 import { PaneArea } from "./shell/Pane.tsx";
 import { resizeHandle } from "./shell/dock.ts";
-import { dockOpen, sidebarOpen } from "./shell/panels.ts";
+import { dockOpen, sidebarOpen, zenMode } from "./shell/panels.ts";
 import { addFolder, editorContext, folders, outlineOpen, panelLayout, sidebarWidth, sortFolderList, resizeSidebar, toggleLockPreview } from "./workspace/store.ts";
 import { isSorted } from "./workspace/folders.ts";
 import { activeTabOf, allTabs, lockPreview } from "./workspace/context.ts";
@@ -50,7 +50,7 @@ export default function App() {
           </div>
         </div>
       </aside>
-      <div class="workspace">
+      <div class="workspace" classList={{ zen: zenMode() }}>
         <TitleBar />
         {/* core v0.8.3 I-17: Right Sidebars draws Panes | Outline | Tree from the same elements (app.css). */}
         <div class="workspace-body" classList={{ "sidebars-right": panelLayout() === "right" }}>

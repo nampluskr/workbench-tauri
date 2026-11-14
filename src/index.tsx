@@ -7,7 +7,8 @@ import { loadHome } from "./shell/home.ts";
 import { installTooltips } from "./shell/tooltip.ts";
 import { guardClose, loadWorkspace } from "./workspace/store.ts";
 import { installWatcher } from "./workspace/watch.ts";
-import { loadSettings, watchSettings } from "./settings/load.ts";
+import { loadSettings, settings, watchSettings } from "./settings/load.ts";
+import { installScrollbarHide } from "./shell/scrollbar-hide.ts";
 import SettingsWindow from "./settings/Settings.tsx";
 import { installSettingsCommands } from "./settings/main.ts";
 import "./app.css";
@@ -26,6 +27,7 @@ if (!root) {
 try {
   await watchSettings();
   await loadSettings();
+  installScrollbarHide(() => settings().scrollbar_hide_delay); // core v0.8.3 I-1: both windows
   if (getCurrentWindow().label === "settings") {
     render(() => <SettingsWindow />, root);
   } else {

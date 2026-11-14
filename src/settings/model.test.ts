@@ -115,6 +115,22 @@ test("core v0.8.3 I-11: the line number font size (px, 8 up to the editor font s
   assert.ok(categoryKeys("Editor").includes("editor_line_number_font_size")); // Load Defaults deletes it
 });
 
+test("core v0.8.3 I-1: the scrollbar hide delay (whole seconds, 0 to 10) reads, validates and writes", () => {
+  const read = (json: string) => parseSettings(json, THEMES).scrollbar_hide_delay;
+  assert.equal(DEFAULTS.scrollbar_hide_delay, 3);
+  for (const value of [0, 1, 3, 10]) assert.equal(read(`{"scrollbar_hide_delay":${value}}`), value); // 0: the scrollbars always show
+  for (const value of [-1, 11, 2.5, '"3"', "true", "null"]) assert.equal(read(`{"scrollbar_hide_delay":${value}}`), 3, String(value));
+  // The Settings screen: a step is 1, and a typed value goes to the nearest whole second in the range.
+  assert.equal(settingStep("scrollbar_hide_delay"), 1);
+  assert.deepEqual([-1, 0, 2.4, 2.5, 10, 11].map((value) => settingNumber("scrollbar_hide_delay", value)), [0, 0, 2, 3, 10, 10]);
+  // Saved the usual way: comments and unknown keys stay.
+  const written = updateSettings('{\n  // keep\n  "x": 1\n}', { scrollbar_hide_delay: 0 }, THEMES);
+  assert.ok(written.includes("// keep") && written.includes('"x": 1'));
+  assert.equal(read(written), 0);
+  for (const value of [-1, 11, 2.5]) assert.throws(() => updateSetting("{}", "scrollbar_hide_delay", value, THEMES));
+  assert.ok(categoryKeys("UI").includes("scrollbar_hide_delay")); // Load Defaults deletes it
+});
+
 test("core v0.8.2 I-21 / I-23: the preview code line height (1.0 to 3.0, 0.05 steps) and code line numbers read, validate and write", () => {
   const read = (json: string) => parseSettings(json, THEMES);
   assert.deepEqual([DEFAULTS.preview_code_line_height, DEFAULTS.preview_code_line_numbers], [1.45, false]);
@@ -176,7 +192,7 @@ test("settings search includes the category title, name and description", () => 
   const keys = (query: string) => filterSettings(query).map((r) => r.key);
   assert.deepEqual(keys("preview"), ["preview_theme_dark", "preview_theme_light", "preview_font_size", "preview_code_font_family", "preview_code_font_size", "preview_code_line_height", "preview_code_line_numbers", "preview_paragraph_line_spacing", "preview_paragraph_spacing", "preview_list_line_spacing", "preview_list_spacing"]);
   assert.deepEqual(keys("EDITOR"), ["editor_theme_dark", "editor_theme_light", "buffer_font_family", "buffer_font_size", "editor_line_height", "editor_line_numbers", "editor_line_number_font_size", "editor_word_wrap", "editor_indent_guides", "editor_render_whitespace"]);
-  assert.deepEqual(keys("ui"), ["theme_dark", "theme_light", "icon_theme", "ui_font_size", "editor_indent_guides"]); // "guides" holds "ui"
+  assert.deepEqual(keys("ui"), ["theme_dark", "theme_light", "icon_theme", "ui_font_size", "scrollbar_hide_delay", "editor_indent_guides"]); // "guides" holds "ui"
   assert.deepEqual(keys("ui font size"), ["ui_font_size"]);
   assert.equal(keys("theme").length, 7); // core v0.8.2 I-2: Dark Theme and Light Theme in each category, and Icon Theme
   assert.deepEqual(filterSettings("dark theme").map((r) => [r.category, r.name]), [["UI", "Dark Theme"], ["Editor", "Dark Theme"], ["Preview", "Dark Theme"]]);

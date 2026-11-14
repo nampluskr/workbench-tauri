@@ -18,6 +18,7 @@ export const BROWSER_KEYS: ReadonlySet<string> = new Set([
   "ctrl-+", "ctrl--", "ctrl-=", "ctrl-0", "ctrl-w", "ctrl-tab", "f1", "f6",
   "ctrl-shift-v", // paste as plain text: Zed binds it only to previews, so an unmatched press must not paste
   "f10", // WebView2 would enter the window-menu mode even when the keymap does not bind F10 (e.g. a null)
+  "f11", // core v0.8.3 I-14: never the browser full screen, also when the keymap unbinds Zen Mode
 ]);
 
 export const keymap = new Keymap();
@@ -82,7 +83,8 @@ export function onKeyDown(e: KeyboardEvent): void {
       pending = [];
       return;
     }
-    if (!(e.ctrlKey || e.altKey || e.metaKey)) {
+    // core v0.8.3 I-14: F11 is the only way out of Zen Mode, so it is dispatched from an input too.
+    if (!(e.ctrlKey || e.altKey || e.metaKey) && stroke !== "f11") {
       pending = [];
       if (BROWSER_KEYS.has(stroke)) e.preventDefault();
       return;

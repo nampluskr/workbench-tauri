@@ -14,7 +14,7 @@ export type ThemeArea = (typeof THEME_AREAS)[number];
 export const DEFAULTS = { theme_dark: BASE_THEME.dark as string, theme_light: BASE_THEME.light as string, theme_mode: "light" as Appearance,
   editor_theme_dark: BASE_THEME.dark as string, editor_theme_light: BASE_THEME.light as string, editor_theme_mode: "light" as Appearance,
   preview_theme_dark: BASE_THEME.dark as string, preview_theme_light: BASE_THEME.light as string, preview_theme_mode: "light" as Appearance,
-  icon_theme: "Zed (Default)", ui_font_size: 16, buffer_font_size: 14, preview_font_size: PREVIEW_BASE_FONT_SIZE, // core v0.8.2 I-26
+  icon_theme: "Zed (Default)", ui_font_size: 16, scrollbar_hide_delay: 3 /* core v0.8.3 I-1: seconds, 0 never hides */, buffer_font_size: 14, preview_font_size: PREVIEW_BASE_FONT_SIZE, // core v0.8.2 I-26
   // core v0.8.2 I-26: the preview's line and block gaps in px at the 14px preview font, scaling with it: Zed 1.27.0 measured at 16px
   // (core v0.8.1 I-8: 8, 16, 6, 4) times 14/16. New key names, so the 0.8.1 *_gap values in a file are read apart (oldGaps).
   preview_paragraph_line_spacing: 7, preview_paragraph_spacing: 14, preview_list_line_spacing: 5.25, preview_list_spacing: 3.5,
@@ -43,11 +43,13 @@ export const nearestCodeLineHeight = (value: number): number => Math.min(3, Math
 // core v0.8.3 I-11: px, 8 up to the editor font size. A file value under 8 is invalid (the default); one over the editor font size is
 // kept and drawn at the editor font size (spec/metrics.ts lineNumberFontSize), as that size can change later.
 export const nearestLineNumberSize = (value: number, bufferFontSize: number): number => Math.min(bufferFontSize, Math.max(8, value));
+// core v0.8.3 I-1: whole seconds, 0 (the scrollbars always show) to 10. Same handling as the line height.
+export const nearestHideDelay = (value: number): number => Math.min(10, Math.max(0, Math.round(value)));
 export const settingStep = (key: SettingKey): number => key === "editor_line_height" ? 0.1 : key === "preview_code_line_height" ? 0.05 : 1;
 /** The number a Settings stepper or input saves: a step away from `current`, or the typed value, kept to the key's own range. */
 export const settingNumber = (key: SettingKey, value: number, bufferFontSize = Infinity): number =>
   key === "editor_line_number_font_size" ? nearestLineNumberSize(value, bufferFontSize) : key === "editor_line_height" ? nearestLineHeight(value) : key === "preview_code_line_height" ? nearestCodeLineHeight(value)
-    : isGapKey(key) ? nearestGap(value) : key === "preview_code_font_size" ? nearestPercent(value) : value;
+    : isGapKey(key) ? nearestGap(value) : key === "preview_code_font_size" ? nearestPercent(value) : key === "scrollbar_hide_delay" ? nearestHideDelay(value) : value;
 /** The theme an area shows: its dark or light setting, by its mode. */
 export const areaTheme = (s: Settings, area: ThemeArea): string => s[`${area}_${s[`${area}_mode`]}`];
 /** core v0.8.2 I-2: the status bar button's write: that area's mode only. */
@@ -72,6 +74,7 @@ export const ROWS: { key: SettingKey; name: string; description: string; categor
   { key: "theme_light", name: "Light Theme", description: "Specifies the color theme used in the workbench when it is light.", category: "UI" },
   { key: "icon_theme", name: "Icon Theme", description: "Specifies the file icon theme used in the workbench.", category: "UI" },
   { key: "ui_font_size", name: "Font Size", description: "Controls the font size in pixels used in the UI.", category: "UI" },
+  { key: "scrollbar_hide_delay", name: "Scrollbar Hide Delay", description: "Controls the seconds without input after which the vertical scrollbars hide. 0 always shows them.", category: "UI" },
   { key: "editor_theme_dark", name: "Dark Theme", description: "Specifies the color theme used in the editor when it is dark.", category: "Editor" },
   { key: "editor_theme_light", name: "Light Theme", description: "Specifies the color theme used in the editor when it is light.", category: "Editor" },
   { key: "buffer_font_family", name: "Font Family", description: "Controls the font family.", category: "Editor" },
@@ -112,6 +115,7 @@ export function validSetting(key: SettingKey, value: unknown, choices: Choices):
   if (key === "preview_code_line_height") return typeof value === "number" && value === nearestCodeLineHeight(value);
   if (isGapKey(key)) return typeof value === "number" && value === nearestGap(value);
   if (key === "preview_code_font_size") return typeof value === "number" && value === nearestPercent(value);
+  if (key === "scrollbar_hide_delay") return typeof value === "number" && value === nearestHideDelay(value);
   if (key === "editor_line_number_font_size") return typeof value === "number" && Number.isFinite(value) && value >= 8;
   return typeof value === "number" && Number.isFinite(value) && value > 0;
 }

@@ -43,6 +43,8 @@ struct Caption {
     hover: AtomicBool,
     pressed: AtomicBool,
     active: AtomicBool,
+    // core v0.8.3 I-14: no title bar (Zen Mode), so no button: the WebView is whole again and nothing is hit or drawn here.
+    hidden: AtomicBool,
 }
 static CAPTIONS: LazyLock<Mutex<HashMap<isize, Arc<Caption>>>> = LazyLock::new(|| Mutex::new(HashMap::new()));
 
@@ -87,6 +89,10 @@ fn apply_region(top: HWND) {
         let Ok(webview) = FindWindowExW(Some(top), None, w!("WRY_WEBVIEW"), PCWSTR::null()) else {
             return;
         };
+        if caption(top).is_some_and(|state| state.hidden.load(Relaxed)) {
+            _ = SetWindowRgn(webview, None, true);
+            return;
+        }
         // Region coordinates are relative to the child, so subtract its origin.
         let (mut rect, mut origin) = (RECT::default(), POINT::default());
         _ = GetWindowRect(webview, &mut rect);
@@ -105,6 +111,7 @@ fn apply_region(top: HWND) {
 }
 
 fn paint(top: HWND, state: &Caption) {
+    if state.hidden.load(Relaxed) { return; }
     let color = |i: usize| COLORREF(state.colors[i].load(Relaxed));
     let background = if state.pressed.load(Relaxed) {
         color(3)
@@ -161,7 +168,7 @@ unsafe extern "system" fn top_proc(
             let mut pt = POINT { x: lparam.0 as i16 as i32, y: (lparam.0 >> 16) as i16 as i32 };
             _ = ScreenToClient(top, &mut pt);
             let b = button_rect(top);
-            if pt.x >= b.left && pt.x < b.right && pt.y >= b.top && pt.y < b.bottom {
+            if !state.hidden.load(Relaxed) && pt.x >= b.left && pt.x < b.right && pt.y >= b.top && pt.y < b.bottom {
                 return LRESULT(HTMAXBUTTON as isize);
             }
         }
@@ -219,10 +226,21 @@ pub fn install(top: HWND) {
     let state = Arc::new(Caption {
         colors: [const { AtomicU32::new(0) }; 5],
         hover: AtomicBool::new(false), pressed: AtomicBool::new(false), active: AtomicBool::new(true),
+        hidden: AtomicBool::new(false),
     });
     // SAFETY: called on the live window's UI thread; the subclass is removed with the window.
     if !unsafe { SetWindowSubclass(top, Some(top_proc), 1, 0) }.as_bool() { return; }
     if let Ok(mut captions) = CAPTIONS.lock() { captions.insert(top.0 as isize, state); }
+    apply_region(top);
+    redraw(top);
+}
+
+/// Show the button again, or take it away with its hole in the WebView (Zen Mode). Call on the window's UI thread.
+pub fn set_visible(top: HWND, visible: bool) {
+    let Some(state) = caption(top) else { return };
+    state.hidden.store(!visible, Relaxed);
+    state.hover.store(false, Relaxed);
+    state.pressed.store(false, Relaxed);
     apply_region(top);
     redraw(top);
 }
