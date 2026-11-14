@@ -2,7 +2,7 @@
 
 - 작성일: 2026-11-11
 - 기준 커밋: `2866205`(ORDER-06 코드)
-- 고친 날: 2026-11-13(0.8.1 release 빌드, [4A절](#4a-081-결과-파일), 기준 커밋 `267cfa5`; 같은 날 ORDER-09로 다시 빌드, 기준 커밋 `56c3b66`), 2026-11-14(0.8.2 release 빌드, [4B절](#4b-082-결과-파일), 기준 커밋 `1f9bd3a`)
+- 고친 날: 2026-11-13(0.8.1 release 빌드, [4A절](#4a-081-결과-파일), 기준 커밋 `267cfa5`; 같은 날 ORDER-09로 다시 빌드, 기준 커밋 `56c3b66`), 2026-11-14(0.8.2 release 빌드, [4B절](#4b-082-결과-파일), 기준 커밋 `1f9bd3a`; 0.8.3 release 빌드, [4C절](#4c-083-결과-파일), 기준 커밋 `8505c9f`)
 
 배포본(release exe·NSIS 설치 파일)을 만드는 과정이다. 2026-11-11 0.8.0 release 빌드에 성공했고, 같은 날 ORDER-06(I-11)으로 다시 빌드했다. 도구·기존 측정은 각 절의 날짜를 따른다.
 
@@ -168,6 +168,33 @@ npm run tauri build             # release exe + NSIS 설치 파일
 - `npm.cmd run tauri build`(NSIS 켬): 전체 76초(05:05:42 → 05:06:58), vite 6.99초, cargo release 55.37초(`workbench-tauri` 크레이트만 다시 컴파일), NSIS 포함.
 - 빌드 전 `cargo check`·`cargo clippy -- -D warnings`: 경고 0.
 - 경고는 기존과 같은 종류다: Vite 500 kB 넘는 chunk(`index` 4,630.68 kB, `elk` 1,462.86 kB, `chunk-NGNAAXSQ` 629.04 kB), web-tree-sitter direct eval(`[EVAL]` 2건). Rust 경고 없음.
+
+## 4C. 0.8.3 결과 파일
+
+2026-11-14 tauri-coder(K-06, ORDER-05)의 0.8.3 release 빌드 결과다. 기준 커밋 `8505c9f`(ORDER-05 K-05: I-1 세로 스크롤바 자동 숨김, I-14 Zen Mode `F11`; 앞 ORDER-03·04의 I-4 Sidebar 키 `Ctrl+Alt+1/2/3`, I-16 세 Sidebar 제목 줄, I-17 Panel Layout Left/Right Sidebars 등 포함). 앱 버전은 `tauri.conf.json`의 0.8.3 그대로다. 빌드 직전 `workbench-tauri` 프로세스는 0개였다(`Get-Process workbench-tauri`).
+
+| 파일 | 경로 | 크기·버전 |
+|---|---|---|
+| NSIS 설치 파일 | `src-tauri\target\release\bundle\nsis\workbench-tauri_0.8.3_x64-setup.exe` | 10,590,767 바이트(수정 시각 2026-11-14 16:27:56); ProductVersion `0.8.3`, FileVersion `0.8.3` |
+| 앱 exe | `src-tauri\target\release\workbench-tauri.exe` | 21,558,272 바이트(수정 시각 2026-11-14 16:27:56); ProductVersion `0.8.3`, FileVersion `0.8.3` |
+| 참고: 프런트엔드 `dist/` | exe 안에 압축돼 들어감 | 31,225,457 바이트, 파일 4,998개, JS 청크 205개 |
+
+- 버전은 `(Get-Item …).VersionInfo`로 읽었다.
+
+### 0.8.2 대비
+
+| 파일 | 0.8.2 | 0.8.3 | 증가 |
+|---|---|---|---|
+| NSIS 설치 파일 | 10,589,344 B | 10,590,767 B | +1,423 B (+0.01%) |
+| 앱 exe | 21,532,160 B | 21,558,272 B | +26,112 B (+0.12%) |
+| `dist/` | 31,216,009 B | 31,225,457 B | +9,448 B |
+
+- 이유: 새 의존성·글꼴·문법은 없고 앱 코드만 늘었다. `index` 청크가 4,630.68 → 4,638.61 kB다(파일 수와 JS 청크 수는 같다).
+
+### 빌드 시간·경고
+
+- `npm.cmd run tauri build`(NSIS 켬): 전체 77초(16:26:38 → 16:27:56), vite 7.33초, cargo release 55.63초, NSIS 포함.
+- 경고는 기존과 같은 종류다: Vite 500 kB 넘는 chunk(`index` 4,638.61 kB, `elk` 1,462.86 kB, `chunk-NGNAAXSQ` 629.04 kB), web-tree-sitter direct eval(`[EVAL]` 2건). Rust 경고 없음.
 
 ## 5. 걸린 시간(이 PC)
 
