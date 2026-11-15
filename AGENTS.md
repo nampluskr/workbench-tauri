@@ -67,6 +67,7 @@ cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
 - PowerShell에서 `npm`(`npm.ps1`)이 실행 정책에 막히면 `npm.cmd`로 부른다(예: `npm.cmd run test`).
 - 개발자 도구로 WebView 값을 읽어야 할 때만 `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222`를 주고 `tauri dev`를 실행한다.
 - 테스트와 타입 검사가 통과하지 않은 상태로 완료 보고를 하지 않는다. `cargo` 경고(clippy 포함)를 남긴 채 완료 보고를 하지 않는다.
+- **줄바꿈** — 빌드·테스트 전에 `git ls-files --eol | Select-String 'w/crlf'`로 확인한다. `test-fixtures/encoding/utf8-crlf.txt` 말고 더 나오면 `git status`가 깨끗할 때 `Remove-Item .git\index` → `git read-tree HEAD` → `git checkout-index -f -a`로 LF로 다시 꺼낸다. `git reset -q`는 index에 CRLF 파일의 stat을 채워 다시 쓰지 않게 하므로 쓰지 않는다(`docs/BUILD.md` 7절, 2026-11-15).
 - **스크립트 언어**
   - 측정·검증 스크립트는 PowerShell 7로 쓴다.
   - Python이 꼭 필요하면 WinPython 인터프리터를 전체 경로로 부른다: `C:\winpython\WPy64-31180_cpu\python-3.11.8.amd64\python.exe`. 시스템 PATH의 `python`은 WindowsApps 스텁이라 쓰지 않는다.

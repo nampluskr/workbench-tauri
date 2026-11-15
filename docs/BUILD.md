@@ -30,7 +30,7 @@
 | Windows | 11 x64 | Windows 전용 앱 |
 | Git | 2.52.0.windows.1 | `winget install -e --id Git.Git` |
 | PowerShell 7 | 7.6.9 | `winget install -e --id Microsoft.PowerShell` (fetch 스크립트는 `pwsh`로 실행. Windows PowerShell 5.1로는 안 됨: `#Requires -Version 7.0`) |
-| Node.js 24 | v24.19.0 (npm 11.17.0) — 2026-11-15 새 PC([4D절](#4d-083-새-환경-빌드)). 그 전 PC는 v22.22.3 (npm 10.9.8) | [nodejs.org](https://nodejs.org)의 v24 Windows 설치 파일. winget에는 24 전용 ID가 없다(2026-11-15 `winget search --id OpenJS.NodeJS` 확인: 22·23·LTS 26.x만 있음). `OpenJS.NodeJS.LTS`(26.x)는 쓰지 않는다. 사용자 결정(2026-11-15)으로 기준을 22에서 24로 바꿨다. 0.8.3까지는 22.x로도 빌드됐다(`winget install -e --id OpenJS.NodeJS.22`) |
+| Node.js 24 | v24.19.0 (npm 11.17.0) — 2026-11-15 새 PC([4D절](#4d-083-새-환경-빌드))와 그 전 PC(데스크탑, 같은 날 22.22.3에서 바꿈) 모두 | `winget install -e --id OpenJS.NodeJS.LTS --version 24.19.0` 뒤 `winget pin add --id OpenJS.NodeJS.LTS --version 24.19.0`(두 PC 모두 이렇게 설치·고정함, 2026-11-15). winget에는 24 전용 ID가 없고, `OpenJS.NodeJS.LTS`의 최신은 26.x라 고정하지 않으면 `winget upgrade --all`이 26으로 올린다. [nodejs.org](https://nodejs.org)의 v24 Windows 설치 파일로 깔아도 된다. 사용자 결정(2026-11-15)으로 기준을 22에서 24로 바꿨다. 0.8.3까지는 22.x로도 빌드됐다(`winget install -e --id OpenJS.NodeJS.22`) |
 | Visual Studio Build Tools 2022 (C++) | — | `winget install -e --id Microsoft.VisualStudio.2022.BuildTools --override "--wait --passive --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"` (MSVC 링커·Windows SDK. Rust MSVC 툴체인에 필요) |
 | Rust | 1.99.1 `x86_64-pc-windows-msvc` | `winget install -e --id Rustlang.Rustup` 뒤 새 터미널에서 `rustup default stable`(최소 1.90, `Cargo.toml` `rust-version`). 같은 버전을 원하면 `rustup default 1.99.1` |
 | WebView2 런타임 | 157.0.4341.42 | Windows 11 기본 포함. 없으면 `winget install -e --id Microsoft.EdgeWebView2Runtime` |
@@ -41,6 +41,7 @@
 | Tauri | crate `tauri` =2.12.5, `tauri-build` =2.7.4, `@tauri-apps/api` 2.12.4 | 설치 안 함. 버전은 `Cargo.toml`·`package.json`에 고정 |
 
 - 설치 확인 명령: `git --version`, `pwsh -v`, `node -v`, `npm -v`, `rustc -V`, `cargo -V`
+- release에 올리는 설치 파일은 데스크탑에서 빌드한다(사용자 2026-11-15). 0.8.3 Draft의 설치 파일은 데스크탑 빌드로 바꿨다(4D절 끝).
 
 ## 2. 복사본 채우기(gitignore된 폴더)
 
@@ -222,7 +223,7 @@ npm run tauri build             # release exe + NSIS 설치 파일
 |---|---|---|---|
 | 1. 복사본 채우기 | `pwsh tools/fetch-zed-icons.ps1` → `fetch-zed-themes.ps1` → `fetch-zed-grammars.ps1` | exit 0. 문법 언어 29, wasm 25 | 288초(셋 합) |
 | 2. 의존성 | `npm.cmd ci` | 패키지 219개, 취약점 0. `katex@0.18.11` deprecated 경고만 | 251초 |
-| 3. 줄바꿈 | `git config core.autocrlf false` → `Remove-Item .git\index` → `git reset -q` → `git checkout-index -f -a` | `git ls-files --eol`이 `i/lf w/lf`, 작업 폴더 깨끗 | — |
+| 3. 줄바꿈 | `git config core.autocrlf false` → `Remove-Item .git\index` → `git reset -q` → `git checkout-index -f -a` | `git ls-files --eol`이 `i/lf w/lf`, 작업 폴더 깨끗. 데스크탑에서는 이 순서로 CRLF 34개가 남았다. 지금 순서는 [7절](#7-알려진-제약) 줄바꿈 항목(`git reset -q` 대신 `git read-tree HEAD`) | — |
 | 4. 검사 | `npm.cmd run typecheck`, `npm.cmd run test` | typecheck 0, test 347/347 통과. 3단계 전에는 I-25·I-29 두 개가 실패([7절](#7-알려진-제약) 줄바꿈) | 7초 |
 | 5. 빌드 | `npm.cmd run tauri build` | exit 0. Rust 크레이트 441개 처음 컴파일, NSIS 3.13·`nsis_tauri_utils` v0.5.3 처음 내려받음 | 947초 |
 
@@ -250,6 +251,13 @@ npm run tauri build             # release exe + NSIS 설치 파일
 - GitHub: 태그 `v0.8.3`(이 설정을 넣은 커밋)에 **Draft release**로 설치 파일을 올렸다(`gh release create v0.8.3 --draft`). 레포는 PUBLIC이지만 draft는 레포 권한자만 보고 받을 수 있다. 그래서 8절의 배포 범위(개인 용도, core I-3)는 그대로다. 공개(publish)로 바꾸는 것은 배포 범위를 바꾸는 결정이라 라이선스 정리(8절)가 먼저다(미정, 사용자가 정함).
 - 빌드 직전 `workbench-tauri` 프로세스는 0개였다. 앱은 실행하지 않았다(About·Licenses 화면은 사용자 확인 필요).
 
+### 데스크탑 빌드로 Draft 설치 파일 교체 (2026-11-15)
+
+- 데스크탑 도구는 위 새 PC와 같다. Node v24.19.0, npm 11.17.0, rustc·cargo 1.99.1이다. Git은 2.52.0, PowerShell은 7.7.0이다.
+- `9338139`에서 fetch 3개 → `npm.cmd ci` → 줄바꿈 정리([7절](#7-알려진-제약)) → typecheck 0, test 347/347 → `npm.cmd run tauri build`(exit 0) 순서로 빌드했다.
+- 설치 파일 `workbench-tauri_0.8.3_x64-setup.exe`: 10,591,421 B, 2026-11-15 18:35:13, ProductVersion 0.8.3, SHA256 `B2FEAC9D88E664D746E59AB4C910491F3F05D9A45C4982099221D4362775AAD3`. exe는 21,535,232 B다.
+- Draft release `v0.8.3`의 설치 파일을 이 파일로 바꿨다(`gh release upload --clobber`). 앞의 새 PC 파일(`E85F2945…`)과는 같은 커밋이고 바이트만 다르다.
+
 ## 5. 걸린 시간(이 PC)
 
 - 처음부터 release 빌드(`--no-bundle` 상태, 2026-11-08): 전체 200초, 그중 Rust 컴파일 3분 5초.
@@ -275,7 +283,8 @@ npm run tauri build             # release exe + NSIS 설치 파일
 - 런타임: WebView2 필요. 없는 PC는 설치할 때 인터넷이 필요하다(오프라인 설치는 `offlineInstaller`/`embedBootstrapper`, 지금 안 켬). exe만 옮기면 WebView2를 설치해 주지 않는다.
 - 콘솔 창: release 빌드는 뜨지 않는다(`src-tauri/src/main.rs`의 `windows_subsystem = "windows"`). 그래서 release exe의 `eprintln!` 로그는 보이지 않는다. 디버그 빌드는 콘솔 창이 뜬다.
 - Windows x64만.
-- 줄바꿈(2026-11-15 확인, 같은 날 루트 `.gitattributes` `* text=auto eol=lf`를 더해 새 clone·checkout은 LF로 풀린다): `.gitattributes`가 없던 때 Git `core.autocrlf=true`(Git for Windows 시스템 기본)인 PC에서는 작업 파일이 CRLF로 풀렸다. 그러면 `src/licenses/rust-dependencies.txt`·`src-tauri/Cargo.lock`을 `\n`으로 나누는 코드가 깨진다. `npm run test`의 I-25(`tools/rust-licenses.test.mjs`)·I-29(`src/shell/about.test.ts`)가 실패하고, 앱의 About·Licenses 화면(`src/shell/about.ts`)의 Rust 목록·개수도 틀릴 수 있다. 확인은 `git ls-files --eol src/licenses/rust-dependencies.txt`로 하고, `w/crlf`면 이 레포에서 `git config core.autocrlf false` → `Remove-Item .git\index` → `git reset -q` → `git checkout-index -f -a`로 LF로 다시 꺼낸다. 추적 파일만 다시 쓰며, 복사본 폴더·`node_modules`는 건드리지 않는다. `.gitattributes`를 더한 뒤로는 `.gitattributes`가 들어간 커밋을 받은 작업 폴더에서 `Remove-Item .git\index` → `git reset -q` → `git checkout-index -f -a`만 해도 LF가 된다. 더할 때 `git add --renormalize .`로 바뀐 추적 파일은 0개였다. `test-fixtures/encoding/utf8-crlf.txt`는 그 폴더의 `.gitattributes`(`-text`)로 CRLF 그대로다.
+- 줄바꿈(2026-11-15 확인, 같은 날 루트 `.gitattributes` `* text=auto eol=lf`를 더해 새 clone·checkout은 LF로 풀린다): `.gitattributes`가 없던 때 Git `core.autocrlf=true`(Git for Windows 시스템 기본)인 PC에서는 작업 파일이 CRLF로 풀렸다. 그러면 `src/licenses/rust-dependencies.txt`·`src-tauri/Cargo.lock`을 `\n`으로 나누는 코드가 깨진다. `npm run test`의 I-25(`tools/rust-licenses.test.mjs`)·I-29(`src/shell/about.test.ts`)가 실패하고, 앱의 About·Licenses 화면(`src/shell/about.ts`)의 Rust 목록·개수도 틀릴 수 있다. 확인은 `git ls-files --eol src/licenses/rust-dependencies.txt`로 하고, `w/crlf`면 이 레포에서 `git status --porcelain`이 비어 있는지 확인한 뒤 `git config core.autocrlf false` → `Remove-Item .git\index` → `git read-tree HEAD` → `git checkout-index -f -a`로 LF로 다시 꺼낸다. 추적 파일만 다시 쓰며, 복사본 폴더·`node_modules`는 건드리지 않는다. 확인은 `git ls-files --eol | Select-String 'w/crlf'`가 `test-fixtures/encoding/utf8-crlf.txt` 하나만 나오는 것이다.
+  - **`git reset -q`를 쓰지 않는다**(2026-11-15 데스크탑 확인). `git reset`은 index에 지금 작업 파일의 stat을 다시 채운다. 그러면 `checkout-index -f`가 그 파일을 "변경 없음"으로 보고 다시 쓰지 않아 CRLF가 그대로 남는다(34개가 남았다). `git read-tree HEAD`는 stat 없는 index를 만들어 모든 파일을 다시 쓰게 한다. `.gitattributes`가 이미 있어도 그 전에 풀린 CRLF 작업 파일은 저절로 바뀌지 않으므로 이 순서가 필요하다. 더할 때 `git add --renormalize .`로 바뀐 추적 파일은 0개였다. `test-fixtures/encoding/utf8-crlf.txt`는 그 폴더의 `.gitattributes`(`-text`)로 CRLF 그대로다.
 - 앱 버전은 `src-tauri/tauri.conf.json`의 `version` 한 곳에서만 정한다. 버전을 끝낼 때마다 그 번호로 올린다(v0.8.1이면 `0.8.1`). Tauri가 이 값을 설치 파일 이름과 exe·설치 파일의 제품/파일 버전에 쓴다. private npm 패키지에는 `version`이 없고, Cargo 패키지는 생략 기본값을 쓴다. Help 메뉴의 "About workbench-tauri"가 `tauri.conf.json` 버전을 보인다.
 - 빌드 경고(기존과 같은 종류, 0.8.0): Vite 500 kB 넘는 chunk(`index` 4,557.41 kB, 0.7.0은 3,863.55 kB; Mermaid 쪽 `elk` 1,462.86 kB·`chunk-NGNAAXSQ` 629.04 kB 등은 지연 로딩), web-tree-sitter direct eval. Rust 경고 없음.
 - `cargo test`: `folder_watch::tests::missing_root_is_watched_after_creation_and_recreation`가 0.8.0 빌드 확인(K-05c)에서 1회 실패했다(`expected filesystem event: Timeout`). 코드 변경 없이 다시 돌리면 통과(3회 모두)해서 간헐 실패로 본다. 원인은 조사하지 않았다.

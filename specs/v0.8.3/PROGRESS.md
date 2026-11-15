@@ -275,3 +275,18 @@
   - 결과: 설치 파일 10,593,637 B, ProductVersion 0.8.3, SHA256 `E85F2945…D0BF5`. 생성 `installer.nsi`에 `MUI_LANGUAGE "Korean"`이 있다. `docs/BUILD.md` 3절·4D절에 적었다.
   - 검증: 빌드 exit 0. 사용자가 이 PC에 설치·실행해 확인했다("잘 설치되어 실행이 잘 됩니다"). 앱 코드는 바뀌지 않았다.
   - 미정: Draft를 공개로 바꿀지. 배포 범위를 바꾸는 결정이라 라이선스 정리(BUILD 8절)가 먼저이고, 사용자·core가 정한다.
+- **데스크탑 빌드 환경 맞춤과 시험 빌드** (2026-11-15, 사용자 요청. Herdr w1H의 `p-leader`가 했다. 명령은 `terminal` 창에서 실행했고, 마지막 전체 빌드 스크립트는 사용자가 직접 실행했다)
+  - 무엇을 했나:
+    - 데스크탑 Node 22.22.3(`OpenJS.NodeJS.22`)을 지우고 `OpenJS.NodeJS.LTS` 24.19.0을 설치해 `winget pin`으로 고정했다. 노트북도 같은 버전으로 고정했다. `docs/BUILD.md` 1절 Node 줄을 고쳤다.
+    - `HEAD 9338139`에서 fetch 3개 → `npm.cmd ci` → 줄바꿈 정리 → typecheck·test → `npm.cmd run tauri build` 순서로 빌드했다.
+  - 줄바꿈 원인과 해결:
+    - 4D절 순서(`Remove-Item .git\index` → `git reset -q` → `git checkout-index -f -a`)로는 CRLF 34개가 남았다.
+    - 원인: `git reset`이 index에 CRLF 작업 파일의 stat을 다시 채워서 `checkout-index -f`가 그 파일을 건너뛴다.
+    - 해결: `git reset -q` 대신 `git read-tree HEAD`를 썼다. 그 뒤 CRLF는 `-text` fixture 1개뿐이다.
+    - `docs/BUILD.md` 7절·4D절, `AGENTS.md` 2절에 적었다.
+  - 결과(LF로 다시 빌드): 설치 파일 10,591,421 B, SHA256 `B2FEAC9D…75AAD3`. exe 21,535,232 B(노트북과 같은 크기). 둘 다 ProductVersion 0.8.3이다. 로그는 `%TEMP%\wt-083-desktop-build-lf-20261115.txt`.
+  - 검증: typecheck 0, test 347/347, 빌드 exit 0. 앱은 실행하지 않았다.
+  - GitHub release(Draft `v0.8.3`)와 비교:
+    - 같은 커밋 `9338139`이고 설치 파일 바이트만 다르다(release 10,593,637 B `E85F2945…`).
+    - 설치 파일 안 exe의 해시는 7-Zip이 없어 비교하지 않았다.
+    - 사용자가 데스크탑을 정식 빌드 머신으로 정했다(2026-11-15). 그래서 Draft의 설치 파일을 데스크탑 빌드로 바꿨다(`gh release upload --clobber`, BUILD 4D절 끝).
